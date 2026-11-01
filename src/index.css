@@ -1,0 +1,37 @@
+:root {
+  --bg: #101113;
+  --panel: #131417;
+  --panel-2: #15171b;
+  --rack: #0a0b0d;
+  --border: #24272c;
+  --text: #e4e6ea;
+  --muted: #9aa0a8;
+
+  /* Cable and category colours. See docs/decisions.md#colours. */
+  --pattern: #e6d35f;
+  --audio: #f4a462;
+  --mod: #7db9f6;
+  --shape: #f293ba;
+  --fx: #b9a9f8;
+  --util: #b7bdc6;
+  --alien: #8cf5da;
+
+  color-scheme: dark;
+  font-family: 'Barlow', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+}

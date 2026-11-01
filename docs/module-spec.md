@@ -1,0 +1,361 @@
+# Module spec (v1)
+
+The sixteen v1 modules. For each: its controls, value ranges and defaults, its jacks, and the Strudel it writes and reads.
+
+The machine-readable version of this spec is [`src/modules/catalog.ts`](../src/modules/catalog.ts). Once the app starts consuming the catalog, **the catalog is the source of truth** and this document describes it; keep the two in step.
+
+## Conventions
+
+- **Width** is in HP. 1 HP = 12 px at 100% zoom. A module is the same width in every look.
+- **Jacks:** `in` / `out`, with signal type `pattern`, `audio`, `mod`, or `any` (Alien and Cyber jacks pass through whatever enters).
+- **CV inputs** modulate one named control (`cvTarget`). See [rule 3](translation-rules.md#3-a-cable-into-cv-turns-a-number-into-a-pattern).
+- **Defaults** are what a freshly added module shows. “Omitted at X” means the generator writes nothing for that control when it holds X.
+- Numbers are written with up to three decimals, no trailing zeros.
+- Function names below were checked against `@strudel/web` 1.3.0.
+
+---
+
+## Pattern sources
+
+### SEQ — Sequencer
+
+Hardware · Pattern · 10 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| STEPS | step editor, 1–16 steps | note name (`c2`, `eb2`), scale degree (`0`, `3`), rest, or an alternation (`<7 10>`) | `c2 c2 eb2 g2 c3 bb2 g2 eb2` | the mini-notation string |
+| LEN | knob | 1–16, step 1 | 8 | number of steps |
+| MODE | switch | NOTE · DEGREE | NOTE | `note(…)` or `n(…)` |
+| RATE | knob, detented | 0.25 · 0.5 · 1 · 2 · 3 · 4 | 1 | `.fast(x)`, omitted at 1 |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| NOTE | out | pattern |
+
+```js
+note("c2 c2 eb2 g2 c3 bb2 g2 eb2")
+n("0 3 5 <7 10>")        // DEGREE mode, usually into QUANT
+note("c2 eb2").fast(2)   // RATE 2
+```
+
+**Reads:** `note("…")` or `n("…")` whose mini-notation is a flat list of tokens, rests and `<…>` alternations. Anything richer (`[ ]` sub-divisions, `*`, Euclidean rhythms) opens the SEQ in **text mode**: the string is shown and edited as text, and the module is still a SEQ. A `.fast(x)` or `.slow(x)` directly after sets RATE (`slow(x)` → 1/x).
+
+### DRUMS — Trigger sequencer
+
+Hardware · Pattern · 14 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| GRID | rows × steps | one sample name per row; 8 or 16 steps | rows `bd`, `sd`, `hh`; 8 steps; bd `x.x.x.x.`, sd `..x...x.`, hh `.x.x.x.x` | the mini-notation string |
+| DROP | knob | 0–0.9, step 0.05 | 0 | `.degradeBy(x)`, omitted at 0 |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| OUT | out | pattern |
+
+```js
+s("[bd ~]*4, [~ ~ sd ~]*2, [~ hh]*4")
+```
+
+**Row rules:** an empty row is left out. An all-on row is written `hh*8`. A row that repeats with period *p* is written `[tokens of first p]*(steps/p)`. Otherwise tokens are joined with spaces, rests as `~`. Rows are joined with `, `. If every row is empty the module writes `s("~")`.
+
+**Reads:** `s("…")` with comma-separated layers, each one sample name plus rests, using `*n`, `[ ]` grouping or Euclidean notation `bd(3,8)`. A Euclidean row is shown as lit cells and keeps its `(k,n)` notation when written back, until edited. Layers whose length does not fit the grid open the module in text mode.
+
+### QUANT — Quantizer
+
+Hardware · Pattern · 8 HP · order-sensitive
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| ROOT | switch | C · C# · D · Eb · E · F · F# · G · Ab · A · Bb · B | C | `.scale("C:…")` |
+| SCALE | switch | major · minor · dorian · phrygian · lydian · mixolydian · locrian | minor | `.scale("…:minor")` |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| IN | in | pattern |
+| OUT | out | pattern |
+
+```js
+n("0 3 5 <7 10>").scale("C:minor")
+```
+
+Pairs with SEQ in DEGREE mode. Multi-word scale names (pentatonics) are deliberately left out of v1 until their exact Strudel spelling is confirmed.
+
+---
+
+## Sound sources
+
+### OSC — Oscillator
+
+Hardware · Sound · 9 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| WAVE | switch | sawtooth · square · triangle · sine · supersaw | sawtooth | `.s("sawtooth")` |
+| TUNE | knob | −24 to +24 semitones, step 1 | 0 | `.transpose(x)`, omitted at 0 |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| NOTE | in | pattern |
+| OUT | out | audio |
+
+```js
+note("c2 eb2 g2").s("sawtooth")
+```
+
+### SMPL — Sampler
+
+Hardware · Sound · 8 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| BANK | switch | default · RolandTR909 · RolandTR808 | RolandTR909 | `.bank("RolandTR909")`, omitted for default |
+| SPEED | knob | 0.25–2, step 0.05 | 1 | `.speed(x)`, omitted at 1 |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| IN | in | pattern |
+| OUT | out | audio |
+
+```js
+s("bd*4, hh*8").bank("RolandTR909")
+```
+
+The engine must load the sample banks at start-up (`@strudel/web` loads none by default). Which sample sources to load is an engine task — see [`build-plan.md`](build-plan.md).
+
+---
+
+## Shaping
+
+### VCF — Filter
+
+Hardware · Shape · 10 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| MODE | switch | LP · HP · BP | LP | chooses `lpf`/`hpf`/`bpf`, `lpq`/`hpq`/`bpq`, `lpenv`/`hpenv`/`bpenv` |
+| CUTOFF | knob, log | 20–20000 Hz | 800 | `.lpf(x)` |
+| RES | knob | 0–20, step 0.5 | 1 | `.lpq(x)` |
+| ENV AMT | knob | 0–8, step 0.5 | 4 | `.lpenv(x)`, only when an ENV is patched into CV |
+
+| Jack | Dir | Signal | CV target |
+| --- | --- | --- | --- |
+| IN | in | audio | |
+| CV | in | mod | CUTOFF |
+| OUT | out | audio | |
+
+```js
+.lpf(800).lpq(1)
+.lpf(sine.range(800, 2400).slow(4)).lpq(1)                    // LFO into CV
+.lpf(800).lpq(1).lpenv(4)
+  .lpattack(0.01).lpdecay(0.2).lpsustain(0.5).lprelease(0.1)  // ENV into CV
+```
+
+### VCA — Amplifier
+
+Hardware · Shape · 8 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| LEVEL | knob | 0–1, step 0.05 | 0.8 | `.gain(x)`, always written |
+
+| Jack | Dir | Signal | CV target |
+| --- | --- | --- | --- |
+| IN | in | audio | |
+| CV | in | mod | LEVEL |
+| OUT | out | audio | |
+
+```js
+.gain(0.8)
+.attack(0.01).decay(0.2).sustain(0.5).release(0.1).gain(0.8)  // ENV into CV
+.gain(sine.range(0.8, 0.3).slow(2))                           // LFO into CV (tremolo)
+```
+
+---
+
+## Modulation
+
+### ENV — Envelope
+
+Hardware · Modulate · 10 HP
+
+| Control | Kind | Range | Default |
+| --- | --- | --- | --- |
+| ATK | knob | 0–2 s, step 0.01 | 0.01 |
+| DEC | knob | 0–2 s, step 0.01 | 0.2 |
+| SUS | knob | 0–1, step 0.05 | 0.5 |
+| REL | knob | 0–4 s, step 0.05 | 0.1 |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| OUT | out | mod |
+
+What it writes depends on where it is patched:
+
+| Patched into | Writes |
+| --- | --- |
+| VCA CV | `.attack(a).decay(d).sustain(s).release(r)` |
+| VCF CV (LP) | `.lpattack(a).lpdecay(d).lpsustain(s).lprelease(r)`, plus VCF’s `.lpenv(amt)` |
+| VCF CV (HP / BP) | the `hp…` / `bp…` equivalents |
+| Nothing | nothing |
+
+The envelope fires on every event, so there is no gate input. In v1 an ENV can only be patched into VCA or VCF CV jacks; anything else is blocked. One ENV may feed both (fan-out).
+
+### LFO — Low-frequency oscillator
+
+Hardware · Modulate · 8 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| SHAPE | switch | sine · tri · saw · isaw · square · perlin · rand | sine | the signal name |
+| RATE | knob | 0.25–16 cycles, detented | 4 | `.slow(x)`; omitted at 1; below 1 written `.fast(1/x)` |
+| DEPTH | knob, bipolar | in the target’s units | depends on target (see below) | the top of `.range()` |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| OUT | out | mod |
+
+```js
+sine.range(800, 2400).slow(4)   // into VCF CV: CUTOFF 800, DEPTH +1600
+```
+
+The LFO writes nothing by itself; it replaces the number of the control it is patched into: `.range(knob, knob + depth)`. DEPTH is bipolar and takes the units of its target, so it is reset to the target’s default when re-patched:
+
+| Target | DEPTH range | Default |
+| --- | --- | --- |
+| VCF CUTOFF | −10000 to +10000 Hz | +1600 |
+| VCA LEVEL | −1 to +1 | −0.5 |
+
+---
+
+## Effects
+
+### DELAY — Echo
+
+Hardware · Effects · 10 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| MIX | knob | 0–1, step 0.05 | 0.4 | `.delay(x)` |
+| TIME | knob | 0.01–2 s, step 0.005 | 0.375 | `.delaytime(x)` |
+| FDBK | knob | 0–0.95, step 0.05 | 0.5 | `.delayfeedback(x)` |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| IN | in | audio |
+| OUT | out | audio |
+
+```js
+.delay(0.4).delaytime(0.375).delayfeedback(0.5)
+```
+
+All three are written when MIX > 0. At MIX 0 the module is bypassed and writes nothing.
+
+### REVERB — Room
+
+Hardware · Effects · 8 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| ROOM | knob | 0–1, step 0.05 | 0.5 | `.room(x)` |
+| SIZE | knob | 0–10, step 0.5 | 4 | `.roomsize(x)` |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| IN | in | audio |
+| OUT | out | audio |
+
+```js
+.room(0.5).roomsize(4)
+```
+
+At ROOM 0 the module is bypassed and writes nothing.
+
+> **Open question — orbits.** In Strudel, delay and reverb are send effects on an *orbit*, shared by every voice on that orbit. Two voices with different DELAY settings on the same orbit will fight. The generator probably needs to give each voice with its own effect settings its own `.orbit(n)`. Decide during the code-generator work.
+
+---
+
+## Utility
+
+### MIX — Mixer
+
+Hardware · Utility · 12 HP
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| CH 1–4 | knob ×4 | 0–1, step 0.05 | 0.8 | `.postgain(x)` on that channel’s voice, omitted at 1 |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| 1, 2, 3, 4 | in | audio |
+| OUT | out | audio |
+
+Writes one `$:` line per connected input, in channel order ([rule 2](translation-rules.md#2-each-mixer-input-is-a--line)).
+
+### OUT — Output
+
+Hardware · Utility · 8 HP · exactly one per rack
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| BPM | knob | 40–240, step 1 | 120 | `setcpm(120/4)` |
+| VOL | knob | 0–1, step 0.05 | 0.8 | app master volume, not written to code |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| IN | in | audio |
+
+Nothing plays unless the mixer (or a single voice) reaches OUT. **Reads** `setcpm(x)` (BPM = x × 4, or the literal `bpm/4` form) and `setcps(x)` (BPM = x × 240).
+
+---
+
+## Alien
+
+### ITER
+
+Alien · 10 HP · order-sensitive
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| STEPS | knob | 1–16, step 1 | 4 | `.iter(x)` |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| IN | in | any |
+| OUT | out | any |
+
+Starts the pattern one step later each cycle.
+
+### JUX
+
+Alien · 10 HP · order-sensitive
+
+| Control | Kind | Range | Default | Writes |
+| --- | --- | --- | --- | --- |
+| RIGHT | switch | rev · fast ×2 · press · iter 4 | rev | `.jux(rev)`, `.jux(x => x.fast(2))`, `.jux(press)`, `.jux(x => x.iter(4))` |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| IN | in | any |
+| OUT | out | any |
+
+Left ear plays the pattern; right ear plays it transformed. **Reads** `.jux(f)` when `f` is one of the four options; any other function makes the whole call a CODE block.
+
+---
+
+## Cyber
+
+### CODE
+
+Cyber · 14 HP · order-sensitive
+
+| Control | Kind | Default | Writes |
+| --- | --- | --- | --- |
+| TEXT | code editor | `.chunk(4, x => x.hurry(2))` | the text, verbatim |
+
+| Jack | Dir | Signal |
+| --- | --- | --- |
+| IN | in | any |
+| OUT | out | any |
+
+Holds any Strudel the app cannot turn into controls. In a chain, its text must be a method call fragment starting with `.`. With nothing patched into IN, the text must be a complete expression and the block acts as a voice’s source. When a module for the code later exists, the app offers to swap it in.
