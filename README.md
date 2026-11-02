@@ -51,6 +51,14 @@ docs/        design decisions and specs
 
 Code generation (`src/codegen/`), the code reader (`src/reader/`), the rack UI (`src/rack/`) and the look system (`src/looks/`) arrive in that order — see [`docs/build-plan.md`](docs/build-plan.md).
 
+## Agent workflows
+
+[`AGENTS.md`](AGENTS.md) maps development tasks to the project specs and the nine
+project-local [tstack skills](.agents/README.md). Use “full stop” to prepare a PR
+for your merge, “full send” to carry it through merge, “sol loop” for a Sol
+review, or “council” for a review across three providers. See the agent guide
+for the remaining workflows and verification expectations.
+
 ## Licence
 
 Not yet chosen. This repository is private. Note that Strudel is licensed AGPL-3.0-or-later, which will matter when a licence is picked.
