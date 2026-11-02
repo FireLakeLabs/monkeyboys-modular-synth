@@ -1,0 +1,345 @@
+{
+  "version": 1,
+  "sources": {
+    "tstack": {
+      "repository": "https://github.com/t3dotgg/tstack",
+      "revision": "1085050f3baed1ac724caa4a8166145fb2ac88af",
+      "license": {
+        "path": ".agents/TSTACK-LICENSE",
+        "sha256": "8095f9a9f97d074131f6a2ce09b952d12c18b36f09f4e5df0517c4e64e82c851"
+      }
+    },
+    "pstack": {
+      "repository": "https://github.com/cursor/plugins",
+      "revision": "ae5650febf4320793844c12c4adaa937f417f8da",
+      "license": {
+        "path": ".agents/PSTACK-LICENSE",
+        "sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+      }
+    }
+  },
+  "skills": [
+    {
+      "name": "babysit-pr",
+      "source": "tstack",
+      "upstreamPath": "skills/babysit-pr",
+      "adapted": false,
+      "dependencies": [
+        "leaving-pr-comments"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/babysit-pr/SKILL.md",
+          "upstreamSha256": "fbe43ba3ab76a466a88ef8b46dca1b41fb8101347d24a396903849865173a6ac",
+          "sha256": "fbe43ba3ab76a466a88ef8b46dca1b41fb8101347d24a396903849865173a6ac",
+          "executable": false
+        },
+        {
+          "path": ".agents/skills/babysit-pr/scripts/pr-wait",
+          "upstreamSha256": "90393f85b95b78bff1b039744bdfb09dc88ff2b430e1c3df687ee6f449c97214",
+          "sha256": "90393f85b95b78bff1b039744bdfb09dc88ff2b430e1c3df687ee6f449c97214",
+          "executable": true
+        }
+      ]
+    },
+    {
+      "name": "benchmark-checklist",
+      "source": "pstack",
+      "upstreamPath": "pstack/skills/benchmark-checklist",
+      "adapted": true,
+      "dependencies": [],
+      "files": [
+        {
+          "path": ".agents/skills/benchmark-checklist/SKILL.md",
+          "upstreamSha256": "ba109e96c8f6c1c391baccf19e5d11e14370df7b3f2605e1572cd565a6c0fca0",
+          "sha256": "fd6a95df93f7058df24ea6b3a2370cd1f105144dea5b45d3d801bd8b3af0d340",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "correct",
+      "source": "pstack",
+      "upstreamPath": "pstack/skills/correct",
+      "adapted": true,
+      "dependencies": [
+        "principle-encode-lessons-in-structure",
+        "principle-test-behavior-not-implementation"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/correct/SKILL.md",
+          "upstreamSha256": "e347045d00c967a0b831ef883cc6ac79d21329aa10b5968637df95de7febf0ba",
+          "sha256": "a46b0e85d36b7e14d1ceb8ac12f2a616bf847d38f8366b6cad2ce7fe4efa9317",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "council",
+      "source": "tstack",
+      "upstreamPath": "skills/council",
+      "adapted": false,
+      "dependencies": [],
+      "files": [
+        {
+          "path": ".agents/skills/council/SKILL.md",
+          "upstreamSha256": "598fb2c7cdd48ddd9643cb22999e1b624c357aa6579aa0af0e7268ae16a8a164",
+          "sha256": "598fb2c7cdd48ddd9643cb22999e1b624c357aa6579aa0af0e7268ae16a8a164",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "file-pr",
+      "source": "tstack",
+      "upstreamPath": "skills/file-pr",
+      "adapted": false,
+      "dependencies": [
+        "babysit-pr",
+        "leaving-pr-comments"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/file-pr/SKILL.md",
+          "upstreamSha256": "174a7ae52e3b9d17f2bd0eaf0a11a89d744d1249164ecbdb0e642359eee75b1b",
+          "sha256": "174a7ae52e3b9d17f2bd0eaf0a11a89d744d1249164ecbdb0e642359eee75b1b",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "full-send",
+      "source": "tstack",
+      "upstreamPath": "skills/full-send",
+      "adapted": false,
+      "dependencies": [
+        "sol-loop",
+        "file-pr",
+        "babysit-pr"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/full-send/SKILL.md",
+          "upstreamSha256": "ba585e47cd901506b0e2de13025b0e39bc02462c136cf27491ad3efbdfe66020",
+          "sha256": "ba585e47cd901506b0e2de13025b0e39bc02462c136cf27491ad3efbdfe66020",
+          "executable": false
+        },
+        {
+          "path": ".agents/skills/full-send/agents/openai.yaml",
+          "upstreamSha256": "8a1e8ce04a774a8a2e469cecf5e45a9cec4d3438b4c587cf166c2f78206390d2",
+          "sha256": "8a1e8ce04a774a8a2e469cecf5e45a9cec4d3438b4c587cf166c2f78206390d2",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "full-stop",
+      "source": "tstack",
+      "upstreamPath": "skills/full-stop",
+      "adapted": false,
+      "dependencies": [
+        "full-send"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/full-stop/SKILL.md",
+          "upstreamSha256": "091dcabfcba73e009ddb8e32c498a993a6bb60f8c223d3e21e917f4e52ab9939",
+          "sha256": "091dcabfcba73e009ddb8e32c498a993a6bb60f8c223d3e21e917f4e52ab9939",
+          "executable": false
+        },
+        {
+          "path": ".agents/skills/full-stop/agents/openai.yaml",
+          "upstreamSha256": "6029e872a883aa06aad3426ab58289df016e4b0d23485719c71152603fec7d35",
+          "sha256": "6029e872a883aa06aad3426ab58289df016e4b0d23485719c71152603fec7d35",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "leaving-pr-comments",
+      "source": "tstack",
+      "upstreamPath": "skills/leaving-pr-comments",
+      "adapted": false,
+      "dependencies": [],
+      "files": [
+        {
+          "path": ".agents/skills/leaving-pr-comments/SKILL.md",
+          "upstreamSha256": "1d110343022d0514c101dd942286cce10d6b9f5bd5b899f5a0530620d34cd295",
+          "sha256": "1d110343022d0514c101dd942286cce10d6b9f5bd5b899f5a0530620d34cd295",
+          "executable": false
+        },
+        {
+          "path": ".agents/skills/leaving-pr-comments/agents/openai.yaml",
+          "upstreamSha256": "f89fa0d9ae1c3e973b3e9ecb50549faee62fd1a0e59973bade68802c74183fdb",
+          "sha256": "f89fa0d9ae1c3e973b3e9ecb50549faee62fd1a0e59973bade68802c74183fdb",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "modernize",
+      "source": "tstack",
+      "upstreamPath": "skills/modernize",
+      "adapted": false,
+      "dependencies": [
+        "leaving-pr-comments"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/modernize/SKILL.md",
+          "upstreamSha256": "6172d774c46f535367086da90db1b0aaaaac969ed05ff040444f9afa9a6b1552",
+          "sha256": "6172d774c46f535367086da90db1b0aaaaac969ed05ff040444f9afa9a6b1552",
+          "executable": false
+        },
+        {
+          "path": ".agents/skills/modernize/agents/openai.yaml",
+          "upstreamSha256": "6675e91e10f2b264fe1a027072f6d9f46299f781011e248a5ba075fc1f764e09",
+          "sha256": "6675e91e10f2b264fe1a027072f6d9f46299f781011e248a5ba075fc1f764e09",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "principle-boundary-discipline",
+      "source": "pstack",
+      "upstreamPath": "pstack/skills/principle-boundary-discipline",
+      "adapted": true,
+      "dependencies": [],
+      "files": [
+        {
+          "path": ".agents/skills/principle-boundary-discipline/SKILL.md",
+          "upstreamSha256": "62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28",
+          "sha256": "b6ebacdc7bf1cb5e29618ac4b55b94e3fbb458713633a9e7718e99210f7d6883",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "principle-encode-lessons-in-structure",
+      "source": "pstack",
+      "upstreamPath": "pstack/skills/principle-encode-lessons-in-structure",
+      "adapted": true,
+      "dependencies": [],
+      "files": [
+        {
+          "path": ".agents/skills/principle-encode-lessons-in-structure/SKILL.md",
+          "upstreamSha256": "228963799189f481827d6f28065f278bc2008ffa37030b1234cbd5814d36b9e9",
+          "sha256": "36c70ec204dbe856cfe2d0103a94aaae47906771fb9d123cf4c679ce6a3500b7",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "principle-test-behavior-not-implementation",
+      "source": "pstack",
+      "upstreamPath": "pstack/skills/principle-test-behavior-not-implementation",
+      "adapted": true,
+      "dependencies": [],
+      "files": [
+        {
+          "path": ".agents/skills/principle-test-behavior-not-implementation/SKILL.md",
+          "upstreamSha256": "f7223698623b6a26fea49c751e466b38e6691b1f32ce841d3983e7ffbe2b74a6",
+          "sha256": "e2d696648492594f0a05beda70fcd78c5942c20a846f5b7c9fd913d12f571b64",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "principle-type-system-discipline",
+      "source": "pstack",
+      "upstreamPath": "pstack/skills/principle-type-system-discipline",
+      "adapted": true,
+      "dependencies": [
+        "principle-boundary-discipline",
+        "principle-encode-lessons-in-structure",
+        "typescript-best-practices"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/principle-type-system-discipline/SKILL.md",
+          "upstreamSha256": "5cdaf79785e3c12b2592b9469ee8c272143eb86ab7a18d8382197cea5fd30106",
+          "sha256": "737801321d63e87964cd88d0b815b588c58be9f9a8e68e18c4fd59b70720b4fd",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "sol-loop",
+      "source": "tstack",
+      "upstreamPath": "skills/sol-loop",
+      "adapted": false,
+      "dependencies": [],
+      "files": [
+        {
+          "path": ".agents/skills/sol-loop/SKILL.md",
+          "upstreamSha256": "1db1eb4c4a156ee666070e9a12623d520cd1bd9b19c3fc21003fe5a440ba0b10",
+          "sha256": "1db1eb4c4a156ee666070e9a12623d520cd1bd9b19c3fc21003fe5a440ba0b10",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "takeover",
+      "source": "tstack",
+      "upstreamPath": "skills/takeover",
+      "adapted": false,
+      "dependencies": [
+        "modernize",
+        "file-pr",
+        "babysit-pr",
+        "leaving-pr-comments"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/takeover/SKILL.md",
+          "upstreamSha256": "9f00a7c67bf82603af2e80f56e9ce63f1516a1b4339365b79cf786d9d9055465",
+          "sha256": "9f00a7c67bf82603af2e80f56e9ce63f1516a1b4339365b79cf786d9d9055465",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "tdd",
+      "source": "pstack",
+      "upstreamPath": "pstack/skills/tdd",
+      "adapted": true,
+      "dependencies": [
+        "principle-test-behavior-not-implementation"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/tdd/SKILL.md",
+          "upstreamSha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
+          "sha256": "627b2732788cd7eeaed11e2c2ec2cda02831f99e26be67fae0a979bfe42c2b01",
+          "executable": false
+        }
+      ]
+    },
+    {
+      "name": "typescript-best-practices",
+      "source": "pstack",
+      "upstreamPath": "pstack/skills/typescript-best-practices",
+      "adapted": true,
+      "dependencies": [
+        "principle-type-system-discipline",
+        "principle-boundary-discipline",
+        "principle-test-behavior-not-implementation"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/typescript-best-practices/SKILL.md",
+          "upstreamSha256": "ec1dac086d3708e5940d45d250c30a37dd953b4e3cb2ca0692f5851d7a039e27",
+          "sha256": "408c5a2512711a5994786af7ca7b869ed83967e0797a6963d4c85b7f81a53208",
+          "executable": false
+        },
+        {
+          "path": ".agents/skills/typescript-best-practices/references/patterns.md",
+          "upstreamSha256": "12e70c9419a8b3f5d6a1ab80e272c1f00a43ac0b3bbf72d68199033570e5de77",
+          "sha256": "65b5770a338cfbb19bf8f63735f3775fd057919dac2f6406a7fb82aa3ffae091",
+          "executable": false
+        }
+      ]
+    }
+  ]
+}

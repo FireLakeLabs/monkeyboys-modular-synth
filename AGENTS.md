@@ -11,6 +11,9 @@ A browser modular synth whose rack and Strudel code are editable views of the sa
 
 ## Development and verification
 
+- For TypeScript/TSX work, apply [typescript-best-practices](.agents/skills/typescript-best-practices/SKILL.md) and its linked principles. For test changes, apply [test behavior](.agents/skills/principle-test-behavior-not-implementation/SKILL.md). Read each dependency once; reciprocal reference links do not require reloading it.
+- For engineering rules or exceptions, read [standards](docs/standards.md), which distinguishes executable enforcement, review guidance, and feature-owned gaps. For a preventable correction, use [correct](.agents/skills/correct/SKILL.md); for a practical bug regression, use [tdd](.agents/skills/tdd/SKILL.md); for measured performance claims, use [benchmark-checklist](.agents/skills/benchmark-checklist/SKILL.md).
+
 - Follow the build plan's dependency order. Resolve the reader and engine spikes before relying on their assumptions in production code. Keep an issue's acceptance criteria attached to the implementation and report any that remain unverified.
 - Keep patch transformations testable without React or browser audio; keep Strudel initialization and playback behind `src/strudel/engine.ts`.
 - Use npm and the committed lockfile. Node 24 is a supported development baseline; the README's Node 20 minimum is too broad for the locked Vitest version.
