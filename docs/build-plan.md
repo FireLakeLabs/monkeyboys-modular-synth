@@ -25,7 +25,21 @@ The reader/engine spikes and feature dependency order remain unchanged.
 These are the two biggest unknowns. Spike them before or alongside steps 2–3.
 
 - **Round-tripping code — spike decided (#1/#14).** Retain the original source and Acorn ranges; splice supported edits and reconcile layout with stable IDs plus conservative syntax matching. [Evidence and limits](source-preservation-spike.md). Production catalog mapping, structural edits, and sound checks remain #3/#6 work.
-- **Embedding the engine.** `@strudel/web` exposes `initStrudel`, `evaluate` and `hush` on import. Confirm re-evaluating on every knob change is smooth enough, that `$:` lines and `const` work through `evaluate`, and how to hook per-module activity (for the alien glow and activity lights).
+- **Embedding the engine (#2, investigated 2 November 2026).** The real browser
+  probe confirms `$:` lines and shared `const` declarations work through
+  `evaluate`, and repeated parameter edits replace the running pattern without
+  resetting its scheduler. The adapter now initializes audio explicitly after
+  lazy import, resumes its context, registers pinned default and TR808/TR909
+  sample maps in `prebake`, rejects reported evaluation errors, and orders
+  Play/Stop operations. Per-event activity is available through
+  `pattern.onTrigger(callback, false)`; pass `false` to keep audio enabled and use
+  the target audio time to schedule visuals. Module/source mapping remains #4.
+  Syntax and expression-construction failures leave the previous pattern
+  scheduling, but arbitrary JS side effects are not rolled back; late
+  sample/output errors are a separate failure class. Stop ends scheduling;
+  existing notes and effect tails can ring out. See [reproduction, signal
+  evidence and verification limits](engine-spike.md). Generator integration and
+  production interaction states remain #4/#8/#12.
 
 ## Design still open
 
@@ -38,7 +52,7 @@ These are the two biggest unknowns. Spike them before or alongside steps 2–3.
 
 ## Technical questions
 
-- **Orbits.** Delay and reverb are per-orbit send effects in Strudel. Voices with different effect settings probably need their own `.orbit(n)`. See [`module-spec.md`](module-spec.md#reverb--room).
+- **Orbits (#13, decided).** One dedicated orbit per final voice, including dry voices; no sharing by equal settings. Append routing on final branches, preserve imported routing, and reset old buses when topology changes reassign them. See [effect-orbit contract](translation-rules.md#effect-orbits). Implementation remains #3/#4.
 - **Layout block matching — decided (#14).** Stable IDs with conservative matching replace derived chain addresses. Ambiguous repeats auto-place; see [`patch-format.md`](patch-format.md#matching-rules). Non-sounding saved state remains open.
-- **Sample sources.** Which banks to load at start-up, from where, and whether to cache them.
+- **Sample sources (#2, decided).** Register pinned Dirt-Samples and tidal-drum-machines manifests on first engine use, with pinned audio bases. Audio files load lazily; use browser HTTP caching, with no app-managed offline cache. See [sample sources and failure behavior](engine-spike.md#samples-and-deployment).
 - **Types for `@strudel/web`.** The package ships without TypeScript types; `src/strudel/strudel-web.d.ts` declares the few functions used.

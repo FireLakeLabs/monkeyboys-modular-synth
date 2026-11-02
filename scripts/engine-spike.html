@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="UTF-8" />
+  <title>Strudel engine spike</title>
+  <h1>Strudel engine spike</h1>
+  <p>Local research harness. Uses the real adapter, scheduler, samples, and Web Audio output.</p>
+  <button id="run" type="button">Run checks (about 40 seconds)</button>
+  <button id="stop" type="button">Stop</button>
+  <a id="audio" download="engine-spike.wav" hidden>Download recorded output</a>
+  <pre id="result" aria-live="polite">Ready. Keep this tab active during the run.</pre>
+  <script type="module" src="./engine-spike.mjs"></script>
+</html>

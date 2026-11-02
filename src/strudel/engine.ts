@@ -1,34 +1,66 @@
-/**
- * Thin wrapper around Strudel's engine.
- *
- * `@strudel/web` is loaded on first use, from a user gesture, because browsers only allow
- * audio to start after a click. Sample loading and per-module activity hooks are still to do
- * (see docs/build-plan.md, step 3).
- */
-
+/** Browser audio and Strudel evaluation stay behind this adapter. */
 type StrudelWeb = typeof import('@strudel/web')
 
+// Pin manifests and audio bases separately: upstream manifests can contain moving _base URLs.
+const SAMPLE_SOURCES = [
+  {
+    map: 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json',
+    base: 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/',
+  },
+  {
+    map: 'https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json',
+    base: 'https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/',
+  },
+] as const
+
 let ready: Promise<StrudelWeb> | null = null
+let pending: Promise<void> = Promise.resolve()
 
 function load(): Promise<StrudelWeb> {
   if (!ready) {
-    ready = import('@strudel/web').then(async (strudel) => {
-      await strudel.initStrudel()
-      return strudel
-    })
+    ready = import('@strudel/web')
+      .then(async (strudel) => {
+        await strudel.initStrudel({
+          prebake: () =>
+            Promise.all(SAMPLE_SOURCES.map(({ map, base }) => strudel.samples(map, base))),
+          // @strudel/web 1.3.0 otherwise catches evaluation errors and resolves undefined.
+          onEvalError: (error) => {
+            throw error
+          },
+        })
+        // Lazy import misses initStrudel's first-mousedown listener.
+        await strudel.initAudio()
+        return strudel
+      })
+      .catch((error: unknown) => {
+        ready = null
+        throw error
+      })
   }
   return ready
 }
 
-/** Plays (or replaces what is playing with) the given Strudel code. Call from a click handler. */
-export async function play(code: string): Promise<void> {
-  const strudel = await load()
-  await strudel.evaluate(code)
+function enqueue(action: () => Promise<void>): Promise<void> {
+  const result = pending.then(action)
+  // A failed edit must not prevent a later edit or Stop from running.
+  pending = result.catch(() => {})
+  return result
 }
 
-/** Stops all sound. Safe to call before anything has played. */
-export async function stop(): Promise<void> {
-  if (!ready) return
-  const strudel = await ready
-  strudel.hush()
+/** Replaces the scheduled pattern. First use must follow a user gesture. */
+export function play(code: string): Promise<void> {
+  return enqueue(async () => {
+    const strudel = await load()
+    await strudel.getAudioContext().resume()
+    await strudel.evaluate(code)
+  })
+}
+
+/** Stops scheduling after earlier edits finish; already sounding notes/tails may ring out. */
+export function stop(): Promise<void> {
+  return enqueue(async () => {
+    if (!ready) return
+    const strudel = await ready
+    strudel.hush()
+  })
 }
