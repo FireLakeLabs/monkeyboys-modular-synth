@@ -132,12 +132,24 @@
   background: #121416;
 }
 
-.cat-pattern .chip-name { color: var(--pattern); }
-.cat-sound .chip-name { color: var(--audio); }
-.cat-shape .chip-name { color: var(--shape); }
-.cat-mod .chip-name { color: var(--mod); }
-.cat-fx .chip-name { color: var(--fx); }
-.cat-util .chip-name { color: var(--util); }
+.cat-pattern .chip-name {
+  color: var(--pattern);
+}
+.cat-sound .chip-name {
+  color: var(--audio);
+}
+.cat-shape .chip-name {
+  color: var(--shape);
+}
+.cat-mod .chip-name {
+  color: var(--mod);
+}
+.cat-fx .chip-name {
+  color: var(--fx);
+}
+.cat-util .chip-name {
+  color: var(--util);
+}
 
 .rack {
   flex: 999 1 560px;

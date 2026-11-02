@@ -11,5 +11,8 @@ declare module '@strudel/web' {
   /** Stops everything that is playing. */
   export function hush(): void
   /** Registers a sample source, e.g. 'github:tidalcycles/dirt-samples'. */
-  export function samples(source: string | Record<string, unknown>, baseUrl?: string): Promise<unknown>
+  export function samples(
+    source: string | Record<string, unknown>,
+    baseUrl?: string,
+  ): Promise<unknown>
 }

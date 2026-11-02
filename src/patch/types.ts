@@ -5,7 +5,8 @@ import type { LookId } from '../modules/looks'
  */
 
 /** A step token, a grid, a number, a switch value or code text, depending on the control. */
-export type ControlValue = number | string | readonly string[] | readonly { sample: string; steps: readonly (0 | 1)[] }[]
+export type ControlValue =
+  number | string | readonly string[] | readonly { sample: string; steps: readonly (0 | 1)[] }[]
 
 export interface PlacedModule {
   /** Module type plus a counter, e.g. 'vcf1'. */

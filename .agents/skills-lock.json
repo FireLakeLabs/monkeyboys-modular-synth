@@ -24,9 +24,7 @@
       "source": "tstack",
       "upstreamPath": "skills/babysit-pr",
       "adapted": false,
-      "dependencies": [
-        "leaving-pr-comments"
-      ],
+      "dependencies": ["leaving-pr-comments"],
       "files": [
         {
           "path": ".agents/skills/babysit-pr/SKILL.md",
@@ -95,10 +93,7 @@
       "source": "tstack",
       "upstreamPath": "skills/file-pr",
       "adapted": false,
-      "dependencies": [
-        "babysit-pr",
-        "leaving-pr-comments"
-      ],
+      "dependencies": ["babysit-pr", "leaving-pr-comments"],
       "files": [
         {
           "path": ".agents/skills/file-pr/SKILL.md",
@@ -113,11 +108,7 @@
       "source": "tstack",
       "upstreamPath": "skills/full-send",
       "adapted": false,
-      "dependencies": [
-        "sol-loop",
-        "file-pr",
-        "babysit-pr"
-      ],
+      "dependencies": ["sol-loop", "file-pr", "babysit-pr"],
       "files": [
         {
           "path": ".agents/skills/full-send/SKILL.md",
@@ -138,9 +129,7 @@
       "source": "tstack",
       "upstreamPath": "skills/full-stop",
       "adapted": false,
-      "dependencies": [
-        "full-send"
-      ],
+      "dependencies": ["full-send"],
       "files": [
         {
           "path": ".agents/skills/full-stop/SKILL.md",
@@ -182,9 +171,7 @@
       "source": "tstack",
       "upstreamPath": "skills/modernize",
       "adapted": false,
-      "dependencies": [
-        "leaving-pr-comments"
-      ],
+      "dependencies": ["leaving-pr-comments"],
       "files": [
         {
           "path": ".agents/skills/modernize/SKILL.md",
@@ -284,12 +271,7 @@
       "source": "tstack",
       "upstreamPath": "skills/takeover",
       "adapted": false,
-      "dependencies": [
-        "modernize",
-        "file-pr",
-        "babysit-pr",
-        "leaving-pr-comments"
-      ],
+      "dependencies": ["modernize", "file-pr", "babysit-pr", "leaving-pr-comments"],
       "files": [
         {
           "path": ".agents/skills/takeover/SKILL.md",
@@ -304,9 +286,7 @@
       "source": "pstack",
       "upstreamPath": "pstack/skills/tdd",
       "adapted": true,
-      "dependencies": [
-        "principle-test-behavior-not-implementation"
-      ],
+      "dependencies": ["principle-test-behavior-not-implementation"],
       "files": [
         {
           "path": ".agents/skills/tdd/SKILL.md",

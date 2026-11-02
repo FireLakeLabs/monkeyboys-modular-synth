@@ -5,7 +5,8 @@ import type { ModuleSpec, SwitchOption } from './types'
  * Once the app consumes this, it is the source of truth; keep the doc in step.
  */
 
-const opts = (...values: string[]): SwitchOption[] => values.map((value) => ({ value, label: value }))
+const opts = (...values: string[]): SwitchOption[] =>
+  values.map((value) => ({ value, label: value }))
 
 export const SEQ: ModuleSpec = {
   id: 'seq',
@@ -15,10 +16,36 @@ export const SEQ: ModuleSpec = {
   category: 'pattern',
   hp: 10,
   controls: [
-    { kind: 'steps', id: 'steps', label: 'STEPS', maxSteps: 16, default: ['c2', 'c2', 'eb2', 'g2', 'c3', 'bb2', 'g2', 'eb2'] },
+    {
+      kind: 'steps',
+      id: 'steps',
+      label: 'STEPS',
+      maxSteps: 16,
+      default: ['c2', 'c2', 'eb2', 'g2', 'c3', 'bb2', 'g2', 'eb2'],
+    },
     { kind: 'knob', id: 'len', label: 'LEN', min: 1, max: 16, step: 1, default: 8 },
-    { kind: 'switch', id: 'mode', label: 'MODE', options: [{ value: 'note', label: 'NOTE' }, { value: 'degree', label: 'DEGREE' }], default: 'note' },
-    { kind: 'knob', id: 'rate', label: 'RATE', min: 0.25, max: 4, step: 0.25, default: 1, unit: '×', detents: [0.25, 0.5, 1, 2, 3, 4], omitAt: 1 },
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      options: [
+        { value: 'note', label: 'NOTE' },
+        { value: 'degree', label: 'DEGREE' },
+      ],
+      default: 'note',
+    },
+    {
+      kind: 'knob',
+      id: 'rate',
+      label: 'RATE',
+      min: 0.25,
+      max: 4,
+      step: 0.25,
+      default: 1,
+      unit: '×',
+      detents: [0.25, 0.5, 1, 2, 3, 4],
+      omitAt: 1,
+    },
   ],
   jacks: [{ id: 'note', label: 'NOTE', direction: 'out', signal: 'pattern' }],
   strudel: ['note', 'n', 'fast', 'slow'],
@@ -44,7 +71,17 @@ export const DRUMS: ModuleSpec = {
         { sample: 'hh', steps: [0, 1, 0, 1, 0, 1, 0, 1] },
       ],
     },
-    { kind: 'knob', id: 'drop', label: 'DROP', min: 0, max: 0.9, step: 0.05, default: 0, unit: '%', omitAt: 0 },
+    {
+      kind: 'knob',
+      id: 'drop',
+      label: 'DROP',
+      min: 0,
+      max: 0.9,
+      step: 0.05,
+      default: 0,
+      unit: '%',
+      omitAt: 0,
+    },
   ],
   jacks: [{ id: 'out', label: 'OUT', direction: 'out', signal: 'pattern' }],
   strudel: ['s', 'degradeBy'],
@@ -59,8 +96,20 @@ export const QUANT: ModuleSpec = {
   category: 'pattern',
   hp: 8,
   controls: [
-    { kind: 'switch', id: 'root', label: 'ROOT', options: opts('C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'), default: 'C' },
-    { kind: 'switch', id: 'scale', label: 'SCALE', options: opts('major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'locrian'), default: 'minor' },
+    {
+      kind: 'switch',
+      id: 'root',
+      label: 'ROOT',
+      options: opts('C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'),
+      default: 'C',
+    },
+    {
+      kind: 'switch',
+      id: 'scale',
+      label: 'SCALE',
+      options: opts('major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'locrian'),
+      default: 'minor',
+    },
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'pattern' },
@@ -78,8 +127,24 @@ export const OSC: ModuleSpec = {
   category: 'sound',
   hp: 9,
   controls: [
-    { kind: 'switch', id: 'wave', label: 'WAVE', options: opts('sawtooth', 'square', 'triangle', 'sine', 'supersaw'), default: 'sawtooth' },
-    { kind: 'knob', id: 'tune', label: 'TUNE', min: -24, max: 24, step: 1, default: 0, unit: 'st', omitAt: 0 },
+    {
+      kind: 'switch',
+      id: 'wave',
+      label: 'WAVE',
+      options: opts('sawtooth', 'square', 'triangle', 'sine', 'supersaw'),
+      default: 'sawtooth',
+    },
+    {
+      kind: 'knob',
+      id: 'tune',
+      label: 'TUNE',
+      min: -24,
+      max: 24,
+      step: 1,
+      default: 0,
+      unit: 'st',
+      omitAt: 0,
+    },
   ],
   jacks: [
     { id: 'note', label: 'NOTE', direction: 'in', signal: 'pattern' },
@@ -99,8 +164,24 @@ export const SMPL: ModuleSpec = {
   category: 'sound',
   hp: 8,
   controls: [
-    { kind: 'switch', id: 'bank', label: 'BANK', options: [{ value: '', label: 'default' }, ...opts('RolandTR909', 'RolandTR808')], default: 'RolandTR909' },
-    { kind: 'knob', id: 'speed', label: 'SPEED', min: 0.25, max: 2, step: 0.05, default: 1, unit: '×', omitAt: 1 },
+    {
+      kind: 'switch',
+      id: 'bank',
+      label: 'BANK',
+      options: [{ value: '', label: 'default' }, ...opts('RolandTR909', 'RolandTR808')],
+      default: 'RolandTR909',
+    },
+    {
+      kind: 'knob',
+      id: 'speed',
+      label: 'SPEED',
+      min: 0.25,
+      max: 2,
+      step: 0.05,
+      default: 1,
+      unit: '×',
+      omitAt: 1,
+    },
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'pattern' },
@@ -118,8 +199,28 @@ export const VCF: ModuleSpec = {
   category: 'shape',
   hp: 10,
   controls: [
-    { kind: 'switch', id: 'mode', label: 'MODE', options: [{ value: 'lp', label: 'LP' }, { value: 'hp', label: 'HP' }, { value: 'bp', label: 'BP' }], default: 'lp' },
-    { kind: 'knob', id: 'cutoff', label: 'CUTOFF', min: 20, max: 20000, step: 1, default: 800, unit: 'Hz', taper: 'log' },
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      options: [
+        { value: 'lp', label: 'LP' },
+        { value: 'hp', label: 'HP' },
+        { value: 'bp', label: 'BP' },
+      ],
+      default: 'lp',
+    },
+    {
+      kind: 'knob',
+      id: 'cutoff',
+      label: 'CUTOFF',
+      min: 20,
+      max: 20000,
+      step: 1,
+      default: 800,
+      unit: 'Hz',
+      taper: 'log',
+    },
     { kind: 'knob', id: 'res', label: 'RES', min: 0, max: 20, step: 0.5, default: 1 },
     { kind: 'knob', id: 'envAmt', label: 'ENV AMT', min: 0, max: 8, step: 0.5, default: 4 },
   ],
@@ -139,7 +240,9 @@ export const VCA: ModuleSpec = {
   family: 'hardware',
   category: 'shape',
   hp: 8,
-  controls: [{ kind: 'knob', id: 'level', label: 'LEVEL', min: 0, max: 1, step: 0.05, default: 0.8 }],
+  controls: [
+    { kind: 'knob', id: 'level', label: 'LEVEL', min: 0, max: 1, step: 0.05, default: 0.8 },
+  ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
     { id: 'cv', label: 'CV', direction: 'in', signal: 'mod', cvTarget: 'level' },
@@ -164,10 +267,22 @@ export const ENV: ModuleSpec = {
   ],
   jacks: [{ id: 'out', label: 'OUT', direction: 'out', signal: 'mod' }],
   strudel: [
-    'attack', 'decay', 'sustain', 'release',
-    'lpattack', 'lpdecay', 'lpsustain', 'lprelease',
-    'hpattack', 'hpdecay', 'hpsustain', 'hprelease',
-    'bpattack', 'bpdecay', 'bpsustain', 'bprelease',
+    'attack',
+    'decay',
+    'sustain',
+    'release',
+    'lpattack',
+    'lpdecay',
+    'lpsustain',
+    'lprelease',
+    'hpattack',
+    'hpdecay',
+    'hpsustain',
+    'hprelease',
+    'bpattack',
+    'bpdecay',
+    'bpsustain',
+    'bprelease',
   ],
   orderSensitive: false,
 }
@@ -180,8 +295,25 @@ export const LFO: ModuleSpec = {
   category: 'mod',
   hp: 8,
   controls: [
-    { kind: 'switch', id: 'shape', label: 'SHAPE', options: opts('sine', 'tri', 'saw', 'isaw', 'square', 'perlin', 'rand'), default: 'sine' },
-    { kind: 'knob', id: 'rate', label: 'RATE', min: 0.25, max: 16, step: 0.25, default: 4, unit: 'cyc', detents: [0.25, 0.5, 1, 2, 3, 4, 6, 8, 12, 16], omitAt: 1 },
+    {
+      kind: 'switch',
+      id: 'shape',
+      label: 'SHAPE',
+      options: opts('sine', 'tri', 'saw', 'isaw', 'square', 'perlin', 'rand'),
+      default: 'sine',
+    },
+    {
+      kind: 'knob',
+      id: 'rate',
+      label: 'RATE',
+      min: 0.25,
+      max: 16,
+      step: 0.25,
+      default: 4,
+      unit: 'cyc',
+      detents: [0.25, 0.5, 1, 2, 3, 4, 6, 8, 12, 16],
+      omitAt: 1,
+    },
     // DEPTH takes the units of whatever it is patched into; the range below is only the
     // normalised fallback. The app rescales it per target (see docs/module-spec.md#lfo).
     { kind: 'knob', id: 'depth', label: 'DEPTH', min: -1, max: 1, step: 0.01, default: 0.5 },
@@ -200,7 +332,16 @@ export const DELAY: ModuleSpec = {
   hp: 10,
   controls: [
     { kind: 'knob', id: 'mix', label: 'MIX', min: 0, max: 1, step: 0.05, default: 0.4, omitAt: 0 },
-    { kind: 'knob', id: 'time', label: 'TIME', min: 0.01, max: 2, step: 0.005, default: 0.375, unit: 's' },
+    {
+      kind: 'knob',
+      id: 'time',
+      label: 'TIME',
+      min: 0.01,
+      max: 2,
+      step: 0.005,
+      default: 0.375,
+      unit: 's',
+    },
     { kind: 'knob', id: 'fdbk', label: 'FDBK', min: 0, max: 0.95, step: 0.05, default: 0.5 },
   ],
   jacks: [
@@ -219,7 +360,16 @@ export const REVERB: ModuleSpec = {
   category: 'fx',
   hp: 8,
   controls: [
-    { kind: 'knob', id: 'room', label: 'ROOM', min: 0, max: 1, step: 0.05, default: 0.5, omitAt: 0 },
+    {
+      kind: 'knob',
+      id: 'room',
+      label: 'ROOM',
+      min: 0,
+      max: 1,
+      step: 0.05,
+      default: 0.5,
+      omitAt: 0,
+    },
     { kind: 'knob', id: 'size', label: 'SIZE', min: 0, max: 10, step: 0.5, default: 4 },
   ],
   jacks: [
@@ -248,7 +398,12 @@ export const MIX: ModuleSpec = {
     omitAt: 1,
   })),
   jacks: [
-    ...[1, 2, 3, 4].map((n) => ({ id: `in${n}`, label: String(n), direction: 'in' as const, signal: 'audio' as const })),
+    ...[1, 2, 3, 4].map((n) => ({
+      id: `in${n}`,
+      label: String(n),
+      direction: 'in' as const,
+      signal: 'audio' as const,
+    })),
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
   strudel: ['postgain', 'stack'],
@@ -337,13 +492,21 @@ export const CODE: ModuleSpec = {
 
 /** Every v1 module, in library order. */
 export const CATALOG: readonly ModuleSpec[] = [
-  SEQ, DRUMS, QUANT,
-  OSC, SMPL,
-  VCF, VCA,
-  ENV, LFO,
-  DELAY, REVERB,
-  MIX, OUT,
-  ITER, JUX,
+  SEQ,
+  DRUMS,
+  QUANT,
+  OSC,
+  SMPL,
+  VCF,
+  VCA,
+  ENV,
+  LFO,
+  DELAY,
+  REVERB,
+  MIX,
+  OUT,
+  ITER,
+  JUX,
   CODE,
 ]
 

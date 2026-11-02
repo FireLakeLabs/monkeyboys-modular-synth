@@ -4,7 +4,7 @@ Foundations first; visual polish late. Each step has a matching GitHub issue.
 
 ## Build order
 
-1. **Module catalog.** `src/modules/catalog.ts` holds every v1 module as data (controls, ranges, defaults, jacks, Strudel functions). *Started in the initial commit, with integrity tests.*
+1. **Module catalog.** `src/modules/catalog.ts` holds every v1 module as data (controls, ranges, defaults, jacks, Strudel functions). _Started in the initial commit, with integrity tests._
 2. **Patch → code generator.** A pure function `generate(patch) → string`, following [`translation-rules.md`](translation-rules.md). Done when unit tests cover every module, CV routing (LFO and ENV into VCF and VCA), fan-out naming, several mixer channels, omitted defaults and the layout block.
 3. **Play through Strudel.** Wire `src/strudel/engine.ts` to the generator: play, stop, re-evaluate when values change. Load sample banks at start-up. Done when a patch built in code plays in the browser and a value change is heard without restarting.
 4. **Rack UI in one look.** Render modules from the catalog in a single look (Instrument is the most neutral), with cables drawn from live jack positions, selection, and a minimal way to change values (see below). Done when every v1 module can be placed, patched and adjusted.

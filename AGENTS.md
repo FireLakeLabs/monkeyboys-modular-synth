@@ -24,16 +24,16 @@ A browser modular synth whose rack and Strudel code are editable views of the sa
 
 Project skills live in `.agents/skills/`. Read the selected `SKILL.md` and its required dependencies when the request triggers it; load other skills only as needed. Installing, documenting, or discussing a workflow is not an instruction to execute it.
 
-| Request | Skill | Finish |
-| --- | --- | --- |
-| “full send” | [full-send](.agents/skills/full-send/SKILL.md) | Implement, prove, review, file, babysit, and merge after its gate passes. |
-| “full stop” | [full-stop](.agents/skills/full-stop/SKILL.md) | The same preparation, with an open PR ready for the user to merge. |
-| “council” | [council](.agents/skills/council/SKILL.md) | Review using three providers and reconcile findings. |
-| “sol loop” | [sol-loop](.agents/skills/sol-loop/SKILL.md) | Bounded Sol review with an explicit verdict and findings. |
-| File, open, or create a PR | [file-pr](.agents/skills/file-pr/SKILL.md) | A concise PR describing the problem, outcome, and verification. |
-| Take over a PR, branch, or thread | [takeover](.agents/skills/takeover/SKILL.md) | Finish the requested scope while preserving contributor credit. |
-| Monitor, watch, or babysit a PR | [babysit-pr](.agents/skills/babysit-pr/SKILL.md) | Address CI/review findings and report readiness; merge only when authorized. |
-| Modernize or rebase an old PR | [modernize](.agents/skills/modernize/SKILL.md) | Reassess intent and update the branch within the requested scope. |
+| Request                           | Skill                                                              | Finish                                                                             |
+| --------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| “full send”                       | [full-send](.agents/skills/full-send/SKILL.md)                     | Implement, prove, review, file, babysit, and merge after its gate passes.          |
+| “full stop”                       | [full-stop](.agents/skills/full-stop/SKILL.md)                     | The same preparation, with an open PR ready for the user to merge.                 |
+| “council”                         | [council](.agents/skills/council/SKILL.md)                         | Review using three providers and reconcile findings.                               |
+| “sol loop”                        | [sol-loop](.agents/skills/sol-loop/SKILL.md)                       | Bounded Sol review with an explicit verdict and findings.                          |
+| File, open, or create a PR        | [file-pr](.agents/skills/file-pr/SKILL.md)                         | A concise PR describing the problem, outcome, and verification.                    |
+| Take over a PR, branch, or thread | [takeover](.agents/skills/takeover/SKILL.md)                       | Finish the requested scope while preserving contributor credit.                    |
+| Monitor, watch, or babysit a PR   | [babysit-pr](.agents/skills/babysit-pr/SKILL.md)                   | Address CI/review findings and report readiness; merge only when authorized.       |
+| Modernize or rebase an old PR     | [modernize](.agents/skills/modernize/SKILL.md)                     | Reassess intent and update the branch within the requested scope.                  |
 | Post an authorized GitHub comment | [leaving-pr-comments](.agents/skills/leaving-pr-comments/SKILL.md) | An attributed, evidence-backed comment. Formatting rules do not authorize posting. |
 
 Ordinary development requests use the development guidance above; they do not automatically invoke shipping or multi-model review workflows. An explicitly requested workflow may invoke its documented dependencies. Honor the user's current scope and the active harness's tool and permission rules.
