@@ -147,8 +147,8 @@
       <div class="status" aria-live="polite">
         <p id="sync-status">! Rack shows previous code</p>
         <p class="evidence" id="dependency">
-          Reader parse-failure prototype reported tested. Production revision ownership and audio
-          status still need integration.
+          Merged reader prototype proves parser failure behavior. Production revision ownership and
+          audio status still need integration.
         </p>
         <button type="button" id="revert">Revert to last readable code</button>
       </div>
@@ -209,7 +209,7 @@
           </p>
           <p class="evidence">
             Effect-order warnings and shared FX routing await #2/#13. Source-preserving fan-out
-            naming awaits #1/#14.
+            naming requires production #3/#6/#8 integration under the merged source contract.
           </p>
         </div>
       </details>
@@ -235,8 +235,8 @@
             ring out).
           </p>
           <p class="evidence">
-            Persisting unconnected modules, inactive values and matching layout identity remains
-            #1/#14 evidence work.
+            Layout matching is decided by merged #14. Complete persistence of unconnected modules
+            and inactive values still needs production #3/#6/#8 proof.
           </p>
         </div>
       </details>
@@ -255,10 +255,10 @@
       const revert = document.getElementById('revert')
       const validCode = '$: note("c2 eb2 g2")\n  .s("sawtooth")\n  .lpf(800)\n  .gain(0.8)'
       const states = {
-        syntax: ['Previous pattern scheduled', 'Stop', 'Line 3: expected an expression. Finish the call to update the rack.', '! Rack shows previous code', 'Reader parse-failure prototype reported tested. Production revision ownership and audio status still need integration.', true],
+        syntax: ['Previous pattern scheduled', 'Stop', 'Line 3: expected an expression. Finish the call to update the rack.', '! Rack shows previous code', 'Merged reader prototype proves parser failure behavior. Production revision ownership and audio status still need integration.', true],
         pending: ['Previous pattern scheduled', 'Stop', 'Reading code…', '… Reading code; rack edits paused', '250 ms idle parse delay is a proposed UX default. Only the newest draft may be accepted.', true],
         synced: ['Stopped', 'Play', 'Readable source accepted.', '✓ Rack matches code', 'Scheduling confirmation, smooth live updates and first-click activation await #2. Matching code does not prove sound.', false],
-        opaque: ['Stopped', 'Play', 'Some code has no controls. Preserve its exact source in CODE.', '✓ Rack matches code · CODE source retained', 'Reader prototype reports opaque source preserved. Production CODE placement and source mapping remain #6/#8 work.', false],
+        opaque: ['Stopped', 'Play', 'Some code has no controls. Preserve its exact source in CODE.', '✓ Rack matches code · CODE source retained', 'Merged reader prototype proves opaque source preservation. Production CODE placement and source mapping remain #6/#8 work.', false],
         runtime: ['Scheduling stopped after error · simulated', 'Play again', 'Could not apply code. Stop requested after evaluation failed.', '✓ Rack matches code · evaluation failed', 'No rollback guarantee: tempo or other effects may have changed before the throw. Explicit error and Stop signals await #2.', false],
         activation: ['Audio activation required', 'Enable audio', 'Click Enable audio to start playback.', '✓ Rack matches code · audio blocked', 'A click is not success. Wait for engine confirmation before showing a scheduled pattern; first-click behavior awaits #2.', false],
         samples: ['Sample status unavailable', 'Stop', 'Sample unavailable: RolandTR909 / bd. Resource details are illustrative.', '✓ Rack matches code · sample failure', 'Bank identification and targeted retry need #2 evidence. Offer Stop / Play again if targeted retry is unavailable.', false],
