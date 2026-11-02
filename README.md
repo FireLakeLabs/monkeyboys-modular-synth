@@ -53,11 +53,13 @@ Code generation (`src/codegen/`), the code reader (`src/reader/`), the rack UI (
 
 ## Agent workflows
 
-[`AGENTS.md`](AGENTS.md) maps development tasks to the project specs and the nine
-project-local [tstack skills](.agents/README.md). Use “full stop” to prepare a PR
+[`AGENTS.md`](AGENTS.md) maps development tasks to the project specs and the
+project-local [tstack workflows and adapted pstack standards](.agents/README.md). Use “full stop” to prepare a PR
 for your merge, “full send” to carry it through merge, “sol loop” for a Sol
 review, or “council” for a review across three providers. See the agent guide
-for the remaining workflows and verification expectations.
+for the remaining workflows and verification expectations. The
+[standards inventory](docs/standards.md) records enforcement and remaining gaps;
+the [pstack adoption review](.agents/pstack-review.md) explains the selection.
 
 ## Licence
 
