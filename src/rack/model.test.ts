@@ -13,6 +13,7 @@ import {
   removeCable,
   removeModule,
   setValue,
+  sequenceText,
   snap,
   starterPatch,
   validateRack,
@@ -25,6 +26,28 @@ function add(patch: Patch, type: string, row = 1) {
 const sounding = (patch: Patch) => generate(patch).split('// ── @monkeyboy')[0]
 
 describe('rack editing', () => {
+  it('converts only the sounding SEQ cells to text', () => {
+    let patch = setValue(demoPatch(), 'seq1', 'len', 4)
+    const before = sounding(patch)
+    const seq = patch.modules.find((m) => m.id === 'seq1')
+    const steps = seq?.values.steps
+    if (
+      !seq ||
+      !Array.isArray(steps) ||
+      !steps.every((step): step is string => typeof step === 'string')
+    )
+      throw new Error('Missing fixture')
+    patch = setValue(patch, 'seq1', 'steps', sequenceText(seq, steps))
+    expect(sounding(patch)).toBe(before)
+  })
+  it('includes displayed rests when SEQ LEN grows, retaining inactive notes on shrink', () => {
+    let patch = setValue(demoPatch(), 'seq1', 'len', 16)
+    expect(sounding(patch)).toContain('note("c2 c2 eb2 g2 c3 bb2 g2 eb2 ~ ~ ~ ~ ~ ~ ~ ~")')
+    patch = setValue(patch, 'seq1', 'len', 4)
+    expect(sounding(patch)).toContain('note("c2 c2 eb2 g2")')
+    patch = setValue(patch, 'seq1', 'len', 16)
+    expect(sounding(patch)).toContain('note("c2 c2 eb2 g2 c3 bb2 g2 eb2 ~ ~ ~ ~ ~ ~ ~ ~")')
+  })
   it('starts silent and permits every catalog module with defaults and no overlaps', () => {
     let patch = starterPatch()
     expect(sounding(patch)).not.toContain('$:')

@@ -1,5 +1,5 @@
 import { generate } from '../codegen/generate'
-import { graph, requireNode } from '../codegen/graph'
+import { graph, isSteps, requireNode } from '../codegen/graph'
 import { getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { JackSignal, KnobControl } from '../modules/types'
@@ -122,12 +122,32 @@ export function setValue(
   value: ControlValue,
 ): Patch {
   if (!patch.modules.some((m) => m.id === module)) throw new Error('Unknown module')
-  return validateRack({
+  const next = validateRack({
     ...patch,
     modules: patch.modules.map((m) =>
       m.id === module ? { ...m, values: { ...m.values, [control]: value } } : m,
     ),
   })
+  const changed = next.modules.find((m) => m.id === module)
+  if (changed?.type === 'seq' && control === 'len' && typeof value === 'number') {
+    const steps =
+      changed.values.steps ?? getModuleSpec('seq').controls.find((c) => c.id === 'steps')?.default
+    if (steps !== undefined && isSteps(steps) && typeof steps !== 'string' && value > steps.length)
+      return setValue(
+        next,
+        module,
+        'steps',
+        Array.from({ length: value }, (_, i) => steps[i] ?? '~'),
+      )
+  }
+  return next
+}
+
+export function sequenceText(module: PlacedModule, steps: readonly string[]): string {
+  const length =
+    module.values.len ?? getModuleSpec('seq').controls.find((c) => c.id === 'len')?.default
+  if (typeof length !== 'number') throw new Error('Missing SEQ length')
+  return steps.slice(0, length).join(' ')
 }
 
 export function removeCable(patch: Patch, id: string): Patch {

@@ -78,3 +78,12 @@ Physical speaker output and subjective continuity were not heard. Other
 browsers, touch, exhaustive imported-code behavior, and persistence/reopening
 remain outside this verification. The private live design canvas was not
 accessed; the archived local workspace board was inspected.
+
+Sol review found two SEQ issues: text-mode conversion included cells beyond LEN,
+and increasing LEN omitted displayed trailing rests. Both focused tests failed
+before the fixes and passed afterward. The browser then emitted sixteen steps
+with eight trailing rests at LEN 16, and text conversion at LEN 4 retained
+exactly four sounding notes. The complete gate passed with 91 unit tests and
+40 guardrail/spike checks. A built-production smoke check also confirmed
+placement, patching, source highlights, deletion, and no page-width overflow at
+1280 × 800.

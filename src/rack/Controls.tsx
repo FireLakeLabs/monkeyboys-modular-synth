@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import type { Control, KnobControl } from '../modules/types'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { isGrid, isSteps } from '../codegen/graph'
-import { depthControl, draggedValue, normalized, snap } from './model'
+import { depthControl, draggedValue, normalized, sequenceText, snap } from './model'
 
 const focusEditor = (element: HTMLInputElement | null) => element?.focus()
 
@@ -233,7 +233,7 @@ export function ControlEditor({
               />
             ))}
           </div>
-          <button type="button" onClick={() => commit(value.join(' '))}>
+          <button type="button" onClick={() => commit(sequenceText(module, value))}>
             Text mode
           </button>
           {error && <small role="alert">{error}</small>}
