@@ -44,7 +44,6 @@
 }
 
 .play {
-  margin-left: auto;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -175,6 +174,8 @@
 
 .code pre {
   margin: 0;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12.5px;
   line-height: 21px;
@@ -185,4 +186,42 @@
 .error {
   color: #ff9f9f;
   font-size: 13px;
+}
+
+.transport-status {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.play:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.playback-patch {
+  width: min(100%, 520px);
+}
+
+.playback-patch h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.playback-control {
+  display: grid;
+  grid-template-columns: 100px minmax(80px, 1fr) 80px;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+  font-size: 13px;
+}
+
+.playback-control input {
+  width: 100%;
+  accent-color: var(--audio);
+}
+
+.playback-control output {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }

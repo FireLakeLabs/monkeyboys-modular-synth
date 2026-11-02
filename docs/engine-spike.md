@@ -4,6 +4,11 @@ Investigated 2 November 2026 for #2 and #13. This is a runtime spike and a
 translation decision; production generator integration remains #3/#4, source
 identity remains #1/#14, and interaction states remain #12/#8.
 
+The production #4 integration now uses this adapter; see
+[generated playback verification](playback-verification.md) for transport,
+volume, structural resets and the remaining listening limits. Findings below
+record the earlier spike rather than the current integration's status.
+
 ## Reproduce
 
 Use `.node-version`, `npm ci`, then `npm run dev`. Open

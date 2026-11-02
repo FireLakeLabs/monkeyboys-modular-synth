@@ -13,6 +13,11 @@ declare module '@strudel/web' {
   /** Initializes audio worklets; call explicitly after lazy import. */
   export function initAudio(): Promise<void>
   export function getAudioContext(): AudioContext
+  /** Version-specific output boundary; resetGlobalEffects replaces this gain node. */
+  export function getSuperdoughAudioController(): {
+    output: { destinationGain: GainNode }
+  }
+  export function resetGlobalEffects(): void
   /** Stops scheduling; existing notes and effect tails can ring out. */
   export function hush(): void
   /** Registers a sample source, e.g. 'github:tidalcycles/dirt-samples'. */

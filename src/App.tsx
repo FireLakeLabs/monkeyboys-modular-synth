@@ -1,19 +1,10 @@
-import { useState } from 'react'
-import { CATALOG } from './modules/catalog'
+import { useState, useSyncExternalStore } from 'react'
+import { CATALOG, getModuleSpec } from './modules/catalog'
+import { generate } from './codegen/generate'
+import { demoPatch } from './patch/demo'
 import type { Family } from './modules/types'
-import { play, stop } from './strudel/engine'
+import { createPlayback } from './strudel/playback'
 import './App.css'
-
-/** A fixed patch for checking the engine until the code generator exists (build step 2). */
-const DEMO_CODE = `setcpm(120/4)
-
-$: note("c2 c2 eb2 g2 c3 bb2 g2 eb2")
-  .s("sawtooth")
-  .lpf(sine.range(800, 2400).slow(4))
-  .lpq(8)
-  .attack(0.01).decay(0.2)
-  .sustain(0.3).release(0.1)
-  .gain(0.8)`
 
 const FAMILY_LABELS: Record<Family, string> = {
   hardware: 'Hardware',
@@ -39,24 +30,45 @@ function Logo() {
 }
 
 export default function App() {
-  const [playing, setPlaying] = useState(false)
+  const [patch, setPatch] = useState(demoPatch)
+  const [playback] = useState(() => createPlayback(patch))
+  const audio = useSyncExternalStore(playback.subscribe, playback.getSnapshot)
   const [error, setError] = useState<string | null>(null)
+  const playing = ['starting', 'playing', 'applying'].includes(audio.status)
+  const code = generate(patch)
 
   async function togglePlay() {
-    setError(null)
+    if (playing) await playback.stop()
+    else await playback.play()
+  }
+
+  async function changeValue(moduleId: string, controlId: string, value: number) {
     try {
-      if (playing) {
-        await stop()
-        setPlaying(false)
-      } else {
-        await play(DEMO_CODE)
-        setPlaying(true)
+      const next = {
+        ...patch,
+        modules: patch.modules.map((module) =>
+          module.id === moduleId
+            ? { ...module, values: { ...module.values, [controlId]: value } }
+            : module,
+        ),
       }
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-      setPlaying(false)
+      const applying = playback.update(next)
+      setPatch(next)
+      setError(null)
+      await applying
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : String(failure))
     }
   }
+
+  const status = {
+    stopped: 'Stopped',
+    starting: 'Starting…',
+    playing: 'Playing',
+    applying: 'Applying…',
+    stopping: 'Stopping…',
+    error: 'Playback error',
+  }[audio.status]
 
   const families: Family[] = ['hardware', 'alien', 'cyber']
 
@@ -70,11 +82,13 @@ export default function App() {
             <span className="tagline">MODULAR SYNTH</span>
           </h1>
         </div>
+        <output className="transport-status">{status}</output>
         <button
           type="button"
           className="play"
           onClick={togglePlay}
           aria-label={playing ? 'Stop' : 'Play'}
+          disabled={audio.status === 'stopping'}
         >
           {playing ? (
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -107,15 +121,60 @@ export default function App() {
         </aside>
 
         <section className="rack" aria-label="Rack">
-          <p className="placeholder">The rack arrives in build step 4. See docs/build-plan.md.</p>
+          <div className="playback-patch">
+            <h2>Playback patch</h2>
+            <p>SEQ → OSC → VCF → VCA → OUT</p>
+            <p className="placeholder">
+              Adjust values while playing. The rack editor arrives in build step 4.
+            </p>
+            {patch.modules
+              .filter((module) => ['vcf', 'out'].includes(module.type))
+              .map((module) => {
+                const spec = getModuleSpec(module.type)
+                return spec.controls
+                  .filter(
+                    (control) =>
+                      control.kind === 'knob' && ['cutoff', 'bpm', 'vol'].includes(control.id),
+                  )
+                  .map((control) => {
+                    if (control.kind !== 'knob') return null
+                    const value = module.values[control.id] ?? control.default
+                    if (typeof value !== 'number') return null
+                    return (
+                      <label className="playback-control" key={`${module.id}-${control.id}`}>
+                        <span>
+                          {spec.name} {control.label}
+                        </span>
+                        <input
+                          type="range"
+                          min={control.min}
+                          max={control.max}
+                          step={control.step}
+                          value={value}
+                          onChange={(event) =>
+                            changeValue(module.id, control.id, Number(event.target.value))
+                          }
+                        />
+                        <output>
+                          {value}
+                          {control.unit ? ` ${control.unit}` : ''}
+                        </output>
+                      </label>
+                    )
+                  })
+              })}
+            <p className="placeholder">
+              Stop ends scheduling; notes and effect tails may ring out.
+            </p>
+          </div>
         </section>
 
         <section className="code" aria-label="Strudel code">
           <h2>STRUDEL</h2>
-          <pre>{DEMO_CODE}</pre>
-          {error && (
+          <pre>{code}</pre>
+          {(error || audio.error) && (
             <p className="error" role="alert">
-              {error}
+              {error || audio.error}
             </p>
           )}
         </section>
