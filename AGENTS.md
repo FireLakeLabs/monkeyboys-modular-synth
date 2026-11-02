@@ -39,6 +39,7 @@ Ordinary development requests use the development guidance above; they do not au
 
 ## Review and PR preferences
 
+- For stacked PRs, register a native GitHub stack and verify every layer's API membership; chained base branches alone are incomplete. See [stack verification](docs/ci.md#native-stacked-pull-requests).
 - Retain the upstream review defaults: one Sol reviewer for `sol-loop`; three providers for `council`. Resolve model availability when invoked, honor user-specified models, and report unavailable providers rather than silently substituting. No fixed model IDs are configured here.
 - In T3 Code, use its delegation and PR-watch lifecycle as directed by the active harness. Skill fallbacks apply only when the harness allows them. Link created or updated PRs to the thread; stop watching at handoff.
 - Keep reviews and fixes within the issue's goal. Lead PR descriptions with the problem and resulting behavior, include observed verification, and link the relevant issue. Keep unrelated findings as follow-ups.

@@ -27,6 +27,26 @@ If repository rules are unavailable for the account/plan, record that limitation
 and use available branch-protection settings. Until activation is verified,
 [standards](standards.md) must continue to mark the merge gate as planned.
 
+## Native stacked pull requests
+
+Matching base/head branches create a dependency chain but do not register a
+native GitHub stack. For a requested stack, use `gh stack link` with existing PR
+numbers in bottom-to-top order, or the
+[create-stack REST endpoint](https://docs.github.com/en/rest/pulls/stacks#create-a-pull-request-stack)
+with an ordered `pull_requests` array. Reuse the existing PRs.
+
+Before reporting completion, read each PR through the API and require a non-null
+`stack` object. Check that all layers share one stack number, report the expected
+size and ordered positions, and target the intended trunk. Also read the stack
+endpoint to verify the ordered member list. `stack: null` is a failed check even
+when the branch chain and description links look correct.
+
+This is a workflow verification step, not a local CI guarantee: stack membership
+lives on GitHub. Record the observed stack number and member order in the result.
+Use GitHub's [native stack merge/rebase behavior](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs)
+rather than applying instructions intended for manually chained PRs. Creating a
+stack does not authorize merging it.
+
 ## Updating tools
 
 Update `.node-version` and the minimum Node engine together, then reinstall with

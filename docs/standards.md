@@ -39,6 +39,10 @@ to both instructions and hashes; review those changes together.
 
 ## Review standards
 
+For stacked PRs, verify native GitHub stack membership using the
+[API completion checks](ci.md#native-stacked-pull-requests). This is reviewed
+workflow evidence; local branch relationships and CI do not establish membership.
+
 | Standard             | Evidence to inspect                                                                                                                                                                     |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Domain modeling      | Distinct variants cannot contradict each other. Brand only meaningful primitive distinctions. Catalog/schema owns shared definitions.                                                   |
