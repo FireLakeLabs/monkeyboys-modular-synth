@@ -1,10 +1,16 @@
 import { parse } from 'acorn'
 import { generateDocument } from '../codegen/generate'
-import { descriptor, RACK_MARKER, type RackLayout, type Scope } from '../codegen/layout'
+import {
+  descriptor,
+  RACK_MARKER,
+  type Binding,
+  type RackLayout,
+  type Scope,
+} from '../codegen/layout'
 import { CATALOG } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
-import type { ParsedScope } from './syntax'
+import { parseSource, type ParsedScope } from './syntax'
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -121,6 +127,95 @@ export function readLayout(source: string): SavedLayout {
           ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b)))
           : item,
       )
+    if (record(raw) && typeof raw.source === 'string') {
+      const snapshot = parseSource(raw.source)
+      parse(raw.source, {
+        ecmaVersion: 'latest',
+        onComment: (block, text) => {
+          if (!block && `//${text}` === RACK_MARKER) throw new Error('Nested rack metadata')
+        },
+      })
+      // Validate scope/binding shape against the generator before interpreting addresses.
+      // Semantic agreement with the snapshot is checked by read() using its projection.
+      if (!Array.isArray(raw.scopes) || !Array.isArray(raw.modules))
+        throw new Error('Invalid source layout')
+      const scopes = snapshot.scopes.map((scope) => scope.descriptor)
+      const normalized = raw.scopes.map((scope: unknown) => {
+        if (!record(scope)) throw new Error('Invalid source scope')
+        const { routing: _routing, ...syntax } = scope
+        return syntax
+      })
+      if (ordered(normalized) !== ordered(scopes))
+        throw new Error('Source scopes do not match snapshot')
+      const rawModules = raw.modules
+      const rawScopes = raw.scopes
+      const sourceScopes: Scope[] = scopes.map((scope, index) => {
+        const candidate: unknown = rawScopes[index]
+        if (!record(candidate) || candidate.routing === undefined) return scope
+        // Scope IDs are addresses in this file, not generator ordinals. An unrelated
+        // declaration can shift them without changing the proven routing expression.
+        const proven = generated.layout.scopes.find(
+          (item) => ordered(item) === ordered({ ...candidate, id: item.id }),
+        )
+        if (!proven) throw new Error('Unverifiable routing provenance')
+        return { ...proven, id: scope.id }
+      })
+      const modules = generated.layout.modules.map((module, index) => {
+        const candidate: unknown = rawModules[index]
+        if (!record(candidate) || !Array.isArray(candidate.bindings))
+          throw new Error('Invalid source bindings')
+        const bindings: Binding[] = candidate.bindings.map((binding: unknown) => {
+          if (
+            !record(binding) ||
+            typeof binding.scope !== 'string' ||
+            !Array.isArray(binding.calls) ||
+            (binding.role !== 'module' &&
+              binding.role !== 'cv' &&
+              binding.role !== 'mixer' &&
+              binding.role !== 'tempo')
+          )
+            throw new Error('Invalid source binding')
+          const scope = scopes.find((scope) => scope.id === binding.scope)
+          const calls = binding.calls.map((call: unknown) => {
+            if (
+              !scope ||
+              typeof call !== 'number' ||
+              !Number.isInteger(call) ||
+              call < 0 ||
+              call >= scope.calls.length
+            )
+              throw new Error('Invalid source address')
+            return call
+          })
+          if (!scope) throw new Error('Invalid source scope')
+          let target: Binding['target']
+          if (binding.target !== undefined) {
+            if (
+              !record(binding.target) ||
+              typeof binding.target.module !== 'string' ||
+              typeof binding.target.jack !== 'string' ||
+              typeof binding.target.control !== 'string'
+            )
+              throw new Error('Invalid CV target')
+            target = {
+              module: binding.target.module,
+              jack: binding.target.jack,
+              control: binding.target.control,
+            }
+          }
+          return { scope: binding.scope, calls, role: binding.role, ...(target ? { target } : {}) }
+        })
+        return { ...module, bindings }
+      })
+      const layout: RackLayout = {
+        ...generated.layout,
+        source: raw.source,
+        scopes: sourceScopes,
+        modules,
+      }
+      if (ordered(raw) !== ordered(layout)) throw new Error('Invalid source metadata fields')
+      return { kind: 'valid', layout, patch, generated: raw.source }
+    }
     if (ordered(raw) !== ordered(generated.layout))
       throw new Error('Unverifiable rack bindings or metadata')
     return { kind: 'valid', layout: generated.layout, patch, generated: generated.code }
@@ -144,9 +239,29 @@ function unique<T>(items: readonly T[], key: (item: T) => string, wanted: string
 export function matchScopes(
   saved: readonly Scope[],
   next: readonly ParsedScope[],
+  unchangedSnapshot = false,
 ): Map<string, { saved: Scope; calls: Map<number, number>; exact: boolean }> {
   const result = new Map<string, { saved: Scope; calls: Map<number, number>; exact: boolean }>()
   const current = next.map((scope) => scope.descriptor)
+  if (
+    unchangedSnapshot &&
+    saved.length === current.length &&
+    saved.every((scope, index) => {
+      const now = current[index]
+      return now && scope.anchor === now.anchor && full(scope) === full(now)
+    })
+  ) {
+    saved.forEach((scope, index) => {
+      const now = current[index]
+      if (now)
+        result.set(now.id, {
+          saved: scope,
+          calls: new Map(now.calls.map((_, i) => [i, i])),
+          exact: true,
+        })
+    })
+    return result
+  }
   for (const scope of current) {
     const key = scope.anchor === undefined ? full : root
     let previous = unique(current, key, key(scope)) ? unique(saved, key, key(scope)) : undefined

@@ -97,6 +97,7 @@ function Numeric({
           <button
             type="button"
             className="readout"
+            aria-label={`Set ${control.label}`}
             onClick={() => {
               setDraft(String(value))
               setError('')
@@ -157,11 +158,13 @@ export function ControlEditor({
   module,
   control,
   commit,
+  editSource,
 }: {
   patch: Patch
   module: PlacedModule
   control: Control
   commit: Commit
+  editSource?: () => void
 }) {
   const [error, setError] = useState('')
   const value = module.values[control.id] ?? control.default
@@ -199,6 +202,15 @@ export function ControlEditor({
         </label>
       )
     case 'text':
+      if (editSource)
+        return (
+          <div className="text-control">
+            <pre>{typeof value === 'string' ? value : control.default}</pre>
+            <button type="button" onClick={editSource}>
+              Edit in source
+            </button>
+          </div>
+        )
       return (
         <TextEditor
           label="CODE source"

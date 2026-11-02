@@ -39,7 +39,7 @@ export interface Patch {
   version: 1
   modules: PlacedModule[]
   cables: Cable[]
-  /** Names for outputs with two or more cables, keyed "moduleId:jackId". */
+  /** Fan-out names, retained after reducing to one branch; keyed "moduleId:jackId". */
   names: Record<string, string>
 }
 

@@ -29,7 +29,7 @@ Where a Strudel function has a close hardware cousin (`.ply()` ≈ a ratchet, `.
   - **Alien:** Crystal · Bioluminescent · Monolith
   - **Cyber:** Terminal · Neon wireframe · Bare board
 - Racks are built up module by module, mixing looks freely.
-- **Looks never change the code.** They are presentation only.
+- **Looks never change executable code.** They are presentation only; their saved metadata changes in the trailing rack comment block.
 - A look may rearrange a module’s panel (move knobs and jacks). A module’s **width stays the same in every look**, so switching looks never pushes neighbours along the rail. Cables are drawn from live jack positions and redraw to follow.
 - Each look is defined by **layout rules** applied to a module’s control list, not by hand-drawing every module in every look.
 - Switch looks from the module’s **right-click menu** (long-press on touch). The menu also offers “use for all modules in this family”.

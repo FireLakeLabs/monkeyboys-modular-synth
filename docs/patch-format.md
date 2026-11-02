@@ -39,6 +39,10 @@ The v1 envelope uses these fields:
   bindings to scope/call descriptors and semantic roles. One module can bind
   several calls; CV bindings include their target module ID and jack/control role.
 - `names`: output names keyed by stable `moduleId:jackId`, as in `Patch`.
+- Optional `source`: the exact executable body of a source-owned workspace file,
+  without a rack block. This accepted snapshot binds saved state to imported
+  source without replacing comments, formatting or unsupported statements.
+  Generator-only v1 files omit it and remain readable.
 
 The writer's types are in [`src/codegen/layout.ts`](../src/codegen/layout.ts).
 A scope has `id`, optional declaration `anchor`, `root` (a JSON string encoding the
@@ -111,6 +115,12 @@ reconciles source bindings before applying saved values or cables, using values
 parsed from matching source for sounding controls. Unverifiable graph/state
 entries must not override code or attach by ordinal. Invalid/unknown metadata
 retains the original source as described above. See [reader verification](reader-verification.md)
-for implemented restoration and stale-state reconciliation. Metadata replacement,
-migrations and save/load UI remain #8 work; the generator's JSON-state preservation
-tests alone do not prove these reader behaviors.
+for implemented restoration and stale-state reconciliation. The workspace now
+replaces known metadata on accepted changes and offers explicit replacement for
+unknown metadata. Source-owned envelopes also verify snapshot scope descriptors,
+binding addresses and semantic ownership through an independent projection; the
+saved and projected graphs' generated programs must agree before full restoration.
+A live program differing from its snapshot receives conservative reconciliation.
+Snapshots cannot contain nested rack blocks. Copy/Export save the exact current
+draft; Open reads plain `.strudel` files. Chosen names survive reducing a split
+to one branch. See [workspace evidence and limits](workspace-verification.md).

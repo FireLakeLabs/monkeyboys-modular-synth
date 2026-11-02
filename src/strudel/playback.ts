@@ -1,5 +1,6 @@
 import { generate } from '../codegen/generate'
-import { RACK_MARKER } from '../codegen/layout'
+import { sourceBody } from '../workspace/document'
+import type { SourceDocument } from '../reader/types'
 import { getModuleSpec } from '../modules/catalog'
 import type { Patch } from '../patch/types'
 import * as engine from './engine'
@@ -9,8 +10,9 @@ export interface PlaybackState {
   error: string | null
 }
 
-function prepare(patch: Patch) {
-  const code = generate(patch) // Validate before accepting a patch or touching audio.
+function prepare(input: Patch | SourceDocument) {
+  const patch = 'kind' in input ? input.patch : input
+  const code = generate(input) // Validate before accepting a patch or touching audio.
   const out = patch.modules.find((module) => module.type === 'out')
   const volume =
     out?.values.vol ??
@@ -19,7 +21,7 @@ function prepare(patch: Patch) {
   return {
     code,
     // Only the generator's trailing block is removed; CODE may contain marker text.
-    source: code.slice(0, code.lastIndexOf(`\n${RACK_MARKER}`)),
+    source: sourceBody(code),
     volume,
     topology: JSON.stringify({
       modules: patch.modules.map((module) => [
@@ -27,13 +29,13 @@ function prepare(patch: Patch) {
         module.type,
         module.type === 'code' ? module.values : undefined,
       ]),
-      cables: patch.cables,
+      cables: patch.cables.map(({ from, to }) => ({ from, to })),
     }),
   }
 }
 
 /** Framework-independent transport. Stopped edits never start audio. */
-export function createPlayback(initial: Patch) {
+export function createPlayback(initial: Patch | SourceDocument) {
   let patch = prepare(initial)
   let accepted: ReturnType<typeof prepare> | undefined
   let state: PlaybackState = { status: 'stopped', error: null }
@@ -94,7 +96,7 @@ export function createPlayback(initial: Patch) {
         listeners.delete(listener)
       }
     },
-    update(next: Patch): Promise<void> {
+    update(next: Patch | SourceDocument): Promise<void> {
       patch = prepare(next)
       if (requested) return apply()
       const volume = patch.volume

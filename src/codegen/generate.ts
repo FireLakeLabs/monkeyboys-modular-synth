@@ -1,4 +1,4 @@
-import { parse } from 'acorn'
+import { parse, tokenizer } from 'acorn'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import type { GridRow } from '../modules/types'
 import type { Patch } from '../patch/types'
@@ -23,6 +23,8 @@ import {
   type RackLayout,
 } from './layout'
 
+const chainedCode = (text: string): boolean =>
+  tokenizer(text, { ecmaVersion: 'latest' }).getToken().type.label === '.'
 const numeric = (value: number): string => String(Number(value.toFixed(3)))
 const quote = (value: string): string => JSON.stringify(value)
 const blank = (): CodeExpression => ({ text: '', owners: [], sourceRouting: false, mixers: [] })
@@ -298,7 +300,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       }
       case 'code': {
         const text = s('text')
-        if (!text.trimStart().startsWith('.')) throw new Error('Chained CODE must start with a dot')
+        if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
         expression = append(expression, text, node)
         expression.sourceRouting ||= syntax(expression.text).hasOrbit
         break
@@ -366,7 +368,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
         if (node.spec.id === 'code') {
           const text = string(node, 'text')
           // A chained fragment with no receiver is an incomplete, silent path.
-          if (text.trimStart().startsWith('.')) return []
+          if (chainedCode(text)) return []
           syntax(text)
           // Preserve the exact source inside parentheses, including terminal line comments.
           return [{ ...append(blank(), `(${text}\n)`, node), sourceRouting: syntax(text).hasOrbit }]
@@ -379,7 +381,8 @@ export function generateDocument(patch: Patch): GeneratedDocument {
   function emit(node: Node): CodeExpression[] {
     const output = node.spec.jacks.find((jack) => jack.direction === 'out')
     const key = `${node.module.id}:${output?.id ?? ''}`
-    if (!output || (node.outputs.get(output.id)?.length ?? 0) < 2) return raw(node)
+    if (!output || ((node.outputs.get(output.id)?.length ?? 0) < 2 && !patch.names[key]))
+      return raw(node)
     const parent = activeDefinitions.at(-1)
     let definition = definitions.get(key)
     if (!definition) {
