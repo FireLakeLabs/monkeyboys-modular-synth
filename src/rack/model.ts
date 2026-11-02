@@ -1,7 +1,7 @@
 import { generate } from '../codegen/generate'
 import { graph, isSteps, requireNode } from '../codegen/graph'
 import { getModuleSpec } from '../modules/catalog'
-import { DEFAULT_LOOK } from '../modules/looks'
+import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { JackSignal, KnobControl } from '../modules/types'
 import type { ControlValue, JackRef, Patch, PlacedModule } from '../patch/types'
 
@@ -279,4 +279,38 @@ export function draggedValue(control: KnobControl, position: number): number {
       ? control.min * (control.max / control.min) ** p
       : control.min + p * (control.max - control.min),
   )
+}
+
+export function setLook(patch: Patch, id: string, look: LookId, family = false): Patch {
+  const module = patch.modules.find((m) => m.id === id)
+  if (!module) throw new Error('Unknown module')
+  const group = getModuleSpec(module.type).family
+  if (!looksFor(group).includes(look)) throw new Error('Look belongs to another family')
+  return validateRack({
+    ...patch,
+    modules: patch.modules.map((m) =>
+      m.id === id || (family && getModuleSpec(m.type).family === group) ? { ...m, look } : m,
+    ),
+  })
+}
+
+export function duplicateModule(patch: Patch, id: string): Patch {
+  const module = patch.modules.find((m) => m.id === id)
+  if (!module) throw new Error('Unknown module')
+  if (getModuleSpec(module.type).unique) throw new Error('This module is unique')
+  let row = module.row
+  while (freePosition(patch, module.type, row, module.hp) === null) row++
+  const placed = placeModule(patch, module.type, row, module.hp)
+  const copy = placed.modules.at(-1)
+  if (!copy) throw new Error('Could not duplicate module')
+  return validateRack({
+    ...placed,
+    modules: placed.modules.map((m) =>
+      m.id === copy.id ? { ...m, look: module.look, values: structuredClone(module.values) } : m,
+    ),
+  })
+}
+
+export function renameOutput(patch: Patch, key: string, name: string): Patch {
+  return validateRack({ ...patch, names: { ...patch.names, [key]: name } })
 }

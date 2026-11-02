@@ -138,8 +138,8 @@ The production API is `read(source): SourceDocument` in `src/reader/`, with the
 graph at `document.patch`. `generate(document)` returns retained source;
 `generate(document.patch)` writes a new rack-owned file and is not an imported
 save. `tryRead` returns a location diagnostic and no document on syntax failure.
-See [reader evidence and integration limits](reader-verification.md). Source-aware
-rack mutations and live editor integration remain #8.
+See [reader evidence](reader-verification.md) and the implemented
+[workspace editing contract and limits](workspace-verification.md).
 
 - Parse with a JavaScript parser (Strudel itself uses `acorn`) and walk method chains.
 - `$:` labels and `stack(…)` arguments become mixer channels. `const` declarations used more than once become named outputs.
@@ -206,3 +206,10 @@ full imported-document routing ownership remains #6 work.
 
 Numbers have at most three decimal places. CODE literals remain verbatim. The
 writer does not mutate the patch and always writes a complete trailing rack block.
+
+An explicitly saved output name keeps its declaration even when only one branch
+remains. Workspace edits use `editDocument`, which splices proven imported literal
+or declaration/receiver ranges and reparses. Imported sounding structural edits
+without a source-preservation plan are refused; they remain editable in source.
+Look and position edits change only trailing metadata, preserving executable
+bytes and avoiding audio re-evaluation.

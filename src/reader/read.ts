@@ -1,5 +1,6 @@
 import { tokenizer, type Expression, type Node } from 'acorn'
 import { graph } from '../codegen/graph'
+import { generate } from '../codegen/generate'
 import { descriptor, type Binding, type RackLayout } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK } from '../modules/looks'
@@ -71,7 +72,12 @@ function project(
   const patch: Patch = { version: 1, modules: [], cables: [], names: {} }
   const bindings: SourceBinding[] = []
   const reserved = new Set(saved?.modules.map((module) => module.id))
-  const matches = matchScopes(saved?.scopes ?? [], scopes)
+  const snapshotUnchanged =
+    saved?.source !== undefined &&
+    descriptor(scopes.map((scope) => scope.descriptor)) ===
+      descriptor(parseSource(saved.source).scopes.map((scope) => scope.descriptor))
+  const matches = matchScopes(saved?.scopes ?? [], scopes, snapshotUnchanged)
+  const voiceScopes = scopes.filter((scope) => scope.kind === 'voice')
   const gains = new Map<string, { value: number; index: number }>()
   const depths = new Map<string, { value: number; isDefault: boolean }[]>()
   let row = 0
@@ -329,7 +335,14 @@ function project(
       const call = calls[index]
       if (!call) continue
       const provenance = matches.get(scope.descriptor.id)
-      if (provenance?.exact && provenance.saved.routing?.call === index) continue
+      // A changed voice set can retain an old orbit number. If current allocation
+      // no longer proves ownership, retain that call as source-owned CODE.
+      if (
+        provenance?.exact &&
+        provenance.saved.routing?.call === index &&
+        (snapshotUnchanged || provenance.saved.routing.orbit === voiceScopes.indexOf(scope) + 1)
+      )
+        continue
       const type = owner(call.name, false)
       if (
         type === 'mix' &&
@@ -658,7 +671,7 @@ function project(
     if (
       patch.cables.filter(
         (cable) => cable.from.module === signal.module.id && cable.from.jack === signal.jack,
-      ).length >= 2
+      ).length >= (Object.values(saved?.names ?? {}).includes(name) ? 1 : 2)
     )
       patch.names[`${signal.module.id}:${signal.jack}`] = name
   }
@@ -669,7 +682,56 @@ function project(
 /** Parse without executing any JavaScript. Syntax errors throw with Acorn's location. */
 export function read(source: string): SourceDocument {
   const parsed = parseSource(source)
-  const saved = readLayout(source)
+  let saved = readLayout(source)
+  if (saved.kind === 'valid' && saved.layout.source !== undefined) {
+    try {
+      const snapshot = parseSource(saved.generated)
+      const projected = project(saved.generated, snapshot.scopes, saved.layout)
+      restore(
+        projected.patch,
+        projected.bindings,
+        saved.layout,
+        matchScopes(saved.layout.scopes, snapshot.scopes, true),
+      )
+      // The generator can omit inactive controls that are nevertheless explicit
+      // in imported source (for example lpenv without an ENV cable).
+      for (const binding of projected.bindings) {
+        if (binding.role !== 'module' && binding.role !== 'tempo') continue
+        const module = projected.patch.modules.find((item) => item.id === binding.module)
+        const stored = saved.patch.modules.find((item) => item.id === binding.module)
+        if (!module || !stored) throw new Error('Missing source owner')
+        for (const id of Object.keys(binding.controls)) {
+          const control = getModuleSpec(module.type).controls.find((item) => item.id === id)
+          if (control?.kind !== 'knob' && control?.kind !== 'switch') continue
+          if (module.values[id] !== (stored.values[id] ?? control.default))
+            throw new Error('Saved control does not agree with source')
+        }
+      }
+      if (
+        descriptor(parseSource(generate(projected.patch)).program) !==
+        descriptor(parseSource(generate(saved.patch)).program)
+      )
+        throw new Error('Saved graph does not agree with source')
+      // Every sounding binding must also be justified by the reader, not just valid indices.
+      const actual = (bindings: SourceBinding[]) =>
+        bindings
+          .map((b) => [b.module, b.scope, b.role, b.calls, b.target])
+          .sort((a, b) => descriptor(a).localeCompare(descriptor(b)))
+      const expected = saved.layout.modules.flatMap((m) =>
+        m.bindings.map((b) => ({ ...b, module: m.id, start: 0, end: 0, controls: {} })),
+      )
+      // Grouped reader bindings and per-call generator bindings are compared as individual addresses.
+      const expand = (bindings: SourceBinding[]) =>
+        bindings.flatMap((b) => (b.calls.length ? b.calls.map((c) => ({ ...b, calls: [c] })) : [b]))
+      if (descriptor(actual(expand(projected.bindings))) !== descriptor(actual(expand(expected))))
+        throw new Error('Unverifiable source ownership')
+    } catch (error) {
+      saved = {
+        kind: 'invalid',
+        message: error instanceof Error ? error.message : 'Invalid source metadata',
+      }
+    }
+  }
   const projection = project(
     source,
     parsed.scopes,
@@ -682,7 +744,7 @@ export function read(source: string): SourceDocument {
     if (descriptor(parsed.program) === descriptor(original.program)) {
       // All executable statements agree, including declarations and statement order.
       // It is now safe to restore omitted/bypassed/disconnected state and cables.
-      const matches = matchScopes(saved.layout.scopes, parsed.scopes)
+      const matches = matchScopes(saved.layout.scopes, parsed.scopes, true)
       restore(projection.patch, projection.bindings, saved.layout, matches)
       projection.patch = saved.patch
       const controls = projection.bindings

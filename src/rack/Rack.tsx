@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { generate } from '../codegen/generate'
+import { LOOK_LABELS, looksFor } from '../modules/looks'
+import { LOOK_LAYOUT } from '../looks/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import type { JackRef, Patch } from '../patch/types'
 import { ControlEditor } from './Controls'
@@ -14,6 +15,9 @@ import {
   removeCable,
   removeModule,
   setValue,
+  setLook,
+  duplicateModule,
+  renameOutput,
 } from './model'
 
 export type RackEdit = (action: (patch: Patch) => Patch) => boolean
@@ -39,13 +43,24 @@ export function Rack({
   selected,
   select,
   newPatch,
+  draft,
+  locked,
+  showCode,
+  sourceModules,
 }: {
   patch: Patch
+  draft: string
+  locked: boolean
+  showCode: (id: string) => void
+  sourceModules: readonly string[]
   edit: RackEdit
   selected: string | null
   select: (id: string | null) => void
   newPatch: () => Promise<boolean>
 }) {
+  const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null)
+  const [allLooks, setAllLooks] = useState(false)
+  const menuModule = patch.modules.find((m) => m.id === menu?.id)
   const surface = useRef<HTMLDivElement>(null)
   const [points, setPoints] = useState<Record<string, Point>>({})
   const [wire, setWire] = useState<Wiring | null>(null)
@@ -80,16 +95,31 @@ export function Rack({
       }
       setPoints(next)
     }
+    const contextMenu = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return
+      const panel = event.target.closest<HTMLElement>('[data-module]')
+      const id = panel?.dataset.module
+      if (!id || locked) return
+      event.preventDefault()
+      select(id)
+      setMenu({
+        id,
+        x: Math.min(event.clientX, window.innerWidth - 280),
+        y: Math.min(event.clientY, window.innerHeight - 380),
+      })
+    }
+    element.addEventListener('contextmenu', contextMenu)
     measure()
     const observer = new ResizeObserver(measure)
     observer.observe(element)
     for (const module of element.querySelectorAll('.module-panel')) observer.observe(module)
     window.addEventListener('resize', measure)
     return () => {
+      element.removeEventListener('contextmenu', contextMenu)
       observer.disconnect()
       window.removeEventListener('resize', measure)
     }
-  }, [patch, rows])
+  }, [patch, rows, locked, select])
 
   function clearWire() {
     setWire(null)
@@ -106,6 +136,7 @@ export function Rack({
     const escape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         cancel()
+        setMenu(null)
         setMessage('Cancelled')
       }
     }
@@ -178,7 +209,11 @@ export function Rack({
   })
   return (
     <>
-      <aside className="library" aria-label="Module library">
+      <aside
+        className={`library ${locked ? 'library-locked' : ''}`}
+        inert={locked}
+        aria-label="Module library"
+      >
         <h2>MODULES</h2>
         {(['hardware', 'alien', 'cyber'] as const).map((family) => (
           <section key={family}>
@@ -219,7 +254,7 @@ export function Rack({
           </section>
         ))}
       </aside>
-      <div className="rack" aria-label="Rack">
+      <div className={`rack ${locked ? 'rack-locked' : ''}`} aria-label="Rack">
         <div className="rack-toolbar">
           <h2>
             RACK <small>{patch.modules.length} modules</small>
@@ -231,6 +266,7 @@ export function Rack({
         <div className="rack-scroll">
           <div
             ref={surface}
+            inert={locked}
             className="rack-surface"
             style={{ width: ROW_HP * HP, height }}
             onDragOver={(event) => {
@@ -288,7 +324,9 @@ export function Rack({
                 <section
                   key={m.id}
                   aria-label={`${spec.name} ${m.id}`}
-                  className={`module-panel cat-${spec.category} family-${spec.family} ${selected === m.id ? 'selected' : ''}`}
+                  data-jacks={LOOK_LAYOUT[m.look].jacks}
+                  data-module={m.id}
+                  className={`module-panel cat-${spec.category} family-${spec.family} look-${m.look} ${selected === m.id ? 'selected' : ''}`}
                   style={{ left: m.hp * HP, top: m.row * ROW_HEIGHT + 20, width: spec.hp * HP }}
                 >
                   <button
@@ -322,6 +360,9 @@ export function Rack({
                         patch={patch}
                         module={m}
                         control={control}
+                        {...(m.type === 'code' && sourceModules.includes(m.id)
+                          ? { editSource: () => showCode(m.id) }
+                          : {})}
                         commit={(value) => edit((p) => setValue(p, m.id, control.id, value))}
                       />
                     ))}
@@ -334,7 +375,7 @@ export function Rack({
                         (c) => keyOf(c.from) === keyOf(ref) || keyOf(c.to) === keyOf(ref),
                       )
                       return (
-                        <div key={jack.id} className="jack-label">
+                        <div key={jack.id} className={`jack-label jack-${jack.direction}`}>
                           <button
                             type="button"
                             data-jack={keyOf(ref)}
@@ -371,6 +412,28 @@ export function Rack({
                             {jack.label}
                             {state ? (state.uncertain ? ' △' : state.valid ? ' ✓' : ' ×') : ''}
                           </span>
+                          {jack.direction === 'out' &&
+                            (patch.cables.filter((c) => keyOf(c.from) === keyOf(ref)).length > 1 ||
+                              patch.names[keyOf(ref)]) && (
+                              <input
+                                key={`${m.id}:${jack.id}:${patch.names[keyOf(ref)]}`}
+                                className="output-name"
+                                aria-label={`Name ${m.id} ${jack.label}`}
+                                defaultValue={patch.names[keyOf(ref)] ?? ''}
+                                onPointerDown={(event) => event.stopPropagation()}
+                                onBlur={(event) => {
+                                  if (event.target.value !== patch.names[keyOf(ref)])
+                                    edit((p) => renameOutput(p, keyOf(ref), event.target.value))
+                                }}
+                                onKeyDown={(event) => {
+                                  if (event.key === 'Enter') event.currentTarget.blur()
+                                  if (event.key === 'Escape') {
+                                    event.currentTarget.value = patch.names[keyOf(ref)] ?? ''
+                                    event.currentTarget.blur()
+                                  }
+                                }}
+                              />
+                            )}
                         </div>
                       )
                     })}
@@ -430,6 +493,7 @@ export function Rack({
         <button
           type="button"
           className="add-row"
+          disabled={locked}
           onClick={() => setRowCount(rows + 1)}
           onDragOver={(event) => {
             if (placement) event.preventDefault()
@@ -458,7 +522,7 @@ export function Rack({
             <button
               type="button"
               onClick={() => {
-                const url = URL.createObjectURL(new Blob([generate(patch)], { type: 'text/plain' }))
+                const url = URL.createObjectURL(new Blob([draft], { type: 'text/plain' }))
                 const link = document.createElement('a')
                 link.href = url
                 link.download = 'monkeyboy.strudel'
@@ -485,7 +549,7 @@ export function Rack({
             </button>
           </fieldset>
         )}
-        {deleteId && (
+        {deleteId && !locked && (
           <fieldset className="replace-prompt">
             <legend>
               Delete {deleteId} and its{' '}
@@ -512,7 +576,7 @@ export function Rack({
             </button>
           </fieldset>
         )}
-        {replacement && wire && (
+        {replacement && wire && !locked && (
           <fieldset className="replace-prompt">
             <legend>Replace connection</legend>
             <p>
@@ -538,12 +602,87 @@ export function Rack({
             </button>
           </fieldset>
         )}
-        {module && (
+        {menu && menuModule && !locked && (
+          <dialog
+            open
+            className="module-menu"
+            aria-label={`${menuModule.id} menu`}
+            style={{ left: Math.max(8, menu.x), top: Math.max(8, menu.y) }}
+          >
+            <strong>{menuModule.id}</strong>
+            <details open>
+              <summary>Look</summary>
+              {looksFor(getModuleSpec(menuModule.type).family).map((look) => (
+                <button
+                  type="button"
+                  key={look}
+                  aria-label={`Look ${LOOK_LABELS[look]}`}
+                  aria-pressed={menuModule.look === look}
+                  onClick={() => {
+                    edit((p) => setLook(p, menuModule.id, look, allLooks))
+                    setMenu(null)
+                  }}
+                >
+                  {menuModule.look === look ? '✓ ' : ''}
+                  {LOOK_LABELS[look]}
+                </button>
+              ))}
+              <label>
+                <input
+                  type="checkbox"
+                  checked={allLooks}
+                  onChange={(event) => setAllLooks(event.target.checked)}
+                />{' '}
+                Use for all modules in this family
+              </label>
+            </details>
+            <button
+              type="button"
+              disabled={!!getModuleSpec(menuModule.type).unique}
+              onClick={() => {
+                edit((p) => duplicateModule(p, menuModule.id))
+                setMenu(null)
+              }}
+            >
+              Duplicate
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                showCode(menuModule.id)
+                setMenu(null)
+              }}
+            >
+              Show in code
+            </button>
+            <button
+              type="button"
+              disabled={!!getModuleSpec(menuModule.type).unique}
+              onClick={() => {
+                setDeleteId(menuModule.id)
+                setMenu(null)
+              }}
+            >
+              Delete
+            </button>
+            <button type="button" onClick={() => setMenu(null)}>
+              Close menu
+            </button>
+          </dialog>
+        )}
+        {module && !locked && (
           <div className="selection-tools">
             <span>
               {module.id} · {getModuleSpec(module.type).hp} HP
             </span>
-            <button type="button" onClick={() => setDeleteId(module.id)}>
+            <button type="button" onClick={() => setMenu({ id: module.id, x: 220, y: 150 })}>
+              Module menu
+            </button>
+            <button
+              type="button"
+              disabled={!!getModuleSpec(module.type).unique}
+              onClick={() => setDeleteId(module.id)}
+            >
               Delete {module.id} and attached cables
             </button>
           </div>
@@ -561,7 +700,7 @@ export function Rack({
             </button>
           ))}
         </details>
-        {currentCable && (
+        {currentCable && !locked && (
           <div className="selection-tools">
             <span>
               {keyOf(currentCable.from)} → {keyOf(currentCable.to)}

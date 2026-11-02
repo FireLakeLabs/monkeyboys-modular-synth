@@ -20,6 +20,8 @@ export interface Scope {
 }
 
 export interface RackLayout {
+  /** Accepted executable source for source-owned files; never another rack block. */
+  source?: string
   version: 1
   scopes: Scope[]
   modules: (PlacedModule & { bindings: Binding[] })[]

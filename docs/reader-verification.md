@@ -93,5 +93,7 @@ Run `npx vitest run src/reader/read.test.ts` and `npm run check`.
 No browser audio was played or heard for this pure reader change. Event equality
 does not prove audible equivalence for every arbitrary JavaScript program or
 late audio failure. Preserving the complete original document is the guarantee
-for unsupported code. The app's live two-way editor, metadata replacement after
-rack edits, structural source splices and runtime error mapping remain #8.
+for unsupported code. The [workspace](workspace-verification.md) now integrates live editing, metadata
+replacement and proven literal/name splices. Sounding structural edits to imported
+source without a preservation plan are refused. Precise runtime error mapping
+remains unverified; parser locations are independent of runtime stacks.
