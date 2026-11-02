@@ -1,16 +1,11 @@
-import { useState, useSyncExternalStore } from 'react'
-import { CATALOG, getModuleSpec } from './modules/catalog'
-import { generate } from './codegen/generate'
-import { demoPatch } from './patch/demo'
-import type { Family } from './modules/types'
+import { useRef, useState, useSyncExternalStore } from 'react'
+import { generateDocument } from './codegen/generate'
+import { RACK_MARKER } from './codegen/layout'
+import { Rack, type RackEdit } from './rack/Rack'
+import { starterPatch } from './rack/model'
 import { createPlayback } from './strudel/playback'
 import './App.css'
-
-const FAMILY_LABELS: Record<Family, string> = {
-  hardware: 'Hardware',
-  alien: 'Alien',
-  cyber: 'Cyber',
-}
+import './rack/Rack.css'
 
 function Logo() {
   return (
@@ -30,35 +25,58 @@ function Logo() {
 }
 
 export default function App() {
-  const [patch, setPatch] = useState(demoPatch)
+  const [patch, setPatch] = useState(starterPatch)
   const [playback] = useState(() => createPlayback(patch))
   const audio = useSyncExternalStore(playback.subscribe, playback.getSnapshot)
   const [error, setError] = useState<string | null>(null)
   const playing = ['starting', 'playing', 'applying'].includes(audio.status)
-  const code = generate(patch)
+  const [selected, setSelected] = useState<string | null>(null)
+  const currentPatch = useRef(patch)
+  const document = generateDocument(patch)
+  const marker = document.code.lastIndexOf(RACK_MARKER)
+  const source = document.code.slice(0, marker)
+  const selectedRanges = selected ? (document.ranges[selected] ?? []) : []
+  const codeLines = source
+    .trimEnd()
+    .split('\n')
+    .map((text, index) => {
+      const start = source
+        .split('\n')
+        .slice(0, index)
+        .reduce((n, line) => n + line.length + 1, 0)
+      const lineOffset = start + text.length + 1
+      return {
+        text,
+        selected: selectedRanges.some((range) => range.start < lineOffset && range.end > start),
+      }
+    })
 
   async function togglePlay() {
     if (playing) await playback.stop()
     else await playback.play()
   }
 
-  async function changeValue(moduleId: string, controlId: string, value: number) {
+  const edit: RackEdit = (action) => {
     try {
-      const next = {
-        ...patch,
-        modules: patch.modules.map((module) =>
-          module.id === moduleId
-            ? { ...module, values: { ...module.values, [controlId]: value } }
-            : module,
-        ),
-      }
+      const next = action(currentPatch.current)
       const applying = playback.update(next)
+      currentPatch.current = next
       setPatch(next)
       setError(null)
-      await applying
+      applying.catch((failure: unknown) =>
+        setError(failure instanceof Error ? failure.message : String(failure)),
+      )
+      return true
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : String(failure))
+      return false
     }
+  }
+
+  async function newPatch(): Promise<boolean> {
+    await playback.stop()
+    if (playback.getSnapshot().status !== 'stopped') return false
+    return edit(starterPatch)
   }
 
   const status = {
@@ -69,8 +87,6 @@ export default function App() {
     stopping: 'Stopping…',
     error: 'Playback error',
   }[audio.status]
-
-  const families: Family[] = ['hardware', 'alien', 'cyber']
 
   return (
     <div className="app">
@@ -104,74 +120,34 @@ export default function App() {
       </header>
 
       <main className="workspace">
-        <aside className="library" aria-label="Module library">
-          {families.map((family) => (
-            <section key={family}>
-              <h2>{FAMILY_LABELS[family]}</h2>
-              <ul>
-                {CATALOG.filter((m) => m.family === family).map((m) => (
-                  <li key={m.id} className={`chip chip-${m.family} cat-${m.category}`}>
-                    <span className="chip-name">{m.name}</span>
-                    <span className="chip-title">{m.title}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </aside>
-
-        <section className="rack" aria-label="Rack">
-          <div className="playback-patch">
-            <h2>Playback patch</h2>
-            <p>SEQ → OSC → VCF → VCA → OUT</p>
-            <p className="placeholder">
-              Adjust values while playing. The rack editor arrives in build step 4.
-            </p>
-            {patch.modules
-              .filter((module) => ['vcf', 'out'].includes(module.type))
-              .map((module) => {
-                const spec = getModuleSpec(module.type)
-                return spec.controls
-                  .filter(
-                    (control) =>
-                      control.kind === 'knob' && ['cutoff', 'bpm', 'vol'].includes(control.id),
-                  )
-                  .map((control) => {
-                    if (control.kind !== 'knob') return null
-                    const value = module.values[control.id] ?? control.default
-                    if (typeof value !== 'number') return null
-                    return (
-                      <label className="playback-control" key={`${module.id}-${control.id}`}>
-                        <span>
-                          {spec.name} {control.label}
-                        </span>
-                        <input
-                          type="range"
-                          min={control.min}
-                          max={control.max}
-                          step={control.step}
-                          value={value}
-                          onChange={(event) =>
-                            changeValue(module.id, control.id, Number(event.target.value))
-                          }
-                        />
-                        <output>
-                          {value}
-                          {control.unit ? ` ${control.unit}` : ''}
-                        </output>
-                      </label>
-                    )
-                  })
-              })}
-            <p className="placeholder">
-              Stop ends scheduling; notes and effect tails may ring out.
-            </p>
-          </div>
-        </section>
+        <Rack
+          patch={patch}
+          edit={edit}
+          selected={selected}
+          select={setSelected}
+          newPatch={newPatch}
+        />
 
         <section className="code" aria-label="Strudel code">
-          <h2>STRUDEL</h2>
-          <pre>{code}</pre>
+          <h2>
+            STRUDEL <small>Generated live from the rack</small>
+          </h2>
+          <pre className="source-lines">
+            {codeLines.map((line, index) => (
+              <span key={index} className={line.selected ? 'code-line highlighted' : 'code-line'}>
+                <span className="line-number">{index + 1}</span>
+                {line.text || ' '}
+                {'\n'}
+              </span>
+            ))}
+          </pre>
+          {selected && selectedRanges.length === 0 && (
+            <p className="placeholder">{selected} has no sounding code in this patch.</p>
+          )}
+          <details className="saved-layout">
+            <summary>Saved rack state</summary>
+            <pre>{document.code.slice(marker)}</pre>
+          </details>
           {(error || audio.error) && (
             <p className="error" role="alert">
               {error || audio.error}
