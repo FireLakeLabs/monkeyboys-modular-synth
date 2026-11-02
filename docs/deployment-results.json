@@ -1,0 +1,116 @@
+{
+  "oldTabPlay": {
+    "at": "2026-11-02T18:08:04.452Z",
+    "contextState": "running",
+    "rms": 0.08090784612993943,
+    "maxRms": 0.12373913952008293,
+    "peak": 0.40932297706604004,
+    "samples": 81920,
+    "button": "Stop",
+    "engine": ["https://mms.firelakelabs.com/assets/initial-demo-a/dist-DZ528Br-.js"]
+  },
+  "oldTabStop": {
+    "at": "2026-11-02T18:08:20.281Z",
+    "rms": 0,
+    "peak": 0,
+    "samples": 40960,
+    "contextState": "running",
+    "button": "Play"
+  },
+  "engineBuildPlay": {
+    "at": "2026-11-02T18:13:43.927Z",
+    "contextState": "running",
+    "rms": 0.078454988183392,
+    "peak": 0.4269670844078064,
+    "samples": 81920,
+    "button": "Stop",
+    "sampleResources": [
+      "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json",
+      "https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json"
+    ]
+  },
+  "samples": {
+    "at": "2026-11-02T18:14:13.445Z",
+    "results": [
+      {
+        "bank": "default",
+        "rms": 0.036073508304667115,
+        "peak": 0.19916227459907532,
+        "samples": 122880
+      },
+      {
+        "bank": "RolandTR808",
+        "rms": 0.012118012171982164,
+        "peak": 0.09644930809736252,
+        "samples": 122880
+      },
+      {
+        "bank": "RolandTR909",
+        "rms": 0.04525749221568843,
+        "peak": 0.20070794224739075,
+        "samples": 122880
+      }
+    ],
+    "resources": [
+      "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json",
+      "https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json",
+      "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/bd/BT0A0A7.wav",
+      "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR808/rolandtr808-bd/BD0000.WAV",
+      "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-bd/Bassdrum-01.wav"
+    ]
+  },
+  "cors": {
+    "at": "2026-11-02T18:14:31.987Z",
+    "stop": {
+      "rms": 0,
+      "peak": 0,
+      "button": "Play"
+    },
+    "responses": [
+      {
+        "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json",
+        "status": 200,
+        "type": "cors",
+        "contentType": "text/plain; charset=utf-8",
+        "cacheControl": "max-age=300",
+        "bytes": 47637
+      },
+      {
+        "url": "https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json",
+        "status": 200,
+        "type": "cors",
+        "contentType": "text/plain; charset=utf-8",
+        "cacheControl": "max-age=300",
+        "bytes": 124375
+      },
+      {
+        "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/bd/BT0A0A7.wav",
+        "status": 200,
+        "type": "cors",
+        "contentType": "audio/wav",
+        "cacheControl": "max-age=300",
+        "bytes": 25108
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR808/rolandtr808-bd/BD0000.WAV",
+        "status": 200,
+        "type": "cors",
+        "contentType": "audio/wav",
+        "cacheControl": "max-age=300",
+        "bytes": 22096
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-bd/Bassdrum-01.wav",
+        "status": 200,
+        "type": "cors",
+        "contentType": "audio/wav",
+        "cacheControl": "max-age=300",
+        "bytes": 82232
+      }
+    ]
+  },
+  "limits": [
+    "WebAudio PCM measured before physical device; no physical listening claim.",
+    "Browser automation reported user activation before Play; stricter untouched-profile autoplay and other browsers unverified."
+  ]
+}

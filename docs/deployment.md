@@ -53,6 +53,20 @@ No long-lived AWS credentials are needed. Trust requires the exact repository/
 environment subject and `sts.amazonaws.com` audience. Environment restrictions
 are essential: an environment OIDC subject does not itself include the branch.
 
+This repository uses GitHub's immutable subject prefix
+`repo:FireLakeLabs@267435624/monkeyboys-modular-synth@1442162225`, followed by
+`:environment:production` or `:environment:infrastructure`. Names alone do not
+match its tokens. Confirm the exact prefix before provisioning or after a
+repository rename/transfer:
+
+```bash
+gh api repos/FireLakeLabs/monkeyboys-modular-synth/actions/oidc/customization/sub
+```
+
+Compare `sub_claim_prefix` with `hosting.oidcSubjectPrefix` and retain immutable
+subjects; do not opt out or broaden trust to suppress authentication errors.
+See GitHub's [immutable subject reference](https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims).
+
 ## Publishing
 
 [Checks](../.github/workflows/check.yml) uses `.node-version`, `npm ci`, and
@@ -70,7 +84,9 @@ active publish. GitHub may replace pending jobs; every publish is a full build.
 Local recovery must be coordinated with Actions and other browser/audio work.
 
 Release IDs are `COMMIT-RUN_ID-ATTEMPT`. `MMS_RELEASE_ID` namespaces hashed
-bundles under `assets/RELEASE_ID/`; ordinary local builds use `assets/`.
+bundles under `assets/RELEASE_ID/`; ordinary local builds use `assets/`. On a
+publish-only retry the asset namespace remains the producing build attempt,
+while the archived deployment release ID uses the new deployment attempt.
 [The publisher](../scripts/hosting.mts) validates the account, stack identity,
 outputs, distribution hostname/enabled state, exact S3 origin, OAC and HTTPS
 redirect before uploading. It archives files with SHA-256 hashes and writes the

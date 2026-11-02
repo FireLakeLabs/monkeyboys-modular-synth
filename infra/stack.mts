@@ -84,7 +84,7 @@ export function createHostingStack(app: App): Stack {
       assumedBy: new iam.WebIdentityPrincipal(provider.openIdConnectProviderArn, {
         StringEquals: {
           'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
-          'token.actions.githubusercontent.com:sub': `repo:${hosting.repository}:environment:${environment}`,
+          'token.actions.githubusercontent.com:sub': `${hosting.oidcSubjectPrefix}:environment:${environment}`,
         },
       }),
       maxSessionDuration: Duration.hours(1),
