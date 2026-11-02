@@ -10,6 +10,21 @@ guardrail tests, TypeScript, and the production build. It does not play audio or
 prove the future reader/generator contracts. Guardrail fixtures are temporary and
 do not modify application files.
 
+## Observed GitHub status
+
+Verified on 2 November 2026: the [repository](https://github.com/FireLakeLabs/monkeyboys-modular-synth)
+is public, and [hosted Checks passed on main](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/41470335192).
+The active [Default branch checks ruleset](https://github.com/FireLakeLabs/monkeyboys-modular-synth/rules/26377051)
+applies to `main`. It requires `Repository checks` from GitHub Actions and an
+up-to-date branch, blocks deletion and force-push, and has no bypass actors.
+This was verified through the ruleset and effective branch-rules APIs; a
+controlled failing-PR merge attempt has not been performed in this audit.
+Classic branch protection is not configured; protection comes from the ruleset.
+
+This is a dated observation, not a continuously checked guarantee. Recheck the
+live ruleset and effective branch rules before relying on it. The checked-in
+JSON is a setup template; it is not proof of live enforcement.
+
 ## Activating the required check
 
 The workflow and [ruleset definition](../.github/rulesets/main.json) are versioned
@@ -24,8 +39,10 @@ After the workflow has been published and its `Repository checks` job has run:
 4. Verify that a failing check blocks a test PR's merge and a passing, current head satisfies the gate. Preserve any stronger existing protections.
 
 If repository rules are unavailable for the account/plan, record that limitation
-and use available branch-protection settings. Until activation is verified,
-[standards](standards.md) must continue to mark the merge gate as planned.
+and use available branch-protection settings. Until the live configuration is verified through the ruleset and effective
+branch-rules APIs, [standards](standards.md) must mark activation as planned.
+Record the failing-PR experiment separately; an active configuration does not
+imply that experiment has been performed.
 
 ## Native stacked pull requests
 
