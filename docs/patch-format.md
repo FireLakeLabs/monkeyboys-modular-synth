@@ -25,29 +25,62 @@ interface Patch {
 
 ## The layout comment block
 
-Proposed format, to be confirmed during the code-reader spike:
+Decided in the [source-preservation spike](source-preservation-spike.md) (#1/#14).
+The marker stays `// ── @monkeyboy rack v1 ──`. The remaining lines contain a
+JSON object, each prefixed with `// `, through end of file. It is a trailing
+comment block, so the saved file remains executable Strudel.
 
-```js
-// ── @monkeyboy rack v1 ──
-// lead.0 seq   row=0 hp=0  look=instrument
-// lead.1 osc   row=0 hp=11 look=powder
-// lead.2 vcf   row=0 hp=21 look=instrument
-// ...
-// name vca1:out lead
-```
+The v1 envelope uses these fields:
 
-- The block starts at the `// ── @monkeyboy rack v1 ──` marker and runs to the end of the file.
-- One line per module, keyed by a **derived address**: the voice’s label (a named pattern or `$N` for the Nth `$:` line) plus the module’s position in that voice’s chain. The reader derives the same address from the code, so the block never has to repeat the code’s content.
-- Modules that do not sit in a chain (LFO, ENV, OUT) are keyed by type and the address of what they feed: `lfo@lead.2:cv`.
-- `name` lines record output names.
+- `version: 1` validates the metadata format independently of the JavaScript.
+- `scopes`: saved opaque IDs, an optional named declaration anchor, and full
+  root/call syntax descriptors from the accepted source revision.
+- `modules`: stable module `id`, catalog `type`, `row`, `hp`, `look`, and source
+  bindings to scope/call descriptors and semantic roles. One module can bind
+  several calls; CV bindings include their target module ID and jack/control role.
+- `names`: output names keyed by stable `moduleId:jackId`, as in `Patch`.
+
+The exact descriptor encoding and module grouping belong to the interoperable
+writer/reader in #3/#6; the spike demonstrates matching with full normalized AST
+argument descriptors, not a finalized serializer. Do not ship a second wire
+encoding from the throwaway prototype. There is no shipped reader of the old
+proposed `lead.2` line format to migrate.
 
 ## Matching rules
 
-- Code without a layout block (plain Strudel pasted in) is auto-laid out: one row per voice, modules left to right in chain order, default looks.
-- If the code was edited so that some addresses no longer match, matched modules keep their position and look, and unmatched ones are auto-placed at the end of their voice’s row.
-- The block is regenerated on every save; hand edits to it are honoured if they parse and ignored if they don’t.
+- A module ID is stable identity; a chain index is only a current source address.
+  Allocate fresh IDs without reusing existing ones. Restored positions, looks,
+  output names and CV targets follow those IDs, never a shifted chain index.
+- Reconcile scopes by a unique declaration anchor, or a unique anonymous root
+  full branch descriptor first, then a unique base-receiver/initial-call
+  fingerprint for edited branches. Do not use the ordinal of a `$:` line as identity. Inside a
+  matched scope, prefer a unique full call fingerprint, then a unique method
+  name for a changed argument. Ignore trivia and literal quote style.
+- A completely unchanged sequence can restore repeated identical calls by order.
+  In a changed sequence, ambiguous repeats receive fresh IDs; do not guess from
+  position. Unambiguous surrounding matches retain their layout. Identical
+  anonymous voices, changed anonymous roots and renamed declarations may reset
+  affected layout. See the spike for tested limits.
+- Known generator-owned final-voice orbit routing does not consume module IDs.
+  Imported routing stays source-owned unless its ownership is established.
+- Without a valid matching block, auto-layout one row per voice, in chain order,
+  using default looks. Unmatched modules are auto-placed after matched modules
+  in their voice's row, without overlapping occupied HP. A matched module keeps
+  its position and family-valid look.
+- Invalid metadata must not invalidate otherwise valid Strudel or change its
+  sound. #6 must validate versions, unique IDs, catalog types/looks, nonnegative
+  integer positions and binding references before applying saved state. Treat
+  unsupported versions as unrecognized metadata: retain original source, report
+  that layout was not restored, and do not silently overwrite the unknown block.
+- An untouched save preserves the block exactly. When rack metadata changes,
+  write a validated replacement block for the current source revision. A
+  code edit triggers reconciliation before the next metadata write. If metadata
+  cannot be interpreted, require an explicit replacement action before discarding it.
 
-## Open questions
+## Remaining persistence questions
 
-- Whether derived addresses survive common edits well enough (inserting a call mid-chain shifts every later address). Alternative: give each chain call a short stable id in the block, matched by function name and order.
-- Whether to store knob values that the code does not express (for example OUT’s VOL, or a bypassed DELAY’s TIME) in the block too. Probably yes, as `key=value` pairs on the module’s line.
+Knob values not expressed in code (OUT volume, bypassed settings), disconnected
+modules and cables need a separate saved-state contract before persistence ships.
+Stable identity does not prove that the entire `Patch` can be reconstructed from
+sounding code. These are acceptance work for the generator/reader and workspace
+persistence, not resolved by the layout matching spike.

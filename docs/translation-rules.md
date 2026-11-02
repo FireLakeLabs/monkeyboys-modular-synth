@@ -97,4 +97,17 @@ Splitting an _audio_ output means the voice plays twice in Strudel, so levels ad
 - Each recognised call maps to a module and control values via the module catalog (`src/modules/catalog.ts`).
 - Unrecognised calls in a chain become a CODE block holding that call’s exact source text, in place.
 - A voice that cannot be read at all becomes a single CODE block acting as its source.
-- User formatting and comments outside the layout block should survive a round trip where the code was not touched. This is the hardest part of the reader; prove it early (see [`build-plan.md`](build-plan.md)).
+- Retain the original document and source ranges alongside the rack graph. An
+  untouched document round-trips exactly, including formatting, comments,
+  statement order and layout text. Supported rack value edits splice only the
+  affected literal and reparse; refuse unsafe or stale edits rather than silently
+  regenerate imported code. See the proven approach and limits in the
+  [source-preservation spike](source-preservation-spike.md).
+- Preserve non-voice statements and opaque regions as source-owned content. A
+  syntax-valid unsupported voice becomes CODE; a syntax failure returns a
+  diagnostic and no new graph. Never partially apply the failed draft to the rack.
+- Persistent module identity uses stable IDs and conservative source matching,
+  not chain positions. See [matching rules](patch-format.md#matching-rules).
+  Multi-call modules and CV expressions need catalog-owned semantic bindings.
+- Parsing is not execution or sandboxing. Source equality, sound equivalence and
+  saved rack identity are separate checks for the production reader/generator.
