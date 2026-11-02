@@ -22,15 +22,22 @@ Pre-alpha. The design is settled enough to build the foundations; see [`docs/`](
 
 ## Getting started
 
-Requires Node 20 or newer.
+Use the exact Node 24 release in [`.node-version`](.node-version). The check
+command rejects a different version; `.npmrc` also enforces the supported engine
+range during installation.
 
 ```bash
-npm install
+npm ci             # install the exact dependencies from the lockfile
 npm run dev        # start the dev server
+npm run check      # the complete local and CI gate
 npm test           # run the unit tests
 npm run typecheck  # type-check the project
-npm run build      # production build
+npm run build      # type-check and production build
+npm run format     # apply repository formatting
 ```
+
+The [standards inventory](docs/standards.md) describes each check and its limits.
+See [CI activation](docs/ci.md) for the remaining GitHub merge-gate setup.
 
 ## Stack
 
