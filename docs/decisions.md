@@ -52,7 +52,7 @@ A module’s category colour is used for its dot on the panel and for the code i
 ## Workspace
 
 - **One workspace:** rack and code side by side, both live and both editable. Edit the code and the rack updates; code that can’t be read becomes a Cyber block.
-- **Layout is saved in the code:** rack positions, looks and output names live in a comment block at the end of the Strudel code, so a patch is a plain Strudel file you can paste into the Strudel REPL, and pasting it back restores the rack. See [`patch-format.md`](patch-format.md).
+- **Layout is saved in the code:** rack positions, looks and output names live in a comment block at the end of the Strudel code, so a patch is a plain Strudel file you can paste into the Strudel REPL, and pasting it back restores the rack. See [`patch-format.md`](patch-format.md). Stable module IDs and conservative syntax matching preserve layout across unambiguous edits; ambiguous matches auto-place (decided 2 November 2026, #14).
 - **Cables:** while dragging, valid jacks light up. Odd-but-possible patches are allowed with a plain explanation. Impossible ones are blocked.
 - **Fan-out:** several cables can leave one output. That output gets an editable name, which becomes a named pattern (`const lead = …`) reused in each voice.
 - **Mixer:** each mixer input becomes its own `$:` line. `stack()` is read on import but not generated.
