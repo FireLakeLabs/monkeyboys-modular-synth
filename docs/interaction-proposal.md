@@ -51,12 +51,14 @@ spike cases establish parser/source behavior: exact diagnostic coordinates,
 opaque-code preservation, and stale-source rejection. The spike was approved
 in two Sol rounds. It establishes no audible or runtime guarantee.
 
-Engine provenance remains provisional: the track has finalized
-`docs/engine-spike.md` and `docs/engine-spike-results.json` on its branch and
-reports five real WebAudio probe runs. It observed nonzero output on the first
-production Play and zero output after Stop once notes had rung out. These are
-reported signal measurements, not a listening claim by this track. Its Sol
-review, PR and merge are still pending; do not treat its adapter as shipped here.
+Engine provenance: [PR #26](https://github.com/FireLakeLabs/monkeyboys-modular-synth/pull/26)
+contains the [engine findings and #12 handoff](https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/7579665e4406c0ac9230296da5e279d3b5f57fea/docs/engine-spike.md#errors-and-last-good-playback-12-handoff)
+and five real WebAudio probe runs. It observed nonzero output on the first
+production Play and zero output after Stop once notes had rung out. The report
+explicitly separates signal measurements from listening; physical speaker
+output and subjective clicks were not heard. The track reports Sol approval
+in one round; CI and merge are still pending. Do not treat its adapter as
+shipped on main. Fresh-profile autoplay and other browsers remain unverified.
 
 | ID  | Evidence available                                                                                                                                                                                                                                                                                                                                             | What this proposal can rely on                                                                                                                                                                                                                                          | Still awaiting evidence / owner                                                                                                                                                                     |
 | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -271,6 +273,10 @@ Stop ends scheduling; existing voices and effect tails may ring out. Do not labe
 Stop must not restart audio. Serializing updates, handling stale completions,
 and preventing older evaluations from winning are production #4/#8 work and
 require engine evidence; a UI revision check alone cannot cancel engine effects.
+PR #26 also records that a never-settling arbitrary evaluation can block its
+serialized queue, including Stop. General cancellation is not supported by that
+adapter; keep this limit explicit rather than promising that every draft can
+always be stopped immediately.
 Fixing syntax while stopped updates the rack without starting sound. Save,
 Copy and Export use the current draft, not the last readable or last-playing
 revision. Never auto-revert typed text after failure.
