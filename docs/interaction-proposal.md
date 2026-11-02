@@ -51,6 +51,13 @@ spike cases establish parser/source behavior: exact diagnostic coordinates,
 opaque-code preservation, and stale-source rejection. The spike was approved
 in two Sol rounds. It establishes no audible or runtime guarantee.
 
+Engine provenance remains provisional: the track has finalized
+`docs/engine-spike.md` and `docs/engine-spike-results.json` on its branch and
+reports five real WebAudio probe runs. It observed nonzero output on the first
+production Play and zero output after Stop once notes had rung out. These are
+reported signal measurements, not a listening claim by this track. Its Sol
+review, PR and merge are still pending; do not treat its adapter as shipped here.
+
 | ID  | Evidence available                                                                                                                                                                                                                                                                                                                                             | What this proposal can rely on                                                                                                                                                                                                                                          | Still awaiting evidence / owner                                                                                                                                                                     |
 | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | R1  | Merged reader prototype tests prove: syntax failure retains the original draft and produces a diagnostic, with no partial document. Source spans are UTF-16, end-exclusive, and revision-bound.                                                                                                                                                                | A failed parse must not replace the rack with a partial graph. Convert diagnostic coordinates only for the exact draft revision.                                                                                                                                        | Production reader/editor integration and latest-revision ownership: #6/#8, under the merged PR #24 source contract.                                                                                 |
@@ -225,6 +232,21 @@ as a proposed starting point for parsing; this is a UX default to tune, not a
 measured performance claim. Apply only results belonging to the newest draft.
 CODE panel edits follow the same path. Selection and inspection remain usable;
 stale selections have no source highlight until remapped.
+
+The engine track has not proved original-source/module mapping for runtime
+stacks: these refer to transpiled/evaluated JavaScript. The production policy
+therefore uses a generic runtime banner, with no module or line underline,
+until revision-correct mapping is proven. Parser diagnostics are a separate,
+proven source-location contract. An engine-reported parse location such as
+`1:9` does not establish runtime stack mapping.
+
+The proposed `onEvalError` adapter reports evaluation failures; it is not a
+universal subscription to scheduler, output, or sample-file/decode failures.
+The sample/output rows below describe desired UX **when a failure is surfaced**.
+Automatic detection and recovery of all late failures remain unsupported.
+Until reliable callbacks exist, do not display a fabricated resource diagnosis
+or promise automatic Stop; retain the manual Stop/Play recovery and show sample
+status as unavailable when it cannot be observed.
 
 | State / trigger                   | Rack and code presentation                                                                                                                                                                                | Audio presentation and action                                                                                                                                                                               | Recovery                                                                                                                                                              |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
