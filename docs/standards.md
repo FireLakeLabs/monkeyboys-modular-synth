@@ -111,7 +111,10 @@ behavior tests cover generation, target-specific CV, fan-out, nested mixer gains
 CODE source retention, routing provenance and saved JSON state. The #5 rack mutation operations now validate through this boundary and reject
 overlap/out-of-rail placement before committing. Focused rack tests cover these
 mutations and generated source ownership; [browser evidence](rack-verification.md)
-covers the UI. Production import and universal audible equivalence remain open.
+covers the UI. The [#6 reader checks](reader-verification.md) cover source-preserving
+import, catalog/CV projection, validated saved-state recovery and conservative
+identity reconciliation. Live editor integration and universal audible equivalence
+remain open.
 
 Resolve open product questions in the owning spec and issue before encoding them
 as expected test results. Do not invent graph, persistence, or audio behavior to
