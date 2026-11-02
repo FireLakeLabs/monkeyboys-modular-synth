@@ -57,6 +57,25 @@ A module’s category colour is used for its dot on the panel and for the code i
 - **Fan-out:** several cables can leave one output. That output gets an editable name, which becomes a named pattern (`const lead = …`) reused in each voice.
 - **Mixer:** each mixer input becomes its own `$:` line. `stack()` is read on import but not generated.
 
+## Interaction policy
+
+Owner choices for #9–#12, approved 2 November 2026. The
+[interaction handoff](interaction-proposal.md) gives detailed flows and remaining
+technical limits; production implementation remains #5/#8.
+
+- **Values in v1:** typed values and vertical knob dragging, Shift for fine
+  control, double-click to reset to the catalog default. This expands the prior
+  v1 scope; touch remains later.
+- **Occupied inputs:** offer Replace / Cancel before replacing a cable; preserve
+  the old connection until confirmation.
+- **Module deletion:** remove the module and its attached cables without
+  reconnecting the remaining neighbors automatically.
+- **New patch:** a silent MIX → OUT starter rack, with no voices and no autoplay.
+- **Runtime failure:** request Stop after a surfaced evaluation/construction
+  failure. Stop ends scheduling; notes and tails may ring out. Arbitrary-code
+  side effects do not roll back, and unreported late errors or never-settling
+  evaluations remain engine limits.
+
 ## Brand
 
 - Logo: a plain smiley — orange circle `#F4A462` with dark features `#1a1b20`. See `public/favicon.svg`.

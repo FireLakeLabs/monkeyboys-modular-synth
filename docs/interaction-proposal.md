@@ -1,6 +1,8 @@
 # Interaction proposal: values, cables, rack editing, and errors
 
-**Owner review requested; proposed UX, not implemented product behavior.**
+**Five UX choices approved by the owner; detailed handoff remains under PR review.**
+This document specifies behavior for later implementation; it does not claim
+that the production rack or workspace implements it.
 This proposal covers [#9](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/9),
 [#10](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/10),
 [#11](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/11), and
@@ -8,8 +10,8 @@ This proposal covers [#9](https://github.com/FireLakeLabs/monkeyboys-modular-syn
 This track owns #12. Production rack work belongs to
 [#5](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/5); workspace
 state and live editing belong to [#8](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/8).
-Approval of this document selects interaction policy; it does not prove the
-unproved production reader, generator, or workspace behavior.
+The owner choices select interaction policy; they do not prove production
+reader, generator, or workspace behavior.
 
 Open the [interactive storyboard](design/interaction-proposal.html) locally to
 review the proposed states. Its scenario selector simulates outcomes. It does
@@ -88,8 +90,10 @@ integration, arbitrary-patch continuity or sound at the physical speaker.
 
 ## #9: values in v1
 
-**Recommend typed readouts with minus/plus controls.** Keep the knob face as
-the value indicator. Clicking the readout opens a compact numeric field in
+**Owner choice: typed readouts plus vertical knob dragging, Shift for fine
+control, and double-click reset.** This deliberately expands v1 scope; see
+[value input](v1-scope.md#value-input). The knob indicates the current value.
+Clicking the readout opens a compact numeric field in
 place; focus selects the number, with the unit outside the field. Enter or
 valid blur commits one edit; Escape restores the previous value. An invalid
 blur keeps the field and inline error open without changing code or audio.
@@ -97,14 +101,14 @@ Accept finite decimal numbers in the displayed unit, including negatives for
 bipolar controls; reject expressions, empty input, non-finite numbers, and
 out-of-range input. Show the allowed range rather than silently clamping.
 
-Minus/plus changes one catalog step, stops at the bounds, and disables there.
-For detented controls, use the preceding/following catalog detent; typed
+Dragging snaps to catalog steps or detents and stops at the bounds. Typed
 off-detent or off-step values show the nearest allowed value and require a
 second explicit commit of that value. Never silently round a typed value.
 For a knob without catalog detents, the allowed numeric sequence is
 `min + n × step` within the inclusive bounds, plus the exact default and max.
 Decimal arithmetic must not expose floating-point residue. A logarithmic
-taper affects the indicator angle, not typed units. A labeled Reset action
+taper affects the indicator angle and drag response, not typed units. A labeled
+Reset action
 restores the catalog default; resetting a CV-patched knob changes its base
 value, without unplugging modulation.
 
@@ -115,16 +119,28 @@ An unsupported imported numeric expression stays code; do not coerce it to a
 default knob value. Imported numeric literals outside a control's editable
 set remain unchanged until an explicit replacement is chosen in code.
 
-No wheel changes, knob dragging, Shift-fine dragging, double-click reset,
-or touch work is added to v1. These gestures in #9 are a proposal, whereas
-[v1 scope](v1-scope.md#later-deliberately-not-v1) explicitly defers drag-to-turn.
-This resolves the conflict without expanding scope. Ordinary form keyboard
-operation is available; keyboard cable patching remains later.
+Drag upward to increase and downward to decrease. Capture the pointer so a
+drag can finish outside the knob. As a proposed starting sensitivity, 200 CSS
+pixels spans the full normalized range; use logarithmic normalization when
+catalog taper is log. Holding Shift reduces sensitivity to one tenth, without
+jumping when Shift changes mid-drag. Snap the resulting value to the nearest
+allowed step or detent. Escape or pointer cancellation restores the drag-start
+value; releasing the pointer keeps the last accepted value. Double-click
+restores the catalog default, using the same reset path as the labeled action.
+Ensure the double-click does not leave an intermediate accidental drag value.
 
-Commit one accepted value to rack and source together. While audio is running,
-request a live update only after that commit. Do not evaluate each digit of a
-numeric field. Evaluation timing and smoothness await E2; until proven, show
-“Applying…” followed by a confirmed result or the #12 failure state.
+Each accepted snapped value updates rack and source together. While playing,
+submit the resulting live update through the engine adapter; do not evaluate
+every raw pointer movement or each digit in a numeric field. Preserve the
+latest accepted revision when coalescing superseded drag updates in #4/#8.
+A cancelled drag requests its starting value as a new accepted revision; this
+restores the controlled value and does not promise rollback of arbitrary code
+side effects. Display “Applying…” until evaluation completes, with the #12
+failure policy on rejection. Sustained notes, lookahead and the merged engine's
+cancellation limits still apply.
+
+Wheel changes and touch-specific work remain outside v1. Ordinary form
+keyboard operation is available; keyboard cable patching remains later.
 
 ## #10: cables
 
@@ -202,7 +218,7 @@ Deletion of MIX is allowed and can leave the patch silent. Unmapped CODE
 dependencies require a source-edit plan; reject deletion when that plan
 cannot preserve unrelated source, rather than deleting arbitrary references.
 
-**Recommend New patch creates a silent starter rack:** MIX at row 0 / HP 0,
+**Owner choice: New patch creates a silent starter rack:** MIX at row 0 / HP 0,
 OUT at row 0 / HP 12, MIX OUT connected to OUT IN, all catalog defaults.
 Show the remaining rail as empty space and the library; there are no voices
 and Play does not invent a sound. This is a UI template, not a change to
@@ -284,21 +300,31 @@ revision. Never auto-revert typed text after failure.
 
 ## Owner decisions and implementation handoff
 
-Review the typed-value choice, explicit cable replacement, no auto-bridging,
-silent MIX/OUT starter, and conservative runtime-stop policy together. They
-are recommendations for owner approval. The reference layouts and existing
-locked product decisions remain authoritative until deliberately changed.
+The owner selected all five choices, in order:
 
-| Issue / acceptance topic                     | Reviewable proposal                                                                 | Production proof still required                                                                                                                                                        |
-| -------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #9: set/reset values, detents, fine input    | Typed values, catalog steps, validation, Reset; dragging deferred.                  | #5: each control kind and units; invalid/cancelled input produces no source/audio edit.                                                                                                |
-| #10: drag, three target states, explanations | Target table, persistent warnings, reroute/remove/replace and fan-out selection.    | #3/#4/#5/#8: whole-graph validation, source-preserving names and warnings under the decided #2/#13 engine/orbit contract.                                                              |
-| #11: placement/full rows/deletion/new patch  | HP ghost, explicit row zone, deletion preview, silent MIX/OUT template.             | #3/#5/#6/#8: no overlap, cancellation, cable cleanup, complete save/reopen state under #14’s decided matching contract.                                                                |
-| #12: half-typed/error line/last-good         | Separate draft/rack/audio state table, exact-revision diagnostics, no partial rack. | #6/#8: integrate the proven #1 parser/source contract, including stale-edit rejection and CRLF/Unicode handling.                                                                       |
-| #12: blocked audio, samples, runtime         | Activation, incomplete-sample, evaluation and output states with explicit recovery. | #4/#8: integrate observed engine behavior; prove fresh-profile activation, surfaced errors, retries and Stop intent; browser observation and audible verification reported separately. |
+1. **Values:** typed input plus vertical knob dragging, Shift for fine control,
+   and double-click reset. Knob dragging is now in v1; touch remains later.
+2. **Occupied inputs:** ask Replace / Cancel and preserve the existing cable
+   until Replace is confirmed.
+3. **Module deletion:** remove the module and its incident cables; leave the
+   remaining modules disconnected, without automatic bridging.
+4. **New patch:** a silent MIX connected to OUT starter rack.
+5. **Runtime failure:** request Stop after a surfaced evaluation/construction
+   failure. Existing notes and tails may ring out; rollback is not promised.
 
-Owner review can approve this interaction policy while production integration
-in R1/R2 and the remaining limitations in E1/E2 remain open. Do not close
+These choices are recorded in [decisions](decisions.md#interaction-policy).
+The detailed interaction defaults remain reviewable implementation guidance.
+
+| Issue / acceptance topic                     | Reviewable proposal                                                                           | Production proof still required                                                                                                                                                        |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #9: set/reset values, detents, fine input    | Typed values, vertical dragging, Shift fine control, catalog snapping and double-click reset. | #5/#8: gestures, pointer cancellation, units, reset and coherent source updates; invalid typed input does not apply.                                                                   |
+| #10: drag, three target states, explanations | Target table, persistent warnings, reroute/remove/replace and fan-out selection.              | #3/#4/#5/#8: whole-graph validation, source-preserving names and warnings under the decided #2/#13 engine/orbit contract.                                                              |
+| #11: placement/full rows/deletion/new patch  | HP ghost, explicit row zone, deletion preview, silent MIX/OUT template.                       | #3/#5/#6/#8: no overlap, cancellation, cable cleanup, complete save/reopen state under #14’s decided matching contract.                                                                |
+| #12: half-typed/error line/last-good         | Separate draft/rack/audio state table, exact-revision diagnostics, no partial rack.           | #6/#8: integrate the proven #1 parser/source contract, including stale-edit rejection and CRLF/Unicode handling.                                                                       |
+| #12: blocked audio, samples, runtime         | Activation, incomplete-sample, evaluation and output states with explicit recovery.           | #4/#8: integrate observed engine behavior; prove fresh-profile activation, surfaced errors, retries and Stop intent; browser observation and audible verification reported separately. |
+
+The five owner choices are approved while production integration in R1/R2 and
+the remaining limitations in E1/E2 remain open. Do not close
 technical dependencies or mark production acceptance passed on the strength of
 the storyboard. Before #5/#8 implementation, use the merged
 reader and engine contracts, update any newly resolved limitations in the
