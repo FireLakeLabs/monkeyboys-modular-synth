@@ -2,7 +2,19 @@
 
 The visual design lives on a Claude design canvas:
 
-**https://claude.ai/code/artifact/3393aa60-6a3d-44b6-9c49-c6e46a06bb8b** (private; share it from the canvas’s Share menu, or export PNG/PDF and drop the files in `docs/design/`).
+**https://claude.ai/code/artifact/3393aa60-6a3d-44b6-9c49-c6e46a06bb8b** (private). [Public canvas](https://claude.ai/artifact/7NQ4nAYu8CfWkjPk9Cjr3t#page-dcb81aee8d83).
+
+User-provided exports received on 2 November 2026 are available locally:
+
+- [Brand — logo](design/brand-logo.png)
+- [Workspace — v1 (playable)](design/workspace-v1.png)
+- [Translation key](design/translation-key.png)
+- [Looks — hardware](design/looks-hardware.png)
+- [Looks — alien](design/looks-alien.png)
+- [Looks — cyber](design/looks-cyber.png)
+- [Original HTML export](design/design-canvas.html)
+
+The PNGs were extracted from the supplied ZIP; the HTML is an unchanged copy of the supplied export. The HTML is an archived reference, not application source.
 
 The canvas boards are mock-ups, not app code. Treat them as reference.
 

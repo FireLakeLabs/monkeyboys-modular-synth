@@ -4,3 +4,5 @@ dist-ssr/
 package-lock.json
 .agents/skills/
 .agents/*LICENSE
+# Preserve the original design export verbatim.
+docs/design/design-canvas.html
