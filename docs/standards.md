@@ -88,6 +88,12 @@ code should satisfy the actual type rather than suppress it.
 
 ## Feature-owned checks still to build
 
+Hosting IAM trust is checked by the synthesized-template regression in
+`scripts/hosting.test.mts`, using the repository's observed immutable GitHub OIDC
+subject as an independent fixture. It rejects the old name-only trust format.
+Actual GitHub-to-AWS exchanges and environment branch restrictions remain live
+verification; record them in [deployment evidence](deployment-verification.md).
+
 | Owner                          | Required checks / decisions                                                                                                                                                                                             |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Graph construction and editing | Unique IDs, existing modules/jacks, direction and signal compatibility, input cardinality, and a defined cycle policy. Validate on mutation, not just import.                                                           |

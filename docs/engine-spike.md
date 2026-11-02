@@ -132,9 +132,10 @@ A map outage currently blocks first Play, including the fixed synth demo, and
 is reported as initialization failure; retry is supported.
 
 Local browser checks confirmed cross-origin manifest/audio loads and nonzero
-sample output. Hosted-origin CORS/cache checks remain deployment/feature
-verification: #22 owns hosting and workflows, and received the source URLs and
-first-click findings. This change adds no infrastructure, CSP or proxy rules.
+sample output. Hosted-origin CORS/cache and PCM checks passed after deployment; see the
+[dated hosting verification](deployment-verification.md#rollback-and-engine-follow-up).
+Issue #22 owns hosting and workflows and received the source URLs and first-click
+findings. This change adds no infrastructure, CSP or proxy rules.
 Previously opened hosted tabs also depend on the retained lazy engine chunks
 already handled by #22.
 

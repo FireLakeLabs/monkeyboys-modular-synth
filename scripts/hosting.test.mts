@@ -123,7 +123,8 @@ await test('hosting template keeps S3 private, uses OAC/HTTPS, and separates app
             Condition: {
               StringEquals: {
                 'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
-                'token.actions.githubusercontent.com:sub': `repo:${hosting.repository}:environment:${environment}`,
+                // Captured from GitHub's OIDC settings API and failed CloudTrail exchanges.
+                'token.actions.githubusercontent.com:sub': `repo:FireLakeLabs@267435624/monkeyboys-modular-synth@1442162225:environment:${environment}`,
               },
             },
           }),
