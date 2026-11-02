@@ -20,7 +20,8 @@ export function checkSkills(root = repoRoot, manifest = lock): string[] {
 
   for (const source of Object.values(manifest.sources)) {
     const path = resolve(root, source.license.path)
-    if (!/^[a-f0-9]{40}$/.test(source.revision)) errors.push('Source revision must be a full commit SHA')
+    if (!/^[a-f0-9]{40}$/.test(source.revision))
+      errors.push('Source revision must be a full commit SHA')
     if (!inside(path) || !existsSync(path) || digest(path) !== source.license.sha256) {
       errors.push(`Missing or changed license: ${source.license.path}`)
     }
@@ -32,7 +33,8 @@ export function checkSkills(root = repoRoot, manifest = lock): string[] {
       if (!names.has(dependency)) errors.push(`${skill.name}: missing dependency ${dependency}`)
     }
     const entry = `.agents/skills/${skill.name}/SKILL.md`
-    if (!skill.files.some((file) => file.path === entry)) errors.push(`${skill.name}: missing entry point`)
+    if (!skill.files.some((file) => file.path === entry))
+      errors.push(`${skill.name}: missing entry point`)
     for (const file of skill.files) {
       const path = resolve(root, file.path)
       if (knownFiles.has(file.path)) errors.push(`Duplicate file: ${file.path}`)
@@ -46,23 +48,31 @@ export function checkSkills(root = repoRoot, manifest = lock): string[] {
         continue
       }
       if (digest(path) !== file.sha256) errors.push(`Content drift: ${file.path}`)
-      if (!/^[a-f0-9]{64}$/.test(file.upstreamSha256)) errors.push(`Invalid upstream hash: ${file.path}`)
+      if (!/^[a-f0-9]{64}$/.test(file.upstreamSha256))
+        errors.push(`Invalid upstream hash: ${file.path}`)
       if (!skill.adapted && file.sha256 !== file.upstreamSha256) {
         errors.push(`Unmodified vendor file differs from upstream: ${file.path}`)
       }
-      if (process.platform !== 'win32' && Boolean(lstatSync(path).mode & 0o111) !== file.executable) {
+      if (
+        process.platform !== 'win32' &&
+        Boolean(lstatSync(path).mode & 0o111) !== file.executable
+      ) {
         errors.push(`Executable mode drift: ${file.path}`)
       }
       if (!file.path.endsWith('.md')) continue
       const text = readFileSync(path, 'utf8')
-      if (file.path === entry && (!text.startsWith(`---\nname: ${skill.name}\n`) || !/^description: .+/m.test(text))) {
+      if (
+        file.path === entry &&
+        (!text.startsWith(`---\nname: ${skill.name}\n`) || !/^description: .+/m.test(text))
+      ) {
         errors.push(`Invalid skill identity/frontmatter: ${file.path}`)
       }
       for (const match of text.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
         const target = match[1]?.split('#')[0]
         if (!target || /^[a-z][a-z0-9+.-]*:/i.test(target)) continue
         const linked = resolve(dirname(path), target)
-        if (!inside(linked) || !existsSync(linked)) errors.push(`Broken local link: ${file.path} -> ${target}`)
+        if (!inside(linked) || !existsSync(linked))
+          errors.push(`Broken local link: ${file.path} -> ${target}`)
       }
     }
   }
@@ -72,7 +82,10 @@ export function checkSkills(root = repoRoot, manifest = lock): string[] {
     for (const item of readdirSync(directory, { withFileTypes: true })) {
       const path = resolve(directory, item.name)
       if (item.isDirectory()) walk(path)
-      else if (item.isSymbolicLink() || !knownFiles.has(relative(root, path).split(sep).join('/'))) {
+      else if (
+        item.isSymbolicLink() ||
+        !knownFiles.has(relative(root, path).split(sep).join('/'))
+      ) {
         errors.push(`Unregistered file or symlink: ${relative(root, path)}`)
       }
     }
@@ -99,7 +112,13 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     console.error(errors.join('\n'))
     process.exitCode = 1
   } else {
-    if (updating) writeFileSync(resolve(repoRoot, '.agents/skills-lock.json'), `${JSON.stringify(next, null, 2)}\n`)
-    process.stdout.write(`Verified ${next.skills.length} skills and their local dependencies${updating ? '; updated reviewed adaptation hashes' : ''}.\n`)
+    if (updating)
+      writeFileSync(
+        resolve(repoRoot, '.agents/skills-lock.json'),
+        `${JSON.stringify(next, null, 2)}\n`,
+      )
+    process.stdout.write(
+      `Verified ${next.skills.length} skills and their local dependencies${updating ? '; updated reviewed adaptation hashes' : ''}.\n`,
+    )
   }
 }

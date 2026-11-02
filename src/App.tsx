@@ -15,7 +15,11 @@ $: note("c2 c2 eb2 g2 c3 bb2 g2 eb2")
   .sustain(0.3).release(0.1)
   .gain(0.8)`
 
-const FAMILY_LABELS: Record<Family, string> = { hardware: 'Hardware', alien: 'Alien', cyber: 'Cyber' }
+const FAMILY_LABELS: Record<Family, string> = {
+  hardware: 'Hardware',
+  alien: 'Alien',
+  cyber: 'Cyber',
+}
 
 function Logo() {
   return (
@@ -23,7 +27,13 @@ function Logo() {
       <circle cx="50" cy="50" r="46" fill="#F4A462" />
       <ellipse cx="36" cy="40" rx="6" ry="9" fill="#1a1b20" />
       <ellipse cx="64" cy="40" rx="6" ry="9" fill="#1a1b20" />
-      <path d="M27 58 Q50 84 73 58" fill="none" stroke="#1a1b20" strokeWidth="8" strokeLinecap="round" />
+      <path
+        d="M27 58 Q50 84 73 58"
+        fill="none"
+        stroke="#1a1b20"
+        strokeWidth="8"
+        strokeLinecap="round"
+      />
     </svg>
   )
 }
@@ -60,7 +70,12 @@ export default function App() {
             <span className="tagline">MODULAR SYNTH</span>
           </h1>
         </div>
-        <button type="button" className="play" onClick={togglePlay} aria-label={playing ? 'Stop' : 'Play'}>
+        <button
+          type="button"
+          className="play"
+          onClick={togglePlay}
+          aria-label={playing ? 'Stop' : 'Play'}
+        >
           {playing ? (
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
               <rect x="3" y="2" width="3.5" height="12" rx="1" fill="currentColor" />
@@ -98,7 +113,11 @@ export default function App() {
         <section className="code" aria-label="Strudel code">
           <h2>STRUDEL</h2>
           <pre>{DEMO_CODE}</pre>
-          {error && <p className="error" role="alert">{error}</p>}
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
         </section>
       </main>
     </div>

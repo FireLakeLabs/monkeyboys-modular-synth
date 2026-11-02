@@ -2,7 +2,24 @@ import { describe, expect, it } from 'vitest'
 import { CATALOG, getModuleSpec } from './catalog'
 import { DEFAULT_LOOK, LOOKS } from './looks'
 
-const V1_MODULES = ['seq', 'drums', 'quant', 'osc', 'smpl', 'vcf', 'vca', 'env', 'lfo', 'delay', 'reverb', 'mix', 'out', 'iter', 'jux', 'code']
+const V1_MODULES = [
+  'seq',
+  'drums',
+  'quant',
+  'osc',
+  'smpl',
+  'vcf',
+  'vca',
+  'env',
+  'lfo',
+  'delay',
+  'reverb',
+  'mix',
+  'out',
+  'iter',
+  'jux',
+  'code',
+]
 
 describe('module catalog', () => {
   it('contains exactly the v1 modules', () => {
@@ -84,7 +101,10 @@ describe('module catalog', () => {
     for (const m of CATALOG) {
       for (const c of m.controls) {
         if (c.kind !== 'switch') continue
-        expect(c.options.map((o) => o.value), `${m.id}.${c.id}`).toContain(c.default)
+        expect(
+          c.options.map((o) => o.value),
+          `${m.id}.${c.id}`,
+        ).toContain(c.default)
       }
     }
   })
@@ -92,9 +112,11 @@ describe('module catalog', () => {
   it('keeps step and grid defaults within their limits', () => {
     for (const m of CATALOG) {
       for (const c of m.controls) {
-        if (c.kind === 'steps') expect(c.default.length, `${m.id}.${c.id}`).toBeLessThanOrEqual(c.maxSteps)
+        if (c.kind === 'steps')
+          expect(c.default.length, `${m.id}.${c.id}`).toBeLessThanOrEqual(c.maxSteps)
         if (c.kind === 'grid') {
-          for (const row of c.default) expect(c.stepCounts, `${m.id}.${c.id}.${row.sample}`).toContain(row.steps.length)
+          for (const row of c.default)
+            expect(c.stepCounts, `${m.id}.${c.id}.${row.sample}`).toContain(row.steps.length)
         }
       }
     }
@@ -116,7 +138,7 @@ describe('module catalog', () => {
     }
   })
 
-  it('has a default look in every family that is one of that family\'s looks', () => {
+  it("has a default look in every family that is one of that family's looks", () => {
     for (const family of ['hardware', 'alien', 'cyber'] as const) {
       expect(LOOKS[family] as readonly string[]).toContain(DEFAULT_LOOK[family])
     }

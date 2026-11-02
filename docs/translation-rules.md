@@ -4,11 +4,11 @@ How a patch becomes Strudel, and how Strudel becomes a patch. These rules apply 
 
 ## The three kinds of cable
 
-| Cable | Colour | Carries | In Strudel |
-| --- | --- | --- | --- |
-| **Pattern** | yellow `#E6D35F` | Events in time: which note, and when. Hardware usually splits this into pitch and gate cables; a Strudel event carries both, so here it is one cable. | Mini-notation strings: `note("c e g")`, `s("bd hh")` |
-| **Audio** | orange `#F4A462` | The sound itself, from a source through filter, amp and effects to the mixer. | One chain of methods on a pattern: `.s() .lpf() .gain() .delay()` |
-| **Mod** | blue `#7DB9F6` | A value that moves on its own. Into a CV jack, it turns that knob for you. | Signals scaled with `.range()`: `sine`, `saw`, `perlin`, `rand` |
+| Cable       | Colour           | Carries                                                                                                                                               | In Strudel                                                        |
+| ----------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Pattern** | yellow `#E6D35F` | Events in time: which note, and when. Hardware usually splits this into pitch and gate cables; a Strudel event carries both, so here it is one cable. | Mini-notation strings: `note("c e g")`, `s("bd hh")`              |
+| **Audio**   | orange `#F4A462` | The sound itself, from a source through filter, amp and effects to the mixer.                                                                         | One chain of methods on a pattern: `.s() .lpf() .gain() .delay()` |
+| **Mod**     | blue `#7DB9F6`   | A value that moves on its own. Into a CV jack, it turns that knob for you.                                                                            | Signals scaled with `.range()`: `sine`, `saw`, `perlin`, `rand`   |
 
 Alien and Cyber jacks accept any cable type; the cable keeps the colour of whatever enters.
 
@@ -78,7 +78,7 @@ $: lead.delay(.4)
 $: lead.jux(rev)
 ```
 
-Splitting an *audio* output means the voice plays twice in Strudel, so levels add up — the same as sending one signal into two mixer channels.
+Splitting an _audio_ output means the voice plays twice in Strudel, so levels add up — the same as sending one signal into two mixer channels.
 
 ## Generated code conventions
 

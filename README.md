@@ -10,15 +10,15 @@ Pre-alpha. The design is settled enough to build the foundations; see [`docs/`](
 
 ## Docs
 
-| Doc | What it covers |
-| --- | --- |
-| [`docs/decisions.md`](docs/decisions.md) | Everything locked in so far |
-| [`docs/v1-scope.md`](docs/v1-scope.md) | The first 16 modules, motion defaults, and what is deliberately later |
-| [`docs/translation-rules.md`](docs/translation-rules.md) | How a patch becomes Strudel code and back |
-| [`docs/module-spec.md`](docs/module-spec.md) | Every v1 module: controls, ranges, defaults, jacks, and the Strudel it writes |
-| [`docs/patch-format.md`](docs/patch-format.md) | The patch data model and the layout comment saved with the code |
-| [`docs/design.md`](docs/design.md) | Where the design canvas lives and what each board shows |
-| [`docs/build-plan.md`](docs/build-plan.md) | Build order and the design work still open |
+| Doc                                                      | What it covers                                                                |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [`docs/decisions.md`](docs/decisions.md)                 | Everything locked in so far                                                   |
+| [`docs/v1-scope.md`](docs/v1-scope.md)                   | The first 16 modules, motion defaults, and what is deliberately later         |
+| [`docs/translation-rules.md`](docs/translation-rules.md) | How a patch becomes Strudel code and back                                     |
+| [`docs/module-spec.md`](docs/module-spec.md)             | Every v1 module: controls, ranges, defaults, jacks, and the Strudel it writes |
+| [`docs/patch-format.md`](docs/patch-format.md)           | The patch data model and the layout comment saved with the code               |
+| [`docs/design.md`](docs/design.md)                       | Where the design canvas lives and what each board shows                       |
+| [`docs/build-plan.md`](docs/build-plan.md)               | Build order and the design work still open                                    |
 
 ## Getting started
 

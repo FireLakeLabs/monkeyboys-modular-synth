@@ -14,11 +14,11 @@ Locked on 1 November 2026. Change these deliberately: update this file in the sa
 
 Every module belongs to exactly one family.
 
-| Family | Rule | Examples |
-| --- | --- | --- |
-| **Hardware** | A common modular module does this to a live signal. | OSC, VCF, VCA, ENV, LFO, DELAY, MIX |
-| **Alien** | Strudel-native with no modular analog: it needs to see the whole cycle at once. | ITER, JUX, REV, PALINDROME |
-| **Cyber** | Code-only: Strudel the app can’t turn into controls yet, passed through untouched. | CODE |
+| Family       | Rule                                                                               | Examples                            |
+| ------------ | ---------------------------------------------------------------------------------- | ----------------------------------- |
+| **Hardware** | A common modular module does this to a live signal.                                | OSC, VCF, VCA, ENV, LFO, DELAY, MIX |
+| **Alien**    | Strudel-native with no modular analog: it needs to see the whole cycle at once.    | ITER, JUX, REV, PALINDROME          |
+| **Cyber**    | Code-only: Strudel the app can’t turn into controls yet, passed through untouched. | CODE                                |
 
 Where a Strudel function has a close hardware cousin (`.ply()` ≈ a ratchet, `.rev()` ≈ a sequencer’s reverse switch), prefer a hardware module or a switch on an existing one. Keep Alien for things with no real equivalent.
 
@@ -37,15 +37,15 @@ Where a Strudel function has a close hardware cousin (`.ply()` ≈ a ratchet, `.
 
 ## Colours
 
-| Meaning | Colour |
-| --- | --- |
+| Meaning                          | Colour    |
+| -------------------------------- | --------- |
 | Pattern cable / pattern category | `#E6D35F` |
-| Audio cable / sound category | `#F4A462` |
-| Mod cable / modulate category | `#7DB9F6` |
-| Shape category (VCF, VCA) | `#F293BA` |
-| Effects category | `#B9A9F8` |
-| Utility category | `#B7BDC6` |
-| Alien accent | `#8CF5DA` |
+| Audio cable / sound category     | `#F4A462` |
+| Mod cable / modulate category    | `#7DB9F6` |
+| Shape category (VCF, VCA)        | `#F293BA` |
+| Effects category                 | `#B9A9F8` |
+| Utility category                 | `#B7BDC6` |
+| Alien accent                     | `#8CF5DA` |
 
 A module’s category colour is used for its dot on the panel and for the code it writes, so the rack and the code read as one.
 
