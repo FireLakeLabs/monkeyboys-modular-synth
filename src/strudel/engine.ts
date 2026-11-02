@@ -15,6 +15,7 @@ const SAMPLE_SOURCES = [
 
 let ready: Promise<StrudelWeb> | null = null
 let pending: Promise<void> = Promise.resolve()
+let volume = 1
 
 function load(): Promise<StrudelWeb> {
   if (!ready) {
@@ -47,11 +48,39 @@ function enqueue(action: () => Promise<void>): Promise<void> {
   return result
 }
 
-/** Replaces the scheduled pattern. First use must follow a user gesture. */
-export function play(code: string): Promise<void> {
+function applyVolume(strudel: StrudelWeb): void {
+  const context = strudel.getAudioContext()
+  const gain = strudel.getSuperdoughAudioController().output.destinationGain.gain
+  gain.cancelScheduledValues(context.currentTime)
+  gain.setTargetAtTime(volume, context.currentTime, 0.01)
+}
+
+function validateVolume(value: number): void {
+  if (!Number.isFinite(value) || value < 0 || value > 1)
+    throw new RangeError('Volume must be between 0 and 1')
+}
+
+/** Changes the app output, including effect tails, without evaluating code or starting audio. */
+export function setVolume(value: number): Promise<void> {
   return enqueue(async () => {
+    validateVolume(value)
+    volume = value
+    if (ready) applyVolume(await ready)
+  })
+}
+
+/** Replaces the scheduled pattern. First use must follow a user gesture. */
+export function play(
+  code: string,
+  options: { volume?: number; resetEffects?: boolean } = {},
+): Promise<void> {
+  return enqueue(async () => {
+    if (options.volume !== undefined) validateVolume(options.volume)
     const strudel = await load()
     await strudel.getAudioContext().resume()
+    if (options.resetEffects) strudel.resetGlobalEffects()
+    if (options.volume !== undefined) volume = options.volume
+    applyVolume(strudel)
     await strudel.evaluate(code)
   })
 }
