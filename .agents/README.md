@@ -53,7 +53,7 @@ dependency link, and imported file against the chosen upstream revision.
 2. Reapply or revise the documented local adaptations. Update the adoption review when a decision changes. Keep workflow ownership and project scope intact.
 3. Record the new revision and upstream hashes only after comparison against the downloaded source. Record new/removed files and dependencies explicitly in the lockfile.
 4. Run `node scripts/check-skills.mts --update-hashes` to accept reviewed edits to adapted files. This does not change upstream hashes, licenses, or unmodified tstack hashes.
-5. Run `node scripts/check-skills.mts` and the repository checks. Review the source/installed hash diff with the content diff before committing.
+5. Run `npm run format`, `node scripts/check-skills.mts`, and the repository checks. Review the source/installed hash diff with the content diff before committing.
 
 The checker verifies registered files, hashes, modes, declared dependencies,
 entry-point identities, and relative Markdown link targets. It does not establish

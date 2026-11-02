@@ -13,12 +13,11 @@ A browser modular synth whose rack and Strudel code are editable views of the sa
 
 - For TypeScript/TSX work, apply [typescript-best-practices](.agents/skills/typescript-best-practices/SKILL.md) and its linked principles. For test changes, apply [test behavior](.agents/skills/principle-test-behavior-not-implementation/SKILL.md). Read each dependency once; reciprocal reference links do not require reloading it.
 - For engineering rules or exceptions, read [standards](docs/standards.md), which distinguishes executable enforcement, review guidance, and feature-owned gaps. For a preventable correction, use [correct](.agents/skills/correct/SKILL.md); for a practical bug regression, use [tdd](.agents/skills/tdd/SKILL.md); for measured performance claims, use [benchmark-checklist](.agents/skills/benchmark-checklist/SKILL.md).
-
 - Follow the build plan's dependency order. Resolve the reader and engine spikes before relying on their assumptions in production code. Keep an issue's acceptance criteria attached to the implementation and report any that remain unverified.
 - Keep patch transformations testable without React or browser audio; keep Strudel initialization and playback behind `src/strudel/engine.ts`.
-- Use npm and the committed lockfile. Node 24 is a supported development baseline; the README's Node 20 minimum is too broad for the locked Vitest version.
-- For TypeScript or build changes, run `npm test`, `npm run lint`, and `npm run build`. The build includes TypeScript checking. Add focused behavior tests for generation, import, graph validation, or persistence changes; catalog integrity tests alone do not prove translation correctness.
-- For playback or live-editing changes, verify the affected behavior in a browser when the task and harness permit it. Report separately what was heard or observed and what only passed static/unit checks. For documentation or skill-only changes, verify links, installation integrity, and relevant script syntax instead of rerunning unrelated application checks.
+- Use the Node version in `.node-version`, npm, and the committed lockfile; bootstrap with `npm ci`.
+- For code, configuration, or tooling changes, run `npm run check`, the same gate used in CI. The build includes TypeScript checking. Add focused behavior tests for generation, import, graph validation, or persistence changes; catalog integrity tests alone do not prove translation correctness.
+- For playback or live-editing changes, verify the affected behavior in a browser when the task and harness permit it. Report separately what was heard or observed and what only passed static/unit checks. For documentation or skill-only changes, run `npm run format:check` and `npm run check:skills`, verify relevant links, and validate changed examples/scripts. CI still runs the full gate.
 
 ## Skill routing
 

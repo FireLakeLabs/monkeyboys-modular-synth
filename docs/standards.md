@@ -13,20 +13,29 @@ product requirements. [AGENTS.md](../AGENTS.md) routes agents to these sources.
 
 ## Baseline
 
-The following baseline is approved for implementation. Its status will change to
-enforced only after the checks and their negative probes pass.
+Run `npm run check` after `npm ci` using the version in `.node-version`. The
+build performs TypeScript checking once. Focused scripts remain available for
+iteration. Formatting does not rewrite vendored skills or embedded code examples.
 
-| Standard                                                                                 | Status   | Mechanism / scope                                                                                                     |
-| ---------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
-| Strict nullability, checked indexes, exact optional properties, explicit return coverage | Planned  | App and tooling TypeScript projects; include Vite and Vitest configuration.                                           |
-| Reproducible supported runtime and dependency tree                                       | Planned  | Node 24 version file, engine checks, lockfile, `npm ci`; CI uses the same version.                                    |
-| Consistent formatting                                                                    | Planned  | One pinned formatter and EditorConfig; preserve vendored skills and executable code examples.                         |
-| Reject explicit `any`, non-null assertions, hook misuse, and unhandled promises          | Planned  | Focused Oxlint rules, including its type-aware companion; justified exceptions remain reviewed.                       |
-| Pure domain modules and isolated audio adapter                                           | Reviewed | Keep patch transformations independent of React and browser audio; preserve `src/strudel/engine.ts`.                  |
-| Catalog consistency                                                                      | Enforced | `npm test` checks module IDs, controls, ranges, CV targets, looks, and Strudel-function ownership.                    |
-| Skill source integrity and complete local dependencies                                   | Planned  | Pinned provenance, file hashes, executable modes, dependency inventory, and relative-link checks.                     |
-| The same checks locally and in CI                                                        | Planned  | One `npm run check` entry point, PR/main workflow, read-only permissions and pinned actions.                          |
-| Merges require passing checks                                                            | Planned  | GitHub repository rules after the workflow is published; a YAML workflow alone does not require a passing merge gate. |
+| Standard                                                                                 | Status                              | Mechanism / scope                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Strict nullability, checked indexes, exact optional properties, explicit return coverage | Enforced                            | App and tooling TypeScript projects, including Vite/Vitest configs and repository scripts; negative compiler probes.                                                      |
+| Consistent supported runtime                                                             | Enforced                            | `.node-version`, `check:runtime`, package engines and `.npmrc`; update the version file and engine minimum together.                                                      |
+| Locked dependency tree                                                                   | Enforced                            | Committed npm lockfile and `npm ci`; this pins package resolution, not the external OS or advisory database.                                                              |
+| Consistent formatting                                                                    | Enforced                            | Pinned Prettier, `format:check`, and EditorConfig. Vendored skill bytes and embedded examples are preserved.                                                              |
+| Reject explicit `any`, non-null assertions, hook misuse, and floating promises           | Enforced                            | Oxlint plus `oxlint-tsgolint`; warnings fail, unused disables are reported, `void` does not exempt promises. Callback rejection semantics still need review.              |
+| Basic accessible JSX                                                                     | Enforced                            | Static image-alt, ARIA, and label checks. Keyboard interaction, focus, reduced motion, and audible behavior still need runtime review.                                    |
+| Pure domain imports                                                                      | Enforced                            | Static React/Strudel imports are blocked in existing `src/modules` and `src/patch` TypeScript modules. Dynamic/transitive effects and future directories remain reviewed. |
+| Catalog consistency                                                                      | Enforced                            | `npm test` checks module IDs, controls, ranges, CV targets, looks, and Strudel-function ownership.                                                                        |
+| Skill source integrity and local dependencies                                            | Enforced                            | `check:skills` checks registered files, hashes, modes, declared dependencies, identity, licenses, and relative links. Negative probes test representative failures.       |
+| The same checks locally and in CI                                                        | Enforced locally; configured for CI | `npm run check`; `.github/workflows/check.yml` invokes it on PRs/main with pinned actions and read-only permissions. Hosted execution starts after publication.           |
+| Merges require passing checks                                                            | Planned external activation         | Apply the checked-in GitHub ruleset after publishing and observing the workflow; see [CI activation](ci.md). A workflow file alone does not require a passing merge gate. |
+
+`npm run test:guardrails` exercises representative invalid and valid cases in
+temporary directories, including compiling the adapted TypeScript examples. It
+protects against accidentally inert checks; it does not prove every rule or
+combination is covered. The skill lockfile detects drift, not a coordinated change
+to both instructions and hashes; review those changes together.
 
 ## Review standards
 
