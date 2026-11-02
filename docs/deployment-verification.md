@@ -1,6 +1,6 @@
 # Deployment verification — issue #22
 
-Observed on 2 November 2026. Pending checks below are not claims of success.
+Observed on 2 November 2026. Limits are distinguished from completed checks below.
 
 | Criterion                                                     | Evidence / status                                                                                                                             |
 | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -11,7 +11,7 @@ Observed on 2 November 2026. Pending checks below are not claims of success.
 | First-click Play, Stop, lazy loading                          | Hosted first pointer click produced output RMS 0.0809; Stop output RMS/peak 0 after 1.5 seconds; no physical-listening claim                  |
 | Preceding-tab engine and cache retention                      | Initial-release tab loaded its old engine HTTP 200 after redeployment; object remains in S3 with immutable cache headers                      |
 | Restore previous release                                      | Run 41497749968 restored initial-demo-a and verified exact homepage bytes; next automatic main deployment rolled forward                      |
-| Required checks and operational docs                          | Local full gate, PR CI, actionlint and strict CDK synthesis pass; see [operations](deployment.md); final evidence checks pending              |
+| Required checks and operational docs                          | Local full gate, PR CI, actionlint and strict CDK synthesis pass; see [operations](deployment.md); final manual infrastructure run passed     |
 | Independent of unfinished features                            | Hosting shipped without generator, reader, rack, or engine feature changes                                                                    |
 
 ## AWS preflight, 2 November 2026
@@ -41,11 +41,10 @@ HTTP still redirected to HTTPS. A browser tab on the public hostname loaded
 the module library and initial-demo-a entry while its engine remained unloaded.
 
 HTML returns `no-cache,max-age=0,must-revalidate`; the lazy engine object returns
-`public,max-age=31536000,immutable` and `text/javascript`. Browser playback,
-old-tab loading and live rollback are pending. The engine track owns adapter
-changes, including first-gesture initialization; no engine behavior was changed
-by hosting. Once that track merges, verify its pinned Dirt-Samples and
-tidal-drum-machines manifests/audio URLs from the public hostname, including CORS.
+`public,max-age=31536000,immutable` and `text/javascript`. At initial rollout, browser playback, old-tab loading and live rollback still
+needed verification; the completed observations follow below. The engine track
+owned adapter changes, including first-gesture initialization. Its later merged
+pinned sample sources were verified from the public hostname as recorded below.
 
 ## Review
 
@@ -55,7 +54,7 @@ CloudTrail and the repository OIDC settings API showed immutable owner/repositor
 IDs in the subject; the initial trust expected the old name-only subject. A
 template regression with the independently captured token subject failed before
 the repair and passed after it; the full gate also passed. The fix retains exact environment-scoped trust and the existing
-immutable-subject setting. Application rerun attempt 2 authenticated through OIDC and published successfully; manual infrastructure rerun awaits the corrected source on main.
+immutable-subject setting. Application rerun attempt 2 authenticated through OIDC and published successfully; manual infrastructure run 41499446411 subsequently passed on the corrected main source.
 
 Sol approved in two rounds with `gpt-6.1-sol` on high effort. S1 (publish-only
 reruns selecting a nonexistent new-attempt artifact) was fixed by passing the
@@ -114,3 +113,19 @@ released. See [captured measurements](deployment-results.json) and
 The automation harness reported user activation even before Play. These checks
 prove the tested tool-activated first click in Chromium, not every untouched
 browser/profile's autoplay policy. Physical audio was not heard.
+
+## Final infrastructure verification
+
+[Manual infrastructure run 41499446411](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/41499446411)
+passed on merge `6a3bcb0353cbd85424814a98623ff04a20c547be`. It authenticated as
+the dedicated infrastructure role through GitHub OIDC at 18:19:48 UTC, actually
+assumed all three CDK bootstrap roles at 18:19:53–54 UTC, found zero stack
+differences, and completed CDK deployment with no changes at 18:20:02 UTC.
+No long-lived AWS credentials, trust broadening, or account rebootstrap was used.
+
+The immutable-subject repair was separately approved by Sol in one round with
+no findings. The current source and deployed trust now agree. All issue #22
+criteria have evidence above; failed-check exclusion is established by the
+workflow dependency/branch conditions, rather than a deliberately failing-main
+experiment. Physical listening and other browsers' autoplay policies remain
+outside the observations reported here.
