@@ -43,7 +43,7 @@ export interface CodeExpression {
 }
 
 /** Full AST descriptors, without source trivia, offsets, or literal quote spelling. */
-function descriptor(value: unknown): string {
+export function descriptor(value: unknown): string {
   return JSON.stringify(value, (key, item: unknown) => {
     if (['start', 'end', 'loc', 'raw'].includes(key)) return undefined
     return typeof item === 'bigint' ? { bigint: String(item) } : item

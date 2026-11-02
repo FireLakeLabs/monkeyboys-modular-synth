@@ -134,6 +134,13 @@ See [engine findings](engine-spike.md) for runtime evidence and limitations.
 
 ## Reading code
 
+The production API is `read(source): SourceDocument` in `src/reader/`, with the
+graph at `document.patch`. `generate(document)` returns retained source;
+`generate(document.patch)` writes a new rack-owned file and is not an imported
+save. `tryRead` returns a location diagnostic and no document on syntax failure.
+See [reader evidence and integration limits](reader-verification.md). Source-aware
+rack mutations and live editor integration remain #8.
+
 - Parse with a JavaScript parser (Strudel itself uses `acorn`) and walk method chains.
 - `$:` labels and `stack(…)` arguments become mixer channels. `const` declarations used more than once become named outputs.
 - Each recognised call maps to a module and control values via the module catalog (`src/modules/catalog.ts`).

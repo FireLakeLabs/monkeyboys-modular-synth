@@ -2,6 +2,7 @@ import { parse } from 'acorn'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import type { GridRow } from '../modules/types'
 import type { Patch } from '../patch/types'
+import type { SourceDocument } from '../reader/types'
 import {
   control,
   graph,
@@ -89,9 +90,15 @@ function omitted(node: Node, id: string): boolean {
 export interface GeneratedDocument {
   code: string
   ranges: Record<string, { start: number; end: number }[]>
+  layout: RackLayout
 }
 
-export function generate(patch: Patch): string {
+export function generate(patch: Patch | SourceDocument): string {
+  if ('kind' in patch) {
+    if (JSON.stringify(patch.patch) !== patch.patchRevision)
+      throw new Error('Imported patch changed outside a source-aware edit')
+    return patch.source
+  }
   return generateDocument(patch).code
 }
 
@@ -457,5 +464,5 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     bindScope(layout, expression, undefined, orbit)
     write(expression, '$: ')
   })
-  return { code: `${lines.join('\n')}\n${writeLayout(layout)}`, ranges }
+  return { code: `${lines.join('\n')}\n${writeLayout(layout)}`, ranges, layout }
 }

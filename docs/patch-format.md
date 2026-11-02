@@ -61,7 +61,7 @@ call; it does not create a module binding. The reader must verify the full
 matching descriptor before trusting that provenance, never just a call index.
 
 Scope IDs (`scope1`, etc.) are opaque IDs for this generated revision, not `$:`
-line identities. The future reader reconciles them using the matching rules
+line identities. The reader reconciles them using the matching rules
 below. The writer is independent of the throwaway spike. There is no shipped
 reader of the old proposed `lead.2` line format to migrate.
 
@@ -106,10 +106,11 @@ are preserved even for modules with no source bindings. `names` includes any
 names allocated by the writer. These fields allow exact rack-state recovery from
 an untouched generated document, separately from sounding-code reconstruction.
 
-Sounding code is authoritative after an external edit: #6 must validate and
-reconcile source bindings before applying saved values or cables, using values
+Sounding code is authoritative after an external edit: the reader validates and
+reconciles source bindings before applying saved values or cables, using values
 parsed from matching source for sounding controls. Unverifiable graph/state
 entries must not override code or attach by ordinal. Invalid/unknown metadata
-retains the original source as described above. Production reading, stale-state
-reconciliation, migrations and save/load UI remain #6/#8 work; the generator's
-JSON-state preservation tests do not claim to implement those features.
+retains the original source as described above. See [reader verification](reader-verification.md)
+for implemented restoration and stale-state reconciliation. Metadata replacement,
+migrations and save/load UI remain #8 work; the generator's JSON-state preservation
+tests alone do not prove these reader behaviors.
