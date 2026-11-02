@@ -2,11 +2,11 @@
 
 Patch a modular synth, read the Strudel. A Fire Lake Labs project — [firelakelabs.com](https://firelakelabs.com).
 
-MonkeyBoy’s Modular Synth is a web app that teaches modular synthesis and [Strudel](https://strudel.cc) side by side. You build a patch in a virtual rack — pull in modules, connect them with cables, turn knobs — and see the exact Strudel code that patch produces. It works the other way too: paste Strudel code and the app builds the matching patch.
+MonkeyBoy’s Modular Synth is being built to teach modular synthesis and [Strudel](https://strudel.cc) side by side. The intended workspace lets you build a patch in a virtual rack and edit the equivalent Strudel code, with changes flowing both ways.
 
 ## Status
 
-Pre-alpha. The design is settled enough to build the foundations; see [`docs/`](docs/) for what is decided and what is still open.
+Pre-alpha. The app currently renders the module catalog, a placeholder rack, and a fixed Strudel demo with play/stop controls. Editable rack patching, code generation, and code import are not implemented yet. See the [build plan](docs/build-plan.md) for implementation order and unresolved research.
 
 ## Docs
 
@@ -37,7 +37,7 @@ npm run format     # apply repository formatting
 ```
 
 The [standards inventory](docs/standards.md) describes each check and its limits.
-See [CI activation](docs/ci.md) for the remaining GitHub merge-gate setup.
+See [CI status and verification](docs/ci.md) for the observed GitHub merge-gate configuration.
 
 ## Stack
 
@@ -56,7 +56,7 @@ src/
 docs/        design decisions and specs
 ```
 
-Code generation (`src/codegen/`), the code reader (`src/reader/`), the rack UI (`src/rack/`) and the look system (`src/looks/`) arrive in that order — see [`docs/build-plan.md`](docs/build-plan.md).
+The [build plan](docs/build-plan.md#build-order) owns the implementation order for code generation, playback, rack UI, code import, and looks.
 
 ## Agent workflows
 
@@ -70,4 +70,4 @@ the [pstack adoption review](.agents/pstack-review.md) explains the selection.
 
 ## Licence
 
-Not yet chosen. This repository is private. Note that Strudel is licensed AGPL-3.0-or-later, which will matter when a licence is picked.
+See [LICENSE](LICENSE) for this project’s MIT license. Strudel is a separately licensed dependency under AGPL-3.0-or-later.

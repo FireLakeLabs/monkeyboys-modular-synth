@@ -7,7 +7,7 @@ Locked on 1 November 2026. Change these deliberately: update this file in the sa
 - **Name:** MonkeyBoy’s Modular Synth — a Fire Lake Labs project ([firelakelabs.com](https://firelakelabs.com)).
 - **What it is:** a web app that is an entry point into both modular synthesis and the Strudel live-coding language. A patch and its Strudel code are two views of the same thing.
 - **Engine:** Strudel’s own engine (`@strudel/web`) in the browser.
-- **Licence:** not yet chosen; the repo is private. Strudel is AGPL-3.0-or-later.
+- **Licence:** see the project’s [MIT license](../LICENSE). Strudel is a separately licensed dependency under AGPL-3.0-or-later.
 - **Audience for v1:** no beginner aids at launch — no hints, no explainer cards. They can be added later.
 
 ## Module families

@@ -2,7 +2,7 @@
 
 The sixteen v1 modules. For each: its controls, value ranges and defaults, its jacks, and the Strudel it writes and reads.
 
-The machine-readable version of this spec is [`src/modules/catalog.ts`](../src/modules/catalog.ts). Once the app starts consuming the catalog, **the catalog is the source of truth** and this document describes it; keep the two in step.
+The machine-readable version of this spec is [`src/modules/catalog.ts`](../src/modules/catalog.ts). The app already consumes it for the module library. **The catalog is the runtime source of truth** and this document describes it; keep the two in step.
 
 ## Conventions
 
