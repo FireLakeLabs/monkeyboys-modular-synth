@@ -15,7 +15,7 @@ The reader/engine spikes and feature dependency order remain unchanged.
 1. **Module catalog.** `src/modules/catalog.ts` holds every v1 module as data (controls, ranges, defaults, jacks, Strudel functions). _Started in the initial commit, with integrity tests._
 2. **Patch → code generator.** A pure function `generate(patch) → string`, following [`translation-rules.md`](translation-rules.md). Done when unit tests cover every module, CV routing (LFO and ENV into VCF and VCA), fan-out naming, several mixer channels, omitted defaults and the layout block.
 3. **Play through Strudel.** Wire `src/strudel/engine.ts` to the generator: play, stop, re-evaluate when values change. Load sample banks at start-up. Done when a patch built in code plays in the browser and a value change is heard without restarting.
-4. **Rack UI in one look.** Render modules from the catalog in a single look (Instrument is the most neutral), with cables drawn from live jack positions, selection, and a minimal way to change values (see below). Done when every v1 module can be placed, patched and adjusted.
+4. **Rack UI in one look.** Render modules from the catalog in a single look (Instrument is the most neutral), with cables drawn from live jack positions, selection, typed values and knob gestures (see below). Done when every v1 module can be placed, patched and adjusted.
 5. **Code → patch reader.** Parse Strudel with `acorn`, retain source and ranges alongside the graph, walk chains, map calls through the catalog, fall back to CODE blocks. The source-aware document is required in addition to `Patch` for exact preservation. Done when round-trip tests pass: `generate(read(code))` reproduces `code` for generated code, and hand-written examples import without changing their sound.
 6. **Looks.** Layout rules for all ten looks; the right-click menu with “use for all”. Done when every module renders in every look in its family and cables follow.
 7. **Workspace polish.** Fan-out name tags and renaming, the layout comment block read and written, live two-way editing with sensible behaviour while code is half-typed.
@@ -41,14 +41,20 @@ These are the two biggest unknowns. Spike them before or alongside steps 2–3.
   evidence and verification limits](engine-spike.md). Generator integration and
   production interaction states remain #4/#8/#12.
 
-## Design still open
+## Interaction design handoff
 
-- **Changing values in v1.** Drag-to-turn and touch are “later”, but v1 needs something. Proposal: drag up/down on a knob, Shift for fine, double-click to reset, click the value to type a number.
-- **Dragging a cable.** Which jacks light up, the explanation shown for odd patches, how blocked targets look.
-- **Adding and removing modules.** Drag from the library onto a rail; where a module lands when a row is full; rows growing; deleting a module and its cables.
-- **New patch.** What an empty rack shows (just MIX and OUT?).
-- **Half-typed code.** What the rack shows while the code does not parse (freeze and dim the rack, mark the error line, keep the last good patch playing).
-- **Errors.** Audio blocked until a click (browser autoplay rules), samples failing to load, code that throws at runtime.
+The owner has selected the five UX choices for #9–#12: typed values plus knob
+dragging with Shift fine control and double-click reset; Replace / Cancel for
+occupied inputs; deletion without auto-bridging; a silent MIX → OUT starter;
+and request Stop after a surfaced runtime failure. Touch remains later.
+See [decisions](decisions.md#interaction-policy), [v1 value input](v1-scope.md#value-input),
+and the [detailed interaction handoff](interaction-proposal.md).
+
+The handoff covers cable target states and explanations, placement/full rows,
+deleting modules, half-typed code, audio activation, samples and runtime errors.
+Production behavior remains #5/#8 work, following the generator/reader/engine
+dependency order above. Owner approval does not close the remaining persistence,
+source-mapping, late-error or cancellation gaps recorded in the handoff.
 
 ## Technical questions
 

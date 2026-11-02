@@ -25,6 +25,15 @@ Sixteen modules, chosen so that between them every feature of the app gets exerc
 
 The rest of the catalog (EUCLID, CLOCK, CHANCE, NOISE, FM, RAND, CRUSH, PAN, REV, PALINDROME and more) ships shortly after, without new app features.
 
+## Value input
+
+Owner decision for #9: v1 includes typed value readouts, vertical knob dragging,
+Shift for fine control, and double-click reset to the catalog default. This
+explicitly brings knob dragging into v1; touch-specific work remains later.
+See the [interaction handoff](interaction-proposal.md#9-values-in-v1) for
+validation, snapping, drag cancellation and live-update behavior. Implementation
+belongs to #5/#8.
+
 ## Motion defaults
 
 | Element                           | Default                                                          | Alternatives considered            |
@@ -37,7 +46,7 @@ The rest of the catalog (EUCLID, CLOCK, CHANCE, NOISE, FM, RAND, CRUSH, PAN, REV
 
 ## Later (deliberately not v1)
 
-- Drag-to-turn knobs and a touch-friendly UI (end goal). v1 still needs a minimal way to set values — see [`build-plan.md`](build-plan.md).
+- A touch-friendly UI (end goal). Pointer knob dragging is included in v1 as described above.
 - Keyboard patching and screen-reader support.
 - Hints and explainers (including plain-language knob labels as a setting that works on every look).
 - Accounts and share links.
