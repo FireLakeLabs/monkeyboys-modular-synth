@@ -1,0 +1,631 @@
+{
+  "date": "2026-11-02",
+  "runs": [
+    {
+      "results": [
+        {
+          "firstPlay": "running",
+          "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        },
+        {
+          "bpm": 90,
+          "edits": 60,
+          "events": 7,
+          "intervals": [
+            0.3333333333333335, 0.3333333333333335, 0.33333333333333304, 0.33333333333333304,
+            0.33333333333333304, 0.3333333333333339
+          ],
+          "baseline": {
+            "frames": 110080,
+            "rms": 0.022967653152145398,
+            "longestSilence": 1,
+            "maxDelta": 0.015038464218378067
+          },
+          "edited": {
+            "frames": 114176,
+            "rms": 0.023029284602577003,
+            "longestSilence": 1,
+            "maxDelta": 0.015038464218378067
+          }
+        },
+        {
+          "bpm": 120,
+          "edits": 60,
+          "events": 10,
+          "intervals": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
+          "baseline": {
+            "frames": 110592,
+            "rms": 0.023073472005889478,
+            "longestSilence": 1,
+            "maxDelta": 0.015012795105576515
+          },
+          "edited": {
+            "frames": 114176,
+            "rms": 0.023156995589206048,
+            "longestSilence": 1,
+            "maxDelta": 0.015012795105576515
+          }
+        },
+        {
+          "bpm": 160,
+          "edits": 60,
+          "events": 13,
+          "intervals": [
+            0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875,
+            0.1875
+          ],
+          "baseline": {
+            "frames": 110080,
+            "rms": 0.023162762702769762,
+            "longestSilence": 1,
+            "maxDelta": 0.014999092556536198
+          },
+          "edited": {
+            "frames": 114688,
+            "rms": 0.023036154633340935,
+            "longestSilence": 1,
+            "maxDelta": 0.014999091625213623
+          }
+        },
+        {
+          "code": "note(\"c3\"",
+          "error": "SyntaxError: Unexpected token (1:9)",
+          "eventsAfterFailure": 6
+        },
+        {
+          "code": "note(\"c3\").missingMethod()",
+          "error": "TypeError: note(...).missingMethod is not a function",
+          "eventsAfterFailure": 6
+        },
+        {
+          "partialSideEffectError": "TypeError: note(...).missingMethod is not a function"
+        },
+        {
+          "sideEffectIntervals": [16.982033333333334, 17.482033333333334, 17.982033333333334]
+        },
+        {
+          "bank": "default",
+          "audioState": "running",
+          "rms": 0.02463156663955001
+        },
+        {
+          "bank": "RolandTR808",
+          "audioState": "running",
+          "rms": 0.0074443188831506985
+        },
+        {
+          "bank": "RolandTR909",
+          "audioState": "running",
+          "rms": 0.022840459411491477
+        },
+        {
+          "orbits": [
+            {
+              "id": 3,
+              "delay": 0.125,
+              "feedback": 0.20000000298023224,
+              "roomsize": 2
+            },
+            {
+              "id": 4,
+              "delay": 0.5,
+              "feedback": 0.6000000238418579,
+              "roomsize": 6
+            }
+          ]
+        },
+        {
+          "stopNewEvents": 0
+        },
+        {
+          "capture": {
+            "frames": 1367424,
+            "sampleRate": 48000
+          }
+        }
+      ],
+      "running": false
+    },
+    {
+      "results": [
+        {
+          "firstPlay": "running",
+          "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        },
+        {
+          "bpm": 90,
+          "edits": 60,
+          "events": 7,
+          "intervals": [
+            0.3333333333333428, 0.3333333333333428, 0.3333333333333144, 0.3333333333333428,
+            0.3333333333333428, 0.3333333333333144
+          ],
+          "baseline": {
+            "frames": 110592,
+            "rms": 0.022941010316389218,
+            "longestSilence": 1,
+            "maxDelta": 0.015038464218378067
+          },
+          "edited": {
+            "frames": 114688,
+            "rms": 0.023072501779129232,
+            "longestSilence": 1,
+            "maxDelta": 0.015038464218378067
+          }
+        },
+        {
+          "bpm": 120,
+          "edits": 60,
+          "events": 10,
+          "intervals": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
+          "baseline": {
+            "frames": 110592,
+            "rms": 0.023063312592940075,
+            "longestSilence": 1,
+            "maxDelta": 0.015012795105576515
+          },
+          "edited": {
+            "frames": 113664,
+            "rms": 0.023157394479696242,
+            "longestSilence": 1,
+            "maxDelta": 0.015012795105576515
+          }
+        },
+        {
+          "bpm": 160,
+          "edits": 60,
+          "events": 13,
+          "intervals": [
+            0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875,
+            0.1875
+          ],
+          "baseline": {
+            "frames": 110080,
+            "rms": 0.023162762702769762,
+            "longestSilence": 1,
+            "maxDelta": 0.014999092556536198
+          },
+          "edited": {
+            "frames": 114176,
+            "rms": 0.023045312457076066,
+            "longestSilence": 1,
+            "maxDelta": 0.014999091625213623
+          }
+        },
+        {
+          "code": "note(\"c3\"",
+          "error": "SyntaxError: Unexpected token (1:9)",
+          "eventsAfterFailure": 6
+        },
+        {
+          "code": "note(\"c3\").missingMethod()",
+          "error": "TypeError: note(...).missingMethod is not a function",
+          "eventsAfterFailure": 6
+        },
+        {
+          "partialSideEffectError": "TypeError: note(...).missingMethod is not a function"
+        },
+        {
+          "sideEffectIntervals": [164.3100333333333, 164.8100333333333, 165.3100333333333]
+        },
+        {
+          "bank": "default",
+          "audioState": "running",
+          "rms": 0.024631566639549587
+        },
+        {
+          "bank": "RolandTR808",
+          "audioState": "running",
+          "rms": 0.007444318883738139
+        },
+        {
+          "bank": "RolandTR909",
+          "audioState": "running",
+          "rms": 0.022793911963585572
+        },
+        {
+          "orbits": [
+            {
+              "id": 3,
+              "delay": 0.125,
+              "feedback": 0.20000000298023224,
+              "roomsize": 2
+            },
+            {
+              "id": 4,
+              "delay": 0.5,
+              "feedback": 0.6000000238418579,
+              "roomsize": 6
+            }
+          ]
+        },
+        {
+          "stopNewEvents": 0
+        },
+        {
+          "capture": {
+            "frames": 1367552,
+            "sampleRate": 48000
+          }
+        }
+      ],
+      "running": false,
+      "visibility": "visible"
+    },
+    {
+      "results": [
+        {
+          "firstPlay": "running",
+          "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        },
+        {
+          "bpm": 90,
+          "edits": 60,
+          "events": 7,
+          "intervals": [
+            0.3333333333333428, 0.3333333333333428, 0.3333333333333144, 0.3333333333333428,
+            0.3333333333333428, 0.3333333333333144
+          ],
+          "baseline": {
+            "frames": 110080,
+            "rms": 0.022967979052168252,
+            "longestSilence": 1,
+            "maxDelta": 0.01503124600276351
+          },
+          "edited": {
+            "frames": 114688,
+            "rms": 0.02301843579028344,
+            "longestSilence": 1,
+            "maxDelta": 0.01503124600276351
+          }
+        },
+        {
+          "bpm": 120,
+          "edits": 60,
+          "events": 10,
+          "intervals": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
+          "baseline": {
+            "frames": 110464,
+            "rms": 0.02306413470908769,
+            "longestSilence": 1,
+            "maxDelta": 0.015031254850327969
+          },
+          "edited": {
+            "frames": 114176,
+            "rms": 0.023157906336936974,
+            "longestSilence": 1,
+            "maxDelta": 0.015031243208795786
+          }
+        },
+        {
+          "bpm": 160,
+          "edits": 60,
+          "events": 13,
+          "intervals": [
+            0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875,
+            0.1875
+          ],
+          "baseline": {
+            "frames": 110208,
+            "rms": 0.023216076663527898,
+            "longestSilence": 1,
+            "maxDelta": 0.01510041207075119
+          },
+          "edited": {
+            "frames": 114048,
+            "rms": 0.023017577703542482,
+            "longestSilence": 1,
+            "maxDelta": 0.014992578886449337
+          }
+        },
+        {
+          "code": "note(\"c3\"",
+          "error": "SyntaxError: Unexpected token (1:9)",
+          "eventsAfterFailure": 6
+        },
+        {
+          "code": "note(\"c3\").missingMethod()",
+          "error": "TypeError: note(...).missingMethod is not a function",
+          "eventsAfterFailure": 6
+        },
+        {
+          "partialSideEffectError": "TypeError: note(...).missingMethod is not a function"
+        },
+        {
+          "sideEffectIntervals": [210.0793, 210.5793, 211.0793]
+        },
+        {
+          "bank": "default",
+          "audioState": "running",
+          "rms": 0.024497456603680853
+        },
+        {
+          "bank": "RolandTR808",
+          "audioState": "running",
+          "rms": 0.008581536057203697
+        },
+        {
+          "bank": "RolandTR909",
+          "audioState": "running",
+          "rms": 0.022436464821138292
+        },
+        {
+          "orbits": [
+            {
+              "id": 3,
+              "delay": 0.125,
+              "feedback": 0.20000000298023224,
+              "roomsize": 2
+            },
+            {
+              "id": 4,
+              "delay": 0.5,
+              "feedback": 0.6000000238418579,
+              "roomsize": 6
+            }
+          ]
+        },
+        {
+          "stopNewEvents": 0
+        },
+        {
+          "capture": {
+            "frames": 1367040,
+            "sampleRate": 48000
+          }
+        }
+      ],
+      "running": false
+    },
+    {
+      "results": [
+        {
+          "firstPlay": "running",
+          "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        },
+        {
+          "bpm": 90,
+          "edits": 60,
+          "events": 7,
+          "intervals": [
+            0.3333333333333428, 0.3333333333333428, 0.3333333333333144, 0.3333333333333428,
+            0.3333333333333428, 0.3333333333333144
+          ],
+          "baseline": {
+            "frames": 110592,
+            "rms": 0.022941077772765096,
+            "longestSilence": 0,
+            "maxDelta": 0.01505129924044013
+          },
+          "edited": {
+            "frames": 113664,
+            "rms": 0.02305872861335635,
+            "longestSilence": 1,
+            "maxDelta": 0.01505129924044013
+          }
+        },
+        {
+          "bpm": 120,
+          "edits": 60,
+          "events": 10,
+          "intervals": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
+          "baseline": {
+            "frames": 110592,
+            "rms": 0.023068267263153988,
+            "longestSilence": 0,
+            "maxDelta": 0.01501529011875391
+          },
+          "edited": {
+            "frames": 113664,
+            "rms": 0.02317102760168289,
+            "longestSilence": 1,
+            "maxDelta": 0.01501529011875391
+          }
+        },
+        {
+          "bpm": 160,
+          "edits": 60,
+          "events": 13,
+          "intervals": [
+            0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875,
+            0.1875
+          ],
+          "baseline": {
+            "frames": 110080,
+            "rms": 0.02336527375353687,
+            "longestSilence": 0,
+            "maxDelta": 0.015283322893083096
+          },
+          "edited": {
+            "frames": 114176,
+            "rms": 0.023060957364725247,
+            "longestSilence": 1,
+            "maxDelta": 0.015010600909590721
+          }
+        },
+        {
+          "code": "note(\"c3\"",
+          "error": "SyntaxError: Unexpected token (1:9)",
+          "eventsAfterFailure": 6
+        },
+        {
+          "code": "note(\"c3\").missingMethod()",
+          "error": "TypeError: note(...).missingMethod is not a function",
+          "eventsAfterFailure": 6
+        },
+        {
+          "partialSideEffectError": "TypeError: note(...).missingMethod is not a function"
+        },
+        {
+          "sideEffectIntervals": [256.106, 256.606, 257.106]
+        },
+        {
+          "bank": "default",
+          "audioState": "running",
+          "rms": 0.024655082649712348
+        },
+        {
+          "bank": "RolandTR808",
+          "audioState": "running",
+          "rms": 0.007657950687409464
+        },
+        {
+          "bank": "RolandTR909",
+          "audioState": "running",
+          "rms": 0.0230818547112611
+        },
+        {
+          "orbits": [
+            {
+              "id": 3,
+              "delay": 0.125,
+              "feedback": 0.20000000298023224,
+              "roomsize": 2
+            },
+            {
+              "id": 4,
+              "delay": 0.5,
+              "feedback": 0.6000000238418579,
+              "roomsize": 6
+            }
+          ]
+        },
+        {
+          "stopNewEvents": 0
+        },
+        {
+          "capture": {
+            "frames": 1364992,
+            "sampleRate": 48000
+          }
+        }
+      ],
+      "running": false
+    },
+    {
+      "results": [
+        {
+          "firstPlay": "running",
+          "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+        },
+        {
+          "bpm": 90,
+          "edits": 60,
+          "events": 7,
+          "intervals": [
+            0.3333333333333144, 0.3333333333333144, 0.33333333333337123, 0.3333333333333144,
+            0.3333333333333144, 0.33333333333337123
+          ],
+          "baseline": {
+            "frames": 110080,
+            "rms": 0.022967979057200258,
+            "longestSilence": 1,
+            "maxDelta": 0.01503124600276351
+          },
+          "edited": {
+            "frames": 113664,
+            "rms": 0.023022232918768894,
+            "longestSilence": 1,
+            "maxDelta": 0.01503124600276351
+          }
+        },
+        {
+          "bpm": 120,
+          "edits": 60,
+          "events": 10,
+          "intervals": [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25],
+          "baseline": {
+            "frames": 110208,
+            "rms": 0.023067966600727206,
+            "longestSilence": 1,
+            "maxDelta": 0.015031254850327969
+          },
+          "edited": {
+            "frames": 114048,
+            "rms": 0.023168329595747803,
+            "longestSilence": 1,
+            "maxDelta": 0.015031243208795786
+          }
+        },
+        {
+          "bpm": 160,
+          "edits": 60,
+          "events": 13,
+          "intervals": [
+            0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875, 0.1875,
+            0.1875
+          ],
+          "baseline": {
+            "frames": 110080,
+            "rms": 0.023365352548876943,
+            "longestSilence": 1,
+            "maxDelta": 0.015188385266810656
+          },
+          "edited": {
+            "frames": 114176,
+            "rms": 0.023057998281401794,
+            "longestSilence": 1,
+            "maxDelta": 0.014992576092481613
+          }
+        },
+        {
+          "code": "note(\"c3\"",
+          "error": "SyntaxError: Unexpected token (1:9)",
+          "eventsAfterFailure": 6
+        },
+        {
+          "code": "note(\"c3\").missingMethod()",
+          "error": "TypeError: note(...).missingMethod is not a function",
+          "eventsAfterFailure": 6
+        },
+        {
+          "partialSideEffectError": "TypeError: note(...).missingMethod is not a function"
+        },
+        {
+          "sideEffectIntervals": [300.9913, 301.4913, 301.9913]
+        },
+        {
+          "bank": "default",
+          "audioState": "running",
+          "rms": 0.024630822464007926
+        },
+        {
+          "bank": "RolandTR808",
+          "audioState": "running",
+          "rms": 0.007444283462915374
+        },
+        {
+          "bank": "RolandTR909",
+          "audioState": "running",
+          "rms": 0.022793898413908074
+        },
+        {
+          "orbits": [
+            {
+              "id": 3,
+              "delay": 0.125,
+              "feedback": 0.20000000298023224,
+              "roomsize": 2
+            },
+            {
+              "id": 4,
+              "delay": 0.5,
+              "feedback": 0.6000000238418579,
+              "roomsize": 6
+            }
+          ]
+        },
+        {
+          "stopNewEvents": 0
+        },
+        {
+          "capture": {
+            "frames": 1366016,
+            "sampleRate": 48000
+          }
+        }
+      ],
+      "running": false
+    }
+  ]
+}

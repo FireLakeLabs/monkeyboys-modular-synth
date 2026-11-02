@@ -271,7 +271,15 @@ Hardware · Effects · 8 HP
 
 At ROOM 0 the module is bypassed and writes nothing.
 
-> **Open question — orbits.** In Strudel, delay and reverb are send effects on an _orbit_, shared by every voice on that orbit. Two voices with different DELAY settings on the same orbit will fight. The generator probably needs to give each voice with its own effect settings its own `.orbit(n)`. Decide during the code-generator work.
+**Orbit decision (#13).** DELAY and REVERB are send effects on one shared bus
+per orbit. Give each final audible voice its own `.orbit(n)`, even when dry or
+when settings currently match another voice. Both effects on that voice share
+its dedicated orbit. Place routing on the final mixer branch, outside any shared
+named pattern. This is generator routing metadata, so the module catalog needs
+no extra module/control. Preserve imported routing verbatim unless it is proven
+generator-owned. Allocation, source-mapping and structural replacement rules are
+in [translation rules](translation-rules.md#effect-orbits); the browser evidence
+is in [engine findings](engine-spike.md).
 
 ---
 

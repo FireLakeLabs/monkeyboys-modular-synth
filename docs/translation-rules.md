@@ -80,11 +80,53 @@ $: lead.jux(rev)
 
 Splitting an _audio_ output means the voice plays twice in Strudel, so levels add up — the same as sending one signal into two mixer channels.
 
+## Effect orbits
+
+Each final audible voice gets a dedicated positive integer `.orbit(n)`, including
+voices with no active send effects. Allocate `1, 2, …` in the same deterministic
+mixer-channel traversal order used for the emitted `$:` lines (a voice wired
+directly to OUT is a single final voice). Do not combine voices because their
+current effect settings happen to match. Parameter edits and DELAY/REVERB bypass
+changes retain the allocation while the final voice set and order stay the same.
+
+Append routing at the end of the final voice expression, after pattern transforms,
+CODE and mixer gain. Shared `const` patterns carry no generator-owned orbit: each
+fan-out branch gets its own final routing call.
+
+```js
+const lead = note("c3 e3").s("sawtooth")
+$: lead.delay(.4).delaytime(.375).delayfeedback(.5).orbit(1)
+$: lead.room(.5).roomsize(4).orbit(2)
+$: s("bd*4").orbit(3)
+```
+
+Strudel has one delay and one reverb bus per orbit. Separate buses prevent
+voices from overwriting each other's delay time/feedback or reverb size; even
+identical settings remain separate so editing one voice cannot affect another.
+Both effects on one voice use that voice's orbit. This is routing metadata, not
+an extra module or a catalog control.
+
+Only calls with **known generator provenance** can be excluded from module
+matching and mapped to a final voice's routing. Their source ranges remain part
+of the retained document and do not consume a module identity. Never infer
+ownership from a literal integer alone. Imported shared, patterned, computed or
+otherwise unrepresentable orbit routing stays exact source/CODE; do not silently
+renumber, relocate or append an overriding orbit to it. Import normalization
+requires explicit user intent in the future reader/workspace work.
+
+Adding, deleting or reordering final voices can renumber the allocation. Engine
+integration (#4) must distinguish this structural replacement from a parameter
+edit and reset the old global effect buses when the allocation changes, so tails
+cannot transfer to a different voice. It must also reset buses when loading a
+new patch. Do not reset them on every knob edit. This spike decides the contract;
+allocator/generator integration and its graph/round-trip tests remain with #3/#4.
+See [engine findings](engine-spike.md) for runtime evidence and limitations.
+
 ## Generated code conventions
 
 - `setcpm(bpm/4)` first, written as `setcpm(120/4)` so the BPM stays readable. v1 assumes four beats per cycle.
 - Named patterns (`const`) next, in rack order.
-- Then one `$:` line per mixer input, in channel order.
+- Then one `$:` line per mixer input, in channel order, with final voice routing as defined in [effect orbits](#effect-orbits).
 - Two-space indentation for chained calls; one method per line unless two belong together (`.attack(…).decay(…)`, `.delay(…).delaytime(…)`).
 - Knobs at their default value are omitted when Strudel’s own default matches (for example `.speed(1)`, `.postgain(1)`). Where the module’s default differs from Strudel’s, it is always written.
 - Numbers are written with up to three decimal places and no trailing zeros.
