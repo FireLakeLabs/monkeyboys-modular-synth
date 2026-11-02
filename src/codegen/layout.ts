@@ -54,6 +54,7 @@ export function syntax(text: string): {
   root: string
   calls: { name: string; arguments: string; start: number; end: number }[]
   hasOrbit: boolean
+  orbitNumbers: number[]
 } {
   // Parentheses make CODE sources (including object/arrow expressions) unambiguous.
   const program = parse(`(${text}\n)`, { ecmaVersion: 'latest', sourceType: 'script' })
@@ -107,7 +108,42 @@ export function syntax(text: string): {
       return true
     return Object.values(value).some(usesOrbit)
   }
-  return { root, calls, hasOrbit: usesOrbit(statement.expression) }
+  const orbitNumbers = new Set<number>()
+  function reserveOrbits(value: unknown): void {
+    if (typeof value !== 'object' || value === null) return
+    if (
+      'type' in value &&
+      value.type === 'CallExpression' &&
+      'callee' in value &&
+      typeof value.callee === 'object' &&
+      value.callee !== null &&
+      'type' in value.callee &&
+      value.callee.type === 'MemberExpression' &&
+      'property' in value.callee &&
+      typeof value.callee.property === 'object' &&
+      value.callee.property !== null &&
+      (('name' in value.callee.property && value.callee.property.name === 'orbit') ||
+        ('value' in value.callee.property && value.callee.property.value === 'orbit')) &&
+      'arguments' in value &&
+      Array.isArray(value.arguments)
+    ) {
+      const argument: unknown = value.arguments[0]
+      if (
+        typeof argument === 'object' &&
+        argument !== null &&
+        'type' in argument &&
+        argument.type === 'Literal' &&
+        'value' in argument &&
+        typeof argument.value === 'number' &&
+        Number.isInteger(argument.value) &&
+        argument.value > 0
+      )
+        orbitNumbers.add(argument.value)
+    }
+    for (const child of Object.values(value)) reserveOrbits(child)
+  }
+  reserveOrbits(statement.expression)
+  return { root, calls, hasOrbit: usesOrbit(statement.expression), orbitNumbers: [...orbitNumbers] }
 }
 
 export function bindScope(

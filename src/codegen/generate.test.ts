@@ -248,10 +248,10 @@ describe('CV routing', () => {
   )
 
   it.each([
-    ['vcf', {}, '.lpf(sine\n  .slow(4).range(800, 2400))'],
-    ['vca', {}, '.gain(sine\n  .slow(4).range(0.8, 0.3))'],
-    ['vcf', { shape: 'saw', rate: 0.5, depth: -200 }, '.lpf(saw\n  .fast(2).range(800, 600))'],
-    ['vca', { shape: 'tri', rate: 1, depth: -0.7 }, '.gain(tri.range(0.8, 0.1))'],
+    ['vcf', {}, '.lpf(sine\n  .slow(4)\n  .range(800, 2400))'],
+    ['vca', {}, '.gain(sine\n  .slow(4)\n  .range(0.8, 0.3))'],
+    ['vcf', { shape: 'saw', rate: 0.5, depth: -200 }, '.lpf(saw\n  .fast(2)\n  .range(800, 600))'],
+    ['vca', { shape: 'tri', rate: 1, depth: -0.7 }, '.gain(tri\n  .range(0.8, 0.1))'],
   ] satisfies [string, Record<string, ControlValue>, string][])(
     'routes LFO into %s with target units',
     (type, values, expected) => {
@@ -264,6 +264,16 @@ describe('CV routing', () => {
     },
   )
 
+  it('preserves a trailing CODE comment on a CV signal without swallowing range scaling', () => {
+    const filter = module('vcf'),
+      lfo = module('lfo'),
+      code = module('code', { text: '.fast(2) // keep' })
+    const patch = chain(seq(), osc(), filter, out())
+    patch.modules.push(lfo, code)
+    patch.cables.push(wire(lfo, code), wire(code, filter, 'cv'))
+    expect(sound(patch)).toContain('.fast(2) // keep\n  .range(800, 2400)')
+  })
+
   it('names shared LFO signals once and scales separately at each destination', () => {
     const filter = module('vcf')
     const amp = module('vca')
@@ -273,8 +283,8 @@ describe('CV routing', () => {
     patch.cables.push(wire(lfo, filter, 'cv'), wire(lfo, amp, 'cv'))
     patch.names['lfo1:out'] = 'wobble'
     expect(sound(patch)).toContain('const wobble = sine\n  .slow(4)')
-    expect(sound(patch)).toContain('.lpf(wobble.range(800, 2400))')
-    expect(sound(patch)).toContain('.gain(wobble.range(0.8, 0.3))')
+    expect(sound(patch)).toContain('.lpf(wobble\n  .range(800, 2400))')
+    expect(sound(patch)).toContain('.gain(wobble\n  .range(0.8, 0.3))')
   })
 })
 
@@ -416,6 +426,31 @@ $: lead
     expect(sound(patch)).toContain('.iter(4)\n  .postgain(0.125)\n  .orbit(1)')
     expect(sound(patch)).toContain('$: mb_osc1\n  .iter(4)\n  .postgain(0.25)\n  .orbit(2)')
     expect(sound(patch)).not.toContain('stack(')
+  })
+
+  it.each([1, 2])('reserves CODE-owned orbit %s before routing ordinary voices', (owned) => {
+    const source = seq(),
+      oscillator = osc(),
+      code = module('code', { text: `.orbit(${owned})` }),
+      mix = module('mix'),
+      output = out()
+    const patch: Patch = {
+      version: 1,
+      modules: [source, oscillator, code, mix, output],
+      names: {},
+      cables: [
+        wire(source, oscillator),
+        wire(oscillator, code),
+        wire(code, mix, 'in1'),
+        wire(oscillator, mix, 'in2'),
+        wire(mix, output),
+      ],
+    }
+    const generated = owned === 1 ? 2 : 1
+    expect(sound(patch).match(/\.orbit\(\d\)/g)).toEqual([
+      `.orbit(${owned})`,
+      `.orbit(${generated})`,
+    ])
   })
 
   it('preserves source-owned orbit routing through multiple named dependencies', () => {

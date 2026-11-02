@@ -191,7 +191,7 @@ export function generate(patch: Patch): string {
     if (expressions.length !== 1 || !signal)
       throw new Error('CV requires one modulation expression')
     return {
-      text: `${signal.text}.range(${numeric(base)}, ${numeric(base + depth)})`,
+      text: append(signal, `.range(${numeric(base)}, ${numeric(base + depth)})`).text,
       modules: [
         ...new Set([
           ...signal.owners.map((owner) => owner.module),
@@ -409,7 +409,14 @@ export function generate(patch: Patch): string {
       if (definitions.has(key)) writeDefinition(key)
     }
   }
-  voices.forEach((original, index) => {
+  const reservedOrbits = new Set(
+    [
+      ...voices,
+      ...[...definitions.values()].flatMap((definition) => definition.expressions),
+    ].flatMap((expression) => syntax(expression.text).orbitNumbers),
+  )
+  let nextOrbit = 1
+  voices.forEach((original) => {
     const gain = original.mixers.reduce((total, mixer) => total * mixer.gain, 1)
     let voice = original
     if (gain !== 1) {
@@ -420,7 +427,8 @@ export function generate(patch: Patch): string {
     }
     // Opaque routing is source-owned even when its argument happens to be an integer.
     const importedRouting = voice.sourceRouting || syntax(voice.text).hasOrbit
-    const orbit = importedRouting ? undefined : index + 1
+    while (reservedOrbits.has(nextOrbit)) nextOrbit++
+    const orbit = importedRouting ? undefined : nextOrbit++
     const expression = orbit === undefined ? voice : append(voice, `.orbit(${orbit})`)
     bindScope(layout, expression, undefined, orbit)
     lines.push(`$: ${expression.text}\n`)

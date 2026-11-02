@@ -189,7 +189,10 @@ trailing line comment. Chained CODE must start with `.`; malformed active CODE
 rejects generation. Unconnected CODE drafts are saved without parsing. Recognized
 CODE-owned orbit references (including computed `["orbit"]` and opaque callbacks)
 propagate through named outputs; the generator adds no overriding routing to
-those voices. Dynamic routing hidden behind arbitrary code cannot be inferred;
+those voices. Positive integer literal orbits in active CODE (including shared
+named expressions) are reserved before allocating generated voices from the
+remaining positive integers. This avoids overwriting an imported bus. Dynamic
+routing hidden behind arbitrary code cannot be inferred;
 full imported-document routing ownership remains #6 work.
 
 Numbers have at most three decimal places. CODE literals remain verbatim. The
