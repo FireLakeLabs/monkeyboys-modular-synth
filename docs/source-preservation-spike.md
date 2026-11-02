@@ -10,7 +10,7 @@ node --test scripts/source-spike.test.mts
 ```
 
 The tests also run in `npm run check` through `test:guardrails`. Acorn is an
-explicit development dependency. Nothing under `src/` imports the prototype.
+explicit production dependency shared with the generator. Nothing under `src/` imports the prototype.
 
 ## Decision: keep the document, splice edits
 

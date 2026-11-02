@@ -70,6 +70,14 @@ describe('module catalog', () => {
       for (const j of m.jacks.filter((jack) => jack.cvTarget)) {
         const target = m.controls.find((c) => c.id === j.cvTarget)
         expect(target?.kind, `${m.id}:${j.id}`).toBe('knob')
+        if (target?.kind === 'knob') {
+          expect(target.modulation?.default).toBeGreaterThanOrEqual(
+            target.modulation?.min ?? Infinity,
+          )
+          expect(target.modulation?.default).toBeLessThanOrEqual(
+            target.modulation?.max ?? -Infinity,
+          )
+        }
         expect(j.direction, `${m.id}:${j.id}`).toBe('in')
         expect(j.signal, `${m.id}:${j.id}`).toBe('mod')
       }

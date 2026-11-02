@@ -220,6 +220,7 @@ export const VCF: ModuleSpec = {
       default: 800,
       unit: 'Hz',
       taper: 'log',
+      modulation: { min: -10000, max: 10000, default: 1600 },
     },
     { kind: 'knob', id: 'res', label: 'RES', min: 0, max: 20, step: 0.5, default: 1 },
     { kind: 'knob', id: 'envAmt', label: 'ENV AMT', min: 0, max: 8, step: 0.5, default: 4 },
@@ -241,7 +242,16 @@ export const VCA: ModuleSpec = {
   category: 'shape',
   hp: 8,
   controls: [
-    { kind: 'knob', id: 'level', label: 'LEVEL', min: 0, max: 1, step: 0.05, default: 0.8 },
+    {
+      kind: 'knob',
+      id: 'level',
+      label: 'LEVEL',
+      min: 0,
+      max: 1,
+      step: 0.05,
+      default: 0.8,
+      modulation: { min: -1, max: 1, default: -0.5 },
+    },
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
