@@ -186,7 +186,9 @@ range operations on these continuous signals commute.
 CODE text is kept exact inside the surrounding generated expression. Source CODE
 is parenthesized, with a newline before the closing parenthesis to preserve a
 trailing line comment. Chained CODE must start with `.`; malformed active CODE
-rejects generation. Unconnected CODE drafts are saved without parsing. Recognized
+rejects generation. Unconnected CODE drafts are saved without parsing. A chained fragment beginning
+with `.` and no upstream receiver is also silent and retained; reconnecting its
+input restores its chain role. Recognized
 CODE-owned orbit references (including computed `["orbit"]` and opaque callbacks)
 propagate through named outputs; the generator adds no overriding routing to
 those voices. Positive integer literal orbits in active CODE (including shared

@@ -86,7 +86,17 @@ function omitted(node: Node, id: string): boolean {
 }
 
 /** Generate new rack-owned code. Imported documents must use source-preserving edits (#6). */
+export interface GeneratedDocument {
+  code: string
+  ranges: Record<string, { start: number; end: number }[]>
+}
+
 export function generate(patch: Patch): string {
+  return generateDocument(patch).code
+}
+
+/** Source ownership for selection, captured while writing this exact revision. */
+export function generateDocument(patch: Patch): GeneratedDocument {
   const nodes = graph(patch)
   const layout: RackLayout = {
     version: 1,
@@ -348,6 +358,8 @@ export function generate(patch: Patch): string {
         if (upstream) return emit(upstream).map((expression) => transform(node, expression))
         if (node.spec.id === 'code') {
           const text = string(node, 'text')
+          // A chained fragment with no receiver is an incomplete, silent path.
+          if (text.trimStart().startsWith('.')) return []
           syntax(text)
           // Preserve the exact source inside parentheses, including terminal line comments.
           return [{ ...append(blank(), `(${text}\n)`, node), sourceRouting: syntax(text).hasOrbit }]
@@ -388,7 +400,19 @@ export function generate(patch: Patch): string {
 
   const source = out ? input(out) : undefined
   const voices = source ? emit(source) : []
-  const lines = [tempoExpression.text + '\n']
+  const lines: string[] = []
+  const ranges: GeneratedDocument['ranges'] = {}
+  function write(expression: CodeExpression, prefix = '') {
+    const offset = lines.join('\n').length + (lines.length ? 1 : 0) + prefix.length
+    for (const owner of expression.owners) {
+      ;(ranges[owner.module] ??= []).push({
+        start: offset + owner.start,
+        end: offset + owner.end,
+      })
+    }
+    lines.push(`${prefix}${expression.text}\n`)
+  }
+  write(tempoExpression)
   const written = new Set<string>()
   function writeDefinition(key: string): void {
     if (written.has(key)) return
@@ -399,7 +423,7 @@ export function generate(patch: Patch): string {
       const name = definition.names[i]
       if (!name) throw new Error('Missing declaration name')
       bindScope(layout, expression, name)
-      lines.push(`const ${name} = ${expression.text}\n`)
+      write(expression, `const ${name} = `)
     })
     written.add(key)
   }
@@ -431,7 +455,7 @@ export function generate(patch: Patch): string {
     const orbit = importedRouting ? undefined : nextOrbit++
     const expression = orbit === undefined ? voice : append(voice, `.orbit(${orbit})`)
     bindScope(layout, expression, undefined, orbit)
-    lines.push(`$: ${expression.text}\n`)
+    write(expression, '$: ')
   })
-  return `${lines.join('\n')}\n${writeLayout(layout)}`
+  return { code: `${lines.join('\n')}\n${writeLayout(layout)}`, ranges }
 }
