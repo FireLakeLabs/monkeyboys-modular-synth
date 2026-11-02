@@ -54,7 +54,9 @@ function run(root: string, tool: 'typescript' | 'oxlint', args: string[]) {
 await test('runtime accepts the pinned version and rejects a different one', () => {
   const expected = readFileSync(join(repoRoot, '.node-version'), 'utf8').trim()
   assert.equal(checkRuntime(expected), undefined)
-  assert.match(checkRuntime('22.0.0') ?? '', /Use Node/)
+  // Intentionally unsupported input: this proves the runtime gate rejects it.
+  const unsupportedNodeVersion = '22.0.0'
+  assert.match(checkRuntime(unsupportedNodeVersion) ?? '', /Use Node/)
 })
 
 for (const project of ['tsconfig.app.json', 'tsconfig.node.json']) {

@@ -37,6 +37,32 @@ protects against accidentally inert checks; it does not prove every rule or
 combination is covered. The skill lockfile detects drift, not a coordinated change
 to both instructions and hashes; review those changes together.
 
+## Runtime and TypeScript configuration
+
+`.node-version` pins the runtime used locally and in CI. The root package's engine
+range sets installation compatibility; the runtime check requires the exact pin.
+Older versions in negative test fixtures are intentionally rejected inputs.
+Dependency engine ranges in `package-lock.json` describe those packages' support,
+not additional supported development environments for this repository.
+
+[tsconfig.base.json](../tsconfig.base.json) owns shared compiler safety settings.
+The app and tooling projects inherit that policy using TypeScript's
+[`extends`](https://www.typescriptlang.org/tsconfig/extends.html) mechanism, while
+retaining their different environments:
+
+- [App](../tsconfig.app.json): browser DOM and Vite types, JSX, and bundler module resolution for `src`.
+- [Tooling](../tsconfig.node.json): Node types and NodeNext module resolution for Vite/Vitest configuration and repository scripts; no DOM globals.
+
+`tsc` checks type compatibility, nullability, indexed access, optional properties,
+and return paths. Oxlint adds policies that valid TypeScript can still violate,
+including explicit `any`, non-null assertions, floating promises, React hooks,
+accessible JSX, and restricted imports. Some hygiene checks overlap, such as
+unused variables; that does not make either layer a replacement for the other.
+Oxlint's [type-aware mode](https://oxc.rs/docs/guide/usage/linter/type-aware.html)
+uses type information for lint rules; this repo does not enable its separate
+full type-check mode. The build runs `tsc -b` once for the actual projects; negative
+guardrail probes separately compile intentional invalid/valid fixtures.
+
 ## Review standards
 
 For stacked PRs, verify native GitHub stack membership using the

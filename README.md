@@ -27,7 +27,7 @@ command rejects a different version; `.npmrc` also enforces the supported engine
 range during installation.
 
 ```bash
-npm ci
+npm ci             # install the exact dependencies from the lockfile
 npm run dev        # start the dev server
 npm run check      # the complete local and CI gate
 npm test           # run the unit tests
