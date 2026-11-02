@@ -28,6 +28,8 @@ export interface KnobControl {
   detents?: readonly number[]
   /** The generator writes nothing when the knob holds this value. */
   omitAt?: number
+  /** LFO depth in this target control's units. */
+  modulation?: { min: number; max: number; default: number }
 }
 
 export interface SwitchOption {

@@ -219,6 +219,9 @@ Hardware · Modulate · 8 HP
 sine.range(800, 2400).slow(4)   // into VCF CV: CUTOFF 800, DEPTH +1600
 ```
 
+The target ranges/defaults below are owned by each target knob’s `modulation`
+data in the catalog. A missing LFO depth value uses that target default.
+
 The LFO writes nothing by itself; it replaces the number of the control it is patched into: `.range(knob, knob + depth)`. DEPTH is bipolar and takes the units of its target, so it is reset to the target’s default when re-patched:
 
 | Target     | DEPTH range         | Default |

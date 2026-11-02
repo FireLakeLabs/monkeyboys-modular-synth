@@ -105,6 +105,12 @@ verification; record them in [deployment evidence](deployment-verification.md).
 | Property testing               | Add deterministic seeds and shrinking for graph and round-trip properties once their contracts exist. Consider formal models only for a concrete property that benefits.                                                |
 | Assets and offline use         | Inventory sample/font sources, versions, licenses, and caching. Repository-owned development standards do not imply an offline audio application.                                                                       |
 
+The #3 generator now validates graph structure (including cycles and signals
+through passthrough modules) and control/layout values before emission. Its
+behavior tests cover generation, target-specific CV, fan-out, nested mixer gains,
+CODE source retention, routing provenance and saved JSON state. This does not
+yet establish mutation-owner validation, production import, or audible equivalence.
+
 Resolve open product questions in the owning spec and issue before encoding them
 as expected test results. Do not invent graph, persistence, or audio behavior to
 make a standards check pass.

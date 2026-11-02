@@ -5,9 +5,9 @@ the Node version in `.node-version`, then runs `npm run check`. It runs for pull
 requests, pushes to main, and manual dispatch. Its check job has read-only repository access,
 does not persist checkout credentials, and pins third-party action revisions.
 
-The gate checks runtime, formatting, skill integrity, lint, catalog tests,
+The gate checks runtime, formatting, skill integrity, lint, catalog/generator/engine tests,
 guardrail tests, TypeScript, and the production build. It does not play audio or
-prove the future reader/generator contracts. Guardrail fixtures are temporary and
+prove production import and audible equivalence. Guardrail fixtures are temporary and
 do not modify application files.
 
 Passing main builds also publish the exact checked artifact through a dedicated

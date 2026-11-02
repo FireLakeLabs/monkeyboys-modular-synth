@@ -40,11 +40,30 @@ The v1 envelope uses these fields:
   several calls; CV bindings include their target module ID and jack/control role.
 - `names`: output names keyed by stable `moduleId:jackId`, as in `Patch`.
 
-The exact descriptor encoding and module grouping belong to the interoperable
-writer/reader in #3/#6; the spike demonstrates matching with full normalized AST
-argument descriptors, not a finalized serializer. Do not ship a second wire
-encoding from the throwaway prototype. There is no shipped reader of the old
-proposed `lead.2` line format to migrate.
+The writer's types are in [`src/codegen/layout.ts`](../src/codegen/layout.ts).
+A scope has `id`, optional declaration `anchor`, `root` (a JSON string encoding the
+full normalized Acorn root expression), and ordered `calls` with `name` and
+`arguments` (a JSON string encoding the full normalized argument AST array).
+Normalization omits `start`, `end`, `loc` and `raw`; BigInt values use
+`{"bigint":"<decimal>"}`. The initial direct function call is both the root and
+call zero. Member calls follow in receiver order; nested callback/CV calls stay
+inside their outer argument descriptor. An identifier receiver has no initial
+call. Scopes include the tempo expression, declarations, and final voices.
+
+A module binding contains `scope`, `calls` (zero-based indices into that scope),
+and `role` (`module`, `cv`, `mixer`, or `tempo`). CV bindings also have
+`target: {module, jack, control}`. Several bindings can belong to the same module;
+several modules can bind the same outer call for CV or folded mixer gain. An
+empty call list binds a root-only expression (for example an unscaled `sine`).
+Omitted/bypassed/disconnected modules have no sounding bindings. A final scope's
+optional `routing: {call, orbit}` identifies the exact generator-owned routing
+call; it does not create a module binding. The reader must verify the full
+matching descriptor before trusting that provenance, never just a call index.
+
+Scope IDs (`scope1`, etc.) are opaque IDs for this generated revision, not `$:`
+line identities. The future reader reconciles them using the matching rules
+below. The writer is independent of the throwaway spike. There is no shipped
+reader of the old proposed `lead.2` line format to migrate.
 
 ## Matching rules
 
@@ -77,10 +96,20 @@ proposed `lead.2` line format to migrate.
   code edit triggers reconciliation before the next metadata write. If metadata
   cannot be interpreted, require an explicit replacement action before discarding it.
 
-## Remaining persistence questions
+## Saved rack state (#3)
 
-Knob values not expressed in code (OUT volume, bypassed settings), disconnected
-modules and cables need a separate saved-state contract before persistence ships.
-Stable identity does not prove that the entire `Patch` can be reconstructed from
-sounding code. These are acceptance work for the generator/reader and workspace
-persistence, not resolved by the layout matching spike.
+Every saved `modules` entry also retains its `values` object, including omitted
+controls, OUT volume, bypassed settings, and disconnected CODE drafts. `cables`
+retains the complete patch cable array, including IDs and disconnected paths.
+Missing control entries still mean catalog defaults. Positions, looks and values
+are preserved even for modules with no source bindings. `names` includes any
+names allocated by the writer. These fields allow exact rack-state recovery from
+an untouched generated document, separately from sounding-code reconstruction.
+
+Sounding code is authoritative after an external edit: #6 must validate and
+reconcile source bindings before applying saved values or cables, using values
+parsed from matching source for sounding controls. Unverifiable graph/state
+entries must not override code or attach by ordinal. Invalid/unknown metadata
+retains the original source as described above. Production reading, stale-state
+reconciliation, migrations and save/load UI remain #6/#8 work; the generator's
+JSON-state preservation tests do not claim to implement those features.

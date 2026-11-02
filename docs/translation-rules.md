@@ -153,3 +153,47 @@ See [engine findings](engine-spike.md) for runtime evidence and limitations.
   Multi-call modules and CV expressions need catalog-owned semantic bindings.
 - Parsing is not execution or sandboxing. Source equality, sound equivalence and
   saved rack identity are separate checks for the production reader/generator.
+
+## Rack generator contract (#3)
+
+`generate(patch)` in `src/codegen/generate.ts` is a pure writer for a new,
+rack-owned document. It does not accept imported source or replace the
+source-preserving editing contract above. The generator validates IDs, controls,
+layout, jack references, cardinality, signal compatibility (including through
+Alien/CODE passthroughs) and rejects cycles. Incomplete/disconnected chains are
+silent. No OUT means no voices; an empty rack uses the catalog tempo. ENV may
+only connect directly to VCF/VCA CV, as specified in the module catalog/spec.
+
+MIX is a virtual bus: recursively visit connected channels in catalog channel
+order. Nested mixer levels multiply into one final `.postgain(product)`; repeated
+Strudel `postgain` settings would overwrite rather than multiply. Transforms
+after MIX apply to each leaf voice. Final gain is written after transforms and
+before routing. MIX fan-out names each leaf expression with a numbered suffix,
+rather than generating `stack()`. The levels remain on final branches, including
+when an intermediate bus has a named output.
+
+Shared declarations follow rack-array order except that dependencies are emitted
+first. Missing output names become deterministic collision-free `mb_<moduleId>`
+names; chosen names are recorded in the rack block. Explicit names must be valid
+JavaScript identifiers, unique, and must not shadow generator-used Strudel
+functions/signals. ENV has no independent expression: fan-out repeats its
+context-specific envelope calls at the destinations. Shared LFO outputs name the
+unscaled signal; each destination supplies its own `.range(base, base + depth)`.
+Absent LFO depth uses the target knob's catalog modulation default. An explicit
+depth is in target units and must fit every connected target's range. Rate and
+range operations on these continuous signals commute.
+
+CODE text is kept exact inside the surrounding generated expression. Source CODE
+is parenthesized, with a newline before the closing parenthesis to preserve a
+trailing line comment. Chained CODE must start with `.`; malformed active CODE
+rejects generation. Unconnected CODE drafts are saved without parsing. Recognized
+CODE-owned orbit references (including computed `["orbit"]` and opaque callbacks)
+propagate through named outputs; the generator adds no overriding routing to
+those voices. Positive integer literal orbits in active CODE (including shared
+named expressions) are reserved before allocating generated voices from the
+remaining positive integers. This avoids overwriting an imported bus. Dynamic
+routing hidden behind arbitrary code cannot be inferred;
+full imported-document routing ownership remains #6 work.
+
+Numbers have at most three decimal places. CODE literals remain verbatim. The
+writer does not mutate the patch and always writes a complete trailing rack block.
