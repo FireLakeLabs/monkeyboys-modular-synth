@@ -6,3 +6,4 @@ package-lock.json
 .agents/*LICENSE
 # Preserve the original design export verbatim.
 docs/design/design-canvas.html
+cdk.out/

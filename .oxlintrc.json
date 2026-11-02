@@ -2,7 +2,7 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "typescript", "oxc", "jsx-a11y"],
   "options": { "typeAware": true },
-  "ignorePatterns": ["dist/**", ".agents/skills/**"],
+  "ignorePatterns": ["dist/**", "cdk.out/**", ".agents/skills/**"],
   "rules": {
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
