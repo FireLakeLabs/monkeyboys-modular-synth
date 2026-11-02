@@ -18,6 +18,11 @@ The PNGs were extracted from the supplied ZIP; the HTML is an unchanged copy of 
 
 The canvas boards are mock-ups, not app code. Treat them as reference.
 
+For values, cable gestures, rack editing, and half-typed code/error states,
+see the [interaction proposal](interaction-proposal.md) and its
+[interactive storyboard](design/interaction-proposal.html). These are pending
+owner review; production implementation remains with #5 and #8.
+
 ## Boards
 
 | Board                         | What it shows                                                                                                                                                                                                                                        |

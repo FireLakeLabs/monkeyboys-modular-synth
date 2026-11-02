@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MonkeyBoy’s interaction proposal</title>
+    <style>
+      :root { color-scheme: dark; font-family: Barlow, system-ui, sans-serif; }
+      body { margin: 0; color: var(--foreground, #e4e6ea); }
+      * { box-sizing: border-box; }
+      .proposal { --mb-bg: #101113; --mb-panel: #15171b; --mb-border: #3b3f46; --mb-text: #e4e6ea; --mb-muted: #afb5bf; --mb-audio: #f4a462; --mb-shape: #f293ba; --mb-mod: #7db9f6; color: var(--mb-text); background: var(--mb-bg); border-radius: 12px; overflow: hidden; font: 14px/1.5 Barlow, system-ui, sans-serif; }
+      .proposal header, .review-controls, .transport, .status, .notes { padding: 16px; }
+      .proposal header { border-bottom: 1px solid var(--mb-border); display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+      .brand { color: var(--mb-audio); font-weight: 700; letter-spacing: 1px; }
+      .sub { color: var(--mb-muted); }
+      button, select, input { font: inherit; }
+      .proposal button, .proposal select, .proposal input { color: var(--mb-text); background: #24272c; border: 1px solid #626874; border-radius: 5px; padding: 7px 10px; }
+      .proposal button:disabled { opacity: .5; }
+      .proposal button:focus-visible, .proposal select:focus-visible, .proposal input:focus-visible { outline: 3px solid var(--mb-mod); outline-offset: 3px; }
+      .review-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: #1c1f24; }
+      .review-controls select { flex: 1; min-width: 180px; }
+      .transport { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border-bottom: 1px solid var(--mb-border); }
+      .transport strong { margin-right: auto; }
+      .transport button { border-color: var(--mb-audio); }
+      .workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+      .rack-pane, .code-pane { min-width: 0; padding: 16px; }
+      .code-pane { background: var(--mb-panel); border-left: 1px solid var(--mb-border); }
+      h2, h3, p { margin: 0 0 12px; }
+      h2 { font-size: 16px; }
+      h3 { font-size: 15px; }
+      .rack { background: #0a0b0d; padding: 14px 8px; border-top: 7px solid #3b3f46; border-bottom: 7px solid #3b3f46; }
+      .modules { display: flex; gap: 4px; justify-content: center; }
+      .module { flex: none; width: 120px; background: linear-gradient(100deg, #afb4bc, #e0e2e5, #a6acb5); color: #191c22; border-radius: 3px; border: 2px solid #858b95; }
+      .module.vca { width: 96px; }
+      .module-name { background: #1a1d22; color: #f4f5f6; padding: 7px; font-weight: 700; border-bottom: 3px solid var(--mb-shape); }
+      .knob { width: 48px; height: 48px; border-radius: 50%; margin: 18px auto 8px; border: 5px ridge #737a85; background: radial-gradient(at 35% 30%, #535b65, #171b20); position: relative; }
+      .knob::after { content: ''; position: absolute; height: 17px; width: 2px; background: #fafafa; top: 1px; left: 18px; transform: rotate(-35deg); transform-origin: bottom; }
+      .readout { margin: 8px; padding: 7px 2px; background: #13161a; color: #f293ba; text-align: center; font: 13px/1.5 monospace; }
+      .jack-row { display: flex; justify-content: space-around; margin: 18px 2px 6px; font: 11px/1.5 monospace; }
+      .jack { text-align: center; }
+      .socket { width: 20px; height: 20px; display: block; border-radius: 50%; border: 4px solid #737b87; background: var(--mb-audio); }
+      .socket.mod { background: var(--mb-mod); }
+      .wire { width: 220px; height: 46px; display: block; margin: 0 auto; }
+      .wire path { stroke: var(--mb-audio); fill: none; stroke-width: 5; }
+      .rack.stale .rack-surface { opacity: .45; }
+      .rack.stale { border-color: #6a5b35; }
+      .pane-note { color: var(--mb-muted); margin-top: 12px; }
+      pre { white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.8 'JetBrains Mono', monospace; margin: 0; }
+      .code-shape { color: var(--mb-shape); }
+      .code-audio { color: var(--mb-audio); }
+      .code-pattern { color: #e6d35f; }
+      .error-line { background: #4d252d; text-decoration: underline wavy #ffb5bc; }
+      .status { border-top: 1px solid var(--mb-border); background: #1c1f24; }
+      .status p:last-child, .notes p:last-child { margin-bottom: 0; }
+      .message { padding: 12px; background: #292d35; border-left: 3px solid var(--mb-mod); margin-bottom: 12px; }
+      .message.error { background: #39242b; border-color: #ffb5bc; }
+      .evidence { color: #f3d997; }
+      .notes { border-top: 1px solid var(--mb-border); }
+      details { border-top: 1px solid var(--mb-border); padding: 16px; }
+      summary { font-weight: 600; }
+      details > div { padding-top: 16px; }
+      .value-demo { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+      .value-demo input { width: 100px; }
+      .value-demo output { flex-basis: 100%; }
+      .targets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .target { padding: 12px 8px; border: 1px solid var(--mb-border); text-align: center; }
+      .target b { display: block; margin: 8px auto; border-radius: 50%; width: 30px; height: 30px; border: 3px solid var(--mb-audio); }
+      .target.odd b { border-style: dashed; }
+      .target.blocked b { border-color: #8c929b; }
+      .rail-plan { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: #0a0b0d; border-top: 5px solid #3b3f46; border-bottom: 5px solid #3b3f46; }
+      .rail-plan span { display: block; padding: 16px 10px; background: #2b3038; }
+      .rail-plan .ghost { border: 2px dashed var(--mb-mod); background: #152638; }
+      .row-zone { border: 1px dashed var(--mb-muted); padding: 10px; margin: 8px 0; }
+      @media (max-width: 620px) { .workspace { grid-template-columns: 1fr; } .code-pane { border-left: 0; border-top: 1px solid var(--mb-border); } .targets { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main class="proposal">
+      <header>
+        <span class="brand">MONKEYBOY’S · MODULAR SYNTH</span
+        ><span class="sub">Interaction proposal · owner review</span>
+      </header>
+      <div class="review-controls">
+        <label for="scenario">Storyboard state</label
+        ><select id="scenario">
+          <option value="syntax">#12 · Half-typed code</option>
+          <option value="pending">#12 · Reading code</option>
+          <option value="synced">#12 · Rack matches code</option>
+          <option value="opaque">#12 · Valid code without controls</option>
+          <option value="runtime">#12 · Evaluation failed</option>
+          <option value="activation">#12 · Audio activation required</option>
+          <option value="samples">#12 · Sample failed</option>
+          <option value="output">#12 · Output failed / Stop failed</option>
+        </select>
+      </div>
+      <div class="transport">
+        <strong id="audio-state">Previous pattern scheduled</strong
+        ><button type="button" id="audio-action">Stop</button>
+      </div>
+      <div class="workspace">
+        <section class="rack-pane" aria-label="Proposed rack state">
+          <h2>RACK <span class="sub" id="rack-status">· previous code</span></h2>
+          <div class="rack stale" id="rack">
+            <div class="rack-surface">
+              <div class="modules">
+                <div class="module">
+                  <div class="module-name">VCF</div>
+                  <div class="knob" aria-hidden="true"></div>
+                  <div class="readout">CUTOFF · 800 Hz</div>
+                  <div class="jack-row">
+                    <span class="jack"><i class="socket"></i>IN</span
+                    ><span class="jack"><i class="socket mod"></i>CV</span
+                    ><span class="jack"><i class="socket"></i>OUT</span>
+                  </div>
+                </div>
+                <div class="module vca">
+                  <div class="module-name">VCA</div>
+                  <div class="knob" aria-hidden="true"></div>
+                  <div class="readout">LEVEL · 0.8</div>
+                  <div class="jack-row">
+                    <span class="jack"><i class="socket"></i>IN</span
+                    ><span class="jack"><i class="socket mod"></i>CV</span
+                    ><span class="jack"><i class="socket"></i>OUT</span>
+                  </div>
+                </div>
+              </div>
+              <svg class="wire" role="img" aria-label="Audio connection from VCF to VCA">
+                <path d="M 100 0 Q 120 55 140 0" />
+              </svg>
+            </div>
+          </div>
+          <p class="pane-note" id="rack-note">
+            Previous readable rack. Values and patching are temporarily locked; inspection stays
+            available.
+          </p>
+        </section>
+        <section class="code-pane" aria-label="Proposed code state">
+          <h2>STRUDEL <span class="sub">· editable draft</span></h2>
+          <div class="message error" id="message">
+            Line 3: expected an expression. Finish the call to update the rack.
+          </div>
+          <pre id="source"><span class="code-pattern">$: note("c2 eb2 g2")</span>
+<span class="code-audio">  .s("sawtooth")</span>
+<span class="code-shape error-line">  .lpf(</span></pre>
+        </section>
+      </div>
+      <div class="status" aria-live="polite">
+        <p id="sync-status">! Rack shows previous code</p>
+        <p class="evidence" id="dependency">
+          Reader parse-failure prototype reported tested. Production revision ownership and audio
+          status still need integration.
+        </p>
+        <button type="button" id="revert">Revert to last readable code</button>
+      </div>
+      <div class="notes">
+        <p>
+          Review fixture only. Scenario changes and recovery buttons simulate policy; this
+          storyboard has no parser, engine, saved rack, or audible output.
+        </p>
+        <p>
+          Reference: archived workspace, Instrument panels and translation key. Fixed module widths:
+          VCF 10 HP / VCA 8 HP. Readouts are illustrative.
+        </p>
+      </div>
+      <details>
+        <summary>#9 · Type a value; commit once</summary>
+        <div>
+          <p>
+            Use the recessed readout for exact values. Dragging knobs stays later. This fixture uses
+            VCA LEVEL: 0–1, step 0.05, default 0.8.
+          </p>
+          <form id="value-form" class="value-demo">
+            <label for="level">LEVEL</label
+            ><input id="level" type="text" inputmode="decimal" value="0.8" /><button type="submit">
+              Commit</button
+            ><button type="button" id="reset-value">Reset to 0.8</button
+            ><output id="value-result" aria-live="polite">Committed value: 0.8</output>
+          </form>
+          <p>
+            Enter commits; Escape cancels. Invalid or off-step input leaves the committed value
+            intact. Production controls also provide catalog-step minus/plus actions.
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>#10 · A destination explains the consequence</summary>
+        <div>
+          <div class="targets">
+            <div class="target">
+              <b>✓</b>Valid
+              <p>OSC → VCF IN<br />Audio</p>
+            </div>
+            <div class="target odd">
+              <b>!</b>Odd, allowed
+              <p>Second audio branch<br />Voice plays twice; levels add.</p>
+            </div>
+            <div class="target blocked">
+              <b>×</b>Blocked
+              <p>ENV → OSC NOTE<br />ENV needs VCF or VCA CV.</p>
+            </div>
+          </div>
+          <p>
+            Keep signal color. Put the explanation below the rack while dragging; retain odd-patch
+            warnings after drop. Escape cancels.
+          </p>
+          <p>
+            Move destination preserves the old cable until commit. An occupied input offers Replace
+            / Cancel. Select an output to list stacked destinations and edit its fan-out name.
+          </p>
+          <p class="evidence">
+            Effect-order warnings and shared FX routing await #2/#13. Source-preserving fan-out
+            naming awaits #1/#14.
+          </p>
+        </div>
+      </details>
+      <details>
+        <summary>#11 · Show the landing place before drop</summary>
+        <div>
+          <div class="rail-plan" aria-label="Schematic placement, not a scaled rail">
+            <span>SEQ · existing</span><span>OSC · existing</span
+            ><span class="ghost">VCF · proposed free interval</span>
+          </div>
+          <div class="row-zone">+ Add row · drop here when the current rail is full</div>
+          <p>
+            Snap to whole HP; never overlap or push neighbors. A full row rejects the drop and
+            exposes the new-row zone. Empty-space cable drops cancel.
+          </p>
+          <p>
+            Delete previews the module and incident cable count, then asks Delete / Cancel. Do not
+            bridge the remaining modules.
+          </p>
+          <p>
+            New patch recommendation: silent MIX → OUT starter. Preserve exactly one OUT. Confirm
+            replacement, offer export of the current draft, and stop scheduling first (tails may
+            ring out).
+          </p>
+          <p class="evidence">
+            Persisting unconnected modules, inactive values and matching layout identity remains
+            #1/#14 evidence work.
+          </p>
+        </div>
+      </details>
+    </main>
+    <script>
+      const scenario = document.getElementById('scenario')
+      const rack = document.getElementById('rack')
+      const rackStatus = document.getElementById('rack-status')
+      const rackNote = document.getElementById('rack-note')
+      const message = document.getElementById('message')
+      const source = document.getElementById('source')
+      const audioState = document.getElementById('audio-state')
+      const audioAction = document.getElementById('audio-action')
+      const syncStatus = document.getElementById('sync-status')
+      const dependency = document.getElementById('dependency')
+      const revert = document.getElementById('revert')
+      const validCode = '$: note("c2 eb2 g2")\n  .s("sawtooth")\n  .lpf(800)\n  .gain(0.8)'
+      const states = {
+        syntax: ['Previous pattern scheduled', 'Stop', 'Line 3: expected an expression. Finish the call to update the rack.', '! Rack shows previous code', 'Reader parse-failure prototype reported tested. Production revision ownership and audio status still need integration.', true],
+        pending: ['Previous pattern scheduled', 'Stop', 'Reading code…', '… Reading code; rack edits paused', '250 ms idle parse delay is a proposed UX default. Only the newest draft may be accepted.', true],
+        synced: ['Stopped', 'Play', 'Readable source accepted.', '✓ Rack matches code', 'Scheduling confirmation, smooth live updates and first-click activation await #2. Matching code does not prove sound.', false],
+        opaque: ['Stopped', 'Play', 'Some code has no controls. Preserve its exact source in CODE.', '✓ Rack matches code · CODE source retained', 'Reader prototype reports opaque source preserved. Production CODE placement and source mapping remain #6/#8 work.', false],
+        runtime: ['Scheduling stopped after error · simulated', 'Play again', 'Could not apply code. Stop requested after evaluation failed.', '✓ Rack matches code · evaluation failed', 'No rollback guarantee: tempo or other effects may have changed before the throw. Explicit error and Stop signals await #2.', false],
+        activation: ['Audio activation required', 'Enable audio', 'Click Enable audio to start playback.', '✓ Rack matches code · audio blocked', 'A click is not success. Wait for engine confirmation before showing a scheduled pattern; first-click behavior awaits #2.', false],
+        samples: ['Sample status unavailable', 'Stop', 'Sample unavailable: RolandTR909 / bd. Resource details are illustrative.', '✓ Rack matches code · sample failure', 'Bank identification and targeted retry need #2 evidence. Offer Stop / Play again if targeted retry is unavailable.', false],
+        output: ['Audio state unknown — Stop failed', 'Retry Stop', 'Audio output failed. Stopping could not be confirmed.', '✓ Rack matches code · audio fault', 'Scheduled/output failures differ from evaluation failures. Reliable reporting and Stop recovery await #2.', false],
+      }
+      let transportLabel = states.syntax[0]
+      let transportAction = states.syntax[1]
+      let applying = false
+      function render() {
+        const state = states[scenario.value]
+        rack.classList.toggle('stale', state[5])
+        rackStatus.textContent = state[5] ? '· previous code' : '· current readable code'
+        rackNote.textContent = state[5] ? 'Previous readable rack. Values and patching are temporarily locked; inspection stays available.' : scenario.value === 'opaque' ? 'Readable controls stay available. The unknown call is retained in a CODE block (not pictured).' : 'Current readable rack. Audio status is reported separately.'
+        message.textContent = state[2]
+        message.classList.toggle('error', ['syntax', 'runtime', 'samples', 'output'].includes(scenario.value))
+        audioState.textContent = transportLabel
+        audioAction.textContent = transportAction
+        audioAction.disabled = !transportAction.includes('Stop') && state[5]
+        syncStatus.textContent = state[3]
+        dependency.textContent = applying ? 'This fixture does not play audio. Production must wait for explicit engine confirmation; it must not infer success from a resolved evaluate promise.' : state[4]
+        revert.hidden = !state[5]
+        source.textContent = scenario.value === 'syntax' ? '$: note("c2 eb2 g2")\n  .s("sawtooth")\n  .lpf(' : scenario.value === 'runtime' ? validCode + '\nthrow new Error("example")' : scenario.value === 'opaque' ? validCode + '\n  .chunk(4, x => x.hurry(2))' : scenario.value === 'samples' ? '$: s("bd*4").bank("RolandTR909")' : validCode
+        if (scenario.value === 'syntax') {
+          const lines = source.textContent.split('\n')
+          source.textContent = lines.slice(0, 2).join('\n') + '\n'
+          const error = document.createElement('span')
+          error.className = 'error-line'
+          error.textContent = lines[2]
+          source.append(error)
+        }
+      }
+      scenario.addEventListener('change', () => { transportLabel = states[scenario.value][0]; transportAction = states[scenario.value][1]; applying = false; render() })
+      revert.addEventListener('click', () => { scenario.value = 'synced'; render() })
+      audioAction.addEventListener('click', () => {
+        if (transportAction.includes('Stop')) { transportLabel = 'Scheduling stopped · simulated'; transportAction = 'Play'; applying = false }
+        else { transportLabel = 'Applying… · simulated'; transportAction = 'Stop'; applying = true }
+        render()
+      })
+      const field = document.getElementById('level')
+      const result = document.getElementById('value-result')
+      let committed = '0.8'
+      document.getElementById('value-form').addEventListener('submit', (event) => {
+        event.preventDefault()
+        const value = Number(field.value)
+        if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(field.value.trim()) || !Number.isFinite(value) || value < 0 || value > 1) { result.textContent = 'Use a finite number from 0 to 1. Committed value stays ' + committed; return }
+        if (Math.abs(value * 20 - Math.round(value * 20)) > 0.000001) { result.textContent = 'Use steps of 0.05; nearest is ' + (Math.round(value * 20) / 20) + '. Committed value stays ' + committed; return }
+        committed = String(value)
+        result.textContent = 'Committed value: ' + committed + ' · simulated, no source or audio change'
+      })
+      field.addEventListener('keydown', (event) => { if (event.key === 'Escape') { field.value = committed; result.textContent = 'Cancelled. Committed value: ' + committed } })
+      document.getElementById('reset-value').addEventListener('click', () => { committed = '0.8'; field.value = committed; result.textContent = 'Committed value: 0.8 · default restored' })
+      render()
+    </script>
+  </body>
+</html>
