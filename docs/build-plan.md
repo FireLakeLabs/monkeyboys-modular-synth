@@ -2,6 +2,14 @@
 
 Foundations first; visual polish late. Each step has a matching GitHub issue.
 
+## Early public hosting
+
+[Issue #22](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/22)
+deploys the existing module library and fixed Play/Stop demo independently of
+the feature work below. This repository owns its separate AWS hosting stack;
+see [deployment operations](deployment.md) and [verification evidence](deployment-verification.md).
+The reader/engine spikes and feature dependency order remain unchanged.
+
 ## Build order
 
 1. **Module catalog.** `src/modules/catalog.ts` holds every v1 module as data (controls, ranges, defaults, jacks, Strudel functions). _Started in the initial commit, with integrity tests._
