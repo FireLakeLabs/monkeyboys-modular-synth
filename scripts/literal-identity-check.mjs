@@ -1,6 +1,6 @@
 // Run in the Vite page: (await import('/scripts/literal-identity-check.mjs')).verifyLiteralIdentity().
 // Exercises the accepted editor/rack path without starting audio.
-import { editorSource, replaceSource } from './editor-browser.mjs'
+import { editorSource, replaceSource, enableAutoApply } from './editor-browser.mjs'
 
 function assert(value, message) {
   if (!value) throw new Error(message)
@@ -18,6 +18,7 @@ export async function verifyLiteralIdentity() {
     .find((node) => node.textContent.trim() === 'Discard saved patch')
     ?.click()
   await until(() => document.querySelector('.cm-content'))
+  enableAutoApply()
   const { generate } = await import('../src/codegen/generate.ts')
   const { read } = await import('../src/reader/index.ts')
   const { sourceBody } = await import('../src/workspace/document.ts')

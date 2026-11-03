@@ -68,7 +68,7 @@ A module’s category colour is used for its dot on the panel and for the code i
   successful apply is an accepted-document boundary for #63 undo/redo.
   [#70](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/70) owns
   implementation, shortcut discovery and integration with the existing #12
-  error-state behavior; this decision does not mark that implementation shipped.
+  error-state behavior; see the [contract and observed verification](code-application.md).
 - **Library rack ownership (#55, decided 3 November 2026):** module exercises
   and the planned Start here collection (#80) are authored in generator style,
   with saved rack state, so rack edits work immediately. Attribution stays visible

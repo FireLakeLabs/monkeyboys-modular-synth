@@ -339,6 +339,12 @@
   gap: 8px;
   margin: 12px 0;
 }
+.auto-apply {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
 .code-actions button,
 .restore-prompt button,
 .open-library,
@@ -360,6 +366,10 @@
   background: var(--audio);
   border-color: var(--audio);
   color: #1a1408;
+}
+.apply-shortcuts {
+  font-size: 11px;
+  color: var(--muted);
 }
 .sync-status {
   font-size: 12px;

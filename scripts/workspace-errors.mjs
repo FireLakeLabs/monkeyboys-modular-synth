@@ -24,6 +24,7 @@ const pass = (group, name) => {
 }
 const source = (page) => page.getByRole('textbox', { name: 'Strudel source', exact: true })
 async function replaceSource(page, text) {
+  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
   await source(page).waitFor()
   await page.evaluate(async (value) => {
     ;(await import('/scripts/editor-browser.mjs')).replaceSource(value)
