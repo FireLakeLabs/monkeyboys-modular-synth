@@ -4,6 +4,8 @@ import { generate } from '../codegen/generate'
 import { read, tryRead } from '../reader'
 import {
   connect,
+  addRow,
+  removeRow,
   removeCable,
   placeModule,
   renameOutput,
@@ -22,6 +24,22 @@ describe('source-owned workspace', () => {
     expect(sourceBody(changed.source)).toBe(original.source)
     expect(read(changed.source).patch).toEqual(changed.patch)
     expect(read(changed.source).patch.modules.find((m) => m.id === filter.id)?.look).toBe('vintage')
+  })
+  it('saves empty rails as presentation metadata without touching imported source', () => {
+    const original = saveLayout(
+      read("// exact 🐒\r\n$: note('c3').s('sine').chunk(4,x=>x.rev()) /* tail */\r\n"),
+    )
+    const changed = editDocument(original, addRow(original.patch))
+    expect(sourceBody(changed.source)).toBe(sourceBody(original.source))
+    expect(read(changed.source).patch).toEqual(changed.patch)
+    expect(changed.patch.rows).toBe(3)
+    const removed = editDocument(changed, removeRow(changed.patch, 2))
+    expect(sourceBody(removed.source)).toBe(sourceBody(original.source))
+    const invalid = changed.source.replace('"rows": 3', '"rows": "2"')
+    expect(read(invalid).layout).toBe('invalid')
+    expect(generate(read(invalid))).toBe(invalid)
+    expect(read(changed.source.replace('"rows": 3', '"rows": 0')).layout).toBe('invalid')
+    expect(read(changed.source.replace('"rows": 3', '"rows": 0.5')).layout).toBe('invalid')
   })
   it('splices imported literal values without dropping quotes, comments, unsupported code, or identity', () => {
     const original = saveLayout(

@@ -14,12 +14,18 @@ interface Patch {
   version: 1
   modules: PlacedModule[]   // what is in the rack, where, in which look, with which values
   cables: Cable[]           // output jack → input jack
-  names: Record<string, string>  // "moduleId:jackId" → name, for outputs with 2+ cables
+  names: Record<string, string>  // "moduleId:jackId" → name, retained after a split
+  rows?: number                 // explicit rail count, including empty rows
 }
 ```
 
 - Module ids are the module type plus a counter: `seq1`, `vcf1`, `vcf2`.
 - Positions are a row index and an offset in HP from the left of that row.
+- Optional `rows` preserves empty rails. It is a positive safe integer greater than
+  every module row index. Older v1 files omit it and derive the rail count from
+  module positions (at least one row). Placement grows this count; removing the
+  last module in a row does not shrink it. Explicit removal of an empty row
+  shifts later rows up one, retaining module HP, looks, values and cables.
 - `values` holds one entry per control id from the catalog; missing entries mean “catalog default”.
 - A cable always runs from an `out` jack to an `in` jack. An `out` jack may have many cables; an `in` jack has at most one.
 
@@ -38,6 +44,7 @@ The v1 envelope uses these fields:
 - `modules`: stable module `id`, catalog `type`, `row`, `hp`, `look`, and source
   bindings to scope/call descriptors and semantic roles. One module can bind
   several calls; CV bindings include their target module ID and jack/control role.
+- Optional `rows`: the saved rail count from `Patch`, including empty rows.
 - `names`: output names keyed by stable `moduleId:jackId`, as in `Patch`.
 - Optional `source`: the exact executable body of a source-owned workspace file,
   without a rack block. This accepted snapshot binds saved state to imported

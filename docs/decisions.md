@@ -61,7 +61,8 @@ A module’s category colour is used for its dot on the panel and for the code i
 
 Owner choices for #9–#12, approved 2 November 2026. The
 [interaction handoff](interaction-proposal.md) gives detailed flows and remaining
-technical limits; production implementation remains #5/#8.
+technical limits; [interaction evidence](interaction-verification.md) records
+production acceptance for #9–#11.
 
 - **Values in v1:** typed values and vertical knob dragging, Shift for fine
   control, double-click to reset to the catalog default. This expands the prior

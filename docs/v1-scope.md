@@ -31,8 +31,8 @@ Owner decision for #9: v1 includes typed value readouts, vertical knob dragging,
 Shift for fine control, and double-click reset to the catalog default. This
 explicitly brings knob dragging into v1; touch-specific work remains later.
 See the [interaction handoff](interaction-proposal.md#9-values-in-v1) for
-validation, snapping, drag cancellation and live-update behavior. Implementation
-belongs to #5/#8.
+validation, snapping, drag cancellation and live-update behavior. See
+[production verification](interaction-verification.md) for the #9 acceptance evidence.
 
 ## Motion defaults
 

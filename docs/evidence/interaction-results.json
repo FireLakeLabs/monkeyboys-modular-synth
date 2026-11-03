@@ -1,0 +1,54 @@
+{
+  "interactions": {
+    "browser": "156.0.8078.4",
+    "checks": [
+      "silent starter; existing OUT selects without duplication",
+      "typed validation and valid blur: no draft evaluation or silent clamping",
+      "off-step typing requires explicit confirmation",
+      "log drag; Shift fine control; Escape/pointer cancellation; double-click and labeled reset",
+      "whole-graph blocked drop retains original source and cables",
+      "output-to-output cancels without starting a replacement gesture",
+      "occupied input: Cancel default and atomic Replace",
+      "fan-out warning preview and retained cable warning; visible plugs, destination selection, editable name",
+      "reroute cancellation and accepted move retain cable identity; removal retains chosen output name",
+      "explicit empty-row removal; empty rows survive code acceptance",
+      "focused Delete confirmation; Escape cancels; deletion selects a neighbor",
+      "New patch exports exact invalid draft and installs a silent stopped starter",
+      "no browser runtime errors"
+    ],
+    "errors": []
+  },
+  "placement": {
+    "browser": "156.0.8078.4",
+    "checks": [
+      "native library drag snaps to free whole HP, without auto-wiring",
+      "native module move retains neighbors and snaps final placement",
+      "full-row drop is refused without changing source",
+      "native Add row drop creates exactly one row and module at HP 0",
+      "save/open restores empty rows, module layout, defaults and cables",
+      "cancelled native placement leaves no module or row"
+    ]
+  },
+  "audio": {
+    "browser": "156.0.8078.4",
+    "signal": {
+      "rms": 0.01928426950309435,
+      "samples": 49152
+    },
+    "checks": [
+      "real Play produces nonzero post-master WebAudio signal",
+      "accepted coarse/fine drag updates source and returns to scheduled playback",
+      "New patch Cancel leaves current audio scheduling",
+      "New patch Replace stops scheduling before installing the silent starter",
+      "stopped value edits do not autoplay"
+    ],
+    "listening": false
+  },
+  "review": {
+    "browser": "156.0.8078.4",
+    "checks": [
+      "unity-gain MIX stays active through routing despite having no generated call",
+      "old v1 file retains its last empty row after deleting the last module"
+    ]
+  }
+}

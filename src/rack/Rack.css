@@ -324,6 +324,22 @@
 .jack.blocked {
   opacity: 0.4;
 }
+.jack.warning,
+.jack.unresolved {
+  outline-style: dashed;
+}
+.module-panel.inactive .module-dot {
+  box-shadow: none;
+  opacity: 0.45;
+}
+.plug-collar {
+  fill: var(--signal);
+  stroke: #30343b;
+  stroke-width: 2;
+}
+.warning-cable path:not(.cable-shadow) {
+  stroke-dasharray: 12 3;
+}
 .module-id {
   position: absolute;
   bottom: -14px;

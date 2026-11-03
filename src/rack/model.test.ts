@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CATALOG, VCF, SEQ } from '../modules/catalog'
 import { demoPatch } from '../patch/demo'
 import { generate, generateDocument } from '../codegen/generate'
+import { read } from '../reader'
 import { emptyPatch, type Patch } from '../patch/types'
 import {
   cableSignal,
@@ -17,6 +18,11 @@ import {
   snap,
   starterPatch,
   validateRack,
+  assessConnection,
+  cableWarnings,
+  removeRow,
+  addRow,
+  routedModules,
 } from './model'
 
 const ref = (module: string, jack: string) => ({ module, jack })
@@ -26,6 +32,88 @@ function add(patch: Patch, type: string, row = 1) {
 const sounding = (patch: Patch) => generate(patch).split('// ── @monkeyboy')[0]
 
 describe('rack editing', () => {
+  it('marks modules routed to OUT active even when unity controls emit no source call', () => {
+    let patch = placeModule(placeModule(placeModule(starterPatch(), 'seq', 0), 'osc', 0), 'vcf', 1)
+    patch = connect(patch, ref('seq1', 'note'), ref('osc1', 'note'))
+    patch = connect(patch, ref('osc1', 'out'), ref('mix1', 'in1'))
+    patch = setValue(patch, 'mix1', 'ch1', 1)
+    expect(generateDocument(patch).ranges['mix1']).toBeUndefined()
+    expect(routedModules(patch)).toEqual(new Set(['out1', 'mix1', 'osc1', 'seq1']))
+    const cable = patch.cables.find((c) => c.to.module === 'mix1')
+    if (!cable) throw new Error('Missing fixture')
+    expect(routedModules(removeCable(patch, cable.id))).toEqual(new Set(['out1', 'mix1']))
+  })
+  it('keeps the final empty rail when deleting from an older v1 file without rows', () => {
+    const patch = starterPatch()
+    patch.modules.push({ id: 'vcf1', type: 'vcf', row: 1, hp: 0, look: 'instrument', values: {} })
+    const next = removeModule(read(generate(patch)).patch, 'vcf1')
+    expect(next.rows).toBe(2)
+    expect(read(generate(next)).patch).toEqual(next)
+  })
+
+  it('protects OUT and removes only explicitly chosen empty rows', () => {
+    const patch = placeModule(starterPatch(), 'vcf', 2, 6)
+    expect(() => removeModule(patch, 'out1')).toThrow('OUT')
+    expect(() => removeRow(patch, 0)).toThrow('empty')
+    const next = removeRow(patch, 1)
+    expect(next.modules.find((m) => m.id === 'vcf1')).toMatchObject({ row: 1, hp: 6 })
+    expect(next.cables).toEqual(patch.cables)
+    expect(patch.modules.find((m) => m.id === 'vcf1')?.row).toBe(2)
+  })
+  it('saves empty rows and retains them after deleting their last module', () => {
+    let patch = addRow(starterPatch())
+    expect(patch.rows).toBe(2)
+    patch = placeModule(patch, 'vcf', 1, 0)
+    patch = removeModule(patch, 'vcf1')
+    expect(read(generate(patch)).patch).toEqual(patch)
+    expect(patch.rows).toBe(2)
+    expect(removeRow(patch, 1).rows).toBe(1)
+    expect(() => generate({ ...patch, rows: 0 })).toThrow('row')
+    expect(() => generate({ ...patch, rows: 1.5 })).toThrow('row')
+  })
+  it('explains fixed FX order even with a module between the effects', () => {
+    let patch = placeModule(
+      placeModule(placeModule(demoPatch(), 'reverb', 1), 'iter', 1),
+      'delay',
+      1,
+    )
+    patch = connect(patch, ref('vca1', 'out'), ref('reverb1', 'in'))
+    patch = connect(patch, ref('reverb1', 'out'), ref('iter1', 'in'))
+    expect(assessConnection(patch, ref('iter1', 'out'), ref('delay1', 'in'))).toMatchObject({
+      kind: 'warning',
+      message: expect.stringContaining('delay before reverb'),
+    })
+    patch = removeCable(patch, patch.cables.find((c) => c.to.module === 'iter1')?.id ?? '')
+    patch = connect(patch, ref('iter1', 'out'), ref('delay1', 'in'))
+    expect(assessConnection(patch, ref('reverb1', 'out'), ref('iter1', 'in'))).toMatchObject({
+      kind: 'warning',
+    })
+  })
+  it('previews warnings and unresolved signals without mutating the committed patch', () => {
+    let patch = placeModule(demoPatch(), 'mix', 1)
+    patch = connect(patch, ref('vca1', 'out'), ref('mix1', 'in1'))
+    const before = structuredClone(patch)
+    expect(assessConnection(patch, ref('vca1', 'out'), ref('mix1', 'in2'))).toMatchObject({
+      kind: 'warning',
+      signal: 'audio',
+    })
+    expect(assessConnection(patch, ref('seq1', 'note'), ref('mix1', 'in2')).kind).toBe('blocked')
+    expect(patch).toEqual(before)
+    patch = placeModule(patch, 'iter', 2)
+    expect(assessConnection(patch, ref('iter1', 'out'), ref('mix1', 'in2')).kind).toBe('unresolved')
+    patch = placeModule(patch, 'code', 2)
+    patch = connect(patch, ref('vca1', 'out'), ref('code1', 'in'))
+    expect(assessConnection(patch, ref('code1', 'out'), ref('mix1', 'in2'))).toMatchObject({
+      kind: 'unresolved',
+      signal: 'audio',
+    })
+    const split = connect(patch, ref('vca1', 'out'), ref('mix1', 'in2'))
+    const cable = split.cables.at(-1)
+    if (!cable) throw new Error('Missing fixture')
+    expect(cableWarnings(split, cable)).toContain(
+      'Audio split plays each connected branch; levels add.',
+    )
+  })
   it('converts only the sounding SEQ cells to text', () => {
     let patch = setValue(demoPatch(), 'seq1', 'len', 4)
     const before = sounding(patch)

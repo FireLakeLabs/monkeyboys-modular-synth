@@ -52,9 +52,10 @@ and the [detailed interaction handoff](interaction-proposal.md).
 
 The handoff covers cable target states and explanations, placement/full rows,
 deleting modules, half-typed code, audio activation, samples and runtime errors.
-Production behavior remains #5/#8 work, following the generator/reader/engine
-dependency order above. Owner approval does not close the remaining persistence,
-source-mapping, late-error or cancellation gaps recorded in the handoff.
+The #9–#11 value, cable and module flows are implemented; see the
+[acceptance audit and browser evidence](interaction-verification.md). Empty rows
+now persist in optional v1 metadata. The #12 late-error detection, runtime source
+mapping and arbitrary-evaluation cancellation limits remain as documented.
 
 ## Technical questions
 

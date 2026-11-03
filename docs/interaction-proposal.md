@@ -1,8 +1,8 @@
 # Interaction proposal: values, cables, rack editing, and errors
 
-**Five UX choices approved by the owner; detailed handoff remains under PR review.**
-This document specifies behavior for later implementation; it does not claim
-that the production rack or workspace implements it.
+**Five UX choices approved by the owner.** Values, cables, and rack editing
+for #9–#11 are implemented and verified in [interaction evidence](interaction-verification.md).
+The #12 error-state handoff below retains its separately documented engine limits.
 This proposal covers [#9](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/9),
 [#10](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/10),
 [#11](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/11), and
@@ -10,8 +10,8 @@ This proposal covers [#9](https://github.com/FireLakeLabs/monkeyboys-modular-syn
 This track owns #12. Production rack work belongs to
 [#5](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/5); workspace
 state and live editing belong to [#8](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/8).
-The owner choices select interaction policy; they do not prove production
-reader, generator, or workspace behavior.
+The owner choices select interaction policy; the linked verification reports
+provide production evidence separately from this storyboard.
 
 Open the [interactive storyboard](design/interaction-proposal.html) locally to
 review the proposed states. Its scenario selector simulates outcomes. It does
@@ -315,13 +315,13 @@ The owner selected all five choices, in order:
 These choices are recorded in [decisions](decisions.md#interaction-policy).
 The detailed interaction defaults remain reviewable implementation guidance.
 
-| Issue / acceptance topic                     | Reviewable proposal                                                                           | Production proof still required                                                                                                                                                        |
-| -------------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #9: set/reset values, detents, fine input    | Typed values, vertical dragging, Shift fine control, catalog snapping and double-click reset. | #5/#8: gestures, pointer cancellation, units, reset and coherent source updates; invalid typed input does not apply.                                                                   |
-| #10: drag, three target states, explanations | Target table, persistent warnings, reroute/remove/replace and fan-out selection.              | #3/#4/#5/#8: whole-graph validation, source-preserving names and warnings under the decided #2/#13 engine/orbit contract.                                                              |
-| #11: placement/full rows/deletion/new patch  | HP ghost, explicit row zone, deletion preview, silent MIX/OUT template.                       | #3/#5/#6/#8: no overlap, cancellation, cable cleanup, complete save/reopen state under #14’s decided matching contract.                                                                |
-| #12: half-typed/error line/last-good         | Separate draft/rack/audio state table, exact-revision diagnostics, no partial rack.           | #6/#8: integrate the proven #1 parser/source contract, including stale-edit rejection and CRLF/Unicode handling.                                                                       |
-| #12: blocked audio, samples, runtime         | Activation, incomplete-sample, evaluation and output states with explicit recovery.           | #4/#8: integrate observed engine behavior; prove fresh-profile activation, surfaced errors, retries and Stop intent; browser observation and audible verification reported separately. |
+| Issue / acceptance topic                     | Reviewable proposal                                                                           | Production proof still required                                                                                                                                                                                    |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| #9: set/reset values, detents, fine input    | Typed values, vertical dragging, Shift fine control, catalog snapping and double-click reset. | Verified: numeric validation, explicit snap confirmation, pointer/Escape cancellation, reset and live source/audio application. See [interaction evidence](interaction-verification.md).                           |
+| #10: drag, three target states, explanations | Target table, persistent warnings, reroute/remove/replace and fan-out selection.              | Verified: graph validation, warnings, unresolved CODE, replacement, rerouting, removal and named fan-out selection. Imported unsafe edits remain refused. See [interaction evidence](interaction-verification.md). |
+| #11: placement/full rows/deletion/new patch  | HP ghost, explicit row zone, deletion preview, silent MIX/OUT template.                       | Verified: native placement/movement, full rows, cancellation, deletion, silent replacement and complete saved state including empty rails. See [interaction evidence](interaction-verification.md).                |
+| #12: half-typed/error line/last-good         | Separate draft/rack/audio state table, exact-revision diagnostics, no partial rack.           | #6/#8: integrate the proven #1 parser/source contract, including stale-edit rejection and CRLF/Unicode handling.                                                                                                   |
+| #12: blocked audio, samples, runtime         | Activation, incomplete-sample, evaluation and output states with explicit recovery.           | #4/#8: integrate observed engine behavior; prove fresh-profile activation, surfaced errors, retries and Stop intent; browser observation and audible verification reported separately.                             |
 
 The five owner choices are approved while production integration in R1/R2 and
 the remaining limitations in E1/E2 remain open. Do not close
