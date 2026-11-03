@@ -44,6 +44,25 @@ the existing dark surfaces, orange primary action and Barlow panel typography.
 The module picker stays alongside the rack. See the
 [library interaction contract and observed layouts](patch-library.md).
 
+The header owns the single Play/Stop control and a catalog-backed BPM readout.
+BPM edits use the same source-preserving operation as OUT; OUT and code edits
+update the header. Stop remains available while starting, applying, stopping or
+recovering unknown scheduling, including with an invalid draft. Playing a patch
+without an executable voice reports “Nothing reaches OUT yet” and brings OUT's
+highlighted input into view; it does not initialize audio.
+
+New racks place MIX and OUT at the right end of the first rail. Palette clicks
+fill free space from the left. Clicks and drag previews share the same placement
+search: nearest whole HP on the requested rail, then the next free rail or a new
+one, without shifting neighbors. Saved and imported positions are retained.
+
+Open file is a keyboard-focusable button that opens the hidden file picker.
+Open in Strudel opens a separate tab using the accepted executable source,
+without rack metadata, encoded as UTF-8 Base64 in the URL hash. An unreadable
+draft shows that the last readable code will be used. Copy and Export retain
+the exact draft, including saved rack state. See the
+[five-issue acceptance evidence](workspace-trust-verification.md).
+
 | Token         | Value                                |
 | ------------- | ------------------------------------ |
 | Background    | `#101113`                            |

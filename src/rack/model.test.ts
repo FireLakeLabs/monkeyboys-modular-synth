@@ -11,6 +11,7 @@ import {
   draggedValue,
   freePosition,
   placeModule,
+  placementPosition,
   removeCable,
   removeModule,
   setValue,
@@ -32,6 +33,19 @@ function add(patch: Patch, type: string, row = 1) {
 const sounding = (patch: Patch) => generate(patch).split('// ── @monkeyboy')[0]
 
 describe('rack editing', () => {
+  it('adds a sequence, oscillator and filter before the starter mixer and output without moving neighbors', () => {
+    let patch = starterPatch()
+    const original = structuredClone(patch.modules)
+    for (const type of ['seq', 'osc', 'vcf']) patch = placeModule(patch, type, 0)
+    expect([...patch.modules].sort((a, b) => a.hp - b.hp).map((m) => m.type)).toEqual([
+      'seq',
+      'osc',
+      'vcf',
+      'mix',
+      'out',
+    ])
+    expect(patch.modules.filter((m) => ['mix', 'out'].includes(m.type))).toEqual(original)
+  })
   it('marks modules routed to OUT active even when unity controls emit no source call', () => {
     let patch = placeModule(placeModule(placeModule(starterPatch(), 'seq', 0), 'osc', 0), 'vcf', 1)
     patch = connect(patch, ref('seq1', 'note'), ref('osc1', 'note'))
@@ -163,6 +177,19 @@ describe('rack editing', () => {
     patch = placeModule(patch, 'drums', 2)
     expect(freePosition(patch, 'osc', 2, 0)).toBeNull()
     expect(() => placeModule(patch, 'osc', 2)).toThrow('No room')
+  })
+  it('previews and places onto the next rail when the selected rail is full', () => {
+    let patch = starterPatch()
+    patch = placeModule(patch, 'seq', 0)
+    patch = placeModule(patch, 'osc', 0)
+    patch = placeModule(patch, 'vcf', 0)
+    patch = placeModule(patch, 'vcf', 0)
+    const before = structuredClone(patch.modules)
+    const position = placementPosition(patch, 'drums', 0, 20)
+    expect(position).toEqual({ row: 1, hp: 0 })
+    const placed = placeModule(patch, 'drums', position.row, position.hp)
+    expect(placed.modules.slice(0, -1)).toEqual(before)
+    expect(placed.modules.at(-1)).toMatchObject({ type: 'drums', row: 1, hp: 0 })
   })
   it('patches a voice and generates edits immediately, including folded mixer gain', () => {
     let patch = add(add(starterPatch(), 'seq'), 'osc')

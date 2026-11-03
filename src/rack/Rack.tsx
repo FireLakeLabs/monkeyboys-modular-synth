@@ -17,7 +17,7 @@ import {
   rackRows,
   routedModules,
   connect,
-  freePosition,
+  placementPosition,
   placeModule,
   removeCable,
   removeModule,
@@ -56,12 +56,14 @@ export function Rack({
   showCode,
   sourceModules,
   editingModule,
+  emptyOutput,
   assess,
 }: {
   patch: Patch
   locked: boolean
   showCode: (id: string) => void
   editingModule: string | null
+  emptyOutput: boolean
   sourceModules: readonly string[]
   edit: RackEdit
   assess: (from: JackRef, to: JackRef, moving?: string) => SourceConnectionAssessment
@@ -87,6 +89,12 @@ export function Rack({
     if (surface.current) return observeActivity(surface.current)
     return undefined
   }, [])
+  useEffect(() => {
+    if (emptyOutput)
+      surface.current
+        ?.querySelector('.needs-source')
+        ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+  }, [emptyOutput])
   const [points, setPoints] = useState<Record<string, Point>>({})
   const [wire, setWire] = useState<Wiring | null>(null)
   const [pointer, setPointer] = useState<Point | null>(null)
@@ -95,7 +103,7 @@ export function Rack({
   const [replacement, setReplacement] = useState<JackRef | null>(null)
   const [selectedCable, setSelectedCable] = useState<string | null>(null)
   const [placement, setPlacement] = useState<Placement | null>(null)
-  const [ghost, setGhost] = useState<{ row: number; hp: number | null } | null>(null)
+  const [ghost, setGhost] = useState<{ row: number; hp: number } | null>(null)
   const [message, setMessage] = useState(
     'Add a module, then drag or click from an output to an input.',
   )
@@ -279,11 +287,8 @@ export function Rack({
                         select(existing.id)
                         return
                       }
-                      for (let row = 0; row <= rows; row++)
-                        if (freePosition(patch, spec.id, row, 0) !== null) {
-                          edit((p) => placeModule(p, spec.id, row))
-                          break
-                        }
+                      const position = placementPosition(patch, spec.id)
+                      edit((p) => placeModule(p, spec.id, position.row, position.hp))
                     }}
                   >
                     <span className="chip-name">{spec.name}</span>
@@ -330,15 +335,17 @@ export function Rack({
                 0,
                 Math.min(rows - 1, Math.floor((event.clientY - bounds.top) / ROW_HEIGHT)),
               )
-              const hp = freePosition(
+              const position = placementPosition(
                 patch,
                 placement.type,
                 row,
                 Math.round((event.clientX - bounds.left) / HP),
                 placement.moving,
               )
-              setGhost({ row, hp })
-              if (hp === null) setMessage('No room here — drop on + Add row')
+              setGhost(position)
+              setMessage(
+                `${getModuleSpec(placement.type).name} · row ${position.row + 1}, HP ${position.hp}`,
+              )
             }}
             onDragLeave={(event) => {
               if (
@@ -349,7 +356,7 @@ export function Rack({
             }}
             onDrop={(event) => {
               event.preventDefault()
-              if (ghost?.hp !== null && ghost) place(ghost.row, ghost.hp)
+              if (ghost) place(ghost.row, ghost.hp)
             }}
             onPointerMove={(event) => {
               if (wire && surface.current) {
@@ -459,7 +466,7 @@ export function Rack({
                           <button
                             type="button"
                             data-jack={keyOf(ref)}
-                            className={`jack signal-${state && state.kind !== 'blocked' ? state.signal : jack.signal} ${connected ? 'connected' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
+                            className={`jack signal-${state && state.kind !== 'blocked' ? state.signal : jack.signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
                             aria-label={`${m.id} ${jack.label} ${jack.direction}`}
                             aria-describedby={
                               wire && target && keyOf(target) === keyOf(ref)
@@ -565,7 +572,7 @@ export function Rack({
                 </section>
               )
             })}
-            {placement && ghost?.hp !== null && ghost && ghost.row < rows && (
+            {placement && ghost && ghost.row < rows && (
               <div
                 className="placement-ghost"
                 style={{

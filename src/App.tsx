@@ -9,7 +9,9 @@ import {
 } from 'react'
 import { Rack, type RackEdit } from './rack/Rack'
 import type { JackRef, Patch } from './patch/types'
-import { starterPatch, validateRack } from './rack/model'
+import { setValue, starterPatch, validateRack } from './rack/model'
+import { getModuleSpec } from './modules/catalog'
+import { Numeric } from './rack/Controls'
 import { createPlayback } from './strudel/playback'
 import { tryRead } from './reader'
 import type { ReadResult, SourceDocument } from './reader/types'
@@ -23,6 +25,7 @@ import {
   sourceBody,
 } from './workspace/document'
 import { prepareReplacement } from './workspace/open'
+import { hasOutput, strudelUrl } from './workspace/transport'
 import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { createAutosave } from './workspace/autosave'
 import { RestorePrompt } from './workspace/RestorePrompt'
@@ -83,9 +86,11 @@ export default function App() {
   const [rackGeneration, setRackGeneration] = useState(0)
   const [replacing, setReplacing] = useState(false)
   const [slowAudio, setSlowAudio] = useState<typeof audio | null>(null)
+  const [emptyPlay, setEmptyPlay] = useState<SourceDocument | null>(null)
   const workRevision = useRef(0)
   const replacementRevision = useRef(0)
   const playing = ['starting', 'playing', 'applying'].includes(audio.status)
+  const needsStop = playing || audio.scheduling === 'unknown' || audio.status === 'stopping'
   const [composing, setComposing] = useState(false)
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
@@ -94,8 +99,12 @@ export default function App() {
   const cleanSource = useRef<string | null>(document.source)
   const draftSaved = useRef(true)
   const editor = useRef<EditorView>(null)
+  const fileInput = useRef<HTMLInputElement>(null)
   const locked = phase !== 'readable' || composing
   const patch = document.patch
+  const out = patch.modules.find((module) => module.type === 'out')
+  const tempoControl = getModuleSpec('out').controls.find((control) => control.id === 'bpm')
+  const emptyOutput = emptyPlay === document
   const assess = useCallback(
     (from: JackRef, to: JackRef, moving?: string) =>
       assessDocumentConnection(document, from, to, moving),
@@ -181,8 +190,16 @@ export default function App() {
   }, [draft, phase, playback, composing, autosave])
 
   async function togglePlay() {
-    if (playing) await playback.stop()
-    else if (current.current.phase === 'readable') await playback.play()
+    if (needsStop) await playback.stop()
+    else if (current.current.phase === 'readable') {
+      if (!hasOutput(current.current.document)) {
+        setEmptyPlay(current.current.document)
+        setSelected(out?.id ?? null)
+        return
+      }
+      setEmptyPlay(null)
+      await playback.play()
+    }
   }
 
   const edit: RackEdit = (action, point = { x: 220, y: 150 }) => {
@@ -361,15 +378,31 @@ export default function App() {
         >
           Patch library
         </button>
-        <output className="transport-status">{status}</output>
+        <output className="transport-status" aria-live="polite">
+          {emptyOutput ? 'Nothing reaches OUT yet' : status}
+        </output>
+        <fieldset
+          className="header-tempo"
+          disabled={locked || document.layout === 'invalid' || !out}
+        >
+          <legend className="sr-only">Tempo</legend>
+          {tempoControl?.kind === 'knob' && (
+            <Numeric
+              key={`${out?.id}:${typeof out?.values.bpm === 'number' ? out.values.bpm : tempoControl.default}:${rackGeneration}`}
+              control={tempoControl}
+              value={typeof out?.values.bpm === 'number' ? out.values.bpm : tempoControl.default}
+              commit={(value) => !!out && edit((p) => setValue(p, out.id, tempoControl.id, value))}
+            />
+          )}
+        </fieldset>
         <button
           type="button"
           className="play"
           onClick={togglePlay}
-          aria-label={playing ? 'Stop' : 'Play'}
-          disabled={audio.status === 'stopping' || (locked && !playing)}
+          aria-label={needsStop ? 'Stop' : 'Play'}
+          disabled={locked && !needsStop}
         >
-          {playing ? (
+          {needsStop ? (
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
               <rect x="3" y="2" width="3.5" height="12" rx="1" fill="currentColor" />
               <rect x="9.5" y="2" width="3.5" height="12" rx="1" fill="currentColor" />
@@ -390,6 +423,7 @@ export default function App() {
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}
           editingModule={editingModule}
+          emptyOutput={emptyOutput}
           edit={edit}
           assess={assess}
           selected={selected}
@@ -426,23 +460,38 @@ export default function App() {
             <button type="button" onClick={exportDraft}>
               Export
             </button>
-            <label className="import-code">
+            <button
+              type="button"
+              onClick={() =>
+                window.open(strudelUrl(current.current.document), '_blank', 'noopener,noreferrer')
+              }
+            >
+              Open in Strudel
+            </button>
+            <button type="button" onClick={() => fileInput.current?.click()}>
               Open file
-              <input
-                type="file"
-                accept=".strudel,.js,.txt"
-                onChange={(event) => {
-                  const file = event.target.files?.[0]
-                  if (file) {
-                    requestReplacement({ kind: 'file', file }).catch((failure: unknown) =>
-                      setError(String(failure)),
-                    )
-                  }
-                  event.target.value = ''
-                }}
-              />
-            </label>
+            </button>
+            <input
+              ref={fileInput}
+              hidden
+              type="file"
+              accept=".strudel,.js,.txt"
+              onChange={(event) => {
+                const file = event.target.files?.[0]
+                if (file) {
+                  requestReplacement({ kind: 'file', file }).catch((failure: unknown) =>
+                    setError(String(failure)),
+                  )
+                }
+                event.target.value = ''
+              }}
+            />
           </div>
+          {locked && (
+            <p className="share-note">
+              Open in Strudel uses the last readable code while this draft is unreadable.
+            </p>
+          )}
           {pendingReplacement?.kind === 'file' && replacementPrompt}
           <Suspense fallback={<output className="source-surface">Loading source editor…</output>}>
             <SourceEditor
@@ -523,9 +572,6 @@ export default function App() {
               audio.
             </output>
           )}
-          <button type="button" onClick={() => playback.stop()}>
-            Stop scheduling
-          </button>
           {error && (
             <p className="error" role="alert">
               {error}

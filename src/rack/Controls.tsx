@@ -9,7 +9,7 @@ const focusEditor = (element: HTMLInputElement | null) => element?.focus()
 
 type Commit = (value: ControlValue) => boolean
 
-function Numeric({
+export function Numeric({
   control,
   value,
   commit,

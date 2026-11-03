@@ -125,7 +125,8 @@
   margin-top: 24px;
   padding-top: 10px;
 }
-.patch-library .load-patch {
+.patch-library .load-patch,
+.patch-library .confirm-replacement {
   background: var(--audio);
   border-color: var(--audio);
   color: #1a1408;
