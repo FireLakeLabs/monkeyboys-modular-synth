@@ -65,8 +65,9 @@ physical speakers/headphones were heard; broader browser/device coverage and
 universal audible equivalence remain unverified. The archived design boards
 were available; the private live canvas was not accessed.
 
-After rebasing onto `b40d2d8` (the palette/library and rack control updates),
-`npm run check` passed again: 791 unit tests, 40 guardrails, formatting, skill
+After rebasing onto `9cbea9a` (including the palette/library, rack controls and
+inline modulation generator updates),
+`npm run check` passed again: 792 unit tests, 40 guardrails, formatting, skill
 integrity, lint, TypeScript and the production build. Both browser suites passed
 again on that base; the linked raw results and screenshot are from this final run.
 

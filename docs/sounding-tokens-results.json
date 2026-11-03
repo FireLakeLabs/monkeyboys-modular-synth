@@ -12,7 +12,7 @@
   "trance": {
     "before": {
       "counters": [78, 16, 141],
-      "events": 17
+      "events": 16
     },
     "after": {
       "counters": [78, 16, 141],
@@ -20,7 +20,7 @@
     }
   },
   "deliveryLeadSeconds": {
-    "max": 0.004252380952380008,
+    "max": 0.0047952380952374085,
     "count": 79
   },
   "feedback": {
@@ -42,6 +42,6 @@
       "semicolon-free bare voices after tempo and const declarations play with attributable activity"
     ],
     "physicalListening": false,
-    "pcmRms": 0.05923015478761929
+    "pcmRms": 0.06037147148513803
   }
 }
