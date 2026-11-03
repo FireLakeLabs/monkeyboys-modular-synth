@@ -8,7 +8,7 @@ owns the behavior; this is dated evidence.
 ## Static and deterministic proof
 
 `npm ci` and `npm run check` passed: formatting, skill integrity, lint,
-732 passing Vitest tests (17 existing expected failures), 40 guardrail tests,
+776 passing Vitest tests, 40 guardrail tests,
 TypeScript and production build. The focused numeric behavior test first failed
 because keyboard stepping was absent, then passed with logarithmic/fine cutoff,
 detents, clamping, range endpoints and reset. Existing generation, source
@@ -51,6 +51,11 @@ width or saved-layout format changed.
   The seven cable endpoints remain aligned after the edit. A native palette drag
   at Fit places ITER on the second rail at HP 32. Switching all hardware to
   Vintage lab moves the jacks to the top and retains aligned cables.
+
+After rebasing onto `9ef4a21`, the full gate and 183-observation browser matrix
+passed again. A native keyboard edit during playback changed 964→971 Hz while
+retaining “Pattern scheduled” and nonzero PCM (RMS 0.00549). Screenshots were
+recaptured with the current folded-metadata editor.
 
 The private online design canvas was not accessed; the repository's supplied
 PNG/HTML board exports were available as references.
