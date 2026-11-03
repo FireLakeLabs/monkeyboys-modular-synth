@@ -1,0 +1,38 @@
+{
+  "browser": "156.0.8078.4",
+  "ui": [
+    "invalid draft export is byte exact; accepted rack retained/locked; Revert restores saved identity without Play",
+    "adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Stop available and require explicit Play after correction",
+    "older failure is labeled as older work; current valid code has no invented runtime underline",
+    "failed Stop reports unknown audio, refuses Open/New, retains source and supports Retry Stop",
+    "pending evaluation/Stop warning does not claim cancellation; edits cancel pending Open replacement",
+    "confirmed Open stays silent and preserves valid unsupported CODE; no unhandled browser errors",
+    "Cancel and Escape invalidate New replacement while Stop is pending",
+    "imported invalid CRLF draft exports exact bytes independently of textarea newline normalization"
+  ],
+  "engine": [
+    "fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails",
+    "real adapter resume rejection and construction throw retain work; retry/correction needs explicit Play",
+    "real scheduler Stop failure reports unknown state; explicit Stop retry recovers",
+    "missing sample is reported in a workspace banner and automatically stops scheduling",
+    "undecodable sample reports failure; registered manifests never claim verified decoding",
+    "late output throw reaches workspace banner and automatically stops scheduling",
+    "real never-settling evaluation permits immediate Stop and exact export; replay refused until reload, then explicit Play succeeds",
+    "settled abandoned evaluation cannot restart its scheduler; explicit Play can recover without reload"
+  ],
+  "pcm": {
+    "play": {
+      "rms": 0.014281195664533381,
+      "samples": 51200
+    },
+    "invalidDraft": {
+      "rms": 0.01130204813106095,
+      "samples": 98304
+    },
+    "afterStop": {
+      "rms": 0,
+      "samples": 153600
+    }
+  },
+  "physicalListening": false
+}

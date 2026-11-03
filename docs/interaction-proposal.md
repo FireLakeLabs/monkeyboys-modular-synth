@@ -296,10 +296,11 @@ Stop must not restart audio. Serializing updates, handling stale completions,
 and preventing older evaluations from winning are production #4/#8 work and
 must respect the merged engine contract; a UI revision check alone cannot
 cancel engine effects.
-PR #26 also records that a never-settling arbitrary evaluation can block its
-serialized queue, including Stop. General cancellation is not supported by that
-adapter; keep this limit explicit rather than promising that every draft can
-always be stopped immediately.
+The [#36 engine contract](audio-recovery.md) supersedes PR #26's serialized-Stop
+limit: Stop bypasses pending evaluation and guards its later installation/queries.
+The evaluation itself remains uninterruptible. Explicit replay waits for it to
+settle or requires export/reload; synchronous main-thread blocking still requires
+browser-level recovery.
 Fixing syntax while stopped updates the rack without starting sound. Save,
 Copy and Export use the current draft, not the last readable or last-playing
 revision. Never auto-revert typed text after failure.

@@ -56,8 +56,10 @@ The #9–#11 value, cable and module flows are implemented; see the
 [acceptance audit and browser evidence](interaction-verification.md). Empty rows
 now persist in optional v1 metadata. The [#12 production error audit](error-verification.md)
 adds revision-owned diagnostics, pending warnings and guarded Open/New replacement.
-Late-error/resource reporting and arbitrary-evaluation recovery remain #36 dependencies;
-#12 stays open until that acceptance is integrated.
+The [#36 recovery contract and browser evidence](audio-recovery.md) integrate
+late resource/output reporting and guarded Stop without waiting for evaluation.
+Uninterruptible JavaScript and universal resource readiness remain explicit engine
+boundaries; the #12 browser acceptance suite has been rerun against this contract.
 
 ## Technical questions
 

@@ -377,13 +377,23 @@ export default function App() {
           ))}
           <p className="audio-note">
             {locked && audio.scheduling === 'scheduled' ? 'Previous pattern scheduled. ' : ''}Sample
-            status unavailable. Stop ends scheduling; tails may ring out.
+            status:{' '}
+            {
+              {
+                unknown: 'unknown; audio has not initialized',
+                loading: 'loading manifests; audio readiness unverified',
+                registered: 'manifests registered; sample decoding and output unverified',
+                failed: 'resource/output failure observed; readiness unknown',
+              }[audio.resources]
+            }
+            . Stop ends scheduling; tails may ring out.
           </p>
           {slowAudio === audio && (
             <output className="pending-note error">
-              Still waiting for audio. Stop waits for pending engine work; a timeout cannot cancel
-              running code. If it never completes, export your draft before reloading this page.
-              Reloading discards unsaved work and ends this page’s audio.
+              Still waiting for audio. Stop cancels scheduling intent without waiting for
+              evaluation. Running code cannot be interrupted. If it never completes, export your
+              draft before reloading this page. Reloading discards unsaved work and ends this page’s
+              audio.
             </output>
           )}
           <button type="button" onClick={() => playback.stop()}>
@@ -400,7 +410,7 @@ export default function App() {
                 {audio.errorSource &&
                 (locked || sourceBody(audio.errorSource) !== sourceBody(document.source))
                   ? 'An earlier code revision failed. Current draft retained.'
-                  : 'Could not start or apply audio. Current draft retained.'}{' '}
+                  : 'Audio failure. Current draft retained.'}{' '}
                 Correct code or check audio access, then press Play explicitly. Stop can be retried
                 if audio state is unknown.
               </p>
