@@ -142,6 +142,12 @@ make a standards check pass.
 
 ## Maintaining standards
 
+The [#64 literal-edit suite](literal-edit-verification.md) enumerates every catalog
+control, with separate source, wiring/layout/value, exact saved identity and real
+Strudel event assertions. It runs in the shared gate. Named executable expected
+failures retain the routing (#65), grid representation (#66) and additional
+identity/channel (#99) gaps; passing the suite does not claim those bugs are fixed.
+
 The #45 library behavior tests require unique collection/patch IDs, active
 source-bound coverage of every shipped module, exact original source on load,
 and independently reopened saved rack state. Shared deterministic tests also
