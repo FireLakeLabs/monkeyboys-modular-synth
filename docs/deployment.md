@@ -9,6 +9,10 @@ existing issued wildcard ACM certificate, Route 53 zone and GitHub OIDC provider
 
 ## Infrastructure and setup
 
+The pinned CDK tooling currently has an upstream-blocked minimatch advisory.
+See the [dated reachability assessment and tracked disposition](cdk-advisory.md)
+before changing tooling or glob inputs.
+
 The stack owns a private website bucket, separate private release archive,
 CloudFront distribution with OAC, A/AAAA aliases, and two GitHub roles. Buckets
 block public access, require TLS, use S3 encryption and bucket-owner ownership,

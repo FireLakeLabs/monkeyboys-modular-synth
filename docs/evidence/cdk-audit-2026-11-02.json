@@ -1,0 +1,58 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "aws-cdk-lib": {
+      "name": "aws-cdk-lib",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": ["minimatch"],
+      "effects": [],
+      "range": "*",
+      "nodes": ["node_modules/aws-cdk-lib"],
+      "fixAvailable": false
+    },
+    "minimatch": {
+      "name": "minimatch",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1244012,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch has potential denial of service via globparts amplification",
+          "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+          "severity": "moderate",
+          "cwe": ["CWE-405"],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<11.0.1"
+        }
+      ],
+      "effects": ["aws-cdk-lib"],
+      "range": "<11.0.1",
+      "nodes": ["node_modules/aws-cdk-lib/node_modules/minimatch"],
+      "fixAvailable": false
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 2,
+      "high": 0,
+      "critical": 0,
+      "total": 2
+    },
+    "dependencies": {
+      "prod": 75,
+      "dev": 140,
+      "optional": 75,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 217
+    }
+  }
+}
