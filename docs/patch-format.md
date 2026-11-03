@@ -145,6 +145,57 @@ Snapshots cannot contain nested rack blocks. Copy/Export save the exact current
 draft; Open reads plain `.strudel` files. Chosen names survive reducing a split
 to one branch. See [workspace evidence and limits](workspace-verification.md).
 
+## Local workspace recovery (#60)
+
+The browser keeps one recovery copy in `localStorage`, under
+`monkeyboy.workspace.v1`. Its JSON envelope has `version: 1`, `source` (the exact
+accepted Strudel file, including its saved rack block) and `draft` (the exact
+editor text). Rack edits and readable code acceptance save the complete accepted
+file; draft input is saved synchronously before the reader's debounce, including
+invalid or composing text. Unknown rack metadata stays in the source unchanged.
+
+On load, a validated local copy offers **Restore last patch** or **Discard saved
+patch** in a modal before editing can overwrite it. Restore brings back the
+accepted rack and the draft independently, without executing code or starting
+audio. An unfinished draft is read normally, leaving the last readable rack in
+place if invalid. Export keeps its exact text; Revert explicitly discards that
+draft in favor of the readable file. Discard removes the copy and keeps the
+silent starter. Loading a file/library patch or choosing New replaces the copy
+only after the existing guarded replacement succeeds.
+
+Storage access, quota, malformed envelopes and unsupported envelope versions
+fail quietly: editing, playback and export remain available. Failed writes keep
+the previous copy. If a draft cannot be saved, leaving/reloading requests the
+browser's standard unsaved-work warning; browsers can suppress that warning
+without prior interaction, on mobile termination, or on crashes. Export remains
+the durable fallback. No recovery is guaranteed when browser storage is blocked,
+cleared or evicted. No initial starter is saved over an unchosen recovery copy.
+Invalid/unsupported envelopes are ignored without being deleted on load.
+
+This is one recovery slot per origin, shared across tabs; the last successful
+write wins. There is no multi-tab merge, history, account sync or offline cache.
+The browser verification is `node scripts/autosave-check.mjs <dev-server-url>
+<output-directory>` after installing Playwright Chromium. Its results distinguish
+exact source, saved rack identity and stopped audio from audible verification.
+
+Observed 3 November 2026 with Node 24.22.2 and headless Chromium 156.0.8078.4:
+the recovery suite passed readable/rack edits, reload and immediate tab-close,
+byte-exact source/export, full saved rack identity, long and short invalid drafts,
+Revert/correction, discard, blocked access and quota failures. Restore created
+zero AudioContexts; both storage-failure cases showed the native departure
+warning and retained the draft when navigation was cancelled. No page errors
+remained. The short-draft regression first failed with a CodeMirror range error;
+mapping decorations through input transactions fixed it. The existing feedback
+suite (native Chromium IME, selection/scroll, activity/reduced motion and real
+Strudel PCM) and library UI/rack-editing groups also passed. Physical listening
+and other browsers/devices were not verified. The full workspace error/recovery
+suite also passed after making its reload step choose Restore explicitly.
+`npm run check` passed: 615 unit cases, 53 inherited expected failures, 40
+guardrails, formatting/skill integrity, lint, TypeScript and production build.
+After rebasing onto `686e80d` (#65), the full gate passed again (699 unit cases,
+19 inherited expected failures, 40 guardrails), as did the complete recovery
+browser suite. The recovery behavior diff remained unchanged.
+
 ## Structural source mutation plans (#35)
 
 The [structural-edit matrix](translation-rules.md#imported-structural-edits-35)

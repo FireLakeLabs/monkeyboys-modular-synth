@@ -24,6 +24,8 @@ import {
 } from './workspace/document'
 import { prepareReplacement } from './workspace/open'
 import { ReplacementPrompt } from './workspace/ReplacementPrompt'
+import { createAutosave } from './workspace/autosave'
+import { RestorePrompt } from './workspace/RestorePrompt'
 import { PatchLibrary } from './library/PatchLibrary'
 import { readLibraryPatch } from './library/load'
 import { assessDocumentConnection } from './workspace/connections'
@@ -58,6 +60,8 @@ function Logo() {
 }
 
 export default function App() {
+  const [autosave] = useState(() => createAutosave())
+  const [recovery, setRecovery] = useState(() => autosave.load())
   const [document, setDocument] = useState(() => fromPatch(starterPatch()))
   const [draft, setDraft] = useState(document.source)
   const [phase, setPhase] = useState<'readable' | 'editing' | 'invalid'>('readable')
@@ -86,6 +90,7 @@ export default function App() {
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const current = useRef({ document, draft, phase })
+  const draftSaved = useRef(true)
   const editor = useRef<EditorView>(null)
   const locked = phase !== 'readable' || composing
   const patch = document.patch
@@ -111,6 +116,7 @@ export default function App() {
     setPhase('readable')
     setDiagnostic(null)
     setError(null)
+    draftSaved.current = autosave.save(next)
     playback.update(next).catch((failure: unknown) => setError(String(failure)))
   }
 
@@ -121,7 +127,19 @@ export default function App() {
     setDraft(source)
     setPhase('editing')
     setDiagnostic(null)
+    // Save before the reader debounce, including invalid and composing text.
+    draftSaved.current = autosave.save(current.current.document, source)
   }
+
+  useEffect(() => {
+    const warn = (event: BeforeUnloadEvent) => {
+      if (current.current.phase === 'readable' || draftSaved.current) return
+      event.preventDefault()
+      event.returnValue = true
+    }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [])
 
   useEffect(() => {
     if (!['starting', 'applying', 'stopping'].includes(audio.status)) return
@@ -149,6 +167,7 @@ export default function App() {
         setDraft(next.source)
         setPhase('readable')
         setError(null)
+        draftSaved.current = autosave.save(next)
         playback.update(next).catch((failure: unknown) => setError(String(failure)))
       } catch (failure) {
         current.current = { ...current.current, phase: 'invalid' }
@@ -157,7 +176,7 @@ export default function App() {
       }
     }, 250)
     return () => clearTimeout(timer)
-  }, [draft, phase, playback, composing])
+  }, [draft, phase, playback, composing, autosave])
 
   async function togglePlay() {
     if (playing) await playback.stop()
@@ -518,6 +537,20 @@ export default function App() {
           )}
         </section>
       </main>
+      {recovery && (
+        <RestorePrompt
+          hasDraft={recovery.draft !== recovery.document.source}
+          restore={() => {
+            install(recovery.document)
+            if (recovery.draft !== recovery.document.source) changeDraft(recovery.draft)
+            setRecovery(null)
+          }}
+          discard={() => {
+            autosave.discard()
+            setRecovery(null)
+          }}
+        />
+      )}
       {refusedEdit && (
         <div
           className="rack-edit-refusal"
