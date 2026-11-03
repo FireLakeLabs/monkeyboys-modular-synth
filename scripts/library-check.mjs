@@ -1,3 +1,4 @@
+import { editorSource as source, replaceSource } from './editor-browser.mjs'
 // Browser verification: import this module from the Vite dev server in a browser.
 // See docs/patch-library.md for the harness commands and listening limits.
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -16,7 +17,6 @@ function button(text, root = document) {
   if (!element) throw new Error(`Missing button: ${text}`)
   return element
 }
-const source = () => document.querySelector('.source-editor').value
 const status = () => document.querySelector('.transport-status').textContent
 const library = () => document.querySelector('.patch-library')
 async function choose(title) {
@@ -35,11 +35,8 @@ async function load(title) {
   assert(status() === 'Stopped', `${title}: load started audio`)
 }
 async function editSource(value) {
-  const element = document.querySelector('.source-editor')
-  // oxlint-disable-next-line typescript/unbound-method -- Invoke the native setter with its textarea receiver below.
-  const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set
-  setter.call(element, value)
-  element.dispatchEvent(new Event('input', { bubbles: true }))
+  replaceSource(value)
+  await pause(0)
   await until(() =>
     document.querySelector('.sync-status').textContent.startsWith('Rack matches code'),
   )

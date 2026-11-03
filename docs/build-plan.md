@@ -89,7 +89,7 @@ The Start here collection (#80) and global undo/redo (#63) remain separate work.
 [Issue #37](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/37)
 completes event-timed Alien/Instrument feedback, editing-only Cyber blinking,
 reduced motion and category/family code styling with all owned selection spans.
-The native editor retains exact draft text, selection, scrolling and IME input.
+The CodeMirror editor retains exact draft text, selection, scrolling and IME input.
 See the [attribution contract and browser evidence](feedback-verification.md).
 
 ## Source-preserving structural edits
@@ -105,8 +105,11 @@ ownership and saved graph identity before acceptance. See the
 
 The [#53 CodeMirror spike](editor-spike.md) recommends plain CodeMirror 6,
 with event/source mapping behind the engine and accepted-document undo ownership.
-The production editor is still the textarea. #59 owns adoption and the remaining
-native IME/reduced-motion/browser acceptance; #63 owns global undo/redo.
+#59 adopts it as a lazy editor, applies minimal rack rewrites, memoizes source
+styles and checkpoints draft history on acceptance. The [adoption evidence](editor-adoption.md)
+records Chromium composition, reduced motion and all three production browser suites.
+#63 owns global accepted-document undo/redo; #68/#69/#72 own metadata folding,
+error placement and event marks. Physical OS IMEs and broad device coverage remain unverified.
 
 ## Prove early
 

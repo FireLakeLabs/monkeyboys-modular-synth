@@ -3,7 +3,7 @@ import { activityPlan } from './activity'
 import { sourceLocations } from './sourceLocations'
 import type { Span } from '../reader/types'
 
-/** Opt-in editor-spike feedback, bound to the exact submitted source revision. */
+/** Opt-in source-location feedback, bound to the exact submitted source revision. */
 export interface SourceFeedback {
   source: string
   spans: Span[]

@@ -3,10 +3,10 @@ import { read } from '../src/reader/index.ts'
 import { HP, ROW_HEIGHT, validateRack } from '../src/rack/model.ts'
 import { sourceBody } from '../src/workspace/document.ts'
 import { libraryPatches } from '../src/library/catalog.ts'
+import { editorSource as source } from './editor-browser.mjs'
 
 const entry = libraryPatches().find((patch) => patch.id === 'switch-angel-trance-demo')
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-const source = () => document.querySelector('.source-editor').value
 const status = () => document.querySelector('.transport-status').textContent
 const library = () => document.querySelector('.patch-library')
 function assert(condition, message) {

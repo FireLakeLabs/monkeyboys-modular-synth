@@ -1,0 +1,614 @@
+{
+  "browser": "156.0.8078.4",
+  "runs": [
+    {
+      "label": "textarea",
+      "run": 0,
+      "rackPaintMs": 343.69999998807907,
+      "editorPaintMs": 343.69999998807907,
+      "js": [
+        {
+          "name": "/assets/index-Dc0LO5Y-.js",
+          "bytes": 451954,
+          "transferBytes": 140271,
+          "startMs": 19.299999982118607,
+          "endMs": 48
+        }
+      ]
+    },
+    {
+      "label": "codemirror",
+      "run": 0,
+      "rackPaintMs": 130.80000001192093,
+      "editorPaintMs": 427.7000000178814,
+      "js": [
+        {
+          "name": "/assets/index-DzmK322r.js",
+          "bytes": 448850,
+          "transferBytes": 139376,
+          "startMs": 6,
+          "endMs": 20.200000017881393
+        },
+        {
+          "name": "/assets/SourceEditor-B5POL1PB.js",
+          "bytes": 402714,
+          "transferBytes": 136133,
+          "startMs": 118.90000000596046,
+          "endMs": 134.2000000178814
+        }
+      ]
+    },
+    {
+      "label": "textarea",
+      "run": 1,
+      "rackPaintMs": 131.19999998807907,
+      "editorPaintMs": 131.19999998807907,
+      "js": [
+        {
+          "name": "/assets/index-Dc0LO5Y-.js",
+          "bytes": 451954,
+          "transferBytes": 140271,
+          "startMs": 5.0999999940395355,
+          "endMs": 21.299999982118607
+        }
+      ]
+    },
+    {
+      "label": "codemirror",
+      "run": 1,
+      "rackPaintMs": 129.19999998807907,
+      "editorPaintMs": 422.7999999821186,
+      "js": [
+        {
+          "name": "/assets/index-DzmK322r.js",
+          "bytes": 448850,
+          "transferBytes": 139376,
+          "startMs": 5.299999982118607,
+          "endMs": 19.899999976158142
+        },
+        {
+          "name": "/assets/SourceEditor-B5POL1PB.js",
+          "bytes": 402714,
+          "transferBytes": 136133,
+          "startMs": 116.7999999821186,
+          "endMs": 131
+        }
+      ]
+    },
+    {
+      "label": "textarea",
+      "run": 2,
+      "rackPaintMs": 227.59999999403954,
+      "editorPaintMs": 227.59999999403954,
+      "js": [
+        {
+          "name": "/assets/index-Dc0LO5Y-.js",
+          "bytes": 451954,
+          "transferBytes": 140271,
+          "startMs": 5.800000011920929,
+          "endMs": 21.5
+        }
+      ]
+    },
+    {
+      "label": "codemirror",
+      "run": 2,
+      "rackPaintMs": 128.5,
+      "editorPaintMs": 424.80000001192093,
+      "js": [
+        {
+          "name": "/assets/index-DzmK322r.js",
+          "bytes": 448850,
+          "transferBytes": 139376,
+          "startMs": 5.699999988079071,
+          "endMs": 19.599999994039536
+        },
+        {
+          "name": "/assets/SourceEditor-B5POL1PB.js",
+          "bytes": 402714,
+          "transferBytes": 136133,
+          "startMs": 116.90000000596046,
+          "endMs": 130.30000001192093
+        }
+      ]
+    },
+    {
+      "label": "textarea",
+      "run": 3,
+      "rackPaintMs": 137,
+      "editorPaintMs": 137,
+      "js": [
+        {
+          "name": "/assets/index-Dc0LO5Y-.js",
+          "bytes": 451954,
+          "transferBytes": 140271,
+          "startMs": 5.5999999940395355,
+          "endMs": 22.400000005960464
+        }
+      ]
+    },
+    {
+      "label": "codemirror",
+      "run": 3,
+      "rackPaintMs": 127,
+      "editorPaintMs": 424.7999999821186,
+      "js": [
+        {
+          "name": "/assets/index-DzmK322r.js",
+          "bytes": 448850,
+          "transferBytes": 139376,
+          "startMs": 5.299999982118607,
+          "endMs": 22
+        },
+        {
+          "name": "/assets/SourceEditor-B5POL1PB.js",
+          "bytes": 402714,
+          "transferBytes": 136133,
+          "startMs": 116.09999999403954,
+          "endMs": 132
+        }
+      ]
+    },
+    {
+      "label": "textarea",
+      "run": 4,
+      "rackPaintMs": 126,
+      "editorPaintMs": 126,
+      "js": [
+        {
+          "name": "/assets/index-Dc0LO5Y-.js",
+          "bytes": 451954,
+          "transferBytes": 140271,
+          "startMs": 5.0999999940395355,
+          "endMs": 20.399999976158142
+        }
+      ]
+    },
+    {
+      "label": "codemirror",
+      "run": 4,
+      "rackPaintMs": 129.90000000596046,
+      "editorPaintMs": 425.19999998807907,
+      "js": [
+        {
+          "name": "/assets/index-DzmK322r.js",
+          "bytes": 448850,
+          "transferBytes": 139376,
+          "startMs": 5.0999999940395355,
+          "endMs": 23.900000005960464
+        },
+        {
+          "name": "/assets/SourceEditor-B5POL1PB.js",
+          "bytes": 402714,
+          "transferBytes": 136133,
+          "startMs": 119,
+          "endMs": 132.5
+        }
+      ]
+    }
+  ],
+  "lazyRack": true,
+  "feedback": {
+    "browser": "156.0.8078.4",
+    "checks": [
+      "family/category/named-output styling, all VCF spans, exact retained source",
+      "real rack value rewrite maps backward selection and both scroll axes; Show in code uses live geometry",
+      "unaccepted typing can be undone locally; accepting source checkpoints local history",
+      "invalid drafts clear selection highlights; accepted source restores current ownership",
+      "native Chromium IME composition defers parsing, clears stale highlights and commits exact Japanese text",
+      "typing beyond a CODE span retains Cyber editing focus through an invalid draft; blur clears it and Revert restores source",
+      "Cyber cursor stays solid except while its block is being edited",
+      "selection does not reparse treatments; playback renders retain the same decorations and treatment count",
+      "real final ITER/JUX events drive 400 ms Alien/Instrument feedback; opaque voice has none; PCM remains nonzero",
+      "changing reduced motion during playback clears active fades",
+      "Stop cancels active fades and pending event visuals",
+      "reduced motion suppresses pulses/blinking; widths and cable paths remain identical",
+      "replacement and surfaced errors clear obsolete activity",
+      "semicolon-free bare voices after tempo and const declarations play with attributable activity"
+    ],
+    "physicalListening": false,
+    "pcmRms": 0.05920092423231996
+  },
+  "workspaceErrors": {
+    "browser": "156.0.8078.4",
+    "ui": [
+      "issue #44 spills long CODE/CV voice onto fixed rails; layout failure retains exact draft and rack; Export/Stop/Revert/correction recover without autoplay",
+      "invalid draft export is byte exact; accepted rack retained/locked; Revert restores saved identity without Play",
+      "adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Stop available and require explicit Play after correction",
+      "older failure is labeled as older work; current valid code has no invented runtime underline",
+      "failed Stop reports unknown audio, refuses Open/New, retains source and supports Retry Stop",
+      "pending evaluation/Stop warning does not claim cancellation; edits cancel pending Open replacement",
+      "confirmed Open stays silent and preserves valid unsupported CODE; no unhandled browser errors",
+      "Cancel and Escape invalidate New replacement while Stop is pending",
+      "imported invalid CRLF draft exports exact bytes with exact editor-state line endings"
+    ],
+    "engine": [
+      "fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails",
+      "real adapter resume rejection and construction throw retain work; retry/correction needs explicit Play",
+      "real scheduler Stop failure reports unknown state; explicit Stop retry recovers",
+      "missing sample is reported in a workspace banner and automatically stops scheduling",
+      "undecodable sample reports failure; registered manifests never claim verified decoding",
+      "late output throw reaches workspace banner and automatically stops scheduling",
+      "real never-settling evaluation permits immediate Stop and exact export; replay refused until reload, then explicit Play succeeds",
+      "settled abandoned evaluation cannot restart its scheduler; explicit Play can recover without reload"
+    ],
+    "pcm": {
+      "play": {
+        "rms": 0.01428346696927067,
+        "samples": 51200
+      },
+      "invalidDraft": {
+        "rms": 0.01130059925219637,
+        "samples": 98304
+      },
+      "afterStop": {
+        "rms": 0,
+        "samples": 153600
+      }
+    },
+    "physicalListening": false
+  },
+  "library": {
+    "browser": "156.0.8078.4",
+    "ui": [
+      "Nested collections expand/collapse; attribution, exact Export current and Cancel retain current draft/rack",
+      "Malformed library source reports failure while retaining draft/rack",
+      "All nine entries load exact source and matching rack without autoplay",
+      "Helper/CODE survives edits; reload restores original; export/reopen preserves source and changed rack look independently",
+      "Shared New confirmation installs silent MIX/OUT starter"
+    ],
+    "signals": [
+      {
+        "id": "enveloped-synth",
+        "rms": 0.005193928234316158,
+        "samples": 1392640
+      },
+      {
+        "id": "quantized-sequence",
+        "rms": 0.0035978832961461676,
+        "samples": 4378624
+      },
+      {
+        "id": "lfo-sweep",
+        "rms": 0.0022129273292425923,
+        "samples": 6049792
+      },
+      {
+        "id": "filter-envelope",
+        "rms": 0.002331856885225615,
+        "samples": 7462912
+      },
+      {
+        "id": "drum-machine",
+        "rms": 0.00575914847261092,
+        "samples": 9635840
+      },
+      {
+        "id": "echo-room",
+        "rms": 0.0012917777808477014,
+        "samples": 11489280
+      },
+      {
+        "id": "iter-jux",
+        "rms": 0.0012919877413973832,
+        "samples": 14647296
+      },
+      {
+        "id": "custom-helper",
+        "rms": 0.0011898216487550464,
+        "samples": 16975872
+      },
+      {
+        "id": "switch-angel-trance-demo",
+        "rms": 0.008501632006861546,
+        "samples": 42807296
+      },
+      {
+        "id": "layered-sketch",
+        "rms": 0.0006749096213838558,
+        "samples": 56418304
+      }
+    ],
+    "stopFailure": "Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover",
+    "physicalListening": false
+  },
+  "environment": {
+    "date": "2026-11-03",
+    "node": "24.22.2",
+    "os": "Linux",
+    "viewport": "1600x1000",
+    "cores": 16,
+    "initialLoadAverage": "0.60/0.19/0.09",
+    "baselineCommit": "8acfd286da73f75afb63ed8b9323998d102ef297",
+    "timingClaim": "Illustrative local first-load observations; no deployed latency or speedup claim",
+    "profile": "Separate unreported profile: 365 idle samples, 78 app, 45 editor; installed React has a 300 ms fallback throttle. Not CPU saturated."
+  },
+  "bundle": {
+    "initialBefore": {
+      "raw": 451954,
+      "gzip": 141290
+    },
+    "initialAfter": {
+      "raw": 448850,
+      "gzip": 140380
+    },
+    "lazyEditor": {
+      "raw": 402714,
+      "gzip": 137400
+    },
+    "mergeDiff": {
+      "renderedBytesBeforeFinalMinification": 9892,
+      "renderedExports": ["diff", "Change"],
+      "mergeViewIncluded": false
+    },
+    "gzipMethod": "Vite production build report; rounded to 10 bytes"
+  },
+  "trance": {
+    "status": "passed",
+    "modules": 29,
+    "rows": 9,
+    "cycles": 4,
+    "events": {
+      "bd:default": 16,
+      "supersaw:2": 76,
+      "supersaw:3": 76,
+      "pulse:4": 64
+    },
+    "bpm": 140,
+    "firstPCM": [
+      {
+        "output": "master",
+        "rms": 0.17076871526545565,
+        "samples": 184320
+      },
+      {
+        "output": "orbit1",
+        "rms": 0.14638291362201716,
+        "samples": 184320
+      },
+      {
+        "output": "orbit2",
+        "rms": 0.12261260961374229,
+        "samples": 184320
+      },
+      {
+        "output": "orbit3",
+        "rms": 0.08957785182759645,
+        "samples": 184320
+      },
+      {
+        "output": "orbit4",
+        "rms": 0.049093638762744925,
+        "samples": 184320
+      }
+    ],
+    "secondPCM": [
+      {
+        "output": "master",
+        "rms": 0.1670212440313146,
+        "samples": 184320
+      },
+      {
+        "output": "orbit1",
+        "rms": 0.142572133117952,
+        "samples": 184320
+      },
+      {
+        "output": "orbit2",
+        "rms": 0.11334779733995912,
+        "samples": 184320
+      },
+      {
+        "output": "orbit3",
+        "rms": 0.08596512715332007,
+        "samples": 184320
+      },
+      {
+        "output": "orbit4",
+        "rms": 0.04967352114590022,
+        "samples": 184320
+      }
+    ],
+    "reopenedPCM": [
+      {
+        "output": "master",
+        "rms": 0.1747818745654155,
+        "samples": 184320
+      },
+      {
+        "output": "orbit1",
+        "rms": 0.1452593271040294,
+        "samples": 184320
+      },
+      {
+        "output": "orbit2",
+        "rms": 0.12820942701502924,
+        "samples": 184320
+      },
+      {
+        "output": "orbit3",
+        "rms": 0.0883352539488118,
+        "samples": 184320
+      },
+      {
+        "output": "orbit4",
+        "rms": 0.04977727171919483,
+        "samples": 184320
+      }
+    ],
+    "exactSource": true,
+    "savedRackIdentity": true,
+    "renderedRackIdentity": true,
+    "physicalListening": false
+  },
+  "afterMainRebase": {
+    "base": "3de7423b6cf5aa445380765fe9539ec1d29eb03a",
+    "reason": "#75 library rack editing landed; preserved rack refusal/conversion callback and composition guard",
+    "gate": {
+      "passed": 604,
+      "expectedFailuresInherited": 53,
+      "guardrails": 40
+    },
+    "bundleViteReported": {
+      "initialRaw": 518820,
+      "initialGzip": 145030,
+      "editorRaw": 402714,
+      "editorGzip": 137400
+    },
+    "feedback": {
+      "browser": "156.0.8078.4",
+      "checks": [
+        "family/category/named-output styling, all VCF spans, exact retained source",
+        "real rack value rewrite maps backward selection and both scroll axes; Show in code uses live geometry",
+        "unaccepted typing can be undone locally; accepting source checkpoints local history",
+        "invalid drafts clear selection highlights; accepted source restores current ownership",
+        "native Chromium IME composition defers parsing, clears stale highlights and commits exact Japanese text",
+        "typing beyond a CODE span retains Cyber editing focus through an invalid draft; blur clears it and Revert restores source",
+        "Cyber cursor stays solid except while its block is being edited",
+        "selection does not reparse treatments; playback renders retain the same decorations and treatment count",
+        "real final ITER/JUX events drive 400 ms Alien/Instrument feedback; opaque voice has none; PCM remains nonzero",
+        "changing reduced motion during playback clears active fades",
+        "Stop cancels active fades and pending event visuals",
+        "reduced motion suppresses pulses/blinking; widths and cable paths remain identical",
+        "replacement and surfaced errors clear obsolete activity",
+        "semicolon-free bare voices after tempo and const declarations play with attributable activity"
+      ],
+      "physicalListening": false,
+      "pcmRms": 0.05921491801183635
+    },
+    "errors": {
+      "browser": "156.0.8078.4",
+      "ui": [
+        "issue #44 spills long CODE/CV voice onto fixed rails; layout failure retains exact draft and rack; Export/Stop/Revert/correction recover without autoplay",
+        "invalid draft export is byte exact; accepted rack retained/locked; Revert restores saved identity without Play",
+        "adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Stop available and require explicit Play after correction",
+        "older failure is labeled as older work; current valid code has no invented runtime underline",
+        "failed Stop reports unknown audio, refuses Open/New, retains source and supports Retry Stop",
+        "pending evaluation/Stop warning does not claim cancellation; edits cancel pending Open replacement",
+        "confirmed Open stays silent and preserves valid unsupported CODE; no unhandled browser errors",
+        "Cancel and Escape invalidate New replacement while Stop is pending",
+        "imported invalid CRLF draft exports exact bytes with exact editor-state line endings"
+      ],
+      "engine": [
+        "fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails",
+        "real adapter resume rejection and construction throw retain work; retry/correction needs explicit Play",
+        "real scheduler Stop failure reports unknown state; explicit Stop retry recovers",
+        "missing sample is reported in a workspace banner and automatically stops scheduling",
+        "undecodable sample reports failure; registered manifests never claim verified decoding",
+        "late output throw reaches workspace banner and automatically stops scheduling",
+        "real never-settling evaluation permits immediate Stop and exact export; replay refused until reload, then explicit Play succeeds",
+        "settled abandoned evaluation cannot restart its scheduler; explicit Play can recover without reload"
+      ],
+      "pcm": {
+        "play": {
+          "rms": 0.014284599223443691,
+          "samples": 51200
+        },
+        "invalidDraft": {
+          "rms": 0.011266127498928101,
+          "samples": 98304
+        },
+        "afterStop": {
+          "rms": 0,
+          "samples": 204800
+        }
+      },
+      "physicalListening": false
+    },
+    "library": {
+      "ui": [
+        "Nested collections expand/collapse; attribution, exact Export current and Cancel retain current draft/rack",
+        "Malformed library source reports failure while retaining draft/rack",
+        "All entries load exact source and matching rack without autoplay",
+        "Helper/CODE survives edits; reload restores original; export/reopen preserves source and changed rack look independently",
+        "Shared New confirmation installs silent MIX/OUT starter"
+      ],
+      "rack": [
+        "enveloped-synth: CV, effect insertion, extra mixer channel and export identity passed",
+        "quantized-sequence: CV, effect insertion, extra mixer channel and export identity passed",
+        "lfo-sweep: CV, effect insertion, extra mixer channel and export identity passed",
+        "filter-envelope: CV, effect insertion, extra mixer channel and export identity passed",
+        "drum-machine: CV, effect insertion, extra mixer channel and export identity passed",
+        "echo-room: CV, effect insertion, extra mixer channel and export identity passed",
+        "iter-jux: CV, effect insertion, extra mixer channel and export identity passed",
+        "custom-helper: CV, effect insertion, extra mixer channel and export identity passed",
+        "layered-sketch: CV, effect insertion, extra mixer channel and export identity passed",
+        "Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay"
+      ],
+      "signals": [
+        {
+          "id": "enveloped-synth",
+          "rms": 0.0030491167488101967,
+          "samples": 3989504,
+          "events": 32,
+          "sounds": ["sawtooth"]
+        },
+        {
+          "id": "quantized-sequence",
+          "rms": 0.0028694014539420425,
+          "samples": 6979584,
+          "events": 56,
+          "sounds": ["triangle"]
+        },
+        {
+          "id": "lfo-sweep",
+          "rms": 0.0018363412487538522,
+          "samples": 8755200,
+          "events": 16,
+          "sounds": ["sawtooth"]
+        },
+        {
+          "id": "filter-envelope",
+          "rms": 0.0019935632743820803,
+          "samples": 10166272,
+          "events": 24,
+          "sounds": ["square"]
+        },
+        {
+          "id": "drum-machine",
+          "rms": 0.0050420120202378125,
+          "samples": 12339200,
+          "events": 38,
+          "sounds": ["bd", "sd", "hh"]
+        },
+        {
+          "id": "echo-room",
+          "rms": 0.0011293365152653292,
+          "samples": 14198784,
+          "events": 20,
+          "sounds": ["triangle"]
+        },
+        {
+          "id": "iter-jux",
+          "rms": 0.0011986187233121158,
+          "samples": 17385472,
+          "events": 72,
+          "sounds": ["sine"]
+        },
+        {
+          "id": "custom-helper",
+          "rms": 0.0011038883804172879,
+          "samples": 19685376,
+          "events": 20,
+          "sounds": ["triangle"]
+        },
+        {
+          "id": "switch-angel-trance-demo",
+          "rms": 0.008409686041388814,
+          "samples": 45506560,
+          "events": 232,
+          "sounds": ["bd", "supersaw", "pulse"]
+        },
+        {
+          "id": "layered-sketch",
+          "rms": 0.0006543167347297916,
+          "samples": 59248640,
+          "events": 60,
+          "sounds": ["sawtooth", "triangle", "bd", "hh"]
+        }
+      ],
+      "stopFailure": "Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover",
+      "errors": []
+    }
+  }
+}

@@ -1,5 +1,9 @@
 # CodeMirror editor spike (#53)
 
+This is the historical spike record. [Production adoption evidence](editor-adoption.md)
+supersedes its remaining #59 acceptance work. The opt-in entries/prototype were
+removed on adoption; reproduction commands below apply to commit `8acfd286`.
+
 **Go: adopt plain CodeMirror 6 in #59.** The main unknown is resolved: real
 Strudel events can light their original mini-notation tokens while audio output
 continues. This PR keeps a reusable, opt-in prototype; it does not replace the
@@ -20,8 +24,8 @@ change/composing/editingModule contracts. The intentional incompatibility is
 `editor`: it is an `EditorView` ref, not an `HTMLTextAreaElement` ref. #59 must
 migrate App's caret and Show in code callers instead of pretending a CodeMirror
 view supports textarea methods. The prototype lives in
-[CodeMirrorSourceEditor](../src/spikes/CodeMirrorSourceEditor.tsx), with an
-[example caller](../src/spikes/editor-main.tsx). No production App import reaches
+[CodeMirrorSourceEditor](https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/8acfd286da73f75afb63ed8b9323998d102ef297/src/spikes/CodeMirrorSourceEditor.tsx), with an
+[example caller](https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/8acfd286da73f75afb63ed8b9323998d102ef297/src/spikes/editor-main.tsx). No production App import reaches
 it. CodeMirror packages are development dependencies for this spike.
 
 On a fresh page, run this in the browser console:
@@ -30,7 +34,7 @@ On a fresh page, run this in the browser console:
 await (await import('/scripts/editor-probe.mjs')).probe()
 ```
 
-The [probe](../scripts/editor-probe.mjs) checks 20 editor behaviors and restores
+The [probe](https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/8acfd286da73f75afb63ed8b9323998d102ef297/scripts/editor-probe.mjs) checks 20 editor behaviors and restores
 the initial source. Separately click Play, observe the orange mini-notation
 marks, then Stop. Playback needs network access to the existing pinned sample
 manifests, even though this fixture uses synths. Never confuse the probe's
@@ -84,7 +88,7 @@ not exercised here.
 
 ## 2. Rack-driven rewrites: demonstrated
 
-[editorChanges](../src/spikes/editorChanges.ts) uses `@codemirror/merge`'s plain
+[editorChanges](https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/8acfd286da73f75afb63ed8b9323998d102ef297/src/spikes/editorChanges.ts) uses `@codemirror/merge`'s plain
 `diff`, converting disjoint changes to a CodeMirror transaction. This is not a
 whole-document delete/insert or a single prefix/suffix splice. The rack caller
 uses the real `editDocument`/`setValue` path, changing both executable cutoff and

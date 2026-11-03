@@ -1,7 +1,8 @@
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
+  lazy,
+  Suspense,
   useRef,
   useState,
   useSyncExternalStore,
@@ -26,10 +27,14 @@ import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { PatchLibrary } from './library/PatchLibrary'
 import { readLibraryPatch } from './library/load'
 import type { LibraryPatch } from './library/catalog'
-import { SourceEditor } from './workspace/SourceEditor'
+import type { EditorView } from '@codemirror/view'
 import './App.css'
 import './rack/Rack.css'
 import './looks/looks.css'
+
+const SourceEditor = lazy(() =>
+  import('./workspace/SourceEditor').then((module) => ({ default: module.SourceEditor })),
+)
 
 type Replacement =
   { kind: 'file'; file: File } | { kind: 'new' } | { kind: 'library'; entry: LibraryPatch }
@@ -80,15 +85,8 @@ export default function App() {
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const current = useRef({ document, draft, phase })
-  const caret = useRef<{
-    start: number
-    end: number
-    direction: 'forward' | 'backward' | 'none'
-    top: number
-    left: number
-  } | null>(null)
-  const editor = useRef<HTMLTextAreaElement>(null)
-  const locked = phase !== 'readable'
+  const editor = useRef<EditorView>(null)
+  const locked = phase !== 'readable' || composing
   const patch = document.patch
   const selectedRanges = locked ? [] : document.bindings.filter((b) => b.module === selected)
   const cancelReplacement = useCallback(() => {
@@ -141,14 +139,6 @@ export default function App() {
           result.document.layout === 'invalid' ? result.document : saveLayout(result.document)
         validateRack(next.patch)
         current.current = { document: next, draft: next.source, phase: 'readable' }
-        if (editor.current && window.document.activeElement === editor.current)
-          caret.current = {
-            start: editor.current.selectionStart,
-            end: editor.current.selectionEnd,
-            direction: editor.current.selectionDirection,
-            top: editor.current.scrollTop,
-            left: editor.current.scrollLeft,
-          }
         setDocument(next)
         setDraft(next.source)
         setPhase('readable')
@@ -163,23 +153,13 @@ export default function App() {
     return () => clearTimeout(timer)
   }, [draft, phase, playback, composing])
 
-  useLayoutEffect(() => {
-    const position = caret.current
-    if (position && editor.current) {
-      editor.current.setSelectionRange(position.start, position.end, position.direction)
-      editor.current.scrollTop = position.top
-      editor.current.scrollLeft = position.left
-      caret.current = null
-    }
-  }, [draft])
-
   async function togglePlay() {
     if (playing) await playback.stop()
     else if (current.current.phase === 'readable') await playback.play()
   }
 
   const edit: RackEdit = (action, point = { x: 220, y: 150 }) => {
-    if (current.current.phase !== 'readable') return false
+    if (current.current.phase !== 'readable' || composing) return false
     setRefusedEdit(null)
     const accepted = current.current.document
     let next: Patch
@@ -279,9 +259,10 @@ export default function App() {
     const binding = current.current.document.bindings.find((b) => b.module === id)
     if (!binding || current.current.phase !== 'readable') return
     editor.current?.focus()
-    editor.current?.setSelectionRange(binding.start, binding.end)
-    const line = draft.slice(0, binding.start).split('\n').length
-    if (editor.current) editor.current.scrollTop = Math.max(0, (line - 3) * 21)
+    editor.current?.dispatch({
+      selection: { anchor: binding.start, head: binding.end },
+      scrollIntoView: true,
+    })
   }
 
   function exportDraft() {
@@ -425,16 +406,18 @@ export default function App() {
             </label>
           </div>
           {pendingReplacement?.kind === 'file' && replacementPrompt}
-          <SourceEditor
-            editor={editor}
-            source={draft}
-            document={locked ? null : document}
-            selected={selected}
-            invalid={phase === 'invalid'}
-            change={changeDraft}
-            composing={setComposing}
-            editingModule={setEditingModule}
-          />
+          <Suspense fallback={<output className="source-surface">Loading source editor…</output>}>
+            <SourceEditor
+              editor={editor}
+              source={draft}
+              document={locked ? null : document}
+              selected={selected}
+              invalid={phase === 'invalid'}
+              change={changeDraft}
+              composing={setComposing}
+              editingModule={setEditingModule}
+            />
+          </Suspense>
           {diagnostic && (
             <p className="error" role="alert">
               Line {diagnostic.line}, column {diagnostic.column + 1}: {diagnostic.message}

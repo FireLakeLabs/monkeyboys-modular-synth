@@ -130,9 +130,11 @@ The #37 activity boundary uses numeric context keys, enforced by the
 [attribution regression](../src/strudel/activity.test.ts), so Strudel cannot turn
 an observer key into mini-notation. Fake-clock engine tests cover scheduled-audio
 time and cancellation. Statement-boundary regressions reject decoration that
-changes JavaScript automatic semicolon insertion. One typography rule owns the
-editor and ink layer; the browser suite checks computed metrics and glyph
-alignment. The separate [real-browser feedback check](feedback-verification.md)
+changes JavaScript automatic semicolon insertion. CodeMirror renders editable text and decorations in one layer; the browser
+suite verifies current owned spans, native composition, mapped backward selection,
+both scroll axes, local undo checkpoints, Cyber editing through invalid span-boundary drafts and live Show in code geometry. Treatment
+instrumentation rejects reparsing on selection, and playback renders retain the
+same decoration facet. The separate [real-browser feedback check](feedback-verification.md)
 requires actual pulses, nonzero PCM, native IME and reduced-motion behavior;
 shared CI still lacks Chromium/network provisioning for that suite.
 
