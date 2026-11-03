@@ -172,3 +172,49 @@ Sol review: one round with GPT-6.1 Sol on high, verdict APPROVE. Its sole nit
 cells. Three focused cases failed before narrowing the atom matcher and passed
 afterwards for both grid projections. No findings were declined; token usage
 was not exposed.
+
+## Control identity and channel preservation (#99)
+
+Verified 3 November 2026 with Node 24.22.2 and the committed lockfile.
+All 17 remaining named expected failures were first run as ordinary assertions:
+MIX channels 2–4 read 1 instead of 0.7, OUT/SEQ/VCF lost identity/layout, SEQ lost
+its output-name key and the shared ENV became two modules. They now pass as
+ordinary assertions, retaining separate exact source, saved-state and real
+Strudel event checks.
+
+The [identity contract](patch-format.md#matching-rules) now permits unique
+catalog mode switches and same-spelling tempo edits. A unique receiver/call
+sequence distinguishes split branches after a literal edit. Exact matches still
+come first; ambiguous repeats and anonymous roots whose arguments change are
+not matched by position. Sparse MIX channel recovery requires unique matched
+incoming endpoints and unchanged voice order. Live gains and control spans move
+to their proven channels; unused saved channel levels remain silent. Repeated
+ENV calls share a saved identity only with matched saved targets/bindings and
+equal parsed values.
+
+Additional checks cover unique anonymous SEQ/VCF mode switches, ambiguous repeated
+filters and SEQ roots, divergent shared ENV values and equal independently saved
+ENVs. A two-voice sparse MIX regression also failed before adding the unique
+branch-sequence match: changing the amplified branch's final gain lost VCA/ENV
+identity. It now preserves both channels and verifies a subsequent rack gain
+edit replaces only its own source literal and reopens with exact saved state.
+
+Browser acceptance used the local Vite app and T3 Chromium preview. Run the
+committed probe in that page:
+
+```js
+await (await import('/scripts/literal-identity-check.mjs')).verifyLiteralIdentity()
+```
+
+The actual editor accepted MIX CH 3 gain, OUT BPM, VCF resonance, SEQ NOTE →
+DEGREE and VCF LP → HP edits. Seven rendered vintage modules retained their
+IDs, positions, looks, names and directed wiring. The shared ENV remained one
+module with both CV cables; accepted files reopened as restored saved state.
+Executable source remained exact. The probe waited for metadata acceptance,
+not just the editor's immediate text update. No private design canvas was used.
+
+`npm run check` passed: 755 ordinary tests, no expected failures, 40 guardrails,
+formatting, skill integrity, lint, TypeScript and production build. Playback
+remained Stopped during browser acceptance; no audio was started or heard.
+Real Strudel events/tempo were compared independently in Node. These checks do
+not claim physical listening or universal audible equivalence.

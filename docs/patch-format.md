@@ -97,11 +97,28 @@ reader of the old proposed `lead.2` line format to migrate.
   fingerprint for edited branches. Do not use the ordinal of a `$:` line as identity. Inside a
   matched scope, prefer a unique full call fingerprint, then a unique method
   name for a changed argument. Ignore trivia and literal quote style.
+- **Catalog mode identity (#99, decided 3 November 2026):** SEQ `note`/`n`
+  and VCF LP/HP/BP calls (including their envelope calls) may retain identity
+  through a mode switch. After exact matches, compare unique semantic method
+  keys, keeping cutoff, resonance, envelope amount and envelope phases distinct.
+  Anonymous SEQ roots must retain their arguments. A unique receiver plus call
+  sequence can distinguish edited split branches; both old and new keys must
+  be unique. Repeated ambiguous modes/branches still receive fresh IDs.
+  A unique tempo call of the same spelling retains OUT identity when its
+  argument changes; multiple tempo calls do not establish identity.
 - A completely unchanged sequence can restore repeated identical calls by order.
   In a changed sequence, ambiguous repeats receive fresh IDs; do not guess from
   position. Unambiguous surrounding matches retain their layout. Identical
   anonymous voices, changed anonymous roots and renamed declarations may reset
   affected layout. See the spike for tested limits.
+- A matched MIX restores occupied channel numbers only when every projected
+  incoming endpoint has one saved destination on that mixer, without duplicate
+  channels or changing voice order. Parsed gains and their editable spans follow
+  those channels; saved unoccupied channel levels remain silent state. Folded
+  nested buses or ambiguous endpoints do not establish channel ownership.
+- Context-specific ENV calls can share a saved identity only through matched CV
+  targets and saved call bindings, with equal parsed envelope values. Divergent
+  uses remain separate modules; equal values alone never merge independent ENVs.
 - Known generator-owned final-voice orbit routing does not consume module IDs.
   Imported routing stays source-owned unless its ownership is established.
 - Without a valid matching block, auto-layout each voice in chain order using

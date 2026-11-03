@@ -147,7 +147,9 @@ make a standards check pass.
 The [#64 literal-edit suite](literal-edit-verification.md) enumerates every catalog
 control, with separate source, wiring/layout/value, exact saved identity and real
 Strudel event assertions. It runs in the shared gate. Named executable expected
-failures retain the additional identity/channel (#99) gaps. The #66 grid-view
+failures originally retained the identity/channel (#99) gaps; those assertions
+now pass under the [documented conservative contract](patch-format.md#matching-rules).
+The #66 grid-view
 checks now pass, with separate source-splicing and saved-identity regressions and
 [real-browser observations](literal-edit-verification.md#source-independent-grid-views-66). The #65 routing assertions now pass normally, including anonymous
 root edits, unchanged wiring in the reported patch, source preservation and exact

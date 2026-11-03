@@ -812,12 +812,17 @@ function restore(
 ): void {
   const rename = new Map<string, string>()
   const claimed = new Set<string>()
-  for (const module of patch.modules) {
+  // CV identity is constrained by the already matched target, including shared ENV.
+  const ordered = [
+    ...patch.modules.filter((module) => module.type !== 'env'),
+    ...patch.modules.filter((module) => module.type === 'env'),
+  ]
+  for (const module of ordered) {
     const own = bindings.filter((binding) => binding.module === module.id)
     const candidates = saved.modules.filter(
       (old) =>
         old.type === module.type &&
-        !claimed.has(old.id) &&
+        (!claimed.has(old.id) || module.type === 'env') &&
         own.some((binding) => {
           const match = matches.get(binding.scope)
           if (!match) return false
@@ -826,6 +831,8 @@ function restore(
             (oldBinding) =>
               oldBinding.scope === match.saved.id &&
               oldBinding.role === binding.role &&
+              (module.type !== 'env' ||
+                oldBinding.target?.module === rename.get(binding.target?.module ?? '')) &&
               oldBinding.target?.jack === binding.target?.jack &&
               oldBinding.target?.control === binding.target?.control,
           )
@@ -844,12 +851,23 @@ function restore(
     if (candidates.length !== 1) continue
     const old = candidates[0]
     if (!old) continue
+    if (claimed.has(old.id)) {
+      const shared = patch.modules.find((item) => rename.get(item.id) === old.id)
+      // Repeated context-specific calls represent one ENV only while all values agree.
+      if (!shared || descriptor(shared.values) !== descriptor(module.values)) continue
+    }
     claimed.add(old.id)
     rename.set(module.id, old.id)
     module.row = old.row
     module.hp = old.hp
     module.look = old.look
   }
+  patch.modules = patch.modules.filter(
+    (module, index, modules) =>
+      modules.findIndex(
+        (item) => (rename.get(item.id) ?? item.id) === (rename.get(module.id) ?? module.id),
+      ) === index,
+  )
   // Restored positions are occupied even when they are on a later overflow row.
   const occupied = patch.modules.filter((module) => rename.has(module.id))
   const ends = new Map<number, number>()
@@ -884,6 +902,45 @@ function restore(
       return [`${rename.get(id ?? '') ?? id}:${jack}`, name]
     }),
   )
+  for (const module of patch.modules.filter((module) => module.type === 'mix')) {
+    const old = saved.modules.find((item) => item.id === module.id)
+    if (!old) continue
+    const incoming = patch.cables.filter((cable) => cable.to.module === module.id)
+    const channels = incoming.map((cable) => {
+      const previous = saved.cables.filter(
+        (item) =>
+          item.to.module === old.id &&
+          item.from.module === cable.from.module &&
+          item.from.jack === cable.from.jack,
+      )
+      return previous.length === 1 ? previous[0]?.to.jack : undefined
+    })
+    // A changed/ambiguous receiver or reordered voice set cannot prove channel ownership.
+    if (
+      channels.some((jack) => jack === undefined) ||
+      new Set(channels).size !== channels.length ||
+      channels.some((jack, index) => index > 0 && String(jack) <= String(channels[index - 1]))
+    )
+      continue
+    const values = { ...old.values }
+    const controls = new Map<string, string>()
+    incoming.forEach((cable, index) => {
+      const jack = channels[index]
+      if (!jack) return
+      const before = `ch${cable.to.jack.slice(2)}`
+      const after = `ch${jack.slice(2)}`
+      values[after] = module.values[before] ?? 1
+      controls.set(before, after)
+      cable.to.jack = jack
+    })
+    module.values = values
+    for (const binding of bindings.filter(
+      (binding) => binding.module === module.id && binding.role === 'mixer',
+    ))
+      binding.controls = Object.fromEntries(
+        Object.entries(binding.controls).map(([id, span]) => [controls.get(id) ?? id, span]),
+      )
+  }
   graph(patch)
 }
 
