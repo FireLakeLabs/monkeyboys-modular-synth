@@ -11,24 +11,37 @@
   "physicalListening": false,
   "trance": {
     "before": {
-      "counters": [
-        78,
-        16,
-        141
-      ],
-      "events": 17
+      "counters": [78, 16, 141],
+      "events": 14
     },
     "after": {
-      "counters": [
-        78,
-        16,
-        141
-      ],
-      "events": 77
+      "counters": [78, 16, 141],
+      "events": 79
     }
   },
   "deliveryLeadSeconds": {
-    "max": 0.004728571428570305,
-    "count": 79
+    "max": 0.0047952380952374085,
+    "count": 83
+  },
+  "feedback": {
+    "browser": "156.0.8078.4",
+    "checks": [
+      "family/category/named-output styling, all VCF spans, exact retained source",
+      "real rack value rewrite maps backward selection and both scroll axes; Show in code uses live geometry",
+      "unaccepted typing can be undone locally; accepting source checkpoints local history",
+      "invalid drafts clear selection highlights; accepted source restores current ownership",
+      "native Chromium IME composition defers parsing, clears stale highlights and commits exact Japanese text",
+      "typing beyond a CODE span retains Cyber editing focus through an invalid draft; blur clears it and Revert restores source",
+      "Cyber cursor stays solid except while its block is being edited",
+      "selection does not reparse treatments; playback renders retain the same decorations and treatment count",
+      "real final ITER/JUX events drive 400 ms Alien/Instrument feedback; opaque voice has none; PCM remains nonzero",
+      "changing reduced motion during playback clears active fades",
+      "Stop cancels active fades and pending event visuals",
+      "reduced motion suppresses pulses/blinking; widths and cable paths remain identical",
+      "replacement and surfaced errors clear obsolete activity",
+      "semicolon-free bare voices after tempo and const declarations play with attributable activity"
+    ],
+    "physicalListening": false,
+    "pcmRms": 0.05923015478761929
   }
 }

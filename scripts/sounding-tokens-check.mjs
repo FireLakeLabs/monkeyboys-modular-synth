@@ -128,7 +128,7 @@ try {
   )
 
   const imported =
-    '// 🐒 offsets\nsetcpm(120/4)\nconst lead = note("c3 e3 g3 c4").s("sine");\n$: lead.iter(4)\n$: note("a2 b2").s("triangle")\n$: note("d2").s("sine").chunk(4, p => p.add(\"12\"))\n'
+    '// 🐒 offsets\nsetcpm(120/4)\nconst lead = note("c3 e3 g3 c4").s("sine");\n$: lead.iter(4)\n$: note("a2 b2").s("triangle")\n$: note("d2").s("sine").chunk(4, p => p.add("12"))\n'
   await code(imported)
   const saved = await page.evaluate(async () =>
     (await import('/scripts/editor-browser.mjs')).editorSource(),
