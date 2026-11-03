@@ -1,0 +1,411 @@
+{
+  "date": "2026-11-03",
+  "node": "24.22.2",
+  "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "physicalListening": false,
+  "nativeIME": false,
+  "browserChecks": [
+    "exact initial source",
+    "both selected-module spans",
+    "hardware category color",
+    "Alien glow color",
+    "named-output treatment",
+    "Cyber underline",
+    "rack rewrite retains backward selection",
+    "rack rewrite retains both scroll axes",
+    "rack edit changes executable source",
+    "editing-only Cyber owner",
+    "editing Cyber cursor blinks",
+    "blur stops Cyber blinking",
+    "rack metadata folds to one line",
+    "folding preserves exact source",
+    "Show in code uses live editor geometry",
+    "composition defers reader acceptance",
+    "composition callback retains Unicode source",
+    "half-typed draft stays editable",
+    "parse error decorates executable line",
+    "restore original source after probe"
+  ],
+  "loadFixture": {
+    "url": "/scripts/editor-cost.html?editor=textarea|cm",
+    "mode": "production build; localhost; Cache-Control: no-store; no CPU or network throttling; 5 alternating pairs",
+    "validation": "editor-ready mark follows exact source verification and a requestAnimationFrame; all resource transferSize values nonzero",
+    "runs": [
+      {
+        "editor": "textarea",
+        "run": 0,
+        "readyMs": 80.90000000596046,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 6.0999999940395355
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 24.099999994039536
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 7
+          },
+          {
+            "name": "/assets/SourceEditor-D3f-NUfp.js",
+            "bytes": 1654,
+            "transfer": 1128,
+            "duration": 3.4000000059604645
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 3.7999999821186066
+          }
+        ]
+      },
+      {
+        "editor": "cm",
+        "run": 0,
+        "readyMs": 96.80000001192093,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 4.300000011920929
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 19.400000005960464
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 4.799999982118607
+          },
+          {
+            "name": "/assets/CodeMirrorSourceEditor-BMNd-mHM.js",
+            "bytes": 437669,
+            "transfer": 147120,
+            "duration": 19.200000017881393
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 3
+          }
+        ]
+      },
+      {
+        "editor": "textarea",
+        "run": 1,
+        "readyMs": 54.29999998211861,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 4.4000000059604645
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 4.700000017881393
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 17.600000023841858
+          },
+          {
+            "name": "/assets/SourceEditor-D3f-NUfp.js",
+            "bytes": 1654,
+            "transfer": 1128,
+            "duration": 3.199999988079071
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 3.399999976158142
+          }
+        ]
+      },
+      {
+        "editor": "cm",
+        "run": 1,
+        "readyMs": 68.59999999403954,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 3.5999999940395355
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 4.299999982118607
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 16.19999998807907
+          },
+          {
+            "name": "/assets/CodeMirrorSourceEditor-BMNd-mHM.js",
+            "bytes": 437669,
+            "transfer": 147120,
+            "duration": 17.69999998807907
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 2.600000023841858
+          }
+        ]
+      },
+      {
+        "editor": "textarea",
+        "run": 2,
+        "readyMs": 38.79999998211861,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 3.5
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 17.099999994039536
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 3.5999999940395355
+          },
+          {
+            "name": "/assets/SourceEditor-D3f-NUfp.js",
+            "bytes": 1654,
+            "transfer": 1128,
+            "duration": 3.5999999940395355
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 4.0999999940395355
+          }
+        ]
+      },
+      {
+        "editor": "cm",
+        "run": 2,
+        "readyMs": 70.7999999821186,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 2.9000000059604645
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 17.30000001192093
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 3.300000011920929
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 3.5
+          },
+          {
+            "name": "/assets/CodeMirrorSourceEditor-BMNd-mHM.js",
+            "bytes": 437669,
+            "transfer": 147120,
+            "duration": 17.899999976158142
+          }
+        ]
+      },
+      {
+        "editor": "textarea",
+        "run": 3,
+        "readyMs": 45.900000005960464,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 3.2999999821186066
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 17.19999998807907
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 3.699999988079071
+          },
+          {
+            "name": "/assets/SourceEditor-D3f-NUfp.js",
+            "bytes": 1654,
+            "transfer": 1128,
+            "duration": 2.699999988079071
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 2.699999988079071
+          }
+        ]
+      },
+      {
+        "editor": "cm",
+        "run": 3,
+        "readyMs": 74.10000002384186,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 2.5999999940395355
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 3
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 13.900000005960464
+          },
+          {
+            "name": "/assets/CodeMirrorSourceEditor-BMNd-mHM.js",
+            "bytes": 437669,
+            "transfer": 147120,
+            "duration": 17.30000001192093
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 2.7999999821186066
+          }
+        ]
+      },
+      {
+        "editor": "textarea",
+        "run": 4,
+        "readyMs": 45.20000001788139,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 2.9000000059604645
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 16.900000005960464
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 3.2000000178813934
+          },
+          {
+            "name": "/assets/SourceEditor-D3f-NUfp.js",
+            "bytes": 1654,
+            "transfer": 1128,
+            "duration": 3.300000011920929
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 3.5
+          }
+        ]
+      },
+      {
+        "editor": "cm",
+        "run": 4,
+        "readyMs": 71,
+        "resources": [
+          {
+            "name": "/assets/editorCost-DqUvAYsh.js",
+            "bytes": 1594,
+            "transfer": 1116,
+            "duration": 2.4000000059604645
+          },
+          {
+            "name": "/assets/Rack-DxKgCmm4.js",
+            "bytes": 382295,
+            "transfer": 118027,
+            "duration": 17
+          },
+          {
+            "name": "/assets/Rack-D8iPD683.css",
+            "bytes": 12439,
+            "transfer": 4083,
+            "duration": 2.699999988079071
+          },
+          {
+            "name": "/assets/CodeMirrorSourceEditor-BMNd-mHM.js",
+            "bytes": 437669,
+            "transfer": 147120,
+            "duration": 21.099999994039536
+          },
+          {
+            "name": "/assets/highlighting-FFnrMHHb.js",
+            "bytes": 1468,
+            "transfer": 1037,
+            "duration": 2.600000023841858
+          }
+        ]
+      }
+    ],
+    "timingVerdict": "Illustrative local mount observations only; no bottleneck profile, device or deployment prediction."
+  }
+}

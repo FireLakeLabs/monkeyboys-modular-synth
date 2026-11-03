@@ -1,0 +1,20 @@
+@keyframes spike-cursor {
+  50% {
+    opacity: 0;
+  }
+}
+.cyber-editing span {
+  animation: spike-cursor 1s step-end infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cyber-editing span {
+    animation: none;
+  }
+  .editor-spike .cm-event {
+    background: transparent;
+    color: inherit;
+  }
+  .editor-spike .cm-cursor {
+    animation: none;
+  }
+}

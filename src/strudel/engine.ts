@@ -1,5 +1,13 @@
 import { read } from '../reader'
 import { activityPlan } from './activity'
+import { sourceLocations } from './sourceLocations'
+import type { Span } from '../reader/types'
+
+/** Opt-in editor-spike feedback, bound to the exact submitted source revision. */
+export interface SourceFeedback {
+  source: string
+  spans: Span[]
+}
 
 /** Browser audio and Strudel evaluation stay behind this adapter. */
 type StrudelWeb = typeof import('@strudel/web')
@@ -45,7 +53,13 @@ let epoch = 0
 let allowed = false
 let cancelActive: (() => void) | undefined
 let evaluating:
-  { epoch: number; activity: (hap: unknown) => string[]; activityRevision: number } | undefined
+  | {
+      epoch: number
+      activity: (hap: unknown) => string[]
+      activityRevision: number
+      feedback: ((hap: unknown) => () => void) | undefined
+    }
+  | undefined
 let observing = false
 
 let activityRevision = 0
@@ -61,8 +75,14 @@ function scheduleActivity(
   target: number,
   revision: number,
   strudel: StrudelWeb,
+  feedback?: () => void,
 ) {
-  if (!modules.length || !Number.isFinite(target) || revision !== activityRevision || !allowed)
+  if (
+    (!modules.length && !feedback) ||
+    !Number.isFinite(target) ||
+    revision !== activityRevision ||
+    !allowed
+  )
     return
   const deliver = () => {
     if (revision !== activityRevision || !allowed) return
@@ -74,13 +94,19 @@ function scheduleActivity(
       }, remaining)
       activityTimers.add(timer)
     } else {
-      listeners.forEach((listener) => {
-        try {
-          listener({ type: 'activity', modules })
-        } catch {
-          /* Visual observers cannot break audio. */
-        }
-      })
+      try {
+        feedback?.()
+      } catch {
+        /* Editor feedback cannot break audio. */
+      }
+      if (modules.length)
+        listeners.forEach((listener) => {
+          try {
+            listener({ type: 'activity', modules })
+          } catch {
+            /* Visual observers cannot break audio. */
+          }
+        })
     }
   }
   deliver()
@@ -138,7 +164,13 @@ function load(): Promise<StrudelWeb> {
             // start() can yield after installing the pattern but before its first tick.
             // Guard queries too: onToggle fires only after that tick.
             const observed = pattern.onTrigger((hap, _now, _cps, target) => {
-              scheduleActivity(operation.activity(hap), target, operation.activityRevision, strudel)
+              scheduleActivity(
+                operation.activity(hap),
+                target,
+                operation.activityRevision,
+                strudel,
+                operation.feedback?.(hap),
+              )
             }, false)
             return new strudel.Pattern(
               (state) => (current === epoch && allowed ? observed.query(state) : []),
@@ -196,12 +228,20 @@ export function setVolume(value: number): Promise<void> {
 /** Replaces the scheduled pattern. First use must follow a user gesture. */
 export function play(
   code: string,
-  options: { volume?: number; resetEffects?: boolean } = {},
+  options: {
+    volume?: number
+    resetEffects?: boolean
+    sourceFeedback?: (event: SourceFeedback) => void
+  } = {},
 ): Promise<void> {
   const current = epoch
   clearActivity()
   const visualRevision = activityRevision
-  let activity = { code, modules: (_hap: unknown): string[] => [] }
+  let activity = {
+    code,
+    modules: (_hap: unknown): string[] => [],
+    sourceOffset: (offset: number): number | null => offset,
+  }
   try {
     activity = activityPlan(read(code))
   } catch {
@@ -232,6 +272,15 @@ export function play(
         epoch: current,
         activity: activity.modules,
         activityRevision: visualRevision,
+        feedback: options.sourceFeedback
+          ? (hap: unknown) => {
+              const event = {
+                source: code,
+                spans: sourceLocations(hap, code.length, activity.sourceOffset),
+              }
+              return () => options.sourceFeedback?.(event)
+            }
+          : undefined,
       }
       evaluating = operation
       try {
