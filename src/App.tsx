@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useMemo,
   useEffect,
   lazy,
   Suspense,
@@ -24,6 +25,7 @@ import {
   saveLayout,
   sourceBody,
 } from './workspace/document'
+import { codeConversions } from './workspace/codeConversion'
 import { prepareReplacement } from './workspace/open'
 import { mayHaveOutput, strudelUrl } from './workspace/transport'
 import { ReplacementPrompt } from './workspace/ReplacementPrompt'
@@ -105,6 +107,7 @@ export default function App() {
   const editor = useRef<EditorView>(null)
   const fileInput = useRef<HTMLInputElement>(null)
   const locked = phase !== 'readable' || composing
+  const conversions = useMemo(() => codeConversions(document), [document])
   const patch = document.patch
   const out = patch.modules.find((module) => module.type === 'out')
   const tempoControl = getModuleSpec('out').controls.find((control) => control.id === 'bpm')
@@ -543,6 +546,19 @@ export default function App() {
           locked={locked || document.layout === 'invalid'}
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}
+          conversions={conversions}
+          convertCode={(id) => {
+            if (
+              locked ||
+              current.current.phase !== 'readable' ||
+              current.current.document !== document
+            )
+              return
+            const offer = conversions.find((item) => item.module === id)
+            if (!offer) return
+            install(offer.document)
+            setSelected(null)
+          }}
           editingModule={editingModule}
           emptyOutput={emptyOutput}
           edit={edit}

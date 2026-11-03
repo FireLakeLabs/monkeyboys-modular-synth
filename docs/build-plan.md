@@ -207,3 +207,12 @@ badges and name/call filtering. The first library collection, Start here, follow
 the workshop’s four-stage order with original generator-style exercises and
 one-line try-this edits. Existing guarded loading and exact-source showcases keep
 their contracts. See [acceptance evidence](on-ramp-verification.md).
+
+## CODE ownership conversion
+
+Issue #78 adds explicit single-module conversion offers for saved CODE owners
+recognized by the current reader. Conversion retains executable source and
+unrelated rack state, participates in accepted-document undo/redo, and requires
+independent saved-identity validation before an offer appears. See the
+[contract](translation-rules.md#explicit-code-conversion-78) and
+[unit/event and browser evidence](code-conversion-verification.md).

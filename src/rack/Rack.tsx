@@ -11,6 +11,7 @@ import { LOOK_LABELS, looksFor } from '../modules/looks'
 import { LOOK_LAYOUT } from '../looks/layout'
 import { PALETTE_CATEGORIES, paletteModules, getModuleSpec } from '../modules/catalog'
 import type { JackRef, Patch } from '../patch/types'
+import type { CodeConversion } from '../workspace/codeConversion'
 import type { SourceConnectionAssessment } from '../workspace/connections'
 import { observeActivity } from './activity'
 import { ControlEditor } from './Controls'
@@ -67,6 +68,8 @@ export function Rack({
   locked,
   showCode,
   sourceModules,
+  conversions,
+  convertCode,
   editingModule,
   emptyOutput,
   assess,
@@ -77,6 +80,8 @@ export function Rack({
   editingModule: string | null
   emptyOutput: boolean
   sourceModules: readonly string[]
+  conversions: readonly CodeConversion[]
+  convertCode: (id: string) => void
   edit: RackEdit
   assess: (from: JackRef, to: JackRef, moving?: string) => SourceConnectionAssessment
   selected: string | null
@@ -546,6 +551,19 @@ export function Rack({
                             )
                           }
                         />
+                      ))}
+                    {conversions
+                      .filter((offer) => offer.module === m.id)
+                      .map((offer) => (
+                        <button
+                          key={offer.module}
+                          type="button"
+                          className="code-conversion"
+                          disabled={locked}
+                          onClick={() => convertCode(m.id)}
+                        >
+                          Looks like {getModuleSpec(offer.type).name}: convert?
+                        </button>
                       ))}
                   </div>
                   <div className="patch-box">

@@ -17,6 +17,22 @@ function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+/** The reader normalizes scale tonics; that spelling change does not move routing. */
+function routingSyntax(scope: Scope): Scope {
+  return {
+    ...scope,
+    calls: scope.calls.map((call) => {
+      if (call.name !== 'scale') return call
+      const args: unknown = JSON.parse(call.arguments)
+      if (!Array.isArray(args) || args.length !== 1) return call
+      const arg: unknown = args[0]
+      if (!record(arg) || arg.type !== 'Literal' || typeof arg.value !== 'string') return call
+      const value = arg.value.charAt(0).toUpperCase() + arg.value.slice(1)
+      return { ...call, arguments: descriptor([{ ...arg, value }]) }
+    }),
+  }
+}
+
 function controlValue(value: unknown): value is ControlValue {
   return (
     typeof value === 'string' ||
@@ -161,10 +177,12 @@ export function readLayout(source: string): SavedLayout {
         // Scope IDs are addresses in this file, not generator ordinals. An unrelated
         // declaration can shift them without changing the proven routing expression.
         const proven = generated.layout.scopes.find(
-          (item) => ordered(item) === ordered({ ...candidate, id: item.id }),
+          (item) =>
+            ordered(routingSyntax(item)) ===
+            ordered({ ...routingSyntax(scope), routing: candidate.routing, id: item.id }),
         )
-        if (!proven) throw new Error('Unverifiable routing provenance')
-        return { ...proven, id: scope.id }
+        if (!proven?.routing) throw new Error('Unverifiable routing provenance')
+        return { ...scope, routing: proven.routing }
       })
       const modules = generated.layout.modules.map((module, index) => {
         const candidate: unknown = rawModules[index]
