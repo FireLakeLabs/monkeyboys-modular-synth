@@ -336,3 +336,32 @@ proves every accepted edit and restores the exact proposed saved rack. Changes
 inside the edited literal may use canonical spacing/quotes; every surrounding
 byte remains exact. Text mode applies on Enter or blur, without a separate Apply
 button; CODE's existing explicit Apply behavior is unchanged.
+
+## Explicit CODE conversion (#78)
+
+A saved CODE owner that the current reader can represent as one complete module
+shows **Looks like QUANT: convert?** (using the matched catalog name) on its panel.
+Recognition alone never replaces a saved CODE owner. Conversion accepts a new
+ownership revision through normal workspace history; Undo restores the exact
+previous file and CODE owner. Unapplied drafts disable the action. Conversion
+requires confirmed stopped transport; while starting, playing, stopping or in an
+error state the disabled button says to Stop playback first. This avoids
+re-evaluating opaque setup or resetting live effect tails for an ownership change.
+
+The offer requires identical source spans/call ownership from a fresh projection,
+ordinary chain jacks, valid replacement wiring, and independently validated saved
+rack identity. Partial matches, multiple-module fragments, contextual ENV/CV,
+disconnected CODE and any conversion whose persistence cannot be proven stay
+CODE. New modules use their family's default look and take the old block's free
+position; unrelated modules, disconnected state, rails, names and cable IDs are
+retained. Only the chosen owner and its cable/name references change.
+
+Executable source, comments and formatting stay exact; only trailing rack
+metadata changes. Generated routing remains owned. Its scope validation accepts
+the reader's documented lowercase-to-uppercase scale tonic normalization, while
+requiring the same routing call and orbit and retaining independent graph/source
+validation. Conversion does not rewrite a patch into generator style or add
+missing controls to the executable source.
+
+See the [conversion checks](../src/workspace/codeConversion.test.ts) and
+[separate browser observations](code-conversion-verification.md).

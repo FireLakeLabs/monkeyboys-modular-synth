@@ -524,3 +524,12 @@ select:focus-visible {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.code-conversion {
+  white-space: normal;
+  font-size: 12px;
+  padding: 6px;
+  border: 1px solid currentColor;
+  color: #f4a462;
+  background: #131417;
+}
