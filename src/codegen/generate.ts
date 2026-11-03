@@ -1,6 +1,6 @@
 import { parse, tokenizer } from 'acorn'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
-import type { GridRow } from '../modules/types'
+import { drumText } from '../patch/notation'
 import type { Patch } from '../patch/types'
 import type { SourceDocument } from '../reader/types'
 import { parseSource } from '../reader/syntax'
@@ -59,29 +59,6 @@ function append(
         : []),
     ],
   }
-}
-
-function grid(rows: readonly GridRow[]): string {
-  return (
-    rows
-      .flatMap(({ sample, steps }) => {
-        if (!steps.includes(1)) return []
-        if (steps.every((step) => step === 1)) return `${sample}*${steps.length}`
-        let period = steps.length
-        for (let p = 1; p < steps.length; p++) {
-          if (steps.length % p === 0 && steps.every((step, i) => step === steps[i % p])) {
-            period = p
-            break
-          }
-        }
-        const tokens = steps
-          .slice(0, period)
-          .map((step) => (step ? sample : '~'))
-          .join(' ')
-        return period === steps.length ? tokens : `[${tokens}]*${steps.length / period}`
-      })
-      .join(', ') || '~'
-  )
 }
 
 function omitted(node: Node, id: string): boolean {
@@ -352,7 +329,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       case 'drums': {
         const rows = value(node, 'grid')
         if (!isGrid(rows)) throw new Error('Invalid DRUMS grid')
-        const text = typeof rows === 'string' ? rows : grid(rows)
+        const text = typeof rows === 'string' ? rows : drumText(rows)
         let expression = append(blank(), `s(${quote(text)})`, node)
         if (!omitted(node, 'drop'))
           expression = append(expression, `.degradeBy(${numeric(number(node, 'drop'))})`, node)

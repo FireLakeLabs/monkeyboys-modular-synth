@@ -276,3 +276,20 @@ and keeps CODE fragments, then completes that proposed edit atomically. Subseque
 rack edits use the canonical generator path. Library exercises are already authored
 this way; attributed showcases retain exact source until consent. See
 [library ownership and conversion limits](patch-library.md#rack-ownership-55-and-75).
+
+## Source-independent grid views (#66)
+
+The reader retains imported SEQ/DRUMS notation as strings. Grid eligibility is a
+pure projection of that notation using catalog limits, independent of source
+ownership or saved array representation. Plain SEQ tokens/rests/alternations and
+DRUMS flat or generator-repeated rows render as grids; unsupported timing, grouping,
+row shapes or lengths retain text with a reason. No parsing or view switch
+rewrites the accepted source or evaluates Strudel.
+
+Grid edits use the existing literal spans. Array values serialize to mini-notation
+with the generator's drum writer and SEQ length rules; imported string sequences
+retain their full written length. The source/graph validation boundary still
+proves every accepted edit and restores the exact proposed saved rack. Changes
+inside the edited literal may use canonical spacing/quotes; every surrounding
+byte remains exact. Text mode applies on Enter or blur, without a separate Apply
+button; CODE's existing explicit Apply behavior is unchanged.

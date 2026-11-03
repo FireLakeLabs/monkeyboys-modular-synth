@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { Control, KnobControl } from '../modules/types'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { isGrid, isSteps } from '../codegen/graph'
+import { drumText, drumView, stepView } from '../patch/notation'
 import { depthControl, draggedValue, normalized, sequenceText, snap } from './model'
 
 const focusEditor = (element: HTMLInputElement | null) => element?.focus()
@@ -167,6 +168,7 @@ export function ControlEditor({
   editSource?: () => void
 }) {
   const [error, setError] = useState('')
+  const [textMode, setTextMode] = useState(false)
   const value = module.values[control.id] ?? control.default
   switch (control.kind) {
     case 'knob': {
@@ -220,32 +222,57 @@ export function ControlEditor({
       )
     case 'steps': {
       if (!isSteps(value)) return null
-      if (typeof value === 'string')
-        return <TextEditor label="Step notation" value={value} commit={commit} />
+      const text = typeof value === 'string' ? value : sequenceText(module, value)
+      const view = stepView(text, control)
+      if (textMode || view.kind === 'text')
+        return (
+          <TextEditor
+            key={text}
+            label="Step notation"
+            notation
+            value={text}
+            reason={view.kind === 'text' ? view.reason : undefined}
+            backToGrid={view.kind === 'grid' ? () => setTextMode(false) : undefined}
+            commit={(next) => {
+              const applied = commit(next)
+              if (applied) setTextMode(false)
+              return applied
+            }}
+          />
+        )
+      const steps = typeof value === 'string' ? view.value : value
       return (
         <fieldset className="step-editor">
           <legend>{control.label}</legend>
           <div className="steps">
             {Array.from({ length: control.maxSteps }, (_, index) => (
               <input
-                key={index}
+                key={`${index}:${steps[index] ?? '~'}`}
                 aria-label={`Step ${index + 1}`}
-                defaultValue={value[index] ?? '~'}
+                defaultValue={steps[index] ?? '~'}
                 onBlur={(event) => {
                   const token = event.target.value.trim()
-                  if (!/^(?:[^\s<>]+|<[^<>]+>)$/.test(token)) {
+                  const parsed = stepView(token, control)
+                  if (parsed.kind !== 'grid' || parsed.value.length !== 1) {
                     setError('Enter a note, degree, ~, or <a b>')
                     return
                   }
-                  const steps = Array.from({ length: Math.max(value.length, index + 1) }, (_, i) =>
-                    i === index ? token : (value[i] ?? '~'),
+                  if (token === (steps[index] ?? '~')) {
+                    setError('')
+                    return
+                  }
+                  const next = Array.from({ length: Math.max(steps.length, index + 1) }, (_, i) =>
+                    i === index ? token : (steps[i] ?? '~'),
                   )
-                  if (commit(steps)) setError('')
+                  if (commit(typeof value === 'string' ? next.join(' ') : next)) setError('')
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') event.currentTarget.blur()
                 }}
               />
             ))}
           </div>
-          <button type="button" onClick={() => commit(sequenceText(module, value))}>
+          <button type="button" onClick={() => setTextMode(true)}>
             Text mode
           </button>
           {error && <small role="alert">{error}</small>}
@@ -254,9 +281,26 @@ export function ControlEditor({
     }
     case 'grid': {
       if (!isGrid(value)) return null
-      if (typeof value === 'string')
-        return <TextEditor label="Drum notation" value={value} commit={commit} />
-      const count = value[0]?.steps.length ?? 8
+      const text = typeof value === 'string' ? value : drumText(value)
+      const view = drumView(text, control)
+      if (textMode || (typeof value === 'string' && view.kind === 'text'))
+        return (
+          <TextEditor
+            key={text}
+            label="Drum notation"
+            notation
+            value={text}
+            reason={view.kind === 'text' ? view.reason : undefined}
+            backToGrid={view.kind === 'grid' ? () => setTextMode(false) : undefined}
+            commit={(next) => {
+              const applied = commit(next)
+              if (applied) setTextMode(false)
+              return applied
+            }}
+          />
+        )
+      const rows = typeof value === 'string' ? (view.kind === 'grid' ? view.value : []) : value
+      const count = rows[0]?.steps.length ?? control.default[0]?.steps.length ?? 8
       return (
         <fieldset className="grid-editor">
           <legend>{control.label}</legend>
@@ -265,7 +309,7 @@ export function ControlEditor({
             value={count}
             onChange={(event) =>
               commit(
-                value.map((row) => ({
+                rows.map((row) => ({
                   ...row,
                   steps: Array.from(
                     { length: Number(event.target.value) },
@@ -281,18 +325,17 @@ export function ControlEditor({
               </option>
             ))}
           </select>
-          {value.map((row, index) => (
+          {rows.map((row, index) => (
             <div key={index} className="drum-row">
               <input
+                key={row.sample}
                 aria-label={`Sample ${index + 1}`}
                 defaultValue={row.sample}
-                onBlur={(event) =>
-                  commit(
-                    value.map((r, i) =>
-                      i === index ? { ...r, sample: event.target.value.trim() || '~' } : r,
-                    ),
-                  )
-                }
+                onBlur={(event) => {
+                  const sample = event.target.value.trim() || '~'
+                  if (sample === row.sample) return
+                  commit(rows.map((r, i) => (i === index ? { ...r, sample } : r)))
+                }}
               />
               <div className="drum-cells" style={{ gridTemplateColumns: `repeat(${count}, 1fr)` }}>
                 {row.steps.map((step, i) => (
@@ -303,7 +346,7 @@ export function ControlEditor({
                     aria-pressed={step === 1}
                     onClick={() =>
                       commit(
-                        value.map((r, j) =>
+                        rows.map((r, j) =>
                           j === index
                             ? { ...r, steps: r.steps.map((s, k) => (k === i ? (s ? 0 : 1) : s)) }
                             : r,
@@ -319,21 +362,14 @@ export function ControlEditor({
             type="button"
             onClick={() =>
               commit([
-                ...value,
+                ...rows,
                 { sample: 'cp', steps: Array.from({ length: count }, () => 0 as const) },
               ])
             }
           >
             + Voice
           </button>
-          <button
-            type="button"
-            onClick={() =>
-              commit(
-                value.map((r) => r.steps.map((s) => (s ? r.sample : '~')).join(' ')).join(', '),
-              )
-            }
-          >
+          <button type="button" onClick={() => setTextMode(true)}>
             Text mode
           </button>
         </fieldset>
@@ -342,9 +378,33 @@ export function ControlEditor({
   }
 }
 
-function TextEditor({ label, value, commit }: { label: string; value: string; commit: Commit }) {
+function TextEditor({
+  label,
+  value,
+  commit,
+  reason,
+  backToGrid,
+  notation = false,
+}: {
+  label: string
+  value: string
+  commit: Commit
+  reason?: string | undefined
+  backToGrid?: (() => void) | undefined
+  notation?: boolean
+}) {
   const [draft, setDraft] = useState(value)
   const [failed, setFailed] = useState(false)
+  const submitted = useRef(value)
+  function apply() {
+    if (draft === submitted.current) {
+      backToGrid?.()
+      return
+    }
+    const applied = commit(draft)
+    setFailed(!applied)
+    if (applied) submitted.current = draft
+  }
   return (
     <label className="text-control">
       {label}
@@ -352,11 +412,31 @@ function TextEditor({ label, value, commit }: { label: string; value: string; co
         aria-label={label}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
+        onBlur={notation ? apply : undefined}
+        onKeyDown={(event) => {
+          if (
+            notation &&
+            event.key === 'Enter' &&
+            !event.shiftKey &&
+            !event.nativeEvent.isComposing
+          ) {
+            event.preventDefault()
+            apply()
+          }
+        }}
         spellCheck={false}
       />
-      <button type="button" onClick={() => setFailed(!commit(draft))}>
-        Apply
-      </button>
+      {!notation && (
+        <button type="button" onClick={apply}>
+          Apply
+        </button>
+      )}
+      {reason && <small>{reason}</small>}
+      {backToGrid && (
+        <button type="button" onClick={backToGrid}>
+          Grid mode
+        </button>
+      )}
       {failed && <small role="alert">Cannot apply. Fix the source and try again.</small>}
     </label>
   )
