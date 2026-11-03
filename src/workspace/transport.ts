@@ -2,9 +2,20 @@ import { parseSource } from '../reader/syntax'
 import type { SourceDocument } from '../reader/types'
 import { sourceBody } from './document'
 
-/** Use the accepted executable source, including opaque imported voices. */
-export function hasOutput(document: SourceDocument): boolean {
-  return parseSource(sourceBody(document.source)).scopes.some((scope) => scope.kind === 'voice')
+/** Only proven tempo statements establish silence; unclassified code may play. */
+export function mayHaveOutput(document: SourceDocument): boolean {
+  return parseSource(document.source).program.body.some((statement) => {
+    if (statement.type === 'EmptyStatement') return false
+    return !(
+      statement.type === 'ExpressionStatement' &&
+      document.bindings.some(
+        (binding) =>
+          binding.role === 'tempo' &&
+          binding.start === statement.expression.start &&
+          binding.end === statement.expression.end,
+      )
+    )
+  })
 }
 
 export function strudelUrl(document: SourceDocument): string {

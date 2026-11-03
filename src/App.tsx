@@ -25,7 +25,7 @@ import {
   sourceBody,
 } from './workspace/document'
 import { prepareReplacement } from './workspace/open'
-import { hasOutput, strudelUrl } from './workspace/transport'
+import { mayHaveOutput, strudelUrl } from './workspace/transport'
 import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { createAutosave } from './workspace/autosave'
 import { RestorePrompt } from './workspace/RestorePrompt'
@@ -192,7 +192,7 @@ export default function App() {
   async function togglePlay() {
     if (needsStop) await playback.stop()
     else if (current.current.phase === 'readable') {
-      if (!hasOutput(current.current.document)) {
+      if (!mayHaveOutput(current.current.document)) {
         setEmptyPlay(current.current.document)
         setSelected(out?.id ?? null)
         return

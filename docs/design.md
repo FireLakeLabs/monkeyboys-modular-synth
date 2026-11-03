@@ -48,8 +48,9 @@ The header owns the single Play/Stop control and a catalog-backed BPM readout.
 BPM edits use the same source-preserving operation as OUT; OUT and code edits
 update the header. Stop remains available while starting, applying, stopping or
 recovering unknown scheduling, including with an invalid draft. Playing a patch
-without an executable voice reports “Nothing reaches OUT yet” and brings OUT's
-highlighted input into view; it does not initialize audio.
+with only proven tempo setup reports “Nothing reaches OUT yet” and brings OUT's
+highlighted input into view; it does not initialize audio. Unclassified imported
+statements still reach the engine because reader coverage does not prove silence.
 
 New racks place MIX and OUT at the right end of the first rail. Palette clicks
 fill free space from the left. Clicks and drag previews share the same placement

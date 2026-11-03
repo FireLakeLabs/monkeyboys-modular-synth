@@ -511,7 +511,7 @@ try {
   await hang.goto(base)
   await code(
     hang,
-    '// intentionally pending\nglobalThis.hungEvaluationStarted = true; new Promise(() => {}).then(pattern => pattern)\n',
+    '// intentionally pending\nglobalThis.hungEvaluationStarted = true; new Promise(() => {})\n',
   )
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(hang, 'Enabling audio / starting…')
@@ -544,7 +544,7 @@ try {
   await waitStatus(hang, 'Stopped')
   await code(
     hang,
-    `new Promise(resolve => { globalThis.finishEvaluation = () => resolve(note('c3').s('sine')) }).then(pattern => pattern)\n`,
+    `new Promise(resolve => { globalThis.finishEvaluation = () => resolve(note('c3').s('sine')) })\n`,
   )
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
   await hang.waitForFunction(() => typeof globalThis.finishEvaluation === 'function')

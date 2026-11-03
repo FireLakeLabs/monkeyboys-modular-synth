@@ -43,13 +43,18 @@ not accessed.
   highlighted/scrolled OUT's input into view. There is no code-column Stop.
   Playing a synth, making its draft invalid and pressing the header Stop
   retained the exact invalid draft and stopped scheduling.
+  After Sol identified reader classification as insufficient proof of silence,
+  final pattern identifiers and named Strudel labels were admitted again. Both
+  `const lead = note("c3").s("sine").gain(0.2); lead` and
+  `drums: note("c3").s("sine").gain(0.2)` reached Scheduled with nonzero measured
+  output (RMS 0.01975 and 0.00746). New still reported silence without initializing
+  audio. Three focused unclassified-source regressions failed before this fix.
 - **#36 recovery:** `verifyLibraryStopFailure()` still passes using the header:
   injected Stop failure retains work and export, then explicit Stop retry
   recovers. A real pending evaluation remained in Starting; header Stop returned
   immediately to Stopped, and resolving the abandoned evaluation did not
-  restart scheduling. The pending fixture is an unlabeled Promise with an
-  identity `.then(pattern => pattern)` so the reader sees an opaque voice;
-  labeling a Promise would instead invoke Strudel's pattern-only `.p()`.
+  restart scheduling. This also passed with a plain unlabeled Promise after the
+  silence check was narrowed; the existing browser suite retains that fixture.
 
 Strudel sharing/tempo fixture:
 
@@ -62,7 +67,7 @@ $: note("c3 e3 g3").s("sine").gain(0.2)
 ## Deterministic checks
 
 `npm run check` passed: runtime pin, formatting, skill integrity, lint,
-728 passing unit tests plus 17 expected failures after rebasing onto #107,
+731 passing unit tests plus 17 expected failures after rebasing onto #107,
 40 guardrail tests, and the
 TypeScript/production build. The placement regression failed before the fix
 with MIX, OUT, SEQ, OSC, VCF and passes after it. Transport tests cover empty and
