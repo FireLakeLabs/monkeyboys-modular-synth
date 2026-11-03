@@ -57,6 +57,11 @@ passed again. A native keyboard edit during playback changed 964→971 Hz while
 retaining “Pattern scheduled” and nonzero PCM (RMS 0.00549). Screenshots were
 recaptured with the current folded-metadata editor.
 
+After the final rebase onto `e541524` (the new searchable palette), the gate
+passed with 787 tests and 40 guardrails, and the 183-observation matrix plus
+Enveloped fit/cable checks passed again. The screenshots below include that
+palette. The feature diff is unchanged by this rebase.
+
 The private online design canvas was not accessed; the repository's supplied
 PNG/HTML board exports were available as references.
 
