@@ -17,7 +17,8 @@ spans accumulate, retriggers renew their 400 ms lifetime and one expiry timer
 removes old marks. These transactions do not change source, selection or draft
 history. A document edit clears marks immediately, before React's next render.
 Exact source equality suppresses events while the draft differs from evaluated
-code. Playback replacement, Stop, surfaced evaluation/resource errors, editor
+code, including valid unapplied drafts. Explicit Apply resumes the new source;
+auto-apply remains supported. Playback replacement, Stop, surfaced evaluation/resource errors, editor
 cleanup and runtime motion changes clear marks and timers.
 
 Only reader-owned Hardware/Alien spans receive marks. Cached source treatments
@@ -65,8 +66,8 @@ physical speakers/headphones were heard; broader browser/device coverage and
 universal audible equivalence remain unverified. The archived design boards
 were available; the private live canvas was not accessed.
 
-After rebasing onto `9cbea9a` (including the palette/library, rack controls and
-inline modulation generator updates),
+After rebasing onto `3309a29` (including the palette/library, rack controls,
+inline modulation generator and explicit-apply updates),
 `npm run check` passed again: 792 unit tests, 40 guardrails, formatting, skill
 integrity, lint, TypeScript and the production build. Both browser suites passed
 again on that base; the linked raw results and screenshot are from this final run.

@@ -111,6 +111,9 @@ async function observe() {
 try {
   await page.goto(base)
   await page.getByRole('textbox', { name: 'Strudel source', exact: true }).waitFor()
+  const autoApply = page.getByRole('checkbox', { name: 'Auto-apply', exact: true })
+  assert.equal(await autoApply.isChecked(), false)
+  await autoApply.check()
   // A generated library exercise proves generated source, separately from the imported fixture.
   await page.evaluate(async () => {
     const { libraryPatches } = await import('/src/library/catalog.ts')
@@ -151,6 +154,27 @@ try {
   pass(
     'imported shared/later voices retain original UTF-16 token positions without marking opaque calls or changing source',
   )
+
+  await autoApply.uncheck()
+  await page.evaluate(
+    async (source) => {
+      ;(await import('/scripts/editor-browser.mjs')).replaceSource(source)
+    },
+    saved.replace('a2 b2', 'f2 g2'),
+  )
+  assert.equal(await page.evaluate(() => window.tokenMarks().length), 0)
+  await page.waitForTimeout(600)
+  assert.equal(await page.locator('.sync-status').textContent(), 'Unapplied changes')
+  assert.equal(await page.evaluate(() => window.tokenMarks().length), 0)
+  await status('Pattern scheduled')
+  await page.getByRole('button', { name: 'Apply code', exact: true }).click()
+  await accepted()
+  await page.waitForFunction(() => window.tokenMarks().some((span) => span.text === 'f2'))
+  pass(
+    'valid unapplied drafts suppress old token activity until explicit Apply accepts the new source',
+  )
+  await autoApply.check()
+  await code(imported)
 
   await page.evaluate(async () => {
     const { replaceSource, editorSource } = await import('/scripts/editor-browser.mjs')

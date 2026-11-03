@@ -3,6 +3,7 @@
   "checks": [
     "generated exercise tokens highlight through real scheduled Strudel events and clear on Stop",
     "imported shared/later voices retain original UTF-16 token positions without marking opaque calls or changing source",
+    "valid unapplied drafts suppress old token activity until explicit Apply accepts the new source",
     "draft mismatch clears immediately; Revert resumes mapped tokens; runtime reduced motion clears and suppresses pulses",
     "replacement with unmapped numeric/single-quoted code never claims token activity",
     "replacement and evaluation failure remove obsolete token marks",
@@ -11,17 +12,17 @@
   "physicalListening": false,
   "trance": {
     "before": {
-      "counters": [78, 16, 141],
-      "events": 16
+      "counters": [96, 20, 223],
+      "events": 15
     },
     "after": {
-      "counters": [78, 16, 141],
-      "events": 77
+      "counters": [96, 20, 223],
+      "events": 80
     }
   },
   "deliveryLeadSeconds": {
-    "max": 0.0047952380952374085,
-    "count": 79
+    "max": 0.004699999999999704,
+    "count": 84
   },
   "feedback": {
     "browser": "156.0.8078.4",
@@ -42,6 +43,6 @@
       "semicolon-free bare voices after tempo and const declarations play with attributable activity"
     ],
     "physicalListening": false,
-    "pcmRms": 0.06037147148513803
+    "pcmRms": 0.05921491797078031
   }
 }
