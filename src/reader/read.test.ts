@@ -439,3 +439,71 @@ it('preserves real Strudel events in handwritten examples, including shared orbi
     expect(events(generate(document.patch))).toEqual(events(fixture))
   }
 })
+
+it('keeps routing when one of two anonymous voices with the same root is edited', () => {
+  const mix = module('mix')
+  const out = module('out')
+  const filter = module('vcf'),
+    otherFilter = module('vcf', {}, 'vcf2')
+  const first = [module('seq'), module('osc'), filter]
+  const second = [module('seq', {}, 'seq2'), module('osc', {}, 'osc2'), otherFilter]
+  const patch: Patch = {
+    version: 1,
+    modules: [...first, ...second, mix, out],
+    names: {},
+    cables: [
+      ...chain(...first).cables,
+      ...chain(...second).cables,
+      wire(filter, mix, 'in1'),
+      wire(otherFilter, mix, 'in2'),
+      wire(mix, out),
+    ],
+  }
+  const source = generate(patch).replace('.lpq(1)', '.lpq(8)')
+  expect(read(source).patch.modules.some((item) => item.type === 'code')).toBe(false)
+  expect(generate(read(source))).toBe(source)
+})
+
+it.each(['.orbit(7)', '.orbit(sine)', '.orbit(1).orbit(1)'])(
+  'retains changed or ambiguous generated routing %s as CODE',
+  (routing) => {
+    const source = generate(voice(module('vcf')))
+      .replace('.lpq(1)', '.lpq(8)')
+      .replace('.orbit(1)', routing)
+    const document = read(source)
+    expect(
+      document.patch.modules
+        .filter((item) => item.type === 'code')
+        .map((item) => item.values['text']),
+    ).toEqual(expect.arrayContaining([expect.stringContaining('.orbit(')]))
+    expect(generate(document)).toBe(source)
+  },
+)
+
+it('retains generated routing when another voice reserves an orbit in CODE', () => {
+  const custom = module('code', { text: 's("bd").orbit(1)' })
+  const seq = module('seq'),
+    osc = module('osc'),
+    filter = module('vcf')
+  const mix = module('mix'),
+    out = module('out')
+  const patch: Patch = {
+    version: 1,
+    modules: [custom, seq, osc, filter, mix, out],
+    names: {},
+    cables: [
+      wire(custom, mix, 'in1'),
+      wire(seq, osc),
+      wire(osc, filter),
+      wire(filter, mix, 'in2'),
+      wire(mix, out),
+    ],
+  }
+  const source = generate(patch).replace('.lpq(1)', '.lpq(8)')
+  const document = read(source)
+  const code = document.patch.modules.filter((item) => item.type === 'code')
+  expect(code).toHaveLength(1)
+  expect(code[0]?.values['text']).toContain('.orbit(1)')
+  expect(code[0]?.values['text']).not.toContain('.orbit(2)')
+  expect(generate(document)).toBe(source)
+})

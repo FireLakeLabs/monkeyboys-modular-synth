@@ -147,8 +147,10 @@ make a standards check pass.
 The [#64 literal-edit suite](literal-edit-verification.md) enumerates every catalog
 control, with separate source, wiring/layout/value, exact saved identity and real
 Strudel event assertions. It runs in the shared gate. Named executable expected
-failures retain the routing (#65), grid representation (#66) and additional
-identity/channel (#99) gaps; passing the suite does not claim those bugs are fixed.
+failures retain the grid representation (#66) and additional identity/channel
+(#99) gaps. The #65 routing assertions now pass normally, including anonymous
+root edits, unchanged wiring in the reported patch, source preservation and exact
+save/reopen checks; passing the suite does not claim the remaining bugs are fixed.
 
 The #45 library behavior tests require unique collection/patch IDs, active
 source-bound coverage of every shipped module, exact original source on load,

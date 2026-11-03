@@ -6,7 +6,7 @@ import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { nextPosition } from '../patch/layout'
-import { matchScopes, readLayout } from './layout'
+import { matchRouting, matchScopes, readLayout } from './layout'
 import { chain, parseSource, scalar, type Call, type ParsedScope } from './syntax'
 import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } from './types'
 
@@ -69,18 +69,14 @@ function project(
   source: string,
   scopes: ParsedScope[],
   saved?: RackLayout,
+  snapshot?: ParsedScope[],
 ): { patch: Patch; bindings: SourceBinding[] } {
   const patch: Patch = { version: 1, modules: [], cables: [], names: {} }
   if (saved?.prelude !== undefined && source.startsWith(saved.prelude))
     patch.prelude = saved.prelude
   const bindings: SourceBinding[] = []
   const reserved = new Set(saved?.modules.map((module) => module.id))
-  const snapshotUnchanged =
-    saved?.source !== undefined &&
-    descriptor(scopes.map((scope) => scope.descriptor)) ===
-      descriptor(parseSource(saved.source).scopes.map((scope) => scope.descriptor))
-  const matches = matchScopes(saved?.scopes ?? [], scopes, snapshotUnchanged)
-  const voiceScopes = scopes.filter((scope) => scope.kind === 'voice')
+  const routing = saved && snapshot ? matchRouting(saved.scopes, scopes, snapshot) : undefined
   const gains = new Map<string, { value: number; index: number }>()
   const depths = new Map<string, { value: number; isDefault: boolean }[]>()
   let row = 0
@@ -341,15 +337,7 @@ function project(
     for (let index = start; index < calls.length; index++) {
       const call = calls[index]
       if (!call) continue
-      const provenance = matches.get(scope.descriptor.id)
-      // A changed voice set can retain an old orbit number. If current allocation
-      // no longer proves ownership, retain that call as source-owned CODE.
-      if (
-        provenance?.exact &&
-        provenance.saved.routing?.call === index &&
-        (snapshotUnchanged || provenance.saved.routing.orbit === voiceScopes.indexOf(scope) + 1)
-      )
-        continue
+      if (routing?.get(scope.descriptor.id)?.call === index) continue
       const type = owner(call.name, false)
       if (
         type === 'mix' &&
@@ -699,7 +687,7 @@ export function read(source: string): SourceDocument {
   if (saved.kind === 'valid' && saved.layout.source !== undefined) {
     try {
       const snapshot = parseSource(saved.generated)
-      const projected = project(saved.generated, snapshot.scopes, saved.layout)
+      const projected = project(saved.generated, snapshot.scopes, saved.layout, snapshot.scopes)
       restore(
         projected.patch,
         projected.bindings,
@@ -745,15 +733,16 @@ export function read(source: string): SourceDocument {
       }
     }
   }
+  const original = saved.kind === 'valid' ? parseSource(saved.generated) : undefined
   const projection = project(
     source,
     parsed.scopes,
     saved.kind === 'valid' ? saved.layout : undefined,
+    original?.scopes,
   )
   let layout: SourceDocument['layout'] = saved.kind === 'invalid' ? 'invalid' : 'absent'
   const diagnostics = saved.kind === 'invalid' ? [`Layout not restored: ${saved.message}`] : []
-  if (saved.kind === 'valid') {
-    const original = parseSource(saved.generated)
+  if (saved.kind === 'valid' && original) {
     if (descriptor(parsed.program) === descriptor(original.program)) {
       // All executable statements agree, including declarations and statement order.
       // It is now safe to restore omitted/bypassed/disconnected state and cables.

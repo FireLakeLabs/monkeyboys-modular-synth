@@ -298,3 +298,45 @@ export function matchScopes(
   }
   return result
 }
+
+/** Routing ownership is independent of conservative module/layout identity. */
+export function matchRouting(
+  saved: readonly Scope[],
+  next: readonly ParsedScope[],
+  snapshot: readonly ParsedScope[],
+): Map<string, NonNullable<Scope['routing']>> {
+  const result = new Map<string, NonNullable<Scope['routing']>>()
+  const matches = matchScopes(saved, next)
+  const voices = next.filter((scope) => scope.kind === 'voice')
+  const oldVoices = snapshot.filter((scope) => scope.kind === 'voice')
+  for (const [voiceIndex, scope] of voices.entries()) {
+    const initial = scope.calls[0]
+    const provenance = matches.get(scope.descriptor.id)
+    // A unique proven route plus the same receiver/call names, or an unchanged
+    // suffix after a root edit, survives edits with ambiguous module matching.
+    const candidates = saved.filter(
+      (item) =>
+        item.anchor === undefined &&
+        item.routing !== undefined &&
+        descriptor(item.calls[item.routing.call]) === descriptor(scope.descriptor.calls.at(-1)) &&
+        ((item.root === scope.descriptor.root &&
+          descriptor(item.calls.map((call) => call.name)) ===
+            descriptor(scope.descriptor.calls.map((call) => call.name))) ||
+          (initial?.start === scope.root.start &&
+            descriptor(item.calls.slice(1)) === descriptor(scope.descriptor.calls.slice(1)))),
+    )
+    const previous = provenance?.saved ?? (candidates.length === 1 ? candidates[0] : undefined)
+    const routing = previous?.routing
+    const call = scope.calls.length - 1
+    if (
+      routing &&
+      (provenance ? provenance.calls.get(call) : call) === routing.call &&
+      descriptor(scope.descriptor.calls[call]) === descriptor(previous.calls[routing.call]) &&
+      // A shifted voice set may no longer agree with the writer's allocation.
+      // Position constrains an independently matched route; it is not identity.
+      oldVoices[voiceIndex]?.descriptor.id === previous.id
+    )
+      result.set(scope.descriptor.id, { call, orbit: routing.orbit })
+  }
+  return result
+}
