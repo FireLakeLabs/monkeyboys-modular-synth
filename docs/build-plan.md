@@ -37,9 +37,9 @@ feature was reverified on the public host.
 - **Verification still limited:** reports distinguish exact source, saved rack
   identity, Strudel events and measured WebAudio PCM. Physical speakers/headphones
   were not heard; universal audible equivalence, subjective continuity and broad
-  browser/device/autoplay coverage are unverified. Browser suites run separately
-  from shared CI and require Chromium plus external resources. Imported JavaScript
-  is not sandboxed.
+  browser/device/autoplay coverage are unverified. Browser suites require Chromium
+  plus external resources; the separate [browser workflow](ci.md#full-browser-acceptance)
+  runs them after every main push. Imported JavaScript is not sandboxed.
 - **Deferred or separately tracked:** [v1 exclusions](v1-scope.md#later-deliberately-not-v1)
   include touch, keyboard patching/screen-reader support, beginner aids and accounts.
   [#39](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/39) tracks

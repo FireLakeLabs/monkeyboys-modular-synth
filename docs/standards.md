@@ -111,7 +111,7 @@ verification; record them in [deployment evidence](deployment-verification.md).
 | Persistence                    | Versioned metadata validation, unknown-block preservation, explicit replacement and full saved-state restoration, including volume, bypass and empty rows. See [workspace](workspace-verification.md) and [row checks](interaction-verification.md#saved-rows-and-source-preservation). | Ambiguous external edits reset affected identity/layout; unknown versions are retained, not migrated speculatively.                                                 |
 | Audio engine                   | Adapter/transport tests and [browser recovery evidence](audio-recovery.md) cover initialization, retry, Stop intent, abandoned evaluation, resources/output and structural effect resets.                                                                                               | Uninterruptible evaluation/side effects, unreported errors, resource readiness and runtime source mapping retain explicit limits. Physical listening is unverified. |
 | Executable code import         | Reader never executes source; playback runs user JavaScript through Strudel.                                                                                                                                                                                                            | No sandbox, isolation or side-effect rollback. Parsing does not establish execution safety.                                                                         |
-| Browser verification           | Project scripts and committed reports cover rack/workspace, interactions, feedback, errors and library loading.                                                                                                                                                                         | Suites need Chromium/external resources and run outside shared CI; physical listening and broad browser/device coverage remain unverified.                          |
+| Browser verification           | Project scripts and committed reports cover rack/workspace, interactions, feedback, errors and library loading.                                                                                                                                                                         | Runs in a separate [browser workflow](ci.md#full-browser-acceptance); external resources, physical listening and broad browser/device coverage remain limits.       |
 | Property testing               | Focused deterministic behavior fixtures exist.                                                                                                                                                                                                                                          | Seeded generative properties/shrinking remain later work, not implemented enforcement.                                                                              |
 | Assets and offline use         | [Sample sources and caching](engine-spike.md#samples-and-deployment) and [fonts/design](design.md) are documented.                                                                                                                                                                      | No app-managed offline cache; source registration does not prove every resource is available or decoded.                                                            |
 
@@ -147,7 +147,8 @@ check covers generated/imported tokens, opaque/unmapped spans, motion, errors an
 the trance demo without event-driven editor renders or parsing.
 The separate [real-browser feedback check](feedback-verification.md)
 requires actual pulses, nonzero PCM, native IME and reduced-motion behavior;
-shared CI still lacks Chromium/network provisioning for that suite.
+the separate [browser workflow](ci.md#full-browser-acceptance) now provisions
+Chromium and runs this suite after every main push.
 
 Resolve open product questions in the owning spec and issue before encoding them
 as expected test results. Do not invent graph, persistence, or audio behavior to
@@ -177,9 +178,10 @@ The #45 library behavior tests require unique collection/patch IDs, active
 source-bound coverage of every shipped module, exact original source on load,
 and independently reopened saved rack state. Shared deterministic tests also
 cover preparation failure, confirmed Stop and cancellation. The separate
-[library browser check](patch-library.md#browser-verification) verifies actual
+[library browser check](patch-library.md#original-45-browser-verification) verifies actual
 dialog interactions, exports, loading and real-engine PCM; it needs browser/audio
-and external sample resources and is not part of the shared CI gate.
+and external sample resources; it runs in the separate
+[browser workflow](ci.md#full-browser-acceptance), outside the deterministic gate.
 
 The #44 reader placement regressions use the exact reported CODE/CV source to
 check fixed-rail validity, exact executable source and saved rack identity
@@ -202,9 +204,9 @@ This browser check is a narrow exception to the shared local/CI gate: it require
 provisioned Chromium and its real-engine group reaches external sample sources.
 It currently runs separately from `npm run check`; the [#36 audit](audio-recovery.md) adds real resource/output errors,
 scheduler Stop failure, pending evaluation recovery and fresh-context activation;
-CI automation remains a follow-up until browser provisioning and network isolation
-are added. The deterministic transport regressions do run in the shared
-gate. Do not infer render coverage from those unit tests.
+the separate [browser workflow](ci.md#full-browser-acceptance) now provisions
+Chromium and executes it after every main push. Network isolation is not claimed.
+The deterministic transport regressions do run in the shared gate. Do not infer render coverage from those unit tests.
 
 Use [correct](../.agents/skills/correct/SKILL.md) for a correction that reveals a
 preventable failure class. Prefer structure, then types, lint, and behavioral
