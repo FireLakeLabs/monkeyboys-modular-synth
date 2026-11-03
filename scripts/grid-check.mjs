@@ -1,6 +1,6 @@
 // Run in the Vite page with: (await import('/scripts/grid-check.mjs')).verifyGrids().
 // No audio is started. The real controls drive all source mutations.
-import { editorSource, replaceSource } from './editor-browser.mjs'
+import { editorSource, replaceSource, enableAutoApply } from './editor-browser.mjs'
 
 const pause = () => new Promise((resolve) => setTimeout(resolve, 25))
 function assert(value, message) {
@@ -28,6 +28,7 @@ function enter(node) {
   node.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
 }
 async function load(source) {
+  enableAutoApply()
   replaceSource(source)
   await pause()
   await until(() =>

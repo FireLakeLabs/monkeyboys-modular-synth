@@ -70,6 +70,7 @@ async function folded() {
 }
 try {
   await page.goto(base)
+  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
   await editor.waitFor()
   const starter = await source()
   await folded()

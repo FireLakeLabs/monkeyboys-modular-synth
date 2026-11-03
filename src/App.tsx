@@ -92,6 +92,7 @@ export default function App() {
   const playing = ['starting', 'playing', 'applying'].includes(audio.status)
   const needsStop = playing || audio.scheduling === 'unknown' || audio.status === 'stopping'
   const [composing, setComposing] = useState(false)
+  const [autoApply, setAutoApply] = useState(false)
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const current = useRef({ document, draft, phase })
@@ -118,18 +119,21 @@ export default function App() {
     setPendingReplacement(null)
   }, [])
 
-  function install(next: SourceDocument) {
-    setRefusedEdit(null)
-    workRevision.current++
-    current.current = { document: next, draft: next.source, phase: 'readable' }
-    setDocument(next)
-    setDraft(next.source)
-    setPhase('readable')
-    setDiagnostic(null)
-    setError(null)
-    draftSaved.current = autosave.save(next)
-    playback.update(next).catch((failure: unknown) => setError(String(failure)))
-  }
+  const install = useCallback(
+    (next: SourceDocument) => {
+      setRefusedEdit(null)
+      workRevision.current++
+      current.current = { document: next, draft: next.source, phase: 'readable' }
+      setDocument(next)
+      setDraft(next.source)
+      setPhase('readable')
+      setDiagnostic(null)
+      setError(null)
+      draftSaved.current = autosave.save(next)
+      playback.update(next).catch((failure: unknown) => setError(String(failure)))
+    },
+    [autosave, playback],
+  )
 
   function changeDraft(source: string) {
     setRefusedEdit(null)
@@ -158,50 +162,87 @@ export default function App() {
     return () => clearTimeout(timer)
   }, [audio])
 
+  const readDraft = useCallback((source: string): SourceDocument | null => {
+    try {
+      const result = tryRead(source)
+      if (result.kind === 'invalid') {
+        current.current = { ...current.current, phase: 'invalid' }
+        setPhase('invalid')
+        setDiagnostic(result)
+        return null
+      }
+      const next =
+        result.document.layout === 'invalid' || result.document.layout === 'restored'
+          ? result.document
+          : saveLayout(result.document)
+      validateRack(next.patch)
+      return next
+    } catch (failure) {
+      current.current = { ...current.current, phase: 'invalid' }
+      setPhase('invalid')
+      setError(failure instanceof Error ? failure.message : String(failure))
+      return null
+    }
+  }, [])
+
   useEffect(() => {
     if (phase !== 'editing' || composing) return
     const timer = setTimeout(() => {
       if (current.current.draft !== draft || current.current.phase !== 'editing') return
-      try {
-        const result = tryRead(draft)
-        if (result.kind === 'invalid') {
-          current.current = { ...current.current, phase: 'invalid' }
-          setPhase('invalid')
-          setDiagnostic(result)
-          return
-        }
-        const next =
-          result.document.layout === 'invalid' || result.document.layout === 'restored'
-            ? result.document
-            : saveLayout(result.document)
-        validateRack(next.patch)
-        current.current = { document: next, draft: next.source, phase: 'readable' }
-        setDocument(next)
-        setDraft(next.source)
-        setPhase('readable')
-        setError(null)
-        draftSaved.current = autosave.save(next)
-        playback.update(next).catch((failure: unknown) => setError(String(failure)))
-      } catch (failure) {
-        current.current = { ...current.current, phase: 'invalid' }
-        setPhase('invalid')
-        setError(failure instanceof Error ? failure.message : String(failure))
-      }
+      const next = readDraft(draft)
+      if (next && autoApply) install(next)
     }, 250)
     return () => clearTimeout(timer)
-  }, [draft, phase, playback, composing, autosave])
+  }, [draft, phase, composing, autoApply, readDraft, install])
+
+  function playAccepted() {
+    const accepted = current.current.document
+    if (!mayHaveOutput(accepted)) {
+      setEmptyPlay(accepted)
+      setSelected(accepted.patch.modules.find((module) => module.type === 'out')?.id ?? null)
+      return
+    }
+    setEmptyPlay(null)
+    playback.play().catch((failure: unknown) => setError(String(failure)))
+  }
+
+  function applyCode() {
+    if (
+      composing ||
+      editor.current?.composing ||
+      recovery ||
+      replacing ||
+      pendingReplacement ||
+      libraryOpen
+    )
+      return
+    const next = readDraft(current.current.draft)
+    if (!next) return
+    install(next)
+    if (!['starting', 'playing', 'applying'].includes(playback.getSnapshot().status)) playAccepted()
+  }
+
+  // Capture before CodeMirror handles Enter, so applying never inserts a newline.
+  useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      if (!(event.ctrlKey || event.metaKey) || event.altKey) return
+      if (event.key === '.') {
+        event.preventDefault()
+        event.stopPropagation()
+        playback.stop().catch((failure: unknown) => setError(String(failure)))
+      } else if (event.key === 'Enter' && !event.isComposing) {
+        event.preventDefault()
+        event.stopPropagation()
+        if (!event.repeat) applyCode()
+      }
+    }
+    window.addEventListener('keydown', shortcut, true)
+    return () => window.removeEventListener('keydown', shortcut, true)
+  })
 
   async function togglePlay() {
     if (needsStop) await playback.stop()
-    else if (current.current.phase === 'readable') {
-      if (!mayHaveOutput(current.current.document)) {
-        setEmptyPlay(current.current.document)
-        setSelected(out?.id ?? null)
-        return
-      }
-      setEmptyPlay(null)
-      await playback.play()
-    }
+    else if (current.current.phase === 'readable') playAccepted()
   }
 
   const edit: RackEdit = (action, point = { x: 220, y: 150 }) => {
@@ -272,8 +313,11 @@ export default function App() {
         playback,
         () => operation === replacementRevision.current && revision === workRevision.current,
       )
-      if (typeof next === 'string') changeDraft(next)
-      else install(next)
+      if (typeof next === 'string') {
+        changeDraft(next)
+        const readable = readDraft(next)
+        if (readable) install(readable)
+      } else install(next)
       cleanSource.current = typeof next === 'string' ? null : next.source
       setSelected(null)
       setPendingReplacement(null)
@@ -402,6 +446,7 @@ export default function App() {
           className="play"
           onClick={togglePlay}
           aria-label={needsStop ? 'Stop' : 'Play'}
+          title="Ctrl/Cmd+Enter: apply code and play · Ctrl/Cmd+.: stop"
           disabled={locked && !needsStop}
         >
           {needsStop ? (
@@ -441,14 +486,31 @@ export default function App() {
           </h2>
           <output className="sync-status">
             {phase === 'editing'
-              ? 'Reading code…'
+              ? autoApply
+                ? 'Reading code…'
+                : 'Unapplied changes'
               : phase === 'invalid'
                 ? 'Rack shows previous code'
                 : patch.modules.some((m) => m.type === 'code')
                   ? 'Rack matches code · Some code has no controls'
                   : 'Rack matches code'}
           </output>
+          <span className="apply-shortcuts">
+            {phase === 'invalid' ? ' · Unapplied changes' : ''}
+            {' · Ctrl/Cmd+Enter to apply · Ctrl/Cmd+. to stop'}
+          </span>
           <div className="code-actions">
+            <button type="button" onClick={applyCode} disabled={composing}>
+              Apply code
+            </button>
+            <label className="auto-apply">
+              <input
+                type="checkbox"
+                checked={autoApply}
+                onChange={(event) => setAutoApply(event.target.checked)}
+              />
+              Auto-apply
+            </label>
             <button
               type="button"
               onClick={() =>
@@ -491,7 +553,7 @@ export default function App() {
           </div>
           {locked && (
             <p className="share-note">
-              Open in Strudel uses the last readable code while this draft is unreadable.
+              Open in Strudel uses the last applied code while this draft has unapplied changes.
             </p>
           )}
           {pendingReplacement?.kind === 'file' && replacementPrompt}
@@ -586,8 +648,8 @@ export default function App() {
                 (locked || sourceBody(audio.errorSource) !== sourceBody(document.source))
                   ? 'An earlier code revision failed. Current draft retained.'
                   : 'Audio failure. Current draft retained.'}{' '}
-                Correct code or check audio access, then press Play explicitly. Stop can be retried
-                if audio state is unknown.
+                Correct code or check audio access, then apply with Ctrl/Cmd+Enter or press Play.
+                Stop can be retried if audio state is unknown.
               </p>
               <details>
                 <summary>Audio error details</summary>

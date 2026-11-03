@@ -26,3 +26,10 @@ export function replaceSource(source) {
     userEvent: 'input.paste',
   })
 }
+
+// Legacy live-edit suites explicitly opt in; application/shortcut suites keep the default.
+export function enableAutoApply() {
+  const toggle = document.querySelector('.auto-apply input')
+  if (!toggle) throw new Error('Auto-apply control has not mounted')
+  if (!toggle.checked) toggle.click()
+}

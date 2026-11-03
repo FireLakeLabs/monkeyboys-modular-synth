@@ -101,6 +101,7 @@ async function stopped() {
 }
 try {
   await page.goto(base)
+  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
   const body = `// exact 🐒\nsetcpm(120/4)\nconst lead = note("c3 e3 g3 c4").s("sine");\n$: lead.iter(4).lpf(800).lpq(2)\n$: lead.jux(rev).gain(0.15)\n$: note("c2").s("sine").chunk(4, x => x.hurry(2))\n`
   await code(body)
   assert((await sourceText()).startsWith(body))

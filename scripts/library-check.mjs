@@ -1,4 +1,4 @@
-import { editorSource as source, replaceSource } from './editor-browser.mjs'
+import { editorSource as source, replaceSource, enableAutoApply } from './editor-browser.mjs'
 // Browser verification: import this module from the Vite dev server in a browser.
 // See docs/patch-library.md for the harness commands and listening limits.
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -35,6 +35,7 @@ async function load(title) {
   assert(status() === 'Stopped', `${title}: load started audio`)
 }
 async function editSource(value) {
+  enableAutoApply()
   replaceSource(value)
   await until(() => document.querySelector('.sync-status').textContent === 'Reading code…')
   await until(() =>

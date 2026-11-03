@@ -97,6 +97,14 @@ showcases retain exact source and offer explicit conversion at a refused edit.
 See [independent source/rack/event and browser evidence](library-rack-verification.md).
 The Start here collection (#80) and global undo/redo (#63) remain separate work.
 
+## Explicit code application
+
+Issue #70 implements the #56 decision: Ctrl/Cmd+Enter accepts code and starts
+stopped playback; Ctrl/Cmd+. stops globally. Editor drafts require explicit apply
+by default, with a session-only auto-apply toggle. Rack edits remain immediate;
+file loading and recovery remain silent. See the [contract and browser/signal
+evidence](code-application.md), including preserved #12 error/recovery behavior.
+
 ## Local workspace recovery
 
 Issue #60 adds [local workspace recovery](patch-format.md#local-workspace-recovery-60):

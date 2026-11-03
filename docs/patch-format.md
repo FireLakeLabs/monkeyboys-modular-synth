@@ -183,8 +183,9 @@ invalid or composing text. Unknown rack metadata stays in the source unchanged.
 On load, a validated local copy offers **Restore last patch** or **Discard saved
 patch** in a modal before editing can overwrite it. Restore brings back the
 accepted rack and the draft independently, without executing code or starting
-audio. An unfinished draft is read normally, leaving the last readable rack in
-place if invalid. Export keeps its exact text; Revert explicitly discards that
+audio. An unfinished draft is diagnosed but remains unapplied until explicit
+Apply (or opting into auto-apply), leaving the accepted rack in place. See
+[code application](code-application.md). Export keeps its exact text; Revert explicitly discards that
 draft in favor of the readable file. Discard removes the copy and keeps the
 silent starter. Loading a file/library patch or choosing New replaces the copy
 only after the existing guarded replacement succeeds.

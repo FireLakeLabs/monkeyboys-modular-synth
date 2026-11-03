@@ -1,5 +1,5 @@
 // Import from the Vite dev server in a browser; no audio is started.
-import { editorSource, replaceSource } from './editor-browser.mjs'
+import { editorSource, replaceSource, enableAutoApply } from './editor-browser.mjs'
 
 const pause = () => new Promise((resolve) => setTimeout(resolve, 25))
 function assert(value, message) {
@@ -17,6 +17,7 @@ const button = (text) =>
   [...document.querySelectorAll('button')].find((button) => button.textContent.trim() === text)
 
 export async function prepareConnectionFixture() {
+  enableAutoApply()
   replaceSource(
     "// retain\nconst lead = note('c3').s('sine');\n$: lead.lpf(800).gain(.2);\n$: lead.gain(.1);\n",
   )
