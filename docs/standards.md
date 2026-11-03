@@ -122,6 +122,16 @@ behavior tests cover exact source, events, atomic refusal and full reopened rack
 identity. Its [real-engine browser acceptance](structural-edit-verification.md)
 is separate from the shared deterministic gate.
 
+The #37 activity boundary uses numeric context keys, enforced by the
+[attribution regression](../src/strudel/activity.test.ts), so Strudel cannot turn
+an observer key into mini-notation. Fake-clock engine tests cover scheduled-audio
+time and cancellation. Statement-boundary regressions reject decoration that
+changes JavaScript automatic semicolon insertion. One typography rule owns the
+editor and ink layer; the browser suite checks computed metrics and glyph
+alignment. The separate [real-browser feedback check](feedback-verification.md)
+requires actual pulses, nonzero PCM, native IME and reduced-motion behavior;
+shared CI still lacks Chromium/network provisioning for that suite.
+
 Resolve open product questions in the owning spec and issue before encoding them
 as expected test results. Do not invent graph, persistence, or audio behavior to
 make a standards check pass.

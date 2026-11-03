@@ -19,6 +19,7 @@ import {
   sourceBody,
 } from './workspace/document'
 import { prepareReplacement } from './workspace/open'
+import { SourceEditor } from './workspace/SourceEditor'
 import './App.css'
 import './rack/Rack.css'
 import './looks/looks.css'
@@ -56,9 +57,17 @@ export default function App() {
   const workRevision = useRef(0)
   const replacementRevision = useRef(0)
   const playing = ['starting', 'playing', 'applying'].includes(audio.status)
+  const [composing, setComposing] = useState(false)
+  const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const current = useRef({ document, draft, phase })
-  const caret = useRef<{ start: number; end: number; top: number; left: number } | null>(null)
+  const caret = useRef<{
+    start: number
+    end: number
+    direction: 'forward' | 'backward' | 'none'
+    top: number
+    left: number
+  } | null>(null)
   const editor = useRef<HTMLTextAreaElement>(null)
   const locked = phase !== 'readable'
   const patch = document.patch
@@ -95,7 +104,7 @@ export default function App() {
   }, [audio])
 
   useEffect(() => {
-    if (phase !== 'editing') return
+    if (phase !== 'editing' || composing) return
     const timer = setTimeout(() => {
       if (current.current.draft !== draft || current.current.phase !== 'editing') return
       try {
@@ -113,6 +122,7 @@ export default function App() {
           caret.current = {
             start: editor.current.selectionStart,
             end: editor.current.selectionEnd,
+            direction: editor.current.selectionDirection,
             top: editor.current.scrollTop,
             left: editor.current.scrollLeft,
           }
@@ -128,12 +138,12 @@ export default function App() {
       }
     }, 250)
     return () => clearTimeout(timer)
-  }, [draft, phase, playback])
+  }, [draft, phase, playback, composing])
 
   useLayoutEffect(() => {
     const position = caret.current
     if (position && editor.current) {
-      editor.current.setSelectionRange(position.start, position.end)
+      editor.current.setSelectionRange(position.start, position.end, position.direction)
       editor.current.scrollTop = position.top
       editor.current.scrollLeft = position.left
       caret.current = null
@@ -248,6 +258,7 @@ export default function App() {
           locked={locked || document.layout === 'invalid'}
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}
+          editingModule={editingModule}
           edit={edit}
           selected={selected}
           select={setSelected}
@@ -322,14 +333,15 @@ export default function App() {
               is retained.
             </output>
           )}
-          <textarea
-            ref={editor}
-            className="source-editor"
-            aria-label="Strudel source"
-            aria-invalid={phase === 'invalid'}
-            spellCheck={false}
-            value={draft}
-            onChange={(event) => changeDraft(event.target.value)}
+          <SourceEditor
+            editor={editor}
+            source={draft}
+            document={locked ? null : document}
+            selected={selected}
+            invalid={phase === 'invalid'}
+            change={changeDraft}
+            composing={setComposing}
+            editingModule={setEditingModule}
           />
           {diagnostic && (
             <p className="error" role="alert">
@@ -347,7 +359,9 @@ export default function App() {
             <p className="source-selection">
               {selectedRanges.length
                 ? `${selected} · source at line ${draft.slice(0, selectedRanges[0]?.start).split('\n').length}`
-                : `${selected} has no current sounding source range.`}
+                : locked
+                  ? `${selected} · source highlights paused until code is readable.`
+                  : `${selected} has no current sounding source range.`}
             </p>
           )}
           {document.layout === 'invalid' && (

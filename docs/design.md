@@ -84,3 +84,7 @@ Each look is a set of layout rules plus tokens applied to a module’s control l
 | Alien         | Teal `#8CF5DA` with a soft glow               |
 | Cyber         | Off-white with a dashed gold underline        |
 | Named outputs | Orange `#FFC48F` on a faint orange background |
+
+The [#37 feedback contract and browser evidence](feedback-verification.md)
+record the production code treatments, all-span selection, editing-only cursor
+and event-timed visual activity. These treatments preserve the saved source.

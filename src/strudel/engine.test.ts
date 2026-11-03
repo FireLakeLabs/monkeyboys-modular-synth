@@ -2,6 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { InitStrudelOptions } from '@strudel/web'
 
 const web = vi.hoisted(() => ({
+  observe:
+    vi.fn<
+      (
+        callback: (hap: unknown, now: number, cps: number, target: number) => void,
+        dominant: false,
+      ) => void
+    >(),
+  time: 10,
   initStrudel: vi.fn<(options?: InitStrudelOptions) => Promise<unknown>>(),
   evaluate: vi.fn<(code: string) => Promise<unknown>>(),
   hush: vi.fn(),
@@ -15,6 +23,13 @@ const web = vi.hoisted(() => ({
 vi.mock('@strudel/web', () => ({
   ...web,
   Pattern: class {
+    onTrigger(
+      callback: (hap: unknown, now: number, cps: number, target: number) => void,
+      dominant: false,
+    ) {
+      web.observe(callback, dominant)
+      return this
+    }
     query: (state: unknown) => unknown[]
     _steps: unknown
     constructor(query: (state: unknown) => unknown[], steps?: unknown) {
@@ -22,7 +37,7 @@ vi.mock('@strudel/web', () => ({
       this._steps = steps
     }
   },
-  getAudioContext: () => ({ resume: web.resume, currentTime: 10 }),
+  getAudioContext: () => ({ resume: web.resume, currentTime: web.time }),
   getSuperdoughAudioController: () => ({
     output: {
       destinationGain: {
@@ -35,9 +50,13 @@ vi.mock('@strudel/web', () => ({
   }),
 }))
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.useRealTimers()
+})
 
 beforeEach(() => {
+  web.time = 10
   vi.resetModules()
   vi.resetAllMocks()
   web.initStrudel.mockResolvedValue(undefined)
@@ -107,7 +126,7 @@ describe('engine boundary', () => {
     let scheduled = false
     web.evaluate.mockImplementation(async () => {
       await held
-      options?.editPattern?.({ query: () => [], _steps: undefined })
+      options?.editPattern?.(new (await import('@strudel/web')).Pattern(() => []))
       scheduled = true
     })
     web.hush.mockImplementation(() => {
@@ -148,7 +167,9 @@ describe('engine boundary', () => {
       options = next
     })
     web.evaluate.mockImplementation(async () => {
-      const pattern = options?.editPattern?.({ query: () => ['event'], _steps: undefined })
+      const pattern = options?.editPattern?.(
+        new (await import('@strudel/web')).Pattern(() => ['event']),
+      )
       query = pattern ? (state) => pattern.query(state) : undefined
     })
     const { play, stop } = await import('./engine')
@@ -247,4 +268,71 @@ describe('engine boundary', () => {
     expect(web.initStrudel).not.toHaveBeenCalled()
     await expect(setVolume(0.5)).resolves.toBeUndefined()
   })
+})
+
+it('delivers attributable visuals at audio time, retains default output, and clears obsolete work', async () => {
+  vi.useFakeTimers()
+  let options: InitStrudelOptions | undefined
+  web.initStrudel.mockImplementation(async (next) => {
+    options = next
+  })
+  web.evaluate.mockImplementation(async () => {
+    options?.editPattern?.(new (await import('@strudel/web')).Pattern(() => []))
+  })
+  const { play, stop, subscribe } = await import('./engine')
+  const events: import('./engine').EngineEvent[] = []
+  subscribe((event) => events.push(event))
+  await play(`$: note('c3').s('sine').iter(4)`)
+  const callback = web.observe.mock.calls.at(-1)?.[0]
+  expect(web.observe.mock.calls.at(-1)?.[1]).toBe(false)
+  callback?.({ context: { __monkeyboyActivity: 1 } }, 10, 0.5, 10.2)
+  expect(events.filter((event) => event.type === 'activity')).toEqual([])
+  // Wall time alone must not fire a visual while the audio clock is suspended.
+  await vi.advanceTimersByTimeAsync(200)
+  expect(events.filter((event) => event.type === 'activity')).toEqual([])
+  web.time = 10.2
+  await vi.advanceTimersByTimeAsync(200)
+  expect(events).toContainEqual({
+    type: 'activity',
+    modules: expect.arrayContaining(['seq1', 'osc1', 'iter1']),
+  })
+  callback?.({ context: { __monkeyboyActivity: 1 } }, 10.2, 0.5, 11)
+  events.length = 0
+  await play(`$: note('e3').s('sine')`)
+  callback?.({ context: { __monkeyboyActivity: 1 } }, 10.2, 0.5, 10.2)
+  web.time = 11
+  await vi.advanceTimersByTimeAsync(1000)
+  expect(events.filter((event) => event.type === 'activity')).toEqual([])
+  const replacement = web.observe.mock.calls.at(-1)?.[0]
+  replacement?.({ context: { __monkeyboyActivity: 1 } }, 11, 0.5, 12)
+  await stop()
+  web.time = 12
+  await vi.advanceTimersByTimeAsync(1000)
+  expect(events.filter((event) => event.type === 'activity')).toEqual([])
+  expect(events).toContainEqual({ type: 'activity-clear' })
+})
+
+it('clears pending visuals after an evaluation failure and leaves opaque code unattributed', async () => {
+  vi.useFakeTimers()
+  let options: InitStrudelOptions | undefined
+  web.initStrudel.mockImplementation(async (next) => {
+    options = next
+  })
+  web.evaluate.mockImplementation(async () => {
+    options?.editPattern?.(new (await import('@strudel/web')).Pattern(() => []))
+  })
+  const { play, subscribe } = await import('./engine')
+  const events: import('./engine').EngineEvent[] = []
+  subscribe((event) => events.push(event))
+  await play(`$: note('c3').s('sine').chunk(4, x => x.rev())`)
+  web.observe.mock.calls.at(-1)?.[0]({ context: { __monkeyboyActivity: 1 } }, 10, 0.5, 10)
+  expect(events.filter((event) => event.type === 'activity')).toEqual([])
+  await play(`$: note('c3').s('sine')`)
+  web.observe.mock.calls.at(-1)?.[0]({ context: { __monkeyboyActivity: 1 } }, 10, 0.5, 11)
+  web.evaluate.mockRejectedValueOnce(new Error('construction fixture'))
+  await expect(play(`$: note('c3').missing()`)).rejects.toThrow('construction fixture')
+  events.length = 0
+  web.time = 11
+  await vi.advanceTimersByTimeAsync(1000)
+  expect(events).toEqual([])
 })
