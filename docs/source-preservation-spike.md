@@ -2,8 +2,13 @@
 
 Decided 2 November 2026 for [#1](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/1)
 and [#14](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/14).
-This is research for the production generator (#3) and reader (#6), not either
-implementation. Run the throwaway prototype with:
+This historical research informed the production generator (#3) and reader (#6);
+it is not either implementation. Subsequent [reader](reader-verification.md),
+[workspace](workspace-verification.md) and [structural-edit evidence](structural-edit-verification.md)
+provide production proof separately. Pending production work mentioned below
+belongs to this spike's original handoff; the
+[build plan](build-plan.md#current-status-and-remaining-work) owns current status.
+Run the throwaway prototype with:
 
 ```sh
 node --test scripts/source-spike.test.mts

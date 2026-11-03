@@ -86,7 +86,11 @@ condition. Review whether an exception reveals a missing abstraction or boundary
 Negative type tests may use documented `@ts-expect-error`; ordinary application
 code should satisfy the actual type rather than suppress it.
 
-## Feature-owned checks still to build
+## Feature-owned coverage and remaining gaps
+
+The [build plan](build-plan.md#current-status-and-remaining-work) owns feature and
+issue status. This inventory distinguishes implemented checks from their limits;
+a requirement in this table is not evidence of enforcement.
 
 Hosting IAM trust is checked by the synthesized-template regression in
 `scripts/hosting.test.mts`, using the repository's observed immutable GitHub OIDC
@@ -94,16 +98,16 @@ subject as an independent fixture. It rejects the old name-only trust format.
 Actual GitHub-to-AWS exchanges and environment branch restrictions remain live
 verification; record them in [deployment evidence](deployment-verification.md).
 
-| Owner                          | Required checks / decisions                                                                                                                                                                                             |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Graph construction and editing | Unique IDs, existing modules/jacks, direction and signal compatibility, input cardinality, and a defined cycle policy. Validate on mutation, not just import.                                                           |
-| Generator and reader           | Separate sound equivalence, source/comment preservation, and rack identity. Cover fan-out, named dependency ordering, disconnected/bypassed modules, nested mixers, repeated settings, and modulation target semantics. |
-| Persistence                    | Validate versioned input, define migrations and unknown-content preservation, and round-trip all agreed state including volume/bypass. Saved files are an external contract.                                            |
-| Audio engine                   | Verify initialization ownership, retry/stop semantics, concurrent evaluations, last-good behavior, effects/orbits, and sample-loading failures. Real audible verification is separate from unit tests.                  |
-| Executable code import         | Decide execution trust and isolation. Recognizing Strudel syntax does not sandbox arbitrary JavaScript.                                                                                                                 |
-| Browser verification           | Add a project-local verification procedure when the playable slice exists, then automate stable interactions. Include manual listening where automation cannot establish the claim.                                     |
-| Property testing               | Add deterministic seeds and shrinking for graph and round-trip properties once their contracts exist. Consider formal models only for a concrete property that benefits.                                                |
-| Assets and offline use         | Inventory sample/font sources, versions, licenses, and caching. Repository-owned development standards do not imply an offline audio application.                                                                       |
+| Owner                          | Implemented coverage / evidence                                                                                                                                                                                                                                                         | Remaining limits or work                                                                                                                                            |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Graph construction and editing | Generator validation and rack mutations check IDs, jacks, directions, signals, input cardinality, cycles, values and placement.                                                                                                                                                         | Unknown CODE semantics remain unverified; broader effect-order analysis is not claimed.                                                                             |
+| Generator and reader           | Focused tests cover fan-out/dependency ordering, nested mixers, repeated settings, CV, source preservation, saved identity and supported Strudel events. See [reader evidence](reader-verification.md).                                                                                 | Separate source bytes, rack identity and events; none proves universal audible equivalence.                                                                         |
+| Persistence                    | Versioned metadata validation, unknown-block preservation, explicit replacement and full saved-state restoration, including volume, bypass and empty rows. See [workspace](workspace-verification.md) and [row checks](interaction-verification.md#saved-rows-and-source-preservation). | Ambiguous external edits reset affected identity/layout; unknown versions are retained, not migrated speculatively.                                                 |
+| Audio engine                   | Adapter/transport tests and [browser recovery evidence](audio-recovery.md) cover initialization, retry, Stop intent, abandoned evaluation, resources/output and structural effect resets.                                                                                               | Uninterruptible evaluation/side effects, unreported errors, resource readiness and runtime source mapping retain explicit limits. Physical listening is unverified. |
+| Executable code import         | Reader never executes source; playback runs user JavaScript through Strudel.                                                                                                                                                                                                            | No sandbox, isolation or side-effect rollback. Parsing does not establish execution safety.                                                                         |
+| Browser verification           | Project scripts and committed reports cover rack/workspace, interactions, feedback, errors and library loading.                                                                                                                                                                         | Suites need Chromium/external resources and run outside shared CI; physical listening and broad browser/device coverage remain unverified.                          |
+| Property testing               | Focused deterministic behavior fixtures exist.                                                                                                                                                                                                                                          | Seeded generative properties/shrinking remain later work, not implemented enforcement.                                                                              |
+| Assets and offline use         | [Sample sources and caching](engine-spike.md#samples-and-deployment) and [fonts/design](design.md) are documented.                                                                                                                                                                      | No app-managed offline cache; source registration does not prove every resource is available or decoded.                                                            |
 
 The #3 generator now validates graph structure (including cycles and signals
 through passthrough modules) and control/layout values before emission. Its
@@ -113,8 +117,8 @@ overlap/out-of-rail placement before committing. Focused rack tests cover these
 mutations and generated source ownership; [browser evidence](rack-verification.md)
 covers the UI. The [#6 reader checks](reader-verification.md) cover source-preserving
 import, catalog/CV projection, validated saved-state recovery and conservative
-identity reconciliation. Live editor integration and universal audible equivalence
-remain open.
+identity reconciliation. [Live editor integration](workspace-verification.md) is
+implemented; universal audible equivalence remains unverified.
 
 The #35 structural workspace boundary requires explicit call ownership plans and
 independent source/graph validation before accepting imported edits. Focused
@@ -162,7 +166,7 @@ the original crash after an audio failure and verifies that incomplete source,
 Export and Stop remain available. See [error acceptance](error-verification.md).
 This browser check is a narrow exception to the shared local/CI gate: it requires
 provisioned Chromium and its real-engine group reaches external sample sources.
-It currently runs separately from `npm run check`; The [#36 audit](audio-recovery.md) adds real resource/output errors,
+It currently runs separately from `npm run check`; the [#36 audit](audio-recovery.md) adds real resource/output errors,
 scheduler Stop failure, pending evaluation recovery and fresh-context activation;
 CI automation remains a follow-up until browser provisioning and network isolation
 are added. The deterministic transport regressions do run in the shared
@@ -182,7 +186,9 @@ updating imported instructions.
 ## Documentation status ownership
 
 Review guidance: link to `LICENSE` for project licensing and to the build plan for
-implementation order instead of maintaining competing status descriptions. Live
+implementation status and order instead of maintaining competing status descriptions.
+Keep dated verification records scoped to their original run and link superseding
+evidence when later work resolves a limitation. Live
 GitHub settings are dated observations in [CI status](ci.md#observed-github-status),
 verified against the repository, ruleset, and effective branch-rules APIs. Local
 CI does not continuously verify those external settings or prose accuracy.

@@ -2,11 +2,20 @@
 
 Patch a modular synth, read the Strudel. A Fire Lake Labs project — [firelakelabs.com](https://firelakelabs.com).
 
-MonkeyBoy’s Modular Synth is being built to teach modular synthesis and [Strudel](https://strudel.cc) side by side. The intended workspace lets you build a patch in a virtual rack and edit the equivalent Strudel code, with changes flowing both ways.
+MonkeyBoy’s Modular Synth teaches modular synthesis and [Strudel](https://strudel.cc) side by side. Build a patch in the editable rack or edit its Strudel source; supported changes flow both ways, and unsupported code is preserved in CODE blocks.
 
 ## Status
 
-Pre-alpha. The app currently renders the module catalog, a placeholder rack, and a fixed Strudel demo with play/stop controls. Editable rack patching, code generation, and code import are not implemented yet. See the [build plan](docs/build-plan.md) for implementation order and unresolved research.
+Pre-alpha, publicly hosted at [mms.firelakelabs.com](https://mms.firelakelabs.com).
+The workspace includes rack patching, code generation/import, live playback,
+all ten looks, two-way source editing, file export/open and a built-in patch
+library. New patches start silent; Play is explicit.
+
+The [build plan](docs/build-plan.md#current-status-and-remaining-work) owns current
+implementation status, remaining limitations and verification links. Imported
+rack edits require a source-preservation plan. Browser PCM evidence does not
+establish physical listening or universal audible equivalence; playback executes
+JavaScript without a sandbox. See the [audio boundaries](docs/audio-recovery.md).
 
 ## Docs
 
@@ -18,7 +27,7 @@ Pre-alpha. The app currently renders the module catalog, a placeholder rack, and
 | [`docs/module-spec.md`](docs/module-spec.md)             | Every v1 module: controls, ranges, defaults, jacks, and the Strudel it writes |
 | [`docs/patch-format.md`](docs/patch-format.md)           | The patch data model and the layout comment saved with the code               |
 | [`docs/design.md`](docs/design.md)                       | Where the design canvas lives and what each board shows                       |
-| [`docs/build-plan.md`](docs/build-plan.md)               | Build order and the design work still open                                    |
+| [`docs/build-plan.md`](docs/build-plan.md)               | Implementation status, build order and remaining work                         |
 
 ## Getting started
 
@@ -50,13 +59,21 @@ See [CI status and verification](docs/ci.md) for the observed GitHub merge-gate 
 ```
 src/
   modules/   module catalog: the single source of truth for every module
-  patch/     patch data types (modules placed in the rack, cables, looks, names)
-  strudel/   thin wrapper around the Strudel engine (init, play, stop)
-  App.tsx    app shell
-docs/        design decisions and specs
+  patch/     patch data types and fixed-rail layout rules
+  codegen/   graph validation, Strudel generation and rack metadata
+  reader/    source-preserving import and saved-state reconciliation
+  rack/      catalog-driven panels, controls, placement and cables
+  looks/     family look layouts and styles
+  workspace/ source documents, safe edits, highlighting and replacement
+  library/   built-in collections, Strudel patches and loading UI
+  strudel/   engine adapter, transport and event activity
+  App.tsx    shared rack/source workspace and application state
+docs/        contracts, build status and dated verification evidence
+scripts/     guardrails, browser verification and deployment tooling
+infra/       independent AWS hosting stack
 ```
 
-The [build plan](docs/build-plan.md#build-order) owns the implementation order for code generation, playback, rack UI, code import, and looks.
+The [build plan](docs/build-plan.md#build-order) owns implementation status and dependency order; the detailed reports retain their original verification scope.
 
 ## Agent workflows
 

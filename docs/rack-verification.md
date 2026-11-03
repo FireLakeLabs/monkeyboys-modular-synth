@@ -1,5 +1,11 @@
 # Editable rack (#5)
 
+Historical #5 baseline, verified 2 November 2026. Its fixed-look observations
+predate [all ten looks and two-way editing](workspace-verification.md) and
+[PR #34 interaction completion](interaction-verification.md). The
+[build plan](build-plan.md#current-status-and-remaining-work) owns current status;
+the measurements below remain evidence for the original run.
+
 The rack renders the sixteen v1 catalog modules with Instrument hardware panels
 and one fixed presentation for Alien and CODE. Click a library button to place
 in the first available interval, or drag it onto a rail. Headers select and move
@@ -10,8 +16,8 @@ zone. Trailing empty rows can be removed explicitly.
 The code pane is generated from accepted rack state. Generator-owned source
 ranges highlight a selected module's calls, including CV and folded MIX gain.
 Disconnected and bypassed modules can have no sounding span. The saved rack
-block is inspectable separately. Code import and two-way code editing remain
-#6/#8; this view never regenerates imported source.
+block is inspectable separately. This baseline preceded code import and two-way editing; the linked workspace
+evidence records their subsequent integration without regenerating imported source.
 
 ## Reproduce
 
@@ -45,8 +51,8 @@ LFO DEPTH uses target catalog units/ranges, including through passthroughs.
 Repatching restores target defaults. When different targets have different
 implicit defaults, the panel says “per-target defaults”; Set shared depth
 chooses an explicit depth in their shared range. Audio fan-out and directly
-reversed REVERB → DELAY connections have persistent explanations. Exhaustive
-Strudel effect-order analysis and output-name editing remain workspace work.
+reversed REVERB → DELAY connections have persistent explanations. The later interaction/workspace reports verify indirect effect-order warnings
+and output-name editing. Exhaustive Strudel effect-order analysis is not claimed.
 
 ## Observed evidence — 2 November 2026
 

@@ -1,8 +1,9 @@
 # Engine spike: embedding, errors and orbits
 
 Investigated 2 November 2026 for #2 and #13. This is a runtime spike and a
-translation decision; production generator integration remains #3/#4, source
-identity remains #1/#14, and interaction states remain #12/#8.
+translation decision. The findings below retain that spike's scope; subsequent
+production integration and current issue state live in the
+[build plan](build-plan.md#current-status-and-remaining-work).
 
 The production #4 integration now uses this adapter; see
 [generated playback verification](playback-verification.md) for transport,

@@ -39,35 +39,30 @@ for controls, widths, defaults, jacks, and unique-module rules. The board's
 `slot` example does not settle the [layout format](patch-format.md).
 Looks retain fixed HP width and cables follow live jack positions.
 
-## Evidence and unresolved dependencies
+## Evidence and dependency resolution
 
-Snapshot: 2 November 2026. Both reader/source and engine/orbit spike evidence
-are merged on main. Keep observed behavior in those tested cases, recorded
-contracts, and remaining production integration distinct.
+Historical handoff prepared 2 November 2026. The storyboard is design evidence;
+production acceptance comes from the reports below. The
+[build plan](build-plan.md#current-status-and-remaining-work) owns current issue
+status, including open #12. #9–#11 closed through
+[PR #34](https://github.com/FireLakeLabs/monkeyboys-modular-synth/pull/34).
 
 Reader provenance: [PR #24](https://github.com/FireLakeLabs/monkeyboys-modular-synth/pull/24)
-merged as `d998ea93a8a8b4aab7776f570e116915da3d7474`. Its
-[Findings for #12](source-preservation-spike.md#findings-for-12) and 22 passing
-spike cases establish parser/source behavior: exact diagnostic coordinates,
-opaque-code preservation, and stale-source rejection. The spike was approved
-in two Sol rounds. It establishes no audible or runtime guarantee.
+merged the #1/#14 source spike as `d998ea93a8a8b4aab7776f570e116915da3d7474`.
+Its [Findings for #12](source-preservation-spike.md#findings-for-12) established
+parser coordinates, opaque-code preservation and stale-source rejection without
+an audible guarantee. Engine provenance:
+[PR #26](https://github.com/FireLakeLabs/monkeyboys-modular-synth/pull/26) merged
+as `9cc4ef0f2393140002791daa9b78186435cd034c`; its
+[engine handoff](engine-spike.md#errors-and-last-good-playback-12-handoff)
+records the earlier scheduling/output observations separately from listening.
 
-Engine provenance: [PR #26](https://github.com/FireLakeLabs/monkeyboys-modular-synth/pull/26)
-merged as `9cc4ef0f2393140002791daa9b78186435cd034c`. Its
-[engine findings and #12 handoff](engine-spike.md#errors-and-last-good-playback-12-handoff) include the adapter fixes
-and five real WebAudio probe runs. It observed nonzero output on the first
-production Play and zero output after Stop once notes had rung out. The report
-explicitly separates signal measurements from listening; physical speaker
-output and subjective clicks were not heard. The track reports Sol approval
-in one round; CI passed and its adapter is now on main. Fresh-profile autoplay
-and other browsers remain unverified.
-
-| ID  | Evidence available                                                                                                                                                                                                                                                                                                                                                   | What this proposal can rely on                                                                                                                                                                                                                                          | Still awaiting evidence / owner                                                                                                                                                                       |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R1  | Merged reader prototype tests prove: syntax failure retains the original draft and produces a diagnostic, with no partial document. Source spans are UTF-16, end-exclusive, and revision-bound.                                                                                                                                                                      | A failed parse must not replace the rack with a partial graph. Convert diagnostic coordinates only for the exact draft revision.                                                                                                                                        | Production reader/editor integration and latest-revision ownership: #6/#8, under the merged PR #24 source contract.                                                                                   |
-| R2  | Merged reader tests preserve opaque `.chunk(...)` source, comments and CRLF during numeric splices, reparse offsets after edits, and reject a stale draft.                                                                                                                                                                                                           | Distinguish unsupported but valid code from syntax errors; reject rack writes against a different draft.                                                                                                                                                                | Stable-ID matching and ambiguity rules are recorded by #14. Production binding/grouping (#3/#6) and complete saved state (#8), including disconnected modules and inactive values, remain unproved.   |
-| E1  | Merged engine report records Chrome 156 / Linux tests with `@strudel/web` 1.3.0: syntax and missing-method construction failures retain the prior pattern and event callbacks. The old wrapper resolves both; the merged `onEvalError` adapter rejects, with three before/after regression tests. A failed `setcpm(60/4)` draft still changes scheduler CPS to 0.25. | A fulfilled evaluation promise is insufficient evidence of success. Previously scheduled patterns can survive these failures, but arbitrary code is not transactional. These are reported browser/scheduling observations, not an audible guarantee from this proposal. | Adapter is merged; production generator/workspace integration remains #4/#8. No claim that every runtime error preserves the old pattern.                                                             |
-| E2  | Merged engine report records that missing sounds evaluate successfully and fail later at output; failed sample manifests reject initialization and can be retried, while file/decode failures occur later. `hush` stops scheduling but existing voices/tails can ring out. The merged serial play/stop queue prevents late restart for evaluations that settle.      | Separate evaluation, output, and sample states. Say “scheduling stopped”, not “silent”. Avoid claiming complete sample success or per-voice FX isolation from evaluation success.                                                                                       | Late-error/resource reporting, fresh-profile/browser activation and production #4/#8 integration remain unproved. #13 allocation is decided; generator routing and structural bus reset remain #3/#4. |
+| ID  | Original dependency                                                            | Subsequent production evidence / remaining boundary                                                                                                                                                                                                                                                       |
+| --- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1  | Parser failure, exact-revision spans and no partial graph.                     | [Reader](reader-verification.md), [workspace](workspace-verification.md) and [error acceptance](error-verification.md) verify retained drafts/rack, revision ownership and parser diagnostics.                                                                                                            |
+| R2  | Stable grouping, source-preserving edits and complete saved state.             | Reader/workspace tests restore full validated state; [#34](interaction-verification.md#saved-rows-and-source-preservation) adds empty rails and [#35](structural-edit-verification.md) supplies conservative structural plans. Ambiguous external matches still auto-place; unsafe edits are refused.     |
+| E1  | Surfaced evaluation failures, production transport and arbitrary side effects. | [Playback](playback-verification.md), workspace and [#36 recovery](audio-recovery.md) verify explicit recovery and guarded Stop. Evaluation is not transactional; no runtime line/module mapping is proven.                                                                                               |
+| E2  | Late resource/output errors, activation, Stop cancellation and orbit reset.    | #36 verifies observable logs, fresh isolated Chromium activation/retry and Stop outside pending evaluation. Playback verifies structural bus reset and generator/reader tests cover routing. Universal readiness/error detection, other-browser/device behavior and physical listening remain unverified. |
 
 The reader's concrete diagnostic example is `// 🐒\r\n$: note("c").lpf(`:
 offset 24, line 2 (one-based), column 17 (zero-based). In an editor whose
@@ -79,14 +74,15 @@ instead of requiring an existing character to underline.
 
 The merged reader spike records receiver-aware stable-call matching and
 conservative automatic placement for ambiguous repeats. The
-[layout identity contract](patch-format.md#matching-rules) is decided; module
-grouping, wire encoding and complete persistence still need production proof.
+[layout identity contract](patch-format.md#matching-rules) is implemented by the
+reader/workspace, with source and saved-state checks recorded separately.
 
 The merged engine probe records audio signal from default/TR808/TR909 banks and distinct effect settings on separate
 orbits. The [decided orbit allocation](translation-rules.md#effect-orbits) gives
 every final voice (including dry voices) its own orbit at the end of the branch;
-structural edits still need effect-bus handling in #4. The spike does not prove a persistence serializer, generator
-integration, arbitrary-patch continuity or sound at the physical speaker.
+#4 supplies structural effect-bus reset. Those later checks establish generator
+integration and persistence separately from the spike; neither establishes
+arbitrary-patch continuity or sound at the physical speaker.
 
 ## #9: values in v1
 
@@ -168,8 +164,8 @@ Select a cable for Remove or Move destination. During a reroute, the old
 connection remains committed until a valid destination is accepted. Escape,
 an empty-space drop, or a blocked drop restores it; dragging into empty space
 never deletes it. Remove disconnects just that cable. Do not automatically
-bridge a broken chain. Disconnected parts are visibly inactive, pending R2's
-saved-state representation.
+bridge a broken chain. Disconnected parts are visibly inactive and retained in
+validated saved state (R2).
 
 Several cables may leave one output. Offset plug collars slightly so the
 stack is visible; selecting the output lists its destinations so each cable
@@ -177,13 +173,13 @@ can be selected without pixel hunting. At the second cable, reveal an
 editable name tag and a generated valid unique name. Renaming validates a
 JavaScript identifier and rejects reserved or colliding names before commit.
 Source-preserving declaration/reference edits and retaining a chosen name
-after reducing to one cable require production #3/#6/#8 integration; do not promise automatic
-inlining or renaming unknown CODE references.
+after reducing to one cable are verified by the workspace/interaction reports;
+unknown CODE references are refused rather than automatically renamed or inlined.
 
 For reversed apparent FX order, explain the order actually heard; do not
 reorder cables or code. Exact effect-order wording and independent DELAY/
-REVERB settings follow the merged #2/#13 findings; generation and warning
-integration remain #3/#4/#5 work. Shared imported orbits must not be silently
+REVERB settings follow the #2/#13 findings, with generation, structural reset
+and indirect-order warnings verified in the production reports above. Shared imported orbits must not be silently
 split to make the rack look independent. Unrepresentable routing stays CODE.
 
 ## #11: modules and a new patch
@@ -223,8 +219,8 @@ OUT at row 0 / HP 12, MIX OUT connected to OUT IN, all catalog defaults.
 Show the remaining rail as empty space and the library; there are no voices
 and Play does not invent a sound. This is a UI template, not a change to
 `emptyPatch()`. The template's disconnected modules, default values and names
-must survive save/reopen; that is R2’s remaining saved-state dependency, beyond
-the decided matching contract.
+survive save/reopen under the reader/workspace checks; #34 also verifies empty
+rail retention independently of executable source.
 
 New patch first offers “Replace this patch?” with Export current / Replace /
 Cancel whenever work exists. Export copies/downloads the exact current code
@@ -238,11 +234,13 @@ or persistence schema is introduced by this design proposal.
 
 ## #12: half-typed code and failures
 
-The [production acceptance audit](error-verification.md) resolves pending-operation
-warning, diagnostic ownership and Open/New replacement behavior. It records
-verified cases separately from the remaining #36 engine dependencies; #12 stays
-open until those results are integrated. This contract supersedes the earlier
-proposal defaults below where the adapter cannot expose individual phases.
+The [production acceptance audit](error-verification.md) verifies pending-operation
+warnings, diagnostic ownership, retained drafts and Open/New replacement. The
+subsequent [#36 audit](audio-recovery.md) resolves observable resource/output
+reporting and guarded Stop, and reruns that suite. #12 remains open in GitHub for
+issue-level acceptance reconciliation; the build plan records that distinction.
+These reports supersede storyboard defaults where the adapter cannot expose
+individual activation phases, resource readiness or a resource-specific retry.
 
 Keep three distinct facts: **draft source**, **last accepted readable rack**,
 and **last confirmed scheduled audio**. They can represent different revisions.
@@ -264,38 +262,38 @@ until revision-correct mapping is proven. Parser diagnostics are a separate,
 proven source-location contract. An engine-reported parse location such as
 `1:9` does not establish runtime stack mapping.
 
-The merged `onEvalError` adapter reports evaluation failures; it is not a
-universal subscription to scheduler, output, or sample-file/decode failures.
-The sample/output rows below describe desired UX **when a failure is surfaced**.
-Automatic detection and recovery of all late failures remain unsupported.
-Until reliable callbacks exist, do not display a fabricated resource diagnosis
-or promise automatic Stop; retain the manual Stop/Play recovery and show sample
-status as unavailable when it cannot be observed.
+The `onEvalError` adapter reports evaluation failures; #36 additionally observes
+upstream resource/output logs and requests Stop when they report a failure.
+Automatic detection and recovery of all late failures remain unsupported. Do not
+invent a resource diagnosis: distinguish registered manifests from unverified
+decoding/output, and retain manual Stop/explicit Play. No resource-specific retry
+is offered because the adapter cannot reliably clear Strudel's failed sample cache.
 
-| State / trigger                   | Rack and code presentation                                                                                                                                                                                | Audio presentation and action                                                                                                                                                                               | Recovery                                                                                                                                                              |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Editing / parse pending           | “Reading code…”; retain and dim the last accepted rack; disable values, dragging, deletion and look/name edits.                                                                                           | Keep the existing audio status; do not evaluate an incomplete draft. Stop remains enabled.                                                                                                                  | Accept only the newest result.                                                                                                                                        |
-| Syntax error                      | “Rack shows previous code”; mark the diagnostic line/column with underline and inline text. Keep the exact draft editable. With no accepted rack, show “Rack unavailable until code parses”.              | If audio was confirmed running, say “Previous pattern scheduled”; otherwise “Stopped”. The parser alone cannot guarantee audible playback.                                                                  | Fix code or choose Revert to last readable code (explicitly discards the draft). If no accepted revision exists, omit Revert.                                         |
-| Valid unsupported code            | Accept readable portions and exact CODE blocks; label “Some code has no controls”. This is not a parse error.                                                                                             | Apply only through the supported engine path; CODE remains subject to runtime errors.                                                                                                                       | Editing the CODE source may make it readable later; no automatic destructive rewrite.                                                                                 |
-| Parsed and source-mapped          | Restore rack editing and current-span selection; show “Rack matches code”.                                                                                                                                | If stopped, stay stopped. If playing, show “Applying…” until explicit scheduling confirmation.                                                                                                              | An evaluation failure enters the next state without pretending source parsing failed.                                                                                 |
-| Evaluation / construction failure | Keep the valid current draft and its readable rack; underline a line only if the adapter provides a revision-correct source location. Otherwise use a code-pane banner with expandable technical details. | Show “Could not apply code”. **Conservative policy: request Stop**, then show “Scheduling stopped after error” only when confirmed. Do not claim automatic rollback, even if the previous pattern survived. | Fix code and press Play explicitly. Revert to last readable code is not advertised as audio rollback.                                                                 |
-| Audio activation required         | Rack and draft stay editable. Transport says “Enable audio”; message “Click Enable audio to start playback”.                                                                                              | A direct click attempts initialization/resume and evaluation. Do not show Playing merely because the click occurred.                                                                                        | Stay in activation/error state on failure, with Retry and details. The tested first click worked; fresh-profile and other-browser activation still need proof.        |
-| Samples loading / failed          | Keep values and source; identify bank or sample only when supplied by the engine. Persistent “Sample unavailable” message includes Retry samples and details.                                             | Do not claim Playing means all samples loaded. Report “Playback incomplete” if other voices are known to continue, otherwise “Sample status unavailable”. Do not replace the bank or sample silently.       | Retry the failed resource without rewriting code; if the adapter cannot identify/retry it, offer Stop and Play again instead of a nonfunctional Retry samples action. |
-| Scheduled event / output failure  | Keep source and readable rack; show a workspace audio-error banner. No invented error-line location.                                                                                                      | Request Stop, retain the error, and say “Audio state unknown — Stop failed” if stopping fails. Hide activity success indicators whose evidence is stale.                                                    | Explicit Retry/Play after correction; no automatic restart.                                                                                                           |
+The table retains the design states. Actual initialization uses a combined
+starting message; the linked audits record the available statuses/actions.
+
+| State / trigger                   | Rack and code presentation                                                                                                                                                                                   | Audio presentation and action                                                                                                                                                                               | Recovery                                                                                                                                                                                            |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Editing / parse pending           | “Reading code…”; retain and dim the last accepted rack; disable values, dragging, deletion and look/name edits.                                                                                              | Keep the existing audio status; do not evaluate an incomplete draft. Stop remains enabled.                                                                                                                  | Accept only the newest result.                                                                                                                                                                      |
+| Syntax error                      | “Rack shows previous code”; mark the diagnostic line/column with underline and inline text. Keep the exact draft editable. With no accepted rack, show “Rack unavailable until code parses”.                 | If audio was confirmed running, say “Previous pattern scheduled”; otherwise “Stopped”. The parser alone cannot guarantee audible playback.                                                                  | Fix code or choose Revert to last readable code (explicitly discards the draft). If no accepted revision exists, omit Revert.                                                                       |
+| Valid unsupported code            | Accept readable portions and exact CODE blocks; label “Some code has no controls”. This is not a parse error.                                                                                                | Apply only through the supported engine path; CODE remains subject to runtime errors.                                                                                                                       | Editing the CODE source may make it readable later; no automatic destructive rewrite.                                                                                                               |
+| Parsed and source-mapped          | Restore rack editing and current-span selection; show “Rack matches code”.                                                                                                                                   | If stopped, stay stopped. If playing, show “Applying…” until explicit scheduling confirmation.                                                                                                              | An evaluation failure enters the next state without pretending source parsing failed.                                                                                                               |
+| Evaluation / construction failure | Keep the valid current draft and its readable rack; underline a line only if the adapter provides a revision-correct source location. Otherwise use a code-pane banner with expandable technical details.    | Show “Could not apply code”. **Conservative policy: request Stop**, then show “Scheduling stopped after error” only when confirmed. Do not claim automatic rollback, even if the previous pattern survived. | Fix code and press Play explicitly. Revert to last readable code is not advertised as audio rollback.                                                                                               |
+| Audio activation required         | Rack and draft stay editable. Transport says “Enable audio”; message “Click Enable audio to start playback”.                                                                                                 | A direct click attempts initialization/resume and evaluation. Do not show Playing merely because the click occurred.                                                                                        | Stay in activation/error state on failure, with Retry and details. Fresh isolated Chromium click/retry is verified in #36; native OS denial and broader browser/profile coverage remain unverified. |
+| Samples loading / failed          | Keep values and source; identify bank or sample only when supplied by the engine. Show registered/loading/failed manifest status and observed failure details; decoding/output readiness remains unverified. | Do not claim Playing means all samples loaded. Report “Playback incomplete” if other voices are known to continue, otherwise “Sample status unavailable”. Do not replace the bank or sample silently.       | Retry the failed resource without rewriting code; if the adapter cannot identify/retry it, offer Stop and Play again instead of a nonfunctional Retry samples action.                               |
+| Scheduled event / output failure  | Keep source and readable rack; show a workspace audio-error banner. No invented error-line location.                                                                                                         | Request Stop, retain the error, and say “Audio state unknown — Stop failed” if stopping fails. Hide activity success indicators whose evidence is stale.                                                    | Explicit Retry/Play after correction; no automatic restart.                                                                                                                                         |
 
 **Last-good policy:** syntax failures do not submit a new pattern; previously
 scheduled audio may continue, and Stop always remains available. For runtime
 or output failures, prefer an explicit stop over a blanket last-good promise.
 An evaluator can run `setcpm(...)` or other effects before failing. There is
-no promise to roll those effects back. For failure classes the merged adapter
-cannot observe reliably, #8 must keep an explicit Apply/Play boundary and
-label the limitation, rather than infer success from `evaluate()` resolving.
+no promise to roll those effects back. The workspace keeps explicit Play after
+failure and labels readiness limits; `evaluate()` resolution does not prove
+successful resource decoding/output.
 
 Stop ends scheduling; existing voices and effect tails may ring out. Do not label this as immediate silence. Stop cancels pending playback intent: a parse/evaluation result arriving after
-Stop must not restart audio. Serializing updates, handling stale completions,
-and preventing older evaluations from winning are production #4/#8 work and
-must respect the merged engine contract; a UI revision check alone cannot
-cancel engine effects.
+Stop must not restart audio. Playback serializes live updates and rejects stale
+intent; a UI revision check alone cannot cancel engine effects.
 The [#36 engine contract](audio-recovery.md) supersedes PR #26's serialized-Stop
 limit: Stop bypasses pending evaluation and guards its later installation/queries.
 The evaluation itself remains uninterruptible. Explicit replay waits for it to
@@ -322,17 +320,15 @@ The owner selected all five choices, in order:
 These choices are recorded in [decisions](decisions.md#interaction-policy).
 The detailed interaction defaults remain reviewable implementation guidance.
 
-| Issue / acceptance topic                     | Reviewable proposal                                                                           | Production proof still required                                                                                                                                                                                    |
+| Issue / acceptance topic                     | Reviewable proposal                                                                           | Production evidence and remaining scope                                                                                                                                                                            |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | #9: set/reset values, detents, fine input    | Typed values, vertical dragging, Shift fine control, catalog snapping and double-click reset. | Verified: numeric validation, explicit snap confirmation, pointer/Escape cancellation, reset and live source/audio application. See [interaction evidence](interaction-verification.md).                           |
 | #10: drag, three target states, explanations | Target table, persistent warnings, reroute/remove/replace and fan-out selection.              | Verified: graph validation, warnings, unresolved CODE, replacement, rerouting, removal and named fan-out selection. Imported unsafe edits remain refused. See [interaction evidence](interaction-verification.md). |
 | #11: placement/full rows/deletion/new patch  | HP ghost, explicit row zone, deletion preview, silent MIX/OUT template.                       | Verified: native placement/movement, full rows, cancellation, deletion, silent replacement and complete saved state including empty rails. See [interaction evidence](interaction-verification.md).                |
-| #12: half-typed/error line/last-good         | Separate draft/rack/audio state table, exact-revision diagnostics, no partial rack.           | #6/#8: integrate the proven #1 parser/source contract, including stale-edit rejection and CRLF/Unicode handling.                                                                                                   |
-| #12: blocked audio, samples, runtime         | Activation, incomplete-sample, evaluation and output states with explicit recovery.           | #4/#8: integrate observed engine behavior; prove fresh-profile activation, surfaced errors, retries and Stop intent; browser observation and audible verification reported separately.                             |
+| #12: half-typed/error line/last-good         | Separate draft/rack/audio state table, exact-revision diagnostics, no partial rack.           | Verified in reader/workspace and [error acceptance](error-verification.md): retained draft/rack, exact parser coordinates, revision-safe diagnostics and export.                                                   |
+| #12: blocked audio, samples, runtime         | Activation, incomplete-sample, evaluation and output states with explicit recovery.           | [#36 recovery](audio-recovery.md) verifies observable failures, retries and guarded Stop in isolated Chromium; universal detection/readiness, physical listening and broader browser coverage remain unverified.   |
 
-The five owner choices are approved while production integration in R1/R2 and
-the remaining limitations in E1/E2 remain open. Do not close
-technical dependencies or mark production acceptance passed on the strength of
-the storyboard. Before #5/#8 implementation, use the merged
-reader and engine contracts, update any newly resolved limitations in the
-relevant specs, and reconcile any changed constraints here.
+The owner choices and completed production evidence are distinct from the
+storyboard. Keep #12's remaining issue-level acceptance reconciliation separate
+from completed #9–#11 flows and #36 implementation. Preserve the explicit engine
+limits rather than presenting them as unfinished reader/rack integration.

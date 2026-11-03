@@ -105,7 +105,7 @@ reader of the old proposed `lead.2` line format to migrate.
   row, continuing onto free space on later rows without overlapping any retained
   positions. A matched module keeps its position and family-valid look.
 - Invalid metadata must not invalidate otherwise valid Strudel or change its
-  sound. #6 must validate versions, unique IDs, catalog types/looks, nonnegative
+  sound. The reader validates versions, unique IDs, catalog types/looks, nonnegative
   integer positions and binding references before applying saved state. Treat
   unsupported versions as unrecognized metadata: retain original source, report
   that layout was not restored, and do not silently overwrite the unknown block.
@@ -139,7 +139,7 @@ Snapshots cannot contain nested rack blocks. Copy/Export save the exact current
 draft; Open reads plain `.strudel` files. Chosen names survive reducing a split
 to one branch. See [workspace evidence and limits](workspace-verification.md).
 
-## Planned structural source mutations (#35)
+## Structural source mutation plans (#35)
 
 The [structural-edit matrix](translation-rules.md#imported-structural-edits-35)
 defines supported mutations and refusals. A plan carries explicit old-to-new
