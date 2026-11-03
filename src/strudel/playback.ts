@@ -55,6 +55,8 @@ export function createPlayback(initial: Patch | SourceDocument) {
   let sourceRevision = 0
   let pending = Promise.resolve()
   const listeners = new Set<() => void>()
+  const sourceListeners = new Set<(event: engine.SourceFeedback | null) => void>()
+  const clearSourceFeedback = () => sourceListeners.forEach((listener) => listener(null))
   let unsubscribeEngine: (() => void) | undefined
   function publish(
     status: PlaybackState['status'],
@@ -66,6 +68,7 @@ export function createPlayback(initial: Patch | SourceDocument) {
         ? 'stopped'
         : 'unknown',
   ) {
+    if (status !== 'playing') clearSourceFeedback()
     state = { ...state, status, scheduling, error, errorSource }
     listeners.forEach((listener) => listener())
   }
@@ -96,7 +99,8 @@ export function createPlayback(initial: Patch | SourceDocument) {
     }
   }
   function onEngineEvent(event: engine.EngineEvent) {
-    if (event.type === 'resources') {
+    if (event.type === 'activity-clear') clearSourceFeedback()
+    else if (event.type === 'resources') {
       state = { ...state, resources: event.status }
       listeners.forEach((listener) => listener())
     } else if (event.type === 'failure') {
@@ -118,6 +122,18 @@ export function createPlayback(initial: Patch | SourceDocument) {
           await engine.play(next.code, {
             volume: next.volume,
             resetEffects: accepted?.topology !== next.topology,
+            sourceFeedback: (event) => {
+              if (
+                !requested ||
+                operationIntent !== intent ||
+                next.source !== patch.source ||
+                next.topology !== patch.topology
+              )
+                return
+              // Layout/volume-only updates keep the evaluated body and its offsets.
+              // Bind feedback to the current saved file, whose trailing metadata may differ.
+              sourceListeners.forEach((listener) => listener({ ...event, source: patch.code }))
+            },
           })
         }
         if (!requested || operationIntent !== intent) return
@@ -131,6 +147,12 @@ export function createPlayback(initial: Patch | SourceDocument) {
     })
   }
   return {
+    subscribeSourceFeedback: (listener: (event: engine.SourceFeedback | null) => void) => {
+      sourceListeners.add(listener)
+      return () => {
+        sourceListeners.delete(listener)
+      }
+    },
     getSnapshot: () => state,
     subscribe: (listener: () => void) => {
       if (!listeners.size) {

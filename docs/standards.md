@@ -134,7 +134,12 @@ changes JavaScript automatic semicolon insertion. CodeMirror renders editable te
 suite verifies current owned spans, native composition, mapped backward selection,
 both scroll axes, local undo checkpoints, Cyber editing through invalid span-boundary drafts and live Show in code geometry. Treatment
 instrumentation rejects reparsing on selection, and playback renders retain the
-same decoration facet. The separate [real-browser feedback check](feedback-verification.md)
+same decoration facet. The #72 [sounding-token boundary](sounding-tokens.md) uses exact source/intent
+guards and a CodeMirror StateField; focused tests cover token expiry/retrigger,
+draft clearing and transport delivery without React snapshots. Its real-browser
+check covers generated/imported tokens, opaque/unmapped spans, motion, errors and
+the trance demo without event-driven editor renders or parsing.
+The separate [real-browser feedback check](feedback-verification.md)
 requires actual pulses, nonzero PCM, native IME and reduced-motion behavior;
 shared CI still lacks Chromium/network provisioning for that suite.
 

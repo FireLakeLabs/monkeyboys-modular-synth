@@ -14,6 +14,7 @@ import type { SourceDocument } from '../reader/types'
 import { sourceSegments, sourceTreatments, type SourceTreatment } from './highlighting'
 import { editorChanges } from './editorChanges'
 import { foldRackMetadata, metadataFolding } from './metadataFolding'
+import { soundingTokens, type SubscribeSourceFeedback } from './soundingTokens'
 
 const setSourceDecorations = StateEffect.define<DecorationSet>()
 const sourceDecorations = StateField.define<DecorationSet>({
@@ -51,6 +52,7 @@ export function SourceEditor(props: {
   document: SourceDocument | null
   selected: string | null
   editor: RefObject<EditorView | null>
+  sourceFeedback: SubscribeSourceFeedback
   invalid: boolean
   change: (source: string) => void
   composing: (value: boolean) => void
@@ -99,6 +101,26 @@ export function SourceEditor(props: {
           keymap.of([...defaultKeymap, ...historyKeymap]),
           styling.current.of([]),
           sourceDecorations,
+          soundingTokens(current.current.props.sourceFeedback, (event) => {
+            const { props, treatments } = current.current
+            if (props.document?.source !== event.source || !treatments) return []
+            return event.spans.filter(
+              (span) =>
+                treatments.some(
+                  (owner) =>
+                    owner.className.includes('source-token') &&
+                    !owner.className.includes('source-cyber') &&
+                    owner.start <= span.start &&
+                    owner.end >= span.end,
+                ) &&
+                !treatments.some(
+                  (owner) =>
+                    owner.className.includes('source-cyber') &&
+                    owner.start < span.end &&
+                    owner.end > span.start,
+                ),
+            )
+          }),
           EditorView.theme(
             {
               '&': { height: '100%' },

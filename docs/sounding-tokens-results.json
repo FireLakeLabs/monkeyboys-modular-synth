@@ -1,0 +1,48 @@
+{
+  "browser": "156.0.8078.4",
+  "checks": [
+    "generated exercise tokens highlight through real scheduled Strudel events and clear on Stop",
+    "imported shared/later voices retain original UTF-16 token positions without marking opaque calls or changing source",
+    "valid unapplied drafts suppress old token activity until explicit Apply accepts the new source",
+    "draft mismatch clears immediately; Revert resumes mapped tokens; runtime reduced motion clears and suppresses pulses",
+    "replacement with unmapped numeric/single-quoted code never claims token activity",
+    "replacement and evaluation failure remove obsolete token marks",
+    "trance drives CodeMirror effects with no editor React renders, treatment work or reparses; delivery waits for audio time; Stop cancels future marks"
+  ],
+  "physicalListening": false,
+  "trance": {
+    "before": {
+      "counters": [96, 20, 223],
+      "events": 15
+    },
+    "after": {
+      "counters": [96, 20, 223],
+      "events": 80
+    }
+  },
+  "deliveryLeadSeconds": {
+    "max": 0.004699999999999704,
+    "count": 84
+  },
+  "feedback": {
+    "browser": "156.0.8078.4",
+    "checks": [
+      "family/category/named-output styling, all VCF spans, exact retained source",
+      "real rack value rewrite maps backward selection and both scroll axes; Show in code uses live geometry",
+      "unaccepted typing can be undone locally; accepting source checkpoints local history",
+      "invalid drafts clear selection highlights; accepted source restores current ownership",
+      "native Chromium IME composition defers parsing, clears stale highlights and commits exact Japanese text",
+      "typing beyond a CODE span retains Cyber editing focus through an invalid draft; blur clears it and Revert restores source",
+      "Cyber cursor stays solid except while its block is being edited",
+      "selection does not reparse treatments; playback renders retain the same decorations and treatment count",
+      "real final ITER/JUX events drive 400 ms Alien/Instrument feedback; opaque voice has none; PCM remains nonzero",
+      "changing reduced motion during playback clears active fades",
+      "Stop cancels active fades and pending event visuals",
+      "reduced motion suppresses pulses/blinking; widths and cable paths remain identical",
+      "replacement and surfaced errors clear obsolete activity",
+      "semicolon-free bare voices after tempo and const declarations play with attributable activity"
+    ],
+    "physicalListening": false,
+    "pcmRms": 0.05921491797078031
+  }
+}

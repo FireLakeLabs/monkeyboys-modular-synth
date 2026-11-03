@@ -141,8 +141,9 @@ styles and checkpoints draft history on acceptance. The [adoption evidence](edit
 records Chromium composition, reduced motion and all three production browser suites.
 #68 adds [protected metadata folding](metadata-folding.md), retaining the full v1
 file for Copy/Export/Open/paste and keeping EOF diagnostics on code lines.
-#63 owns global accepted-document undo/redo; #69/#72 own further error placement
-and event marks. Physical OS IMEs and broad device coverage remain unverified.
+#72 adds [sounding token marks](sounding-tokens.md) through engine-timed source feedback
+and a CodeMirror StateField. #63 owns global accepted-document undo/redo; #69 owns
+further error placement. Physical OS IMEs and broad device coverage remain unverified.
 
 ## Prove early
 
