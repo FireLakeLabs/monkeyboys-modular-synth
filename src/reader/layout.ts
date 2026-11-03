@@ -7,7 +7,7 @@ import {
   type RackLayout,
   type Scope,
 } from '../codegen/layout'
-import { CATALOG } from '../modules/catalog'
+import { CATALOG, ENV, OUT, VCF } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
 import { parseSource, type ParsedScope } from './syntax'
@@ -241,6 +241,34 @@ export function readLayout(source: string): SavedLayout {
 const full = (scope: Scope): string => descriptor([scope.root, scope.calls])
 const root = (scope: Scope): string =>
   scope.anchor === undefined ? scope.root : `name:${scope.anchor}`
+
+/** Only catalog mode aliases share a key; distinct controls never do. */
+function modeMethod(name: string): string {
+  if (name === 'note' || name === 'n') return 'note'
+  const mode = VCF.controls.find((control) => control.id === 'mode')
+  if (mode?.kind !== 'switch') return name
+  const prefix = mode.options.find((option) => name.startsWith(String(option.value)))?.value
+  return prefix !== undefined && (VCF.strudel.includes(name) || ENV.strudel.includes(name))
+    ? `filter:${name.slice(String(prefix).length)}`
+    : name
+}
+
+function modeRoot(scope: Scope): string {
+  if (scope.anchor !== undefined) return root(scope)
+  const ast: unknown = JSON.parse(scope.root)
+  if (
+    !record(ast) ||
+    ast.type !== 'CallExpression' ||
+    !record(ast.callee) ||
+    ast.callee.type !== 'Identifier' ||
+    typeof ast.callee.name !== 'string'
+  )
+    return root(scope)
+  if (OUT.strudel.includes(ast.callee.name)) return `tempo:${ast.callee.name}`
+  return descriptor({ ...ast, callee: { ...ast.callee, name: modeMethod(ast.callee.name) } })
+}
+const branch = (scope: Scope): string =>
+  descriptor([modeRoot(scope), scope.calls.map((call) => modeMethod(call.name))])
 function unique<T>(items: readonly T[], key: (item: T) => string, wanted: string): T | undefined {
   const matches = items.filter((item) => key(item) === wanted)
   return matches.length === 1 ? matches[0] : undefined
@@ -277,6 +305,12 @@ export function matchScopes(
     const key = scope.anchor === undefined ? full : root
     let previous = unique(current, key, key(scope)) ? unique(saved, key, key(scope)) : undefined
     previous ??= unique(current, root, root(scope)) ? unique(saved, root, root(scope)) : undefined
+    previous ??= unique(current, modeRoot, modeRoot(scope))
+      ? unique(saved, modeRoot, modeRoot(scope))
+      : undefined
+    previous ??= unique(current, branch, branch(scope))
+      ? unique(saved, branch, branch(scope))
+      : undefined
     if (!previous || previous.anchor !== scope.anchor) continue
     const calls = new Map<number, number>()
     const unchanged = descriptor(previous.calls) === descriptor(scope.calls)
@@ -291,7 +325,9 @@ export function matchScopes(
       const old =
         exact ||
         (unique(scope.calls, (item) => item.name, call.name) &&
-          unique(previous.calls, (item) => item.name, call.name))
+          unique(previous.calls, (item) => item.name, call.name)) ||
+        (unique(scope.calls, (item) => modeMethod(item.name), modeMethod(call.name)) &&
+          unique(previous.calls, (item) => modeMethod(item.name), modeMethod(call.name)))
       if (old) calls.set(index, previous.calls.indexOf(old))
     })
     result.set(scope.id, { saved: previous, calls, exact: full(previous) === full(scope) })

@@ -6,7 +6,7 @@ import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
 import { drumView, stepView } from '../patch/notation'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
-import { saveLayout } from '../workspace/document'
+import { editDocument, saveLayout } from '../workspace/document'
 import { read } from './read'
 
 interface EditCase {
@@ -343,7 +343,6 @@ interface Scenario {
   type: string
   edit: EditCase
   patch: Patch
-  rackIssue?: number
 }
 
 const scenarios: Scenario[] = CATALOG.flatMap((spec) =>
@@ -352,10 +351,6 @@ const scenarios: Scenario[] = CATALOG.flatMap((spec) =>
     type: spec.id,
     edit,
     patch: fixture(spec.id, edit),
-    ...(['seq.mode', 'vcf.mode', 'out.bpm'].includes(`${spec.id}.${edit.control}`) ||
-    (spec.id === 'mix' && edit.control !== 'ch1')
-      ? { rackIssue: 99 }
-      : {}),
   })),
 )
 
@@ -405,7 +400,6 @@ for (const modType of ['env', 'lfo']) {
     type: 'vcf',
     edit,
     patch,
-    ...(modType === 'env' ? { rackIssue: 99 } : {}),
   })
 }
 
@@ -423,7 +417,7 @@ function rack(patch: Patch): unknown {
   }
 }
 
-for (const { name, type, edit, patch, rackIssue } of scenarios) {
+for (const { name, type, edit, patch } of scenarios) {
   describe(`${name}: one control edit`, () => {
     const expected = changed(patch, type, edit)
     let code: string
@@ -449,53 +443,38 @@ for (const { name, type, edit, patch, rackIssue } of scenarios) {
       expect(read(saved.source).patch).toEqual(accepted.patch)
       expect(body(saved.source)).toBe(body(code))
     })
-    const channelIssue = type === 'mix' && edit.control !== 'ch1'
-    const controlTest = channelIssue ? it.fails : it
-    controlTest(
-      `reads the changed control${channelIssue ? ' (#99: channel moved to CH 1)' : ''}`,
-      () => {
-        const subject = read(code).patch.modules.find((item) => item.type === type)
-        const actual = subject?.values[edit.control]
-        if (typeof edit.after === 'number') expect(actual).toBeCloseTo(edit.after, 10)
-        else expect(typeof actual === 'string' ? actual.trim() : actual).toEqual(edit.after)
-      },
-    )
-    const rackTest = rackIssue ? it.fails : it
-    rackTest(
-      `keeps modules, wiring, looks, names and all other values${rackIssue ? ` (#${rackIssue})` : ''}`,
-      () => {
-        expect(rack(read(code).patch)).toEqual(rack(expected))
-      },
-    )
-    const identityIssue = ['seq.mode', 'vcf.mode', 'out.bpm'].includes(name)
-    const identityTest = identityIssue ? it.fails : it
-    identityTest(
-      `retains positions, looks and IDs of existing modules${identityIssue ? ' (#99)' : ''}`,
-      () => {
-        const actual = read(code).patch
-        for (const old of expected.modules) {
-          const current = actual.modules.find((item) => item.type === old.type)
-          expect(
-            current && {
-              id: current.id,
-              type: current.type,
-              row: current.row,
-              hp: current.hp,
-              look: current.look,
-            },
-          ).toEqual({ id: old.id, type: old.type, row: old.row, hp: old.hp, look: old.look })
-        }
-      },
-    )
-    controlTest(`changes no other effective control value${channelIssue ? ' (#99)' : ''}`, () => {
+    it('reads the changed control', () => {
+      const subject = read(code).patch.modules.find((item) => item.type === type)
+      const actual = subject?.values[edit.control]
+      if (typeof edit.after === 'number') expect(actual).toBeCloseTo(edit.after, 10)
+      else expect(typeof actual === 'string' ? actual.trim() : actual).toEqual(edit.after)
+    })
+    it('keeps modules, wiring, looks, names and all other values', () => {
+      expect(rack(read(code).patch)).toEqual(rack(expected))
+    })
+    it('retains positions, looks and IDs of existing modules', () => {
+      const actual = read(code).patch
+      for (const old of expected.modules) {
+        const current = actual.modules.find((item) => item.type === old.type)
+        expect(
+          current && {
+            id: current.id,
+            type: current.type,
+            row: current.row,
+            hp: current.hp,
+            look: current.look,
+          },
+        ).toEqual({ id: old.id, type: old.type, row: old.row, hp: old.hp, look: old.look })
+      }
+    })
+    it('changes no other effective control value', () => {
       const actual = read(code).patch
       for (const old of expected.modules) {
         const current = actual.modules.find((item) => item.type === old.type)
         expect(current && effectiveValues(current)).toEqual(effectiveValues(old))
       }
     })
-    const nameTest = name === 'seq.mode' ? it.fails : it
-    nameTest(`retains output names${name === 'seq.mode' ? ' (#99)' : ''}`, () => {
+    it('retains output names', () => {
       expect(read(code).patch.names).toEqual(expected.names)
     })
     it('preserves Strudel events through source and independently regenerated projection', () => {
@@ -508,6 +487,114 @@ for (const { name, type, edit, patch, rackIssue } of scenarios) {
     })
   })
 }
+
+describe('#99 conservative reconciliation boundaries', () => {
+  it.each(['seq', 'vcf'])('retains a unique anonymous %s mode switch', (type) => {
+    const edit = edits[type]?.find((edit) => edit.control === 'mode')
+    if (!edit) throw new Error('Missing mode fixture')
+    const patch = fixture(type, edit)
+    patch.names = {}
+    const source = edited(patch, edit)
+    expect(rack(read(source).patch)).toEqual(rack(changed(patch, type, edit)))
+    expect(generate(read(source))).toBe(source)
+  })
+
+  it('does not assign repeated filters by their position after an ambiguous mode switch', () => {
+    const edit = edits['vcf']?.find((edit) => edit.control === 'mode')
+    if (!edit) throw new Error('Missing mode fixture')
+    const patch = fixture('vcf', edit)
+    const filter = patch.modules.find((item) => item.type === 'vcf')
+    const mix = patch.modules.find((item) => item.type === 'mix')
+    if (!filter || !mix) throw new Error('Missing filter or mixer')
+    const second = { ...module('vcf', { mode: 'hp' }), id: 'vcf2', row: 10 }
+    patch.modules.push(second)
+    patch.cables = patch.cables.filter((cable) => cable.from.module !== filter.id)
+    patch.cables.push(wire(filter, second), wire(second, mix, 'in1'))
+    const source = edited(patch, edit)
+    const document = read(source)
+    expect(document.patch.modules.filter((item) => item.type === 'vcf')).toHaveLength(2)
+    expect(document.patch.modules.some((item) => ['vcf1', 'vcf2'].includes(item.id))).toBe(false)
+    expect(generate(document)).toBe(source)
+    expect(events(generate(document.patch))).toEqual(events(source))
+  })
+
+  it('keeps divergent uses of a previously shared ENV separate', () => {
+    const scenario = scenarios.find((item) => item.name.endsWith('ENV into VCF/VCA'))
+    if (!scenario) throw new Error('Missing shared ENV fixture')
+    const patch = scenario.patch
+    const source = generate(patch).replace('.attack(0.01)', '.attack(0.02)')
+    const document = read(source)
+    const envelopes = document.patch.modules.filter((item) => item.type === 'env')
+    expect(envelopes).toHaveLength(2)
+    expect(
+      envelopes.map((item) => item.values['atk']).sort((a, b) => Number(a) - Number(b)),
+    ).toEqual([0.01, 0.02])
+    expect(generate(document)).toBe(source)
+    expect(events(generate(document.patch))).toEqual(events(source))
+    const saved = saveLayout(document)
+    expect(read(saved.source).patch).toEqual(document.patch)
+  })
+
+  it('does not merge equal envelopes with independent saved identities', () => {
+    const scenario = scenarios.find((item) => item.name.endsWith('ENV into VCF/VCA'))
+    if (!scenario) throw new Error('Missing shared ENV fixture')
+    const patch = structuredClone(scenario.patch)
+    const env = patch.modules.find((item) => item.type === 'env')
+    if (!env) throw new Error('Missing envelope')
+    patch.modules.push({ ...structuredClone(env), id: 'env2', row: 12 })
+    for (const cable of patch.cables)
+      if (cable.from.module === env.id && cable.to.module === 'vca1') cable.from.module = 'env2'
+    const document = read(edited(patch, scenario.edit))
+    expect(rack(document.patch)).toEqual(rack(changed(patch, 'vcf', scenario.edit)))
+  })
+
+  it('does not guess anonymous SEQ identity when a mode switch makes the roots ambiguous', () => {
+    const edit = edits['seq']?.find((edit) => edit.control === 'mode')
+    if (!edit) throw new Error('Missing SEQ mode fixture')
+    const patch = fixture('seq', edit)
+    patch.names = {}
+    const second = { ...module('seq', { steps: '0 2 4', mode: 'degree' }), id: 'seq2', row: 10 }
+    const sound = { ...module('osc', { wave: 'triangle' }), id: 'osc2', row: 11 }
+    const mix = patch.modules.find((item) => item.type === 'mix')
+    if (!mix) throw new Error('Missing mixer')
+    mix.values['ch2'] = 0.8
+    patch.modules.push(second, sound)
+    patch.cables.push(wire(second, sound), wire(sound, mix, 'in2'))
+    const source = edited(patch, edit)
+    const document = read(source)
+    expect(document.patch.modules.some((item) => item.id === 'seq1')).toBe(false)
+    expect(document.patch.modules.find((item) => item.id === 'seq2')).toMatchObject(second)
+    expect(generate(document)).toBe(source)
+    expect(events(generate(document.patch))).toEqual(events(source))
+  })
+
+  it('preserves two occupied sparse mixer channels and their subsequent rack control edits', () => {
+    const scenario = scenarios.find((item) => item.name.endsWith('LFO into VCF/VCA'))
+    if (!scenario) throw new Error('Missing split voice fixture')
+    const patch = structuredClone(scenario.patch)
+    const mix = patch.modules.find((item) => item.type === 'mix')
+    if (!mix) throw new Error('Missing mixer')
+    mix.values = { ch1: 0.3, ch2: 0.8, ch3: 0.4, ch4: 0.6 }
+    for (const cable of patch.cables)
+      if (cable.to.module === mix.id && cable.to.jack === 'in1') cable.to.jack = 'in4'
+    const source = generate(patch).replace('.postgain(0.6)', '.postgain(0.7)')
+    const expected = structuredClone(patch)
+    const expectedMix = expected.modules.find((item) => item.id === mix.id)
+    if (!expectedMix) throw new Error('Missing expected mixer')
+    expectedMix.values['ch4'] = 0.7
+    const document = read(source)
+    expect(rack(document.patch)).toEqual(rack(expected))
+    expect(generate(document)).toBe(source)
+    expect(events(generate(document.patch))).toEqual(events(generate(expected)))
+    const next = structuredClone(document.patch)
+    const nextMix = next.modules.find((item) => item.id === mix.id)
+    if (!nextMix) throw new Error('Missing next mixer')
+    nextMix.values['ch2'] = 0.5
+    const updated = editDocument(document, next)
+    expect(body(updated.source)).toBe(body(source).replace('.postgain(0.8)', '.postgain(0.5)'))
+    expect(read(updated.source).patch).toEqual(next)
+  })
+})
 
 it('uses real mini-notation, timing and tempo in the event oracle', () => {
   expect(events('setcpm(30); $: note("c3 e3").s("sine")')).toEqual({

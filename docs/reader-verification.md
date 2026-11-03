@@ -75,6 +75,10 @@ can keep order, while changed ambiguous repeats get fresh IDs. Only parsed
 sounding controls and verified identity/layout are applied. Saved disconnected
 state and cables do not override edited code. Unmatched modules follow restored
 positions without overlap. A layout diagnostic reports this limited recovery.
+The [#99 matching contract](patch-format.md#matching-rules) additionally retains
+unique catalog mode switches, tempo edits, proven sparse MIX channels and shared
+ENV identities. Its [separate regression/browser evidence](literal-edit-verification.md#control-identity-and-channel-preservation-99)
+keeps ambiguous code and divergent envelopes conservative.
 
 ## Observed proof
 
