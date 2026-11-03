@@ -282,6 +282,11 @@
 .import-code input {
   display: none;
 }
+.replace-prompt .confirm-replacement {
+  background: var(--audio);
+  border-color: var(--audio);
+  color: #1a1408;
+}
 .sync-status {
   font-size: 12px;
   color: #8cf5da;

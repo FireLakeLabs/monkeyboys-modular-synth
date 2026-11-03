@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 export function ReplacementPrompt({
   title,
   action,
+  stopWarning,
   replacing,
   cancel,
   exportCurrent,
@@ -10,6 +11,7 @@ export function ReplacementPrompt({
 }: {
   title: string
   action: string
+  stopWarning: string
   replacing: boolean
   cancel: () => void
   exportCurrent: () => void
@@ -20,14 +22,14 @@ export function ReplacementPrompt({
   return (
     <fieldset className="replace-prompt">
       <legend>{title}</legend>
-      <p>Export your current work if you want to keep it. Loading stops playback.</p>
+      <p>Export your current work if you want to keep it. {stopWarning}</p>
       <button type="button" ref={cancelButton} onClick={cancel}>
         Cancel
       </button>
       <button type="button" onClick={exportCurrent}>
         Export current
       </button>
-      <button type="button" disabled={replacing} onClick={confirm}>
+      <button type="button" className="confirm-replacement" disabled={replacing} onClick={confirm}>
         {action}
       </button>
       {replacing && (

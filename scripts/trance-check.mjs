@@ -35,8 +35,8 @@ export async function loadTrance() {
     'Wrong collection',
   )
   button('Load patch…', library()).click()
-  await until(() => library().querySelector('.replace-prompt'))
-  button('Load patch', library()).click()
+  await until(() => !library() || library().querySelector('.replace-prompt'))
+  if (library()) button('Load patch', library()).click()
   await until(() => !library())
   assert(status() === 'Stopped', 'Library load started audio')
   assert(source() === entry.source, 'Load changed supplied source')

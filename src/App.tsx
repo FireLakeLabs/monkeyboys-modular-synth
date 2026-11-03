@@ -90,6 +90,8 @@ export default function App() {
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const current = useRef({ document, draft, phase })
+  // Exact source includes saved rack layout; files and recovered work stay protected.
+  const cleanSource = useRef<string | null>(document.source)
   const draftSaved = useRef(true)
   const editor = useRef<EditorView>(null)
   const locked = phase !== 'readable' || composing
@@ -231,52 +233,53 @@ export default function App() {
     }
   }
 
-  async function replaceWork(load: () => Promise<string | SourceDocument>): Promise<boolean> {
+  async function replaceWork(replacement: Replacement): Promise<void> {
     const operation = ++replacementRevision.current
     const revision = workRevision.current
     setReplacing(true)
     setError(null)
     try {
       const next = await prepareReplacement(
-        load,
+        async () => {
+          switch (replacement.kind) {
+            case 'file':
+              return replacement.file.text()
+            case 'new':
+              return fromPatch(starterPatch())
+            case 'library':
+              return readLibraryPatch(replacement.entry)
+          }
+        },
         playback,
         () => operation === replacementRevision.current && revision === workRevision.current,
       )
       if (typeof next === 'string') changeDraft(next)
       else install(next)
+      cleanSource.current = typeof next === 'string' ? null : next.source
       setSelected(null)
       setPendingReplacement(null)
       setRackGeneration((generation) => generation + 1)
-      return true
+      setLibraryOpen(false)
     } catch (failure) {
       if (operation === replacementRevision.current)
         setError(failure instanceof Error ? failure.message : String(failure))
-      return false
     } finally {
       if (operation === replacementRevision.current) setReplacing(false)
     }
   }
 
-  function requestReplacement(replacement: Replacement) {
+  async function requestReplacement(replacement: Replacement) {
     cancelReplacement()
     setError(null)
-    setPendingReplacement(replacement)
-  }
-
-  async function confirmReplacement() {
-    const replacement = pendingReplacement
-    if (!replacement) return
-    const loaded = await replaceWork(async () => {
-      switch (replacement.kind) {
-        case 'file':
-          return replacement.file.text()
-        case 'new':
-          return fromPatch(starterPatch())
-        case 'library':
-          return readLibraryPatch(replacement.entry)
-      }
-    })
-    if (loaded) setLibraryOpen(false)
+    const work = current.current
+    if (
+      work.phase === 'readable' &&
+      !composing &&
+      work.document.source === cleanSource.current &&
+      work.draft === cleanSource.current
+    ) {
+      await replaceWork(replacement)
+    } else setPendingReplacement(replacement)
   }
 
   function showCode(id: string) {
@@ -323,10 +326,17 @@ export default function App() {
             ? 'Open patch'
             : 'Load patch'
       }
+      stopWarning={
+        pendingReplacement.kind === 'new'
+          ? 'Starting a new patch stops playback.'
+          : `Loading ${pendingReplacement.kind === 'file' ? pendingReplacement.file.name : pendingReplacement.entry.title} stops playback.`
+      }
       replacing={replacing}
       cancel={cancelReplacement}
       exportCurrent={exportDraft}
-      confirm={confirmReplacement}
+      confirm={async () => {
+        if (pendingReplacement) await replaceWork(pendingReplacement)
+      }}
     />
   )
 
@@ -424,7 +434,9 @@ export default function App() {
                 onChange={(event) => {
                   const file = event.target.files?.[0]
                   if (file) {
-                    requestReplacement({ kind: 'file', file })
+                    requestReplacement({ kind: 'file', file }).catch((failure: unknown) =>
+                      setError(String(failure)),
+                    )
                   }
                   event.target.value = ''
                 }}
@@ -541,6 +553,7 @@ export default function App() {
         <RestorePrompt
           hasDraft={recovery.draft !== recovery.document.source}
           restore={() => {
+            cleanSource.current = null
             install(recovery.document)
             if (recovery.draft !== recovery.document.source) changeDraft(recovery.draft)
             setRecovery(null)
