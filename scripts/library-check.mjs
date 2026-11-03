@@ -561,3 +561,111 @@ export async function verifyLibraryRackEditing() {
   )
   return results
 }
+
+/** #79/#80: run at 1440 px before the signal group. */
+export async function verifyOnRampUI() {
+  const { PATCH_LIBRARY, libraryPatches } = await import('../src/library/catalog.ts')
+  const { read } = await import('../src/reader/index.ts')
+  const { generate } = await import('../src/codegen/generate.ts')
+  const { sourceBody } = await import('../src/workspace/document.ts')
+  function type(input, value) {
+    input.focus()
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, value)
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+  const filter = document.querySelector('.module-filter input')
+  type(filter, '')
+  await until(() => document.querySelectorAll('.chip').length === 16)
+  assert(
+    [...document.querySelectorAll('.library h3')].map((e) => e.textContent).join('|') ===
+      'Pattern|Sound|Shape|Modulate|Effects|Utility',
+    'Wrong palette category order',
+  )
+  for (const chip of document.querySelectorAll('.chip')) {
+    assert(chip.querySelector('.chip-family')?.textContent, 'Missing family badge')
+    assert(chip.querySelector('.chip-call')?.textContent, 'Missing Strudel call')
+    for (const text of chip.querySelectorAll('span, code')) {
+      assert(text.scrollWidth <= text.clientWidth + 1, `Clipped chip text: ${text.textContent}`)
+      assert(getComputedStyle(text).textOverflow !== 'ellipsis', 'Chip uses ellipsis')
+    }
+  }
+  for (const [query, names] of [
+    ['  seQ  ', ['Add SEQ', 'Add DRUMS']],
+    ['.LPF()', ['Add VCF']],
+    ['no-such-module', []],
+  ]) {
+    type(filter, query)
+    await until(
+      () =>
+        JSON.stringify(
+          [...document.querySelectorAll('.chip')].map((e) => e.getAttribute('aria-label')),
+        ) === JSON.stringify(names),
+    )
+  }
+  assert(document.querySelector('.library output'), 'Missing no-results message')
+  type(filter, '')
+  await until(() => document.querySelectorAll('.chip').length === 16)
+
+  const entries = libraryPatches(PATCH_LIBRARY[0].children)
+  const results = []
+  for (const entry of entries) {
+    await choose(entry.title)
+    const first = library().querySelector('.patch-collections details')
+    assert(first.querySelector('summary').textContent === 'Start here', 'Start here is not first')
+    assert(
+      [...first.querySelectorAll('button')].map((e) => e.textContent).join('|') ===
+        '1 · First sounds|2 · First notes|3 · First effects|4 · Pattern effects',
+      'Wrong lesson order',
+    )
+    assert(
+      library().querySelector('.patch-try-this').textContent === `Try this: ${entry.tryThis}`,
+      'Missing try-this',
+    )
+    assert(
+      library().querySelector('.patch-attribution a').href === entry.attribution.url,
+      'Missing workshop credit',
+    )
+    button('Close library', library()).click()
+    await until(() => !library())
+    await load(entry.title)
+    assert(source() === entry.source, `${entry.id}: load rewrote source`)
+    const before = source()
+    if (entry.id === 'first-sounds') {
+      document.querySelector('[aria-label="bd step 2"]').click()
+    } else if (entry.id === 'first-notes') {
+      const input = document.querySelector('.step-editor [aria-label="Step 1"]')
+      type(input, 'd3')
+      input.blur()
+    } else {
+      const label = entry.id === 'first-effects' ? 'CUTOFF' : 'RATE'
+      document.querySelector(`[aria-label="Set ${label}"]`).click()
+      await until(() => document.querySelector(`.module-panel input[aria-label="${label}"]`))
+      const input = document.querySelector(`.module-panel input[aria-label="${label}"]`)
+      type(input, entry.id === 'first-effects' ? '5000' : '1')
+      await pause(0)
+      input.blur()
+    }
+    await until(() => source() !== before)
+    assert(!document.querySelector('.rack-edit-refusal'), `${entry.id}: try-this refused`)
+    const current = read(source())
+    assert(
+      sourceBody(source()) === sourceBody(generate(current.patch)),
+      `${entry.id}: lost rack ownership`,
+    )
+    const exported = await exportedBy(() => button('Export').click())
+    assert(
+      JSON.stringify(read(exported).patch) === JSON.stringify(current.patch),
+      `${entry.id}: export identity differs`,
+    )
+    await load(entry.title)
+    assert(source() === entry.source, `${entry.id}: reload did not reset original`)
+    results.push(
+      `${entry.id}: credit, try-this edit, stopped load, exact source, export identity and reset passed`,
+    )
+  }
+  return {
+    palette:
+      'Six categories, 16 full chips, family badges, name/call filtering and empty results passed',
+    entries: results,
+  }
+}

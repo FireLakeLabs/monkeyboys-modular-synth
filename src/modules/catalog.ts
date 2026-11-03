@@ -1,4 +1,4 @@
-import type { ModuleSpec, SwitchOption } from './types'
+import type { ModuleSpec, PaletteCategory, SwitchOption } from './types'
 
 /**
  * The v1 module catalog. Machine-readable form of docs/module-spec.md.
@@ -15,6 +15,7 @@ export const SEQ: ModuleSpec = {
   family: 'hardware',
   category: 'pattern',
   hp: 10,
+  paletteCall: 'note("…")',
   controls: [
     {
       kind: 'steps',
@@ -59,6 +60,7 @@ export const DRUMS: ModuleSpec = {
   family: 'hardware',
   category: 'pattern',
   hp: 14,
+  paletteCall: 's("…")',
   controls: [
     {
       kind: 'grid',
@@ -95,6 +97,7 @@ export const QUANT: ModuleSpec = {
   family: 'hardware',
   category: 'pattern',
   hp: 8,
+  paletteCall: '.scale()',
   controls: [
     {
       kind: 'switch',
@@ -126,6 +129,7 @@ export const OSC: ModuleSpec = {
   family: 'hardware',
   category: 'sound',
   hp: 9,
+  paletteCall: '.s("…")',
   controls: [
     {
       kind: 'switch',
@@ -163,6 +167,7 @@ export const SMPL: ModuleSpec = {
   family: 'hardware',
   category: 'sound',
   hp: 8,
+  paletteCall: '.bank()',
   controls: [
     {
       kind: 'switch',
@@ -198,6 +203,7 @@ export const VCF: ModuleSpec = {
   family: 'hardware',
   category: 'shape',
   hp: 10,
+  paletteCall: '.lpf()',
   controls: [
     {
       kind: 'switch',
@@ -241,6 +247,7 @@ export const VCA: ModuleSpec = {
   family: 'hardware',
   category: 'shape',
   hp: 8,
+  paletteCall: '.gain()',
   controls: [
     {
       kind: 'knob',
@@ -269,6 +276,7 @@ export const ENV: ModuleSpec = {
   family: 'hardware',
   category: 'mod',
   hp: 10,
+  paletteCall: '.attack()',
   controls: [
     { kind: 'knob', id: 'atk', label: 'ATK', min: 0, max: 2, step: 0.01, default: 0.01, unit: 's' },
     { kind: 'knob', id: 'dec', label: 'DEC', min: 0, max: 2, step: 0.01, default: 0.2, unit: 's' },
@@ -304,6 +312,7 @@ export const LFO: ModuleSpec = {
   family: 'hardware',
   category: 'mod',
   hp: 8,
+  paletteCall: 'sine.range()',
   controls: [
     {
       kind: 'switch',
@@ -340,6 +349,7 @@ export const DELAY: ModuleSpec = {
   family: 'hardware',
   category: 'fx',
   hp: 10,
+  paletteCall: '.delay()',
   controls: [
     { kind: 'knob', id: 'mix', label: 'MIX', min: 0, max: 1, step: 0.05, default: 0.4, omitAt: 0 },
     {
@@ -369,6 +379,7 @@ export const REVERB: ModuleSpec = {
   family: 'hardware',
   category: 'fx',
   hp: 8,
+  paletteCall: '.room()',
   controls: [
     {
       kind: 'knob',
@@ -397,6 +408,7 @@ export const MIX: ModuleSpec = {
   family: 'hardware',
   category: 'util',
   hp: 12,
+  paletteCall: '.postgain()',
   controls: [1, 2, 3, 4].map((n) => ({
     kind: 'knob' as const,
     id: `ch${n}`,
@@ -427,6 +439,7 @@ export const OUT: ModuleSpec = {
   family: 'hardware',
   category: 'util',
   hp: 8,
+  paletteCall: 'setcpm()',
   controls: [
     { kind: 'knob', id: 'bpm', label: 'BPM', min: 40, max: 240, step: 1, default: 120 },
     // App master volume. Not written to the code.
@@ -445,6 +458,8 @@ export const ITER: ModuleSpec = {
   family: 'alien',
   category: 'alien',
   hp: 10,
+  paletteCall: '.iter()',
+  paletteCategory: 'pattern',
   controls: [{ kind: 'knob', id: 'steps', label: 'STEPS', min: 1, max: 16, step: 1, default: 4 }],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
@@ -461,6 +476,8 @@ export const JUX: ModuleSpec = {
   family: 'alien',
   category: 'alien',
   hp: 10,
+  paletteCall: '.jux()',
+  paletteCategory: 'pattern',
   controls: [
     {
       kind: 'switch',
@@ -490,6 +507,8 @@ export const CODE: ModuleSpec = {
   family: 'cyber',
   category: 'cyber',
   hp: 14,
+  paletteCall: '.chunk()',
+  paletteCategory: 'util',
   controls: [{ kind: 'text', id: 'text', label: 'TEXT', default: '.chunk(4, x => x.hurry(2))' }],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
@@ -526,4 +545,24 @@ export function getModuleSpec(id: string): ModuleSpec {
   const spec = byId.get(id)
   if (!spec) throw new Error(`Unknown module type: ${id}`)
   return spec
+}
+
+export const PALETTE_CATEGORIES: readonly { id: PaletteCategory; label: string }[] = [
+  { id: 'pattern', label: 'Pattern' },
+  { id: 'sound', label: 'Sound' },
+  { id: 'shape', label: 'Shape' },
+  { id: 'mod', label: 'Modulate' },
+  { id: 'fx', label: 'Effects' },
+  { id: 'util', label: 'Utility' },
+]
+
+export function paletteModules(category: PaletteCategory, query: string): ModuleSpec[] {
+  const filter = query.trim().toLowerCase()
+  return CATALOG.filter(
+    (spec) =>
+      (spec.paletteCategory ?? spec.category) === category &&
+      [spec.name, spec.title, spec.paletteCall, ...spec.strudel].some((text) =>
+        text.toLowerCase().includes(filter),
+      ),
+  )
 }

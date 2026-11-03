@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { LOOK_LABELS, looksFor } from '../modules/looks'
 import { LOOK_LAYOUT } from '../looks/layout'
-import { CATALOG, getModuleSpec } from '../modules/catalog'
+import { PALETTE_CATEGORIES, paletteModules, getModuleSpec } from '../modules/catalog'
 import type { JackRef, Patch } from '../patch/types'
 import type { SourceConnectionAssessment } from '../workspace/connections'
 import { observeActivity } from './activity'
@@ -73,6 +73,11 @@ export function Rack({
   replacementPrompt: ReactNode
   cancelReplacement: () => void
 }) {
+  const [moduleFilter, setModuleFilter] = useState('')
+  const palette = PALETTE_CATEGORIES.map((category) => ({
+    ...category,
+    modules: paletteModules(category.id, moduleFilter),
+  })).filter((category) => category.modules.length > 0)
   const editOrigin = useRef<HTMLElement | null>(null)
   const rememberOrigin = (event: { target: EventTarget }) => {
     if (event.target instanceof HTMLElement) editOrigin.current = event.target
@@ -255,16 +260,26 @@ export function Rack({
         aria-label="Module library"
       >
         <h2>MODULES</h2>
-        {(['hardware', 'alien', 'cyber'] as const).map((family) => (
-          <section key={family}>
-            <h3>{family}</h3>
+        <label className="module-filter">
+          Filter modules
+          <input
+            type="search"
+            value={moduleFilter}
+            onChange={(event) => setModuleFilter(event.target.value)}
+            placeholder="Name or Strudel call"
+          />
+        </label>
+        {palette.length === 0 && <output>No matching modules.</output>}
+        {palette.map((category) => (
+          <section key={category.id}>
+            <h3>{category.label}</h3>
             <ul>
-              {CATALOG.filter((m) => m.family === family).map((spec) => (
+              {category.modules.map((spec) => (
                 <li key={spec.id}>
                   <button
                     type="button"
                     draggable
-                    className={`chip cat-${spec.category}`}
+                    className={`chip cat-${spec.category} chip-${spec.family}`}
                     aria-label={`Add ${spec.name}`}
                     title={`${spec.title} · ${spec.hp} HP · click to add or drag onto a rail`}
                     onDragStart={(event) => {
@@ -291,8 +306,12 @@ export function Rack({
                       edit((p) => placeModule(p, spec.id, position.row, position.hp))
                     }}
                   >
-                    <span className="chip-name">{spec.name}</span>
+                    <span className="chip-heading">
+                      <span className="chip-name">{spec.name}</span>
+                      <span className="chip-family">{spec.family}</span>
+                    </span>
                     <span className="chip-title">{spec.title}</span>
+                    <code className="chip-call">{spec.paletteCall}</code>
                   </button>
                 </li>
               ))}

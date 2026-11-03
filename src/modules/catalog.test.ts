@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG, getModuleSpec } from './catalog'
+import { CATALOG, getModuleSpec, PALETTE_CATEGORIES, paletteModules } from './catalog'
 import { DEFAULT_LOOK, LOOKS } from './looks'
 
 const V1_MODULES = [
@@ -150,5 +150,38 @@ describe('module catalog', () => {
     for (const family of ['hardware', 'alien', 'cyber'] as const) {
       expect(LOOKS[family] as readonly string[]).toContain(DEFAULT_LOOK[family])
     }
+  })
+})
+
+describe('module palette', () => {
+  it('groups every module once in the six categories, independent of family', () => {
+    expect(PALETTE_CATEGORIES.map((category) => category.label)).toEqual([
+      'Pattern',
+      'Sound',
+      'Shape',
+      'Modulate',
+      'Effects',
+      'Utility',
+    ])
+    const modules = PALETTE_CATEGORIES.flatMap((category) => paletteModules(category.id, ''))
+    expect(modules.map((module) => module.id).sort()).toEqual(
+      CATALOG.map((module) => module.id).sort(),
+    )
+    expect(paletteModules('pattern', '').map((module) => module.id)).toContain('jux')
+    expect(paletteModules('util', '').map((module) => module.id)).toContain('code')
+    for (const module of modules) expect(module.paletteCall.trim(), module.id).not.toBe('')
+  })
+
+  it('filters names, long names and Strudel calls case-insensitively', () => {
+    const find = (query: string) =>
+      PALETTE_CATEGORIES.flatMap((category) =>
+        paletteModules(category.id, query).map((module) => module.id),
+      )
+    expect(find('  vCf  ')).toEqual(['vcf'])
+    expect(find('low-frequency')).toEqual(['lfo'])
+    expect(find('.LPF()')).toEqual(['vcf'])
+    expect(find('note("')).toEqual(['seq'])
+    expect(find('transpose')).toEqual(['osc'])
+    expect(find('no-such-module')).toEqual([])
   })
 })

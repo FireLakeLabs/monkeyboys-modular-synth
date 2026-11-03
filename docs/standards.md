@@ -206,8 +206,8 @@ GitHub settings are dated observations in [CI status](ci.md#observed-github-stat
 verified against the repository, ruleset, and effective branch-rules APIs. Local
 CI does not continuously verify those external settings or prose accuracy.
 
-The #75 library regressions require all nine exercises to be rack-owned and accept
-CV/effect/mixer mutations, with independent export/reopen identity checks. Explicit
+The #75/#80 library regressions require the nine module exercises and four Start
+here entries to be rack-owned and accept CV/effect/mixer mutations, with independent export/reopen identity checks. Explicit
 conversion tests retain opaque setup and CODE, reject invalid saved preludes, and
 query real Strudel control events separately from source and graph assertions.
 The [browser acceptance](library-rack-verification.md) covers the actual controls,

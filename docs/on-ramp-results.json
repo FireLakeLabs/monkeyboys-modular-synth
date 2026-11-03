@@ -1,0 +1,160 @@
+{
+  "onRamp": {
+    "status": "passed",
+    "result": {
+      "palette": "Six categories, 16 full chips, family badges, name/call filtering and empty results passed",
+      "entries": [
+        "first-sounds: credit, try-this edit, stopped load, exact source, export identity and reset passed",
+        "first-notes: credit, try-this edit, stopped load, exact source, export identity and reset passed",
+        "first-effects: credit, try-this edit, stopped load, exact source, export identity and reset passed",
+        "pattern-effects: credit, try-this edit, stopped load, exact source, export identity and reset passed"
+      ]
+    }
+  },
+  "library": {
+    "status": "passed",
+    "ui": [
+      "Nested collections expand/collapse; attribution, exact Export current and Cancel retain current draft/rack",
+      "Malformed library source reports failure while retaining draft/rack",
+      "All entries load exact source and matching rack without autoplay",
+      "Helper/CODE survives edits; reload restores original; export/reopen preserves source and changed rack look independently",
+      "Shared New confirmation installs silent MIX/OUT starter"
+    ],
+    "rack": [
+      "first-sounds: CV, effect insertion, extra mixer channel and export identity passed",
+      "first-notes: CV, effect insertion, extra mixer channel and export identity passed",
+      "first-effects: CV, effect insertion, extra mixer channel and export identity passed",
+      "pattern-effects: CV, effect insertion, extra mixer channel and export identity passed",
+      "enveloped-synth: CV, effect insertion, extra mixer channel and export identity passed",
+      "quantized-sequence: CV, effect insertion, extra mixer channel and export identity passed",
+      "lfo-sweep: CV, effect insertion, extra mixer channel and export identity passed",
+      "filter-envelope: CV, effect insertion, extra mixer channel and export identity passed",
+      "drum-machine: CV, effect insertion, extra mixer channel and export identity passed",
+      "echo-room: CV, effect insertion, extra mixer channel and export identity passed",
+      "iter-jux: CV, effect insertion, extra mixer channel and export identity passed",
+      "custom-helper: CV, effect insertion, extra mixer channel and export identity passed",
+      "layered-sketch: CV, effect insertion, extra mixer channel and export identity passed",
+      "Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay"
+    ]
+  },
+  "signals": {
+    "status": "passed",
+    "result": [
+      {
+        "id": "first-sounds",
+        "rms": 0.00435507680202784,
+        "samples": 4374528,
+        "events": 16,
+        "sounds": ["bd", "hh", "sd"]
+      },
+      {
+        "id": "first-notes",
+        "rms": 0.0020957335428986143,
+        "samples": 5423104,
+        "events": 16,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "first-effects",
+        "rms": 0.0016184300017076125,
+        "samples": 6660096,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "pattern-effects",
+        "rms": 0.0011477996982530196,
+        "samples": 9900032,
+        "events": 64,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "enveloped-synth",
+        "rms": 0.0017244594089699835,
+        "samples": 12724224,
+        "events": 32,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "quantized-sequence",
+        "rms": 0.001917971757001165,
+        "samples": 15835136,
+        "events": 56,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "lfo-sweep",
+        "rms": 0.0012916522419275161,
+        "samples": 17604608,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "filter-envelope",
+        "rms": 0.001470066295856632,
+        "samples": 19017728,
+        "events": 24,
+        "sounds": ["square"]
+      },
+      {
+        "id": "drum-machine",
+        "rms": 0.0039773695206085135,
+        "samples": 21188608,
+        "events": 38,
+        "sounds": ["bd", "sd", "hh"]
+      },
+      {
+        "id": "echo-room",
+        "rms": 0.0008794551998730776,
+        "samples": 23042048,
+        "events": 20,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "iter-jux",
+        "rms": 0.0009689943743783159,
+        "samples": 26220544,
+        "events": 72,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "custom-helper",
+        "rms": 0.000917946790936715,
+        "samples": 28540928,
+        "events": 20,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "switch-angel-trance-demo",
+        "rms": 0.0074037610029179255,
+        "samples": 54810624,
+        "events": 232,
+        "sounds": ["bd", "supersaw", "pulse"]
+      },
+      {
+        "id": "layered-sketch",
+        "rms": 0.0006040225150162794,
+        "samples": 69382144,
+        "events": 60,
+        "sounds": ["sawtooth", "triangle", "bd", "hh"]
+      }
+    ],
+    "physicalListening": false
+  },
+  "finalIntegration": {
+    "base": "9ef4a21",
+    "unitTestsPassed": 786,
+    "guardrailsPassed": 40,
+    "onRampUI": "passed",
+    "libraryUI": "passed",
+    "libraryRackEditing": "passed",
+    "solReview": {
+      "model": "gpt-6.1-sol",
+      "effort": "high",
+      "rounds": 1,
+      "verdict": "APPROVE",
+      "findings": [],
+      "usageExposed": false
+    }
+  }
+}

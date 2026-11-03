@@ -7,6 +7,9 @@ export type Family = 'hardware' | 'alien' | 'cyber'
 /** Drives the module's colour on the panel and in the code. */
 export type Category = 'pattern' | 'sound' | 'shape' | 'mod' | 'fx' | 'util' | 'alien' | 'cyber'
 
+/** Palette groups stay independent of Alien/Cyber visual accents. */
+export type PaletteCategory = Exclude<Category, 'alien' | 'cyber'>
+
 /** What a cable carries. */
 export type Signal = 'pattern' | 'audio' | 'mod'
 
@@ -98,6 +101,10 @@ export interface ModuleSpec {
   category: Category
   /** Width in HP (1 HP = 12 px at 100% zoom). The same in every look. */
   hp: number
+  /** Representative Strudel syntax shown and searched in the palette. */
+  paletteCall: string
+  /** Override the visual category for grouping Alien/Cyber modules. */
+  paletteCategory?: PaletteCategory
   controls: readonly Control[]
   jacks: readonly Jack[]
   /**

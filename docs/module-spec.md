@@ -4,6 +4,21 @@ The sixteen v1 modules. For each: its controls, value ranges and defaults, its j
 
 The machine-readable version of this spec is [`src/modules/catalog.ts`](../src/modules/catalog.ts). The app already consumes it for the module library. **The catalog is the runtime source of truth** and this document describes it; keep the two in step.
 
+## Palette (#79)
+
+The catalog owns `paletteCall`, a representative Strudel expression shown on each
+chip, separate from `strudel` (reader ownership). For example OSC displays
+`.s("…")` without claiming DRUMS’ source-form `s`; CODE displays its default
+`.chunk()` fragment without claiming any reader functions. Calls are core product
+UI under [the #57 decision](decisions.md#product).
+
+The six groups are Pattern, Sound, Shape, Modulate, Effects and Utility. The
+catalog’s optional `paletteCategory` places ITER/JUX in Pattern and CODE in
+Utility, retaining their existing Alien/Cyber colors and family looks. Other
+modules use their existing category. Family is a badge on each chip. Filtering
+matches names, long names, displayed calls and reader function names without case
+sensitivity; chip text wraps instead of truncating. Module widths are unchanged.
+
 ## Conventions
 
 - **Width** is in HP. 1 HP = 12 px at 100% zoom. A module is the same width in every look.

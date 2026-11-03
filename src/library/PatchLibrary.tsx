@@ -108,6 +108,7 @@ export function PatchLibrary({
               <p className="patch-path">{selection.path.join(' / ')}</p>
               <h3>{entry.title}</h3>
               <p>{entry.description}</p>
+              {entry.tryThis && <p className="patch-try-this">Try this: {entry.tryThis}</p>}
               <p className="patch-attribution">
                 {entry.attribution.url ? (
                   <a href={entry.attribution.url} target="_blank" rel="noreferrer">

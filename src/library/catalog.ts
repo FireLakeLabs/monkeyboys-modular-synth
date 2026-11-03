@@ -1,3 +1,7 @@
+import firstSounds from './patches/first-sounds.strudel?raw'
+import firstNotes from './patches/first-notes.strudel?raw'
+import firstEffects from './patches/first-effects.strudel?raw'
+import patternEffects from './patches/pattern-effects.strudel?raw'
 import synth from './patches/enveloped-synth.strudel?raw'
 import quant from './patches/quantized-sequence.strudel?raw'
 import lfo from './patches/lfo-sweep.strudel?raw'
@@ -15,6 +19,7 @@ export interface LibraryPatch {
   title: string
   description: string
   source: string
+  tryThis?: string
   attribution: { author: string; url?: string }
   exercises: readonly string[]
 }
@@ -35,6 +40,69 @@ const attribution = {
 
 /** Repository-owned originals. Loading always reads source into a fresh document. */
 export const PATCH_LIBRARY: readonly LibraryNode[] = [
+  {
+    kind: 'collection',
+    id: 'start-here',
+    title: 'Start here',
+    children: [
+      {
+        kind: 'patch',
+        id: 'first-sounds',
+        title: '1 · First sounds',
+        description: 'Build a beat with drum sounds and rests. Samples load on Play.',
+        tryThis: 'Turn one unlit DRUMS step on, then press Play.',
+        source: firstSounds,
+        attribution: {
+          author:
+            'Original exercise by MonkeyBoy’s Modular Synth contributors · MIT; inspired by the Strudel workshop',
+          url: 'https://strudel.cc/workshop/first-sounds/',
+        },
+        exercises: ['drums', 'smpl', 'vca', 'mix', 'out'],
+      },
+      {
+        kind: 'patch',
+        id: 'first-notes',
+        title: '2 · First notes',
+        description: 'Play a four-note melody with a triangle oscillator.',
+        tryThis: 'Change the first SEQ note from c3 to d3.',
+        source: firstNotes,
+        attribution: {
+          author:
+            'Original exercise by MonkeyBoy’s Modular Synth contributors · MIT; inspired by the Strudel workshop',
+          url: 'https://strudel.cc/workshop/first-notes/',
+        },
+        exercises: ['seq', 'osc', 'vca', 'mix', 'out'],
+      },
+      {
+        kind: 'patch',
+        id: 'first-effects',
+        title: '3 · First effects',
+        description: 'Shape a sawtooth melody with a low-pass filter and a room.',
+        tryThis: 'Raise VCF CUTOFF from 800 to 5000 Hz.',
+        source: firstEffects,
+        attribution: {
+          author:
+            'Original exercise by MonkeyBoy’s Modular Synth contributors · MIT; inspired by the Strudel workshop',
+          url: 'https://strudel.cc/workshop/first-effects/',
+        },
+        exercises: ['seq', 'osc', 'vcf', 'vca', 'reverb', 'mix', 'out'],
+      },
+      {
+        kind: 'patch',
+        id: 'pattern-effects',
+        title: '4 · Pattern effects',
+        description: 'Speed up a melody and reverse its right channel with JUX.',
+        tryThis: 'Change SEQ RATE from 2 to 1 to hear the pattern slow down.',
+        source: patternEffects,
+        attribution: {
+          author:
+            'Original exercise by MonkeyBoy’s Modular Synth contributors · MIT; inspired by the Strudel workshop',
+          url: 'https://strudel.cc/workshop/pattern-effects/',
+        },
+        exercises: ['seq', 'osc', 'jux', 'vca', 'mix', 'out'],
+      },
+    ],
+  },
   {
     kind: 'collection',
     id: 'synths',

@@ -17,6 +17,7 @@ not change a patch's ID or source. IDs are unique across the whole tree.
 
 A patch has `kind: 'patch'`, stable `id`, `title`, short `description`, exact
 `source`, `attribution: { author, url? }` and `exercises` (module catalog IDs).
+Optional `tryThis` supplies one line shown in the selected entry’s details.
 Names shown for exercises come from the module catalog. Attribution must name
 the actual author/source and satisfy the source's license; the initial scripts
 are original repository-owned MIT exercises. Collections do not add another
@@ -44,13 +45,28 @@ a custom helper/CODE fragment, and a three-voice mixer. The attributed
 [Switch Angel trance demo](trance-demo.md) from #46 is an additional complete
 patch under Complete patches → Trance, bundled in its exact supplied variant.
 
+## Start here (#80)
+
+The first collection follows the [Strudel workshop](https://strudel.cc/workshop/getting-started/):
+First sounds → First notes → First effects → Pattern effects. It contains four
+original repository-owned MIT exercises, with a link crediting the corresponding
+workshop chapter and a one-line `tryThis` in each entry. These are original rack
+patches, not copied workshop source. The lessons progress from drum sounds/rests
+to pitched notes, filter/room controls, then rate and right-channel reversal.
+
+Each `.strudel` file is authored in generator style with complete saved rack state;
+all rack edits use the normal rack-owned path. Loading, attribution, stopped audio,
+Cancel/Export and restoration use the same library contract below. The module
+exercise collections and exact-source attributed showcase remain available after it.
+See [palette and Start here verification](on-ramp-verification.md).
+
 ## Rack ownership (#55 and #75)
 
 The [#55 owner decision](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/55#issuecomment-6612111085)
 chooses both approaches. The nine module exercises (including Three-voice sketch)
 are committed as generator-style `.strudel` files with complete validated rack
 metadata. Loading still preserves their exact stored source; no load-time rewrite
-is needed. Their attribution remains in the library detail pane. The planned
+is needed. Their attribution remains in the library detail pane. The
 Start here collection (#80) follows this authoring rule too.
 
 Showcase entries keep the exact attributed source, including comments and
