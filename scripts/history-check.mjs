@@ -142,7 +142,7 @@ try {
   assert.equal(await page.locator('.module-panel').count(), 2)
   await shortcut(page, 'Control+z')
   await expectSource(page, original)
-  assert.equal(await page.locator('.transport-status').textContent(), 'Stopped')
+  assert.equal(await page.locator('.transport-status').textContent(), 'Ready')
   await shortcut(page, 'Control+Shift+z')
   await expectSource(page, replacement)
   await shortcut(page, 'Control+z')
@@ -244,7 +244,7 @@ try {
 
   await button(page, 'Play').click()
   await page.waitForFunction(
-    () => document.querySelector('.transport-status')?.textContent === 'Pattern scheduled',
+    () => document.querySelector('.transport-status')?.textContent === 'Playing',
   )
   await shortcut(page, 'Control+Shift+z', true)
   await expectSource(page, typed)
@@ -252,7 +252,7 @@ try {
   await shortcut(page, 'Control+z', true)
   await expectSource(page, original)
   await page.waitForFunction(() => window.audioFixture.calls.at(-1)?.includes('lpf(800)'))
-  assert.equal(await page.locator('.transport-status').textContent(), 'Pattern scheduled')
+  assert.equal(await page.locator('.transport-status').textContent(), 'Playing')
   pass('accepted undo/redo during playback reaches the normal engine update path')
   await button(page, 'Stop').click()
   await page.reload()
@@ -261,7 +261,7 @@ try {
   assert(await button(page, 'Undo').isDisabled())
   assert(await button(page, 'Redo').isDisabled())
   assert.equal((await saved(page)).source, original)
-  assert.equal(await page.locator('.transport-status').textContent(), 'Stopped')
+  assert.equal(await page.locator('.transport-status').textContent(), 'Ready')
   assert.deepEqual(errors, [])
   pass('recovery starts a fresh accepted history without autoplay or page errors')
   await page.screenshot({ path: `${output}/restored.png`, fullPage: true })
@@ -293,7 +293,7 @@ try {
     await edit(page, '$: note("c3*4").s("sine").gain(0.15)\n')
     await editor(page).press('Control+Enter')
     await page.waitForFunction(
-      () => document.querySelector('.transport-status')?.textContent === 'Pattern scheduled',
+      () => document.querySelector('.transport-status')?.textContent === 'Playing',
       null,
       { timeout: 60000 },
     )
@@ -332,7 +332,7 @@ try {
     await settle('undo', true)
     await shortcut(page, 'Meta+Shift+z', true)
     await settle('redo', false)
-    assert.equal(await page.locator('.transport-status').textContent(), 'Pattern scheduled')
+    assert.equal(await page.locator('.transport-status').textContent(), 'Playing')
     await button(page, 'Stop').click()
     assert.deepEqual(errors, [])
     pass(

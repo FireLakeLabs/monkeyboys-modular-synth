@@ -158,7 +158,7 @@ export async function verifyGrids() {
   assert(document.querySelector('.step-editor'), 'Library code edit lost grid')
   results.push('Library SEQ shows grid before and after code edit')
   assert(
-    document.querySelector('.transport-status').textContent === 'Stopped',
+    document.querySelector('.transport-status').textContent === 'Ready',
     'Grid checks started audio',
   )
   return results

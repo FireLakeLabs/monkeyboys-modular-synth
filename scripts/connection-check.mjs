@@ -103,7 +103,7 @@ export async function verifyConnectionTargets() {
   await until(() => !button('Cancel cable'))
   assert(editorSource() === validSource, 'Incompatible drop changed source')
   assert(!document.querySelector('.rack-edit-refusal'), 'Incompatible drop offered conversion')
-  assert(document.querySelector('.transport-status').textContent === 'Stopped', 'Audio started')
+  assert(document.querySelector('.transport-status').textContent === 'Ready', 'Audio started')
   results.push('Incompatible target remains blocked; no mutation, conversion or autoplay')
   return results
 }

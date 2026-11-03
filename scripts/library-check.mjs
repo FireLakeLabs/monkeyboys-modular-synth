@@ -32,7 +32,7 @@ async function load(title) {
   await until(() => !library() || library().querySelector('.replace-prompt'))
   if (library()) button('Load patch', library()).click()
   await until(() => !library())
-  assert(status() === 'Stopped', `${title}: load started audio`)
+  assert(status() === 'Ready', `${title}: load started audio`)
 }
 async function editSource(value) {
   enableAutoApply()
@@ -111,7 +111,7 @@ export async function verifyLibraryUI() {
       source() === initial && JSON.stringify(read(source()).patch) === initialRack,
       'Failed load replaced current work',
     )
-    assert(status() === 'Stopped', 'Failed parse changed transport')
+    assert(status() === 'Ready', 'Failed parse changed transport')
     button('Close library', library()).click()
     await until(() => !library())
   } finally {
@@ -171,7 +171,7 @@ export async function verifyLibraryUI() {
   await until(() => document.querySelector('.replace-prompt'))
   button('Replace patch').click()
   await until(() => document.querySelectorAll('.module-panel').length === 2)
-  assert(status() === 'Stopped', 'New patch started audio')
+  assert(status() === 'Ready', 'New patch started audio')
   results.push('Shared New confirmation installs silent MIX/OUT starter')
   return results
 }
@@ -185,7 +185,7 @@ export async function verifyReplacementConfirmation() {
     button('Load patch…', library()).click()
     await until(() => !library() || library().querySelector('.replace-prompt'))
     assert(!library(), `${title}: clean workspace still asks for replacement`)
-    assert(status() === 'Stopped', 'Clean replacement started audio')
+    assert(status() === 'Ready', 'Clean replacement started audio')
   }
   function assertPrimary(action) {
     const primary = button(action, document.querySelector('.replace-prompt'))
@@ -311,9 +311,9 @@ export function installAudioProbe() {
 /** Run after a real Play gesture on a loaded library patch, with the probe installed first. */
 export async function verifyReplacementCancelPlayback(measure) {
   const { read } = await import('../src/reader/index.ts')
-  await until(() => status() === 'Pattern scheduled')
+  await until(() => status() === 'Playing')
   await editSource(`// Keep this playing\n${source()}`)
-  await until(() => status() === 'Pattern scheduled')
+  await until(() => status() === 'Playing')
   const original = source()
   const rack = JSON.stringify(read(original).patch)
   const before = await measure()
@@ -331,11 +331,11 @@ export async function verifyReplacementCancelPlayback(measure) {
   await until(() => !library())
   assert(source() === original, 'Cancel changed the playing source')
   assert(JSON.stringify(read(source()).patch) === rack, 'Cancel changed the playing rack')
-  assert(status() === 'Pattern scheduled', 'Cancel stopped playback')
+  assert(status() === 'Playing', 'Cancel stopped playback')
   const after = await measure()
   assert(after.rms > 0.0001, 'Cancel silenced playback')
   document.querySelector('.topbar .play[aria-label=Stop]').click()
-  await until(() => status() === 'Stopped')
+  await until(() => status() === 'Ready')
   return { before, after, sourceAndRackRetained: true, physicalListening: false }
 }
 
@@ -355,8 +355,8 @@ export async function verifyPatchSignals(measure) {
       const transport = document.querySelector('.topbar .play')
       assert(transport.getAttribute('aria-label') === 'Play', 'Load left transport running')
       transport.click()
-      await until(() => status() === 'Pattern scheduled' || status().includes('error'))
-      assert(status() === 'Pattern scheduled', `${entry.id}: evaluation failed`)
+      await until(() => status() === 'Playing' || status().includes('error'))
+      assert(status() === 'Playing', `${entry.id}: evaluation failed`)
       // Allow lazy sample fetch/decode, then sample multiple events.
       await pause(2000)
       const pcm = await measure()
@@ -370,7 +370,7 @@ export async function verifyPatchSignals(measure) {
         sounds: [...new Set(events.map((event) => event.value.s))],
       })
       document.querySelector('.topbar .play[aria-label=Stop]').click()
-      await until(() => status() === 'Stopped')
+      await until(() => status() === 'Ready')
     }
     return results
   } finally {
@@ -412,7 +412,7 @@ export async function verifyLibraryStopFailure() {
     unsubscribe()
   }
   document.querySelector('.topbar .play[aria-label=Stop]').click()
-  await until(() => status() === 'Stopped')
+  await until(() => status() === 'Ready')
   return 'Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover'
 }
 
@@ -552,7 +552,7 @@ export async function verifyLibraryRackEditing() {
     'Conversion did not grant rack ownership',
   )
   assert(read(source()).layout === 'restored', 'Converted rack does not reopen')
-  assert(status() === 'Stopped', 'Conversion started audio')
+  assert(status() === 'Ready', 'Conversion started audio')
   await cable({ module: filter, jack: 'out' }, voice.to, true)
   await add('LFO')
   await cable({ module: id('lfo'), jack: 'out' }, { module: filter, jack: 'cv' })

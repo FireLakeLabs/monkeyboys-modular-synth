@@ -88,7 +88,7 @@ async function code(text) {
 async function stopped() {
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await page.waitForFunction(
-    () => document.querySelector('.transport-status')?.textContent === 'Stopped',
+    () => document.querySelector('.transport-status')?.textContent === 'Ready',
   )
   assert.equal(
     await page.evaluate(
@@ -373,7 +373,7 @@ try {
   )
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.waitForFunction(
-    () => document.querySelector('.transport-status')?.textContent === 'Pattern scheduled',
+    () => document.querySelector('.transport-status')?.textContent === 'Playing',
   )
   await page.waitForTimeout(900)
   assert.equal(await page.evaluate(() => window.animationsSeen.length), countAtStop)
@@ -395,7 +395,7 @@ try {
   await page.waitForFunction((count) => window.animationsSeen.length > count, countAtStop)
   await code('$: note("e3").s("sine").gain(0.1)\n')
   await page.waitForFunction(
-    () => document.querySelector('.transport-status')?.textContent === 'Pattern scheduled',
+    () => document.querySelector('.transport-status')?.textContent === 'Playing',
   )
   const countAfterReplace = await page.evaluate(
     () => window.animationsSeen.filter((a) => ['iter1', 'jux1'].includes(a.module)).length,
@@ -409,8 +409,7 @@ try {
   )
   await code('$: note("c3").missingMethod()\n')
   await page.waitForFunction(
-    () =>
-      document.querySelector('.transport-status')?.textContent === 'Scheduling stopped after error',
+    () => document.querySelector('.transport-status')?.textContent === 'Audio error',
   )
   assert.equal(
     await page.evaluate(
@@ -434,7 +433,7 @@ lead.iter(4)`,
     })
     await page.getByRole('button', { name: 'Play', exact: true }).click()
     await page.waitForFunction(
-      () => document.querySelector('.transport-status')?.textContent === 'Pattern scheduled',
+      () => document.querySelector('.transport-status')?.textContent === 'Playing',
     )
     await page.waitForFunction(() => window.animationsSeen.some((a) => a.module.startsWith('iter')))
     assert.equal(await sourceText(), saved)

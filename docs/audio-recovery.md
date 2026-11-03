@@ -51,8 +51,8 @@ callback exceptions reach this channel in the tested cases. Evaluation logs are
 excluded because the Play promise already reports their exact submitted revision.
 No console interception or catch-all window error handler is installed.
 
-Late logs carry no reliable source revision, line, column or module. They use a
-workspace banner with no source attribution, request Stop and retain editable
+Late logs carry no reliable source revision, line, column or module. They use the
+editor status footer with no source attribution, request Stop and retain editable
 source and the accepted rack. Even a late error from older work conservatively
 stops current scheduling; it is not assigned to current code. Evaluation errors
 retain the submitted source for earlier-revision labeling, with no inferred stack
@@ -62,8 +62,10 @@ Manifest status is unknown before initialization, loading during registration,
 registered after both manifests and audio initialization succeed, or failed after
 an observed resource/output error. Registered manifests do **not** prove sample
 readiness: `superdough/sampler.mjs` logs `loaded-sample` **before** awaiting
-`decodeAudioData`. The UI explicitly says decoding/output are unverified and
-retains an observed-failure warning across Play retries. No global "samples ready"
+`decodeAudioData`. The editor status footer’s Audio engine info control explains that
+decoding/output are unverified and retains an observed-failure indicator across
+Play retries. Its concise “Ready” label means stopped transport, not sample
+readiness; see the [#73 status contract](design.md#editor-status-73). No global "samples ready"
 state is inferred. Successful initialization retries registration; Strudel caches
 rejected audio-buffer promises, so retrying the same failed sample can require a
 reload. No resource-specific retry action is offered.

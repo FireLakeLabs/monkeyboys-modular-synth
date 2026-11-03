@@ -105,6 +105,10 @@ by default, with a session-only auto-apply toggle. Rack edits remain immediate;
 file loading and recovery remain silent. See the [contract and browser/signal
 evidence](code-application.md), including preserved #12 error/recovery behavior.
 
+Issue #73 consolidates sync, cursor, engine status and error/recovery messages
+into one editor footer, with engine caveats behind an info disclosure. See the
+[contract and browser evidence](editor-status-verification.md).
+
 ## Local workspace recovery
 
 Issue #60 adds [local workspace recovery](patch-format.md#local-workspace-recovery-60):
