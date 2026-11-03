@@ -67,3 +67,13 @@ rack-editing probes also passed after the rebase. They explicitly enable
 auto-apply through the shared browser helper; the new application suite leaves
 the initial default untouched. The application suite, including real-engine
 PCM, passed again after the rebase.
+
+After rebasing onto `b40d2d8` (#114), the full gate passed 787 unit cases and
+40 guardrails. The application suite and real-engine signal group passed again;
+its knob locator now uses the upstream accessible slider role. The application
+behavior diff was unchanged by that rebase.
+
+Sol review: one round with gpt-6.1-sol on high effort, APPROVE with no findings.
+Review made no changes; the diff stayed at 535 additions and 60 deletions before
+this final verification note. Usage was not exposed. The branch was pushed only
+after approval.

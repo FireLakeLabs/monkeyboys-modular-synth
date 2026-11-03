@@ -105,7 +105,7 @@ try {
   await value.press('Enter')
   await page.waitForFunction(() => window.audioFixture.calls.length === 3)
   assert.match((await saved(page)).source, /lpf\(1600\)/)
-  const knob = page.getByRole('button', { name: 'Drag CUTOFF', exact: true })
+  const knob = page.getByRole('slider', { name: 'CUTOFF', exact: true })
   const box = await knob.boundingBox()
   assert(box)
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
