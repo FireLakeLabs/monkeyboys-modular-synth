@@ -138,6 +138,15 @@ make a standards check pass.
 
 ## Maintaining standards
 
+The #44 reader placement regressions use the exact reported CODE/CV source to
+check fixed-rail validity, exact executable source and saved rack identity
+separately, plus reconciliation and overflowing mixer buses. Rail width lives in
+`src/patch/layout.ts` and is shared by reader placement and rack mutations.
+The workspace validates the candidate rack before accepting a draft; the browser
+error suite covers an out-of-rail saved layout retaining the draft and accepted
+rack through Stop, Export, Revert and correction. See
+[the #44 browser observations](error-verification.md#long-imported-voices-44).
+
 The #12 workspace compares audio diagnostic ownership only against validated,
 accepted source; editing/invalid drafts never enter the parsing comparison during
 render. The [browser error regression](../scripts/workspace-errors.mjs) reproduces

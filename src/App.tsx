@@ -7,7 +7,7 @@ import {
   useSyncExternalStore,
 } from 'react'
 import { Rack, type RackEdit } from './rack/Rack'
-import { starterPatch } from './rack/model'
+import { starterPatch, validateRack } from './rack/model'
 import { createPlayback } from './strudel/playback'
 import { tryRead } from './reader'
 import type { ReadResult, SourceDocument } from './reader/types'
@@ -117,6 +117,7 @@ export default function App() {
         }
         const next =
           result.document.layout === 'invalid' ? result.document : saveLayout(result.document)
+        validateRack(next.patch)
         current.current = { document: next, draft: next.source, phase: 'readable' }
         if (editor.current && window.document.activeElement === editor.current)
           caret.current = {

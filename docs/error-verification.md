@@ -117,3 +117,61 @@ incomplete source, exact export and available Stop after each adapter failure.
 The suite deliberately exposes unmet #36 criteria. Do not close #12 until #36
 provides observable resource/output reporting and supported recovery, this audit
 is updated with its results, and the remaining end-to-end acceptance is rerun.
+
+## Long imported voices (#44)
+
+Verified 2 November 2026 against the exact
+[reported source](../src/reader/fixtures/issue-44.strudel). At the pre-fix base
+`c857d98`, pasting while stopped produced 15 modules: the voice occupied HP
+0–153 on row 0, followed by MIX/OUT on row 1. `read` and graph validation accepted
+this layout, but `validateRack` rejected it with “Module extends past the rail”.
+Rack mutations all cross that validator, explaining the blocked rack input.
+The source editor, Copy, Export and New remained enabled in this reproduction;
+a complete page freeze was **not** reproduced. The original report did not
+identify its app revision or browser.
+
+Placement now wraps the voice across three 64-HP rails and places MIX/OUT on a
+fourth. Catalog widths and unsupported CODE text remain unchanged. Reconciliation
+reserves every matched position before placing unmatched modules, including on
+later rows. The workspace validates rail bounds and overlap before installing a
+read result, retaining the editable draft and accepted rack on failure.
+
+The five [placement regressions](../src/reader/placement.test.ts) separately prove
+valid placement, exact executable source, saved rack identity, reconciliation and
+later voices/overflowing mixer buses. Three of the original four regressions
+failed before the fix with the reported rail error; exact source preservation
+already passed. `npm run check` passes with 203 unit tests and 40 guardrail checks.
+The [browser error suite](../scripts/workspace-errors.mjs) now includes the long
+voice and failure/revert/correction scenario. Its syntax was checked with
+`node --check`; the complete suite was not rerun in this session. The observations
+below were asserted through T3's managed browser tools against Vite on port 5174,
+using real Strudel rather than the suite's audio fixture.
+
+Chromium 156 on Linux, 1280×800, default managed profile:
+
+- Pasting/importing the complete source produced four bounded rails, without
+  overlap or unhandled page errors. Pasting while stopped did not initialize
+  audio. Explicit Play scheduled the exact imported expression.
+- Editing `.room(.6)` to `.room(.7)` while playing updated the rack and remained
+  scheduled. Resetting DELAY TIME successfully spliced the imported literal.
+  Directly resetting the CV-driven cutoff was refused by the existing
+  source-preservation policy, with a recoverable “edit its code instead” message.
+- A saved layout with the first module moved to HP 64 exercised placement
+  failure while playing. The exact draft and accepted panel IDs/positions stayed
+  intact; the error was visible and the source remained editable. Copy submitted
+  the exact draft to the browser clipboard API; Export's Blob contained the
+  exact draft bytes. Physical clipboard contents were not read back.
+- Stop remained available. Revert restored the exact accepted source and panel
+  positions. Repeating the failure and correcting the source updated the rack
+  without restarting playback.
+- Open from a failed draft while playing loaded the complete fixture after
+  confirmed Stop. New from a failed draft restored the silent two-module
+  starter. Neither action autoplayed. No unhandled page errors were observed.
+
+A WebAudio destination probe measured nonzero output for the exact original
+snippet after explicit Play (RMS 0.002429 over 2,232,320 captured samples).
+This establishes output in this browser, not physical listening or universal
+musical equivalence. Source bytes were preserved independently. Speakers and
+headphones were not heard; other browsers and the original reporter's complete
+freeze remain unverified. Rail width remains 64 HP; configurable wider racks are
+outside this bug fix.

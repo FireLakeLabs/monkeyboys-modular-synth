@@ -93,10 +93,12 @@ reader of the old proposed `lead.2` line format to migrate.
   affected layout. See the spike for tested limits.
 - Known generator-owned final-voice orbit routing does not consume module IDs.
   Imported routing stays source-owned unless its ownership is established.
-- Without a valid matching block, auto-layout one row per voice, in chain order,
-  using default looks. Unmatched modules are auto-placed after matched modules
-  in their voice's row, without overlapping occupied HP. A matched module keeps
-  its position and family-valid look.
+- Without a valid matching block, auto-layout each voice in chain order using
+  default looks. Rails are 64 HP; a voice continues on additional rows before
+  the next voice begins. Mixer buses also spill onto additional rows as needed.
+  Unmatched modules are auto-placed after matched modules in their projected
+  row, continuing onto free space on later rows without overlapping any retained
+  positions. A matched module keeps its position and family-valid look.
 - Invalid metadata must not invalidate otherwise valid Strudel or change its
   sound. #6 must validate versions, unique IDs, catalog types/looks, nonnegative
   integer positions and binding references before applying saved state. Treat

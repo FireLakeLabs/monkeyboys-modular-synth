@@ -74,6 +74,52 @@ try {
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto(base)
+  const longVoice = await readFile(
+    new URL('../src/reader/fixtures/issue-44.strudel', import.meta.url),
+    'utf8',
+  )
+  await code(page, longVoice)
+  const longSaved = await source(page).inputValue()
+  const longRack = await patch(page)
+  await page.evaluate(async (original) => {
+    const { read } = await import('/src/reader/index.ts')
+    const { validateRack } = await import('/src/rack/model.ts')
+    const { sourceBody } = await import('/src/workspace/document.ts')
+    const saved = document.querySelector('.source-editor').value
+    validateRack(read(saved).patch)
+    if (sourceBody(saved) !== original) throw new Error('Long voice executable source changed')
+  }, longVoice)
+  assert(new Set(longRack.modules.map((module) => module.row)).size > 2)
+  // A legacy/corrupt saved layout must fail before replacing the accepted rack.
+  const failedLayout = longSaved.replace('"hp": 0', '"hp": 64')
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await waitStatus(page, 'Pattern scheduled')
+  await source(page).fill(failedLayout)
+  await page.waitForFunction(
+    () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
+  )
+  assert.equal(await source(page).inputValue(), failedLayout)
+  assert.match(await page.getByRole('alert').textContent(), /extends past the rail/)
+  assert.equal(await page.locator('.module-panel').count(), longRack.modules.length)
+  const failedDownload = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export', exact: true }).click()
+  assert.equal(await readFile(await (await failedDownload).path(), 'utf8'), failedLayout)
+  await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await waitStatus(page, 'Stopped')
+  await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
+  assert.equal(await source(page).inputValue(), longSaved)
+  assert.deepEqual(await patch(page), longRack)
+  await source(page).fill(failedLayout)
+  await page.waitForFunction(
+    () => document.querySelector('.source-editor')?.getAttribute('aria-invalid') === 'true',
+  )
+  await code(page, longVoice.replace('.room(.6)', '.room(.7)'))
+  assert.equal(await status(page).textContent(), 'Stopped')
+  assert.match(await source(page).inputValue(), /room\(\.7\)/)
+  pass(
+    'ui',
+    'issue #44 spills long CODE/CV voice onto fixed rails; layout failure retains exact draft and rack; Export/Stop/Revert/correction recover without autoplay',
+  )
   await code(page, '// retained 🐒\n$: note("c3").s("sine").lpf(800)\n')
   const original = await source(page).inputValue()
   const identity = await patch(page)
