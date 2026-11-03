@@ -29,14 +29,14 @@ async function choose(title) {
 async function load(title) {
   await choose(title)
   button('Load patch…', library()).click()
-  await until(() => library().querySelector('.replace-prompt'))
-  button('Load patch', library()).click()
+  await until(() => !library() || library().querySelector('.replace-prompt'))
+  if (library()) button('Load patch', library()).click()
   await until(() => !library())
   assert(status() === 'Stopped', `${title}: load started audio`)
 }
 async function editSource(value) {
   replaceSource(value)
-  await pause(0)
+  await until(() => document.querySelector('.sync-status').textContent === 'Reading code…')
   await until(() =>
     document.querySelector('.sync-status').textContent.startsWith('Rack matches code'),
   )
@@ -62,6 +62,7 @@ export async function verifyLibraryUI() {
   const { read } = await import('../src/reader/index.ts')
   const { sourceBody } = await import('../src/workspace/document.ts')
   const entries = libraryPatches()
+  await editSource(`// Library replacement guard fixture\n${source()}`)
   const initial = source()
   const initialRack = JSON.stringify(read(initial).patch)
   const results = []
@@ -156,8 +157,6 @@ export async function verifyLibraryUI() {
   const input = document.querySelector('input[type=file]')
   input.files = transfer.files
   input.dispatchEvent(new Event('change', { bubbles: true }))
-  await until(() => document.querySelector('.replace-prompt'))
-  button('Open patch').click()
   await until(() => source() === saved)
   assert(
     JSON.stringify(read(source()).patch) === JSON.stringify(savedRack),
@@ -173,6 +172,107 @@ export async function verifyLibraryUI() {
   await until(() => document.querySelectorAll('.module-panel').length === 2)
   assert(status() === 'Stopped', 'New patch started audio')
   results.push('Shared New confirmation installs silent MIX/OUT starter')
+  return results
+}
+
+/** #61: run on a fresh starter, before other suites edit the workspace. */
+export async function verifyReplacementConfirmation() {
+  const starter = source()
+  const results = []
+  async function loadClean(title) {
+    await choose(title)
+    button('Load patch…', library()).click()
+    await until(() => !library() || library().querySelector('.replace-prompt'))
+    assert(!library(), `${title}: clean workspace still asks for replacement`)
+    assert(status() === 'Stopped', 'Clean replacement started audio')
+  }
+  function assertPrimary(action) {
+    const primary = button(action, document.querySelector('.replace-prompt'))
+    assert(
+      getComputedStyle(primary).backgroundColor === 'rgb(244, 164, 98)',
+      `${action}: confirming action lost orange primary style`,
+    )
+  }
+  await loadClean('Enveloped synth')
+  const original = source()
+  await loadClean('Quantized sequence')
+  button('New patch').click()
+  await until(() => source() === starter || document.querySelector('.replace-prompt'))
+  assert(!document.querySelector('.replace-prompt'), 'Unedited library → New asks for replacement')
+  results.push('Starter → library → library → New skips confirmation and leaves scheduling stopped')
+
+  await loadClean('Enveloped synth')
+  const changed = `// keep my work\n${original}`
+  await editSource(changed)
+  const accepted = source()
+  button('New patch').click()
+  await until(() => document.querySelector('.replace-prompt'))
+  assert(
+    document
+      .querySelector('.replace-prompt')
+      .textContent.includes('Starting a new patch stops playback'),
+    'New warning names the wrong action',
+  )
+  assertPrimary('Replace patch')
+  button('Cancel', document.querySelector('.replace-prompt')).click()
+  await until(() => !document.querySelector('.replace-prompt'))
+  assert(source() === accepted, 'New Cancel discarded edits')
+
+  await choose('Enveloped synth')
+  button('Load patch…', library()).click()
+  await until(() => library().querySelector('.replace-prompt'))
+  assert(
+    library()
+      .querySelector('.replace-prompt')
+      .textContent.includes('Loading Enveloped synth stops playback'),
+    'Library warning does not name the patch',
+  )
+  assertPrimary('Load patch')
+  assert(
+    (await exportedBy(() => button('Export current', library()).click())) === accepted,
+    'Replacement export lost current work',
+  )
+  button('Cancel', library()).click()
+  await until(() => !library().querySelector('.replace-prompt'))
+  assert(source() === accepted, 'Library Cancel discarded edits')
+  button('Load patch…', library()).click()
+  await until(() => library().querySelector('.replace-prompt'))
+  button('Load patch', library()).click()
+  await until(() => !library())
+  assert(source() === original, 'Confirmed load did not restore exact library source')
+  results.push(
+    'Edited code prompts; New/library copy and orange actions are correct; Cancel/Export preserve edits',
+  )
+
+  // A look changes only saved rack metadata, which is also work worth keeping.
+  const panel = document.querySelector('.module-panel')
+  panel.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: 300, clientY: 200 }))
+  await until(() => document.querySelector('[aria-label="Look Vintage lab"]'))
+  document.querySelector('[aria-label="Look Vintage lab"]').click()
+  await until(() => source() !== original)
+  const layoutEdit = source()
+  button('New patch').click()
+  await until(() => document.querySelector('.replace-prompt'))
+  button('Cancel', document.querySelector('.replace-prompt')).click()
+  await until(() => !document.querySelector('.replace-prompt'))
+  assert(source() === layoutEdit, 'Cancel discarded saved rack layout')
+  results.push('Presentation-only rack edits still require confirmation')
+
+  replaceSource('$: note(')
+  await until(
+    () => document.querySelector('.sync-status').textContent === 'Rack shows previous code',
+  )
+  button('New patch').click()
+  await until(() => document.querySelector('.replace-prompt'))
+  button('Cancel', document.querySelector('.replace-prompt')).click()
+  await until(() => !document.querySelector('.replace-prompt'))
+  assert(source() === '$: note(', 'Cancel discarded invalid draft')
+  button('New patch').click()
+  await until(() => document.querySelector('.replace-prompt'))
+  button('Replace patch').click()
+  await until(() => source() === starter)
+  await loadClean('Quantized sequence')
+  results.push('Invalid draft remains protected; confirmed New establishes a clean starter again')
   return results
 }
 
@@ -205,6 +305,37 @@ export function installAudioProbe() {
     }
     return { rms: count ? Math.sqrt(sum / count) : 0, samples: count }
   }
+}
+
+/** Run after a real Play gesture on a loaded library patch, with the probe installed first. */
+export async function verifyReplacementCancelPlayback(measure) {
+  const { read } = await import('../src/reader/index.ts')
+  await until(() => status() === 'Pattern scheduled')
+  await editSource(`// Keep this playing\n${source()}`)
+  await until(() => status() === 'Pattern scheduled')
+  const original = source()
+  const rack = JSON.stringify(read(original).patch)
+  const before = await measure()
+  assert(before.rms > 0.0001, 'Playback fixture has no signal before Cancel')
+  button('New patch').click()
+  await until(() => document.querySelector('.replace-prompt'))
+  button('Cancel', document.querySelector('.replace-prompt')).click()
+  await until(() => !document.querySelector('.replace-prompt'))
+  await choose('Enveloped synth')
+  button('Load patch…', library()).click()
+  await until(() => library().querySelector('.replace-prompt'))
+  button('Cancel', library()).click()
+  await until(() => !library().querySelector('.replace-prompt'))
+  button('Close library', library()).click()
+  await until(() => !library())
+  assert(source() === original, 'Cancel changed the playing source')
+  assert(JSON.stringify(read(source()).patch) === rack, 'Cancel changed the playing rack')
+  assert(status() === 'Pattern scheduled', 'Cancel stopped playback')
+  const after = await measure()
+  assert(after.rms > 0.0001, 'Cancel silenced playback')
+  button('Stop scheduling').click()
+  await until(() => status() === 'Stopped')
+  return { before, after, sourceAndRackRetained: true, physicalListening: false }
 }
 
 /** Run after one real user/harness Play click has activated audio. */
@@ -249,6 +380,7 @@ export async function verifyPatchSignals(measure) {
 export async function verifyLibraryStopFailure() {
   const engine = await import('../src/strudel/engine.ts')
   const { read } = await import('../src/reader/index.ts')
+  await editSource(`// Stop failure guard fixture\n${source()}`)
   const original = source()
   const rack = JSON.stringify(read(original).patch)
   // Inject a rejecting Stop via the real adapter's observer boundary, then remove it.

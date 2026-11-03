@@ -80,9 +80,14 @@ See the [#75 observed browser acceptance](library-rack-verification.md).
 
 ## Loading and persistence contract
 
-New, Open file and library loading share one replacement intent and confirmation
-with **Cancel**, **Export current**, and an explicit commit action. A new intent
-cancels any pending one. Browsing and selecting never stop audio or execute code.
+New, Open file and library loading share one replacement intent. Confirmation
+with **Cancel**, **Export current**, and an explicit commit action protects changed
+work. It is skipped when accepted source and draft exactly match the starter or
+the last successfully loaded library entry. The comparison includes saved rack
+metadata, so looks, positions and nonsounding controls count as changes too.
+Unfinished drafts, opened files and restored local work remain protected.
+A new intent cancels any pending one. Browsing and selecting never stop audio
+or execute code.
 
 Library loading first reads the original string into a fresh `SourceDocument`
 and validates its rack. Invalid source or invalid saved layout fails before
@@ -93,6 +98,11 @@ and selection. Cancel/Close/Escape, newer work, validation failure and Stop
 failure retain the current draft and rack. Once Stop has been requested,
 cancellation does not resume previous playback. Stop can leave notes/tails
 ringing out; it confirms scheduling, not immediate physical silence.
+
+Skipping confirmation still uses this same validation, confirmed Stop and revision
+guard. Only successful New/library replacements establish a new clean snapshot.
+Confirmation actions stay orange in every placement; the warning names New or the
+specific library patch/file being loaded.
 
 Successful loading leaves playback stopped until explicit Play. It does not
 normalize formatting, append rack metadata on load, or regenerate source from
@@ -153,6 +163,39 @@ Play and stops each one. The Stop-failure group injects a throwing observer at
 the real adapter boundary, proves exact draft/rack retention and Export current,
 then removes the observer and retries Stop. It does not claim a physical device
 failure. Unit tests also cover cancellation while Stop is pending.
+
+## Replacement confirmation verification (#61)
+
+Observed on 3 November 2026 in Chromium through the T3 browser against the Vite
+app. Before the fix, `verifyReplacementConfirmation()` failed with
+`Enveloped synth: clean workspace still asks for replacement`; the confirmation
+background was gray (`rgb(32, 35, 40)`). After the fix:
+
+- `verifyReplacementConfirmation()` passed starter → library → library → New
+  without confirmation/autoplay. Edited code, a look-only change and an invalid
+  draft prompted; Cancel and Export retained work. Both New and library warnings
+  named their actions, with orange confirming buttons (`rgb(244, 164, 98)`).
+- `verifyLibraryUI()` passed all ten exact-source library loads, malformed-source
+  retention, helper edits, saved rack export/reopen, file protection and New.
+- After a real Play gesture, `verifyReplacementCancelPlayback(measure)` retained
+  exact source and rack through both New and library Cancel, kept scheduling, and
+  measured nonzero WebAudio PCM before/after (RMS 0.00418 / 0.00349). This is signal
+  evidence; physical speakers/headphones were not heard.
+- `verifyLibraryStopFailure()` retained draft/rack/export through an injected
+  real-adapter Stop failure and recovered on Stop retry.
+- A separate check started an unedited library patch, then New skipped the prompt,
+  stopped scheduling and installed the two-module starter. A replacement requested
+  in the same task as a draft edit still prompted before the reader debounce.
+- Open's warning named `example.strudel` and kept its orange action. The trance
+  loader passed; after reloading/restoring its unedited local copy, New prompted
+  and Cancel retained exact source with scheduling stopped.
+
+Run the first two exports from [`scripts/library-check.mjs`](../scripts/library-check.mjs)
+on a fresh page, with no recovery dialog. Install `installAudioProbe()` before the
+first Play gesture; then call `verifyReplacementCancelPlayback(measure)` on a
+playing library patch. The existing trance loader also accepts clean direct loads.
+`npm run check` passed separately: 701 tests passed, 19 expected failures,
+40 guardrail tests, lint, formatting, skill integrity, TypeScript and production build.
 
 This browser check needs WebAudio, the default sample manifests and drum audio
 over the network. It remains separate from the deterministic CI gate, like the
