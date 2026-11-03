@@ -69,3 +69,13 @@ After rebasing onto `b40d2d8` (the palette/library and rack control updates),
 `npm run check` passed again: 791 unit tests, 40 guardrails, formatting, skill
 integrity, lint, TypeScript and the production build. Both browser suites passed
 again on that base; the linked raw results and screenshot are from this final run.
+
+## Review follow-up
+
+Sol approved the behavior in one round with GPT-6.1 Sol on high reasoning effort;
+25 focused tests passed. S1 was a nit: replacing invalid rack metadata located
+before a later voice can preserve stripped-body/topology equality while moving
+that voice's source offsets. Token feedback can then be absent until Stop/Play.
+Deferred as malformed-metadata offset migration outside the normal trailing
+metadata contract; source/body preservation remains unchanged. No behavior code
+changed after review, and no model usage figures were returned.
