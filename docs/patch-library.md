@@ -44,6 +44,40 @@ a custom helper/CODE fragment, and a three-voice mixer. The attributed
 [Switch Angel trance demo](trance-demo.md) from #46 is an additional complete
 patch under Complete patches → Trance, bundled in its exact supplied variant.
 
+## Rack ownership (#55 and #75)
+
+The [#55 owner decision](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/55#issuecomment-6612111085)
+chooses both approaches. The nine module exercises (including Three-voice sketch)
+are committed as generator-style `.strudel` files with complete validated rack
+metadata. Loading still preserves their exact stored source; no load-time rewrite
+is needed. Their attribution remains in the library detail pane. The planned
+Start here collection (#80) follows this authoring rule too.
+
+Showcase entries keep the exact attributed source, including comments and
+formatting. If source preservation refuses a rack edit, a prompt beside the
+control/jack offers **Make rack-editable** and explains that it rewrites the code
+in MonkeyBoy’s style before completing the attempted edit. Cancel and Escape
+leave the accepted source/rack untouched. A draft edit, replacement or newer rack
+edit cancels the pending conversion; a revision check prevents stale retries.
+Conversion installs source and rack together through the normal playback update,
+without starting stopped audio. Reloading the library entry restores its original.
+
+Conversion applies the generator’s control/default and dedicated-orbit conventions.
+Opaque chain fragments stay CODE, and non-rack setup statements (helpers,
+registrations) remain in a saved `prelude`, in their relative order before the
+rack program. Formatting and surrounding comments may change. Mixed helper/pattern
+multi-declarations must be separated in code before conversion. Arbitrary setup
+side effects and routing hidden behind custom functions have no universal semantic
+or audible equivalence guarantee. Export before converting if the original needs
+to be retained; global undo/redo remains #63.
+
+The focused library tests require each exercise to accept VCF/VCA CV where present,
+effect insertion, mixer level changes and an additional mixer channel. They check
+source ownership and reopened rack identity independently. The workspace conversion
+fixture checks real Strudel event values/times separately, including the intended
+CV change; generator-assigned orbit IDs are excluded from that comparison.
+See the [#75 observed browser acceptance](library-rack-verification.md).
+
 ## Loading and persistence contract
 
 New, Open file and library loading share one replacement intent and confirmation
@@ -73,7 +107,7 @@ restore saved looks, positions, output names and nonsounding values. Library
 collection paths and selection are browser metadata and are not exported. See
 [patch format](patch-format.md) and [translation rules](translation-rules.md).
 
-## Browser verification
+## Original #45 browser verification
 
 Observed in this implementation session: the UI and real-engine checks passed,
 including nonzero output for all nine seeds and recovery after injected Stop
@@ -124,3 +158,9 @@ This browser check needs WebAudio, the default sample manifests and drum audio
 over the network. It remains separate from the deterministic CI gate, like the
 existing workspace error suite. Nonzero PCM proves output signal, not subjective
 sound quality or listening through a physical device.
+
+For #75, `libraryCheck.verifyLibraryRackEditing()` drives all nine exercises through
+CV, effect insertion and mixer channel edits, checks attribution and export
+identity, then verifies a nearby showcase refusal, Cancel, explicit conversion,
+retained registrations and a later CV edit. The signal group also queries real
+Strudel onset events independently of source/rack checks.

@@ -41,6 +41,8 @@ export interface Patch {
   cables: Cable[]
   /** Fan-out names, retained after reducing to one branch; keyed "moduleId:jackId". */
   names: Record<string, string>
+  /** Opaque setup statements retained by an explicit rack conversion. */
+  prelude?: string
   /** Optional saved rail count, including empty rows; old files derive it from modules. */
   rows?: number
 }

@@ -157,7 +157,7 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
         id: 'custom-helper',
         title: 'Custom helper',
         description:
-          'A custom helper and chunk transform stay exact in source, with a CODE block beside the recognized synth controls. Edit the helper in code.',
+          'A custom helper and chunk transform sit beside the recognized synth controls. Patch the rack freely; edit the helper in code.',
         source: code,
         attribution,
         exercises: ['seq', 'osc', 'code', 'vca', 'mix', 'out'],

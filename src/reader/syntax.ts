@@ -55,7 +55,10 @@ export function chain(expression: Expression): { root: Expression; calls: Call[]
   }
 }
 
-export function parseSource(source: string): {
+export function parseSource(
+  source: string,
+  { lastExpressionIsVoice = true }: { lastExpressionIsVoice?: boolean } = {},
+): {
   program: ReturnType<typeof parse>
   scopes: ParsedScope[]
 } {
@@ -111,7 +114,7 @@ export function parseSource(source: string): {
       else if (
         expression.type === 'CallExpression' &&
         ((expression.callee.type === 'Identifier' && expression.callee.name === 'stack') ||
-          statement === program.body.at(-1))
+          (lastExpressionIsVoice && statement === program.body.at(-1)))
       )
         add(expression, 'voice')
     }

@@ -1,6 +1,359 @@
-// Original module exercise · MonkeyBoy’s Modular Synth contributors · MIT
 setcpm(116/4)
-$: note("c2 ~ c3 eb2 g2 ~ bb2 g2").s("square")
-  .lpf(450).lpq(3).lpenv(3)
-  .lpattack(0.01).lpdecay(0.3).lpsustain(0.2).lprelease(0.15)
-  .gain(0.2).postgain(0.8)
+
+$: note("c2 ~ c3 eb2 g2 ~ bb2 g2")
+  .s("square")
+  .lpf(450)
+  .lpq(3)
+  .lpenv(3)
+  .lpattack(0.01)
+  .lpdecay(0.3)
+  .lpsustain(0.2)
+  .lprelease(0.15)
+  .gain(0.2)
+  .postgain(0.8)
+  .orbit(1)
+
+// ── @monkeyboy rack v1 ──
+// {
+//   "version": 1,
+//   "scopes": [
+//     {
+//       "id": "scope1",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"setcpm\"},\"arguments\":[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":116},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "setcpm",
+//           "arguments": "[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":116},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}]"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "scope2",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"c2 ~ c3 eb2 g2 ~ bb2 g2\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"c2 ~ c3 eb2 g2 ~ bb2 g2\"}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"square\"}]"
+//         },
+//         {
+//           "name": "lpf",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":450}]"
+//         },
+//         {
+//           "name": "lpq",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":3}]"
+//         },
+//         {
+//           "name": "lpenv",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":3}]"
+//         },
+//         {
+//           "name": "lpattack",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.01}]"
+//         },
+//         {
+//           "name": "lpdecay",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.3}]"
+//         },
+//         {
+//           "name": "lpsustain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.2}]"
+//         },
+//         {
+//           "name": "lprelease",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.15}]"
+//         },
+//         {
+//           "name": "gain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.2}]"
+//         },
+//         {
+//           "name": "postgain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.8}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 11,
+//         "orbit": 1
+//       }
+//     }
+//   ],
+//   "modules": [
+//     {
+//       "id": "seq1",
+//       "type": "seq",
+//       "row": 0,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "c2 ~ c3 eb2 g2 ~ bb2 g2",
+//         "mode": "note",
+//         "rate": 1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc1",
+//       "type": "osc",
+//       "row": 0,
+//       "hp": 10,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "square"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vcf1",
+//       "type": "vcf",
+//       "row": 0,
+//       "hp": 19,
+//       "look": "instrument",
+//       "values": {
+//         "mode": "lp",
+//         "cutoff": 450,
+//         "res": 3,
+//         "envAmt": 3
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             2
+//           ],
+//           "role": "module"
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             3
+//           ],
+//           "role": "module"
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             4
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "env1",
+//       "type": "env",
+//       "row": 0,
+//       "hp": 29,
+//       "look": "instrument",
+//       "values": {
+//         "atk": 0.01,
+//         "dec": 0.3,
+//         "sus": 0.2,
+//         "rel": 0.15
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             5
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vcf1",
+//             "jack": "cv",
+//             "control": "cutoff"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             6
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vcf1",
+//             "jack": "cv",
+//             "control": "cutoff"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             7
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vcf1",
+//             "jack": "cv",
+//             "control": "cutoff"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             8
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vcf1",
+//             "jack": "cv",
+//             "control": "cutoff"
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vca1",
+//       "type": "vca",
+//       "row": 0,
+//       "hp": 39,
+//       "look": "instrument",
+//       "values": {
+//         "level": 0.2
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             9
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "mix1",
+//       "type": "mix",
+//       "row": 1,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "ch1": 0.8,
+//         "ch2": 1,
+//         "ch3": 1,
+//         "ch4": 1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             10
+//           ],
+//           "role": "mixer"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "out2",
+//       "type": "out",
+//       "row": 1,
+//       "hp": 12,
+//       "look": "instrument",
+//       "values": {
+//         "bpm": 116
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope1",
+//           "calls": [
+//             0
+//           ],
+//           "role": "tempo"
+//         }
+//       ]
+//     }
+//   ],
+//   "cables": [
+//     {
+//       "id": "cable1",
+//       "from": {
+//         "module": "seq1",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "osc1",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "cable2",
+//       "from": {
+//         "module": "osc1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vcf1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable3",
+//       "from": {
+//         "module": "env1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vcf1",
+//         "jack": "cv"
+//       }
+//     },
+//     {
+//       "id": "cable4",
+//       "from": {
+//         "module": "vcf1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vca1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable6",
+//       "from": {
+//         "module": "vca1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "mix1",
+//         "jack": "in1"
+//       }
+//     },
+//     {
+//       "id": "cable7",
+//       "from": {
+//         "module": "mix1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "out2",
+//         "jack": "in"
+//       }
+//     }
+//   ],
+//   "names": {}
+// }

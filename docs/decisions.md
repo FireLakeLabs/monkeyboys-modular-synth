@@ -59,6 +59,14 @@ A module’s category colour is used for its dot on the panel and for the code i
 
 ## Interaction policy
 
+- **Library rack ownership (#55, decided 3 November 2026):** module exercises
+  and the planned Start here collection (#80) are authored in generator style,
+  with saved rack state, so rack edits work immediately. Attribution stays visible
+  in the library. Attributed showcases (#46/#47) retain exact source. A refused
+  rack edit offers **Make rack-editable** beside the edit, discloses the rewrite
+  into MonkeyBoy’s style, and completes the pending edit after consent. Setup
+  statements and CODE remain available. Global undo is owned by #63; it is not
+  implemented by this conversion. See [library ownership](patch-library.md#rack-ownership-55-and-75).
 - **Patch library (#45):** a top-bar modal browser with nested, collapsible
   collections and explicit patch selection/loading. The initial repository-owned
   collection includes module exercises; personal library editing, accounts and

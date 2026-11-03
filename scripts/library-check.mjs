@@ -129,12 +129,12 @@ export async function verifyLibraryUI() {
       `${entry.id}: rack mismatch`,
     )
   }
-  results.push('All nine entries load exact source and matching rack without autoplay')
+  results.push('All entries load exact source and matching rack without autoplay')
 
   await load(helper.title)
   await editSource(source().replace('.gain(0.2)', '.gain(0.4)'))
   assert(
-    sourceBody(source()) === helper.source.replace('.gain(0.2)', '.gain(0.4)'),
+    sourceBody(source()) === sourceBody(helper.source).replace('.gain(0.2)', '.gain(0.4)'),
     'Edit lost opaque helper or comments',
   )
   const outId = read(source()).patch.modules.find((module) => module.type === 'out').id
@@ -149,7 +149,7 @@ export async function verifyLibraryUI() {
   const savedRack = read(saved).patch
   assert(savedRack.modules.find((m) => m.type === 'out').look === 'vintage', 'Export lost look')
   assert(
-    sourceBody(saved) === helper.source.replace('.gain(0.2)', '.gain(0.4)'),
+    sourceBody(saved) === sourceBody(helper.source).replace('.gain(0.2)', '.gain(0.4)'),
     'Export lost source',
   )
   await load(helper.title)
@@ -214,22 +214,39 @@ export function installAudioProbe() {
 export async function verifyPatchSignals(measure) {
   const { libraryPatches } = await import('../src/library/catalog.ts')
   const results = []
-  for (const entry of libraryPatches()) {
-    await load(entry.title)
-    const transport = document.querySelector('.topbar .play')
-    assert(transport.getAttribute('aria-label') === 'Play', 'Load left transport running')
-    transport.click()
-    await until(() => status() === 'Pattern scheduled' || status().includes('error'))
-    assert(status() === 'Pattern scheduled', `${entry.id}: evaluation failed`)
-    // Allow lazy sample fetch/decode, then sample multiple events.
-    await pause(2000)
-    const pcm = await measure()
-    assert(pcm.rms > 0.0001, `${entry.id}: no nonzero output (${pcm.rms})`)
-    results.push({ id: entry.id, ...pcm })
-    button('Stop scheduling').click()
-    await until(() => status() === 'Stopped')
+  const original = window.Pattern.prototype.onTrigger
+  let pattern
+  window.Pattern.prototype.onTrigger = function (callback, dominant) {
+    pattern = this
+    return original.call(this, callback, dominant)
   }
-  return results
+  try {
+    for (const entry of libraryPatches()) {
+      await load(entry.title)
+      const transport = document.querySelector('.topbar .play')
+      assert(transport.getAttribute('aria-label') === 'Play', 'Load left transport running')
+      transport.click()
+      await until(() => status() === 'Pattern scheduled' || status().includes('error'))
+      assert(status() === 'Pattern scheduled', `${entry.id}: evaluation failed`)
+      // Allow lazy sample fetch/decode, then sample multiple events.
+      await pause(2000)
+      const pcm = await measure()
+      assert(pcm.rms > 0.0001, `${entry.id}: no nonzero output (${pcm.rms})`)
+      const events = pattern.queryArc(0, 4).filter((event) => event.hasOnset())
+      assert(events.length > 0, `${entry.id}: no Strudel events`)
+      results.push({
+        id: entry.id,
+        ...pcm,
+        events: events.length,
+        sounds: [...new Set(events.map((event) => event.value.s))],
+      })
+      button('Stop scheduling').click()
+      await until(() => status() === 'Stopped')
+    }
+    return results
+  } finally {
+    window.Pattern.prototype.onTrigger = original
+  }
 }
 
 export async function verifyLibraryStopFailure() {
@@ -267,4 +284,151 @@ export async function verifyLibraryStopFailure() {
   button('Stop scheduling').click()
   await until(() => status() === 'Stopped')
   return 'Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover'
+}
+
+/** #75: drive the actual rack controls, separately from pure graph tests. */
+export async function verifyLibraryRackEditing() {
+  const { libraryPatches } = await import('../src/library/catalog.ts')
+  const { read } = await import('../src/reader/index.ts')
+  const { generate } = await import('../src/codegen/generate.ts')
+  const { sourceBody } = await import('../src/workspace/document.ts')
+  const patch = () => read(source()).patch
+  const id = (type) =>
+    patch()
+      .modules.filter((module) => module.type === type)
+      .at(-1).id
+  const jack = (ref) => document.querySelector(`[data-jack="${ref.module}:${ref.jack}"]`)
+  async function add(name) {
+    const before = patch().modules.length
+    document.querySelector(`[aria-label="Add ${name}"]`).click()
+    await until(() => patch().modules.length > before)
+  }
+  async function cable(from, to, replacement = false, refused = false) {
+    jack(from).scrollIntoView({ block: 'center' })
+    jack(from).click()
+    await pause(0)
+    jack(to).scrollIntoView({ block: 'center' })
+    const rect = jack(to).getBoundingClientRect()
+    const before = source()
+    jack(to).click()
+    if (replacement) {
+      await until(() => document.querySelector('.replace-prompt'))
+      button('Replace', document.querySelector('.replace-prompt')).click()
+    }
+    await until(() =>
+      refused ? document.querySelector('.rack-edit-refusal') : source() !== before,
+    )
+    return rect
+  }
+  const results = []
+  for (const entry of libraryPatches().filter((entry) => entry.id !== 'switch-angel-trance-demo')) {
+    await load(entry.title)
+    assert(source() === entry.source, `${entry.id}: initial source differs`)
+    await choose(entry.title)
+    assert(
+      library().querySelector('.patch-attribution').textContent.includes('contributors'),
+      `${entry.id}: attribution missing`,
+    )
+    button('Close library', library()).click()
+    await until(() => !library())
+    await add('LFO')
+    const lfo = id('lfo')
+    for (const target of patch().modules.filter((module) => ['vcf', 'vca'].includes(module.type))) {
+      const to = { module: target.id, jack: 'cv' }
+      const occupied = patch().cables.some((c) => c.to.module === to.module && c.to.jack === 'cv')
+      await cable({ module: lfo, jack: 'out' }, to, occupied)
+      assert(
+        patch().cables.some(
+          (c) => c.from.module === lfo && c.to.module === target.id && c.to.jack === 'cv',
+        ),
+        `${entry.id}: CV missing`,
+      )
+    }
+    await add('DELAY')
+    const delay = id('delay'),
+      mix = id('mix')
+    const incoming = patch().cables.find((c) => c.to.module === mix)
+    await cable(incoming.from, { module: delay, jack: 'in' })
+    await cable({ module: delay, jack: 'out' }, incoming.to, true)
+    const spare = ['in2', 'in3', 'in4'].find(
+      (input) => !patch().cables.some((c) => c.to.module === mix && c.to.jack === input),
+    )
+    await cable(incoming.from, { module: mix, jack: spare })
+    assert(!document.querySelector('.rack-edit-refusal'), `${entry.id}: refused rack edit`)
+    assert(
+      sourceBody(source()) === sourceBody(generate(patch())),
+      `${entry.id}: lost rack ownership`,
+    )
+    const exported = await exportedBy(() => button('Export').click())
+    assert(
+      JSON.stringify(read(exported).patch) === JSON.stringify(patch()),
+      `${entry.id}: export lost identity`,
+    )
+    results.push(
+      `${entry.id}: CV, effect insertion, extra mixer channel and export identity passed`,
+    )
+  }
+
+  const showcase = libraryPatches().find((entry) => entry.id === 'switch-angel-trance-demo')
+  await load(showcase.title)
+  assert(source() === showcase.source, 'Showcase was rewritten on load')
+  await add('VCF')
+  const filter = id('vcf'),
+    mixer = id('mix')
+  const voice = patch().cables.find((c) => c.to.module === mixer)
+  const from = voice.from,
+    to = { module: filter, jack: 'in' }
+  const before = source(),
+    beforePatch = JSON.stringify(patch())
+  const target = await cable(from, to, false, true)
+  const refusal = document.querySelector('.rack-edit-refusal')
+  assert(
+    refusal.textContent.includes('rewrites the code in MonkeyBoy’s style'),
+    'Missing rewrite disclosure',
+  )
+  const bounds = refusal.getBoundingClientRect()
+  assert(
+    Math.abs(bounds.left - target.left) < 350 && Math.abs(bounds.top - target.bottom) < 310,
+    'Refusal is far from jack',
+  )
+  assert(
+    source() === before && JSON.stringify(patch()) === beforePatch,
+    'Refusal changed accepted work',
+  )
+  button('Cancel', refusal).click()
+  await until(() => !document.querySelector('.rack-edit-refusal'))
+  assert(source() === before, 'Cancel changed source')
+  await cable(from, to, false, true)
+  await editSource(`// newer draft\n${source()}`)
+  assert(!document.querySelector('.rack-edit-refusal'), 'New draft retained stale conversion')
+  assert(
+    !patch().cables.some(
+      (c) => c.from.module === from.module && c.to.module === to.module && c.to.jack === to.jack,
+    ),
+    'Stale attempt was committed',
+  )
+  await cable(from, to, false, true)
+  button('Make rack-editable', document.querySelector('.rack-edit-refusal')).click()
+  await until(() => !document.querySelector('.rack-edit-refusal') && source() !== before)
+  assert(
+    patch().cables.some(
+      (c) => c.from.module === from.module && c.to.module === to.module && c.to.jack === to.jack,
+    ),
+    'Conversion did not complete attempted edit',
+  )
+  assert(patch().prelude.match(/register\('/g).length === 4, 'Conversion lost registrations')
+  assert(
+    sourceBody(source()) === sourceBody(generate(patch())),
+    'Conversion did not grant rack ownership',
+  )
+  assert(read(source()).layout === 'restored', 'Converted rack does not reopen')
+  assert(status() === 'Stopped', 'Conversion started audio')
+  await cable({ module: filter, jack: 'out' }, voice.to, true)
+  await add('LFO')
+  await cable({ module: id('lfo'), jack: 'out' }, { module: filter, jack: 'cv' })
+  assert(!document.querySelector('.rack-edit-refusal'), 'Converted showcase refused subsequent CV')
+  results.push(
+    'Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay',
+  )
+  return results
 }

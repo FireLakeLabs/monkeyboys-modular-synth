@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-03",
+  "browser": "T3 Code Chromium preview",
+  "runtime": "Node 24.22.2",
+  "physicalListening": false,
+  "ui": [
+    "Nested collections expand/collapse; attribution, exact Export current and Cancel retain current draft/rack",
+    "Malformed library source reports failure while retaining draft/rack",
+    "All entries load exact source and matching rack without autoplay",
+    "Helper/CODE survives edits; reload restores original; export/reopen preserves source and changed rack look independently",
+    "Shared New confirmation installs silent MIX/OUT starter"
+  ],
+  "signals": {
+    "status": "passed",
+    "signals": [
+      {
+        "id": "enveloped-synth",
+        "rms": 0.0004269911577865613,
+        "samples": 204580864,
+        "events": 32,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "quantized-sequence",
+        "rms": 0.0005288610113644618,
+        "samples": 208472064,
+        "events": 56,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "lfo-sweep",
+        "rms": 0.00031254462597549626,
+        "samples": 210800640,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "filter-envelope",
+        "rms": 0.00045113652467393926,
+        "samples": 212695040,
+        "events": 24,
+        "sounds": ["square"]
+      },
+      {
+        "id": "drum-machine",
+        "rms": 0.0012744321555041847,
+        "samples": 215527424,
+        "events": 38,
+        "sounds": ["bd", "sd", "hh"]
+      },
+      {
+        "id": "echo-room",
+        "rms": 0.00028893112947840464,
+        "samples": 217853952,
+        "events": 20,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "iter-jux",
+        "rms": 0.0003326055965728572,
+        "samples": 221814784,
+        "events": 72,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "custom-helper",
+        "rms": 0.0003249163100420104,
+        "samples": 225110016,
+        "events": 20,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "switch-angel-trance-demo",
+        "rms": 0.0036253711410662317,
+        "samples": 257032192,
+        "events": 232,
+        "sounds": ["bd", "supersaw", "pulse"]
+      },
+      {
+        "id": "layered-sketch",
+        "rms": 0.00029929770433042424,
+        "samples": 275890176,
+        "events": 60,
+        "sounds": ["sawtooth", "triangle", "bd", "hh"]
+      }
+    ]
+  },
+  "rackEditing": [
+    "enveloped-synth: CV, effect insertion, extra mixer channel and export identity passed",
+    "quantized-sequence: CV, effect insertion, extra mixer channel and export identity passed",
+    "lfo-sweep: CV, effect insertion, extra mixer channel and export identity passed",
+    "filter-envelope: CV, effect insertion, extra mixer channel and export identity passed",
+    "drum-machine: CV, effect insertion, extra mixer channel and export identity passed",
+    "echo-room: CV, effect insertion, extra mixer channel and export identity passed",
+    "iter-jux: CV, effect insertion, extra mixer channel and export identity passed",
+    "custom-helper: CV, effect insertion, extra mixer channel and export identity passed",
+    "layered-sketch: CV, effect insertion, extra mixer channel and export identity passed",
+    "Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay"
+  ],
+  "convertedShowcase": {
+    "rms": 0.0033121879223245226,
+    "samples": 298745856,
+    "events": 232,
+    "sounds": ["bd", "supersaw", "pulse"]
+  }
+}

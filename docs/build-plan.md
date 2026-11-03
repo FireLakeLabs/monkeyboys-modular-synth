@@ -78,6 +78,12 @@ adds the exact supplied Switch Angel/cosimo trance demo under Complete patches â
 Trance. It also reads the engine's `setCpm` tempo alias without rewriting it.
 See [source, pinned-engine compatibility and separate verification](trance-demo.md).
 
+Issue #75 implements the [#55 library ownership decision](patch-library.md#rack-ownership-55-and-75):
+all nine module exercises are authored as rack-owned files, while attributed
+showcases retain exact source and offer explicit conversion at a refused edit.
+See [independent source/rack/event and browser evidence](library-rack-verification.md).
+The Start here collection (#80) and global undo/redo (#63) remain separate work.
+
 ## Activity and source feedback
 
 [Issue #37](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/37)
