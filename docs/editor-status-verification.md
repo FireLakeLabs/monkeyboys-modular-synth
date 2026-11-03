@@ -49,6 +49,12 @@ repeating. The browser check requires external sample manifests and is separate
 from the shared CI gate. Existing browser-suite expectations use the new plain
 transport labels; their engine/source assertions are unchanged.
 
-`npm run check` passed: formatting, skill integrity, lint, 829 unit tests,
+`npm run check` passed: formatting, skill integrity, lint, 833 unit tests,
 40 guardrail checks, TypeScript and the production build. These static/unit
 results are separate from the browser observations above.
+
+After rebasing onto `ad15d27` (#63), all six footer/real-engine checks passed
+again. Header Undo/Redo restored exact source through module add/undo/redo,
+with mapped footer cursor coordinates and stopped transport. Both new history
+buttons remain alongside the header transport; history-suite status expectations
+use the same plain labels.

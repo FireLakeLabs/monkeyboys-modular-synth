@@ -12,6 +12,7 @@
   "physicalListening": false,
   "additionalChecks": [
     "760 × 900: footer follows editor with no horizontal overflow; keyboard Enter opens engine info within the viewport",
-    "Existing error-positions browser suite: all seven assertions passed, including source/rack retention, opener markers, metadata folding and Revert"
+    "Existing error-positions browser suite: all seven assertions passed, including source/rack retention, opener markers, metadata folding and Revert",
+    "After #63 rebase: six footer/real-engine checks pass; module add/Undo/Redo restores exact source, maps footer cursor and retains stopped transport"
   ]
 }
