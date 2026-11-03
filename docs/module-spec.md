@@ -38,7 +38,7 @@ n("0 3 5 <7 10>")        // DEGREE mode, usually into QUANT
 note("c2 eb2").fast(2)   // RATE 2
 ```
 
-**Reads:** `note("…")` or `n("…")` whose mini-notation is a flat list of tokens, rests and `<…>` alternations. Anything richer (`[ ]` sub-divisions, `*`, Euclidean rhythms) opens the SEQ in **text mode**: the string is shown and edited as text, and the module is still a SEQ. A `.fast(x)` or `.slow(x)` directly after sets RATE (`slow(x)` → 1/x).
+**Reads:** `note("…")` or `n("…")` whose mini-notation is a flat list of up to 16 tokens, rests and flat `<…>` alternations. The same grid is available for rack-built, imported and library patches, including after code edits (#66). Anything richer (`[ ]` sub-divisions, `*`, Euclidean rhythms) opens the SEQ in **text mode**: the string is shown and edited as text, and the module is still a SEQ. A `.fast(x)` or `.slow(x)` directly after sets RATE (`slow(x)` → 1/x).
 
 ### DRUMS — Trigger sequencer
 
@@ -59,7 +59,9 @@ s("[bd ~]*4, [~ ~ sd ~]*2, [~ hh]*4")
 
 **Row rules:** an empty row is left out. An all-on row is written `hh*8`. A row that repeats with period _p_ is written `[tokens of first p]*(steps/p)`. Otherwise tokens are joined with spaces, rests as `~`. Rows are joined with `, `. If every row is empty the module writes `s("~")`.
 
-**Reads:** `s("…")` with comma-separated layers, each one sample name plus rests, using `*n`, `[ ]` grouping or Euclidean notation `bd(3,8)`. A Euclidean row is shown as lit cells and keeps its `(k,n)` notation when written back, until edited. Layers whose length does not fit the grid open the module in text mode.
+**Reads:** `s("…")` with comma-separated layers. The grid shows flat rows of one sample plus rests, `sample*n`, and `[flat tokens]*n` repetitions, with equal row lengths of 8 or 16 (#66). Other notation stays editable in text mode with a one-line explanation. Euclidean row expansion into lit cells remains a v1 gap; `bd(3,8)` is currently retained as text. Viewing a grid never rewrites its notation.
+
+For both SEQ and DRUMS, **Text mode** changes only the view. Enter or blur applies notation; Shift+Enter inserts a newline. Representable notation returns to the grid after applying. **Grid mode** returns from an unchanged text view. Source-owned grid edits replace only the owned notation literal and save full rack identity; surrounding source stays exact. See [verification](literal-edit-verification.md#source-independent-grid-views-66).
 
 ### QUANT — Quantizer
 

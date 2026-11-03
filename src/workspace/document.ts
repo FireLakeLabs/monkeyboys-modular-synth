@@ -1,4 +1,7 @@
 import { parse, tokenizer } from 'acorn'
+import { isGrid, isSteps } from '../codegen/graph'
+import { drumText } from '../patch/notation'
+import { sequenceText } from '../rack/model'
 import { generate, generateDocument } from '../codegen/generate'
 import { RACK_MARKER, writeLayout, type RackLayout, type Scope } from '../codegen/layout'
 import { getModuleSpec } from '../modules/catalog'
@@ -232,7 +235,19 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
         spans = bindings
         text = value
       }
-      if (!spans.length || (typeof value !== 'number' && typeof value !== 'string'))
+      const notation =
+        control.kind === 'steps' && isSteps(value) && typeof value !== 'string'
+          ? typeof old === 'string'
+            ? value.join(' ')
+            : sequenceText(module, value)
+          : control.kind === 'grid' && isGrid(value) && typeof value !== 'string'
+            ? drumText(value)
+            : undefined
+      if (notation !== undefined) text = JSON.stringify(notation)
+      if (
+        !spans.length ||
+        (notation === undefined && typeof value !== 'number' && typeof value !== 'string')
+      )
         throw new RackEditRefused(
           `Cannot safely edit ${module.id} ${control.label}; edit its code instead`,
         )

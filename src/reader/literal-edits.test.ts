@@ -4,6 +4,7 @@ import { generate } from '../codegen/generate'
 import { RACK_MARKER } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
+import { drumView, stepView } from '../patch/notation'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
 import { saveLayout } from '../workspace/document'
 import { read } from './read'
@@ -561,11 +562,18 @@ describe.each(['seq', 'drums'])('%s grid representation', (type) => {
     if (!spec) throw new Error('Missing grid control')
     before = spec.default
     source.values[control] = before
-    actual = read(edited(patch, edit)).patch.modules.find((item) => item.id === source.id)?.values[
-      control
-    ]
+    const value = read(edited(patch, edit)).patch.modules.find((item) => item.id === source.id)
+      ?.values[control]
+    if (typeof value !== 'string') throw new Error('Expected retained notation')
+    const view =
+      spec.kind === 'steps'
+        ? stepView(value, spec)
+        : spec.kind === 'grid'
+          ? drumView(value, spec)
+          : undefined
+    actual = view?.kind === 'grid' ? view.value : undefined
   })
-  it.fails('retains its grid after a sibling literal edit (#66)', () => {
+  it('retains its grid view after a sibling literal edit (#66)', () => {
     expect(actual).toEqual(before)
   })
 })

@@ -128,3 +128,47 @@ remaining issues, 40 guardrail checks, formatting, skills, lint and build.
 
 This browser check did not start playback or establish physical listening or
 audible continuity. Real Strudel event comparisons ran separately in Node.
+
+## Source-independent grid views (#66)
+
+Observed 3 November 2026 on Node 24.22.2 and the T3 Chromium preview against the
+local Vite server. Run the committed browser probe from the preview page:
+
+```js
+const suite = await import('/scripts/grid-check.mjs')
+await suite.verifyGrids()
+```
+
+- Imported SEQ shows its grid for the reported eight-note notation. Editing a
+  cell changes only the notation literal, retaining CRLF, comments, other quotes
+  and exact reopened rack state. Code edits refresh existing cell values.
+- Imported DRUMS expands generator repetitions into cells. Toggling a cell
+  preserves surrounding source; a sibling DROP code edit retains the grid.
+  Adding a silent voice persists it in the saved rack.
+- Library Enveloped synth and 909 drum machine both show grids on load and
+  after a sibling code edit.
+- Text mode leaves source unchanged. Enter and blur apply edits; plain notation
+  returns to cells. `<3@3 4 5 @3 6>*2` and `bd(3,8)` retain text and a reason.
+  The browser probe dispatches DOM input/keyboard events; a separate native
+  preview typing/Enter check also returned `d3 f3 a3` to the grid.
+- The rendered library SEQ was inspected visually using the existing design
+  exports as reference. The private live canvas was not accessed.
+
+The focused source-edit tests first failed with `Cannot safely edit ... STEPS`
+and `... GRID`; both passed after array-to-notation serialization. Source bytes
+and saved identity are separate assertions. The former #66 expected failures
+now assert the actual grid view after reparsing instead of requiring the reader
+to replace retained source strings with arrays. The pure notation suite covers
+cells, repetitions, shape/length limits and explicit fallback.
+
+`npm run check` passed with 724 ordinary tests, 17 inherited #99 expected
+failures and 40 guardrails, plus formatting, skills, lint, TypeScript and build.
+The browser suite passed all five groups above. Playback stayed Stopped throughout;
+no audio was started or heard, and this UI proof does not claim audible continuity.
+Euclidean cell expansion remains outside this fix, as recorded in the module spec.
+
+Sol review: one round with GPT-6.1 Sol on high, verdict APPROVE. Its sole nit
+(S1) identified standalone `_`, `.` and `..` timing operators being shown as
+cells. Three focused cases failed before narrowing the atom matcher and passed
+afterwards for both grid projections. No findings were declined; token usage
+was not exposed.
