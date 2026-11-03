@@ -31,7 +31,7 @@
 }
 .module-panel[data-jacks='top'] .patch-box {
   order: 1;
-  margin: 4px;
+  margin: 2px;
 }
 .module-panel:not(.look-instrument) .module-header {
   background: transparent;
@@ -284,7 +284,7 @@
   display: block;
   width: 64px;
   max-width: 100%;
-  font: 10px monospace !important;
+  font: 12px monospace !important;
   padding: 3px;
   margin-top: 4px;
   border: 1px solid var(--category);

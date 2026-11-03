@@ -116,3 +116,29 @@ Each look is a set of layout rules plus tokens applied to a module’s control l
 The [#37 feedback contract and browser evidence](feedback-verification.md)
 record the production code treatments, all-span selection, editing-only cursor
 and event-timed visual activity. These treatments preserve the saved source.
+
+## Panel controls and rack zoom (#81, #82, #84, #92, #94, #95)
+
+Numeric controls show a rotary slider, label and editable value including its
+unit. Double-click resets to the catalog default; Backspace resets a focused
+knob. Arrows move through the existing drag scale (1% of travel; Shift: 0.1%),
+snapped to at least one catalog step. Detented controls move to the adjacent
+detent; Home/End reach the range limits. Slider semantics announce the label,
+range, current number and unit. All changes use the existing commit boundary,
+including source preservation and live playback updates.
+
+Panels group switches before knobs after sequence/grid/text editors, with the
+same visual and keyboard order. Compact drum rows place the sample beside its
+step cells. The v1 controls fit the existing catalog widths, so this change does
+not widen modules or relocate saved patches. Panel labels are at least 11 px;
+value fields/readouts are at least 12 px. Module IDs and rail labels use opaque
+dark backgrounds for consistent contrast across looks.
+
+The rack toolbar offers Fit rack and manual 75%, 100%, 125% and 150% zoom.
+Fit recalculates when the viewport or row count changes; zoom is local view
+state and changes neither source nor saved rack positions. Cable measurements,
+wire pointers and module placement convert viewport coordinates back to rack
+coordinates. Jacks reserve at least 24 screen pixels, growing their layout boxes
+when zoomed out and wrapping into additional rows as needed.
+
+See the [browser matrix, screenshots and verification limits](rack-feel-verification.md).

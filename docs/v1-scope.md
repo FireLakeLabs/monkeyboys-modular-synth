@@ -32,7 +32,8 @@ Shift for fine control, and double-click reset to the catalog default. This
 explicitly brings knob dragging into v1; touch-specific work remains later.
 See the [interaction handoff](interaction-proposal.md#9-values-in-v1) for
 validation, snapping, drag cancellation and live-update behavior. See
-[production verification](interaction-verification.md) for the #9 acceptance evidence.
+[production verification](interaction-verification.md) for the #9 acceptance evidence. Numeric knobs also support arrow/Shift-arrow stepping, Home/End and
+Backspace reset with slider semantics; see the [current panel contract](design.md#panel-controls-and-rack-zoom-81-82-84-92-94-95).
 
 ## Motion defaults
 
@@ -47,7 +48,8 @@ validation, snapping, drag cancellation and live-update behavior. See
 ## Later (deliberately not v1)
 
 - A touch-friendly UI (end goal). Pointer knob dragging is included in v1 as described above.
-- Keyboard patching and screen-reader support.
+- Keyboard patching and broader screen-reader support. Numeric knobs do expose
+  slider values and keyboard stepping/reset; see [panel controls](design.md#panel-controls-and-rack-zoom-81-82-84-92-94-95).
 - Hints and explainers (including plain-language knob labels as a setting that works on every look).
 - Accounts and share links.
 - Logo drawn by Fourier epicycles (splash or loading screen).

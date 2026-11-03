@@ -65,6 +65,14 @@ The reader/engine spikes and feature dependency order remain unchanged.
 6. **Looks (#7, implemented).** Layout rules and tokens for all ten looks in `src/looks/`, family-wide changes, and a module context menu with duplicate/show/delete. All 61 module/look combinations retain catalog widths; cables follow measured jack positions. See [video and browser evidence](workspace-verification.md).
 7. **Workspace polish (#8, implemented).** Editable fan-out names, source-bound layout writes, live code/rack editing, exact draft export/open, parser diagnostics and explicit runtime recovery. Imported literal and safe name edits preserve source; structural edits without a preservation plan are refused. See [contracts, videos and remaining engine limits](workspace-verification.md).
 
+## Instrument feel
+
+Issues #81, #82, #84, #92, #94 and #95 share the compact numeric controls,
+keyboard slider semantics, minimum panel typography, enlarged jack targets and
+rack zoom described in [design](design.md#panel-controls-and-rack-zoom-81-82-84-92-94-95).
+See the [61-combination browser matrix and screenshot evidence](rack-feel-verification.md).
+Catalog widths and saved positions remain unchanged.
+
 ## Built-in patch library
 
 Issues #61, #83, #93, #71 and #87 refine replacement, placement, keyboard file

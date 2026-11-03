@@ -1,4 +1,12 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type CSSProperties,
+} from 'react'
 import { LOOK_LABELS, looksFor } from '../modules/looks'
 import { LOOK_LAYOUT } from '../looks/layout'
 import { PALETTE_CATEGORIES, paletteModules, getModuleSpec } from '../modules/catalog'
@@ -90,6 +98,19 @@ export function Rack({
   const [allLooks, setAllLooks] = useState(false)
   const menuModule = patch.modules.find((m) => m.id === menu?.id)
   const surface = useRef<HTMLDivElement>(null)
+  const viewport = useRef<HTMLDivElement>(null)
+  const [zoom, setZoom] = useState<number | 'fit'>(1)
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
+  useLayoutEffect(() => {
+    const element = viewport.current
+    if (!element) return
+    const measure = () =>
+      setViewportSize({ width: element.clientWidth, height: element.clientHeight })
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
   useEffect(() => {
     if (surface.current) return observeActivity(surface.current)
     return undefined
@@ -118,6 +139,11 @@ export function Rack({
   const routed = routedModules(patch)
   const rows = rackRows(patch)
   const height = rows * ROW_HEIGHT
+  const fitScale = Math.max(
+    0.1,
+    Math.min(1, (viewportSize.width - 36) / (ROW_HP * HP), (viewportSize.height - 36) / height),
+  )
+  const scale = zoom === 'fit' ? fitScale : zoom
   const candidates = useMemo(() => {
     const results = new Map<string, SourceConnectionAssessment>()
     if (wire)
@@ -140,8 +166,8 @@ export function Rack({
         const id = jack.dataset.jack
         if (id)
           next[id] = {
-            x: rect.left + rect.width / 2 - bounds.left,
-            y: rect.top + rect.height / 2 - bounds.top,
+            x: (rect.left + rect.width / 2 - bounds.left) / scale,
+            y: (rect.top + rect.height / 2 - bounds.top) / scale,
           }
       }
       setPoints(next)
@@ -163,14 +189,15 @@ export function Rack({
     measure()
     const observer = new ResizeObserver(measure)
     observer.observe(element)
-    for (const module of element.querySelectorAll('.module-panel')) observer.observe(module)
+    for (const part of element.querySelectorAll('.module-panel, .patch-box, [data-jack]'))
+      observer.observe(part)
     window.addEventListener('resize', measure)
     return () => {
       element.removeEventListener('contextmenu', contextMenu)
       observer.disconnect()
       window.removeEventListener('resize', measure)
     }
-  }, [patch, rows, locked, select])
+  }, [patch, rows, locked, select, scale])
 
   function clearWire() {
     setWire(null)
@@ -330,6 +357,28 @@ export function Rack({
           <h2>
             RACK <small>{patch.modules.length} modules</small>
           </h2>
+          <div className="rack-zoom">
+            <button type="button" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>
+              Fit rack
+            </button>
+            <label>
+              Zoom
+              <select
+                aria-label="Rack zoom"
+                value={zoom}
+                onChange={(event) =>
+                  setZoom(event.target.value === 'fit' ? 'fit' : Number(event.target.value))
+                }
+              >
+                <option value="fit">Fit ({Math.round(fitScale * 100)}%)</option>
+                {[0.75, 1, 1.25, 1.5].map((value) => (
+                  <option key={value} value={value}>
+                    {value * 100}%
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           <button
             type="button"
             onClick={() => {
@@ -340,25 +389,32 @@ export function Rack({
             New patch
           </button>
         </div>
-        <div className="rack-scroll">
+        <div ref={viewport} className="rack-scroll">
           <div
             ref={surface}
             inert={locked}
             className="rack-surface"
-            style={{ width: ROW_HP * HP, height }}
+            style={
+              {
+                width: ROW_HP * HP,
+                height,
+                zoom: scale,
+                '--rack-zoom': scale,
+              } as CSSProperties
+            }
             onDragOver={(event) => {
               if (!placement) return
               event.preventDefault()
               const bounds = event.currentTarget.getBoundingClientRect()
               const row = Math.max(
                 0,
-                Math.min(rows - 1, Math.floor((event.clientY - bounds.top) / ROW_HEIGHT)),
+                Math.min(rows - 1, Math.floor((event.clientY - bounds.top) / scale / ROW_HEIGHT)),
               )
               const position = placementPosition(
                 patch,
                 placement.type,
                 row,
-                Math.round((event.clientX - bounds.left) / HP),
+                Math.round((event.clientX - bounds.left) / scale / HP),
                 placement.moving,
               )
               setGhost(position)
@@ -383,7 +439,10 @@ export function Rack({
                 if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 4)
                   gesture.dragged = true
                 const b = surface.current.getBoundingClientRect()
-                setPointer({ x: event.clientX - b.left, y: event.clientY - b.top })
+                setPointer({
+                  x: (event.clientX - b.left) / scale,
+                  y: (event.clientY - b.top) / scale,
+                })
               }
             }}
             onPointerUp={(event) => {
@@ -460,18 +519,20 @@ export function Rack({
                     onFocus={() => select(m.id)}
                     onPointerDown={() => select(m.id)}
                   >
-                    {spec.controls.map((control) => (
-                      <ControlEditor
-                        key={control.id}
-                        patch={patch}
-                        module={m}
-                        control={control}
-                        {...(m.type === 'code' && sourceModules.includes(m.id)
-                          ? { editSource: () => showCode(m.id) }
-                          : {})}
-                        commit={(value) => edit((p) => setValue(p, m.id, control.id, value))}
-                      />
-                    ))}
+                    {[...spec.controls]
+                      .sort((a, b) => Number(a.kind === 'knob') - Number(b.kind === 'knob'))
+                      .map((control) => (
+                        <ControlEditor
+                          key={control.id}
+                          patch={patch}
+                          module={m}
+                          control={control}
+                          {...(m.type === 'code' && sourceModules.includes(m.id)
+                            ? { editSource: () => showCode(m.id) }
+                            : {})}
+                          commit={(value) => edit((p) => setValue(p, m.id, control.id, value))}
+                        />
+                      ))}
                   </div>
                   <div className="patch-box">
                     {spec.jacks.map((jack) => {

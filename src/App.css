@@ -19,8 +19,7 @@
   padding: 0;
   border: 0;
 }
-.header-tempo .knob,
-.header-tempo .reset {
+.header-tempo .knob {
   display: none;
 }
 .header-tempo .numeric-control {

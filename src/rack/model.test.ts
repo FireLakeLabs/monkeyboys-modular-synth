@@ -9,6 +9,7 @@ import {
   connect,
   depthControl,
   draggedValue,
+  keyboardValue,
   freePosition,
   placeModule,
   placementPosition,
@@ -282,6 +283,25 @@ describe('numeric gestures and source ownership', () => {
     expect(draggedValue(cutoff, 0.5)).toBe(632)
     expect(draggedValue(cutoff, -1)).toBe(20)
     expect(draggedValue(cutoff, 2)).toBe(20000)
+  })
+  it('steps knobs with the catalog scale, fine movement, detents and range keys', () => {
+    const cutoff = VCF.controls.find((c) => c.id === 'cutoff')
+    const rate = SEQ.controls.find((c) => c.id === 'rate')
+    const level = CATALOG.find((s) => s.id === 'vca')?.controls[0]
+    if (cutoff?.kind !== 'knob' || rate?.kind !== 'knob' || level?.kind !== 'knob')
+      throw new Error('Missing fixture')
+    expect(keyboardValue(cutoff, 800, 'ArrowUp')).toBe(857)
+    expect(keyboardValue(cutoff, 800, 'ArrowUp', true)).toBe(806)
+    expect(keyboardValue(cutoff, 20, 'ArrowDown')).toBe(20)
+    expect(keyboardValue(cutoff, 800, 'Home')).toBe(20)
+    expect(keyboardValue(cutoff, 800, 'End')).toBe(20000)
+    expect(keyboardValue(cutoff, 1200, 'Backspace')).toBe(800)
+    expect(keyboardValue(rate, 1, 'ArrowRight')).toBe(2)
+    expect(keyboardValue(rate, 1, 'ArrowLeft', true)).toBe(0.5)
+    expect(keyboardValue(level, 0.8, 'ArrowUp')).toBe(0.85)
+    expect(keyboardValue(level, 0.8, 'ArrowDown', true)).toBe(0.75)
+    expect(keyboardValue(level, 1, 'ArrowUp')).toBe(1)
+    expect(keyboardValue(level, 0.8, 'Tab')).toBeNull()
   })
   it('maps selection to exact generated calls for repeated modules, CV, tempo and mixer gain', () => {
     let patch = add(add(demoPatch(), 'env'), 'mix', 2)
