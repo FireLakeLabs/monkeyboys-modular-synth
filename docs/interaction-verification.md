@@ -85,3 +85,49 @@ are unverified or deferred. Imported sounding structural edits without a proven
 source-preservation plan continue to be refused with an explanation. Arbitrary
 JavaScript effects, late sample/output failures and never-settling evaluations
 retain the documented [engine limitations](engine-spike.md).
+
+## Cable refusal preview (#76)
+
+Observed 3 November 2026 using the T3 preview browser against the local Vite app
+at 1280 × 800, with Node 24.22.2. The private design canvas was unavailable;
+the repository's archived references were available.
+
+The focused `src/workspace/connections.test.ts` regression first failed because
+an imported filter CV target returned `valid` even though completing that cable
+threw `RackEditRefused`. It now passes: the preview checks both graph validity
+and the actual source-preserving edit, without changing the accepted document.
+Supported imported replacement, exact reopened rack identity and canonical
+post-conversion CV editing also pass. `npm run check` passes separately.
+
+The browser probe in [connection-check.mjs](../scripts/connection-check.mjs)
+uses the rendered rack, pointer events and focused button activation. Run
+`npm run dev`, then execute in that page:
+
+```js
+await (await import('/scripts/connection-check.mjs')).verifyConnectionTargets()
+```
+
+Observed browser results:
+
+- LFO → imported VCF CV is dimmed and marked × before drop. Hover shows
+  “This patch came from code. Add the cable in code, or make the rack editable.”
+  beside the jack. Dropping opens the existing conversion offer; Cancel retains
+  exact source and saved rack state.
+- Keyboard focus shows the same reason, linked through `aria-describedby`.
+  Make rack-editable still completes the pending cable after explicit consent.
+- A supported imported ITER insertion stays valid. Its occupied input offers
+  Replace / Cancel, retains source before confirmation and commits without a
+  source refusal. Exported source reopens with restored rack metadata.
+- Type-incompatible targets remain blocked and do not mutate source or offer
+  conversion. The transport stays Stopped throughout.
+
+Native preview mouse click/hover additionally confirmed the local tooltip and
+blocked style visually. Native Tab moved from VCF IN to CV with the same reason;
+Enter opened conversion and cleared the tooltip. These checks cover the existing
+desktop keyboard activation path, not a broader keyboard patching design or
+screen-reader certification. No audio behavior changed or listening claim was
+made.
+
+The existing `verifyLibraryRackEditing()` browser suite also passed for all nine
+module exercises and the attributed showcase, including Cancel, stale conversion
+invalidation, conversion retry, subsequent CV and exported rack identity.

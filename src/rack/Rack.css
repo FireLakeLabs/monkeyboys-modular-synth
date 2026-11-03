@@ -324,6 +324,18 @@
 .jack.blocked {
   opacity: 0.4;
 }
+.cable-target-hint {
+  position: fixed;
+  z-index: 30;
+  width: min(300px, calc(100vw - 16px));
+  padding: 8px 10px;
+  border: 1px solid #737980;
+  border-radius: 4px;
+  background: #15171b;
+  color: #e4e6ea;
+  font-size: 13px;
+  pointer-events: none;
+}
 .jack.warning,
 .jack.unresolved {
   outline-style: dashed;

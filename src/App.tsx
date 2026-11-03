@@ -8,7 +8,7 @@ import {
   useSyncExternalStore,
 } from 'react'
 import { Rack, type RackEdit } from './rack/Rack'
-import type { Patch } from './patch/types'
+import type { JackRef, Patch } from './patch/types'
 import { starterPatch, validateRack } from './rack/model'
 import { createPlayback } from './strudel/playback'
 import { tryRead } from './reader'
@@ -26,6 +26,7 @@ import { prepareReplacement } from './workspace/open'
 import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { PatchLibrary } from './library/PatchLibrary'
 import { readLibraryPatch } from './library/load'
+import { assessDocumentConnection } from './workspace/connections'
 import type { LibraryPatch } from './library/catalog'
 import type { EditorView } from '@codemirror/view'
 import './App.css'
@@ -88,6 +89,11 @@ export default function App() {
   const editor = useRef<EditorView>(null)
   const locked = phase !== 'readable' || composing
   const patch = document.patch
+  const assess = useCallback(
+    (from: JackRef, to: JackRef, moving?: string) =>
+      assessDocumentConnection(document, from, to, moving),
+    [document],
+  )
   const selectedRanges = locked ? [] : document.bindings.filter((b) => b.module === selected)
   const cancelReplacement = useCallback(() => {
     setRefusedEdit(null)
@@ -356,6 +362,7 @@ export default function App() {
           sourceModules={document.bindings.map((b) => b.module)}
           editingModule={editingModule}
           edit={edit}
+          assess={assess}
           selected={selected}
           select={setSelected}
           newPatch={() => requestReplacement({ kind: 'new' })}
