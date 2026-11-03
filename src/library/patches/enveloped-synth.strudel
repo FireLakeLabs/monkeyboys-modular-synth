@@ -1,0 +1,6 @@
+// Original module exercise · MonkeyBoy’s Modular Synth contributors · MIT
+setcpm(112/4)
+$: note("c2 c2 eb2 g2 c3 bb2 g2 eb2")
+  .s("sawtooth").lpf(900).lpq(2)
+  .attack(0.01).decay(0.2).sustain(0.5).release(0.15)
+  .gain(0.25).postgain(0.8)

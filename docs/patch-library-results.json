@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-11-03T04:30:48.441Z",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "status": "passed",
+  "signals": [
+    {
+      "id": "enveloped-synth",
+      "rms": 0.005132759621428385,
+      "samples": 1413120
+    },
+    {
+      "id": "quantized-sequence",
+      "rms": 0.003595313798327711,
+      "samples": 4370432
+    },
+    {
+      "id": "lfo-sweep",
+      "rms": 0.002226430995585467,
+      "samples": 6045696
+    },
+    {
+      "id": "filter-envelope",
+      "rms": 0.002329305795791777,
+      "samples": 7458816
+    },
+    {
+      "id": "drum-machine",
+      "rms": 0.00596257880362039,
+      "samples": 9617408
+    },
+    {
+      "id": "echo-room",
+      "rms": 0.0012711505393983055,
+      "samples": 11483136
+    },
+    {
+      "id": "iter-jux",
+      "rms": 0.0013034619105032842,
+      "samples": 14630912
+    },
+    {
+      "id": "custom-helper",
+      "rms": 0.0011964982829213472,
+      "samples": 16982016
+    },
+    {
+      "id": "layered-sketch",
+      "rms": 0.0011183657250380303,
+      "samples": 19984384
+    }
+  ],
+  "stopFailure": "Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover",
+  "ui": [
+    "Nested collections expand/collapse; attribution, exact Export current and Cancel retain current draft/rack",
+    "Malformed library source reports failure while retaining draft/rack",
+    "All nine entries load exact source and matching rack without autoplay",
+    "Helper/CODE survives edits; reload restores original; export/reopen preserves source and changed rack look independently",
+    "Shared New confirmation installs silent MIX/OUT starter"
+  ],
+  "physicalListening": false
+}

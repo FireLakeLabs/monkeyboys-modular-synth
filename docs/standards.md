@@ -138,6 +138,14 @@ make a standards check pass.
 
 ## Maintaining standards
 
+The #45 library behavior tests require unique collection/patch IDs, active
+source-bound coverage of every shipped module, exact original source on load,
+and independently reopened saved rack state. Shared deterministic tests also
+cover preparation failure, confirmed Stop and cancellation. The separate
+[library browser check](patch-library.md#browser-verification) verifies actual
+dialog interactions, exports, loading and real-engine PCM; it needs browser/audio
+and external sample resources and is not part of the shared CI gate.
+
 The #44 reader placement regressions use the exact reported CODE/CV source to
 check fixed-rail validity, exact executable source and saved rack identity
 separately, plus reconciliation and overflowing mixer buses. Rail width lives in

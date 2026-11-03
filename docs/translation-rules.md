@@ -134,6 +134,11 @@ See [engine findings](engine-spike.md) for runtime evidence and limitations.
 
 ## Reading code
 
+Built-in [library patches](patch-library.md) use this same reader, preserving
+exact original source, opaque helpers and CODE. Parse and validate before the
+guarded Stop/replacement; install source and rack atomically after confirmed Stop,
+without source regeneration or autoplay.
+
 The production API is `read(source): SourceDocument` in `src/reader/`, with the
 graph at `document.patch`. `generate(document)` returns retained source;
 `generate(document.patch)` writes a new rack-owned file and is not an imported

@@ -59,6 +59,12 @@ A module’s category colour is used for its dot on the panel and for the code i
 
 ## Interaction policy
 
+- **Patch library (#45):** a top-bar modal browser with nested, collapsible
+  collections and explicit patch selection/loading. The initial repository-owned
+  collection includes module exercises; personal library editing, accounts and
+  sharing remain later. Loading uses the guarded workspace replacement path and
+  leaves audio stopped. See [entry and loading contract](patch-library.md).
+
 Owner choices for #9–#12, approved 2 November 2026. The
 [interaction handoff](interaction-proposal.md) gives detailed flows and remaining
 technical limits; [interaction evidence](interaction-verification.md) records

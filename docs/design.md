@@ -39,6 +39,11 @@ The green **Locked** and blue **V1 scope** notes on the canvas match [`decisions
 
 ## App chrome
 
+The top-bar Patch library opens the nested collection browser from #45. It uses
+the existing dark surfaces, orange primary action and Barlow panel typography.
+The module picker stays alongside the rack. See the
+[library interaction contract and observed layouts](patch-library.md).
+
 | Token         | Value                                |
 | ------------- | ------------------------------------ |
 | Background    | `#101113`                            |

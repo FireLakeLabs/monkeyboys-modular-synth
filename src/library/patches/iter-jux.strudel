@@ -1,0 +1,5 @@
+// Original module exercise · MonkeyBoy’s Modular Synth contributors · MIT
+setcpm(104/4)
+$: note("c4 eb4 g4 bb4 g4 eb4").s("sine")
+  .iter(3).jux(x => x.fast(2))
+  .gain(0.2).postgain(0.8)

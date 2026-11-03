@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { LOOK_LABELS, looksFor } from '../modules/looks'
 import { LOOK_LAYOUT } from '../looks/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
@@ -50,15 +50,14 @@ export function Rack({
   selected,
   select,
   newPatch,
+  replacementPrompt,
   cancelReplacement,
-  draft,
   locked,
   showCode,
   sourceModules,
   editingModule,
 }: {
   patch: Patch
-  draft: string
   locked: boolean
   showCode: (id: string) => void
   editingModule: string | null
@@ -66,7 +65,8 @@ export function Rack({
   edit: RackEdit
   selected: string | null
   select: (id: string | null) => void
-  newPatch: () => Promise<boolean>
+  newPatch: () => void
+  replacementPrompt: ReactNode
   cancelReplacement: () => void
 }) {
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null)
@@ -90,7 +90,6 @@ export function Rack({
   )
   const [selectedOutput, setSelectedOutput] = useState<string | null>(null)
   const wireGesture = useRef<{ x: number; y: number; dragged: boolean } | null>(null)
-  const [confirmNew, setConfirmNew] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const routed = routedModules(patch)
   const rows = rackRows(patch)
@@ -155,7 +154,6 @@ export function Rack({
       if (event.key === 'Escape') {
         cancel()
         setMenu(null)
-        setConfirmNew(false)
         cancelReplacement()
         setDeleteId(null)
         setMessage('Cancelled')
@@ -268,7 +266,7 @@ export function Rack({
             type="button"
             onClick={() => {
               cancelReplacement()
-              setConfirmNew(true)
+              newPatch()
             }}
           >
             New patch
@@ -599,49 +597,7 @@ export function Rack({
             </button>
           )}
         </div>
-        {confirmNew && (
-          <fieldset className="replace-prompt">
-            <legend>Replace this patch?</legend>
-            <button
-              type="button"
-              ref={(element) => element?.focus()}
-              onClick={() => {
-                cancelReplacement()
-                setConfirmNew(false)
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                const url = URL.createObjectURL(new Blob([draft], { type: 'text/plain' }))
-                const link = document.createElement('a')
-                link.href = url
-                link.download = 'monkeyboy.strudel'
-                link.click()
-                setTimeout(() => URL.revokeObjectURL(url), 1000)
-              }}
-            >
-              Export current
-            </button>
-            <button
-              type="button"
-              onClick={async () => {
-                if (await newPatch()) {
-                  select(null)
-                  cancel()
-                  setSelectedCable(null)
-                  setSelectedOutput(null)
-                  setConfirmNew(false)
-                  setMessage('New silent patch')
-                }
-              }}
-            >
-              Replace patch
-            </button>
-          </fieldset>
-        )}
+        {replacementPrompt}
         {deleteId && !locked && (
           <fieldset className="replace-prompt">
             <legend>
