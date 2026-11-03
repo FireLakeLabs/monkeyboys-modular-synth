@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { InitStrudelOptions } from '@strudel/web'
 
 const web = vi.hoisted(() => ({
@@ -14,6 +14,14 @@ const web = vi.hoisted(() => ({
 }))
 vi.mock('@strudel/web', () => ({
   ...web,
+  Pattern: class {
+    query: (state: unknown) => unknown[]
+    _steps: unknown
+    constructor(query: (state: unknown) => unknown[], steps?: unknown) {
+      this.query = query
+      this._steps = steps
+    }
+  },
   getAudioContext: () => ({ resume: web.resume, currentTime: 10 }),
   getSuperdoughAudioController: () => ({
     output: {
@@ -26,6 +34,8 @@ vi.mock('@strudel/web', () => ({
     },
   }),
 }))
+
+afterEach(() => vi.unstubAllGlobals())
 
 beforeEach(() => {
   vi.resetModules()
@@ -85,28 +95,130 @@ describe('engine boundary', () => {
     expect(web.evaluate).toHaveBeenCalledTimes(1)
   })
 
-  it('stops after a play whose evaluation is still pending', async () => {
-    let finishEvaluation = () => {}
-    const evaluating = new Promise<void>((resolve) => {
-      finishEvaluation = resolve
+  it('confirms Stop without waiting for evaluation and rejects its later pattern install', async () => {
+    let options: InitStrudelOptions | undefined
+    web.initStrudel.mockImplementation(async (next) => {
+      options = next
     })
-    let playing = false
+    let finish = () => {}
+    const held = new Promise<void>((resolve) => {
+      finish = resolve
+    })
+    let scheduled = false
     web.evaluate.mockImplementation(async () => {
-      await evaluating
-      playing = true
+      await held
+      options?.editPattern?.({ query: () => [], _steps: undefined })
+      scheduled = true
     })
     web.hush.mockImplementation(() => {
-      playing = false
+      scheduled = false
     })
     const { play, stop } = await import('./engine')
-    const starting = play('s("sine")')
+    const starting = play('pending code')
+    const cancelled = expect(starting).rejects.toThrow(/cancelled/i)
     await vi.waitFor(() => expect(web.evaluate).toHaveBeenCalled())
-    const stopping = stop()
-    await Promise.resolve()
-    finishEvaluation()
-    await Promise.all([starting, stopping])
-    expect(playing).toBe(false)
+    await stop()
+    await cancelled
+    expect(scheduled).toBe(false)
+    await expect(play('new code')).rejects.toThrow(/previous evaluation/i)
+    finish()
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(scheduled).toBe(false)
+    web.evaluate.mockResolvedValue({})
+    await expect(play('new code')).resolves.toBeUndefined()
   })
+
+  it('invalidates queued plays as soon as Stop is requested', async () => {
+    const { play, stop } = await import('./engine')
+    const first = play('first')
+    const second = play('second')
+    const rejected = Promise.all([
+      expect(first).rejects.toThrow(/cancelled/i),
+      expect(second).rejects.toThrow(/cancelled/i),
+    ])
+    await stop()
+    await rejected
+    expect(web.evaluate).not.toHaveBeenCalled()
+  })
+
+  it('prevents a cancelled pattern from producing events even in the scheduler start gap', async () => {
+    let options: InitStrudelOptions | undefined
+    let query: ((state: unknown) => unknown[]) | undefined
+    web.initStrudel.mockImplementation(async (next) => {
+      options = next
+    })
+    web.evaluate.mockImplementation(async () => {
+      const pattern = options?.editPattern?.({ query: () => ['event'], _steps: undefined })
+      query = pattern ? (state) => pattern.query(state) : undefined
+    })
+    const { play, stop } = await import('./engine')
+    await play('sine')
+    expect(query?.({})).toEqual(['event'])
+    await stop()
+    expect(query?.({})).toEqual([])
+  })
+
+  it('reports observable resource/output logs without treating fetched bytes as decoded readiness', async () => {
+    const target = new EventTarget()
+    vi.stubGlobal('document', target)
+    const { play, subscribe, getResourceStatus } = await import('./engine')
+    const events: unknown[] = []
+    const unsubscribe = subscribe((event) => events.push(event))
+    expect(getResourceStatus()).toBe('unknown')
+    await play('sine')
+    expect(getResourceStatus()).toBe('registered')
+    for (const detail of [
+      null,
+      { message: 42 },
+      { message: '[eval] error: bad', type: 'error' },
+      { message: '[sampler] loaded', type: 'loaded-sample' },
+    ]) {
+      target.dispatchEvent(new CustomEvent('strudel.log', { detail }))
+    }
+    expect(
+      events.filter(
+        (event) =>
+          typeof event === 'object' && event && 'type' in event && event.type === 'failure',
+      ),
+    ).toEqual([])
+    target.dispatchEvent(
+      new CustomEvent('strudel.log', { detail: { message: '[getTrigger] error: decode failed' } }),
+    )
+    expect(events).toContainEqual({ type: 'failure', message: '[getTrigger] error: decode failed' })
+    expect(getResourceStatus()).toBe('failed')
+    unsubscribe()
+  })
+
+  it('allows Stop during initialization without later evaluating cancelled code', async () => {
+    let finish = () => {}
+    web.initStrudel.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        finish = resolve
+      }),
+    )
+    const { play, stop } = await import('./engine')
+    const starting = play('old code')
+    const rejected = expect(starting).rejects.toThrow(/cancelled/i)
+    await vi.waitFor(() => expect(web.initStrudel).toHaveBeenCalled())
+    await stop()
+    await rejected
+    finish()
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(web.evaluate).not.toHaveBeenCalled()
+    await play('new code')
+    expect(web.evaluate).toHaveBeenCalledExactlyOnceWith('new code')
+  })
+
+  it('reports hush failures and permits another Stop attempt', async () => {
+    const { play, stop } = await import('./engine')
+    await play('sine')
+    web.hush.mockImplementationOnce(() => {
+      throw new Error('hush failed')
+    })
+    await expect(stop()).rejects.toThrow(/hush failed/)
+    await expect(stop()).resolves.toBeUndefined()
+  })
+
   it('sets master volume on the output bus without evaluating or initializing while stopped', async () => {
     const { play, setVolume } = await import('./engine')
     await setVolume(0.25)

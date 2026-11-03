@@ -5,7 +5,13 @@ import type { Patch } from '../patch/types'
 import { createPlayback } from './playback'
 import * as engine from './engine'
 
-vi.mock('./engine', () => ({ play: vi.fn(), stop: vi.fn(), setVolume: vi.fn() }))
+vi.mock('./engine', () => ({
+  play: vi.fn(),
+  stop: vi.fn(),
+  setVolume: vi.fn(),
+  subscribe: vi.fn(),
+  getResourceStatus: () => 'unknown',
+}))
 
 beforeEach(() => {
   vi.resetAllMocks()
@@ -50,6 +56,24 @@ describe('patch playback', () => {
       error: null,
       scheduling: 'stopped',
     })
+  })
+
+  it('keeps explicit replay authoritative when a stopped evaluation rejects late', async () => {
+    let reject = (_error: Error) => {}
+    vi.mocked(engine.play).mockReturnValueOnce(
+      new Promise<void>((_resolve, fail) => {
+        reject = fail
+      }),
+    )
+    const playback = createPlayback(demoPatch())
+    const starting = playback.play()
+    await vi.waitFor(() => expect(engine.play).toHaveBeenCalledTimes(1))
+    await playback.stop()
+    const replay = playback.play()
+    reject(new Error('cancelled old evaluation'))
+    await Promise.all([starting, replay])
+    expect(playback.getSnapshot()).toMatchObject({ status: 'playing', error: null })
+    expect(engine.play).toHaveBeenCalledTimes(2)
   })
 
   it('reports stopping with unknown scheduling while failure recovery is pending', async () => {
@@ -153,7 +177,7 @@ describe('patch playback', () => {
     expect(playback.getSnapshot().status).toBe('playing')
   })
 
-  it('Stop cancels queued edits, waits for active evaluation, and permits explicit replay', async () => {
+  it('Stop cancels queued edits, bypasses active evaluation, and permits explicit replay', async () => {
     const patch = demoPatch()
     const playback = createPlayback(patch)
     const held = deferred()
@@ -164,7 +188,7 @@ describe('patch playback', () => {
     const stopping = playback.stop()
     const stoppedEdit = playback.update(changed(patch, 'vcf', 'cutoff', 4000))
     expect(playback.getSnapshot().status).toBe('stopping')
-    expect(engine.stop).not.toHaveBeenCalled()
+    expect(engine.stop).toHaveBeenCalledTimes(1)
     held.resolve()
     await Promise.all([starting, editing, stopping, stoppedEdit])
     expect(engine.play).toHaveBeenCalledTimes(1)
@@ -217,24 +241,44 @@ describe('patch playback', () => {
     })
   })
 
-  it('never confirms Stop or accepts replacement while evaluation has not settled', async () => {
+  it('confirms Stop and allows replacement while evaluation has not settled', async () => {
     const { prepareReplacement } = await import('../workspace/open')
     const held = deferred()
     vi.mocked(engine.play).mockReturnValueOnce(held.promise)
     const playback = createPlayback(demoPatch())
     const starting = playback.play()
     await vi.waitFor(() => expect(engine.play).toHaveBeenCalledTimes(1))
-    let replaced = false
-    const replacing = prepareReplacement(async () => 'replacement', playback).then(() => {
-      replaced = true
-    })
-    await vi.waitFor(() => expect(playback.getSnapshot().status).toBe('stopping'))
-    expect(replaced).toBe(false)
-    expect(playback.getSnapshot().scheduling).toBe('unknown')
-    held.resolve()
-    await Promise.all([starting, replacing])
-    expect(replaced).toBe(true)
+    await expect(prepareReplacement(async () => 'replacement', playback)).resolves.toBe(
+      'replacement',
+    )
     expect(playback.getSnapshot().scheduling).toBe('stopped')
+    held.resolve()
+    await starting
+    expect(playback.getSnapshot().status).toBe('stopped')
+  })
+
+  it('surfaces late engine failures without inventing source ownership and requires explicit Play', async () => {
+    let report: ((event: engine.EngineEvent) => void) | undefined
+    vi.mocked(engine.subscribe).mockImplementation((listener) => {
+      report = listener
+      return () => {}
+    })
+    const original = demoPatch()
+    const playback = createPlayback(original)
+    const unsubscribe = playback.subscribe(() => {})
+    await playback.play()
+    report?.({ type: 'failure', message: 'sound missing' })
+    await vi.waitFor(() => expect(playback.getSnapshot().status).toBe('error'))
+    expect(playback.getSnapshot()).toMatchObject({
+      errorSource: null,
+      scheduling: 'stopped',
+      error: expect.stringContaining('sound missing'),
+    })
+    await playback.update(changed(original, 'vcf', 'cutoff', 4000))
+    expect(engine.play).toHaveBeenCalledTimes(1)
+    await playback.play()
+    expect(playback.getSnapshot().status).toBe('playing')
+    unsubscribe()
   })
 
   it('retains work edited while a replacement waits for Stop', async () => {

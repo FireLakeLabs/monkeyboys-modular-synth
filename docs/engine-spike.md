@@ -9,6 +9,11 @@ The production #4 integration now uses this adapter; see
 volume, structural resets and the remaining listening limits. Findings below
 record the earlier spike rather than the current integration's status.
 
+The #36 [audio recovery contract](audio-recovery.md) now supersedes this spike's
+reporting and serialized-Stop limits. It records the installed log channel,
+guarded cancellation, source ownership, browser recovery and remaining arbitrary
+JavaScript boundary.
+
 ## Reproduce
 
 Use `.node-version`, `npm ci`, then `npm run dev`. Open

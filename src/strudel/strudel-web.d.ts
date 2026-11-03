@@ -1,8 +1,17 @@
 // @strudel/web ships without TypeScript types. Declare only what the app uses.
 declare module '@strudel/web' {
+  /** Minimal installed core pattern surface used by the scheduling guard. */
+  export class Pattern {
+    constructor(query: (state: unknown) => unknown[], steps?: unknown)
+    query(state: unknown): unknown[]
+    _steps: unknown
+  }
   export interface InitStrudelOptions {
     /** Runs before the first evaluation; typically loads samples. */
     prebake?: () => unknown
+    /** Version-specific guard immediately before scheduler installation. */
+    editPattern?: (pattern: Pattern) => Pattern
+    onToggle?: (started: boolean) => void
     /** The upstream evaluator catches errors unless this callback rethrows. */
     onEvalError?: (error: unknown) => void
   }

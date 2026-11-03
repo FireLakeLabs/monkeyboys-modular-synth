@@ -8,6 +8,7 @@ import * as engine from './engine'
 export interface PlaybackState {
   status: 'stopped' | 'starting' | 'playing' | 'applying' | 'stopping' | 'error'
   scheduling: 'stopped' | 'scheduled' | 'unknown'
+  resources: engine.ResourceStatus
   error: string | null
   /** Diagnostic ownership only; runtime stack locations are not mapped to this source. */
   errorSource: string | null
@@ -46,12 +47,15 @@ export function createPlayback(initial: Patch | SourceDocument) {
     scheduling: 'stopped',
     error: null,
     errorSource: null,
+    resources: engine.getResourceStatus(),
   }
   let requested = false
   let revision = 0
+  let intent = 0
   let sourceRevision = 0
   let pending = Promise.resolve()
   const listeners = new Set<() => void>()
+  let unsubscribeEngine: (() => void) | undefined
   function publish(
     status: PlaybackState['status'],
     error: string | null = null,
@@ -62,7 +66,7 @@ export function createPlayback(initial: Patch | SourceDocument) {
         ? 'stopped'
         : 'unknown',
   ) {
-    state = { status, scheduling, error, errorSource }
+    state = { ...state, status, scheduling, error, errorSource }
     listeners.forEach((listener) => listener())
   }
   function enqueue(action: () => Promise<void>) {
@@ -72,8 +76,37 @@ export function createPlayback(initial: Patch | SourceDocument) {
   function message(error: unknown) {
     return error instanceof Error ? error.message : String(error)
   }
+  async function fail(detail: string, source: string | null) {
+    accepted = undefined
+    intent++
+    requested = false
+    const recovery = ++revision
+    publish('stopping', detail, source)
+    try {
+      await engine.stop()
+      if (recovery === revision)
+        publish('error', `Scheduling stopped. ${detail}`, source, 'stopped')
+    } catch (stopError) {
+      if (recovery === revision)
+        publish(
+          'error',
+          `Audio state unknown — Stop failed. ${detail}; ${message(stopError)}`,
+          source,
+        )
+    }
+  }
+  function onEngineEvent(event: engine.EngineEvent) {
+    if (event.type === 'resources') {
+      state = { ...state, resources: event.status }
+      listeners.forEach((listener) => listener())
+    } else {
+      // Upstream late logs carry neither a revision nor a source range.
+      fail(`Audio resource/output failure. ${event.message}`, null).catch(() => {})
+    }
+  }
   function apply() {
     const current = ++revision
+    const operationIntent = intent
     const next = patch
     publish(accepted && requested ? 'applying' : 'starting')
     return enqueue(async () => {
@@ -87,38 +120,30 @@ export function createPlayback(initial: Patch | SourceDocument) {
             resetEffects: accepted?.topology !== next.topology,
           })
         }
+        if (!requested || operationIntent !== intent) return
         accepted = next
         if (requested && current === revision) publish('playing')
       } catch (error) {
-        accepted = undefined
-        // A newer manual Stop already owns recovery and its final status.
-        if (!requested) return
-        // A surfaced failure can leave the old pattern running or partially change tempo.
-        requested = false
-        const recovery = ++revision
-        const detail = `Could not start or apply audio. ${message(error)}`
-        publish('stopping', detail, next.code)
-        try {
-          await engine.stop()
-          if (recovery === revision)
-            publish('error', `Scheduling stopped. ${detail}`, next.code, 'stopped')
-        } catch (stopError) {
-          if (recovery === revision)
-            publish(
-              'error',
-              `Audio state unknown — Stop failed. ${message(error)}; ${message(stopError)}`,
-              next.code,
-            )
-        }
+        // Stop/replay owns a new intent, even if the abandoned work rejects later.
+        if (!requested || operationIntent !== intent) return
+        await fail(`Could not start or apply audio. ${message(error)}`, next.code)
       }
     })
   }
   return {
     getSnapshot: () => state,
     subscribe: (listener: () => void) => {
+      if (!listeners.size) {
+        unsubscribeEngine = engine.subscribe(onEngineEvent)
+        state = { ...state, resources: engine.getResourceStatus() }
+      }
       listeners.add(listener)
       return () => {
         listeners.delete(listener)
+        if (!listeners.size) {
+          unsubscribeEngine?.()
+          unsubscribeEngine = undefined
+        }
       }
     },
     update(next: Patch | SourceDocument): Promise<void> {
@@ -143,17 +168,19 @@ export function createPlayback(initial: Patch | SourceDocument) {
       })
     },
     play(): Promise<void> {
+      intent++
       requested = true
       // A stopped scheduler needs evaluation even if its source is unchanged.
       accepted = undefined
       return apply()
     },
     stop(): Promise<void> {
+      intent++
       requested = false
       const current = ++revision
       const { error, errorSource } = state
       publish('stopping', error, errorSource)
-      return enqueue(async () => {
+      return (async () => {
         try {
           await engine.stop()
           if (current === revision) publish('stopped', error, errorSource)
@@ -165,7 +192,7 @@ export function createPlayback(initial: Patch | SourceDocument) {
               errorSource,
             )
         }
-      })
+      })()
     },
   }
 }

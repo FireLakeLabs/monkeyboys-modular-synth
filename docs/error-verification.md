@@ -2,9 +2,11 @@
 
 Audited 2 November 2026. #12 owns the workspace presentation, replacement and
 acceptance evidence; [#36](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/36)
-owns the engine's remaining reporting/cancellation implementation. **#12 remains
-open pending #36's resource/output and recovery results.** This audit does not
-claim that the remaining engine criteria passed.
+owns the engine reporting/cancellation implementation. The subsequent
+[#36 recovery audit](audio-recovery.md) and [run data](audio-recovery-results.json)
+resolve the engine gaps below and rerun this browser suite. The original matrix
+is retained as the #12 baseline; its #36 gaps describe that earlier adapter,
+not the current recovery contract.
 
 ## Reproduce
 

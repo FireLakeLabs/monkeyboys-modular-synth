@@ -129,9 +129,10 @@ the original crash after an audio failure and verifies that incomplete source,
 Export and Stop remain available. See [error acceptance](error-verification.md).
 This browser check is a narrow exception to the shared local/CI gate: it requires
 provisioned Chromium and its real-engine group reaches external sample sources.
-It currently runs separately from `npm run check`; CI automation of the browser
-fixtures remains a #12 acceptance gap until browser provisioning and network
-isolation are added. The deterministic transport regressions do run in the shared
+It currently runs separately from `npm run check`; The [#36 audit](audio-recovery.md) adds real resource/output errors,
+scheduler Stop failure, pending evaluation recovery and fresh-context activation;
+CI automation remains a follow-up until browser provisioning and network isolation
+are added. The deterministic transport regressions do run in the shared
 gate. Do not infer render coverage from those unit tests.
 
 Use [correct](../.agents/skills/correct/SKILL.md) for a correction that reveals a

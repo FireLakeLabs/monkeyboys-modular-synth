@@ -62,6 +62,8 @@ export async function stop() {
   if (state.stop === 'pending') await new Promise(resolve => { state.releaseStop = resolve });
 }
 export async function setVolume() {}
+export const getResourceStatus = () => 'unknown';
+export const subscribe = () => () => {};
 `
 try {
   const context = await browser.newContext({ viewport: { width: 1600, height: 1000 } })
@@ -191,6 +193,7 @@ try {
 
   await page.evaluate(() => {
     window.audioFixture.play = 'pending'
+    window.audioFixture.stop = 'pending'
     window.audioFixture.release = null
   })
   await page.getByRole('button', { name: 'Play', exact: true }).click()
@@ -207,7 +210,11 @@ try {
   )
   assert.match(await source(page).inputValue(), /work typed during Stop/)
   await page.screenshot({ path: `${output}/pending.png` })
-  await page.evaluate(() => window.audioFixture.release())
+  await page.evaluate(() => {
+    window.audioFixture.release()
+    window.audioFixture.releaseStop()
+    window.audioFixture.stop = 'ok'
+  })
   await waitStatus(page, 'Stopped')
   await page.waitForFunction(() =>
     document.querySelector('.code')?.textContent.includes('Replacement cancelled'),
@@ -237,6 +244,7 @@ try {
   for (const action of ['Cancel', 'Escape']) {
     await page.evaluate(() => {
       window.audioFixture.play = 'pending'
+      window.audioFixture.stop = 'pending'
       window.audioFixture.release = null
     })
     const before = await source(page).inputValue()
@@ -247,7 +255,11 @@ try {
     await waitStatus(page, 'Stopping… · audio state unknown')
     if (action === 'Escape') await page.keyboard.press('Escape')
     else await page.getByRole('button', { name: 'Cancel', exact: true }).click()
-    await page.evaluate(() => window.audioFixture.release())
+    await page.evaluate(() => {
+      window.audioFixture.release()
+      window.audioFixture.releaseStop()
+      window.audioFixture.stop = 'ok'
+    })
     await waitStatus(page, 'Stopped')
     assert.equal(await source(page).inputValue(), before)
   }
@@ -289,6 +301,11 @@ try {
   const audio = await real.newPage()
   await audio.goto(base)
   await code(audio, '$: note("c3 e3").s("sine").gain(0.15)\n')
+  assert.match(
+    await audio.locator('.audio-note').textContent(),
+    /unknown; audio has not initialized/,
+  )
+  assert.equal(await audio.evaluate(() => window.probes.length), 0)
   let failManifest = true
   await real.route('**/strudel.json', (route) =>
     failManifest ? route.fulfill({ status: 503, body: 'manifest fixture' }) : route.continue(),
@@ -342,6 +359,14 @@ try {
   await faults.addInitScript(() => {
     // oxlint-disable-next-line typescript/unbound-method -- Invoke with the original AudioContext receiver below.
     const resume = AudioContext.prototype.resume
+    const clear = globalThis.clearInterval
+    globalThis.clearInterval = (id) => {
+      if (globalThis.failNextStop) {
+        globalThis.failNextStop = false
+        throw new Error('injected scheduler Stop failure')
+      }
+      return clear(id)
+    }
     let blocked = true
     AudioContext.prototype.resume = function () {
       if (blocked) {
@@ -372,16 +397,34 @@ try {
     'real adapter resume rejection and construction throw retain work; retry/correction needs explicit Play',
   )
 
+  await fault.evaluate(() => {
+    globalThis.failNextStop = true
+  })
+  await fault.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await waitStatus(fault, 'Audio state unknown')
+  assert.match(
+    await fault.locator('.error details').textContent(),
+    /injected scheduler Stop failure/,
+  )
+  await fault.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await waitStatus(fault, 'Stopped')
+  await fault.getByRole('button', { name: 'Play', exact: true }).click()
+  await waitStatus(fault, 'Pattern scheduled')
+  pass('engine', 'real scheduler Stop failure reports unknown state; explicit Stop retry recovers')
+
   const missing = fault.waitForEvent('console', {
     predicate: (message) => /monkeyboy_missing_fixture.*not found/.test(message.text()),
   })
   await code(fault, '$: s("monkeyboy_missing_fixture")\n')
   await missing
-  await waitStatus(fault, 'Pattern scheduled')
-  assert.match(await fault.locator('.audio-note').textContent(), /Sample status unavailable/)
+  await waitStatus(fault, 'Scheduling stopped after error')
+  assert.match(
+    await fault.locator('.audio-note').textContent(),
+    /resource\/output failure observed/,
+  )
   pass(
     'engine',
-    'missing sample logs upstream; adapter exposes no resource diagnosis (known #36 gap)',
+    'missing sample is reported in a workspace banner and automatically stops scheduling',
   )
   let decodeRequests = 0
   await faults.route('**/*.{wav,mp3,ogg}', (route) => {
@@ -392,48 +435,91 @@ try {
     predicate: (message) => /decode audio|decoding|EncodingError/i.test(message.text()),
   })
   await code(fault, '$: s("bd")\n')
+  await fault.getByRole('button', { name: 'Play', exact: true }).click()
   await decode
   assert(decodeRequests > 0)
-  assert.match(await fault.locator('.audio-note').textContent(), /Sample status unavailable/)
+  await waitStatus(fault, 'Scheduling stopped after error')
+  assert.match(
+    await fault.locator('.audio-note').textContent(),
+    /resource\/output failure observed/,
+  )
   pass(
     'engine',
-    'undecodable sample reproduced by network fault; readiness/retry remains unobservable to workspace (#36)',
+    'undecodable sample reports failure; registered manifests never claim verified decoding',
   )
   await code(
     fault,
-    '$: note("c3").s("sine").onTrigger(() => { globalThis.lateOutputFixture = true; throw new Error("late output fixture") }, false)\n',
+    '$: note("c3").s("sine").onTrigger(() => { globalThis.lateOutputFixture = true; throw new Error(\'late output fixture\') }, false)\n',
   )
+  await fault.getByRole('button', { name: 'Play', exact: true }).click()
   await fault.waitForFunction(() => globalThis.lateOutputFixture === true)
-  await waitStatus(fault, 'Pattern scheduled')
+  await waitStatus(fault, 'Scheduling stopped after error')
+  assert.match(await fault.locator('.error details').textContent(), /late output fixture/)
   await fault.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
   await waitStatus(fault, 'Stopped')
-  pass(
-    'engine',
-    'late output throw is logged upstream with no adapter banner; manual Stop works (#36 gap)',
-  )
+  pass('engine', 'late output throw reaches workspace banner and automatically stops scheduling')
   await faults.close()
 
   const hung = await browser.newContext({ ignoreHTTPSErrors: true })
   const hang = await hung.newPage()
   await hang.goto(base)
-  await code(hang, '// intentionally pending\nnew Promise(() => {})\n')
+  await code(
+    hang,
+    '// intentionally pending\nglobalThis.hungEvaluationStarted = true; new Promise(() => {})\n',
+  )
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(hang, 'Enabling audio / starting…')
+  await hang.waitForFunction(() => globalThis.hungEvaluationStarted === true)
   await hang.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
-  await waitStatus(hang, 'Stopping… · audio state unknown')
-  await hang.waitForFunction(
-    () => document.querySelector('.code')?.textContent.includes('Still waiting for audio'),
-    undefined,
-    { timeout: 15_000 },
-  )
+  await waitStatus(hang, 'Stopped')
   const hungDraft = await source(hang).inputValue()
   const hungDownload = hang.waitForEvent('download')
   await hang.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await hungDownload).path(), 'utf8'), hungDraft)
-  assert.equal(await status(hang).textContent(), 'Stopping… · audio state unknown')
+  assert.equal(await status(hang).textContent(), 'Stopped')
+  await code(hang, '$: note("c3").s("sine")\n')
+  await hang.getByRole('button', { name: 'Play', exact: true }).click()
+  await waitStatus(hang, 'Scheduling stopped after error')
+  assert.match(
+    await hang.locator('.error details').textContent(),
+    /previous evaluation is still pending/,
+  )
+  await hang.reload()
+  await code(hang, '$: note("c3").s("sine")\n')
+  await hang.getByRole('button', { name: 'Play', exact: true }).click()
+  await waitStatus(hang, 'Pattern scheduled')
   pass(
     'engine',
-    'real never-settling evaluation leaves Stop pending, warns after 10s, and allows exact draft export; context disposal is recovery',
+    'real never-settling evaluation permits immediate Stop and exact export; replay refused until reload, then explicit Play succeeds',
+  )
+  await hang.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await waitStatus(hang, 'Stopped')
+  await code(
+    hang,
+    `new Promise(resolve => { globalThis.finishEvaluation = () => resolve(note('c3').s('sine')) })\n`,
+  )
+  await hang.getByRole('button', { name: 'Play', exact: true }).click()
+  await hang.waitForFunction(() => typeof globalThis.finishEvaluation === 'function')
+  await hang.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await waitStatus(hang, 'Stopped')
+  let starts = 0
+  hang.on('console', (message) => {
+    if (message.text().includes('[cyclist] start')) starts++
+  })
+  const abandoned = hang.waitForEvent('console', {
+    predicate: (message) =>
+      /\[eval\] error: Audio operation cancelled by Stop/.test(message.text()),
+  })
+  await hang.evaluate(() => globalThis.finishEvaluation())
+  await abandoned
+  assert.equal(starts, 0)
+  assert.equal(await status(hang).textContent(), 'Stopped')
+  await code(hang, '$: note("d3").s("sine")\n')
+  await hang.getByRole('button', { name: 'Play', exact: true }).click()
+  await waitStatus(hang, 'Pattern scheduled')
+  pass(
+    'engine',
+    'settled abandoned evaluation cannot restart its scheduler; explicit Play can recover without reload',
   )
   await hung.close()
 } finally {
