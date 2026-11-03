@@ -1,5 +1,6 @@
 import { parse, type CallExpression, type Expression } from 'acorn'
 import { descriptor, type Scope } from '../codegen/layout'
+import { OUT } from '../modules/catalog'
 import type { Span } from './types'
 
 export interface Call extends Span {
@@ -104,7 +105,7 @@ export function parseSource(source: string): {
       if (
         expression.type === 'CallExpression' &&
         expression.callee.type === 'Identifier' &&
-        ['setcpm', 'setcps'].includes(expression.callee.name)
+        OUT.strudel.includes(expression.callee.name)
       )
         add(expression, 'tempo')
       else if (

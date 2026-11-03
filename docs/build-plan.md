@@ -28,6 +28,11 @@ module exercise patches. It reuses the source-preserving reader and shared
 New/Open replacement confirmation, validates before Stop, and never autoplays.
 See [adding entries, loading/persistence and browser verification](patch-library.md).
 
+[Issue #46](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/46)
+adds the exact supplied Switch Angel/cosimo trance demo under Complete patches →
+Trance. It also reads the engine's `setCpm` tempo alias without rewriting it.
+See [source, pinned-engine compatibility and separate verification](trance-demo.md).
+
 ## Activity and source feedback
 
 [Issue #37](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/37)

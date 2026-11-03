@@ -40,8 +40,9 @@ To add a patch:
 
 The nine seeds cover an amplitude envelope, degree quantization, filter and
 amplitude LFOs, a filter envelope, a TR909 drum grid, delay/reverb, ITER/JUX,
-a custom helper/CODE fragment, and a three-voice mixer. The requested trance
-composition remains the dependent content issue's scope.
+a custom helper/CODE fragment, and a three-voice mixer. The attributed
+[Switch Angel trance demo](trance-demo.md) from #46 is an additional complete
+patch under Complete patches → Trance, bundled in its exact supplied variant.
 
 ## Loading and persistence contract
 

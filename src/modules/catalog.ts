@@ -433,7 +433,7 @@ export const OUT: ModuleSpec = {
     { kind: 'knob', id: 'vol', label: 'VOL', min: 0, max: 1, step: 0.05, default: 0.8 },
   ],
   jacks: [{ id: 'in', label: 'IN', direction: 'in', signal: 'audio' }],
-  strudel: ['setcpm', 'setcps'],
+  strudel: ['setcpm', 'setCpm', 'setcps'],
   orderSensitive: false,
   unique: true,
 }

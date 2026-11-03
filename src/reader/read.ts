@@ -662,7 +662,11 @@ function project(
     let value = scalar(arg)
     if (arg?.type === 'BinaryExpression' && arg.operator === '/' && scalar(arg.right) === 4) {
       const bpm = arg.left.type === 'PrivateIdentifier' ? undefined : scalar(arg.left)
-      if (typeof bpm === 'number' && call.name === 'setcpm' && fits('out', 'bpm', bpm)) {
+      if (
+        typeof bpm === 'number' &&
+        call.name.toLowerCase() === 'setcpm' &&
+        fits('out', 'bpm', bpm)
+      ) {
         out.values['bpm'] = bpm
         bind(out, tempo, [0], literalControls('bpm', arg.left), { role: 'tempo' })
       }

@@ -316,7 +316,7 @@ Hardware · Utility · 8 HP · exactly one per rack
 | ---- | --- | ------ |
 | IN   | in  | audio  |
 
-Nothing plays unless the mixer (or a single voice) reaches OUT. **Reads** `setcpm(x)` (BPM = x × 4, or the literal `bpm/4` form) and `setcps(x)` (BPM = x × 240).
+Nothing plays unless the mixer (or a single voice) reaches OUT. **Reads** `setcpm(x)` and its pinned-engine alias `setCpm(x)` (BPM = x × 4, or the literal `bpm/4` form), and `setcps(x)` (BPM = x × 240). Imported spelling is preserved when editing BPM; new rack-owned code uses lowercase `setcpm`.
 
 ---
 
