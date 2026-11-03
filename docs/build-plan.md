@@ -176,3 +176,11 @@ boundaries; the #12 browser acceptance suite has been rerun against this contrac
 - **Layout block matching — decided (#14).** Stable IDs with conservative matching replace derived chain addresses. Ambiguous repeats auto-place; see [`patch-format.md`](patch-format.md#matching-rules). The reader/workspace now restore validated complete saved state, including disconnected modules and empty rails; see [saved-state evidence](reader-verification.md#saved-state) and [row persistence](interaction-verification.md#saved-rows-and-source-preservation).
 - **Sample sources (#2, decided).** Register pinned Dirt-Samples and tidal-drum-machines manifests on first engine use, with pinned audio bases. Audio files load lazily; use browser HTTP caching, with no app-managed offline cache. See [sample sources and failure behavior](engine-spike.md#samples-and-deployment).
 - **Types for `@strudel/web`.** The package ships without TypeScript types; `src/strudel/strudel-web.d.ts` declares the few functions used.
+
+## Palette and first-session collection (#79/#80)
+
+The palette groups catalog-owned Strudel call chips by category, with family
+badges and name/call filtering. The first library collection, Start here, follows
+the workshop’s four-stage order with original generator-style exercises and
+one-line try-this edits. Existing guarded loading and exact-source showcases keep
+their contracts. See [acceptance evidence](on-ramp-verification.md).

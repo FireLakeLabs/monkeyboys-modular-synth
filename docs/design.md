@@ -41,7 +41,10 @@ The green **Locked** and blue **V1 scope** notes on the canvas match [`decisions
 
 The top-bar Patch library opens the nested collection browser from #45. It uses
 the existing dark surfaces, orange primary action and Barlow panel typography.
-The module picker stays alongside the rack. See the
+The module picker stays alongside the rack. Its independently scrollable palette
+groups chips by the six categories, shows family badges and catalog-owned Strudel
+calls, and filters names/calls (#79). Labels wrap without ellipsis; rack module
+widths stay fixed. See the
 [library interaction contract and observed layouts](patch-library.md).
 
 The header owns the single Play/Stop control and a catalog-backed BPM readout.

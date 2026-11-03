@@ -14,6 +14,29 @@ function snapshot(status: PlaybackState['status']): PlaybackState {
 }
 
 describe('built-in patch library', () => {
+  it('starts with four rack-owned exercises in workshop order, each with a try-this and credit', () => {
+    const first = PATCH_LIBRARY[0]
+    if (!first || first.kind !== 'collection') throw new Error('Missing first collection')
+    expect(first.id).toBe('start-here')
+    expect(first.title).toBe('Start here')
+    const entries = libraryPatches(first.children)
+    expect(entries.map((entry) => entry.id)).toEqual([
+      'first-sounds',
+      'first-notes',
+      'first-effects',
+      'pattern-effects',
+    ])
+    for (const entry of entries) {
+      expect(entry.tryThis?.trim(), entry.id).toBeTruthy()
+      expect(entry.tryThis, entry.id).not.toContain('\n')
+      expect(entry.attribution.author).toContain('Original exercise')
+      expect(entry.attribution.url).toBe(`https://strudel.cc/workshop/${entry.id}/`)
+      const document = readLibraryPatch(entry)
+      expect(document.layout, entry.id).toBe('restored')
+      expect(document.source, entry.id).toBe(generate(document.patch))
+    }
+  })
+
   it('gives every nested collection and patch a stable unique ID', () => {
     const ids: string[] = []
     function visit(nodes: readonly LibraryNode[]) {

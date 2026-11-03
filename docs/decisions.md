@@ -8,7 +8,7 @@ Locked on 1 November 2026. Change these deliberately: update this file in the sa
 - **What it is:** a web app that is an entry point into both modular synthesis and the Strudel live-coding language. A patch and its Strudel code are two views of the same thing.
 - **Engine:** Strudel’s own engine (`@strudel/web`) in the browser.
 - **Licence:** see the project’s [MIT license](../LICENSE). Strudel is a separately licensed dependency under AGPL-3.0-or-later.
-- **Audience for v1:** no beginner aids at launch — no hints, no explainer cards. They can be added later.
+- **Audience for v1:** no beginner aids at launch — no hints, no explainer cards. They can be added later. **Strudel calls on palette chips are core product UI, not beginner aids** (#57/#79); each module shows catalog-owned syntax alongside its name and family.
 
 ## Module families
 
