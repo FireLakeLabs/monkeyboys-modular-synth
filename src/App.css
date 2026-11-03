@@ -278,6 +278,8 @@
   margin: 12px 0;
 }
 .code-actions button,
+.open-library,
+.replace-prompt button,
 .import-code,
 .code > button,
 .code .error button {

@@ -1,0 +1,6 @@
+// Original module exercise · MonkeyBoy’s Modular Synth contributors · MIT
+setcpm(116/4)
+$: note("c2 ~ c3 eb2 g2 ~ bb2 g2").s("square")
+  .lpf(450).lpq(3).lpenv(3)
+  .lpattack(0.01).lpdecay(0.3).lpsustain(0.2).lprelease(0.15)
+  .gain(0.2).postgain(0.8)

@@ -20,6 +20,14 @@ The reader/engine spikes and feature dependency order remain unchanged.
 6. **Looks (#7, implemented).** Layout rules and tokens for all ten looks in `src/looks/`, family-wide changes, and a module context menu with duplicate/show/delete. All 61 module/look combinations retain catalog widths; cables follow measured jack positions. See [video and browser evidence](workspace-verification.md).
 7. **Workspace polish (#8, implemented).** Editable fan-out names, source-bound layout writes, live code/rack editing, exact draft export/open, parser diagnostics and explicit runtime recovery. Imported literal and safe name edits preserve source; structural edits without a preservation plan are refused. See [contracts, videos and remaining engine limits](workspace-verification.md).
 
+## Built-in patch library
+
+[Issue #45](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/45)
+adds a modal browser of nested collections, exact source/attribution and nine
+module exercise patches. It reuses the source-preserving reader and shared
+New/Open replacement confirmation, validates before Stop, and never autoplays.
+See [adding entries, loading/persistence and browser verification](patch-library.md).
+
 ## Activity and source feedback
 
 [Issue #37](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/37)

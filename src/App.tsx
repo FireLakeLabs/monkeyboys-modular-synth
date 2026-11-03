@@ -19,10 +19,17 @@ import {
   sourceBody,
 } from './workspace/document'
 import { prepareReplacement } from './workspace/open'
+import { ReplacementPrompt } from './workspace/ReplacementPrompt'
+import { PatchLibrary } from './library/PatchLibrary'
+import { readLibraryPatch } from './library/load'
+import type { LibraryPatch } from './library/catalog'
 import { SourceEditor } from './workspace/SourceEditor'
 import './App.css'
 import './rack/Rack.css'
 import './looks/looks.css'
+
+type Replacement =
+  { kind: 'file'; file: File } | { kind: 'new' } | { kind: 'library'; entry: LibraryPatch }
 
 function Logo() {
   return (
@@ -51,7 +58,9 @@ export default function App() {
   const [playback] = useState(() => createPlayback(document))
   const audio = useSyncExternalStore(playback.subscribe, playback.getSnapshot)
   const [error, setError] = useState<string | null>(null)
-  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [pendingReplacement, setPendingReplacement] = useState<Replacement | null>(null)
+  const [libraryOpen, setLibraryOpen] = useState(false)
+  const [rackGeneration, setRackGeneration] = useState(0)
   const [replacing, setReplacing] = useState(false)
   const [slowAudio, setSlowAudio] = useState<typeof audio | null>(null)
   const workRevision = useRef(0)
@@ -75,7 +84,7 @@ export default function App() {
   const cancelReplacement = useCallback(() => {
     replacementRevision.current++
     setReplacing(false)
-    setPendingFile(null)
+    setPendingReplacement(null)
   }, [])
 
   function install(next: SourceDocument) {
@@ -171,6 +180,7 @@ export default function App() {
     const operation = ++replacementRevision.current
     const revision = workRevision.current
     setReplacing(true)
+    setError(null)
     try {
       const next = await prepareReplacement(
         load,
@@ -180,7 +190,8 @@ export default function App() {
       if (typeof next === 'string') changeDraft(next)
       else install(next)
       setSelected(null)
-      setPendingFile(null)
+      setPendingReplacement(null)
+      setRackGeneration((generation) => generation + 1)
       return true
     } catch (failure) {
       if (operation === replacementRevision.current)
@@ -189,6 +200,28 @@ export default function App() {
     } finally {
       if (operation === replacementRevision.current) setReplacing(false)
     }
+  }
+
+  function requestReplacement(replacement: Replacement) {
+    cancelReplacement()
+    setError(null)
+    setPendingReplacement(replacement)
+  }
+
+  async function confirmReplacement() {
+    const replacement = pendingReplacement
+    if (!replacement) return
+    const loaded = await replaceWork(async () => {
+      switch (replacement.kind) {
+        case 'file':
+          return replacement.file.text()
+        case 'new':
+          return fromPatch(starterPatch())
+        case 'library':
+          return readLibraryPatch(replacement.entry)
+      }
+    })
+    if (loaded) setLibraryOpen(false)
   }
 
   function showCode(id: string) {
@@ -220,6 +253,27 @@ export default function App() {
       audio.scheduling === 'stopped' ? 'Scheduling stopped after error' : 'Audio state unknown',
   }[audio.status]
 
+  const replacementPrompt = pendingReplacement && (
+    <ReplacementPrompt
+      title={
+        pendingReplacement.kind === 'new'
+          ? 'Replace this patch?'
+          : `Replace this patch with ${pendingReplacement.kind === 'file' ? pendingReplacement.file.name : pendingReplacement.entry.title}?`
+      }
+      action={
+        pendingReplacement.kind === 'new'
+          ? 'Replace patch'
+          : pendingReplacement.kind === 'file'
+            ? 'Open patch'
+            : 'Load patch'
+      }
+      replacing={replacing}
+      cancel={cancelReplacement}
+      exportCurrent={exportDraft}
+      confirm={confirmReplacement}
+    />
+  )
+
   return (
     <div className="app">
       <header className="topbar">
@@ -230,6 +284,17 @@ export default function App() {
             <span className="tagline">MODULAR SYNTH</span>
           </h1>
         </div>
+        <button
+          type="button"
+          className="open-library"
+          onClick={() => {
+            cancelReplacement()
+            setError(null)
+            setLibraryOpen(true)
+          }}
+        >
+          Patch library
+        </button>
         <output className="transport-status">{status}</output>
         <button
           type="button"
@@ -253,9 +318,8 @@ export default function App() {
 
       <main className="workspace">
         <Rack
-          key={locked ? 'locked' : 'ready'}
+          key={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
           patch={patch}
-          draft={draft}
           locked={locked || document.layout === 'invalid'}
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}
@@ -263,7 +327,8 @@ export default function App() {
           edit={edit}
           selected={selected}
           select={setSelected}
-          newPatch={() => replaceWork(async () => fromPatch(starterPatch()))}
+          newPatch={() => requestReplacement({ kind: 'new' })}
+          replacementPrompt={pendingReplacement?.kind === 'new' ? replacementPrompt : null}
           cancelReplacement={cancelReplacement}
         />
 
@@ -302,38 +367,14 @@ export default function App() {
                 onChange={(event) => {
                   const file = event.target.files?.[0]
                   if (file) {
-                    cancelReplacement()
-                    setPendingFile(file)
+                    requestReplacement({ kind: 'file', file })
                   }
                   event.target.value = ''
                 }}
               />
             </label>
           </div>
-          {pendingFile && (
-            <fieldset className="replace-prompt">
-              <legend>Replace this patch with {pendingFile.name}?</legend>
-              <button type="button" onClick={cancelReplacement}>
-                Cancel
-              </button>
-              <button type="button" onClick={exportDraft}>
-                Export current
-              </button>
-              <button
-                type="button"
-                disabled={replacing}
-                onClick={() => replaceWork(() => pendingFile.text())}
-              >
-                Open patch
-              </button>
-            </fieldset>
-          )}
-          {replacing && (
-            <output className="pending-note">
-              Waiting for confirmed Stop before replacing. Editing cancels replacement; current work
-              is retained.
-            </output>
-          )}
+          {pendingReplacement?.kind === 'file' && replacementPrompt}
           <SourceEditor
             editor={editor}
             source={draft}
@@ -437,6 +478,21 @@ export default function App() {
           )}
         </section>
       </main>
+      {libraryOpen && (
+        <PatchLibrary
+          close={() => {
+            cancelReplacement()
+            setLibraryOpen(false)
+          }}
+          requestLoad={(entry) => requestReplacement({ kind: 'library', entry })}
+          cancelReplacement={() => {
+            cancelReplacement()
+            setError(null)
+          }}
+          confirmation={pendingReplacement?.kind === 'library' ? replacementPrompt : null}
+          error={error}
+        />
+      )}
     </div>
   )
 }

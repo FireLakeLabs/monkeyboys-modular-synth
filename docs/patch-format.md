@@ -7,6 +7,11 @@ A patch has two equivalent forms:
 
 The code is the canonical saved form. Paste it into the Strudel REPL and it plays; paste it back into MonkeyBoy and the rack is restored.
 
+The built-in [patch library](patch-library.md) stores exact Strudel strings and
+collection/attribution metadata as repository data. Loading reads a fresh source
+document; editing never changes the built-in original. Export/reopen uses this
+same format. Collection nesting and browser selection do not enter rack metadata.
+
 ## In memory
 
 ```ts

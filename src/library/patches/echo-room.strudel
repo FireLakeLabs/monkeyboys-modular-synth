@@ -1,0 +1,5 @@
+// Original module exercise · MonkeyBoy’s Modular Synth contributors · MIT
+setcpm(96/4)
+$: note("c4 ~ eb4 g4 ~ bb4 ~ g4").s("triangle").gain(0.2)
+  .delay(0.3).delaytime(0.375).delayfeedback(0.35)
+  .room(0.25).roomsize(3).postgain(0.8)
