@@ -49,6 +49,7 @@ export function Rack({
   selected,
   select,
   newPatch,
+  cancelReplacement,
   draft,
   locked,
   showCode,
@@ -63,6 +64,7 @@ export function Rack({
   selected: string | null
   select: (id: string | null) => void
   newPatch: () => Promise<boolean>
+  cancelReplacement: () => void
 }) {
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null)
   const [allLooks, setAllLooks] = useState(false)
@@ -147,6 +149,7 @@ export function Rack({
         cancel()
         setMenu(null)
         setConfirmNew(false)
+        cancelReplacement()
         setDeleteId(null)
         setMessage('Cancelled')
       }
@@ -163,7 +166,7 @@ export function Rack({
       window.removeEventListener('pointerup', outsideDrop)
       window.removeEventListener('pointercancel', clearWire)
     }
-  }, [])
+  }, [cancelReplacement])
   function candidate(to: JackRef) {
     return wire ? assessConnection(patch, wire.from, to, wire.moving) : null
   }
@@ -254,7 +257,13 @@ export function Rack({
           <h2>
             RACK <small>{patch.modules.length} modules</small>
           </h2>
-          <button type="button" onClick={() => setConfirmNew(true)}>
+          <button
+            type="button"
+            onClick={() => {
+              cancelReplacement()
+              setConfirmNew(true)
+            }}
+          >
             New patch
           </button>
         </div>
@@ -582,7 +591,10 @@ export function Rack({
             <button
               type="button"
               ref={(element) => element?.focus()}
-              onClick={() => setConfirmNew(false)}
+              onClick={() => {
+                cancelReplacement()
+                setConfirmNew(false)
+              }}
             >
               Cancel
             </button>

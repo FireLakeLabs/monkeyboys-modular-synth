@@ -1,11 +1,24 @@
-import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import { Rack, type RackEdit } from './rack/Rack'
 import { starterPatch } from './rack/model'
 import { createPlayback } from './strudel/playback'
 import { tryRead } from './reader'
 import type { ReadResult, SourceDocument } from './reader/types'
-import { editDocument, fromPatch, replaceLayout, saveLayout } from './workspace/document'
-import { openFile } from './workspace/open'
+import {
+  editDocument,
+  fromPatch,
+  replaceLayout,
+  saveLayout,
+  sourceBody,
+} from './workspace/document'
+import { prepareReplacement } from './workspace/open'
 import './App.css'
 import './rack/Rack.css'
 import './looks/looks.css'
@@ -37,6 +50,11 @@ export default function App() {
   const [playback] = useState(() => createPlayback(document))
   const audio = useSyncExternalStore(playback.subscribe, playback.getSnapshot)
   const [error, setError] = useState<string | null>(null)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [replacing, setReplacing] = useState(false)
+  const [slowAudio, setSlowAudio] = useState<typeof audio | null>(null)
+  const workRevision = useRef(0)
+  const replacementRevision = useRef(0)
   const playing = ['starting', 'playing', 'applying'].includes(audio.status)
   const [selected, setSelected] = useState<string | null>(null)
   const current = useRef({ document, draft, phase })
@@ -45,8 +63,14 @@ export default function App() {
   const locked = phase !== 'readable'
   const patch = document.patch
   const selectedRanges = locked ? [] : document.bindings.filter((b) => b.module === selected)
+  const cancelReplacement = useCallback(() => {
+    replacementRevision.current++
+    setReplacing(false)
+    setPendingFile(null)
+  }, [])
 
   function install(next: SourceDocument) {
+    workRevision.current++
     current.current = { document: next, draft: next.source, phase: 'readable' }
     setDocument(next)
     setDraft(next.source)
@@ -57,11 +81,18 @@ export default function App() {
   }
 
   function changeDraft(source: string) {
+    workRevision.current++
     current.current = { ...current.current, draft: source, phase: 'editing' }
     setDraft(source)
     setPhase('editing')
     setDiagnostic(null)
   }
+
+  useEffect(() => {
+    if (!['starting', 'applying', 'stopping'].includes(audio.status)) return
+    const timer = setTimeout(() => setSlowAudio(audio), 10_000)
+    return () => clearTimeout(timer)
+  }, [audio])
 
   useEffect(() => {
     if (phase !== 'editing') return
@@ -125,12 +156,28 @@ export default function App() {
     }
   }
 
-  async function newPatch(): Promise<boolean> {
-    await playback.stop()
-    if (playback.getSnapshot().status !== 'stopped') return false
-    install(fromPatch(starterPatch()))
-    setSelected(null)
-    return true
+  async function replaceWork(load: () => Promise<string | SourceDocument>): Promise<boolean> {
+    const operation = ++replacementRevision.current
+    const revision = workRevision.current
+    setReplacing(true)
+    try {
+      const next = await prepareReplacement(
+        load,
+        playback,
+        () => operation === replacementRevision.current && revision === workRevision.current,
+      )
+      if (typeof next === 'string') changeDraft(next)
+      else install(next)
+      setSelected(null)
+      setPendingFile(null)
+      return true
+    } catch (failure) {
+      if (operation === replacementRevision.current)
+        setError(failure instanceof Error ? failure.message : String(failure))
+      return false
+    } finally {
+      if (operation === replacementRevision.current) setReplacing(false)
+    }
   }
 
   function showCode(id: string) {
@@ -154,11 +201,12 @@ export default function App() {
 
   const status = {
     stopped: 'Stopped',
-    starting: 'Starting…',
+    starting: 'Enabling audio / starting…',
     playing: 'Pattern scheduled',
     applying: 'Applying…',
-    stopping: 'Stopping…',
-    error: 'Playback error',
+    stopping: 'Stopping… · audio state unknown',
+    error:
+      audio.scheduling === 'stopped' ? 'Scheduling stopped after error' : 'Audio state unknown',
   }[audio.status]
 
   return (
@@ -203,7 +251,8 @@ export default function App() {
           edit={edit}
           selected={selected}
           select={setSelected}
-          newPatch={newPatch}
+          newPatch={() => replaceWork(async () => fromPatch(starterPatch()))}
+          cancelReplacement={cancelReplacement}
         />
 
         <section className="code" aria-label="Strudel code">
@@ -240,15 +289,39 @@ export default function App() {
                 accept=".strudel,.js,.txt"
                 onChange={(event) => {
                   const file = event.target.files?.[0]
-                  if (file)
-                    openFile(file, playback)
-                      .then(changeDraft)
-                      .catch((failure: unknown) => setError(String(failure)))
+                  if (file) {
+                    cancelReplacement()
+                    setPendingFile(file)
+                  }
                   event.target.value = ''
                 }}
               />
             </label>
           </div>
+          {pendingFile && (
+            <fieldset className="replace-prompt">
+              <legend>Replace this patch with {pendingFile.name}?</legend>
+              <button type="button" onClick={cancelReplacement}>
+                Cancel
+              </button>
+              <button type="button" onClick={exportDraft}>
+                Export current
+              </button>
+              <button
+                type="button"
+                disabled={replacing}
+                onClick={() => replaceWork(() => pendingFile.text())}
+              >
+                Open patch
+              </button>
+            </fieldset>
+          )}
+          {replacing && (
+            <output className="pending-note">
+              Waiting for confirmed Stop before replacing. Editing cancels replacement; current work
+              is retained.
+            </output>
+          )}
           <textarea
             ref={editor}
             className="source-editor"
@@ -303,16 +376,39 @@ export default function App() {
             </p>
           ))}
           <p className="audio-note">
-            {locked && playing ? 'Previous pattern scheduled. ' : ''}Sample status unavailable. Stop
-            ends scheduling; tails may ring out.
+            {locked && audio.scheduling === 'scheduled' ? 'Previous pattern scheduled. ' : ''}Sample
+            status unavailable. Stop ends scheduling; tails may ring out.
           </p>
+          {slowAudio === audio && (
+            <output className="pending-note error">
+              Still waiting for audio. Stop waits for pending engine work; a timeout cannot cancel
+              running code. If it never completes, export your draft before reloading this page.
+              Reloading discards unsaved work and ends this page’s audio.
+            </output>
+          )}
           <button type="button" onClick={() => playback.stop()}>
             Stop scheduling
           </button>
-          {(error || audio.error) && (
+          {error && (
             <p className="error" role="alert">
-              {error || audio.error}
+              {error}
             </p>
+          )}
+          {audio.error && (
+            <div className="error" role="alert">
+              <p>
+                {audio.errorSource &&
+                (locked || sourceBody(audio.errorSource) !== sourceBody(document.source))
+                  ? 'An earlier code revision failed. Current draft retained.'
+                  : 'Could not start or apply audio. Current draft retained.'}{' '}
+                Correct code or check audio access, then press Play explicitly. Stop can be retried
+                if audio state is unknown.
+              </p>
+              <details>
+                <summary>Audio error details</summary>
+                {audio.error}
+              </details>
+            </div>
           )}
         </section>
       </main>

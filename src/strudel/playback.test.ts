@@ -32,6 +32,71 @@ function deferred() {
 }
 
 describe('patch playback', () => {
+  it('keeps a newer Stop authoritative when an older evaluation rejects', async () => {
+    let reject = (_error: Error) => {}
+    vi.mocked(engine.play).mockReturnValueOnce(
+      new Promise<void>((_resolve, fail) => {
+        reject = fail
+      }),
+    )
+    const playback = createPlayback(demoPatch())
+    const starting = playback.play()
+    await vi.waitFor(() => expect(engine.play).toHaveBeenCalledTimes(1))
+    const stopping = playback.stop()
+    reject(new Error('obsolete evaluation failure'))
+    await Promise.all([starting, stopping])
+    expect(playback.getSnapshot()).toMatchObject({
+      status: 'stopped',
+      error: null,
+      scheduling: 'stopped',
+    })
+  })
+
+  it('reports stopping with unknown scheduling while failure recovery is pending', async () => {
+    const held = deferred()
+    vi.mocked(engine.play).mockRejectedValueOnce(new Error('construction failed'))
+    vi.mocked(engine.stop).mockReturnValueOnce(held.promise)
+    const playback = createPlayback(demoPatch())
+    const starting = playback.play()
+    await vi.waitFor(() => expect(engine.stop).toHaveBeenCalledTimes(1))
+    expect(playback.getSnapshot()).toMatchObject({
+      status: 'stopping',
+      scheduling: 'unknown',
+      error: expect.stringContaining('construction failed'),
+    })
+    held.resolve()
+    await starting
+    expect(playback.getSnapshot()).toMatchObject({ status: 'error', scheduling: 'stopped' })
+  })
+
+  it('retains the failing source revision when newer code was queued', async () => {
+    let reject = (_error: Error) => {}
+    vi.mocked(engine.play).mockReturnValueOnce(
+      new Promise<void>((_resolve, fail) => {
+        reject = fail
+      }),
+    )
+    const original = demoPatch()
+    const playback = createPlayback(original)
+    const starting = playback.play()
+    await vi.waitFor(() => expect(engine.play).toHaveBeenCalledTimes(1))
+    const editing = playback.update(changed(original, 'vcf', 'cutoff', 4000))
+    reject(new Error('older code failed'))
+    await Promise.all([starting, editing])
+    expect(playback.getSnapshot()).toMatchObject({
+      status: 'error',
+      scheduling: 'stopped',
+      errorSource: generate(original),
+    })
+    expect(engine.play).toHaveBeenCalledTimes(1)
+    await playback.play()
+    expect(playback.getSnapshot().status).toBe('playing')
+    expect(engine.play).toHaveBeenLastCalledWith(
+      generate(changed(original, 'vcf', 'cutoff', 4000)),
+      expect.anything(),
+    )
+  })
+
   it('stays silent until Play and evaluates the latest generated patch', async () => {
     const patch = changed(demoPatch(), 'vcf', 'cutoff', 2000)
     const playback = createPlayback(demoPatch())
@@ -150,6 +215,62 @@ describe('patch playback', () => {
       status: 'error',
       error: expect.stringContaining('Audio state unknown'),
     })
+  })
+
+  it('never confirms Stop or accepts replacement while evaluation has not settled', async () => {
+    const { prepareReplacement } = await import('../workspace/open')
+    const held = deferred()
+    vi.mocked(engine.play).mockReturnValueOnce(held.promise)
+    const playback = createPlayback(demoPatch())
+    const starting = playback.play()
+    await vi.waitFor(() => expect(engine.play).toHaveBeenCalledTimes(1))
+    let replaced = false
+    const replacing = prepareReplacement(async () => 'replacement', playback).then(() => {
+      replaced = true
+    })
+    await vi.waitFor(() => expect(playback.getSnapshot().status).toBe('stopping'))
+    expect(replaced).toBe(false)
+    expect(playback.getSnapshot().scheduling).toBe('unknown')
+    held.resolve()
+    await Promise.all([starting, replacing])
+    expect(replaced).toBe(true)
+    expect(playback.getSnapshot().scheduling).toBe('stopped')
+  })
+
+  it('retains work edited while a replacement waits for Stop', async () => {
+    const { prepareReplacement } = await import('../workspace/open')
+    const held = deferred()
+    vi.mocked(engine.stop).mockReturnValueOnce(held.promise)
+    const playback = createPlayback(demoPatch())
+    let unchanged = true
+    const replacing = prepareReplacement(
+      async () => 'file source',
+      playback,
+      () => unchanged,
+    )
+    const rejected = expect(replacing).rejects.toThrow(/current work retained/)
+    await vi.waitFor(() => expect(engine.stop).toHaveBeenCalledTimes(1))
+    unchanged = false
+    held.resolve()
+    await rejected
+  })
+
+  it('does not publish a stopped-volume error for superseded source', async () => {
+    let reject = (_error: Error) => {}
+    vi.mocked(engine.setVolume).mockReturnValueOnce(
+      new Promise<void>((_resolve, fail) => {
+        reject = fail
+      }),
+    )
+    const patch = demoPatch()
+    const playback = createPlayback(patch)
+    const obsolete = playback.update(changed(patch, 'out', 'vol', 0.2))
+    await vi.waitFor(() => expect(engine.setVolume).toHaveBeenCalledTimes(1))
+    const latest = playback.update(changed(patch, 'out', 'vol', 0.6))
+    reject(new Error('obsolete volume failure'))
+    await Promise.all([obsolete, latest])
+    expect(playback.getSnapshot()).toMatchObject({ status: 'stopped', error: null })
+    expect(engine.setVolume).toHaveBeenLastCalledWith(0.6)
   })
 
   it('rejects invalid patch edits before they reach the running engine', async () => {

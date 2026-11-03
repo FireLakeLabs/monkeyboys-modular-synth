@@ -1,0 +1,36 @@
+{
+  "browser": "156.0.8078.4",
+  "ui": [
+    "invalid draft export is byte exact; accepted rack retained/locked; Revert restores saved identity without Play",
+    "adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Stop available and require explicit Play after correction",
+    "older failure is labeled as older work; current valid code has no invented runtime underline",
+    "failed Stop reports unknown audio, refuses Open/New, retains source and supports Retry Stop",
+    "pending evaluation/Stop warning does not claim cancellation; edits cancel pending Open replacement",
+    "confirmed Open stays silent and preserves valid unsupported CODE; no unhandled browser errors",
+    "Cancel and Escape invalidate New replacement while Stop is pending",
+    "imported invalid CRLF draft exports exact bytes independently of textarea newline normalization"
+  ],
+  "engine": [
+    "fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails",
+    "real adapter resume rejection and construction throw retain work; retry/correction needs explicit Play",
+    "missing sample logs upstream; adapter exposes no resource diagnosis (known #36 gap)",
+    "undecodable sample reproduced by network fault; readiness/retry remains unobservable to workspace (#36)",
+    "late output throw is logged upstream with no adapter banner; manual Stop works (#36 gap)",
+    "real never-settling evaluation leaves Stop pending, warns after 10s, and allows exact draft export; context disposal is recovery"
+  ],
+  "pcm": {
+    "play": {
+      "rms": 0.01429891098808497,
+      "samples": 51200
+    },
+    "invalidDraft": {
+      "rms": 0.01130372410468124,
+      "samples": 98304
+    },
+    "afterStop": {
+      "rms": 0,
+      "samples": 153600
+    }
+  },
+  "physicalListening": false
+}

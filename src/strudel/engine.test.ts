@@ -76,6 +76,15 @@ describe('engine boundary', () => {
     await expect(play('s("bd")')).resolves.toBeUndefined()
   })
 
+  it('does not evaluate when audio resume rejects and permits explicit retry', async () => {
+    web.resume.mockRejectedValueOnce(new Error('audio activation blocked'))
+    const { play } = await import('./engine')
+    await expect(play('s("bd")')).rejects.toThrow(/activation blocked/)
+    expect(web.evaluate).not.toHaveBeenCalled()
+    await expect(play('s("bd")')).resolves.toBeUndefined()
+    expect(web.evaluate).toHaveBeenCalledTimes(1)
+  })
+
   it('stops after a play whose evaluation is still pending', async () => {
     let finishEvaluation = () => {}
     const evaluating = new Promise<void>((resolve) => {
