@@ -4,7 +4,7 @@ import { RACK_MARKER, writeLayout, type RackLayout, type Scope } from '../codege
 import { getModuleSpec } from '../modules/catalog'
 import type { Patch } from '../patch/types'
 import { read } from '../reader'
-import { readLayout, matchScopes } from '../reader/layout'
+import { readLayout, matchRouting } from '../reader/layout'
 import { parseSource } from '../reader/syntax'
 import type { SourceAddress, SourceDocument, Span } from '../reader/types'
 import { planStructure, spliceSource } from './structure'
@@ -82,19 +82,19 @@ export function saveLayout(document: SourceDocument, patch = document.patch): So
   const body = sourceBody(document.source)
   const parsed = parseSource(body)
   const old = readLayout(document.source)
-  const matches = matchScopes(old.kind === 'valid' ? old.layout.scopes : [], parsed.scopes)
+  const routes =
+    old.kind === 'valid'
+      ? matchRouting(old.layout.scopes, parsed.scopes, parseSource(old.generated).scopes)
+      : undefined
   const scopes = parsed.scopes.map((scope) => {
-    const match = matches.get(scope.descriptor.id)
-    const routing = match?.saved.routing
-    const call = routing && [...match.calls].find(([, old]) => old === routing.call)?.[0]
+    const routing = routes?.get(scope.descriptor.id)
     return {
       ...scope.descriptor,
       ...(routing &&
-      call !== undefined &&
       !document.bindings.some(
-        (binding) => binding.scope === scope.descriptor.id && binding.calls.includes(call),
+        (binding) => binding.scope === scope.descriptor.id && binding.calls.includes(routing.call),
       )
-        ? { routing: { call, orbit: routing.orbit } }
+        ? { routing }
         : {}),
     }
   })

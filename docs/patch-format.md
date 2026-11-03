@@ -73,8 +73,14 @@ several modules can bind the same outer call for CV or folded mixer gain. An
 empty call list binds a root-only expression (for example an unscaled `sine`).
 Omitted/bypassed/disconnected modules have no sounding bindings. A final scope's
 optional `routing: {call, orbit}` identifies the exact generator-owned routing
-call; it does not create a module binding. The reader must verify the full
-matching descriptor before trusting that provenance, never just a call index.
+call; it does not create a module binding. The reader must verify that exact
+final call descriptor against validated generator provenance, never just a call
+index or integer argument. Literal edits elsewhere in a matched voice retain
+routing ownership. If module matching is ambiguous, a unique proven route with
+the same receiver and call names, or an unchanged suffix after an anonymous root
+edit, can retain routing without assigning module identities. The matched route
+must also retain its saved voice position so saving agrees with the writer's
+allocation. Reading and saving use the same routing matcher.
 
 Scope IDs (`scope1`, etc.) are opaque IDs for this generated revision, not `$:`
 line identities. The reader reconciles them using the matching rules

@@ -45,8 +45,9 @@ Unsupported calls retain their exact receiver suffix, including intervening
 comments and callbacks, in CODE. Opaque receivers become CODE sources. If a
 voice's projection cannot satisfy graph invariants, that voice becomes one CODE
 source, without retaining a partial failed graph. Nested callback calls are not
-mistaken for outer modules. Imported routing remains CODE unless the complete
-scope matches verified generator provenance.
+mistaken for outer modules. Imported routing remains CODE unless its exact final call matches verified
+generator provenance. The [#65 regression](literal-edit-verification.md#routing-literal-edit-fix-65)
+retains that ownership across literal edits separately from module identity.
 
 Bindings identify module, scope, call indices, semantic role, CV target and exact
 source ranges. Scalar literal spans exclude argument comments; a signed literal

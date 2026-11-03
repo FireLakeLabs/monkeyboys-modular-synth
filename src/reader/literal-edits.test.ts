@@ -354,9 +354,7 @@ const scenarios: Scenario[] = CATALOG.flatMap((spec) =>
     ...(['seq.mode', 'vcf.mode', 'out.bpm'].includes(`${spec.id}.${edit.control}`) ||
     (spec.id === 'mix' && edit.control !== 'ch1')
       ? { rackIssue: 99 }
-      : !['seq', 'drums'].includes(spec.id)
-        ? { rackIssue: 65 }
-        : {}),
+      : {}),
   })),
 )
 
@@ -377,7 +375,6 @@ for (const type of ['env', 'lfo']) {
       type,
       edit,
       patch: fixture(type, edit, 'vcf'),
-      rackIssue: 65,
     })
   }
 }
@@ -600,13 +597,35 @@ describe('exact reported six-module LFO/VCF patch (#65)', () => {
     expect(read(generate(patch)).patch).toEqual(patch)
     expect(events(generate(read(code).patch))).toEqual(events(generate(expected)))
   })
-  it.fails('keeps six modules and the same five connections (#65)', () => {
+  it('keeps six modules and the same five connections (#65)', () => {
     const actual = read(code).patch
     expect(actual.modules.map((item) => item.id).sort()).toEqual(
       patch.modules.map((item) => item.id).sort(),
     )
-    expect(actual.cables.map(({ from, to }) => ({ from, to }))).toEqual(
-      patch.cables.map(({ from, to }) => ({ from, to })),
-    )
+    const endpoints = (value: Patch) =>
+      value.cables
+        .map(({ from, to }) => ({ from, to }))
+        .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
+    expect(endpoints(actual)).toEqual(endpoints(patch))
   })
 })
+
+// Anonymous source literals change the root fingerprint, independently of #99's
+// module/layout matching contract. Routing must still stay out of CODE.
+it.each(scenarios)(
+  '$name retains routing after an anonymous literal edit (#65)',
+  ({ patch, edit }) => {
+    const anonymous = { ...patch, names: {} }
+    const code = edited(anonymous, edit)
+    const document = read(code)
+    expect(
+      document.patch.modules
+        .filter((item) => item.type === 'code')
+        .map((item) => item.values['text']),
+    ).not.toEqual(expect.arrayContaining([expect.stringContaining('.orbit(')]))
+    expect(generate(document)).toBe(code)
+    const saved = saveLayout(document)
+    expect(read(saved.source).patch).toEqual(document.patch)
+    expect(body(saved.source)).toBe(body(code))
+  },
+)

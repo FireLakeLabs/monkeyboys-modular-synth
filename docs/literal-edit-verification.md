@@ -48,6 +48,9 @@ No pattern/mini/tonal behavior is mocked. Production engine loading is unchanged
 
 ## Known failures are executable
 
+The counts and observations below record the original #64 baseline. The
+[#65 follow-up](#routing-literal-edit-fix-65) removes routing expected failures.
+
 The 413 tests include 53 named expected failures. They execute normally under
 Vitest's `it.fails`, and an unexpected pass fails the gate until the annotation is
 removed. Setup, parsing, source retention, saved identity, most individual
@@ -81,3 +84,47 @@ reopened accepted revision.
 This is domain/runtime verification in Node. It does not render the rack, start
 browser audio, measure PCM, or establish physical listening or audible continuity.
 Those belong to the production fixes' browser acceptance.
+
+## Routing literal-edit fix (#65)
+
+Verified 3 November 2026 with Node 24.22.2 and the committed lockfile.
+
+The exact six-module reproduction failed before the fix with an extra `code1`.
+The reader required the entire voice descriptor to match before excluding its
+proven generator-owned final `.orbit()`. Editing `.lpq(1)` to `.lpq(8)` changed
+that descriptor even though routing was untouched.
+
+Reading and saving now share routing ownership matching. It verifies the exact
+final routing call against validated metadata, independently of module identity.
+A unique route with the same receiver/call names, or an unchanged suffix after
+an anonymous source edit, can retain ownership even when layout matching cannot.
+The original saved voice position also constrains allocation. Changed/computed
+orbit arguments, ambiguous duplicate routing and unverified metadata remain CODE.
+No routing is inferred from an integer alone.
+
+- All 34 #65 expected failures are now ordinary passing tests. The exact reported
+  patch keeps six modules and the same five directed connections; cable array
+  order is not treated as wiring identity.
+- Another 45 catalog scenarios clear retained output names and edit anonymous
+  generated voices. Each rejects orbit CODE, preserves the exact original source,
+  and saves/reopens the accepted graph exactly without rewriting executable text.
+  The new anonymous note/sample tests failed before the routing fallback.
+- A two-voice fixture with identical anonymous roots failed before the fallback
+  and now keeps routing out of CODE when only one resonance literal changes.
+  Negative cases retain changed/computed/duplicated routing as exact source/CODE.
+  A separate fixture retains generated routing beside CODE that reserves orbit 1.
+- The original catalog suite continues to compare real Strudel events separately
+  from source and saved rack identity. #66 and #99 remain expected failures.
+
+Browser observations, using the local Vite app and T3's shared Chromium 156
+preview: loaded the exact six-module graph through the source editor, changed
+only `.lpq(1)` to `.lpq(8)`, and waited for acceptance. The rendered rack had six
+module panels, no CODE, RES 8 and “Rack matches code”; the accepted source reopened
+with six modules and the same five endpoints. The executable body differed only
+in resonance. SEQ still changed from its step grid to text (#66).
+
+The full `npm run check` passed: 688 ordinary tests, 19 expected failures for
+remaining issues, 40 guardrail checks, formatting, skills, lint and build.
+
+This browser check did not start playback or establish physical listening or
+audible continuity. Real Strudel event comparisons ran separately in Node.
