@@ -23,6 +23,9 @@ const pass = (group, name) => {
   process.stdout.write(`PASS ${group}: ${name}\n`)
 }
 const source = (page) => page.getByRole('textbox', { name: 'Strudel source', exact: true })
+async function sourceText(page) {
+  return page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource())
+}
 const status = (page) => page.locator('.transport-status')
 async function waitStatus(page, value) {
   await page.waitForFunction(
@@ -42,7 +45,7 @@ async function code(page, text) {
 async function patch(page) {
   return page.evaluate(async () => {
     const { read } = await import('/src/reader/index.ts')
-    return read(document.querySelector('.source-editor').value).patch
+    return read((await import('/scripts/editor-browser.mjs')).editorSource()).patch
   })
 }
 async function open(page, text) {
@@ -79,13 +82,13 @@ try {
     'utf8',
   )
   await code(page, longVoice)
-  const longSaved = await source(page).inputValue()
+  const longSaved = await sourceText(page)
   const longRack = await patch(page)
   await page.evaluate(async (original) => {
     const { read } = await import('/src/reader/index.ts')
     const { validateRack } = await import('/src/rack/model.ts')
     const { sourceBody } = await import('/src/workspace/document.ts')
-    const saved = document.querySelector('.source-editor').value
+    const saved = (await import('/scripts/editor-browser.mjs')).editorSource()
     validateRack(read(saved).patch)
     if (sourceBody(saved) !== original) throw new Error('Long voice executable source changed')
   }, longVoice)
@@ -98,7 +101,7 @@ try {
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
-  assert.equal(await source(page).inputValue(), failedLayout)
+  assert.equal(await sourceText(page), failedLayout)
   assert.match(await page.getByRole('alert').textContent(), /extends past the rail/)
   assert.equal(await page.locator('.module-panel').count(), longRack.modules.length)
   const failedDownload = page.waitForEvent('download')
@@ -107,21 +110,21 @@ try {
   await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
   await waitStatus(page, 'Stopped')
   await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
-  assert.equal(await source(page).inputValue(), longSaved)
+  assert.equal(await sourceText(page), longSaved)
   assert.deepEqual(await patch(page), longRack)
   await source(page).fill(failedLayout)
   await page.waitForFunction(
-    () => document.querySelector('.source-editor')?.getAttribute('aria-invalid') === 'true',
+    () => document.querySelector('.cm-content')?.getAttribute('aria-invalid') === 'true',
   )
   await code(page, longVoice.replace('.room(.6)', '.room(.7)'))
   assert.equal(await status(page).textContent(), 'Stopped')
-  assert.match(await source(page).inputValue(), /room\(\.7\)/)
+  assert.match(await sourceText(page), /room\(\.7\)/)
   pass(
     'ui',
     'issue #44 spills long CODE/CV voice onto fixed rails; layout failure retains exact draft and rack; Export/Stop/Revert/correction recover without autoplay',
   )
   await code(page, '// retained 🐒\n$: note("c3").s("sine").lpf(800)\n')
-  const original = await source(page).inputValue()
+  const original = await sourceText(page)
   const identity = await patch(page)
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(page, 'Pattern scheduled')
@@ -145,7 +148,7 @@ try {
   await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
   await waitStatus(page, 'Stopped')
   await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
-  assert.equal(await source(page).inputValue(), original)
+  assert.equal(await sourceText(page), original)
   assert.deepEqual(await patch(page), identity)
   assert.equal(await status(page).textContent(), 'Stopped')
   pass(
@@ -158,10 +161,10 @@ try {
       window.audioFixture.play = 'reject'
       window.audioFixture.detail = detail
     }, detail)
-    const retained = await source(page).inputValue()
+    const retained = await sourceText(page)
     await page.getByRole('button', { name: 'Play', exact: true }).click()
     await waitStatus(page, 'Scheduling stopped after error')
-    assert.equal(await source(page).inputValue(), retained)
+    assert.equal(await sourceText(page), retained)
     assert.match(await page.locator('.error details').textContent(), new RegExp(detail))
     await source(page).fill('$: note(')
     await page.waitForFunction(
@@ -169,7 +172,7 @@ try {
       undefined,
       { timeout: 2000 },
     )
-    assert.equal(await source(page).inputValue(), '$: note(')
+    assert.equal(await sourceText(page), '$: note(')
     assert(await page.getByRole('button', { name: 'Stop scheduling', exact: true }).isEnabled())
     const failedDraftDownload = page.waitForEvent('download')
     await page.getByRole('button', { name: 'Export', exact: true }).click()
@@ -199,7 +202,7 @@ try {
   await waitStatus(page, 'Scheduling stopped after error')
   assert.match(await page.getByRole('alert').textContent(), /earlier code revision/)
   assert.equal(await source(page).getAttribute('aria-invalid'), 'false')
-  assert.match(await source(page).inputValue(), /d3/)
+  assert.match(await sourceText(page), /d3/)
   pass(
     'ui',
     'older failure is labeled as older work; current valid code has no invented runtime underline',
@@ -211,21 +214,21 @@ try {
   })
   await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
   await waitStatus(page, 'Audio state unknown')
-  const retained = await source(page).inputValue()
+  const retained = await sourceText(page)
   await open(page, '$: note("g3").s("sine")\n')
-  assert.equal(await source(page).inputValue(), retained)
+  assert.equal(await sourceText(page), retained)
   await page.getByRole('button', { name: 'Open patch', exact: true }).click()
   await page.waitForFunction(() =>
     document.querySelector('.code')?.textContent.includes('Could not replace patch'),
   )
-  assert.equal(await source(page).inputValue(), retained)
+  assert.equal(await sourceText(page), retained)
   await page.getByRole('button', { name: 'Cancel', exact: true }).click()
   await page.getByRole('button', { name: 'New patch', exact: true }).click()
   await page.getByRole('button', { name: 'Replace patch', exact: true }).click()
   await page.waitForFunction(() =>
     document.querySelector('.code')?.textContent.includes('Could not replace patch'),
   )
-  assert.equal(await source(page).inputValue(), retained)
+  assert.equal(await sourceText(page), retained)
   await page.getByRole('button', { name: 'Cancel', exact: true }).click()
   await page.evaluate(() => {
     window.audioFixture.stop = 'ok'
@@ -254,7 +257,7 @@ try {
     undefined,
     { timeout: 15_000 },
   )
-  assert.match(await source(page).inputValue(), /work typed during Stop/)
+  assert.match(await sourceText(page), /work typed during Stop/)
   await page.screenshot({ path: `${output}/pending.png` })
   await page.evaluate(() => {
     window.audioFixture.release()
@@ -265,7 +268,7 @@ try {
   await page.waitForFunction(() =>
     document.querySelector('.code')?.textContent.includes('Replacement cancelled'),
   )
-  assert.match(await source(page).inputValue(), /work typed during Stop/)
+  assert.match(await sourceText(page), /work typed during Stop/)
   await page.getByRole('button', { name: 'Cancel', exact: true }).click()
   pass(
     'ui',
@@ -274,12 +277,11 @@ try {
 
   await open(page, '// unsupported preserved\n$: note("g3").s("sine").chunk(4, x => x.rev())\n')
   await page.getByRole('button', { name: 'Open patch', exact: true }).click()
-  await page.waitForFunction(
-    () =>
-      document.querySelector('.source-editor')?.value.includes('// unsupported preserved') &&
-      document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
+  await page.waitForFunction(() =>
+    document.querySelector('.cm-content')?.textContent.includes('// unsupported preserved'),
   )
-  assert.match(await source(page).inputValue(), /chunk\(4, x => x.rev\(\)\)/)
+  await accepted(page)
+  assert.match(await sourceText(page), /chunk\(4, x => x.rev\(\)\)/)
   assert((await patch(page)).modules.some((module) => module.type === 'code'))
   assert.equal(await status(page).textContent(), 'Stopped')
   assert.deepEqual(errors, [])
@@ -293,7 +295,7 @@ try {
       window.audioFixture.stop = 'pending'
       window.audioFixture.release = null
     })
-    const before = await source(page).inputValue()
+    const before = await sourceText(page)
     await page.getByRole('button', { name: 'Play', exact: true }).click()
     await page.waitForFunction(() => window.audioFixture.release !== null)
     await page.getByRole('button', { name: 'New patch', exact: true }).click()
@@ -307,7 +309,7 @@ try {
       window.audioFixture.stop = 'ok'
     })
     await waitStatus(page, 'Stopped')
-    assert.equal(await source(page).inputValue(), before)
+    assert.equal(await sourceText(page), before)
   }
   pass('ui', 'Cancel and Escape invalidate New replacement while Stop is pending')
   const invalidFile = '// imported CRLF 🐒\r\n$: note('
@@ -319,10 +321,7 @@ try {
   const exactDownload = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await exactDownload).path(), 'utf8'), invalidFile)
-  pass(
-    'ui',
-    'imported invalid CRLF draft exports exact bytes independently of textarea newline normalization',
-  )
+  pass('ui', 'imported invalid CRLF draft exports exact bytes with exact editor-state line endings')
   await context.close()
 
   // This is the real adapter, network and WebAudio engine in fresh, isolated contexts.
@@ -356,10 +355,10 @@ try {
   await real.route('**/strudel.json', (route) =>
     failManifest ? route.fulfill({ status: 503, body: 'manifest fixture' }) : route.continue(),
   )
-  const saved = await source(audio).inputValue()
+  const saved = await sourceText(audio)
   await audio.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(audio, 'Scheduling stopped after error')
-  assert.equal(await source(audio).inputValue(), saved)
+  assert.equal(await sourceText(audio), saved)
   failManifest = false
   await audio.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(audio, 'Pattern scheduled')
@@ -425,10 +424,10 @@ try {
   const fault = await faults.newPage()
   await fault.goto(base)
   await code(fault, '$: note("c3").s("sine")\n')
-  const beforeActivation = await source(fault).inputValue()
+  const beforeActivation = await sourceText(fault)
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(fault, 'Scheduling stopped after error')
-  assert.equal(await source(fault).inputValue(), beforeActivation)
+  assert.equal(await sourceText(fault), beforeActivation)
   assert.match(await fault.locator('.error details').textContent(), /injected activation rejection/)
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(fault, 'Pattern scheduled')
@@ -518,7 +517,7 @@ try {
   await hang.waitForFunction(() => globalThis.hungEvaluationStarted === true)
   await hang.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
   await waitStatus(hang, 'Stopped')
-  const hungDraft = await source(hang).inputValue()
+  const hungDraft = await sourceText(hang)
   const hungDownload = hang.waitForEvent('download')
   await hang.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await hungDownload).path(), 'utf8'), hungDraft)

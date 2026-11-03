@@ -19,6 +19,20 @@ const context = await browser.newContext({
   viewport: { width: 1600, height: 1000 },
   ignoreHTTPSErrors: true,
 })
+// Count the real treatment boundary without adding production instrumentation.
+await context.route('**/src/workspace/highlighting.ts*', async (route) => {
+  const response = await route.fetch()
+  const body = await response.text()
+  const signature = 'export function sourceTreatments(document) {'
+  assert(body.includes(signature), 'Treatment instrumentation no longer matches Vite output')
+  await route.fulfill({
+    response,
+    body: body.replace(
+      signature,
+      signature + '\nwindow.treatmentReads = (window.treatmentReads ?? 0) + 1;',
+    ),
+  })
+})
 await context.addInitScript(() => {
   window.animationsSeen = []
   // oxlint-disable-next-line typescript/unbound-method -- Called with its original Element receiver.
@@ -48,6 +62,9 @@ const page = await context.newPage()
 const errors = []
 page.on('pageerror', (error) => errors.push(error.message))
 const editor = page.getByRole('textbox', { name: 'Strudel source', exact: true })
+async function sourceText() {
+  return page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource())
+}
 async function accepted() {
   await page.waitForFunction(() =>
     document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
@@ -56,6 +73,11 @@ async function accepted() {
 async function code(text) {
   await editor.fill(text)
   await accepted()
+  await page.evaluate(async () => {
+    const view = (await import('/scripts/editor-browser.mjs')).editorView()
+    view.dispatch({ selection: { anchor: 0 }, scrollIntoView: true })
+  })
+  await page.waitForTimeout(100)
 }
 async function stopped() {
   await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
@@ -75,15 +97,17 @@ try {
   await page.goto(base)
   const body = `// exact 🐒\nsetcpm(120/4)\nconst lead = note("c3 e3 g3 c4").s("sine");\n$: lead.iter(4).lpf(800).lpq(2)\n$: lead.jux(rev).gain(0.15)\n$: note("c2").s("sine").chunk(4, x => x.hurry(2))\n`
   await code(body)
-  assert((await editor.inputValue()).startsWith(body))
-  const saved = await editor.inputValue()
+  assert((await sourceText()).startsWith(body))
+  const saved = await sourceText()
+  const reads = await page.evaluate(() => window.treatmentReads)
   await page.getByRole('button', { name: 'Select vcf1', exact: true }).click()
+  assert.equal(await page.evaluate(() => window.treatmentReads), reads)
   assert.deepEqual(await page.locator('.source-selected').allTextContents(), [
     '.lpf(800)',
     '.lpq(2)',
   ])
-  assert.equal(await editor.inputValue(), saved)
-  const colors = await page.locator('.source-ink').evaluate((element) =>
+  assert.equal(await sourceText(), saved)
+  const colors = await page.locator('.cm-content').evaluate((element) =>
     Array.from(element.querySelectorAll('span'))
       .filter((e) => e.className)
       .map((e) => ({
@@ -96,48 +120,76 @@ try {
   assert(colors.some((s) => s.text === '.s("sine")' && s.color === 'rgb(244, 164, 98)'))
   assert(colors.some((s) => s.text === 'lead' && s.color === 'rgb(255, 196, 143)'))
   assert(colors.some((s) => s.text.includes('chunk') && s.underline === 'dashed'))
-  const typography = await page.evaluate(() => {
-    const properties = [
-      'fontFamily',
-      'fontSize',
-      'fontWeight',
-      'lineHeight',
-      'letterSpacing',
-      'tabSize',
-      'whiteSpace',
-      'fontVariantLigatures',
-    ]
-    return ['.source-editor', '.source-ink'].map((selector) => {
-      const style = getComputedStyle(document.querySelector(selector))
-      return Object.fromEntries(properties.map((property) => [property, style[property]]))
-    })
+  await page.screenshot({ path: `${output}/editor.png` })
+  pass('family/category/named-output styling, all VCF spans, exact retained source')
+
+  const position = await page.evaluate(async () => {
+    const view = (await import('/scripts/editor-browser.mjs')).editorView()
+    const from = view.state.doc.toString().indexOf('.lpq(2)')
+    view.dispatch({ selection: { anchor: from + 7, head: from } })
+    view.scrollDOM.scrollTop = 120
+    view.scrollDOM.scrollLeft = 80
+    return { top: view.scrollDOM.scrollTop, left: view.scrollDOM.scrollLeft }
   })
-  assert.deepEqual(typography[0], typography[1])
-  const alignment = await page.evaluate(() => {
-    const editor = document.querySelector('.source-editor'),
-      ink = document.querySelector('.source-ink')
-    const range = document.createRange()
-    range.setStart(ink.firstChild.firstChild, 0)
-    range.setEnd(ink.firstChild.firstChild, 8)
-    const style = getComputedStyle(editor),
-      canvas = document.createElement('canvas'),
-      measure = canvas.getContext('2d')
-    measure.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`
+  await page
+    .locator('[data-module="vcf1"]')
+    .getByRole('button', { name: 'Set CUTOFF', exact: true })
+    .click()
+  await page
+    .locator('[data-module="vcf1"]')
+    .getByRole('textbox', { name: 'CUTOFF', exact: true })
+    .fill('1800')
+  await page
+    .locator('[data-module="vcf1"]')
+    .getByRole('textbox', { name: 'CUTOFF', exact: true })
+    .press('Enter')
+  const mapped = await page.evaluate(async () => {
+    const view = (await import('/scripts/editor-browser.mjs')).editorView()
+    const { from, to, anchor, head } = view.state.selection.main
     return {
-      actualWidth: range.getBoundingClientRect().width,
-      expectedWidth: measure.measureText(editor.value.slice(0, 8)).width,
-      actualLeft: range.getBoundingClientRect().left,
-      expectedLeft:
-        editor.getBoundingClientRect().left +
-        parseFloat(style.borderLeftWidth) +
-        parseFloat(style.paddingLeft),
+      text: view.state.sliceDoc(from, to),
+      backward: anchor > head,
+      top: view.scrollDOM.scrollTop,
+      left: view.scrollDOM.scrollLeft,
     }
   })
-  assert(Math.abs(alignment.actualWidth - alignment.expectedWidth) < 0.1, JSON.stringify(alignment))
-  assert.equal(alignment.actualLeft, alignment.expectedLeft)
-  pass('ink typography, character width and text origin match native textarea')
+  assert.equal(mapped.text, '.lpq(2)')
+  assert(mapped.backward)
+  assert.deepEqual({ top: mapped.top, left: mapped.left }, position)
+  assert((await sourceText()).includes('.lpf(1800)'))
+  await page.locator('[data-module="vcf1"]').click({ button: 'right' })
+  await page.getByRole('button', { name: 'Show in code', exact: true }).click()
+  await page.waitForTimeout(100)
+  assert(
+    await page.evaluate(async () => {
+      const view = (await import('/scripts/editor-browser.mjs')).editorView()
+      const coords = view.coordsAtPos(view.state.selection.main.from)
+      const bounds = view.scrollDOM.getBoundingClientRect()
+      return coords && coords.top >= bounds.top && coords.bottom <= bounds.bottom
+    }),
+  )
+  pass(
+    'real rack value rewrite maps backward selection and both scroll axes; Show in code uses live geometry',
+  )
+  await code(saved)
 
-  pass('family/category/named-output styling, all VCF spans, exact retained source')
+  // Draft history ends at acceptance; accepted rack/source undo is owned by #63.
+  await page.evaluate(async () => {
+    const view = (await import('/scripts/editor-browser.mjs')).editorView()
+    view.focus()
+    view.dispatch({ selection: { anchor: 3 } })
+  })
+  await editor.press('x')
+  await editor.press('ControlOrMeta+z')
+  assert.equal(await sourceText(), saved)
+  await accepted()
+  await editor.press('x')
+  await accepted()
+  const checkpoint = await sourceText()
+  await editor.press('ControlOrMeta+z')
+  assert.equal(await sourceText(), checkpoint)
+  await code(saved)
+  pass('unaccepted typing can be undone locally; accepting source checkpoints local history')
 
   await editor.fill('$: note(')
   await page.waitForFunction(
@@ -152,26 +204,11 @@ try {
   ])
   pass('invalid drafts clear selection highlights; accepted source restores current ownership')
 
-  await editor.evaluate((e) => {
-    e.focus()
-    e.setSelectionRange(3, 7, 'backward')
-    e.scrollTop = 400
-    e.scrollLeft = e.scrollWidth
-    e.dispatchEvent(new Event('scroll'))
-  })
-  const scrolled = await page.evaluate(() => {
-    const e = document.querySelector('.source-editor'),
-      ink = document.querySelector('.source-ink')
-    return [e.scrollTop, ink.scrollTop, e.scrollLeft, ink.scrollLeft, e.selectionDirection]
-  })
-  assert.equal(scrolled[0], scrolled[1])
-  assert.equal(scrolled[2], scrolled[3])
-  assert.equal(scrolled[4], 'backward')
-  await editor.evaluate((e) => {
-    e.scrollTop = 0
-    e.scrollLeft = 0
-    e.setSelectionRange(9, 9)
-    e.dispatchEvent(new Event('scroll'))
+  await page.evaluate(async () => {
+    const { editorView } = await import('/scripts/editor-browser.mjs')
+    const view = editorView()
+    view.focus()
+    view.dispatch({ selection: { anchor: 9, head: 9 } })
   })
   const cdp = await context.newCDPSession(page)
   await cdp.send('Input.imeSetComposition', { text: 'に', selectionStart: 1, selectionEnd: 1 })
@@ -180,9 +217,9 @@ try {
   assert.equal(await page.locator('.source-selected').count(), 0)
   await cdp.send('Input.insertText', { text: '日本' })
   await accepted()
-  assert((await editor.inputValue()).startsWith('// exact 日本🐒'))
+  assert((await sourceText()).startsWith('// exact 日本🐒'))
   pass(
-    'native scroll/selection preserved; real IME composition defers parsing and removes stale highlights',
+    'native Chromium IME composition defers parsing, clears stale highlights and commits exact Japanese text',
   )
 
   await page.getByRole('button', { name: 'Select code1', exact: true }).click()
@@ -196,6 +233,33 @@ try {
     await page.locator('.cyber-cursor').evaluate((e) => getComputedStyle(e).animationName),
     'cyber-edit',
   )
+  const beforeCyberDraft = await sourceText()
+  await page.evaluate(async () => {
+    const view = (await import('/scripts/editor-browser.mjs')).editorView()
+    view.dispatch({ selection: { anchor: view.state.selection.main.to } })
+  })
+  await editor.press('(')
+  await page.waitForFunction(
+    () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
+  )
+  assert.equal(
+    await page.locator('.cyber-cursor').evaluate((e) => getComputedStyle(e).animationName),
+    'cyber-edit',
+  )
+  await editor.evaluate((element) => element.blur())
+  await page.waitForFunction(
+    () => getComputedStyle(document.querySelector('.cyber-cursor')).animationName === 'none',
+  )
+  assert.equal(
+    await page.locator('.cyber-cursor').evaluate((e) => getComputedStyle(e).animationName),
+    'none',
+  )
+  await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
+  await accepted()
+  assert.equal(await sourceText(), beforeCyberDraft)
+  pass(
+    'typing beyond a CODE span retains Cyber editing focus through an invalid draft; blur clears it and Revert restores source',
+  )
   await page.getByRole('button', { name: 'Select vcf1', exact: true }).click()
   assert.equal(
     await page.locator('.cyber-cursor').evaluate((e) => getComputedStyle(e).animationName),
@@ -203,6 +267,11 @@ try {
   )
   pass('Cyber cursor stays solid except while its block is being edited')
 
+  await page.evaluate(async () => {
+    const { editorDecorations } = await import('/scripts/editor-browser.mjs')
+    window.savedDecorations = editorDecorations()
+    window.readsBeforePlay = window.treatmentReads
+  })
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.waitForFunction(
     () =>
@@ -239,6 +308,18 @@ try {
   assert(audio.animations.every((a) => a.options.duration === 400))
   assert(audio.animations.some((a) => a.module === 'osc1' && a.options.pseudoElement === '::after'))
   assert(!audio.animations.some((a) => ['seq2', 'osc2', 'code1'].includes(a.module)))
+  assert(
+    await page.evaluate(async () => {
+      const { editorDecorations } = await import('/scripts/editor-browser.mjs')
+      return (
+        window.treatmentReads === window.readsBeforePlay &&
+        editorDecorations() === window.savedDecorations
+      )
+    }),
+  )
+  pass(
+    'selection does not reparse treatments; playback renders retain the same decorations and treatment count',
+  )
   result.pcmRms = audio.rms
   pass(
     'real final ITER/JUX events drive 400 ms Alien/Instrument feedback; opaque voice has none; PCM remains nonzero',
@@ -335,7 +416,7 @@ note('c3').s('sine').iter(4)`,
 lead.iter(4)`,
   ]) {
     await code(bare)
-    const saved = await editor.inputValue()
+    const saved = await sourceText()
     await page.evaluate(() => {
       window.animationsSeen = []
     })
@@ -344,7 +425,7 @@ lead.iter(4)`,
       () => document.querySelector('.transport-status')?.textContent === 'Pattern scheduled',
     )
     await page.waitForFunction(() => window.animationsSeen.some((a) => a.module.startsWith('iter')))
-    assert.equal(await editor.inputValue(), saved)
+    assert.equal(await sourceText(), saved)
     await stopped()
   }
   pass(

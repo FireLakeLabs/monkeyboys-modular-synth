@@ -1,14 +1,14 @@
 # Activity and source feedback (#37)
 
-Verified 2 November 2026 with Node 24.22.2 and Chromium 156 on Linux.
+Re-recorded for #59 on 3 November 2026 with Node 24.22.2 and Chromium 156 on Linux.
 The archived [workspace](design/workspace-v1.png), [Alien](design/looks-alien.png)
 and [Cyber](design/looks-cyber.png) boards were available as visual references.
 
 ## Contract
 
-The native textarea remains the editor. An inert, hidden-from-assistive-technology
-text layer shows the exact draft with category colors, teal Alien glow, dashed
-gold Cyber underlines and orange named pattern declarations/references. Current
+The lazy CodeMirror 6 editor renders the exact draft with category colors,
+teal Alien glow, dashed gold Cyber underlines and orange named pattern
+declarations/references as document decorations. Current
 reader bindings own the treatments; each owned call is highlighted independently.
 Nested LFO expressions use modulation color inside the target's call. Selecting
 a shared module highlights every current owned span. A disconnected or bypassed
@@ -59,17 +59,27 @@ node scripts/feedback-check.mjs http://127.0.0.1:5173 /tmp/monkeyboy-feedback
 
 The browser check requires installed Playwright Chromium and access to the
 pinned sample manifests. It runs separately from the deterministic CI gate,
-like the [audio recovery harness](audio-recovery.md). It writes a JSON report.
+like the [audio recovery harness](audio-recovery.md). It writes a JSON report
+and an editor screenshot. The [#59 results](editor-adoption-results.json) retain
+this rerun, library/error recovery and integrated loading measurements; see the
+[adoption report](editor-adoption.md) and [editor screenshot](evidence/source-editor.png).
 The browser suite observed:
 
 - Category/family/named-output styles; both selected VCF calls; retained source.
-- Matching 12 px editor/ink typography, measured character origins and advance
-  widths, horizontal-limit scrolling and backward selection. Real Chromium
-  IME composition stayed in the editing phase past the parse debounce, then
-  committed Japanese text without losing the source or composition.
+- Real rack cutoff changes preserve backward selection and both scroll axes;
+  Show in code scrolls the selected span into view using live editor geometry.
+- Chromium native composition driven with CDP stayed in the editing phase past
+  the parse debounce, cleared stale ownership styling, then committed Japanese
+  text without losing source. This exercises the browser composition path;
+  a physical OS IME was not operated.
+- Local undo removes unaccepted typing and is checkpointed on acceptance.
+  Selecting modules does not reparse treatments; unrelated playback renders
+  retain the exact decoration facet and treatment count.
 - Semicolon-free bare voices following tempo or const declarations played with
   attributable ITER activity and unchanged saved source.
-- Cyber blinking only with editing focus; no blinking under reduced motion.
+- Cyber blinking only with editing focus, including invalid typing beyond the
+  accepted CODE span; blur clears it, Revert restores source, and reduced motion
+  keeps it solid.
 - Real-engine ITER/JUX and Instrument activity with 400 ms fades, no activity on
   the opaque voice, and nonzero PCM output at the engine bus.
 - No further activity after Stop; no obsolete Alien feedback after replacement;
@@ -88,4 +98,4 @@ to map absent hap voice IDs; final tests require actual Alien/Instrument pulses.
 
 PCM evidence establishes that the observer leaves output enabled for the tested
 patch. Physical speakers were **not heard**; subjective clicks, other browsers,
-very large programs and arbitrary user-code side effects remain unverified.
+arbitrary large programs, physical OS IMEs and user-code side effects remain unverified.

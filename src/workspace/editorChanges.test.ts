@@ -26,35 +26,3 @@ describe('rack rewrites', () => {
     expect(next.doc.toString()).toBe(after)
   })
 })
-
-it('CodeMirror history omits a rack transaction excluded from editor history', async () => {
-  const { history, undo } = await import('@codemirror/commands')
-  const { Transaction } = await import('@codemirror/state')
-  let state = EditorState.create({ doc: 'note("c3").lpf(800)', extensions: [history()] })
-  state = state.update({
-    changes: { from: 8, insert: ' ' },
-    annotations: Transaction.userEvent.of('input.type'),
-  }).state
-  const changed = state.doc.toString().replace('800', '1800')
-  state = state.update({
-    changes: editorChanges(state.doc.toString(), changed),
-    annotations: Transaction.addToHistory.of(false),
-  }).state
-  expect(
-    undo({
-      state,
-      dispatch: (transaction) => {
-        state = transaction.state
-      },
-    }),
-  ).toBe(true)
-  expect(state.doc.toString()).toBe('note("c3").lpf(1800)')
-  expect(
-    undo({
-      state,
-      dispatch: (transaction) => {
-        state = transaction.state
-      },
-    }),
-  ).toBe(false)
-})

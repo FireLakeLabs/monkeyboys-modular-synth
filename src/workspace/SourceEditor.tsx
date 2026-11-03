@@ -1,95 +1,160 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, type RefObject } from 'react'
+import { useLayoutEffect, useMemo, useRef, type RefObject } from 'react'
+import { Compartment, EditorState, Text, Transaction } from '@codemirror/state'
+import { Decoration, EditorView, keymap, lineNumbers } from '@codemirror/view'
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
+import { javascript } from '@codemirror/lang-javascript'
 import type { SourceDocument } from '../reader/types'
-import { sourceSegments, sourceTreatments } from './highlighting'
+import { sourceSegments, sourceTreatments, type SourceTreatment } from './highlighting'
+import { editorChanges } from './editorChanges'
 
-export function SourceEditor({
-  source,
-  document,
-  selected,
-  editor,
-  invalid,
-  change,
-  composing,
-  editingModule,
-}: {
+function reportEditing(
+  view: EditorView,
+  treatments: SourceTreatment[] | null,
+  report: (id: string | null) => void,
+) {
+  // Keep the last known editing owner during an unaccepted draft, as the rack
+  // still shows that revision. Blur always ends editing; acceptance remaps it.
+  if (!treatments && view.hasFocus) return
+  const { from, to } = view.state.selection.main
+  const owner =
+    view.hasFocus &&
+    treatments?.find(
+      (span) => span.className.includes('source-cyber') && span.start <= from && span.end >= to,
+    )
+  report(owner ? (owner.modules[0] ?? null) : null)
+}
+
+export function SourceEditor(props: {
   source: string
   document: SourceDocument | null
   selected: string | null
-  editor: RefObject<HTMLTextAreaElement | null>
+  editor: RefObject<EditorView | null>
   invalid: boolean
   change: (source: string) => void
   composing: (value: boolean) => void
   editingModule: (id: string | null) => void
 }) {
-  const ink = useRef<HTMLPreElement>(null)
-  const treatments = useMemo(() => (document ? sourceTreatments(document) : []), [document])
-  const segments = useMemo(
-    () => sourceSegments(source, treatments, selected),
-    [source, treatments, selected],
+  const host = useRef<HTMLDivElement>(null)
+  const treatments = useMemo(
+    () => (props.document ? sourceTreatments(props.document) : null),
+    [props.document],
   )
-  const sync = useCallback(() => {
-    if (ink.current && editor.current) {
-      ink.current.style.width = `${editor.current.clientWidth + 2}px`
-      ink.current.style.height = `${editor.current.clientHeight + 2}px`
-      ink.current.scrollTop = editor.current.scrollTop
-      ink.current.scrollLeft = editor.current.scrollLeft
-    }
-  }, [editor])
-  useEffect(() => {
-    const element = editor.current
-    if (!element) return undefined
-    const observer = new ResizeObserver(sync)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [editor, sync])
-  const reportEditing = useCallback(() => {
-    if (!document) return
-    const element = editor.current
-    const owner =
-      element &&
-      window.document.activeElement === element &&
-      treatments.find(
-        (span) =>
-          span.className.includes('source-cyber') &&
-          span.start <= element.selectionStart &&
-          span.end >= element.selectionEnd,
-      )
-    editingModule(owner ? (owner.modules[0] ?? null) : null)
-  }, [document, editor, editingModule, treatments])
-  useEffect(() => {
-    window.document.addEventListener('selectionchange', reportEditing)
-    return () => window.document.removeEventListener('selectionchange', reportEditing)
-  }, [reportEditing])
+  const decorations = useMemo(
+    () =>
+      Decoration.set(
+        sourceSegments(props.source, treatments ?? [], props.selected).flatMap((segment) =>
+          segment.text && segment.className.trim()
+            ? [
+                Decoration.mark({ class: segment.className.trim() }).range(
+                  segment.start,
+                  segment.start + segment.text.length,
+                ),
+              ]
+            : [],
+        ),
+      ),
+    [props.source, treatments, props.selected],
+  )
+  const current = useRef({ props, treatments })
+  const styling = useRef(new Compartment())
+  const draftHistory = useRef(new Compartment())
   useLayoutEffect(() => {
-    sync()
-    reportEditing()
+    current.current = { props, treatments }
   })
-  return (
-    <div className="source-surface">
-      <pre ref={ink} className="source-ink" aria-hidden="true">
-        {segments.map((segment) => (
-          <span key={segment.start} className={segment.className}>
-            {segment.text}
-          </span>
-        ))}
-        {'\n'}
-      </pre>
-      <textarea
-        ref={editor}
-        className="source-editor"
-        aria-label="Strudel source"
-        aria-invalid={invalid}
-        spellCheck={false}
-        wrap="off"
-        value={source}
-        onScroll={sync}
-        onFocus={reportEditing}
-        onSelect={reportEditing}
-        onBlur={() => editingModule(null)}
-        onCompositionStart={() => composing(true)}
-        onCompositionEnd={() => composing(false)}
-        onChange={(event) => change(event.target.value)}
-      />
-    </div>
-  )
+
+  useLayoutEffect(() => {
+    if (!host.current) return
+    let compositionTimer: ReturnType<typeof setTimeout> | undefined
+    const view = new EditorView({
+      parent: host.current,
+      state: EditorState.create({
+        doc: Text.of(current.current.props.source.split('\n')),
+        extensions: [
+          EditorState.lineSeparator.of('\n'),
+          lineNumbers(),
+          javascript(),
+          draftHistory.current.of(history()),
+          keymap.of([...defaultKeymap, ...historyKeymap]),
+          styling.current.of([]),
+          EditorView.theme(
+            {
+              '&': { height: '100%' },
+              '.cm-scroller': { overflow: 'auto' },
+              '.cm-gutters': { background: '#15171b', color: '#9aa0a8' },
+              '&.cm-focused .cm-cursor': { borderLeftColor: '#e4e6ea' },
+            },
+            { dark: true },
+          ),
+          EditorView.contentAttributes.of({ 'aria-label': 'Strudel source', spellcheck: 'false' }),
+          EditorView.updateListener.of((update) => {
+            const { props, treatments } = current.current
+            if (
+              update.docChanged &&
+              !update.transactions.every((tr) => tr.annotation(Transaction.userEvent) === 'rack')
+            )
+              props.change(update.state.doc.toString())
+            if (update.selectionSet || update.focusChanged || update.docChanged)
+              // Accepted spans describe the old document until React installs the
+              // new revision. Preserve editing ownership across that boundary.
+              reportEditing(update.view, update.docChanged ? null : treatments, props.editingModule)
+          }),
+          EditorView.domEventHandlers({
+            compositionstart: () => {
+              clearTimeout(compositionTimer)
+              current.current.props.composing(true)
+            },
+            compositionend: () => {
+              // CM flushes pending DOM mutations after compositionend. Publish the final
+              // document before releasing the reader/rack gate, never an earlier prop.
+              compositionTimer = setTimeout(() => {
+                current.current.props.change(view.state.doc.toString())
+                current.current.props.composing(false)
+              }, 0)
+            },
+          }),
+        ],
+      }),
+    })
+    const editor = current.current.props.editor
+    editor.current = view
+    return () => {
+      clearTimeout(compositionTimer)
+      editor.current = null
+      view.destroy()
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    const view = props.editor.current
+    if (!view || view.composing) return
+    const before = view.state.doc.toString()
+    if (before !== props.source)
+      view.dispatch({
+        changes: editorChanges(before, props.source),
+        annotations: [Transaction.userEvent.of('rack'), Transaction.addToHistory.of(false)],
+      })
+  }, [props.source, props.editor])
+
+  useLayoutEffect(() => {
+    const view = props.editor.current
+    if (!view) return
+    view.dispatch({
+      effects: styling.current.reconfigure([
+        EditorView.decorations.of(decorations),
+        EditorView.contentAttributes.of({ 'aria-invalid': String(props.invalid) }),
+      ]),
+    })
+    reportEditing(view, treatments, props.editingModule)
+  }, [decorations, props.invalid, props.editor, props.editingModule, treatments])
+
+  useLayoutEffect(() => {
+    const view = props.editor.current
+    // Accepted source + graph history belongs to the app (#63). Removing and
+    // reinstalling the extension checkpoints draft undo without resetting selection.
+    if (!view || !props.document) return
+    view.dispatch({ effects: draftHistory.current.reconfigure([]) })
+    view.dispatch({ effects: draftHistory.current.reconfigure(history()) })
+  }, [props.document, props.editor])
+
+  return <div ref={host} className="source-surface" />
 }

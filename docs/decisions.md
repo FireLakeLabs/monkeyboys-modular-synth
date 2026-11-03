@@ -100,9 +100,10 @@ real-engine mini-notation token highlighting, mapped rack rewrites, existing
 source treatments, folding and code-line diagnostics. Keep event/source mapping
 behind `src/strudel/engine.ts`. Use app-owned accepted source documents for #63
 undo/redo, with CodeMirror history limited to unaccepted drafts and an explicit
-checkpoint boundary. Native OS IME and the full replacement browser suites
-remain production acceptance work; the opt-in prototype does not replace the
-current textarea.
+checkpoint boundary. The [#59 adoption](editor-adoption.md) replaces the textarea with a lazy editor
+and checkpoints draft history at acceptance. Chromium-native composition and the
+full replacement browser suites are verified there; physical OS IME/device
+coverage remains unverified.
 
 ## Brand
 
