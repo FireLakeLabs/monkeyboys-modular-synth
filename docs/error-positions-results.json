@@ -1,0 +1,14 @@
+{
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "checks": [
+    "Issue #65 voice: missing lpq closer reports line 8 and its opener column, with an aligned gutter marker; saved rack/source and exact draft are retained",
+    "Revert restores the exact last readable file and clears the marker",
+    "Balanced-bracket syntax errors retain their exact code token and gutter marker",
+    "Correcting a draft clears stale markers immediately and accepts the readable code",
+    "Marker-like strings and literal/comment brackets do not steal the metadata boundary or opener diagnosis",
+    "Line numbers cover code only, including when metadata is unfolded",
+    "Shortening an invalid draft updates its marker safely; Revert still restores the accepted file"
+  ],
+  "physicalListening": false,
+  "pageErrors": []
+}
