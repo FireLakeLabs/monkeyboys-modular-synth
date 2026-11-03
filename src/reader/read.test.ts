@@ -292,13 +292,16 @@ describe('handwritten catalog projection', () => {
       '.fast(2)',
     )
   })
-  it.each(['setcpm(30)', 'setcpm(120/4)', 'setcps(.5)'])('reads tempo %s', (tempo) => {
-    expect(
-      read(`${tempo};\n$: s("bd")`).patch.modules.find((module) => module.type === 'out')?.values[
-        'bpm'
-      ],
-    ).toBe(120)
-  })
+  it.each(['setcpm(30)', 'setcpm(120/4)', 'setCpm(30)', 'setCpm(120/4)', 'setcps(.5)'])(
+    'reads tempo %s',
+    (tempo) => {
+      expect(
+        read(`${tempo};\n$: s("bd")`).patch.modules.find((module) => module.type === 'out')?.values[
+          'bpm'
+        ],
+      ).toBe(120)
+    },
+  )
   it('never executes valid or invalid imported JavaScript', () => {
     const source = 'throw new Error("must not execute");\n$: custom().lpf(999999)'
     expect(generate(read(source))).toBe(source)

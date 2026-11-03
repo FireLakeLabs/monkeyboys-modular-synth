@@ -134,6 +134,11 @@ See [engine findings](engine-spike.md) for runtime evidence and limitations.
 
 ## Reading code
 
+OUT recognizes `setCpm` as the pinned engine's alias for `setcpm`, including
+the literal `bpm/4` form. Supported BPM edits retain imported spelling; new
+rack-owned generation stays lowercase. The [#46 trance fixture](trance-demo.md)
+checks its exact source, custom routing and separate saved-state/event behavior.
+
 Built-in [library patches](patch-library.md) use this same reader, preserving
 exact original source, opaque helpers and CODE. Parse and validate before the
 guarded Stop/replacement; install source and rack atomically after confirmed Stop,

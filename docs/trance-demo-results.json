@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-11-03T04:59:29.985Z",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "status": "passed",
+  "modules": 29,
+  "rows": 9,
+  "cycles": 4,
+  "events": {
+    "bd:default": 16,
+    "supersaw:2": 76,
+    "supersaw:3": 76,
+    "pulse:4": 64
+  },
+  "bpm": 140,
+  "firstPCM": [
+    {
+      "output": "master",
+      "rms": 0.159016581602813,
+      "samples": 184320
+    },
+    {
+      "output": "orbit1",
+      "rms": 0.13931937765224406,
+      "samples": 184320
+    },
+    {
+      "output": "orbit2",
+      "rms": 0.11301640595731079,
+      "samples": 184320
+    },
+    {
+      "output": "orbit3",
+      "rms": 0.08108743017782576,
+      "samples": 184320
+    },
+    {
+      "output": "orbit4",
+      "rms": 0.049206502925395246,
+      "samples": 184320
+    }
+  ],
+  "secondPCM": [
+    {
+      "output": "master",
+      "rms": 0.17443615721818623,
+      "samples": 184320
+    },
+    {
+      "output": "orbit1",
+      "rms": 0.14482965345265725,
+      "samples": 184320
+    },
+    {
+      "output": "orbit2",
+      "rms": 0.11808331895019127,
+      "samples": 184320
+    },
+    {
+      "output": "orbit3",
+      "rms": 0.09102579553082508,
+      "samples": 184320
+    },
+    {
+      "output": "orbit4",
+      "rms": 0.05016744851919089,
+      "samples": 184320
+    }
+  ],
+  "reopenedPCM": [
+    {
+      "output": "master",
+      "rms": 0.16060410995812965,
+      "samples": 184320
+    },
+    {
+      "output": "orbit1",
+      "rms": 0.14065081807566387,
+      "samples": 184320
+    },
+    {
+      "output": "orbit2",
+      "rms": 0.10361931037072244,
+      "samples": 184320
+    },
+    {
+      "output": "orbit3",
+      "rms": 0.08495715156948308,
+      "samples": 184320
+    },
+    {
+      "output": "orbit4",
+      "rms": 0.05070258768120774,
+      "samples": 184320
+    }
+  ],
+  "exactSource": true,
+  "savedRackIdentity": true,
+  "physicalListening": false,
+  "stopFailure": "Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover"
+}

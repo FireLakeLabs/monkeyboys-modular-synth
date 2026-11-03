@@ -7,6 +7,7 @@ import effects from './patches/echo-room.strudel?raw'
 import alien from './patches/iter-jux.strudel?raw'
 import code from './patches/custom-helper.strudel?raw'
 import layered from './patches/layered-sketch.strudel?raw'
+import trance from './patches/switch-angel-trance-demo.strudel?raw'
 
 export interface LibraryPatch {
   kind: 'patch'
@@ -168,6 +169,26 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
     id: 'complete',
     title: 'Complete patches',
     children: [
+      {
+        kind: 'collection',
+        id: 'trance',
+        title: 'Trance',
+        children: [
+          {
+            kind: 'patch',
+            id: 'switch-angel-trance-demo',
+            title: 'Switch Angel trance demo (cosimo transcription)',
+            description:
+              'The supplied 140 BPM, four-voice trance demo: kick, two gated supersaws and an FM pulse. Custom registrations and routing stay in source/CODE. Samples load on Play.',
+            source: trance,
+            attribution: {
+              author: 'Switch Angel · transcription by cosimo · user-supplied variant',
+              url: 'https://gist.github.com/cosimo/b0843897efb5f23b4594cb5082be1a85',
+            },
+            exercises: ['drums', 'code', 'out'],
+          },
+        ],
+      },
       {
         kind: 'collection',
         id: 'layered',
