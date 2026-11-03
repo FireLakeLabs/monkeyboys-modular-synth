@@ -55,13 +55,15 @@ local Vite development server:
   checks now explicitly opt into auto-apply. These retain real-engine error
   injection, exact source and saved rack identity, pending/failed Stop,
   restricted storage, native Chromium composition and protected metadata checks.
-- `npm run check` passed all 775 unit cases, 40 guardrails, formatting, skill
+- `npm run check` passed all 786 unit cases after rebasing onto `e541524` (#113), 40 guardrails, formatting, skill
   integrity, lint, TypeScript and production build. Browser checks remain
   separate from shared CI and require provisioned Chromium; real-engine checks
   also require external sample manifests. Mac hardware/OS IMEs and other
   browsers/devices were not tested; Cmd events were exercised in Chromium.
 
 Output JSON and screenshots are written to the supplied temporary directory.
-Legacy in-page grid, connection, identity and library probes explicitly enable
+The in-page grid, connection, identity, library loading/replacement and library
+rack-editing probes also passed after the rebase. They explicitly enable
 auto-apply through the shared browser helper; the new application suite leaves
-the initial default untouched.
+the initial default untouched. The application suite, including real-engine
+PCM, passed again after the rebase.
