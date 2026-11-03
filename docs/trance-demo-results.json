@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-03T04:59:29.985Z",
+  "timestamp": "2026-11-03T05:03:19.269Z",
   "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
   "status": "passed",
   "modules": 29,
@@ -15,86 +15,87 @@
   "firstPCM": [
     {
       "output": "master",
-      "rms": 0.159016581602813,
+      "rms": 0.1653032004069887,
       "samples": 184320
     },
     {
       "output": "orbit1",
-      "rms": 0.13931937765224406,
+      "rms": 0.13927210531456619,
       "samples": 184320
     },
     {
       "output": "orbit2",
-      "rms": 0.11301640595731079,
+      "rms": 0.11878804985435115,
       "samples": 184320
     },
     {
       "output": "orbit3",
-      "rms": 0.08108743017782576,
+      "rms": 0.0863284617179947,
       "samples": 184320
     },
     {
       "output": "orbit4",
-      "rms": 0.049206502925395246,
+      "rms": 0.04905406702329411,
       "samples": 184320
     }
   ],
   "secondPCM": [
     {
       "output": "master",
-      "rms": 0.17443615721818623,
+      "rms": 0.16834857255818741,
       "samples": 184320
     },
     {
       "output": "orbit1",
-      "rms": 0.14482965345265725,
+      "rms": 0.14123210866688085,
       "samples": 184320
     },
     {
       "output": "orbit2",
-      "rms": 0.11808331895019127,
+      "rms": 0.11968632277088898,
       "samples": 184320
     },
     {
       "output": "orbit3",
-      "rms": 0.09102579553082508,
+      "rms": 0.09211352662104563,
       "samples": 184320
     },
     {
       "output": "orbit4",
-      "rms": 0.05016744851919089,
+      "rms": 0.05083838219300169,
       "samples": 184320
     }
   ],
   "reopenedPCM": [
     {
       "output": "master",
-      "rms": 0.16060410995812965,
+      "rms": 0.17566269621273203,
       "samples": 184320
     },
     {
       "output": "orbit1",
-      "rms": 0.14065081807566387,
+      "rms": 0.1455685706886445,
       "samples": 184320
     },
     {
       "output": "orbit2",
-      "rms": 0.10361931037072244,
+      "rms": 0.1294236428979674,
       "samples": 184320
     },
     {
       "output": "orbit3",
-      "rms": 0.08495715156948308,
+      "rms": 0.08759181121854835,
       "samples": 184320
     },
     {
       "output": "orbit4",
-      "rms": 0.05070258768120774,
+      "rms": 0.049463384273473174,
       "samples": 184320
     }
   ],
   "exactSource": true,
   "savedRackIdentity": true,
+  "renderedRackIdentity": true,
   "physicalListening": false,
   "stopFailure": "Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover"
 }

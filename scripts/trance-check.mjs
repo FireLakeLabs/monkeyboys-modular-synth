@@ -1,6 +1,6 @@
 // Import from the Vite dev server in the harness browser. See docs/trance-demo.md.
 import { read } from '../src/reader/index.ts'
-import { validateRack } from '../src/rack/model.ts'
+import { HP, ROW_HEIGHT, validateRack } from '../src/rack/model.ts'
 import { sourceBody } from '../src/workspace/document.ts'
 import { libraryPatches } from '../src/library/catalog.ts'
 
@@ -248,6 +248,28 @@ export async function verifyTrance() {
       JSON.stringify(read(source()).patch) === JSON.stringify(savedRack),
       'Reopen lost saved rack identity',
     )
+    assert(
+      document.querySelector(`[data-module="${outId}"]`).classList.contains('look-vintage'),
+      'Reopen did not restore the visible OUT look',
+    )
+    const rendered = [...document.querySelectorAll('.module-panel')]
+      .map((panel) => ({
+        id: panel.dataset.module,
+        left: panel.style.left,
+        top: panel.style.top,
+      }))
+      .sort((a, b) => a.id.localeCompare(b.id))
+    const expected = savedRack.modules
+      .map((module) => ({
+        id: module.id,
+        left: `${module.hp * HP}px`,
+        top: `${module.row * ROW_HEIGHT + 20}px`,
+      }))
+      .sort((a, b) => a.id.localeCompare(b.id))
+    assert(
+      JSON.stringify(rendered) === JSON.stringify(expected),
+      'Reopened panels do not match saved rack identities and positions',
+    )
     const reopenedPCM = await play()
     assert(
       eventSnapshot(events()) === eventSnapshot(firstEvents),
@@ -266,6 +288,7 @@ export async function verifyTrance() {
       reopenedPCM,
       exactSource: true,
       savedRackIdentity: true,
+      renderedRackIdentity: true,
       physicalListening: false,
     }
   } finally {

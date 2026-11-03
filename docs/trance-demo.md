@@ -65,7 +65,7 @@ per-orbit output on initial Play, repeated load/Play and exported-file reopen.
 Four-cycle event counts were 16 kick, 76 first supersaw, 76 second supersaw and
 64 pulse events. Full event snapshots, including timing and controls, stayed
 equal across the three runs. Stop ceased scheduling, loads stayed silent, the
-OUT look survived reopening, and injected Stop failure retained the trance
+rendered module identities/positions and OUT look survived reopening, and injected Stop failure retained the trance
 draft/rack and Export current before a successful retry. No physical listening
 or comparison with the original video performance was performed.
 
