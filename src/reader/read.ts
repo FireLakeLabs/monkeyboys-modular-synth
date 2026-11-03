@@ -1,13 +1,13 @@
 import { tokenizer, type Expression, type Node } from 'acorn'
 import { graph } from '../codegen/graph'
 import { generate } from '../codegen/generate'
-import { descriptor, type Binding, type RackLayout } from '../codegen/layout'
+import { descriptor, type RackLayout } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { matchScopes, readLayout } from './layout'
 import { chain, parseSource, scalar, type Call, type ParsedScope } from './syntax'
-import type { ReadResult, SourceBinding, SourceDocument, Span } from './types'
+import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } from './types'
 
 type Output = { module: PlacedModule; jack: string }
 
@@ -125,7 +125,7 @@ function project(
     scope: ParsedScope,
     indices: number[],
     controls: Record<string, Span> = {},
-    semantic: { role: Binding['role']; target?: Binding['target'] } = { role: 'module' },
+    semantic: Pick<SourceAddress, 'role' | 'target'> = { role: 'module' },
   ): void {
     const calls = indices.flatMap((index) => scope.calls[index] ?? [])
     const start = calls[0]?.start ?? scope.start

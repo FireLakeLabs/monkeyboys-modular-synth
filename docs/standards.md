@@ -116,6 +116,12 @@ import, catalog/CV projection, validated saved-state recovery and conservative
 identity reconciliation. Live editor integration and universal audible equivalence
 remain open.
 
+The #35 structural workspace boundary requires explicit call ownership plans and
+independent source/graph validation before accepting imported edits. Focused
+behavior tests cover exact source, events, atomic refusal and full reopened rack
+identity. Its [real-engine browser acceptance](structural-edit-verification.md)
+is separate from the shared deterministic gate.
+
 Resolve open product questions in the owning spec and issue before encoding them
 as expected test results. Do not invent graph, persistence, or audio behavior to
 make a standards check pass.

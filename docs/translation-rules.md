@@ -209,7 +209,37 @@ writer does not mutate the patch and always writes a complete trailing rack bloc
 
 An explicitly saved output name keeps its declaration even when only one branch
 remains. Workspace edits use `editDocument`, which splices proven imported literal
-or declaration/receiver ranges and reparses. Imported sounding structural edits
-without a source-preservation plan are refused; they remain editable in source.
+or declaration/receiver ranges and reparses. Imported sounding structural edits use the explicit [preservation matrix](#imported-structural-edits-35); edits outside that matrix remain editable in source.
 Look and position edits change only trailing metadata, preserving executable
 bytes and avoiding audio re-evaluation.
+
+## Imported structural edits (#35)
+
+A structural edit requires an explicit source plan, followed by an independent
+reader/graph check before either rack or playback is updated. The supported
+matrix is conservative; a graph-valid cable is not necessarily source-editable.
+
+| Operation                                 | Supported source-owned case                                                                                                                                                                                     |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add/remove disconnected modules or cables | Metadata only when sounding code is unchanged.                                                                                                                                                                  |
+| Insert/remove a chain module              | Connect a supported catalog transform into an existing chain, or bypass it by repatching. Existing roots and the relative order of surviving modules stay fixed. Multi-call settings travel as one owned group. |
+| Connect/replace a sounding cable          | Extend a chain or bypass/replace transforms within the same final mixer channel. Retain the existing root and declaration boundaries.                                                                           |
+| Disconnect a voice or delete its module   | Remove an independent top-level `$:` statement with fully supported catalog code. Deletion does not bridge neighbors. Keep all comments/whitespace and save the remaining disconnected graph.                   |
+| Reconnect a disconnected voice            | Append an independent `$:` expression from supported catalog modules, without creating/changing shared declarations or names.                                                                                   |
+| CODE and imported orbit routing           | Retain existing fragments byte-for-byte and in order. Insertions around them are allowed; removing, copying or moving opaque fragments is refused. No overriding routing is appended.                           |
+
+All untouched tokens, comments, whitespace, unrelated declarations and statements
+stay exact. Removing catalog calls removes only their executable tokens; comments
+inside those calls remain as trivia. New calls use generator formatting. Reconnected voices whose old executable tokens were removed use generator formatting too; retained comments stay at their original positions. A plan
+records the new call ownership explicitly, so repeated calls need no heuristic
+identity matching during an authorized rack edit. The independent reader still
+must prove the saved graph and all bindings agree with the edited source.
+
+Refuse changes to roots, shared-declaration topology/names, mixer structure,
+structural CV routing, reordered surviving groups, ambiguous scope ownership,
+whole-voice removal containing CODE, and removal of a `stack()` argument or bare
+unlabelled voice. Refuse any remaining case that fails independent source/graph,
+routing provenance or saved identity validation. Explain that the user can make
+that structural edit in code. Refusal is atomic: source, rack and scheduled audio
+stay at the accepted revision. These limits do not restrict canonical rack-owned
+generation or the existing proven literal/name edits.

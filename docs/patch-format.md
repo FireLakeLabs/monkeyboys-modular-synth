@@ -131,3 +131,18 @@ A live program differing from its snapshot receives conservative reconciliation.
 Snapshots cannot contain nested rack blocks. Copy/Export save the exact current
 draft; Open reads plain `.strudel` files. Chosen names survive reducing a split
 to one branch. See [workspace evidence and limits](workspace-verification.md).
+
+## Planned structural source mutations (#35)
+
+The [structural-edit matrix](translation-rules.md#imported-structural-edits-35)
+defines supported mutations and refusals. A plan carries explicit old-to-new
+call ownership, rather than reconciling identities by a changed call's ordinal.
+After splicing, parse the new body, stamp its actual scope/call addresses, and
+independently validate source semantics before accepting the v1 envelope.
+
+Export/reopen must restore the proposed patch exactly: stable module and cable
+IDs, layout, looks, names, values, disconnected/bypassed state, and empty rows.
+Removed sounding calls may leave their modules and cables as disconnected saved
+state. No dangling source binding is retained for such modules. Source byte
+preservation, Strudel event behavior and complete saved identity are distinct
+verification claims; graph validity alone establishes none of the three.
