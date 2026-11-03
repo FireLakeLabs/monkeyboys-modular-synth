@@ -84,6 +84,16 @@ showcases retain exact source and offer explicit conversion at a refused edit.
 See [independent source/rack/event and browser evidence](library-rack-verification.md).
 The Start here collection (#80) and global undo/redo (#63) remain separate work.
 
+## Local workspace recovery
+
+Issue #60 adds [local workspace recovery](patch-format.md#local-workspace-recovery-60):
+accepted source and exact draft text share one browser-local recovery copy.
+An explicit restore/discard choice protects that copy on load; restoring keeps
+audio stopped. Storage failure leaves editing/export available and an unsaved
+draft requests the browser's departure warning. `scripts/autosave-check.mjs`
+checks reload/close, exact source/rack identity, draft recovery, discard and
+restricted storage separately from the deterministic gate.
+
 ## Activity and source feedback
 
 [Issue #37](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/37)

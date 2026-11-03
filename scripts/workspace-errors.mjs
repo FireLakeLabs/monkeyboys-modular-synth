@@ -530,6 +530,8 @@ try {
     /previous evaluation is still pending/,
   )
   await hang.reload()
+  await hang.getByRole('button', { name: 'Restore last patch', exact: true }).click()
+  await waitStatus(hang, 'Stopped')
   await code(hang, '$: note("c3").s("sine")\n')
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(hang, 'Pattern scheduled')

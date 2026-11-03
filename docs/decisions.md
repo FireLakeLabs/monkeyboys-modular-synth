@@ -72,6 +72,12 @@ A module’s category colour is used for its dot on the panel and for the code i
   collection includes module exercises; personal library editing, accounts and
   sharing remain later. Loading uses the guarded workspace replacement path and
   leaves audio stopped. See [entry and loading contract](patch-library.md).
+- **Local recovery (#60, decided 3 November 2026):** save the accepted file and
+  unfinished draft together in browser storage. On load, offer explicit restore
+  or discard before editing; restore never starts audio. Invalid drafts return
+  beside the last readable rack, and a draft that could not be stored requests
+  the browser's departure warning. Storage failures otherwise stay quiet. See
+  [recovery format and limits](patch-format.md#local-workspace-recovery-60).
 
 Owner choices for #9–#12, approved 2 November 2026. Current implementation and
 issue status live in the [build plan](build-plan.md#current-status-and-remaining-work). The

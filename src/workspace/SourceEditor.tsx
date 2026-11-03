@@ -1,11 +1,32 @@
 import { useLayoutEffect, useMemo, useRef, type RefObject } from 'react'
-import { Compartment, EditorState, Text, Transaction } from '@codemirror/state'
-import { Decoration, EditorView, keymap, lineNumbers } from '@codemirror/view'
+import {
+  Compartment,
+  EditorState,
+  StateEffect,
+  StateField,
+  Text,
+  Transaction,
+} from '@codemirror/state'
+import { Decoration, EditorView, keymap, lineNumbers, type DecorationSet } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { javascript } from '@codemirror/lang-javascript'
 import type { SourceDocument } from '../reader/types'
 import { sourceSegments, sourceTreatments, type SourceTreatment } from './highlighting'
 import { editorChanges } from './editorChanges'
+
+const setSourceDecorations = StateEffect.define<DecorationSet>()
+const sourceDecorations = StateField.define<DecorationSet>({
+  create: () => Decoration.none,
+  update(decorations, transaction) {
+    // Input can shorten the document before React publishes its new treatments.
+    // Keep every range valid during that interval, including invalid drafts.
+    let next = decorations.map(transaction.changes)
+    for (const effect of transaction.effects)
+      if (effect.is(setSourceDecorations)) next = effect.value
+    return next
+  },
+  provide: (field) => EditorView.decorations.from(field),
+})
 
 function reportEditing(
   view: EditorView,
@@ -76,6 +97,7 @@ export function SourceEditor(props: {
           draftHistory.current.of(history()),
           keymap.of([...defaultKeymap, ...historyKeymap]),
           styling.current.of([]),
+          sourceDecorations,
           EditorView.theme(
             {
               '&': { height: '100%' },
@@ -139,10 +161,12 @@ export function SourceEditor(props: {
     const view = props.editor.current
     if (!view) return
     view.dispatch({
-      effects: styling.current.reconfigure([
-        EditorView.decorations.of(decorations),
-        EditorView.contentAttributes.of({ 'aria-invalid': String(props.invalid) }),
-      ]),
+      effects: [
+        setSourceDecorations.of(decorations),
+        styling.current.reconfigure([
+          EditorView.contentAttributes.of({ 'aria-invalid': String(props.invalid) }),
+        ]),
+      ],
     })
     reportEditing(view, treatments, props.editingModule)
   }, [decorations, props.invalid, props.editor, props.editingModule, treatments])

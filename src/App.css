@@ -263,6 +263,7 @@
   margin: 12px 0;
 }
 .code-actions button,
+.restore-prompt button,
 .open-library,
 .replace-prompt button,
 .import-code,
@@ -376,4 +377,36 @@
 }
 .rack-edit-refusal button + button {
   margin-left: 8px;
+}
+
+.restore-prompt {
+  width: min(440px, calc(100vw - 64px));
+  padding: 24px;
+  border: 1px solid #414650;
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 20px 80px #0008;
+}
+.restore-prompt::backdrop {
+  background: #0009;
+}
+.restore-prompt h2 {
+  margin: 0 0 12px;
+  font:
+    24px 'Barlow Condensed',
+    sans-serif;
+}
+.restore-prompt p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.restore-prompt button {
+  margin: 4px 8px 4px 0;
+}
+.restore-prompt button:first-of-type {
+  background: var(--audio);
+  border-color: var(--audio);
+  color: #1a1408;
 }
