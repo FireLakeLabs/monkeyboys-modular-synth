@@ -75,6 +75,26 @@ the exact draft, including saved rack state. See the
 | Text          | `#e4e6ea`; muted `#9aa0a8`           |
 | Rack interior | `#0a0b0d`, rails `#3b3f46 → #25282d` |
 
+## Editor status (#73)
+
+One bar directly beneath the source editor contains the cursor's one-based line
+and column, rack/code sync state, concise engine status and an **Audio engine
+info** disclosure. Cursor coordinates follow the active selection head and
+mapped document changes without updating React workspace state. The header
+retains the single Play/Stop control and tempo.
+
+The bar says “Ready” while stopped, “Loading samples” during manifest
+registration, “Playing” while scheduled, and reports starting/applying/stopping
+or audio errors as needed. “Ready” means the transport is available; it does not
+promise decoded samples or audible output. Manifest state, sample-readiness
+limits and Stop/tail caveats live behind the keyboard-operable info control.
+An observed resource failure keeps that control visibly marked after retries.
+
+Parser, metadata and runtime errors expand this same footer. Revert, metadata
+replacement, runtime error details and the slow-evaluation export/reload advice
+remain reachable; the header Stop and global Stop shortcut keep their #36
+semantics. See [browser observations and checks](editor-status-verification.md).
+
 ## Looks at a glance
 
 Each look is a set of layout rules plus tokens applied to a module’s control list (see [`decisions.md`](decisions.md#looks)). Fonts are Google Fonts.

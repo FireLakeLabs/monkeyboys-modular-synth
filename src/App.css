@@ -16,6 +16,7 @@
 
 .header-tempo {
   margin: 0;
+  margin-left: auto;
   padding: 0;
   border: 0;
 }
@@ -350,7 +351,7 @@
 .open-library,
 .replace-prompt button,
 .import-code,
-.code > button,
+.editor-status > button,
 .code .error button {
   border: 1px solid #414650;
   background: #202328;
@@ -374,6 +375,61 @@
 .sync-status {
   font-size: 12px;
   color: #8cf5da;
+}
+.editor-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border: 1px solid #343d46;
+  border-top: 0;
+  border-radius: 0 0 6px 6px;
+  background: #15171b;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.cursor-position {
+  font:
+    11px 'JetBrains Mono',
+    monospace;
+  white-space: nowrap;
+}
+.engine-info {
+  position: relative;
+}
+.engine-info[data-warning='true'] summary {
+  color: #ff9f9f;
+}
+.engine-info summary {
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 24px;
+  min-width: 24px;
+  text-align: center;
+  list-style: none;
+}
+.engine-info-content {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: min(320px, calc(100vw - 80px));
+  padding: 8px 12px;
+  border: 1px solid #414650;
+  border-radius: 6px;
+  background: #202328;
+  box-shadow: 0 8px 24px #0008;
+}
+.editor-status > .error,
+.editor-status > .source-selection,
+.editor-status > .placeholder {
+  flex-basis: 100%;
+  margin: 0;
+}
+.editor-status .error p {
+  margin: 0 0 8px;
 }
 .audio-note,
 .share-note,
@@ -402,7 +458,7 @@
   resize: vertical;
   overflow: hidden;
   border: 1px solid #343d46;
-  border-radius: 6px;
+  border-radius: 6px 6px 0 0;
   background: #090c11;
   color: #dce5e9;
 }

@@ -103,7 +103,7 @@ try {
   // A legacy/corrupt saved layout must fail before replacing the accepted rack.
   const failedLayout = longSaved.replace('"hp": 0', '"hp": 64')
   await page.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(page, 'Pattern scheduled')
+  await waitStatus(page, 'Playing')
   await replaceSource(page, failedLayout)
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
@@ -115,7 +115,7 @@ try {
   await page.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await failedDownload).path(), 'utf8'), failedLayout)
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
   assert.equal(await sourceText(page), longSaved)
   assert.deepEqual(await patch(page), longRack)
@@ -124,7 +124,7 @@ try {
     () => document.querySelector('.cm-content')?.getAttribute('aria-invalid') === 'true',
   )
   await code(page, longVoice.replace('.room(.6)', '.room(.7)'))
-  assert.equal(await status(page).textContent(), 'Stopped')
+  assert.equal(await status(page).textContent(), 'Ready')
   assert.match(await sourceText(page), /room\(\.7\)/)
   pass(
     'ui',
@@ -134,13 +134,13 @@ try {
   const original = await sourceText(page)
   const identity = await patch(page)
   await page.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(page, 'Pattern scheduled')
+  await waitStatus(page, 'Playing')
   const invalid = '// exact draft 🐒\n$: note('
   await replaceSource(page, invalid)
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
-  assert.equal(await status(page).textContent(), 'Pattern scheduled')
+  assert.equal(await status(page).textContent(), 'Playing')
   assert.match(await page.locator('.audio-note').textContent(), /Previous pattern scheduled/)
   assert.equal(await page.locator('.module-panel').count(), identity.modules.length)
   await assert.rejects(
@@ -153,11 +153,11 @@ try {
   assert.equal(await readFile(await (await download).path(), 'utf8'), invalid)
   await page.screenshot({ path: `${output}/syntax.png` })
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
   assert.equal(await sourceText(page), original)
   assert.deepEqual(await patch(page), identity)
-  assert.equal(await status(page).textContent(), 'Stopped')
+  assert.equal(await status(page).textContent(), 'Ready')
   pass(
     'ui',
     'invalid draft export is byte exact; accepted rack retained/locked; Revert restores saved identity without Play',
@@ -170,7 +170,7 @@ try {
     }, detail)
     const retained = await sourceText(page)
     await page.getByRole('button', { name: 'Play', exact: true }).click()
-    await waitStatus(page, 'Scheduling stopped after error')
+    await waitStatus(page, 'Audio error')
     assert.equal(await sourceText(page), retained)
     assert.match(await page.locator('.error details').textContent(), new RegExp(detail))
     await replaceSource(page, '$: note(')
@@ -188,11 +188,11 @@ try {
       window.audioFixture.play = 'ok'
     })
     await code(page, retained.replace('.lpf(800)', '.lpf(900)'))
-    assert.equal(await status(page).textContent(), 'Scheduling stopped after error')
+    assert.equal(await status(page).textContent(), 'Audio error')
     await page.getByRole('button', { name: 'Play', exact: true }).click()
-    await waitStatus(page, 'Pattern scheduled')
+    await waitStatus(page, 'Playing')
     await page.getByRole('button', { name: 'Stop', exact: true }).click()
-    await waitStatus(page, 'Stopped')
+    await waitStatus(page, 'Ready')
   }
   pass(
     'ui',
@@ -206,7 +206,7 @@ try {
   await page.waitForFunction(() => window.audioFixture.release !== null)
   await code(page, '$: note("d3").s("sine")\n')
   await page.evaluate(() => window.audioFixture.reject(new Error('obsolete code failure')))
-  await waitStatus(page, 'Scheduling stopped after error')
+  await waitStatus(page, 'Audio error')
   assert.match(await page.getByRole('alert').textContent(), /earlier code revision/)
   assert.equal(await source(page).getAttribute('aria-invalid'), 'false')
   assert.match(await sourceText(page), /d3/)
@@ -220,7 +220,7 @@ try {
     window.audioFixture.stop = 'reject'
   })
   await page.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(page, 'Pattern scheduled')
+  await waitStatus(page, 'Playing')
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(page, 'Audio state unknown')
   const retained = await sourceText(page)
@@ -243,7 +243,7 @@ try {
     window.audioFixture.stop = 'ok'
   })
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   pass(
     'ui',
     'failed Stop reports unknown audio, refuses Open/New, retains source and supports Retry Stop',
@@ -258,7 +258,7 @@ try {
   await page.waitForFunction(() => window.audioFixture.release !== null)
   await open(page, '$: note("a3").s("sine")\n')
   await page.getByRole('button', { name: 'Open patch', exact: true }).click()
-  await waitStatus(page, 'Stopping… · audio state unknown')
+  await waitStatus(page, 'Stopping audio')
   await replaceSource(page, '// work typed during Stop\n$: note("e3").s("sine")\n')
   await accepted(page)
   await page.waitForFunction(
@@ -273,7 +273,7 @@ try {
     window.audioFixture.releaseStop()
     window.audioFixture.stop = 'ok'
   })
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   await page.waitForFunction(() =>
     document.querySelector('.code')?.textContent.includes('Replacement cancelled'),
   )
@@ -292,7 +292,7 @@ try {
   await accepted(page)
   assert.match(await sourceText(page), /chunk\(4, x => x.rev\(\)\)/)
   assert((await patch(page)).modules.some((module) => module.type === 'code'))
-  assert.equal(await status(page).textContent(), 'Stopped')
+  assert.equal(await status(page).textContent(), 'Ready')
   assert.deepEqual(errors, [])
   pass(
     'ui',
@@ -309,7 +309,7 @@ try {
     await page.waitForFunction(() => window.audioFixture.release !== null)
     await page.getByRole('button', { name: 'New patch', exact: true }).click()
     await page.getByRole('button', { name: 'Replace patch', exact: true }).click()
-    await waitStatus(page, 'Stopping… · audio state unknown')
+    await waitStatus(page, 'Stopping audio')
     if (action === 'Escape') await page.keyboard.press('Escape')
     else await page.getByRole('button', { name: 'Cancel', exact: true }).click()
     await page.evaluate(() => {
@@ -317,7 +317,7 @@ try {
       window.audioFixture.releaseStop()
       window.audioFixture.stop = 'ok'
     })
-    await waitStatus(page, 'Stopped')
+    await waitStatus(page, 'Ready')
     assert.equal(await sourceText(page), before)
   }
   pass('ui', 'Cancel and Escape invalidate New replacement while Stop is pending')
@@ -366,11 +366,11 @@ try {
   )
   const saved = await sourceText(audio)
   await audio.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(audio, 'Scheduling stopped after error')
+  await waitStatus(audio, 'Audio error')
   assert.equal(await sourceText(audio), saved)
   failManifest = false
   await audio.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(audio, 'Pattern scheduled')
+  await waitStatus(audio, 'Playing')
   async function rms() {
     return audio.evaluate(async () => {
       let sum = 0,
@@ -398,7 +398,7 @@ try {
   results.pcm.invalidDraft = await rms()
   assert(results.pcm.invalidDraft.rms > 0.001)
   await audio.getByRole('button', { name: 'Stop', exact: true }).click()
-  await waitStatus(audio, 'Stopped')
+  await waitStatus(audio, 'Ready')
   // Observe after the test synth's release; Stop itself does not promise immediate silence.
   await audio.waitForTimeout(1500)
   results.pcm.afterStop = await rms()
@@ -435,17 +435,17 @@ try {
   await code(fault, '$: note("c3").s("sine")\n')
   const beforeActivation = await sourceText(fault)
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(fault, 'Scheduling stopped after error')
+  await waitStatus(fault, 'Audio error')
   assert.equal(await sourceText(fault), beforeActivation)
   assert.match(await fault.locator('.error details').textContent(), /injected activation rejection/)
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(fault, 'Pattern scheduled')
+  await waitStatus(fault, 'Playing')
   await code(fault, '$: note("c3").missingMethod()\n')
-  await waitStatus(fault, 'Scheduling stopped after error')
+  await waitStatus(fault, 'Audio error')
   await code(fault, '$: note("c4").s("sine")\n')
-  assert.equal(await status(fault).textContent(), 'Scheduling stopped after error')
+  assert.equal(await status(fault).textContent(), 'Audio error')
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(fault, 'Pattern scheduled')
+  await waitStatus(fault, 'Playing')
   pass(
     'engine',
     'real adapter resume rejection and construction throw retain work; retry/correction needs explicit Play',
@@ -461,9 +461,9 @@ try {
     /injected scheduler Stop failure/,
   )
   await fault.getByRole('button', { name: 'Stop', exact: true }).click()
-  await waitStatus(fault, 'Stopped')
+  await waitStatus(fault, 'Ready')
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(fault, 'Pattern scheduled')
+  await waitStatus(fault, 'Playing')
   pass('engine', 'real scheduler Stop failure reports unknown state; explicit Stop retry recovers')
 
   const missing = fault.waitForEvent('console', {
@@ -471,7 +471,7 @@ try {
   })
   await code(fault, '$: s("monkeyboy_missing_fixture")\n')
   await missing
-  await waitStatus(fault, 'Scheduling stopped after error')
+  await waitStatus(fault, 'Audio error')
   assert.match(
     await fault.locator('.audio-note').textContent(),
     /resource\/output failure observed/,
@@ -492,7 +492,7 @@ try {
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
   await decode
   assert(decodeRequests > 0)
-  await waitStatus(fault, 'Scheduling stopped after error')
+  await waitStatus(fault, 'Audio error')
   assert.match(
     await fault.locator('.audio-note').textContent(),
     /resource\/output failure observed/,
@@ -507,7 +507,7 @@ try {
   )
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
   await fault.waitForFunction(() => globalThis.lateOutputFixture === true)
-  await waitStatus(fault, 'Scheduling stopped after error')
+  await waitStatus(fault, 'Audio error')
   assert.match(await fault.locator('.error details').textContent(), /late output fixture/)
   assert(await fault.getByRole('button', { name: 'Play', exact: true }).isEnabled())
   pass('engine', 'late output throw reaches workspace banner and automatically stops scheduling')
@@ -521,34 +521,34 @@ try {
     '// intentionally pending\nglobalThis.hungEvaluationStarted = true; new Promise(() => {})\n',
   )
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(hang, 'Enabling audio / starting…')
+  await waitStatus(hang, 'Starting audio')
   await hang.waitForFunction(() => globalThis.hungEvaluationStarted === true)
   await hang.getByRole('button', { name: 'Stop', exact: true }).click()
-  await waitStatus(hang, 'Stopped')
+  await waitStatus(hang, 'Ready')
   const hungDraft = await sourceText(hang)
   const hungDownload = hang.waitForEvent('download')
   await hang.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await hungDownload).path(), 'utf8'), hungDraft)
-  assert.equal(await status(hang).textContent(), 'Stopped')
+  assert.equal(await status(hang).textContent(), 'Ready')
   await code(hang, '$: note("c3").s("sine")\n')
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(hang, 'Scheduling stopped after error')
+  await waitStatus(hang, 'Audio error')
   assert.match(
     await hang.locator('.error details').textContent(),
     /previous evaluation is still pending/,
   )
   await hang.reload()
   await hang.getByRole('button', { name: 'Restore last patch', exact: true }).click()
-  await waitStatus(hang, 'Stopped')
+  await waitStatus(hang, 'Ready')
   await code(hang, '$: note("c3").s("sine")\n')
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(hang, 'Pattern scheduled')
+  await waitStatus(hang, 'Playing')
   pass(
     'engine',
     'real never-settling evaluation permits immediate Stop and exact export; replay refused until reload, then explicit Play succeeds',
   )
   await hang.getByRole('button', { name: 'Stop', exact: true }).click()
-  await waitStatus(hang, 'Stopped')
+  await waitStatus(hang, 'Ready')
   await code(
     hang,
     `new Promise(resolve => { globalThis.finishEvaluation = () => resolve(note('c3').s('sine')) })\n`,
@@ -556,7 +556,7 @@ try {
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
   await hang.waitForFunction(() => typeof globalThis.finishEvaluation === 'function')
   await hang.getByRole('button', { name: 'Stop', exact: true }).click()
-  await waitStatus(hang, 'Stopped')
+  await waitStatus(hang, 'Ready')
   let starts = 0
   hang.on('console', (message) => {
     if (message.text().includes('[cyclist] start')) starts++
@@ -568,10 +568,10 @@ try {
   await hang.evaluate(() => globalThis.finishEvaluation())
   await abandoned
   assert.equal(starts, 0)
-  assert.equal(await status(hang).textContent(), 'Stopped')
+  assert.equal(await status(hang).textContent(), 'Ready')
   await code(hang, '$: note("d3").s("sine")\n')
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(hang, 'Pattern scheduled')
+  await waitStatus(hang, 'Playing')
   pass(
     'engine',
     'settled abandoned evaluation cannot restart its scheduler; explicit Play can recover without reload',

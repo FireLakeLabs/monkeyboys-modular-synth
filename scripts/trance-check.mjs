@@ -38,7 +38,7 @@ export async function loadTrance() {
   await until(() => !library() || library().querySelector('.replace-prompt'))
   if (library()) button('Load patch', library()).click()
   await until(() => !library())
-  assert(status() === 'Stopped', 'Library load started audio')
+  assert(status() === 'Ready', 'Library load started audio')
   assert(source() === entry.source, 'Load changed supplied source')
   const patch = read(source()).patch
   validateRack(patch)
@@ -134,8 +134,8 @@ export async function verifyTrance() {
   async function play() {
     triggers.length = 0
     document.querySelector('.topbar .play').click()
-    await until(() => status() === 'Pattern scheduled' || status().includes('error'))
-    assert(status() === 'Pattern scheduled', 'Demo evaluation failed')
+    await until(() => status() === 'Playing' || status().includes('error'))
+    assert(status() === 'Playing', 'Demo evaluation failed')
     await pause(2500)
     const pcm = await signal()
     assert(
@@ -206,7 +206,7 @@ export async function verifyTrance() {
       'Missing custom registration',
     )
     document.querySelector('.topbar .play[aria-label=Stop]').click()
-    await until(() => status() === 'Stopped')
+    await until(() => status() === 'Ready')
     const stoppedCount = triggers.length
     await pause(1000)
     assert(triggers.length === stoppedCount, 'Stop left scheduler triggering')
@@ -231,7 +231,7 @@ export async function verifyTrance() {
       'Repeated load/Play changed events',
     )
     document.querySelector('.topbar .play[aria-label=Stop]').click()
-    await until(() => status() === 'Stopped')
+    await until(() => status() === 'Ready')
 
     const transfer = new DataTransfer()
     transfer.items.add(new File([saved], 'switch-angel.strudel', { type: 'text/plain' }))
@@ -276,7 +276,7 @@ export async function verifyTrance() {
       'Export/reopen changed sound events',
     )
     document.querySelector('.topbar .play[aria-label=Stop]').click()
-    await until(() => status() === 'Stopped')
+    await until(() => status() === 'Ready')
     return {
       status: 'passed',
       ...layout,

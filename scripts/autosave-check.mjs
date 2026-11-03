@@ -41,7 +41,7 @@ async function stored(page) {
   })
 }
 async function assertStopped(page) {
-  assert.equal(await page.locator('.transport-status').textContent(), 'Stopped')
+  assert.equal(await page.locator('.transport-status').textContent(), 'Ready')
   assert.equal(await page.evaluate(() => window.audioContexts), 0)
 }
 async function exported(page) {

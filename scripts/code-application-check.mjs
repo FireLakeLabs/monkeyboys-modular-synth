@@ -62,7 +62,7 @@ try {
   assert.equal((await saved(page)).draft, first)
   assert.notEqual((await saved(page)).source, first)
   await source(page).press('Control+Enter')
-  await waitStatus(page, 'Pattern scheduled')
+  await waitStatus(page, 'Playing')
   assert.equal(await page.evaluate(() => window.audioFixture.calls.length), 1)
   assert.match(await page.locator('.sync-status').textContent(), /^Rack matches code/)
   assert.equal(
@@ -91,10 +91,10 @@ try {
   assert.equal((await saved(page)).source, accepted)
   await page.getByRole('button', { name: 'Patch library', exact: true }).focus()
   await page.keyboard.press('Meta+Period')
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   assert.equal((await saved(page)).draft, draft)
   await source(page).press('Meta+Enter')
-  await waitStatus(page, 'Pattern scheduled')
+  await waitStatus(page, 'Playing')
   assert.equal(await calls(), 2)
   assert.match(await page.evaluate(() => window.audioFixture.calls.at(-1)), /lpf\(1200\)/)
   assert.equal((await saved(page)).draft, (await saved(page)).source)
@@ -127,7 +127,7 @@ try {
   await source(page).press('Control+Enter')
   await page.getByRole('alert').filter({ hasText: 'Line 2' }).waitFor()
   assert.equal(await calls(), beforeInvalid)
-  assert.equal(await page.locator('.transport-status').textContent(), 'Pattern scheduled')
+  assert.equal(await page.locator('.transport-status').textContent(), 'Playing')
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export', exact: true }).click()
   const stream = await (await download).createReadStream()
@@ -135,9 +135,9 @@ try {
   for await (const chunk of stream) chunks.push(chunk)
   assert.equal(Buffer.concat(chunks).toString('utf8'), invalid)
   await source(page).press('Control+Period')
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   await page.getByRole('button', { name: 'Revert to last readable code' }).click()
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   assert.equal(await calls(), beforeInvalid)
   pass('invalid apply retains prior scheduling/rack and exact Export; Stop and Revert remain safe')
 
@@ -164,7 +164,7 @@ try {
   )
   assert.equal(await calls(), beforeInvalid)
   await page.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(page, 'Pattern scheduled')
+  await waitStatus(page, 'Playing')
   await edit(page, (await saved(page)).source.replace('900', '1100'))
   await page.waitForFunction((count) => window.audioFixture.calls.length > count, beforeInvalid + 1)
   await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).uncheck()
@@ -180,7 +180,7 @@ try {
     window.audioFixture.fail = true
   })
   await page.getByRole('button', { name: 'Apply code', exact: true }).click()
-  await waitStatus(page, 'Scheduling stopped after error')
+  await waitStatus(page, 'Audio error')
   const afterFailure = await calls()
   await edit(page, '$: note(')
   await source(page).press('Control+Enter')
@@ -192,7 +192,7 @@ try {
     window.audioFixture.fail = false
   })
   await source(page).press('Control+Enter')
-  await waitStatus(page, 'Pattern scheduled')
+  await waitStatus(page, 'Playing')
   pass('runtime failure stops; incomplete correction stays editable; explicit Apply recovers')
 
   await page.evaluate(() => {
@@ -203,13 +203,13 @@ try {
   await page.waitForFunction(() => typeof window.audioFixture.release === 'function')
   await page.getByRole('button', { name: 'Patch library', exact: true }).click()
   await page.keyboard.press('Control+Period')
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   await page.evaluate(() => {
     window.audioFixture.pending = false
     window.audioFixture.release()
   })
   await page.waitForTimeout(300)
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   await page.keyboard.press('Escape')
   pass('global Stop works in a dialog during pending apply; late completion cannot restart')
 
@@ -222,7 +222,7 @@ try {
   assert.equal(await page.getByRole('checkbox', { name: 'Auto-apply' }).isChecked(), false)
   assert.equal((await saved(page)).draft, restoredDraft)
   assert.notEqual((await saved(page)).source, restoredDraft)
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   assert.equal(await calls(), 0)
   assert(beforeRestore > 0)
   pass('reload defaults to explicit apply and restores accepted rack plus unapplied draft silently')
@@ -236,7 +236,7 @@ try {
   await page.waitForFunction(() =>
     document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
   )
-  await waitStatus(page, 'Stopped')
+  await waitStatus(page, 'Ready')
   assert.equal(await calls(), 0)
   assert.match((await saved(page)).source, /b3/)
   pass('explicit file loading accepts the rack silently with auto-apply off')
@@ -268,7 +268,7 @@ try {
     await page.waitForTimeout(600)
     assert.equal(await page.evaluate(() => window.probes.length), 0)
     await source(page).press('Control+Enter')
-    await waitStatus(page, 'Pattern scheduled')
+    await waitStatus(page, 'Playing')
     async function rms() {
       return page.evaluate(async () => {
         let sum = 0,
@@ -294,7 +294,7 @@ try {
     results.pcm.unapplied = await rms()
     assert(results.pcm.unapplied > 0.001)
     await source(page).press('Meta+Enter')
-    await waitStatus(page, 'Pattern scheduled')
+    await waitStatus(page, 'Playing')
     // Strudel installs live edits on its scheduling boundary; old notes may finish.
     for (let attempt = 0; attempt < 8; attempt++) {
       results.pcm.appliedMute = await rms()
@@ -303,7 +303,7 @@ try {
     }
     assert(results.pcm.appliedMute < 0.00001, JSON.stringify(results.pcm))
     await source(page).press('Control+Period')
-    await waitStatus(page, 'Stopped')
+    await waitStatus(page, 'Ready')
     pass(
       'real engine keyboard activation produces PCM; draft mute waits for Cmd+Enter; Ctrl+. stops',
     )

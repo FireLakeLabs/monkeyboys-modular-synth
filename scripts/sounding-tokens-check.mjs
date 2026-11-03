@@ -72,11 +72,11 @@ async function code(source) {
 }
 async function start() {
   await page.getByRole('button', { name: 'Play', exact: true }).click()
-  await status('Pattern scheduled')
+  await status('Playing')
 }
 async function stop() {
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
-  await status('Stopped')
+  await status('Ready')
   assert.equal(await page.locator('.source-sounding').count(), 0)
 }
 async function observe() {
@@ -166,7 +166,7 @@ try {
   await page.waitForTimeout(600)
   assert.equal(await page.locator('.sync-status').textContent(), 'Unapplied changes')
   assert.equal(await page.evaluate(() => window.tokenMarks().length), 0)
-  await status('Pattern scheduled')
+  await status('Playing')
   await page.getByRole('button', { name: 'Apply code', exact: true }).click()
   await accepted()
   await page.waitForFunction(() => window.tokenMarks().some((span) => span.text === 'f2'))
@@ -210,12 +210,12 @@ try {
       }),
     )
   })
-  await status('Scheduling stopped after error')
+  await status('Audio error')
   assert.equal(await page.evaluate(() => window.tokenMarks().length), 0)
   await start()
   await page.waitForFunction(() => window.tokenMarks().some((span) => span.text === 'e3'))
   await code('$: note("e3").missingMethod()\n')
-  await status('Scheduling stopped after error')
+  await status('Audio error')
   assert.equal(await page.evaluate(() => window.tokenMarks().length), 0)
   pass('replacement and evaluation failure remove obsolete token marks')
 

@@ -131,7 +131,7 @@ export async function verifyLiteralIdentity() {
   )
   results.push('VCF HP switch retains filter identity and shared ENV')
   assert(
-    document.querySelector('.transport-status')?.textContent === 'Stopped',
+    document.querySelector('.transport-status')?.textContent === 'Ready',
     'Probe started playback',
   )
   return results

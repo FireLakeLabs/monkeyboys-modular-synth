@@ -425,13 +425,12 @@ export default function App() {
   }
 
   const status = {
-    stopped: 'Stopped',
-    starting: 'Enabling audio / starting…',
-    playing: 'Pattern scheduled',
-    applying: 'Applying…',
-    stopping: 'Stopping… · audio state unknown',
-    error:
-      audio.scheduling === 'stopped' ? 'Scheduling stopped after error' : 'Audio state unknown',
+    stopped: 'Ready',
+    starting: audio.resources === 'loading' ? 'Loading samples' : 'Starting audio',
+    playing: 'Playing',
+    applying: 'Applying code',
+    stopping: 'Stopping audio',
+    error: audio.scheduling === 'stopped' ? 'Audio error' : 'Audio state unknown',
   }[audio.status]
 
   const replacementPrompt = pendingReplacement && (
@@ -499,9 +498,6 @@ export default function App() {
         >
           Redo
         </button>
-        <output className="transport-status" aria-live="polite">
-          {emptyOutput ? 'Nothing reaches OUT yet' : status}
-        </output>
         <fieldset
           className="header-tempo"
           disabled={locked || document.layout === 'invalid' || !out}
@@ -562,21 +558,7 @@ export default function App() {
           <h2>
             STRUDEL <small>Live code · editable</small>
           </h2>
-          <output className="sync-status">
-            {phase === 'editing'
-              ? autoApply
-                ? 'Reading code…'
-                : 'Unapplied changes'
-              : phase === 'invalid'
-                ? 'Rack shows previous code'
-                : patch.modules.some((m) => m.type === 'code')
-                  ? 'Rack matches code · Some code has no controls'
-                  : 'Rack matches code'}
-          </output>
-          <span className="apply-shortcuts">
-            {phase === 'invalid' ? ' · Unapplied changes' : ''}
-            {' · Ctrl/Cmd+Enter to apply · Ctrl/Cmd+. to stop'}
-          </span>
+          <span className="apply-shortcuts">Ctrl/Cmd+Enter to apply · Ctrl/Cmd+. to stop</span>
           <div className="code-actions">
             <button type="button" onClick={applyCode} disabled={composing}>
               Apply code
@@ -644,100 +626,129 @@ export default function App() {
               selected={selected}
               invalid={phase === 'invalid'}
               diagnostic={diagnostic}
+              status={
+                <>
+                  <output className="sync-status">
+                    {phase === 'editing'
+                      ? autoApply
+                        ? 'Reading code…'
+                        : 'Unapplied changes'
+                      : phase === 'invalid'
+                        ? 'Rack shows previous code'
+                        : patch.modules.some((m) => m.type === 'code')
+                          ? 'Rack matches code · Some code has no controls'
+                          : 'Rack matches code'}
+                  </output>
+                  {phase === 'invalid' && <span>Unapplied changes</span>}
+                  <output className="transport-status" aria-live="polite">
+                    {emptyOutput ? 'Nothing reaches OUT yet' : status}
+                  </output>
+                  <details className="engine-info" data-warning={audio.resources === 'failed'}>
+                    <summary aria-label="Audio engine info" title="Audio engine info">
+                      ⓘ
+                    </summary>
+                    <div className="engine-info-content">
+                      <p className="audio-note">
+                        {locked && audio.scheduling === 'scheduled'
+                          ? 'Previous pattern scheduled. '
+                          : ''}
+                        Sample status:{' '}
+                        {
+                          {
+                            unknown: 'unknown; audio has not initialized',
+                            loading: 'loading manifests; audio readiness unverified',
+                            registered:
+                              'manifests registered; sample decoding and output unverified',
+                            failed: 'resource/output failure observed; readiness unknown',
+                          }[audio.resources]
+                        }
+                        . Stop ends scheduling; tails may ring out.
+                      </p>
+                    </div>
+                  </details>
+                  {diagnostic && (
+                    <p className="error" role="alert">
+                      Line {diagnostic.line}, column {diagnostic.column + 1}: {diagnostic.message}
+                      <br />
+                      <mark>{draft.split(/\r?\n/)[diagnostic.line - 1]}</mark>
+                    </p>
+                  )}
+                  {locked && (
+                    <button type="button" onClick={() => install(current.current.document)}>
+                      Revert to last readable code
+                    </button>
+                  )}
+                  {selected && (
+                    <p className="source-selection">
+                      {selectedRanges.length
+                        ? `${selected} · source at line ${draft.slice(0, selectedRanges[0]?.start).split('\n').length}`
+                        : locked
+                          ? `${selected} · source highlights paused until code is readable.`
+                          : `${selected} has no current sounding source range.`}
+                    </p>
+                  )}
+                  {document.layout === 'invalid' && (
+                    <div className="error">
+                      <p>
+                        Unknown or invalid saved rack metadata retained. Rack editing is disabled
+                        until you replace it.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          try {
+                            install(replaceLayout(current.current.document))
+                          } catch (failure) {
+                            setError(String(failure))
+                          }
+                        }}
+                      >
+                        Replace rack metadata
+                      </button>
+                    </div>
+                  )}
+                  {document.diagnostics.map((message) => (
+                    <p key={message} className="placeholder">
+                      {message}
+                    </p>
+                  ))}
+                  {slowAudio === audio && (
+                    <output className="pending-note error">
+                      Still waiting for audio. Stop cancels scheduling intent without waiting for
+                      evaluation. Running code cannot be interrupted. If it never completes, export
+                      your draft before reloading this page. Reloading discards unsaved work and
+                      ends this page’s audio.
+                    </output>
+                  )}
+                  {error && (
+                    <p className="error" role="alert">
+                      {error}
+                    </p>
+                  )}
+                  {audio.error && (
+                    <div className="error" role="alert">
+                      <p>
+                        {audio.errorSource &&
+                        (locked || sourceBody(audio.errorSource) !== sourceBody(document.source))
+                          ? 'An earlier code revision failed. Current draft retained.'
+                          : 'Audio failure. Current draft retained.'}{' '}
+                        Correct code or check audio access, then apply with Ctrl/Cmd+Enter or press
+                        Play. Stop can be retried if audio state is unknown.
+                      </p>
+                      <details>
+                        <summary>Audio error details</summary>
+                        {audio.error}
+                      </details>
+                    </div>
+                  )}
+                </>
+              }
               change={changeDraft}
               composing={setComposing}
               editingModule={setEditingModule}
               stepHistory={stepHistory}
             />
           </Suspense>
-          {diagnostic && (
-            <p className="error" role="alert">
-              Line {diagnostic.line}, column {diagnostic.column + 1}: {diagnostic.message}
-              <br />
-              <mark>{draft.split(/\r?\n/)[diagnostic.line - 1]}</mark>
-            </p>
-          )}
-          {locked && (
-            <button type="button" onClick={() => install(current.current.document)}>
-              Revert to last readable code
-            </button>
-          )}
-          {selected && (
-            <p className="source-selection">
-              {selectedRanges.length
-                ? `${selected} · source at line ${draft.slice(0, selectedRanges[0]?.start).split('\n').length}`
-                : locked
-                  ? `${selected} · source highlights paused until code is readable.`
-                  : `${selected} has no current sounding source range.`}
-            </p>
-          )}
-          {document.layout === 'invalid' && (
-            <div className="error">
-              <p>
-                Unknown or invalid saved rack metadata retained. Rack editing is disabled until you
-                replace it.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  try {
-                    install(replaceLayout(current.current.document))
-                  } catch (failure) {
-                    setError(String(failure))
-                  }
-                }}
-              >
-                Replace rack metadata
-              </button>
-            </div>
-          )}
-          {document.diagnostics.map((message) => (
-            <p key={message} className="placeholder">
-              {message}
-            </p>
-          ))}
-          <p className="audio-note">
-            {locked && audio.scheduling === 'scheduled' ? 'Previous pattern scheduled. ' : ''}Sample
-            status:{' '}
-            {
-              {
-                unknown: 'unknown; audio has not initialized',
-                loading: 'loading manifests; audio readiness unverified',
-                registered: 'manifests registered; sample decoding and output unverified',
-                failed: 'resource/output failure observed; readiness unknown',
-              }[audio.resources]
-            }
-            . Stop ends scheduling; tails may ring out.
-          </p>
-          {slowAudio === audio && (
-            <output className="pending-note error">
-              Still waiting for audio. Stop cancels scheduling intent without waiting for
-              evaluation. Running code cannot be interrupted. If it never completes, export your
-              draft before reloading this page. Reloading discards unsaved work and ends this page’s
-              audio.
-            </output>
-          )}
-          {error && (
-            <p className="error" role="alert">
-              {error}
-            </p>
-          )}
-          {audio.error && (
-            <div className="error" role="alert">
-              <p>
-                {audio.errorSource &&
-                (locked || sourceBody(audio.errorSource) !== sourceBody(document.source))
-                  ? 'An earlier code revision failed. Current draft retained.'
-                  : 'Audio failure. Current draft retained.'}{' '}
-                Correct code or check audio access, then apply with Ctrl/Cmd+Enter or press Play.
-                Stop can be retried if audio state is unknown.
-              </p>
-              <details>
-                <summary>Audio error details</summary>
-                {audio.error}
-              </details>
-            </div>
-          )}
         </section>
       </main>
       {recovery && (

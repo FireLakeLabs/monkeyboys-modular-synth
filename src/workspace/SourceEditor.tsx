@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, type RefObject } from 'react'
+import { useLayoutEffect, useMemo, useRef, type ReactNode, type RefObject } from 'react'
 import {
   Compartment,
   EditorState,
@@ -56,12 +56,14 @@ export function SourceEditor(props: {
   sourceFeedback: SubscribeSourceFeedback
   invalid: boolean
   diagnostic: Extract<ReadResult, { kind: 'invalid' }> | null
+  status: ReactNode
   change: (source: string) => void
   composing: (value: boolean) => void
   editingModule: (id: string | null) => void
   stepHistory: (direction: 'undo' | 'redo') => boolean
 }) {
   const host = useRef<HTMLDivElement>(null)
+  const cursor = useRef<HTMLOutputElement>(null)
   const treatments = useMemo(
     () => (props.document ? sourceTreatments(props.document) : null),
     [props.document],
@@ -91,6 +93,14 @@ export function SourceEditor(props: {
 
   useLayoutEffect(() => {
     if (!host.current) return
+    // Selection is editor-local: moving the caret must not rerender the workspace
+    // or rebuild source treatments. CodeMirror owns this output's text.
+    const reportCursor = (state: EditorState) => {
+      const head = state.selection.main.head
+      const line = state.doc.lineAt(head)
+      if (cursor.current)
+        cursor.current.textContent = `Ln ${line.number}, Col ${head - line.from + 1}`
+    }
     let compositionTimer: ReturnType<typeof setTimeout> | undefined
     const view = new EditorView({
       parent: host.current,
@@ -142,6 +152,7 @@ export function SourceEditor(props: {
           EditorView.contentAttributes.of({ 'aria-label': 'Strudel source', spellcheck: 'false' }),
           EditorView.updateListener.of((update) => {
             const { props, treatments } = current.current
+            if (update.selectionSet || update.docChanged) reportCursor(update.state)
             if (
               update.docChanged &&
               !update.transactions.every((tr) => tr.annotation(Transaction.userEvent) === 'rack')
@@ -186,6 +197,7 @@ export function SourceEditor(props: {
       }),
     })
     view.dispatch({ effects: foldRackMetadata(view.state) })
+    reportCursor(view.state)
     const editor = current.current.props.editor
     editor.current = view
     return () => {
@@ -233,5 +245,18 @@ export function SourceEditor(props: {
     view.dispatch({ effects: draftHistory.current.reconfigure(history()) })
   }, [props.document, props.editor])
 
-  return <div ref={host} className="source-surface" />
+  return (
+    <>
+      <div ref={host} className="source-surface" />
+      <footer className="editor-status" aria-label="Editor status">
+        <output
+          ref={cursor}
+          className="cursor-position"
+          aria-live="off"
+          aria-label="Cursor position"
+        />
+        {props.status}
+      </footer>
+    </>
+  )
 }
