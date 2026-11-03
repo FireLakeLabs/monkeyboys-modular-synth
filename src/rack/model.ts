@@ -4,9 +4,11 @@ import { getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { JackSignal, KnobControl } from '../modules/types'
 import type { Cable, ControlValue, JackRef, Patch, PlacedModule } from '../patch/types'
+import { ROW_HP } from '../patch/layout'
+
+export { ROW_HP } from '../patch/layout'
 
 export const HP = 12
-export const ROW_HP = 64
 export const ROW_HEIGHT = 440
 
 export function starterPatch(): Patch {

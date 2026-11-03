@@ -5,6 +5,7 @@ import { descriptor, type RackLayout } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
+import { nextPosition } from '../patch/layout'
 import { matchScopes, readLayout } from './layout'
 import { chain, parseSource, scalar, type Call, type ParsedScope } from './syntax'
 import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } from './types'
@@ -83,8 +84,12 @@ function project(
   let row = 0
   let hp = 0
   let cableId = 0
+  const nextRow = () => patch.modules.reduce((end, module) => Math.max(end, module.row + 1), 0)
   function add(type: string, values: Record<string, ControlValue> = {}): PlacedModule {
     const spec = getModuleSpec(type)
+    const position = nextPosition(patch.modules, type, row, hp)
+    row = position.row
+    hp = position.hp
     let counter = 1
     while (reserved.has(`${type}${counter}`)) counter++
     const id = `${type}${counter}`
@@ -580,7 +585,8 @@ function project(
 
   const voices: { output: Output; scope: ParsedScope }[] = []
   for (const scope of scopes.filter((scope) => scope.kind === 'voice')) {
-    row = voices.length
+    row = nextRow()
+    const voiceRow = row
     hp = 0
     const checkpoint = structuredClone(patch)
     const previousBindings = structuredClone(bindings)
@@ -609,6 +615,7 @@ function project(
         if (module) resolved.set(key, { module, jack: value.jack })
       })
       resolving.clear()
+      row = voiceRow
       hp = 0
       voice = code(
         scope,
@@ -618,7 +625,7 @@ function project(
     }
     voices.push({ output: voice, scope })
   }
-  row = voices.length
+  row = nextRow()
   hp = 0
   // Four physical channels per bus; chain buses for larger imported scores.
   let bus: PlacedModule | undefined
@@ -848,16 +855,21 @@ function restore(
     module.hp = old.hp
     module.look = old.look
   }
-  // Unmatched modules follow all restored positions in their voice's row.
+  // Restored positions are occupied even when they are on a later overflow row.
+  const occupied = patch.modules.filter((module) => rename.has(module.id))
   const ends = new Map<number, number>()
-  for (const module of patch.modules.filter((module) => rename.has(module.id)))
+  for (const module of occupied)
     ends.set(
       module.row,
       Math.max(ends.get(module.row) ?? 0, module.hp + getModuleSpec(module.type).hp),
     )
   for (const module of patch.modules) {
     if (!rename.has(module.id)) {
-      module.hp = ends.get(module.row) ?? 0
+      Object.assign(
+        module,
+        nextPosition(occupied, module.type, module.row, ends.get(module.row) ?? 0),
+      )
+      occupied.push(module)
       ends.set(module.row, module.hp + getModuleSpec(module.type).hp)
     }
     module.id = rename.get(module.id) ?? module.id

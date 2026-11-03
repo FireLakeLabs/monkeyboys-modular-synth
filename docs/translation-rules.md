@@ -146,6 +146,9 @@ See [reader evidence](reader-verification.md) and the implemented
 - Each recognised call maps to a module and control values via the module catalog (`src/modules/catalog.ts`).
 - Unrecognised calls in a chain become a CODE block holding that call’s exact source text, in place.
 - A voice that cannot be read at all becomes a single CODE block acting as its source.
+- Auto-placement uses catalog widths and spills long voices and mixer buses onto
+  additional 64-HP rails. Placement and source ownership are separate: wrapping
+  a voice must not rewrite its expression or turn readable modules into CODE.
 - Retain the original document and source ranges alongside the rack graph. An
   untouched document round-trips exactly, including formatting, comments,
   statement order and layout text. Supported rack value edits splice only the
