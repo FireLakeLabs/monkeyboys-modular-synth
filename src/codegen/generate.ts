@@ -131,6 +131,8 @@ export function generateDocument(patch: Patch): GeneratedDocument {
 
   // Reserving runtime names prevents a const from shadowing Strudel's functions/signals.
   const used = new Set([...CATALOG.flatMap((spec) => spec.strudel), 'rev', 'press', 'orbit'])
+  for (const token of tokenizer(prelude, { ecmaVersion: 'latest' }))
+    if (token.type.label === 'name') used.add(prelude.slice(token.start, token.end))
   for (const [key, name] of Object.entries(patch.names)) {
     const [moduleId, jackId, extra] = key.split(':')
     const node = moduleId ? nodes.get(moduleId) : undefined
@@ -144,8 +146,6 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     parse(`const ${name} = 0`, { ecmaVersion: 'latest', sourceType: 'module' })
     used.add(name)
   }
-  for (const token of tokenizer(prelude, { ecmaVersion: 'latest' }))
-    if (token.type.label === 'name') used.add(prelude.slice(token.start, token.end))
   const definitions = new Map<
     string,
     { expressions: CodeExpression[]; names: string[]; dependencies: Set<string> }

@@ -3,7 +3,7 @@ import { parse } from 'acorn'
 import { generate } from '../codegen/generate'
 import { libraryPatches } from '../library/catalog'
 import { read } from '../reader'
-import { connect, placeModule, setValue } from '../rack/model'
+import { connect, placeModule, renameOutput, setValue } from '../rack/model'
 import { editDocument, makeRackEditable, RackEditRefused, sourceBody } from './document'
 
 const fixture =
@@ -57,6 +57,18 @@ describe('explicit rack conversion', () => {
     const changed = editDocument(converted, placeModule(converted.patch, 'vcf', row))
     expect(read(changed.source).patch).toEqual(changed.patch)
     expect(original.source).toBe(entry.source)
+  })
+
+  it('rejects output names that shadow retained setup dependencies', () => {
+    const entry = libraryPatches().find((entry) => entry.id === 'switch-angel-trance-demo')
+    if (!entry) throw new Error('Missing showcase')
+    const converted = makeRackEditable(read(entry.source))
+    const sampler = converted.patch.modules.find((module) => module.type === 'smpl')
+    if (!sampler) throw new Error('Missing sampler')
+    expect(() => renameOutput(converted.patch, `${sampler.id}:out`, 'register')).toThrow(
+      /colliding/,
+    )
+    expect(() => renameOutput(converted.patch, `${sampler.id}:out`, 'kick')).not.toThrow()
   })
 
   it('rejects malformed, voice-containing and incorrectly typed saved preludes', () => {

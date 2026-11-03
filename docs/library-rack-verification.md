@@ -21,7 +21,7 @@ before/after conversion and after the intended CV edit. The fixture explicitly
 states its filter settings. It excludes the deliberately assigned orbit field;
 this does not claim universal equivalence for arbitrary imported setup/routing.
 
-`npm run check` passed: runtime, formatting, skill integrity, lint, 244 unit tests,
+`npm run check` passed: runtime, formatting, skill integrity, lint, 245 unit tests,
 40 guardrail checks, TypeScript and production build. Browser checks remain outside
 the shared CI gate because they require Chromium, WebAudio and sample resources.
 
@@ -48,3 +48,15 @@ separately from source and saved-state checks. Measured results are recorded in
 were not heard. PCM and event checks establish output and pattern construction;
 they do not establish subjective continuity, arbitrary-code safety, every browser,
 or universal audible equivalence. Global conversion undo remains owned by #63.
+
+## Sol review
+
+One round with GPT-6.1 Sol on high effort returned APPROVE, with no blocker or
+should findings. S1 (nit) identified a setup-name collision: a generated output
+named `register` could shadow the retained showcase registration function. The
+focused regression failed before moving setup-name reservation ahead of output
+name validation and passed afterward; an ordinary `kick` name remains valid.
+No findings were declined. Review usage was not exposed. The behavior fix was
+made locally without a second reviewer, following the T3 small-finding rule.
+The diff changed from 3,651 insertions / 79 deletions to the final recorded PR diff;
+most lines are authored rack metadata for the nine exercise files.
