@@ -199,6 +199,26 @@ See [reader evidence](reader-verification.md) and the implemented
 - Parsing is not execution or sandboxing. Source equality, sound equivalence and
   saved rack identity are separate checks for the production reader/generator.
 
+## Common imported calls (#77)
+
+Recognition retains exact executable bytes; aliases are catalog-owned reader
+adapters, while new rack-owned generation uses the canonical long names.
+
+| Imported form                          | Projection and limits                                                                                                                                                                                                                                                                                                                                      |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.scale("g:minor")`                    | QUANT accepts the catalog's twelve roots with uppercase or lowercase tonic letters and its seven named modes. Only the control value normalizes to `G`; source stays exact. Its passthrough jacks allow scale before or after sound selection without relocating the call. Unsupported spellings, patterned/computed scales and extra arguments stay CODE. |
+| `.gain(1.4)`                           | VCA LEVEL now spans 0–2, including gain above unity. Literal edits preserve the call and surrounding source; default 0.8, step 0.05 and CV depth limits are unchanged. Out-of-range or unsupported patterns remain CODE.                                                                                                                                   |
+| `.att/.dec/.sus/.rel`                  | ENV aliases for `attack/decay/sustain/release`, including mixed long/short names in the existing complete, ordered ADSR group followed by scalar `.gain()` for VCA CV.                                                                                                                                                                                     |
+| `.lpa/.lpd/.lps/.lpr` (and `hp`, `bp`) | Filter ENV aliases, with the same complete group and matching VCF target requirements as long names. Each literal retains its own control binding and original method spelling.                                                                                                                                                                            |
+| Partial `.dec(.1)`                     | CODE. ENV writes all four ADSR controls; absent parameters are not equivalent to the catalog defaults, and no missing controls are invented. Computed, patterned, incomplete or unmatched envelope groups stay CODE.                                                                                                                                       |
+| `.o(2)` / imported `.orbit(2)`         | CODE. `o` in the trance demo is a custom registration, not pinned-engine routing provenance. Literal integers do not prove generator ownership. No routing is removed, renumbered or replaced.                                                                                                                                                             |
+
+The [alias regressions](../src/reader/aliases.test.ts) check exact source,
+full saved rack identity and real Strudel control events separately, including
+alias-preserving ENV and above-unity VCA edits. The
+[trance acceptance](trance-demo.md#common-call-reader-acceptance-77) records the
+measured CODE count and separate browser observations.
+
 ## Rack generator contract (#3)
 
 `generate(patch)` in `src/codegen/generate.ts` is a pure writer for a new,

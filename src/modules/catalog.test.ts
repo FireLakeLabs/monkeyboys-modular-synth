@@ -133,11 +133,18 @@ describe('module catalog', () => {
   it('assigns each Strudel function to at most one module', () => {
     const owner = new Map<string, string>()
     for (const m of CATALOG) {
-      for (const fn of m.strudel) {
+      for (const fn of [...m.strudel, ...Object.keys(m.strudelAliases ?? {})]) {
         expect(owner.get(fn), `${fn} claimed by ${owner.get(fn)} and ${m.id}`).toBeUndefined()
         owner.set(fn, m.id)
       }
     }
+  })
+
+  it('aliases refer to functions owned by the same module', () => {
+    for (const module of CATALOG)
+      for (const name of Object.values(module.strudelAliases ?? {}))
+        expect(module.strudel).toContain(name)
+    expect(paletteModules('mod', 'lpd').map((module) => module.id)).toEqual(['env'])
   })
 
   it('marks every alien and cyber module as order-sensitive', () => {

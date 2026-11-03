@@ -55,6 +55,10 @@ describe('issue #46 supplied Switch Angel demo', () => {
     expect(generate(document)).toContain('pat.orbit(orbit)')
     expect(generate(document).match(/\.o\([234]\)/g)).toEqual(['.o(2)', '.o(3)', '.o(4)'])
     expect(generate(document).match(/register\('/g)).toHaveLength(4)
+    expect(document.patch.modules).toHaveLength(29)
+    expect(document.patch.modules.filter((module) => module.type === 'code')).toHaveLength(14)
+    expect(document.patch.modules.filter((module) => module.type === 'quant')).toHaveLength(2)
+    expect(document.patch.modules.find((module) => module.type === 'vca')?.values.level).toBe(1.4)
   })
 
   it('preserves source separately from saved rack identity through edits and reopen', () => {

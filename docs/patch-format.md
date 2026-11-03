@@ -253,3 +253,13 @@ A prelude is trusted as saved rack state only while the live source still starts
 with it. Editing setup code externally falls back to source-owned reconciliation;
 its old saved prelude cannot override that live edit. Exact source, setup
 semantics, generated event values and saved graph identity remain separate checks.
+
+## Reader additions and saved CODE (#77)
+
+A new call adapter does not replace an existing file's explicit saved CODE
+owners. For an unchanged scope, the reader retains a contiguous saved CODE
+fragment only when its complete call bytes match the stored text. It still
+checks source ownership and generated graph agreement independently. Altered
+source reprojects conservatively; forged CODE text invalidates metadata instead
+of overriding executable source. Plain files without saved CODE use the new
+adapters. See the [legacy-file regression](../src/reader/aliases.test.ts).

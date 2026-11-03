@@ -222,3 +222,11 @@ The #76 connection preview uses the source mutation boundary before showing a
 valid jack. Focused regressions cover imported CV refusal, accepted replacement
 and saved identity; the [separate browser probe](interaction-verification.md#cable-refusal-preview-76)
 covers blocked styling, local hover/focus reasons and conversion consent.
+
+The #77 [common-call regressions](../src/reader/aliases.test.ts) separately check
+source bytes, complete saved rack identity and real Strudel events for lowercase
+scale roots, above-unity gain and all sixteen short ENV aliases. Saved-file
+fixtures protect existing suffix and whole-voice CODE ownership when adapters are added; external source
+edits and forged saved text exercise that boundary's conservative rejection.
+Partial envelopes and unproven orbit aliases remain CODE under the
+[translation contract](translation-rules.md#common-imported-calls-77).

@@ -13,7 +13,7 @@ export type PaletteCategory = Exclude<Category, 'alien' | 'cyber'>
 /** What a cable carries. */
 export type Signal = 'pattern' | 'audio' | 'mod'
 
-/** Alien and Cyber jacks accept and pass through any signal. */
+/** Passthrough transforms retain their incoming signal. */
 export type JackSignal = Signal | 'any'
 
 export interface KnobControl {
@@ -112,6 +112,8 @@ export interface ModuleSpec {
    * so each function belongs to exactly one module.
    */
   strudel: readonly string[]
+  /** Pinned-engine aliases; source spelling is retained by the reader. */
+  strudelAliases?: Readonly<Record<string, string>>
   /** True when the module changes the pattern itself, so its position in the chain matters. */
   orderSensitive: boolean
   /** True when a rack may contain at most one. */

@@ -87,16 +87,19 @@ Hardware · Pattern · 8 HP · order-sensitive
 | ROOT    | switch | C · C# · D · Eb · E · F · F# · G · Ab · A · Bb · B                | C       | `.scale("C:…")`     |
 | SCALE   | switch | major · minor · dorian · phrygian · lydian · mixolydian · locrian | minor   | `.scale("…:minor")` |
 
-| Jack | Dir | Signal  |
-| ---- | --- | ------- |
-| IN   | in  | pattern |
-| OUT  | out | pattern |
+| Jack | Dir | Signal |
+| ---- | --- | ------ |
+| IN   | in  | any    |
+| OUT  | out | any    |
 
 ```js
 n("0 3 5 <7 10>").scale("C:minor")
 ```
 
-Pairs with SEQ in DEGREE mode. Multi-word scale names (pentatonics) are deliberately left out of v1 until their exact Strudel spelling is confirmed.
+Pairs with SEQ in DEGREE mode. QUANT preserves its incoming signal, so it can
+also follow OSC without moving the order-sensitive scale call. The reader accepts
+lowercase tonic letters for the listed roots (for example `g:minor` → G/minor
+controls) while retaining the original source spelling. Multi-word scale names (pentatonics) are deliberately left out of v1 until their exact Strudel spelling is confirmed.
 
 ---
 
@@ -174,7 +177,7 @@ Hardware · Shape · 8 HP
 
 | Control | Kind | Range          | Default | Writes                     |
 | ------- | ---- | -------------- | ------- | -------------------------- |
-| LEVEL   | knob | 0–1, step 0.05 | 0.8     | `.gain(x)`, always written |
+| LEVEL   | knob | 0–2, step 0.05 | 0.8     | `.gain(x)`, always written |
 
 | Jack | Dir | Signal | CV target |
 | ---- | --- | ------ | --------- |
@@ -215,6 +218,12 @@ What it writes depends on where it is patched:
 | VCF CV (LP)      | `.lpattack(a).lpdecay(d).lpsustain(s).lprelease(r)`, plus VCF’s `.lpenv(amt)` |
 | VCF CV (HP / BP) | the `hp…` / `bp…` equivalents                                                 |
 | Nothing          | nothing                                                                       |
+
+The reader also accepts the pinned engine aliases `att/dec/sus/rel` and
+`lpa/lpd/lps/lpr`, `hpa/hpd/hps/hpr`, `bpa/bpd/bps/bpr`. Long and short names
+may mix within a complete, ordered ADSR group. Existing VCA/VCF target rules
+still apply; partial envelopes such as `.dec(.1)` stay CODE because filling
+missing parameters would invent settings. Source spelling survives literal edits.
 
 The envelope fires on every event, so there is no gate input. In v1 an ENV can only be patched into VCA or VCF CV jacks; anything else is blocked. One ENV may feed both (fan-out).
 
