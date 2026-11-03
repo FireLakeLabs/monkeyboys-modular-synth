@@ -21,15 +21,15 @@ it('uses the reader boundary after earlier marker-like text and retains unknown 
   expect(readLayout(source).kind).toBe('invalid')
 })
 
-it('reports an unfinished expression at the end of code, before trailing rack metadata', () => {
+it('reports an unfinished expression at its opener, before trailing rack metadata', () => {
   const source = `setcpm(30)\n$: note(\n\n${RACK_MARKER}\n// {\n//   "version": 999\n// }\n`
   expect(tryRead(source)).toMatchObject({
     kind: 'invalid',
     source,
-    offset: 19,
+    offset: 18,
     line: 2,
-    column: 8,
-    message: 'Unexpected token (2:8)',
+    column: 7,
+    message: "Unclosed '(' (2:7)",
   })
 })
 

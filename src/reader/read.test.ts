@@ -306,7 +306,7 @@ describe('handwritten catalog projection', () => {
     const source = 'throw new Error("must not execute");\n$: custom().lpf(999999)'
     expect(generate(read(source))).toBe(source)
     const invalid = tryRead('// 🐒\r\n$: note("c").lpf(')
-    expect(invalid).toMatchObject({ kind: 'invalid', offset: 24, line: 2, column: 17 })
+    expect(invalid).toMatchObject({ kind: 'invalid', offset: 23, line: 2, column: 16 })
     expect(invalid).not.toHaveProperty('document')
   })
 })

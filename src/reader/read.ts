@@ -8,6 +8,7 @@ import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { nextPosition } from '../patch/layout'
 import { matchRouting, matchScopes, readLayout } from './layout'
 import { codeEnd } from './metadata'
+import { unclosedBracket } from './diagnostics'
 import { chain, parseSource, scalar, type Call, type ParsedScope } from './syntax'
 import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } from './types'
 
@@ -962,7 +963,8 @@ export function tryRead(source: string): ReadResult {
       typeof error.loc.column !== 'number'
     )
       throw error
-    const offset = Math.min(error.pos, codeEnd(source))
+    const opener = unclosedBracket(source, error.pos)
+    const offset = opener?.offset ?? Math.min(error.pos, codeEnd(source))
     const lines = source.slice(0, offset).split(/\r\n|\r|\n/)
     const line = lines.length
     const column = lines.at(-1)?.length ?? 0
@@ -972,7 +974,9 @@ export function tryRead(source: string): ReadResult {
       offset,
       line,
       column,
-      message: error.message.replace(/\(\d+:\d+\)$/, `(${line}:${column})`),
+      message: opener
+        ? `Unclosed '${opener.bracket}' (${line}:${column})`
+        : error.message.replace(/\(\d+:\d+\)$/, `(${line}:${column})`),
     }
   }
 }

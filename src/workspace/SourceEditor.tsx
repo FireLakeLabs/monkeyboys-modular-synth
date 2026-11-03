@@ -10,11 +10,12 @@ import {
 import { Decoration, EditorView, keymap, type DecorationSet } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { javascript } from '@codemirror/lang-javascript'
-import type { SourceDocument } from '../reader/types'
+import type { ReadResult, SourceDocument } from '../reader/types'
 import { sourceSegments, sourceTreatments, type SourceTreatment } from './highlighting'
 import { editorChanges } from './editorChanges'
 import { foldRackMetadata, metadataFolding } from './metadataFolding'
 import { soundingTokens, type SubscribeSourceFeedback } from './soundingTokens'
+import { setSourceDiagnostic, sourceDiagnostics } from './sourceDiagnostics'
 
 const setSourceDecorations = StateEffect.define<DecorationSet>()
 const sourceDecorations = StateField.define<DecorationSet>({
@@ -54,6 +55,7 @@ export function SourceEditor(props: {
   editor: RefObject<EditorView | null>
   sourceFeedback: SubscribeSourceFeedback
   invalid: boolean
+  diagnostic: Extract<ReadResult, { kind: 'invalid' }> | null
   change: (source: string) => void
   composing: (value: boolean) => void
   editingModule: (id: string | null) => void
@@ -96,6 +98,7 @@ export function SourceEditor(props: {
         extensions: [
           EditorState.lineSeparator.of('\n'),
           metadataFolding,
+          sourceDiagnostics,
           javascript(),
           draftHistory.current.of(history()),
           keymap.of([...defaultKeymap, ...historyKeymap]),
@@ -199,6 +202,10 @@ export function SourceEditor(props: {
     })
     reportEditing(view, treatments, props.editingModule)
   }, [decorations, props.invalid, props.editor, props.editingModule, treatments])
+
+  useLayoutEffect(() => {
+    props.editor.current?.dispatch({ effects: setSourceDiagnostic.of(props.diagnostic) })
+  }, [props.diagnostic, props.editor])
 
   useLayoutEffect(() => {
     const view = props.editor.current

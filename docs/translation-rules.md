@@ -189,6 +189,10 @@ See [reader evidence](reader-verification.md) and the implemented
 - Preserve non-voice statements and opaque regions as source-owned content. A
   syntax-valid unsupported voice becomes CODE; a syntax failure returns a
   diagnostic and no new graph. Never partially apply the failed draft to the rack.
+- Syntax diagnostics use the reader's comment-aware trailing metadata boundary.
+  Unclosed brackets at EOF or a mismatched closer point to their opening token;
+  other parse errors retain their code token. The editor displays a gutter marker
+  without accepting the invalid draft; see [verification](error-positions.md).
 - Persistent module identity uses stable IDs and conservative source matching,
   not chain positions. See [matching rules](patch-format.md#matching-rules).
   Multi-call modules and CV expressions need catalog-owned semantic bindings.

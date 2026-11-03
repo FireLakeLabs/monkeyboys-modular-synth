@@ -565,6 +565,7 @@ export default function App() {
               document={locked ? null : document}
               selected={selected}
               invalid={phase === 'invalid'}
+              diagnostic={diagnostic}
               change={changeDraft}
               composing={setComposing}
               editingModule={setEditingModule}

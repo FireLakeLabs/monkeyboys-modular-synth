@@ -22,9 +22,8 @@ restamped valid imported files.
 
 The gutter numbers code lines only. Acorn EOF errors after a trailing block
 are capped at the last non-whitespace code position, including the location in
-the displayed message. Errors already inside code keep their positions. This
-is not the more precise opener diagnosis or inline error presentation owned by
-#69. Copy/Export of invalid drafts still retain their exact source.
+the displayed message. Errors already inside code keep their positions. The more precise [opener diagnostics and gutter markers](error-positions.md)
+are implemented by #69. Copy/Export of invalid drafts still retain their exact source.
 
 ## Observed verification, 3 November 2026
 
