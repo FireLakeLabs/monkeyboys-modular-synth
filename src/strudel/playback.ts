@@ -99,7 +99,7 @@ export function createPlayback(initial: Patch | SourceDocument) {
     if (event.type === 'resources') {
       state = { ...state, resources: event.status }
       listeners.forEach((listener) => listener())
-    } else {
+    } else if (event.type === 'failure') {
       // Upstream late logs carry neither a revision nor a source range.
       fail(`Audio resource/output failure. ${event.message}`, null).catch(() => {})
     }

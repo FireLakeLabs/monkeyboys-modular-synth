@@ -3,6 +3,15 @@ declare module '@strudel/web' {
   /** Minimal installed core pattern surface used by the scheduling guard. */
   export class Pattern {
     constructor(query: (state: unknown) => unknown[], steps?: unknown)
+    onTrigger(
+      callback: (
+        hap: unknown,
+        currentAudioTime: number,
+        cps: number,
+        targetAudioTime: number,
+      ) => void,
+      dominant: false,
+    ): Pattern
     query(state: unknown): unknown[]
     _steps: unknown
   }

@@ -300,3 +300,56 @@
 .module-menu input {
   accent-color: #f4a462;
 }
+
+.cyber-cursor {
+  position: absolute;
+  top: 12px;
+  left: 6px;
+  font: 12px monospace;
+}
+.family-cyber[data-editing='true'] .cyber-cursor,
+.family-cyber:has(textarea:focus) .cyber-cursor {
+  animation: cyber-edit 1s steps(2, jump-none) infinite;
+}
+@keyframes cyber-edit {
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .module-panel .cyber-cursor {
+    animation: none !important;
+  }
+}
+
+.activity-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  box-shadow:
+    inset 0 0 35px var(--panel-ink),
+    0 0 16px var(--panel-ink);
+}
+.look-instrument .module-dot {
+  background: color-mix(in srgb, var(--category) 35%, #15171b);
+  box-shadow: none;
+}
+.look-instrument .module-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: var(--category);
+  box-shadow: 0 0 9px var(--category);
+}
+.family-alien {
+  isolation: isolate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .activity-glow {
+    display: none;
+  }
+}

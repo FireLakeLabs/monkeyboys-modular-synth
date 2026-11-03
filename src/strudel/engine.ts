@@ -1,3 +1,6 @@
+import { read } from '../reader'
+import { activityPlan } from './activity'
+
 /** Browser audio and Strudel evaluation stay behind this adapter. */
 type StrudelWeb = typeof import('@strudel/web')
 
@@ -15,7 +18,10 @@ const SAMPLE_SOURCES = [
 
 export type ResourceStatus = 'unknown' | 'loading' | 'registered' | 'failed'
 export type EngineEvent =
-  { type: 'resources'; status: ResourceStatus } | { type: 'failure'; message: string }
+  | { type: 'resources'; status: ResourceStatus }
+  | { type: 'failure'; message: string }
+  | { type: 'activity'; modules: string[] }
+  | { type: 'activity-clear' }
 
 let resources: ResourceStatus = 'unknown'
 const listeners = new Set<(event: EngineEvent) => void>()
@@ -38,8 +44,47 @@ let volume = 1
 let epoch = 0
 let allowed = false
 let cancelActive: (() => void) | undefined
-let evaluating: { epoch: number } | undefined
+let evaluating:
+  { epoch: number; activity: (hap: unknown) => string[]; activityRevision: number } | undefined
 let observing = false
+
+let activityRevision = 0
+const activityTimers = new Set<ReturnType<typeof setTimeout>>()
+function clearActivity() {
+  activityRevision++
+  activityTimers.forEach(clearTimeout)
+  activityTimers.clear()
+  listeners.forEach((listener) => listener({ type: 'activity-clear' }))
+}
+function scheduleActivity(
+  modules: string[],
+  target: number,
+  revision: number,
+  strudel: StrudelWeb,
+) {
+  if (!modules.length || !Number.isFinite(target) || revision !== activityRevision || !allowed)
+    return
+  const deliver = () => {
+    if (revision !== activityRevision || !allowed) return
+    const remaining = (target - strudel.getAudioContext().currentTime) * 1000
+    if (remaining > 5) {
+      const timer = setTimeout(() => {
+        activityTimers.delete(timer)
+        deliver()
+      }, remaining)
+      activityTimers.add(timer)
+    } else {
+      listeners.forEach((listener) => {
+        try {
+          listener({ type: 'activity', modules })
+        } catch {
+          /* Visual observers cannot break audio. */
+        }
+      })
+    }
+  }
+  deliver()
+}
 
 function cancelled(): Error {
   return new Error('Audio operation cancelled by Stop')
@@ -66,6 +111,7 @@ function observeLogs() {
     // Evaluation errors belong to the submitted revision and reject play() instead.
     if (message.startsWith('[eval]')) return
     if (('type' in detail && detail.type === 'error') || /^\[[^\]]+\] error:/.test(message)) {
+      clearActivity()
       resourceStatus('failed')
       listeners.forEach((listener) => listener({ type: 'failure', message }))
     }
@@ -87,11 +133,15 @@ function load(): Promise<StrudelWeb> {
           // The hook runs immediately before scheduler.setPattern in core 1.2.6.
           editPattern: (pattern) => {
             if (!evaluating || evaluating.epoch !== epoch || !allowed) throw cancelled()
-            const current = evaluating.epoch
+            const operation = evaluating
+            const current = operation.epoch
             // start() can yield after installing the pattern but before its first tick.
             // Guard queries too: onToggle fires only after that tick.
+            const observed = pattern.onTrigger((hap, _now, _cps, target) => {
+              scheduleActivity(operation.activity(hap), target, operation.activityRevision, strudel)
+            }, false)
             return new strudel.Pattern(
-              (state) => (current === epoch && allowed ? pattern.query(state) : []),
+              (state) => (current === epoch && allowed ? observed.query(state) : []),
               pattern._steps,
             )
           },
@@ -149,6 +199,14 @@ export function play(
   options: { volume?: number; resetEffects?: boolean } = {},
 ): Promise<void> {
   const current = epoch
+  clearActivity()
+  const visualRevision = activityRevision
+  let activity = { code, modules: (_hap: unknown): string[] => [] }
+  try {
+    activity = activityPlan(read(code))
+  } catch {
+    /* Unreadable code stays playable, without invented attribution. */
+  }
   return enqueue(async () => {
     checkEpoch(current)
     if (evaluating)
@@ -170,10 +228,14 @@ export function play(
       if (options.volume !== undefined) volume = options.volume
       applyVolume(strudel)
       allowed = true
-      const operation = { epoch: current }
+      const operation = {
+        epoch: current,
+        activity: activity.modules,
+        activityRevision: visualRevision,
+      }
       evaluating = operation
       try {
-        await strudel.evaluate(code)
+        await strudel.evaluate(activity.code)
         checkEpoch(current)
       } finally {
         if (evaluating === operation) evaluating = undefined
@@ -181,6 +243,9 @@ export function play(
     })()
     try {
       await Promise.race([work, cancellation])
+    } catch (error) {
+      if (visualRevision === activityRevision) clearActivity()
+      throw error
     } finally {
       if (cancelActive === cancel) cancelActive = undefined
     }
@@ -190,6 +255,7 @@ export function play(
 /** Invalidates queued work immediately; never waits for arbitrary user evaluation. */
 export async function stop(): Promise<void> {
   epoch++
+  clearActivity()
   allowed = false
   cancelActive?.()
   initialized?.hush()

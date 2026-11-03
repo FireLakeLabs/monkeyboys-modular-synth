@@ -3,6 +3,7 @@ import { LOOK_LABELS, looksFor } from '../modules/looks'
 import { LOOK_LAYOUT } from '../looks/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import type { JackRef, Patch } from '../patch/types'
+import { observeActivity } from './activity'
 import { ControlEditor } from './Controls'
 import {
   HP,
@@ -54,11 +55,13 @@ export function Rack({
   locked,
   showCode,
   sourceModules,
+  editingModule,
 }: {
   patch: Patch
   draft: string
   locked: boolean
   showCode: (id: string) => void
+  editingModule: string | null
   sourceModules: readonly string[]
   edit: RackEdit
   selected: string | null
@@ -70,6 +73,10 @@ export function Rack({
   const [allLooks, setAllLooks] = useState(false)
   const menuModule = patch.modules.find((m) => m.id === menu?.id)
   const surface = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (surface.current) return observeActivity(surface.current)
+    return undefined
+  }, [])
   const [points, setPoints] = useState<Record<string, Point>>({})
   const [wire, setWire] = useState<Wiring | null>(null)
   const [pointer, setPointer] = useState<Point | null>(null)
@@ -343,9 +350,11 @@ export function Rack({
                   aria-label={`${spec.name} ${m.id}`}
                   data-jacks={LOOK_LAYOUT[m.look].jacks}
                   data-module={m.id}
+                  data-editing={editingModule === m.id}
                   className={`module-panel cat-${spec.category} family-${spec.family} look-${m.look} ${selected === m.id ? 'selected' : ''} ${!routed.has(m.id) ? 'inactive' : ''}`}
                   style={{ left: m.hp * HP, top: m.row * ROW_HEIGHT + 20, width: spec.hp * HP }}
                 >
+                  {spec.family === 'alien' && <span className="activity-glow" aria-hidden="true" />}
                   <button
                     type="button"
                     className="module-header"
@@ -370,6 +379,11 @@ export function Rack({
                     }}
                   >
                     <span className="module-dot" />
+                    {spec.family === 'cyber' && (
+                      <span className="cyber-cursor" aria-hidden="true">
+                        ▌
+                      </span>
+                    )}
                     <strong>{spec.name}</strong>
                     <small>{spec.title}</small>
                   </button>
