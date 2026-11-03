@@ -113,5 +113,45 @@
     "unitPassed": 751,
     "inheritedExpectedFailures": 17,
     "guardrailsPassed": 40
+  },
+  "afterMainRebase": {
+    "base": "91ffb420784ae7fccdcb8309276cbcdada8e8975",
+    "static": {
+      "command": "npm run check",
+      "passed": true,
+      "unitPassed": 775,
+      "inheritedExpectedFailures": 0,
+      "guardrailsPassed": 40
+    },
+    "metadata": {
+      "browser": "156.0.8078.4",
+      "checks": [
+        "Silent starter shows code and one metadata fold while retaining the complete file",
+        "Enveloped synth folds automatically on library load; category-coloured code stays visible",
+        "Copy, Export, Open and native whole-file paste preserve exact source and restore complete saved rack identity",
+        "Unfolded metadata, its separator and select-all deletion are protected from keyboard edits",
+        "Keyboard Enter and continued typing add a code line before the protected separator",
+        "Code edits refold metadata after acceptance; unfinished comments retain fold/protection; Revert restores source",
+        "Only the reader-recognized trailing block folds; strings, block comments and earlier marker comments stay visible; unknown metadata exports unchanged",
+        "EOF diagnostic points to code line 1, metadata has no line numbers even unfolded, and invalid draft export stays exact"
+      ],
+      "physicalListening": false,
+      "pageErrors": []
+    },
+    "libraryRackEditing": {
+      "checks": [
+        "enveloped-synth: CV, effect insertion, extra mixer channel and export identity passed",
+        "quantized-sequence: CV, effect insertion, extra mixer channel and export identity passed",
+        "lfo-sweep: CV, effect insertion, extra mixer channel and export identity passed",
+        "filter-envelope: CV, effect insertion, extra mixer channel and export identity passed",
+        "drum-machine: CV, effect insertion, extra mixer channel and export identity passed",
+        "echo-room: CV, effect insertion, extra mixer channel and export identity passed",
+        "iter-jux: CV, effect insertion, extra mixer channel and export identity passed",
+        "custom-helper: CV, effect insertion, extra mixer channel and export identity passed",
+        "layered-sketch: CV, effect insertion, extra mixer channel and export identity passed",
+        "Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay"
+      ],
+      "pageErrors": []
+    }
   }
 }

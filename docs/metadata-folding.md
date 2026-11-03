@@ -54,6 +54,17 @@ with no page errors. `npm run check` passed: 751 unit tests, 17 inherited expect
 failures, 40 guardrail checks, formatting/skill integrity, lint, TypeScript and
 the production build.
 
+After rebasing onto `91ffb42` (#111's reader identity fix), the full gate passed
+again: 775 unit tests with no expected failures and 40 guardrail checks. The
+focused metadata browser suite and all nine library exercise rack-edit groups
+also passed again, with no page errors. The implementation diff was unchanged
+by the rebase.
+
+Sol review approved in one round with `gpt-6.1-sol` on high, with no actionable
+findings or code changes. The reviewed diff remained 20 files, 771 insertions
+and 26 deletions before/after review; later additions only record rebase proof.
+Review token usage was not exposed.
+
 Regression proof first observed the unfinished expression on line 2 reported
 inside metadata at line 8; the test now reports line 2. A browser replacement
 also exposed an old fold mapping onto a marker-like string. Its focused unit
