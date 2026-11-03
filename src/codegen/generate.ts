@@ -19,7 +19,7 @@ import {
   bindScope,
   syntax,
   writeLayout,
-  type CodeExpression,
+  type CodeExpression as LayoutExpression,
   type Owner,
   type RackLayout,
 } from './layout'
@@ -28,7 +28,17 @@ const chainedCode = (text: string): boolean =>
   tokenizer(text, { ecmaVersion: 'latest' }).getToken().type.label === '.'
 const numeric = (value: number): string => String(Number(value.toFixed(3)))
 const quote = (value: string): string => JSON.stringify(value)
-const blank = (): CodeExpression => ({ text: '', owners: [], sourceRouting: false, mixers: [] })
+interface CodeExpression extends LayoutExpression {
+  inline: boolean
+}
+
+const blank = (inline = false): CodeExpression => ({
+  text: '',
+  owners: [],
+  sourceRouting: false,
+  mixers: [],
+  inline,
+})
 
 function append(
   expression: CodeExpression,
@@ -38,10 +48,11 @@ function append(
   target?: Owner['target'],
 ): CodeExpression {
   if (!text) return expression
-  const prefix = expression.text ? '\n  ' : ''
+  const prefix = expression.text && !expression.inline ? '\n  ' : ''
   const start = expression.text.length + prefix.length
   return {
     text: expression.text + prefix + text,
+    inline: expression.inline,
     sourceRouting: expression.sourceRouting,
     mixers: expression.mixers,
     owners: [
@@ -287,7 +298,8 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       case 'code': {
         const text = s('text')
         if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
-        expression = append(expression, text, node)
+        // Opaque CODE may end in a line comment; keep separators around it.
+        expression = append({ ...expression, inline: false }, text, node)
         expression.sourceRouting ||= syntax(expression.text).hasOrbit
         break
       }
@@ -302,7 +314,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       case 'env':
         throw new Error('ENV has no standalone expression')
       case 'lfo': {
-        let expression = append(blank(), string(node, 'shape'), node)
+        let expression = append(blank(true), string(node, 'shape'), node)
         const rate = number(node, 'rate')
         if (rate !== 1)
           expression = append(
@@ -388,6 +400,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     if (parent) definitions.get(parent)?.dependencies.add(key)
     return definition.names.map((name, i) => ({
       text: name,
+      inline: definition.expressions[i]?.inline ?? false,
       owners: [],
       sourceRouting: definition.expressions[i]?.sourceRouting ?? false,
       mixers: definition.expressions[i]?.mixers ?? [],
