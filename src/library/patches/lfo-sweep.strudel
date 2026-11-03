@@ -2,13 +2,9 @@ setcpm(100/4)
 
 $: note("c2 g2 bb2 eb3")
   .s("sawtooth")
-  .lpf(sine
-  .slow(4)
-  .range(400, 2800))
+  .lpf(sine.slow(4).range(400, 2800))
   .lpq(3)
-  .gain(tri
-  .slow(2)
-  .range(0.1, 0.3))
+  .gain(tri.slow(2).range(0.1, 0.3))
   .postgain(0.8)
   .orbit(1)
 

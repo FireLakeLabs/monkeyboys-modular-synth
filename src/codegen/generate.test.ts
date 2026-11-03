@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
-import { generate } from './generate'
+import { read } from '../reader/read'
+import { generate, generateDocument } from './generate'
 import { RACK_MARKER } from './layout'
 
 function module(
@@ -248,10 +249,10 @@ describe('CV routing', () => {
   )
 
   it.each([
-    ['vcf', {}, '.lpf(sine\n  .slow(4)\n  .range(800, 2400))'],
-    ['vca', {}, '.gain(sine\n  .slow(4)\n  .range(0.8, 0.3))'],
-    ['vcf', { shape: 'saw', rate: 0.5, depth: -200 }, '.lpf(saw\n  .fast(2)\n  .range(800, 600))'],
-    ['vca', { shape: 'tri', rate: 1, depth: -0.7 }, '.gain(tri\n  .range(0.8, 0.1))'],
+    ['vcf', {}, '.lpf(sine.slow(4).range(800, 2400))'],
+    ['vca', {}, '.gain(sine.slow(4).range(0.8, 0.3))'],
+    ['vcf', { shape: 'saw', rate: 0.5, depth: -200 }, '.lpf(saw.fast(2).range(800, 600))'],
+    ['vca', { shape: 'tri', rate: 1, depth: -0.7 }, '.gain(tri.range(0.8, 0.1))'],
   ] satisfies [string, Record<string, ControlValue>, string][])(
     'routes LFO into %s with target units',
     (type, values, expected) => {
@@ -263,6 +264,37 @@ describe('CV routing', () => {
       expect(sound(patch)).toContain(expected)
     },
   )
+
+  it('keeps transformed CV inline, tracks its source ownership and restores old saved formatting', () => {
+    const filter = module('vcf'),
+      lfo = module('lfo'),
+      iter = module('iter')
+    const patch = chain(seq(), osc(), filter, out())
+    patch.modules.forEach((item, index) => {
+      item.hp = index * 12
+    })
+    lfo.row = 1
+    iter.row = 1
+    iter.hp = 12
+    patch.modules.push(lfo, iter)
+    patch.cables.push(wire(lfo, iter), wire(iter, filter, 'cv'))
+    const generated = generateDocument(patch)
+    const cv = '.lpf(sine.slow(4).iter(4).range(800, 2400))'
+    expect(generated.code).toContain(`\n  ${cv}\n  .lpq(1)\n  .orbit(1)`)
+    for (const id of [filter.id, lfo.id, iter.id])
+      expect(
+        generated.ranges[id]?.map(({ start, end }) => generated.code.slice(start, end)),
+      ).toContain(cv)
+    expect(read(generated.code).patch).toEqual(patch)
+    const legacy = generated.code.replace(
+      'sine.slow(4).iter(4).range',
+      'sine\n  .slow(4)\n  .iter(4)\n  .range',
+    )
+    const reopened = read(legacy)
+    expect(reopened.layout).toBe('restored')
+    expect(reopened.patch).toEqual(patch)
+    expect(generate(reopened)).toBe(legacy)
+  })
 
   it('preserves a trailing CODE comment on a CV signal without swallowing range scaling', () => {
     const filter = module('vcf'),
@@ -282,9 +314,9 @@ describe('CV routing', () => {
     patch.modules.push(lfo)
     patch.cables.push(wire(lfo, filter, 'cv'), wire(lfo, amp, 'cv'))
     patch.names['lfo1:out'] = 'wobble'
-    expect(sound(patch)).toContain('const wobble = sine\n  .slow(4)')
-    expect(sound(patch)).toContain('.lpf(wobble\n  .range(800, 2400))')
-    expect(sound(patch)).toContain('.gain(wobble\n  .range(0.8, 0.3))')
+    expect(sound(patch)).toContain('const wobble = sine.slow(4)')
+    expect(sound(patch)).toContain('.lpf(wobble.range(800, 2400))')
+    expect(sound(patch)).toContain('.gain(wobble.range(0.8, 0.3))')
   })
 })
 

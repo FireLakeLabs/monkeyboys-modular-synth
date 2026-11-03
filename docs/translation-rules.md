@@ -43,7 +43,7 @@ An unpatched knob writes a plain number. Patch an LFO into it and the number is 
 // knob alone
 .lpf(800)
 // LFO patched into CUTOFF
-.lpf(sine.range(800, 2400).slow(4))
+.lpf(sine.slow(4).range(800, 2400))
 ```
 
 ### 4. Sound settings ignore order; pattern changes don’t
@@ -129,10 +129,29 @@ allocator/generator and playback structural replacement boundary; see
 - `setcpm(bpm/4)` first, written as `setcpm(120/4)` so the BPM stays readable. v1 assumes four beats per cycle.
 - Named patterns (`const`) next, in rack order.
 - Then one `$:` line per mixer input, in channel order, with final voice routing as defined in [effect orbits](#effect-orbits).
-- Two-space indentation for chained calls; one method per line unless two belong together (`.attack(…).decay(…)`, `.delay(…).delaytime(…)`).
+- Top-level voice and named pattern chains write one method per line with two-space
+  indentation, including envelope and effect settings. Separate setup, declarations
+  and voices with blank lines; omit semicolons.
+- Generated modulation chains stay inline, including named LFO declarations,
+  transforms and destination scaling: `.lpf(sine.slow(4).range(800, 2400))`.
+  CODE fragments keep their exact text and surrounding line breaks so a trailing
+  line comment cannot swallow the next call.
+- Repository-owned rack library patches use this generator style. Imported files,
+  attributed showcases and retained CODE/prelude keep their source formatting;
+  loading an older saved file does not reformat it or change its rack identity.
 - Knobs at their default value are omitted when Strudel’s own default matches (for example `.speed(1)`, `.postgain(1)`). Where the module’s default differs from Strudel’s, it is always written.
 - Numbers are written with up to three decimal places and no trailing zeros.
 - The layout comment block comes last. See [`patch-format.md`](patch-format.md).
+
+For #67, verified on 3 November 2026: the [generator regressions](../src/codegen/generate.test.ts)
+failed with the old multiline CV output and pass with inline direct, transformed
+and shared LFOs. They separately check source ownership and identical saved rack
+recovery from old line breaks. `npm run check` passes. In the local Chromium
+browser, loading **LFO sweep and tremolo** showed inline filter/gain chains;
+changing CUTOFF from 400 to 800 kept the chain inline and the rack synchronized.
+Pasting the same saved file with old multiline CV formatting retained every source
+byte and restored the identical eight-module rack. These are observed editor and
+persistence checks; audio was neither played nor heard for this formatting change.
 
 ## Reading code
 
