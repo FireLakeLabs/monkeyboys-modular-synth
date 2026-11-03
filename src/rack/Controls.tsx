@@ -7,7 +7,7 @@ import { depthControl, draggedValue, keyboardValue, normalized, sequenceText, sn
 
 const focusEditor = (element: HTMLInputElement | null) => element?.focus()
 
-type Commit = (value: ControlValue) => boolean
+type Commit = (value: ControlValue, historyGroup?: object) => boolean
 
 export function Numeric({
   control,
@@ -20,7 +20,9 @@ export function Numeric({
 }) {
   const [draft, setDraft] = useState<string | null>(null)
   const [error, setError] = useState('')
-  const drag = useRef<{ start: number; y: number; position: number } | null>(null)
+  const drag = useRef<{ start: number; y: number; position: number; historyGroup: object } | null>(
+    null,
+  )
   function apply() {
     if (draft === null) return
     const n = Number(draft)
@@ -48,7 +50,7 @@ export function Numeric({
   function cancelDrag() {
     const current = drag.current
     drag.current = null
-    if (current) commit(current.start)
+    if (current) commit(current.start, current.historyGroup)
   }
   return (
     <div className="numeric-control">
@@ -69,7 +71,12 @@ export function Numeric({
         onPointerDown={(event) => {
           if (event.button !== 0) return
           event.currentTarget.setPointerCapture(event.pointerId)
-          drag.current = { start: value, y: event.clientY, position: normalized(control, value) }
+          drag.current = {
+            start: value,
+            y: event.clientY,
+            position: normalized(control, value),
+            historyGroup: {},
+          }
         }}
         onPointerMove={(event) => {
           const current = drag.current
@@ -83,7 +90,7 @@ export function Numeric({
           )
           current.y = event.clientY
           const next = draggedValue(control, current.position)
-          if (next !== value) commit(next)
+          if (next !== value) commit(next, current.historyGroup)
         }}
         onPointerUp={() => {
           drag.current = null

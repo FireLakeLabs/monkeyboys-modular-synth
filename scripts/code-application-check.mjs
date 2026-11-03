@@ -73,8 +73,13 @@ try {
   )
   pass('explicit apply retains draft/rack until Ctrl+Enter, then starts once')
   const accepted = (await saved(page)).source
-  await source(page).press('Control+z')
-  assert.equal((await saved(page)).draft, accepted, 'Apply checkpoints local draft history')
+  assert.equal(
+    await page.evaluate(async () => {
+      return (await import('/scripts/editor-browser.mjs')).draftUndoDepth()
+    }),
+    0,
+    'Apply checkpoints local draft history; accepted undo belongs to the app',
+  )
   const calls = () => page.evaluate(() => window.audioFixture.calls.length)
   const draft = accepted.replace('800', '1200')
   await edit(page, draft)

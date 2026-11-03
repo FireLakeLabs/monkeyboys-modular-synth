@@ -95,7 +95,7 @@ Issue #75 implements the [#55 library ownership decision](patch-library.md#rack-
 all nine module exercises are authored as rack-owned files, while attributed
 showcases retain exact source and offer explicit conversion at a refused edit.
 See [independent source/rack/event and browser evidence](library-rack-verification.md).
-The Start here collection (#80) and global undo/redo (#63) remain separate work.
+Global [undo/redo](undo-redo.md) is implemented separately under #63.
 
 ## Explicit code application
 
@@ -142,8 +142,10 @@ records Chromium composition, reduced motion and all three production browser su
 #68 adds [protected metadata folding](metadata-folding.md), retaining the full v1
 file for Copy/Export/Open/paste and keeping EOF diagnostics on code lines.
 #72 adds [sounding token marks](sounding-tokens.md) through engine-timed source feedback
-and a CodeMirror StateField. #63 owns global accepted-document undo/redo; #69 adds
-[opener diagnostics and gutter markers](error-positions.md). Physical OS IMEs and broad device coverage remain unverified.
+and a CodeMirror StateField. #63 adds [accepted-document undo/redo](undo-redo.md),
+including saved rack identity, draft checkpoints, knob gesture grouping and live
+playback restoration. #69 adds [opener diagnostics and gutter markers](error-positions.md).
+Physical OS IMEs and broad device coverage remain unverified.
 
 ## Prove early
 

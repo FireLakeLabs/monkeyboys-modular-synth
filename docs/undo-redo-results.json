@@ -1,0 +1,24 @@
+{
+  "browser": "156.0.8078.4",
+  "checks": [
+    "Ctrl/Cmd undo and editor redo restore deleted module, cables, exact saved names/positions/looks",
+    "look changes undo/redo through both visible buttons and shortcuts",
+    "cable deletion restores complete source and saved wiring",
+    "New replacement undo/redo retains complete rack and never starts stopped playback",
+    "BPM blur commit and subsequent CUTOFF drag remain separate undo steps",
+    "continuous live knob drag is one accepted undo step",
+    "draft undo/redo stays local, then acceptance checkpoints it without a duplicate accepted undo",
+    "invalid draft escape consumes one undo before accepted history and preserves redo",
+    "new accepted edits after undo discard the old redo branch",
+    "accepted undo/redo during playback reaches the normal engine update path",
+    "recovery starts a fresh accepted history without autoplay or page errors",
+    "real Strudel PCM: accepted mute, undo restores signal, redo mutes while scheduling continues"
+  ],
+  "pcm": {
+    "initial": 0.014147046842545289,
+    "mute": 0,
+    "undo": 0.00465039409041923,
+    "redo": 0
+  },
+  "physicalListening": false
+}

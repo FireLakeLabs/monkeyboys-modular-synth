@@ -8,7 +8,7 @@ import {
   Transaction,
 } from '@codemirror/state'
 import { Decoration, EditorView, keymap, type DecorationSet } from '@codemirror/view'
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
+import { defaultKeymap, history, undo, redo, undoDepth, redoDepth } from '@codemirror/commands'
 import { javascript } from '@codemirror/lang-javascript'
 import type { ReadResult, SourceDocument } from '../reader/types'
 import { sourceSegments, sourceTreatments, type SourceTreatment } from './highlighting'
@@ -59,6 +59,7 @@ export function SourceEditor(props: {
   change: (source: string) => void
   composing: (value: boolean) => void
   editingModule: (id: string | null) => void
+  stepHistory: (direction: 'undo' | 'redo') => boolean
 }) {
   const host = useRef<HTMLDivElement>(null)
   const treatments = useMemo(
@@ -101,7 +102,7 @@ export function SourceEditor(props: {
           sourceDiagnostics,
           javascript(),
           draftHistory.current.of(history()),
-          keymap.of([...defaultKeymap, ...historyKeymap]),
+          keymap.of(defaultKeymap),
           styling.current.of([]),
           sourceDecorations,
           soundingTokens(current.current.props.sourceFeedback, (event) => {
@@ -152,6 +153,22 @@ export function SourceEditor(props: {
               reportEditing(update.view, update.docChanged ? null : treatments, props.editingModule)
           }),
           EditorView.domEventHandlers({
+            keydown: (event, view) => {
+              if (
+                !(event.ctrlKey || event.metaKey) ||
+                event.altKey ||
+                event.key.toLowerCase() !== 'z'
+              )
+                return false
+              event.preventDefault()
+              if (event.isComposing || view.composing || event.repeat) return true
+              const direction = event.shiftKey ? 'redo' : 'undo'
+              const { props } = current.current
+              if (!props.document && (direction === 'undo' ? undoDepth : redoDepth)(view.state))
+                (direction === 'undo' ? undo : redo)(view)
+              else props.stepHistory(direction)
+              return true
+            },
             compositionstart: () => {
               clearTimeout(compositionTimer)
               current.current.props.composing(true)
