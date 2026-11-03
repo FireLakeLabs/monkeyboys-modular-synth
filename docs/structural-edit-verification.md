@@ -82,3 +82,20 @@ reader, rack, playback and engine suites. Browser actions above are a separate
 real-engine acceptance check; they are not part of CI. Arbitrary JavaScript
 rewriting, structural CV changes, shared-definition rewrites, ambiguous scopes,
 opaque-code removal and the other matrix refusals remain intentionally blocked.
+
+## Sol review regressions
+
+The first review reproduced two overly broad refusals. New tests first failed
+with scope ambiguity for explicit `.delay(0)` / `.room(0)`, and with the CV guard
+for a normal insertion after a modulated VCF. They now pass: explicit inactive
+source groups follow their proven branch membership even when generation omits
+them; unchanged CV groups survive surrounding insertions, while CV rewiring is
+still refused. Omitted default calls are not materialized during the edit.
+
+A second real-browser fixture used a shared `lead` with `.delay(/* bypass */ 0)`
+on one voice and `.lpf(sine.range(/* keep */ 800,1200))` on another. Cable Replace
+inserted ITER into each branch while Pattern scheduled remained visible with no
+errors. The bypass call and entire CV expression stayed byte-identical, no extra
+`.lpq(1)` appeared, CV cables were identical, and the independently reopened
+layout was restored. This observed scheduling and source behavior; no additional
+physical listening claim is made.

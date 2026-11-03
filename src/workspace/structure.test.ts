@@ -135,6 +135,49 @@ describe('planned imported structure', () => {
     expect(changed.patch.modules.find((module) => module.id === second.id)?.look).toBe('vintage')
   })
 
+  it.each(['delay', 'room'])(
+    'retains explicit inactive %s calls while editing the same or another voice',
+    (effect) => {
+      const source = `// keep\n$: note('c3').s('sine').${effect}(/* bypass */ 0); // untouched\n$: note('e3').s('square').gain(.2);\n`
+      let original = saveLayout(read(source))
+      original = editDocument(original, placeModule(original.patch, 'iter', 3))
+      const iter = id(original.patch, 'iter')
+      const mixerInputs = original.patch.cables.filter(
+        (cable) => cable.to.module === id(original.patch, 'mix'),
+      )
+      for (const input of mixerInputs) {
+        const next = connect(
+          connect(original.patch, input.from, { module: iter, jack: 'in' }, false, input.id),
+          { module: iter, jack: 'out' },
+          input.to,
+        )
+        const result = editDocument(original, next)
+        const end = input.to.jack === 'in1' ? `.${effect}(/* bypass */ 0)` : '.gain(.2)'
+        expect(sourceBody(result.source)).toBe(source.replace(end, `${end}\n  .iter(4)`))
+        expect(read(result.source).patch).toEqual(next)
+      }
+    },
+  )
+
+  it('keeps unchanged CV source and target groups exact around a normal chain insertion', () => {
+    const source = "$: note('c3').s('sine').lpf(sine.range(/* keep */ 800,1200));\n"
+    let original = saveLayout(read(source))
+    original = editDocument(original, placeModule(original.patch, 'iter', 3))
+    const iter = id(original.patch, 'iter')
+    const input = cable(original.patch, id(original.patch, 'mix'))
+    const next = connect(
+      connect(original.patch, input.from, { module: iter, jack: 'in' }, false, input.id),
+      { module: iter, jack: 'out' },
+      input.to,
+    )
+    const result = editDocument(original, next)
+    expect(sourceBody(result.source)).toBe(source.replace(';', '\n  .iter(4);'))
+    expect(read(result.source).patch).toEqual(next)
+    const mod = result.patch.cables.find((cable) => cable.to.jack === 'cv')
+    if (!mod) throw new Error('Missing modulation')
+    expect(() => editDocument(result, removeCable(result.patch, mod.id))).toThrow(/CV/)
+  })
+
   it('refuses stack argument removal and root replacement rather than changing unrelated interpretation', () => {
     const stacked = saveLayout(read("stack(note('c3').s('sine'),note('e3').s('square'))\n"))
     const input = cable(stacked.patch, id(stacked.patch, 'mix'))

@@ -86,68 +86,97 @@ function owned(
   }
 }
 
+interface Branch {
+  key: string
+  modules: string[]
+}
+
 /** Mixer-channel paths identify final branches without relying on source line ordinals. */
-function voiceKeys(patch: Patch): string[] {
-  function visit(id: string, path: string): string[] {
+function branches(
+  patch: Patch,
+  origin = patch.modules.find((module) => module.type === 'out')?.id,
+): Branch[] {
+  function visit(id: string, path: string): Branch[] {
     const module = patch.modules.find((module) => module.id === id)
     if (!module) return []
-    if (module.type === 'seq' || module.type === 'drums') return [path]
+    if (['seq', 'drums', 'lfo'].includes(module.type)) return [{ key: path, modules: [id] }]
     const inputs = getModuleSpec(module.type).jacks.filter(
       (jack) => jack.direction === 'in' && !jack.cvTarget,
     )
     if (module.type === 'code' && !patch.cables.some((cable) => cable.to.module === id)) {
       const text = module.values.text
-      return typeof text === 'string' && !text.trimStart().startsWith('.') ? [path] : []
+      return typeof text === 'string' && !text.trimStart().startsWith('.')
+        ? [{ key: path, modules: [id] }]
+        : []
     }
     return inputs.flatMap((jack) => {
       const cable = patch.cables.find(
         (cable) => cable.to.module === id && cable.to.jack === jack.id,
       )
       return cable
-        ? visit(cable.from.module, module.type === 'mix' ? `${path}/${id}:${jack.id}` : path)
+        ? visit(cable.from.module, module.type === 'mix' ? `${path}/${id}:${jack.id}` : path).map(
+            (branch) => ({ ...branch, modules: [...branch.modules, id] }),
+          )
         : []
     })
   }
-  const out = patch.modules.find((module) => module.type === 'out')
-  return out ? visit(out.id, out.id) : []
+  return origin ? visit(origin, origin) : []
 }
 
-function generated(patch: Patch, result = generateDocument(patch)): Map<string, OwnedScope> {
+interface GeneratedScope extends OwnedScope {
+  members: string[]
+}
+
+function generated(patch: Patch, result = generateDocument(patch)): Map<string, GeneratedScope> {
   const bindings: SourceAddress[] = result.layout.modules.flatMap((module) =>
     module.bindings.map((binding) => ({
       ...binding,
       module: module.id,
     })),
   )
-  const paths = voiceKeys(patch)
+  const paths = branches(patch)
   let index = 0
   return new Map(
     parseSource(result.code)
       .scopes.filter((scope) => scope.kind !== 'tempo')
       .map((scope) => {
-        const key =
-          scope.kind === 'declaration' ? `const:${scope.descriptor.anchor}` : paths[index++]
-        if (!key) return refuse('the final branch has no stable channel')
+        const declaration =
+          scope.kind === 'declaration'
+            ? Object.entries(result.layout.names)
+                .find(([, name]) => name === scope.descriptor.anchor)?.[0]
+                .split(':')[0]
+            : undefined
+        const branch = declaration ? branches(patch, declaration)[0] : paths[index++]
+        const key = scope.kind === 'declaration' ? `const:${scope.descriptor.anchor}` : branch?.key
+        if (!key || !branch) return refuse('the final branch has no stable channel')
+        const boundary = branch.modules.findLastIndex(
+          (id) =>
+            id !== declaration &&
+            Object.keys(result.layout.names).some((key) => key.startsWith(`${id}:`)),
+        )
         return [
           key,
-          owned(
-            scope,
-            bindings,
-            result.layout.scopes.find((item) => item.id === scope.descriptor.id)?.routing,
-          ),
+          {
+            ...owned(
+              scope,
+              bindings,
+              result.layout.scopes.find((item) => item.id === scope.descriptor.id)?.routing,
+            ),
+            members: branch.modules.slice(boundary + 1),
+          },
         ]
       }),
   )
 }
-const signature = (scope: OwnedScope): string =>
+const signature = (scope: OwnedScope, emitted: Set<string>): string =>
   descriptor([
     scope.scope.kind,
     scope.scope.descriptor.anchor,
     [
       ...new Set(
-        [...scope.units.flatMap((unit) => unit.owners), ...scope.roots].map((owner) =>
-          descriptor(owner),
-        ),
+        [...scope.units.flatMap((unit) => unit.owners), ...scope.roots]
+          .map((owner) => descriptor(owner))
+          .filter((owner) => emitted.has(owner)),
       ),
     ].sort(),
   ])
@@ -155,6 +184,13 @@ const signature = (scope: OwnedScope): string =>
 /** A plan never mutates the accepted document. Its result still needs semantic reader validation. */
 export function planStructure(document: SourceDocument, next: Patch, body: string): StructurePlan {
   const before = generated(document.patch)
+  const emitted = new Set(
+    [...before.values()].flatMap((scope) =>
+      [...scope.units.flatMap((unit) => unit.owners), ...scope.roots].map((owner) =>
+        descriptor(owner),
+      ),
+    ),
+  )
   const nextGenerated = generateDocument(next)
   const after = generated(next, nextGenerated)
   const declarations = (scopes: Map<string, OwnedScope>) =>
@@ -169,6 +205,20 @@ export function planStructure(document: SourceDocument, next: Patch, body: strin
     if (old && (old.type !== module.type || descriptor(old.values) !== descriptor(module.values)))
       refuse('combine structural and value edits separately')
   }
+  const cv = (patch: Patch) =>
+    patch.cables
+      .filter((cable) => {
+        const module = patch.modules.find((module) => module.id === cable.to.module)
+        return (
+          module &&
+          getModuleSpec(module.type).jacks.some(
+            (jack) => jack.id === cable.to.jack && jack.cvTarget,
+          )
+        )
+      })
+      .map(({ from, to }) => ({ from, to }))
+  if (descriptor(cv(document.patch)) !== descriptor(cv(next)))
+    refuse('CV routing needs a code edit')
   const buses = (patch: Patch) => ({
     modules: patch.modules
       .filter((module) => ['mix', 'out'].includes(module.type))
@@ -213,7 +263,9 @@ export function planStructure(document: SourceDocument, next: Patch, body: strin
       plans.push(original)
       continue
     }
-    const candidates = [...before].filter(([, item]) => signature(item) === signature(original))
+    const candidates = [...before].filter(
+      ([, item]) => signature(item, emitted) === signature(original, emitted),
+    )
     const match = candidates[0]
     if (candidates.length !== 1 || !match || claimed.has(match[0]))
       refuse('scope ownership is ambiguous')
@@ -243,12 +295,34 @@ export function planStructure(document: SourceDocument, next: Patch, body: strin
       edits.push({ ...statement, text: trivia(body.slice(statement.start, statement.end)) })
       continue
     }
-    const targetUnits = target.units.filter((unit) => unit.key !== '@routing')
     const oldUnits = original.units.filter((unit) => unit.key !== '@routing')
+    const targetUnits = target.units.filter(
+      (unit) =>
+        unit.key !== '@routing' &&
+        (oldUnits.some((item) => item.key === unit.key) ||
+          !canonical.units.some((item) => item.key === unit.key)),
+    )
+    // Explicit bypassed/default calls still own source even when generation omits them.
+    for (const unit of oldUnits) {
+      if (
+        canonical.units.some((item) => item.key === unit.key) ||
+        !unit.owners.length ||
+        !unit.owners.every(
+          (owner) => owner.role === 'module' && target.members.includes(owner.module),
+        )
+      )
+        continue
+      const position = Math.min(...unit.owners.map((owner) => target.members.indexOf(owner.module)))
+      const following = targetUnits.findIndex((item) =>
+        item.owners.some(
+          (owner) => owner.role === 'module' && target.members.indexOf(owner.module) > position,
+        ),
+      )
+      targetUnits.splice(following < 0 ? targetUnits.length : following, 0, unit)
+    }
     if (
-      descriptor(
-        canonical.units.filter((unit) => unit.key !== '@routing').map((unit) => unit.key),
-      ) === descriptor(targetUnits.map((unit) => unit.key))
+      descriptor(oldUnits.map((unit) => unit.key)) ===
+      descriptor(targetUnits.map((unit) => unit.key))
     ) {
       plans.push(original)
       continue
@@ -260,7 +334,13 @@ export function planStructure(document: SourceDocument, next: Patch, body: strin
       refuse('the expression root would change')
     if (
       [...original.units, ...target.units].some((unit) =>
-        unit.owners.some((owner) => owner.role === 'cv' || owner.role === 'mixer'),
+        unit.owners.some(
+          (owner) =>
+            owner.role === 'mixer' ||
+            (owner.role === 'cv' &&
+              (!original.units.some((item) => item.key === unit.key) ||
+                !targetUnits.some((item) => item.key === unit.key))),
+        ),
       )
     )
       refuse('CV or mixer ownership needs a code edit')
