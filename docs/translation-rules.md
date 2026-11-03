@@ -260,6 +260,13 @@ that structural edit in code. Refusal is atomic: source, rack and scheduled audi
 stay at the accepted revision. These limits do not restrict canonical rack-owned
 generation or the existing proven literal/name edits.
 
+Cable target previews (#76) run the same source-aware edit boundary before a
+jack is marked valid, including the proposed replacement or moved cable.
+Source-refused targets show the blocked state and a plain explanation beside
+the jack on hover and focus. Activating such a target retains the explicit
+conversion offer below; it does not commit the cable without consent. Supported
+imported edits remain available. See [browser evidence](interaction-verification.md#cable-refusal-preview-76).
+
 ## Explicit rack conversion (#55/#75)
 
 The imported preservation matrix still governs edits until a user consents to

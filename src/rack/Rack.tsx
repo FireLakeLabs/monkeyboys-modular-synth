@@ -1,8 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { LOOK_LABELS, looksFor } from '../modules/looks'
 import { LOOK_LAYOUT } from '../looks/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import type { JackRef, Patch } from '../patch/types'
+import type { SourceConnectionAssessment } from '../workspace/connections'
 import { observeActivity } from './activity'
 import { ControlEditor } from './Controls'
 import {
@@ -10,7 +11,6 @@ import {
   ROW_HEIGHT,
   ROW_HP,
   cableSignal,
-  assessConnection,
   cableWarnings,
   removeRow,
   addRow,
@@ -56,6 +56,7 @@ export function Rack({
   showCode,
   sourceModules,
   editingModule,
+  assess,
 }: {
   patch: Patch
   locked: boolean
@@ -63,6 +64,7 @@ export function Rack({
   editingModule: string | null
   sourceModules: readonly string[]
   edit: RackEdit
+  assess: (from: JackRef, to: JackRef, moving?: string) => SourceConnectionAssessment
   selected: string | null
   select: (id: string | null) => void
   newPatch: () => void
@@ -89,6 +91,7 @@ export function Rack({
   const [wire, setWire] = useState<Wiring | null>(null)
   const [pointer, setPointer] = useState<Point | null>(null)
   const [target, setTarget] = useState<JackRef | null>(null)
+  const [hintPoint, setHintPoint] = useState<Point | null>(null)
   const [replacement, setReplacement] = useState<JackRef | null>(null)
   const [selectedCable, setSelectedCable] = useState<string | null>(null)
   const [placement, setPlacement] = useState<Placement | null>(null)
@@ -102,6 +105,17 @@ export function Rack({
   const routed = routedModules(patch)
   const rows = rackRows(patch)
   const height = rows * ROW_HEIGHT
+  const candidates = useMemo(() => {
+    const results = new Map<string, SourceConnectionAssessment>()
+    if (wire)
+      for (const module of patch.modules)
+        for (const jack of getModuleSpec(module.type).jacks)
+          if (jack.direction === 'in') {
+            const to = { module: module.id, jack: jack.id }
+            results.set(keyOf(to), assess(wire.from, to, wire.moving))
+          }
+    return results
+  }, [patch, wire, assess])
   useLayoutEffect(() => {
     const element = surface.current
     if (!element) return
@@ -149,6 +163,7 @@ export function Rack({
     setWire(null)
     setPointer(null)
     setTarget(null)
+    setHintPoint(null)
     setReplacement(null)
     wireGesture.current = null
   }
@@ -181,13 +196,26 @@ export function Rack({
     }
   }, [cancelReplacement])
   function candidate(to: JackRef) {
-    return wire ? assessConnection(patch, wire.from, to, wire.moving) : null
+    return candidates.get(keyOf(to)) ?? null
+  }
+  function inspectJack(to: JackRef, element: HTMLElement) {
+    if (!wire) return
+    const bounds = element.getBoundingClientRect()
+    setTarget(to)
+    setHintPoint({
+      x: Math.max(8, Math.min(bounds.left, window.innerWidth - 308)),
+      y: Math.max(8, Math.min(bounds.bottom + 8, window.innerHeight - 110)),
+    })
+    setMessage(candidate(to)?.message ?? '')
   }
   function finish(to: JackRef) {
     if (!wire) return
     const result = candidate(to)
     setMessage(result?.message ?? '')
     if (!result || result.kind === 'blocked') {
+      // A blocked source edit can still offer the existing explicit conversion.
+      if (result && 'sourceRefused' in result)
+        edit((p) => connect(p, wire.from, to, true, wire.moving))
       cancel()
       return
     }
@@ -433,6 +461,11 @@ export function Rack({
                             data-jack={keyOf(ref)}
                             className={`jack signal-${state && state.kind !== 'blocked' ? state.signal : jack.signal} ${connected ? 'connected' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
                             aria-label={`${m.id} ${jack.label} ${jack.direction}`}
+                            aria-describedby={
+                              wire && target && keyOf(target) === keyOf(ref)
+                                ? 'cable-target-hint'
+                                : undefined
+                            }
                             title={
                               state?.message ??
                               (wire && jack.direction === 'out'
@@ -454,15 +487,20 @@ export function Rack({
                                 setReplacement(null)
                               }
                             }}
-                            onPointerEnter={() => {
-                              if (wire && jack.direction === 'in') {
-                                setTarget(ref)
-                                setMessage(candidate(ref)?.message ?? '')
-                              }
+                            onFocus={(event) => {
+                              if (jack.direction === 'in') inspectJack(ref, event.currentTarget)
                             }}
-                            onPointerLeave={() => {
-                              setTarget(null)
-                              if (wire) setMessage('Choose an input. Escape cancels.')
+                            onBlur={(event) => {
+                              if (!event.currentTarget.matches(':hover')) setTarget(null)
+                            }}
+                            onPointerEnter={(event) => {
+                              if (jack.direction === 'in') inspectJack(ref, event.currentTarget)
+                            }}
+                            onPointerLeave={(event) => {
+                              if (event.currentTarget !== document.activeElement) {
+                                setTarget(null)
+                                if (wire) setMessage('Choose an input. Escape cancels.')
+                              }
                             }}
                             onPointerUp={() => {
                               if (wire && jack.direction === 'in') finish(ref)
@@ -613,6 +651,16 @@ export function Rack({
             </button>
           )}
         </div>
+        {wire && target && hintPoint && (
+          <div
+            id="cable-target-hint"
+            role="tooltip"
+            className="cable-target-hint"
+            style={{ left: hintPoint.x, top: hintPoint.y }}
+          >
+            {candidate(target)?.message}
+          </div>
+        )}
         {replacementPrompt}
         {deleteId && !locked && (
           <fieldset className="replace-prompt">

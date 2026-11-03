@@ -209,3 +209,8 @@ conversion tests retain opaque setup and CODE, reject invalid saved preludes, an
 query real Strudel control events separately from source and graph assertions.
 The [browser acceptance](library-rack-verification.md) covers the actual controls,
 nearby refusal/Cancel/retry and measured output; physical listening remains unverified.
+
+The #76 connection preview uses the source mutation boundary before showing a
+valid jack. Focused regressions cover imported CV refusal, accepted replacement
+and saved identity; the [separate browser probe](interaction-verification.md#cable-refusal-preview-76)
+covers blocked styling, local hover/focus reasons and conversion consent.
