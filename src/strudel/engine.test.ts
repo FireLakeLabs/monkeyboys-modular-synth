@@ -336,3 +336,37 @@ it('clears pending visuals after an evaluation failure and leaves opaque code un
   await vi.advanceTimersByTimeAsync(1000)
   expect(events).toEqual([])
 })
+
+it('delivers revision-bound source spans at audio time and cancels them on Stop', async () => {
+  vi.useFakeTimers()
+  let options: InitStrudelOptions | undefined
+  web.initStrudel.mockImplementation(async (next) => {
+    options = next
+  })
+  web.evaluate.mockImplementation(async () => {
+    options?.editPattern?.(new (await import('@strudel/web')).Pattern(() => []))
+  })
+  const { play, stop } = await import('./engine')
+  const source = '$: note("c3").s("sine")\n$: note("e3").s("sine")'
+  const feedback = vi.fn()
+  await play(source, { sourceFeedback: feedback })
+  const evaluated = web.evaluate.mock.calls.at(-1)?.[0]
+  if (typeof evaluated !== 'string') throw new Error('Missing evaluated source')
+  const start = evaluated.indexOf('e3')
+  const hap = { context: { locations: [{ start, end: start + 2 }] } }
+  const trigger = web.observe.mock.calls.at(-1)?.[0]
+  trigger?.(hap, 10, 0.5, 10.2)
+  await vi.advanceTimersByTimeAsync(200)
+  expect(feedback).not.toHaveBeenCalled()
+  web.time = 10.2
+  await vi.advanceTimersByTimeAsync(200)
+  expect(feedback).toHaveBeenCalledExactlyOnceWith({
+    source,
+    spans: [{ start: source.indexOf('e3'), end: source.indexOf('e3') + 2 }],
+  })
+  trigger?.(hap, 10.2, 0.5, 11)
+  await stop()
+  web.time = 11
+  await vi.advanceTimersByTimeAsync(1000)
+  expect(feedback).toHaveBeenCalledTimes(1)
+})

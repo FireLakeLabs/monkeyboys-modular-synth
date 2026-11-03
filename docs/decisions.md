@@ -85,6 +85,17 @@ production acceptance for #9–#11.
   evaluations remain engine limits. The [#36 recovery contract](audio-recovery.md)
   defines observable late errors and Stop independent of pending evaluation.
 
+## Source editor (#53, decided 3 November 2026)
+
+Adopt plain CodeMirror 6 in #59. The [editor spike](editor-spike.md) demonstrated
+real-engine mini-notation token highlighting, mapped rack rewrites, existing
+source treatments, folding and code-line diagnostics. Keep event/source mapping
+behind `src/strudel/engine.ts`. Use app-owned accepted source documents for #63
+undo/redo, with CodeMirror history limited to unaccepted drafts and an explicit
+checkpoint boundary. Native OS IME and the full replacement browser suites
+remain production acceptance work; the opt-in prototype does not replace the
+current textarea.
+
 ## Brand
 
 - Logo: a plain smiley — orange circle `#F4A462` with dark features `#1a1b20`. See `public/favicon.svg`.

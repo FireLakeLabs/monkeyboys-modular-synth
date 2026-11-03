@@ -95,6 +95,13 @@ ownership and saved graph identity before acceptance. See the
 [supported matrix](translation-rules.md#imported-structural-edits-35) and
 [source, event, saved-state and browser evidence](structural-edit-verification.md).
 
+## Source editor adoption
+
+The [#53 CodeMirror spike](editor-spike.md) recommends plain CodeMirror 6,
+with event/source mapping behind the engine and accepted-document undo ownership.
+The production editor is still the textarea. #59 owns adoption and the remaining
+native IME/reduced-motion/browser acceptance; #63 owns global undo/redo.
+
 ## Prove early
 
 These were the two foundational unknowns, resolved before the production work

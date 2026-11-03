@@ -64,6 +64,7 @@ export function activityPlan(document: SourceDocument) {
     return [...new Set(own)]
   }
   const mapping = new Map<number, string[]>()
+  const insertions: { at: number; length: number }[] = []
   let code = document.source
   if (safe)
     for (const scope of scopes.filter((scope) => scope.kind === 'voice').reverse()) {
@@ -74,13 +75,23 @@ export function activityPlan(document: SourceDocument) {
       mapping.set(key, own)
       // Reader-owned voices are call/identifier chains. Append context without a
       // leading parenthesis, which could join semicolon-free top-level statements.
-      code =
-        code.slice(0, scope.end) +
-        `.withContext(context => ({...context, ${ACTIVITY}: ${key}}))` +
-        code.slice(scope.end)
+      const inserted = `.withContext(context => ({...context, ${ACTIVITY}: ${key}}))`
+      insertions.push({ at: scope.end, length: inserted.length })
+      code = code.slice(0, scope.end) + inserted + code.slice(scope.end)
     }
+  insertions.sort((a, b) => a.at - b.at)
   return {
     code,
+    sourceOffset(this: void, offset: number): number | null {
+      let shift = 0
+      for (const insertion of insertions) {
+        const start = insertion.at + shift
+        if (offset <= start) break
+        if (offset < start + insertion.length) return null
+        shift += insertion.length
+      }
+      return offset - shift
+    },
     modules(this: void, hap: unknown): string[] {
       const context: unknown =
         hap && typeof hap === 'object' && 'context' in hap ? hap.context : undefined
