@@ -15,9 +15,9 @@
     "real Strudel PCM: accepted mute, undo restores signal, redo mutes while scheduling continues"
   ],
   "pcm": {
-    "initial": 0.014147046842545289,
+    "initial": 0.01433078153135726,
     "mute": 0,
-    "undo": 0.00465039409041923,
+    "undo": 0.002972896775315753,
     "redo": 0
   },
   "physicalListening": false

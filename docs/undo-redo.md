@@ -54,7 +54,7 @@ assert exact source, saved rack identity and reopen identity through layout,
 look, name, cable, module deletion, code and patch replacement. They also cover
 gesture grouping/cancellation, no-op acceptance, branching, boundaries and reset.
 A CodeMirror regression checks local whole-file paste undo/redo through protected
-metadata. `npm run check` passes, including 796 unit cases, 40 guardrails,
+metadata. `npm run check` passes, including 805 unit cases, 40 guardrails,
 formatting, skill integrity, lint, TypeScript and production build.
 
 Run the workspace acceptance suite against Vite:
@@ -75,7 +75,7 @@ browser/device coverage. The suite needs Chromium; real Strudel initialization
 also uses external resources, so it remains separate from the shared CI gate.
 
 The [raw acceptance results](undo-redo-results.json) record 12 passing browser
-checks. PCM RMS measured 0.01415 initially, zero after mute, 0.00465 after undo
+checks. PCM RMS measured 0.01433 initially, zero after mute, 0.00297 after undo
 and zero after redo. No page errors occurred. The shared preview also observed
 module add/undo/redo with stopped transport.
 
@@ -89,3 +89,7 @@ returned BPM 120 instead of retaining 140. Grouping now travels explicitly with
 Numeric pointer commits through the rack edit boundary. The same regression
 passes: the first Undo retains BPM 140 and restores cutoff; the second restores
 BPM 120. The full 12-check browser suite, including real PCM, passes afterward.
+
+After rebasing onto `e44907a` (#69), the App/editor integration retains opener
+diagnostics and gutter markers. The full gate and 12-check history/PCM browser
+suite passed again, as did the existing code-application and feedback suites.
