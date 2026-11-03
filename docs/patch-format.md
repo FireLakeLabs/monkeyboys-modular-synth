@@ -153,3 +153,19 @@ Removed sounding calls may leave their modules and cables as disconnected saved
 state. No dangling source binding is retained for such modules. Source byte
 preservation, Strudel event behavior and complete saved identity are distinct
 verification claims; graph validity alone establishes none of the three.
+
+## Opaque setup on an explicit rack conversion (#75)
+
+`Patch` and its v1 envelope may include optional `prelude: string`. It holds
+non-rack setup statements retained when the user explicitly chooses Make
+rack-editable. The generator writes them before the tempo and rack-owned
+expressions, tracks their declaration scopes and reserves their identifiers
+against generated output names. CODE fragments may refer to those helpers.
+The string must parse and must not contain a recognized voice or tempo scope;
+malformed or non-string saved values invalidate metadata. No code is executed
+while reading or converting it. Older files omit this field and remain valid.
+
+A prelude is trusted as saved rack state only while the live source still starts
+with it. Editing setup code externally falls back to source-owned reconciliation;
+its old saved prelude cannot override that live edit. Exact source, setup
+semantics, generated event values and saved graph identity remain separate checks.

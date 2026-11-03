@@ -377,3 +377,23 @@
     caret-animation: manual;
   }
 }
+
+.rack-edit-refusal {
+  position: fixed;
+  z-index: 30;
+  width: min(340px, calc(100vw - 16px));
+  padding: 16px;
+  border: 1px solid #f4a462;
+  border-radius: 8px;
+  background: #15171b;
+  box-shadow: 0 8px 32px #000b;
+}
+.rack-edit-refusal p {
+  margin: 0 0 12px;
+}
+.rack-edit-refusal details {
+  margin-bottom: 12px;
+}
+.rack-edit-refusal button + button {
+  margin-left: 8px;
+}

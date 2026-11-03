@@ -7,6 +7,7 @@ import {
   useSyncExternalStore,
 } from 'react'
 import { Rack, type RackEdit } from './rack/Rack'
+import type { Patch } from './patch/types'
 import { starterPatch, validateRack } from './rack/model'
 import { createPlayback } from './strudel/playback'
 import { tryRead } from './reader'
@@ -14,6 +15,8 @@ import type { ReadResult, SourceDocument } from './reader/types'
 import {
   editDocument,
   fromPatch,
+  makeRackEditable,
+  RackEditRefused,
   replaceLayout,
   saveLayout,
   sourceBody,
@@ -57,6 +60,13 @@ export default function App() {
   )
   const [playback] = useState(() => createPlayback(document))
   const audio = useSyncExternalStore(playback.subscribe, playback.getSnapshot)
+  const [refusedEdit, setRefusedEdit] = useState<{
+    document: SourceDocument
+    patch: Patch
+    revision: number
+    message: string
+    point: { x: number; y: number }
+  } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [pendingReplacement, setPendingReplacement] = useState<Replacement | null>(null)
   const [libraryOpen, setLibraryOpen] = useState(false)
@@ -82,12 +92,14 @@ export default function App() {
   const patch = document.patch
   const selectedRanges = locked ? [] : document.bindings.filter((b) => b.module === selected)
   const cancelReplacement = useCallback(() => {
+    setRefusedEdit(null)
     replacementRevision.current++
     setReplacing(false)
     setPendingReplacement(null)
   }, [])
 
   function install(next: SourceDocument) {
+    setRefusedEdit(null)
     workRevision.current++
     current.current = { document: next, draft: next.source, phase: 'readable' }
     setDocument(next)
@@ -99,6 +111,7 @@ export default function App() {
   }
 
   function changeDraft(source: string) {
+    setRefusedEdit(null)
     workRevision.current++
     current.current = { ...current.current, draft: source, phase: 'editing' }
     setDraft(source)
@@ -165,14 +178,51 @@ export default function App() {
     else if (current.current.phase === 'readable') await playback.play()
   }
 
-  const edit: RackEdit = (action) => {
+  const edit: RackEdit = (action, point = { x: 220, y: 150 }) => {
     if (current.current.phase !== 'readable') return false
+    setRefusedEdit(null)
+    const accepted = current.current.document
+    let next: Patch
     try {
-      install(editDocument(current.current.document, action(current.current.document.patch)))
-      return true
+      next = action(accepted.patch)
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : String(failure))
       return false
+    }
+    try {
+      install(editDocument(accepted, next))
+      return true
+    } catch (failure) {
+      if (failure instanceof RackEditRefused) {
+        setError(null)
+        setRefusedEdit({
+          document: accepted,
+          patch: next,
+          revision: workRevision.current,
+          message: failure.message,
+          point,
+        })
+      } else setError(failure instanceof Error ? failure.message : String(failure))
+      return false
+    }
+  }
+
+  function convertAndRetry() {
+    if (!refusedEdit) return
+    if (
+      refusedEdit.revision !== workRevision.current ||
+      refusedEdit.document !== current.current.document ||
+      current.current.phase !== 'readable'
+    ) {
+      setRefusedEdit(null)
+      return
+    }
+    try {
+      install(makeRackEditable(refusedEdit.document, refusedEdit.patch))
+      setRackGeneration((generation) => generation + 1)
+    } catch (failure) {
+      setRefusedEdit(null)
+      setError(failure instanceof Error ? failure.message : String(failure))
     }
   }
 
@@ -478,6 +528,37 @@ export default function App() {
           )}
         </section>
       </main>
+      {refusedEdit && (
+        <div
+          className="rack-edit-refusal"
+          role="alertdialog"
+          aria-label="Make rack-editable?"
+          aria-describedby="rack-edit-refusal-description"
+          style={{
+            left: Math.max(8, Math.min(refusedEdit.point.x, window.innerWidth - 348)),
+            top: Math.max(8, Math.min(refusedEdit.point.y, window.innerHeight - 300)),
+          }}
+        >
+          <p id="rack-edit-refusal-description">
+            This edit cannot preserve the imported source. Make rack-editable rewrites the code in
+            MonkeyBoy’s style, retaining setup code and CODE blocks, then completes this edit.
+          </p>
+          <details>
+            <summary>Why this edit was refused</summary>
+            {refusedEdit.message}
+          </details>
+          <button
+            type="button"
+            ref={(element) => element?.focus()}
+            onClick={() => setRefusedEdit(null)}
+          >
+            Cancel
+          </button>
+          <button type="button" onClick={convertAndRetry}>
+            Make rack-editable
+          </button>
+        </div>
+      )}
       {libraryOpen && (
         <PatchLibrary
           close={() => {

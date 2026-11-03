@@ -259,3 +259,13 @@ routing provenance or saved identity validation. Explain that the user can make
 that structural edit in code. Refusal is atomic: source, rack and scheduled audio
 stay at the accepted revision. These limits do not restrict canonical rack-owned
 generation or the existing proven literal/name edits.
+
+## Explicit rack conversion (#55/#75)
+
+The imported preservation matrix still governs edits until a user consents to
+**Make rack-editable** at a refusal. Conversion regenerates the proposed graph,
+retains opaque setup as [prelude metadata](patch-format.md#opaque-setup-on-an-explicit-rack-conversion-75)
+and keeps CODE fragments, then completes that proposed edit atomically. Subsequent
+rack edits use the canonical generator path. Library exercises are already authored
+this way; attributed showcases retain exact source until consent. See
+[library ownership and conversion limits](patch-library.md#rack-ownership-55-and-75).

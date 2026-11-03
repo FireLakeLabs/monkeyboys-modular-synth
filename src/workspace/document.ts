@@ -44,6 +44,35 @@ export function fromPatch(patch: Patch): SourceDocument {
   return read(generate(patch))
 }
 
+/** Explicitly relinquish source formatting while retaining opaque setup and CODE. */
+export function makeRackEditable(document: SourceDocument, next = document.patch): SourceDocument {
+  if (JSON.stringify(document.patch) !== document.patchRevision)
+    throw new Error('Stale source spans')
+  if (document.layout === 'invalid')
+    throw new Error('Replace unknown rack metadata explicitly before editing the rack')
+  const body = sourceBody(document.source)
+  const parsed = parseSource(body)
+  const bound = new Set(document.bindings.map((binding) => binding.scope))
+  const setup: string[] = []
+  for (const statement of parsed.program.body) {
+    const scopes = parsed.scopes.filter(
+      (scope) => scope.start >= statement.start && scope.end <= statement.end,
+    )
+    const owned = scopes.filter(
+      (scope) => scope.kind !== 'declaration' || bound.has(scope.descriptor.id),
+    )
+    if (owned.length) {
+      if (owned.length !== scopes.length)
+        throw new Error('Separate helper and pattern declarations before converting this patch')
+    } else setup.push(body.slice(statement.start, statement.end))
+  }
+  const prelude = setup.join('\n')
+  const { prelude: _previous, ...patch } = next
+  const result = fromPatch({ ...patch, ...(prelude ? { prelude } : {}) })
+  if (result.layout !== 'restored') throw new Error('Cannot restore the converted rack')
+  return result
+}
+
 /** Stamp current, proven bindings without rewriting a single executable/trivia byte. */
 export function saveLayout(document: SourceDocument, patch = document.patch): SourceDocument {
   if (JSON.stringify(document.patch) !== document.patchRevision)
@@ -80,6 +109,7 @@ function stampLayout(
 ): SourceDocument {
   const layout: RackLayout = {
     version: 1,
+    ...(patch.prelude === undefined ? {} : { prelude: patch.prelude }),
     source: body,
     scopes,
     modules: patch.modules.map((module) => ({
@@ -105,6 +135,8 @@ function stampLayout(
     )
   return result
 }
+
+export class RackEditRefused extends Error {}
 
 interface Edit extends Span {
   text: string
@@ -152,8 +184,12 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
     before.modules.length !== next.modules.length ||
     before.modules.some((m, i) => m.id !== next.modules[i]?.id)
   ) {
-    const plan = planStructure(document, next, sourceBody(document.source))
-    return stampLayout(plan.source, next, plan.bindings, plan.scopes)
+    try {
+      const plan = planStructure(document, next, sourceBody(document.source))
+      return stampLayout(plan.source, next, plan.bindings, plan.scopes)
+    } catch (failure) {
+      throw new RackEditRefused(failure instanceof Error ? failure.message : String(failure))
+    }
   }
   const edits: Edit[] = []
   for (const module of next.modules) {
@@ -197,14 +233,16 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
         text = value
       }
       if (!spans.length || (typeof value !== 'number' && typeof value !== 'string'))
-        throw new Error(`Cannot safely edit ${module.id} ${control.label}; edit its code instead`)
+        throw new RackEditRefused(
+          `Cannot safely edit ${module.id} ${control.label}; edit its code instead`,
+        )
       for (const span of spans) edits.push({ ...span, text })
     }
   }
   for (const [key, name] of Object.entries(next.names)) {
     const old = before.names[key]
     if (old === name) continue
-    if (!old) throw new Error('Rename this imported output in the code')
+    if (!old) throw new RackEditRefused('Rename this imported output in the code')
     const parsed = parseSource(document.source)
     const allowed: Span[] = []
     for (const statement of parsed.program.body)
@@ -219,14 +257,14 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
         token.type.label === 'name' && document.source.slice(token.start, token.end) === old,
     )
     if (!allowed.length || tokens.length !== allowed.length)
-      throw new Error('Name has CODE references; rename it in the code')
+      throw new RackEditRefused('Name has CODE references; rename it in the code')
     if (
       [...tokenizer(sourceBody(document.source), { ecmaVersion: 'latest' })].some(
         (token) =>
           token.type.label === 'name' && document.source.slice(token.start, token.end) === name,
       )
     )
-      throw new Error('Name collides with imported code')
+      throw new RackEditRefused('Name collides with imported code')
     edits.push(...allowed.map((span) => ({ ...span, text: name })))
   }
   const changed = spliceSource(

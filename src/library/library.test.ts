@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { CATALOG } from '../modules/catalog'
 import { generate } from '../codegen/generate'
 import { read } from '../reader'
-import { routedModules, setLook, setValue, validateRack } from '../rack/model'
+import { connect, placeModule, routedModules, setLook, setValue, validateRack } from '../rack/model'
 import { editDocument, saveLayout, sourceBody } from '../workspace/document'
 import { prepareReplacement } from '../workspace/open'
 import { libraryPatches, PATCH_LIBRARY, type LibraryNode } from './catalog'
@@ -58,6 +58,50 @@ describe('built-in patch library', () => {
     expect([...covered].sort()).toEqual(CATALOG.map((module) => module.id).sort())
   })
 
+  for (const entry of libraryPatches().filter((entry) => entry.id !== 'switch-angel-trance-demo')) {
+    it(`${entry.id}: loads rack-owned and accepts CV, effects and mixer edits`, () => {
+      let document = readLibraryPatch(entry)
+      const row = Math.max(...document.patch.modules.map((module) => module.row)) + 1
+      const edit = (patch: typeof document.patch) => {
+        document = editDocument(document, patch)
+        expect(read(document.source).patch).toEqual(document.patch)
+      }
+      edit(placeModule(document.patch, 'lfo', row))
+      const lfo = document.patch.modules.find((module) => module.type === 'lfo')
+      if (!lfo) throw new Error('Missing LFO')
+      for (const target of document.patch.modules.filter((module) =>
+        ['vcf', 'vca'].includes(module.type),
+      )) {
+        edit(
+          connect(
+            document.patch,
+            { module: lfo.id, jack: 'out' },
+            { module: target.id, jack: 'cv' },
+            true,
+          ),
+        )
+      }
+      expect(sourceBody(document.source)).toBe(sourceBody(generate(document.patch)))
+      edit(placeModule(document.patch, 'delay', row + 1))
+      const delay = document.patch.modules.filter((module) => module.type === 'delay').at(-1)
+      const mixer = document.patch.modules.find((module) => module.type === 'mix')
+      if (!delay || !mixer) throw new Error('Missing effect or mixer')
+      const incoming = document.patch.cables.find((cable) => cable.to.module === mixer.id)
+      if (!incoming) throw new Error('Missing voice')
+      edit(connect(document.patch, incoming.from, { module: delay.id, jack: 'in' }))
+      edit(connect(document.patch, { module: delay.id, jack: 'out' }, incoming.to, true))
+      edit(setValue(document.patch, mixer.id, 'ch1', 0.55))
+      const spare = ['in2', 'in3', 'in4'].find(
+        (jack) =>
+          !document.patch.cables.some(
+            (cable) => cable.to.module === mixer.id && cable.to.jack === jack,
+          ),
+      )
+      if (!spare) throw new Error('Missing spare channel')
+      edit(connect(document.patch, incoming.from, { module: mixer.id, jack: spare }))
+    })
+  }
+
   for (const entry of libraryPatches()) {
     it(`${entry.id}: preserves exact source and independently restores saved rack state`, () => {
       const original = readLibraryPatch(entry)
@@ -69,7 +113,7 @@ describe('built-in patch library', () => {
         setValue(original.patch, out.id, 'vol', 0.35),
       )
       const looked = editDocument(edited, setLook(edited.patch, out.id, 'vintage'))
-      expect(sourceBody(looked.source)).toBe(entry.source)
+      expect(sourceBody(looked.source)).toBe(sourceBody(entry.source))
       const reopened = read(looked.source)
       validateRack(reopened.patch)
       expect(reopened.source).toBe(looked.source)
@@ -90,7 +134,9 @@ describe('built-in patch library', () => {
     const amp = original.patch.modules.find((module) => module.type === 'vca')
     if (!amp) throw new Error('Missing amplifier')
     const edited = editDocument(original, setValue(original.patch, amp.id, 'level', 0.4))
-    expect(sourceBody(edited.source)).toBe(entry.source.replace('.gain(0.2)', '.gain(0.4)'))
+    expect(sourceBody(edited.source)).toBe(
+      sourceBody(entry.source).replace('.gain(0.2)', '.gain(0.4)'),
+    )
     expect(
       edited.patch.modules.some(
         (m) =>

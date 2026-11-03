@@ -27,7 +27,7 @@ import {
   renameOutput,
 } from './model'
 
-export type RackEdit = (action: (patch: Patch) => Patch) => boolean
+export type RackEdit = (action: (patch: Patch) => Patch, point?: Point) => boolean
 interface Point {
   x: number
   y: number
@@ -46,7 +46,7 @@ const curve = (a: Point, b: Point) =>
 
 export function Rack({
   patch,
-  edit,
+  edit: requestEdit,
   selected,
   select,
   newPatch,
@@ -69,6 +69,14 @@ export function Rack({
   replacementPrompt: ReactNode
   cancelReplacement: () => void
 }) {
+  const editOrigin = useRef<HTMLElement | null>(null)
+  const rememberOrigin = (event: { target: EventTarget }) => {
+    if (event.target instanceof HTMLElement) editOrigin.current = event.target
+  }
+  const edit: RackEdit = (action) => {
+    const bounds = editOrigin.current?.getBoundingClientRect()
+    return requestEdit(action, bounds ? { x: bounds.left, y: bounds.bottom + 8 } : undefined)
+  }
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null)
   const [allLooks, setAllLooks] = useState(false)
   const menuModule = patch.modules.find((m) => m.id === menu?.id)
@@ -204,6 +212,8 @@ export function Rack({
   return (
     <>
       <aside
+        onPointerDownCapture={rememberOrigin}
+        onClickCapture={rememberOrigin}
         className={`library ${locked ? 'library-locked' : ''}`}
         inert={locked}
         aria-label="Module library"
@@ -257,7 +267,13 @@ export function Rack({
           </section>
         ))}
       </aside>
-      <div className={`rack ${locked ? 'rack-locked' : ''}`} aria-label="Rack">
+      <div
+        className={`rack ${locked ? 'rack-locked' : ''}`}
+        aria-label="Rack"
+        onPointerUpCapture={rememberOrigin}
+        onClickCapture={rememberOrigin}
+        onFocusCapture={rememberOrigin}
+      >
         <div className="rack-toolbar">
           <h2>
             RACK <small>{patch.modules.length} modules</small>

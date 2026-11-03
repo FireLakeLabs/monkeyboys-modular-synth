@@ -71,6 +71,8 @@ function project(
   saved?: RackLayout,
 ): { patch: Patch; bindings: SourceBinding[] } {
   const patch: Patch = { version: 1, modules: [], cables: [], names: {} }
+  if (saved?.prelude !== undefined && source.startsWith(saved.prelude))
+    patch.prelude = saved.prelude
   const bindings: SourceBinding[] = []
   const reserved = new Set(saved?.modules.map((module) => module.id))
   const snapshotUnchanged =

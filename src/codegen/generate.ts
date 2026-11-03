@@ -3,6 +3,7 @@ import { CATALOG, getModuleSpec } from '../modules/catalog'
 import type { GridRow } from '../modules/types'
 import type { Patch } from '../patch/types'
 import type { SourceDocument } from '../reader/types'
+import { parseSource } from '../reader/syntax'
 import {
   control,
   graph,
@@ -107,9 +108,14 @@ export function generate(patch: Patch | SourceDocument): string {
 /** Source ownership for selection, captured while writing this exact revision. */
 export function generateDocument(patch: Patch): GeneratedDocument {
   const nodes = graph(patch)
+  const prelude = patch.prelude ?? ''
+  const setup = parseSource(prelude, { lastExpressionIsVoice: false })
+  if (setup.scopes.some((scope) => scope.kind !== 'declaration'))
+    throw new Error('Rack prelude must contain setup statements only')
   const layout: RackLayout = {
     version: 1,
-    scopes: [],
+    scopes: setup.scopes.map((scope) => scope.descriptor),
+    ...(patch.prelude === undefined ? {} : { prelude }),
     modules: patch.modules.map((module) => ({ ...module, bindings: [] })),
     cables: patch.cables,
     names: { ...patch.names },
@@ -125,6 +131,8 @@ export function generateDocument(patch: Patch): GeneratedDocument {
 
   // Reserving runtime names prevents a const from shadowing Strudel's functions/signals.
   const used = new Set([...CATALOG.flatMap((spec) => spec.strudel), 'rev', 'press', 'orbit'])
+  for (const token of tokenizer(prelude, { ecmaVersion: 'latest' }))
+    if (token.type.label === 'name') used.add(prelude.slice(token.start, token.end))
   for (const [key, name] of Object.entries(patch.names)) {
     const [moduleId, jackId, extra] = key.split(':')
     const node = moduleId ? nodes.get(moduleId) : undefined
@@ -411,7 +419,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
 
   const source = out ? input(out) : undefined
   const voices = source ? emit(source) : []
-  const lines: string[] = []
+  const lines: string[] = prelude ? [`${prelude}\n`] : []
   const ranges: GeneratedDocument['ranges'] = {}
   function write(expression: CodeExpression, prefix = '') {
     const offset = lines.join('\n').length + (lines.length ? 1 : 0) + prefix.length
@@ -468,5 +476,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     bindScope(layout, expression, undefined, orbit)
     write(expression, '$: ')
   })
-  return { code: `${lines.join('\n')}\n${writeLayout(layout)}`, ranges, layout }
+  const body = `${lines.join('\n')}\n`
+  parse(body, { ecmaVersion: 'latest' })
+  return { code: `${body}${writeLayout(layout)}`, ranges, layout }
 }

@@ -94,6 +94,8 @@ function patchFrom(value: unknown): Patch {
       configurable: true,
     })
   }
+  if (value.prelude !== undefined && typeof value.prelude !== 'string')
+    throw new Error('Invalid saved prelude')
   if (value.rows !== undefined && typeof value.rows !== 'number')
     throw new Error('Invalid saved row count')
   return {
@@ -101,6 +103,7 @@ function patchFrom(value: unknown): Patch {
     modules,
     cables,
     names,
+    ...(value.prelude === undefined ? {} : { prelude: value.prelude }),
     ...(value.rows === undefined ? {} : { rows: value.rows }),
   }
 }
