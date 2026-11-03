@@ -333,7 +333,7 @@ export async function verifyReplacementCancelPlayback(measure) {
   assert(status() === 'Pattern scheduled', 'Cancel stopped playback')
   const after = await measure()
   assert(after.rms > 0.0001, 'Cancel silenced playback')
-  button('Stop scheduling').click()
+  document.querySelector('.topbar .play[aria-label=Stop]').click()
   await until(() => status() === 'Stopped')
   return { before, after, sourceAndRackRetained: true, physicalListening: false }
 }
@@ -368,7 +368,7 @@ export async function verifyPatchSignals(measure) {
         events: events.length,
         sounds: [...new Set(events.map((event) => event.value.s))],
       })
-      button('Stop scheduling').click()
+      document.querySelector('.topbar .play[aria-label=Stop]').click()
       await until(() => status() === 'Stopped')
     }
     return results
@@ -410,7 +410,7 @@ export async function verifyLibraryStopFailure() {
   } finally {
     unsubscribe()
   }
-  button('Stop scheduling').click()
+  document.querySelector('.topbar .play[aria-label=Stop]').click()
   await until(() => status() === 'Stopped')
   return 'Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover'
 }

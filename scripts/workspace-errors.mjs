@@ -107,7 +107,7 @@ try {
   const failedDownload = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await failedDownload).path(), 'utf8'), failedLayout)
-  await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(page, 'Stopped')
   await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
   assert.equal(await sourceText(page), longSaved)
@@ -145,7 +145,7 @@ try {
   await page.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await download).path(), 'utf8'), invalid)
   await page.screenshot({ path: `${output}/syntax.png` })
-  await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(page, 'Stopped')
   await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
   assert.equal(await sourceText(page), original)
@@ -173,7 +173,7 @@ try {
       { timeout: 2000 },
     )
     assert.equal(await sourceText(page), '$: note(')
-    assert(await page.getByRole('button', { name: 'Stop scheduling', exact: true }).isEnabled())
+    assert(await page.getByRole('button', { name: 'Play', exact: true }).isDisabled())
     const failedDraftDownload = page.waitForEvent('download')
     await page.getByRole('button', { name: 'Export', exact: true }).click()
     assert.equal(await readFile(await (await failedDraftDownload).path(), 'utf8'), '$: note(')
@@ -184,12 +184,12 @@ try {
     assert.equal(await status(page).textContent(), 'Scheduling stopped after error')
     await page.getByRole('button', { name: 'Play', exact: true }).click()
     await waitStatus(page, 'Pattern scheduled')
-    await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+    await page.getByRole('button', { name: 'Stop', exact: true }).click()
     await waitStatus(page, 'Stopped')
   }
   pass(
     'ui',
-    'adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Stop available and require explicit Play after correction',
+    'adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Play disabled after confirmed Stop and require explicit Play after correction',
   )
 
   await page.evaluate(() => {
@@ -212,7 +212,9 @@ try {
     window.audioFixture.play = 'ok'
     window.audioFixture.stop = 'reject'
   })
-  await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await waitStatus(page, 'Pattern scheduled')
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(page, 'Audio state unknown')
   const retained = await sourceText(page)
   await open(page, '$: note("g3").s("sine")\n')
@@ -233,7 +235,7 @@ try {
   await page.evaluate(() => {
     window.audioFixture.stop = 'ok'
   })
-  await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(page, 'Stopped')
   pass(
     'ui',
@@ -388,7 +390,7 @@ try {
   )
   results.pcm.invalidDraft = await rms()
   assert(results.pcm.invalidDraft.rms > 0.001)
-  await audio.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await audio.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(audio, 'Stopped')
   // Observe after the test synth's release; Stop itself does not promise immediate silence.
   await audio.waitForTimeout(1500)
@@ -445,13 +447,13 @@ try {
   await fault.evaluate(() => {
     globalThis.failNextStop = true
   })
-  await fault.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await fault.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(fault, 'Audio state unknown')
   assert.match(
     await fault.locator('.error details').textContent(),
     /injected scheduler Stop failure/,
   )
-  await fault.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await fault.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(fault, 'Stopped')
   await fault.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(fault, 'Pattern scheduled')
@@ -500,8 +502,7 @@ try {
   await fault.waitForFunction(() => globalThis.lateOutputFixture === true)
   await waitStatus(fault, 'Scheduling stopped after error')
   assert.match(await fault.locator('.error details').textContent(), /late output fixture/)
-  await fault.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
-  await waitStatus(fault, 'Stopped')
+  assert(await fault.getByRole('button', { name: 'Play', exact: true }).isEnabled())
   pass('engine', 'late output throw reaches workspace banner and automatically stops scheduling')
   await faults.close()
 
@@ -515,7 +516,7 @@ try {
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(hang, 'Enabling audio / starting…')
   await hang.waitForFunction(() => globalThis.hungEvaluationStarted === true)
-  await hang.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await hang.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(hang, 'Stopped')
   const hungDraft = await sourceText(hang)
   const hungDownload = hang.waitForEvent('download')
@@ -539,7 +540,7 @@ try {
     'engine',
     'real never-settling evaluation permits immediate Stop and exact export; replay refused until reload, then explicit Play succeeds',
   )
-  await hang.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await hang.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(hang, 'Stopped')
   await code(
     hang,
@@ -547,7 +548,7 @@ try {
   )
   await hang.getByRole('button', { name: 'Play', exact: true }).click()
   await hang.waitForFunction(() => typeof globalThis.finishEvaluation === 'function')
-  await hang.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await hang.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(hang, 'Stopped')
   let starts = 0
   hang.on('console', (message) => {

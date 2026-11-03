@@ -12,11 +12,19 @@ export const HP = 12
 export const ROW_HEIGHT = 440
 
 export function starterPatch(): Patch {
+  const outHp = ROW_HP - getModuleSpec('out').hp
   return {
     version: 1,
     modules: [
-      { id: 'mix1', type: 'mix', row: 0, hp: 0, look: 'instrument', values: {} },
-      { id: 'out1', type: 'out', row: 0, hp: 12, look: 'instrument', values: {} },
+      {
+        id: 'mix1',
+        type: 'mix',
+        row: 0,
+        hp: outHp - getModuleSpec('mix').hp,
+        look: 'instrument',
+        values: {},
+      },
+      { id: 'out1', type: 'out', row: 0, hp: outHp, look: 'instrument', values: {} },
     ],
     cables: [
       { id: 'c1', from: { module: 'mix1', jack: 'out' }, to: { module: 'out1', jack: 'in' } },
@@ -66,6 +74,22 @@ export function freePosition(
     )
     .sort((a, b) => Math.abs(a - wanted) - Math.abs(b - wanted) || a - b)
   return positions[0] ?? null
+}
+
+/** Find space without shifting neighbors; a full rail spills onto the next one. */
+export function placementPosition(
+  patch: Patch,
+  type: string,
+  row = 0,
+  wanted = 0,
+  moving?: string,
+): { row: number; hp: number } {
+  for (;;) {
+    const hp = freePosition(patch, type, row, wanted, moving)
+    if (hp !== null) return { row, hp }
+    row++
+    wanted = 0
+  }
 }
 
 function nextId(prefix: string, ids: readonly string[]): string {

@@ -205,7 +205,7 @@ export async function verifyTrance() {
       ),
       'Missing custom registration',
     )
-    button('Stop scheduling').click()
+    document.querySelector('.topbar .play[aria-label=Stop]').click()
     await until(() => status() === 'Stopped')
     const stoppedCount = triggers.length
     await pause(1000)
@@ -230,7 +230,7 @@ export async function verifyTrance() {
       eventSnapshot(events()) === eventSnapshot(firstEvents),
       'Repeated load/Play changed events',
     )
-    button('Stop scheduling').click()
+    document.querySelector('.topbar .play[aria-label=Stop]').click()
     await until(() => status() === 'Stopped')
 
     const transfer = new DataTransfer()
@@ -275,7 +275,7 @@ export async function verifyTrance() {
       eventSnapshot(events()) === eventSnapshot(firstEvents),
       'Export/reopen changed sound events',
     )
-    button('Stop scheduling').click()
+    document.querySelector('.topbar .play[aria-label=Stop]').click()
     await until(() => status() === 'Stopped')
     return {
       status: 'passed',

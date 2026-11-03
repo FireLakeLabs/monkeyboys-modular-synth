@@ -67,6 +67,11 @@ The reader/engine spikes and feature dependency order remain unchanged.
 
 ## Built-in patch library
 
+Issues #61, #83, #93, #71 and #87 refine replacement, placement, keyboard file
+opening, Strudel sharing and the single header transport. See the
+[contracts](design.md#app-chrome) and
+[browser, signal and regression evidence](workspace-trust-verification.md).
+
 [Issue #45](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/45)
 adds a modal browser of nested collections, exact source/attribution and nine
 module exercise patches. It reuses the source-preserving reader and shared

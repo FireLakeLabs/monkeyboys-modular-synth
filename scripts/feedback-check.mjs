@@ -80,7 +80,7 @@ async function code(text) {
   await page.waitForTimeout(100)
 }
 async function stopped() {
-  await page.getByRole('button', { name: 'Stop scheduling', exact: true }).click()
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await page.waitForFunction(
     () => document.querySelector('.transport-status')?.textContent === 'Stopped',
   )
