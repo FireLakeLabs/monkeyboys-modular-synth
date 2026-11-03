@@ -12,16 +12,16 @@
   "trance": {
     "before": {
       "counters": [78, 16, 141],
-      "events": 14
+      "events": 17
     },
     "after": {
       "counters": [78, 16, 141],
-      "events": 79
+      "events": 77
     }
   },
   "deliveryLeadSeconds": {
-    "max": 0.0047952380952374085,
-    "count": 83
+    "max": 0.004252380952380008,
+    "count": 79
   },
   "feedback": {
     "browser": "156.0.8078.4",
