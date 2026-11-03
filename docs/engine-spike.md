@@ -115,6 +115,17 @@ show the error without inventing a precise module/line highlight. These
 limitations were shared with the interaction-design track; that track owns the
 resulting UX decisions.
 
+## Workspace recovery boundary (#12)
+
+The [workspace error audit](error-verification.md) reproduces manifest, resume,
+construction, missing/decode sample, late output and never-settling evaluation
+failures against the installed engine. It defines the 10-second pending warning
+and export/reload fallback without claiming cancellation. #36 owns remaining
+resource/output subscriptions and in-page recovery. Synchronous code blocking the
+main thread cannot be interrupted by the workspace UI; asynchronous work that
+never settles keeps the serialized Stop pending. These are execution limits,
+not parser errors or source rollback.
+
 ## Samples and deployment
 
 `@strudel/web` loads synths, but no external sample banks by default. Its

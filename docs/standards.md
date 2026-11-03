@@ -122,6 +122,18 @@ make a standards check pass.
 
 ## Maintaining standards
 
+The #12 workspace compares audio diagnostic ownership only against validated,
+accepted source; editing/invalid drafts never enter the parsing comparison during
+render. The [browser error regression](../scripts/workspace-errors.mjs) reproduces
+the original crash after an audio failure and verifies that incomplete source,
+Export and Stop remain available. See [error acceptance](error-verification.md).
+This browser check is a narrow exception to the shared local/CI gate: it requires
+provisioned Chromium and its real-engine group reaches external sample sources.
+It currently runs separately from `npm run check`; CI automation of the browser
+fixtures remains a #12 acceptance gap until browser provisioning and network
+isolation are added. The deterministic transport regressions do run in the shared
+gate. Do not infer render coverage from those unit tests.
+
 Use [correct](../.agents/skills/correct/SKILL.md) for a correction that reveals a
 preventable failure class. Prefer structure, then types, lint, and behavioral
 tests; use review instructions for remaining judgment. Prove each new guardrail

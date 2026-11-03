@@ -238,6 +238,12 @@ or persistence schema is introduced by this design proposal.
 
 ## #12: half-typed code and failures
 
+The [production acceptance audit](error-verification.md) resolves pending-operation
+warning, diagnostic ownership and Open/New replacement behavior. It records
+verified cases separately from the remaining #36 engine dependencies; #12 stays
+open until those results are integrated. This contract supersedes the earlier
+proposal defaults below where the adapter cannot expose individual phases.
+
 Keep three distinct facts: **draft source**, **last accepted readable rack**,
 and **last confirmed scheduled audio**. They can represent different revisions.
 “Rack and code in sync” says nothing about playback success. Only show it

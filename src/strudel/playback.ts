@@ -7,7 +7,10 @@ import * as engine from './engine'
 
 export interface PlaybackState {
   status: 'stopped' | 'starting' | 'playing' | 'applying' | 'stopping' | 'error'
+  scheduling: 'stopped' | 'scheduled' | 'unknown'
   error: string | null
+  /** Diagnostic ownership only; runtime stack locations are not mapped to this source. */
+  errorSource: string | null
 }
 
 function prepare(input: Patch | SourceDocument) {
@@ -38,13 +41,28 @@ function prepare(input: Patch | SourceDocument) {
 export function createPlayback(initial: Patch | SourceDocument) {
   let patch = prepare(initial)
   let accepted: ReturnType<typeof prepare> | undefined
-  let state: PlaybackState = { status: 'stopped', error: null }
+  let state: PlaybackState = {
+    status: 'stopped',
+    scheduling: 'stopped',
+    error: null,
+    errorSource: null,
+  }
   let requested = false
   let revision = 0
+  let sourceRevision = 0
   let pending = Promise.resolve()
   const listeners = new Set<() => void>()
-  function publish(status: PlaybackState['status'], error: string | null = null) {
-    state = { status, error }
+  function publish(
+    status: PlaybackState['status'],
+    error: string | null = null,
+    errorSource: string | null = null,
+    scheduling: PlaybackState['scheduling'] = status === 'playing'
+      ? 'scheduled'
+      : status === 'stopped'
+        ? 'stopped'
+        : 'unknown',
+  ) {
+    state = { status, scheduling, error, errorSource }
     listeners.forEach((listener) => listener())
   }
   function enqueue(action: () => Promise<void>) {
@@ -72,19 +90,26 @@ export function createPlayback(initial: Patch | SourceDocument) {
         accepted = next
         if (requested && current === revision) publish('playing')
       } catch (error) {
+        accepted = undefined
+        // A newer manual Stop already owns recovery and its final status.
+        if (!requested) return
         // A surfaced failure can leave the old pattern running or partially change tempo.
         requested = false
-        revision++
+        const recovery = ++revision
+        const detail = `Could not start or apply audio. ${message(error)}`
+        publish('stopping', detail, next.code)
         try {
           await engine.stop()
-          publish('error', `Could not apply patch. Scheduling stopped. ${message(error)}`)
+          if (recovery === revision)
+            publish('error', `Scheduling stopped. ${detail}`, next.code, 'stopped')
         } catch (stopError) {
-          publish(
-            'error',
-            `Audio state unknown — Stop failed. ${message(error)}; ${message(stopError)}`,
-          )
+          if (recovery === revision)
+            publish(
+              'error',
+              `Audio state unknown — Stop failed. ${message(error)}; ${message(stopError)}`,
+              next.code,
+            )
         }
-        accepted = undefined
       }
     })
   }
@@ -98,13 +123,22 @@ export function createPlayback(initial: Patch | SourceDocument) {
     },
     update(next: Patch | SourceDocument): Promise<void> {
       patch = prepare(next)
+      const sourceCurrent = ++sourceRevision
       if (requested) return apply()
       const volume = patch.volume
+      const source = patch.code
+      const current = revision
       return enqueue(async () => {
         try {
           await engine.setVolume(volume)
         } catch (error) {
-          publish('error', `Could not set output volume. ${message(error)}`)
+          if (current === revision && sourceCurrent === sourceRevision)
+            publish(
+              'error',
+              `Could not set output volume. ${message(error)}`,
+              source,
+              state.scheduling,
+            )
         }
       })
     },
@@ -117,14 +151,19 @@ export function createPlayback(initial: Patch | SourceDocument) {
     stop(): Promise<void> {
       requested = false
       const current = ++revision
-      publish('stopping')
+      const { error, errorSource } = state
+      publish('stopping', error, errorSource)
       return enqueue(async () => {
         try {
           await engine.stop()
-          if (current === revision) publish('stopped')
-        } catch (error) {
+          if (current === revision) publish('stopped', error, errorSource)
+        } catch (stopError) {
           if (current === revision)
-            publish('error', `Audio state unknown — Stop failed. ${message(error)}`)
+            publish(
+              'error',
+              `${error ? `${error} ` : ''}Audio state unknown — Stop failed. ${message(stopError)}`,
+              errorSource,
+            )
         }
       })
     },

@@ -54,8 +54,10 @@ The handoff covers cable target states and explanations, placement/full rows,
 deleting modules, half-typed code, audio activation, samples and runtime errors.
 The #9–#11 value, cable and module flows are implemented; see the
 [acceptance audit and browser evidence](interaction-verification.md). Empty rows
-now persist in optional v1 metadata. The #12 late-error detection, runtime source
-mapping and arbitrary-evaluation cancellation limits remain as documented.
+now persist in optional v1 metadata. The [#12 production error audit](error-verification.md)
+adds revision-owned diagnostics, pending warnings and guarded Open/New replacement.
+Late-error/resource reporting and arbitrary-evaluation recovery remain #36 dependencies;
+#12 stays open until that acceptance is integrated.
 
 ## Technical questions
 
