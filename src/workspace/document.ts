@@ -1,12 +1,13 @@
 import { parse, tokenizer } from 'acorn'
 import { generate, generateDocument } from '../codegen/generate'
-import { RACK_MARKER, writeLayout, type RackLayout } from '../codegen/layout'
+import { RACK_MARKER, writeLayout, type RackLayout, type Scope } from '../codegen/layout'
 import { getModuleSpec } from '../modules/catalog'
 import type { Patch } from '../patch/types'
 import { read } from '../reader'
 import { readLayout, matchScopes } from '../reader/layout'
 import { parseSource } from '../reader/syntax'
-import type { SourceDocument, Span } from '../reader/types'
+import type { SourceAddress, SourceDocument, Span } from '../reader/types'
+import { planStructure, spliceSource } from './structure'
 
 /** Remove identifiable metadata comments, retaining any executable source after them. */
 export function sourceBody(source: string): string {
@@ -53,27 +54,37 @@ export function saveLayout(document: SourceDocument, patch = document.patch): So
   const parsed = parseSource(body)
   const old = readLayout(document.source)
   const matches = matchScopes(old.kind === 'valid' ? old.layout.scopes : [], parsed.scopes)
+  const scopes = parsed.scopes.map((scope) => {
+    const match = matches.get(scope.descriptor.id)
+    const routing = match?.saved.routing
+    const call = routing && [...match.calls].find(([, old]) => old === routing.call)?.[0]
+    return {
+      ...scope.descriptor,
+      ...(routing &&
+      call !== undefined &&
+      !document.bindings.some(
+        (binding) => binding.scope === scope.descriptor.id && binding.calls.includes(call),
+      )
+        ? { routing: { call, orbit: routing.orbit } }
+        : {}),
+    }
+  })
+  return stampLayout(body, patch, document.bindings, scopes)
+}
+
+function stampLayout(
+  body: string,
+  patch: Patch,
+  bindings: SourceAddress[],
+  scopes: Scope[],
+): SourceDocument {
   const layout: RackLayout = {
     version: 1,
     source: body,
-    scopes: parsed.scopes.map((scope) => {
-      const match = matches.get(scope.descriptor.id)
-      const routing = match?.saved.routing
-      const call = routing && [...match.calls].find(([, old]) => old === routing.call)?.[0]
-      return {
-        ...scope.descriptor,
-        ...(routing &&
-        call !== undefined &&
-        !document.bindings.some(
-          (binding) => binding.scope === scope.descriptor.id && binding.calls.includes(call),
-        )
-          ? { routing: { call, orbit: routing.orbit } }
-          : {}),
-      }
-    }),
+    scopes,
     modules: patch.modules.map((module) => ({
       ...module,
-      bindings: document.bindings
+      bindings: bindings
         .filter((b) => b.module === module.id)
         .map(({ scope, calls, role, target }) => ({
           scope,
@@ -90,7 +101,7 @@ export function saveLayout(document: SourceDocument, patch = document.patch): So
   const result = read(source)
   if (result.layout !== 'restored' || JSON.stringify(result.patch) !== JSON.stringify(patch))
     throw new Error(
-      `Cannot prove saved rack identity for this edit: ${result.diagnostics.join('; ')}`,
+      `Cannot prove saved rack identity for this edit: ${result.diagnostics.join('; ')}. Edit the code instead.`,
     )
   return result
 }
@@ -98,17 +109,6 @@ export function saveLayout(document: SourceDocument, patch = document.patch): So
 interface Edit extends Span {
   text: string
 }
-function splice(source: string, edits: Edit[]): string {
-  const sorted = edits.sort((a, b) => b.start - a.start)
-  let end = source.length
-  for (const edit of sorted) {
-    if (edit.end > end) throw new Error('Overlapping source edits')
-    source = source.slice(0, edit.start) + edit.text + source.slice(edit.end)
-    end = edit.start
-  }
-  return source
-}
-
 /** Source-aware mutation boundary. Unsafe imported structural edits are refused. */
 export function editDocument(document: SourceDocument, next: Patch): SourceDocument {
   generate(next)
@@ -151,8 +151,10 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
     JSON.stringify(before.cables) !== JSON.stringify(next.cables) ||
     before.modules.length !== next.modules.length ||
     before.modules.some((m, i) => m.id !== next.modules[i]?.id)
-  )
-    throw new Error('This imported structural edit cannot preserve source. Edit the code instead.')
+  ) {
+    const plan = planStructure(document, next, sourceBody(document.source))
+    return stampLayout(plan.source, next, plan.bindings, plan.scopes)
+  }
   const edits: Edit[] = []
   for (const module of next.modules) {
     const previous = before.modules.find((m) => m.id === module.id)
@@ -227,7 +229,7 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
       throw new Error('Name collides with imported code')
     edits.push(...allowed.map((span) => ({ ...span, text: name })))
   }
-  const changed = splice(
+  const changed = spliceSource(
     document.source,
     edits.filter(
       (edit, i, all) =>

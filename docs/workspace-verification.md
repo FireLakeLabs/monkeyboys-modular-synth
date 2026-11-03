@@ -70,7 +70,10 @@ and delete actions are disabled. Escape closes the menu.
 - Imported value edits splice proven literal ranges. Safe declaration/receiver
   renames update every proven reference. Opaque CODE references, missing literal
   ownership and sounding structural edits without a preservation plan are refused
-  with an explanation; users can edit those expressions in source. Adding or
+  with an explanation; users can edit those expressions in source. The #35
+  [structural matrix and browser evidence](structural-edit-verification.md) now
+  cover conservative insert/bypass and independent voice connection/disconnection
+  plans. Adding or
   duplicating a disconnected module is safe and retained in metadata.
 - Active CODE blocks offer **Edit in source**, so half-typed expressions use the
   same draft/diagnostic flow. Disconnected CODE drafts remain editable as saved

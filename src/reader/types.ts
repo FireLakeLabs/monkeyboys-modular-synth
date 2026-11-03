@@ -6,12 +6,12 @@ export interface Span {
   end: number
 }
 
-export interface SourceBinding extends Span {
+/** A semantic address can be planned before the edited source has new byte ranges. */
+export interface SourceAddress extends Binding {
   module: string
-  scope: string
-  calls: number[]
-  role: Binding['role']
-  target?: Binding['target']
+}
+
+export interface SourceBinding extends SourceAddress, Span {
   /** Only literal tokens with a proven catalog meaning can be spliced. */
   controls: Record<string, Span>
 }

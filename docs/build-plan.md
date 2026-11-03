@@ -20,6 +20,15 @@ The reader/engine spikes and feature dependency order remain unchanged.
 6. **Looks (#7, implemented).** Layout rules and tokens for all ten looks in `src/looks/`, family-wide changes, and a module context menu with duplicate/show/delete. All 61 module/look combinations retain catalog widths; cables follow measured jack positions. See [video and browser evidence](workspace-verification.md).
 7. **Workspace polish (#8, implemented).** Editable fan-out names, source-bound layout writes, live code/rack editing, exact draft export/open, parser diagnostics and explicit runtime recovery. Imported literal and safe name edits preserve source; structural edits without a preservation plan are refused. See [contracts, videos and remaining engine limits](workspace-verification.md).
 
+## Source-preserving structural edits
+
+[Issue #35](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/35)
+extends the workspace with explicit plans for conservative imported chain edits
+and independent voice connection/disconnection. Reader validation proves planned
+ownership and saved graph identity before acceptance. See the
+[supported matrix](translation-rules.md#imported-structural-edits-35) and
+[source, event, saved-state and browser evidence](structural-edit-verification.md).
+
 ## Prove early
 
 These are the two biggest unknowns. Spike them before or alongside steps 2–3.
