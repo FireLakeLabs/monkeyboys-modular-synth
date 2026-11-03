@@ -343,7 +343,10 @@ A saved CODE owner that the current reader can represent as one complete module
 shows **Looks like QUANT: convert?** (using the matched catalog name) on its panel.
 Recognition alone never replaces a saved CODE owner. Conversion accepts a new
 ownership revision through normal workspace history; Undo restores the exact
-previous file and CODE owner. Unapplied drafts disable the action.
+previous file and CODE owner. Unapplied drafts disable the action. Conversion
+requires confirmed stopped transport; while starting, playing, stopping or in an
+error state the disabled button says to Stop playback first. This avoids
+re-evaluating opaque setup or resetting live effect tails for an ownership change.
 
 The offer requires identical source spans/call ownership from a fresh projection,
 ordinary chain jacks, valid replacement wiring, and independently validated saved

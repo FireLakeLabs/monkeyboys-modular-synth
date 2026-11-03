@@ -69,6 +69,7 @@ export function Rack({
   showCode,
   sourceModules,
   conversions,
+  conversionStopped,
   convertCode,
   editingModule,
   emptyOutput,
@@ -81,6 +82,7 @@ export function Rack({
   emptyOutput: boolean
   sourceModules: readonly string[]
   conversions: readonly CodeConversion[]
+  conversionStopped: boolean
   convertCode: (id: string) => void
   edit: RackEdit
   assess: (from: JackRef, to: JackRef, moving?: string) => SourceConnectionAssessment
@@ -559,7 +561,8 @@ export function Rack({
                           key={offer.module}
                           type="button"
                           className="code-conversion"
-                          disabled={locked}
+                          disabled={locked || !conversionStopped}
+                          title={conversionStopped ? undefined : 'Stop playback to convert'}
                           onClick={() => convertCode(m.id)}
                         >
                           Looks like {getModuleSpec(offer.type).name}: convert?

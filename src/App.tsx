@@ -547,11 +547,15 @@ export default function App() {
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}
           conversions={conversions}
+          conversionStopped={audio.status === 'stopped' && audio.scheduling === 'stopped'}
           convertCode={(id) => {
+            const transport = playback.getSnapshot()
             if (
               locked ||
               current.current.phase !== 'readable' ||
-              current.current.document !== document
+              current.current.document !== document ||
+              transport.status !== 'stopped' ||
+              transport.scheduling !== 'stopped'
             )
               return
             const offer = conversions.find((item) => item.module === id)

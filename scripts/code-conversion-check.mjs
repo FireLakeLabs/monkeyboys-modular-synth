@@ -83,3 +83,55 @@ export async function verifyCodeConversion() {
   )
   return results
 }
+
+// Real-engine playback regression: conversion must wait for confirmed Stop.
+export async function verifyConversionPlayback() {
+  const { read } = await import('../src/reader/index.ts')
+  const { saveLayout } = await import('../src/workspace/document.ts')
+  const { default: legacy } = await import('../src/reader/fixtures/pre-77-aliases.strudel?raw')
+  ;[...document.querySelectorAll('button')]
+    .find((node) => node.textContent === 'Discard saved patch')
+    ?.click()
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: '.', ctrlKey: true }))
+  await until(() => document.querySelector('.transport-status')?.textContent === 'Ready')
+  const key = '__monkeyboyConversionEvaluations'
+  globalThis[key] = 0
+  const setup = `globalThis.${key} = (globalThis.${key} ?? 0) + 1;\n`
+  const fixture = saveLayout(read(setup + legacy))
+  enableAutoApply()
+  replaceSource(fixture.source)
+  await until(() => buttons().length === 2 && buttons().every((button) => !button.disabled))
+  const before = editorSource()
+  const status = () => document.querySelector('.transport-status')?.textContent
+  try {
+    document.querySelector('[aria-label="Play"]').click()
+    await pause()
+    assert(
+      buttons().every((button) => button.disabled),
+      'Conversion enabled during playback',
+    )
+    for (let attempt = 0; attempt < 1200 && status() !== 'Playing'; attempt++) {
+      assert(!status()?.startsWith('Audio error'), `Playback failed: ${status()}`)
+      await pause()
+    }
+    assert(status() === 'Playing', `Playback did not start: ${status()}`)
+    assert(globalThis[key] === 1, 'Fixture did not evaluate once')
+    assert(
+      buttons().every((button) => button.disabled),
+      'Conversion enabled while playing',
+    )
+    buttons()[0].click()
+    assert(editorSource() === before, 'Disabled conversion changed running source')
+    assert(globalThis[key] === 1, 'Disabled conversion re-evaluated setup')
+    document.querySelector('[aria-label="Stop"]').click()
+    await until(() => status() === 'Ready')
+    await until(() => buttons().every((button) => !button.disabled))
+    buttons()[0].click()
+    await until(() => buttons().length === 1)
+    assert(globalThis[key] === 1, 'Stopped conversion re-evaluated setup')
+    assert(status() === 'Ready', 'Conversion restarted playback')
+    return 'Starting/playing conversion is disabled; after confirmed Stop it converts without re-evaluating stateful setup or restarting audio'
+  } finally {
+    document.querySelector('[aria-label="Stop"]')?.click()
+  }
+}

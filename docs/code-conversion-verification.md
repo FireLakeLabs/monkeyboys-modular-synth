@@ -33,6 +33,14 @@ The suite passed:
 - An unapplied draft disables conversion and keeps unfinished text.
 - Partial `.dec(.1)` and custom `.o(2)` remain CODE without a conversion offer.
 
-Audio stayed stopped throughout these UI observations. Event equality above uses
+The separate `verifyConversionPlayback()` export uses the real engine and a
+stateful setup counter. Before the transport gate fix it failed with
+“Conversion enabled during playback.” After the fix, starting/playing disables
+conversion; a disabled click keeps the source and evaluation count unchanged.
+After confirmed Stop, conversion succeeds with the setup counter still at one
+and audio still stopped. No additional evaluation or live effect reset occurs.
+
+The initial suite stayed stopped; the playback regression observed actual engine
+scheduling and Stop. Event equality above uses
 the real Strudel pattern runtime without WebAudio; no physical audio was heard,
-and live audio continuity or cross-browser/device coverage is not claimed.
+and effect-tail listening or cross-browser/device coverage is not claimed.
