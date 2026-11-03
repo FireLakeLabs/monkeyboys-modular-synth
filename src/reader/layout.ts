@@ -94,7 +94,15 @@ function patchFrom(value: unknown): Patch {
       configurable: true,
     })
   }
-  return { version: 1, modules, cables, names }
+  if (value.rows !== undefined && typeof value.rows !== 'number')
+    throw new Error('Invalid saved row count')
+  return {
+    version: 1,
+    modules,
+    cables,
+    names,
+    ...(value.rows === undefined ? {} : { rows: value.rows }),
+  }
 }
 
 export type SavedLayout =

@@ -3,7 +3,7 @@ import { graph, isSteps, requireNode } from '../codegen/graph'
 import { getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { JackSignal, KnobControl } from '../modules/types'
-import type { ControlValue, JackRef, Patch, PlacedModule } from '../patch/types'
+import type { Cable, ControlValue, JackRef, Patch, PlacedModule } from '../patch/types'
 
 export const HP = 12
 export const ROW_HP = 64
@@ -88,6 +88,7 @@ export function placeModule(
     return validateRack({
       ...patch,
       modules: patch.modules.map((m) => (m.id === moving ? { ...m, row, hp } : m)),
+      rows: Math.max(rackRows(patch), row + 1),
     })
   }
   const module: PlacedModule = {
@@ -101,10 +102,16 @@ export function placeModule(
     look: DEFAULT_LOOK[spec.family],
     values: {},
   }
-  return validateRack({ ...patch, modules: [...patch.modules, module] })
+  return validateRack({
+    ...patch,
+    modules: [...patch.modules, module],
+    rows: Math.max(rackRows(patch), row + 1),
+  })
 }
 
 export function removeModule(patch: Patch, id: string): Patch {
+  if (patch.modules.find((m) => m.id === id)?.type === 'out')
+    throw new Error('OUT cannot be deleted while the rack is open')
   return validateRack({
     ...patch,
     modules: patch.modules.filter((m) => m.id !== id),
@@ -112,6 +119,40 @@ export function removeModule(patch: Patch, id: string): Patch {
     names: Object.fromEntries(
       Object.entries(patch.names).filter(([key]) => !key.startsWith(`${id}:`)),
     ),
+    rows: rackRows(patch),
+  })
+}
+
+/** Routing activity is independent of whether omitted controls own any source bytes. */
+export function routedModules(patch: Patch): Set<string> {
+  const routed = new Set<string>()
+  function visit(id: string) {
+    if (routed.has(id)) return
+    routed.add(id)
+    for (const cable of patch.cables) if (cable.to.module === id) visit(cable.from.module)
+  }
+  for (const module of patch.modules) if (module.type === 'out') visit(module.id)
+  return routed
+}
+
+export function rackRows(patch: Patch): number {
+  return Math.max(patch.rows ?? 1, ...patch.modules.map((m) => m.row + 1))
+}
+
+export function addRow(patch: Patch): Patch {
+  return validateRack({ ...patch, rows: rackRows(patch) + 1 })
+}
+
+/** Removing an empty rail closes its gap; module HP positions and wiring stay intact. */
+export function removeRow(patch: Patch, row: number): Patch {
+  const rows = rackRows(patch)
+  if (!Number.isInteger(row) || row < 0 || row >= rows || rows === 1)
+    throw new Error('Cannot remove this row')
+  if (patch.modules.some((m) => m.row === row)) throw new Error('Only empty rows can be removed')
+  return validateRack({
+    ...patch,
+    modules: patch.modules.map((m) => (m.row > row ? { ...m, row: m.row - 1 } : m)),
+    rows: rows - 1,
   })
 }
 
@@ -211,6 +252,82 @@ export function cableSignal(patch: Patch, from: JackRef): JackSignal {
   if (jack?.signal !== 'any') return jack?.signal ?? 'any'
   const input = patch.cables.find((c) => c.to.module === from.module && c.to.jack === 'in')
   return input ? cableSignal(patch, input.from) : 'any'
+}
+
+function pathContains(
+  patch: Patch,
+  id: string,
+  type: string,
+  direction: 'upstream' | 'downstream',
+): boolean {
+  if (patch.modules.find((m) => m.id === id)?.type === type) return true
+  return patch.cables.some((c) =>
+    direction === 'upstream'
+      ? c.to.module === id &&
+        c.to.jack !== 'cv' &&
+        pathContains(patch, c.from.module, type, direction)
+      : c.from.module === id && pathContains(patch, c.to.module, type, direction),
+  )
+}
+
+export function cableWarnings(patch: Patch, cable: Cable): string[] {
+  const warnings: string[] = []
+  if (
+    cableSignal(patch, cable.from) === 'audio' &&
+    patch.cables.filter(
+      (c) => c.from.module === cable.from.module && c.from.jack === cable.from.jack,
+    ).length > 1
+  )
+    warnings.push('Audio split plays each connected branch; levels add.')
+  const to = patch.modules.find((m) => m.id === cable.to.module)
+  if (to?.type === 'delay' && pathContains(patch, cable.from.module, 'reverb', 'upstream'))
+    warnings.push('Strudel applies delay before reverb, regardless of cable order.')
+  return warnings
+}
+
+export type ConnectionAssessment =
+  | { kind: 'blocked'; message: string }
+  | { kind: 'valid' | 'warning' | 'unresolved'; signal: JackSignal; message: string }
+
+/** Preview the whole proposed graph without touching committed state. */
+export function assessConnection(
+  patch: Patch,
+  from: JackRef,
+  to: JackRef,
+  moving?: string,
+): ConnectionAssessment {
+  try {
+    const next = connect(patch, from, to, true, moving)
+    const cable = next.cables.at(-1)
+    if (!cable) throw new Error('Missing proposed cable')
+    const signal = cableSignal(next, from)
+    const opaque =
+      pathContains(next, from.module, 'code', 'upstream') ||
+      pathContains(next, to.module, 'code', 'downstream')
+    const warnings = [
+      ...new Set([
+        ...cableWarnings(next, cable),
+        ...next.cables.flatMap((c) =>
+          cableWarnings(next, c).filter((warning) => !cableWarnings(patch, c).includes(warning)),
+        ),
+      ]),
+    ]
+    const occupied = patch.cables.some(
+      (c) => c.to.module === to.module && c.to.jack === to.jack && c.id !== moving,
+    )
+    return {
+      kind: signal === 'any' || opaque ? 'unresolved' : warnings.length ? 'warning' : 'valid',
+      signal,
+      message: [
+        `${from.module}:${from.jack} → ${to.module}:${to.jack} · ${signal === 'any' ? 'signal unresolved until its source is connected' : signal}`,
+        ...warnings,
+        ...(opaque ? ['CODE semantics are unverified; inspect the source.'] : []),
+        ...(occupied ? [`Replace ${to.module} ${to.jack} connection?`] : []),
+      ].join(' · '),
+    }
+  } catch (error) {
+    return { kind: 'blocked', message: error instanceof Error ? error.message : String(error) }
+  }
 }
 
 export function depthControl(

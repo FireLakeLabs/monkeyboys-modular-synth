@@ -89,6 +89,12 @@ function validValue(item: Control, candidate: ControlValue, node: Node): boolean
 /** Validate the graph before traversing it; disconnected incomplete chains are legal. */
 export function graph(patch: Patch): Map<string, Node> {
   if (patch.version !== 1) throw new Error('Unsupported patch version')
+  const rows = patch.rows
+  if (
+    rows !== undefined &&
+    (!Number.isSafeInteger(rows) || rows < 1 || patch.modules.some((m) => m.row >= rows))
+  )
+    throw new Error('Invalid rack row count')
   const nodes = new Map<string, Node>()
   const unique = new Set<string>()
   for (const module of patch.modules) {

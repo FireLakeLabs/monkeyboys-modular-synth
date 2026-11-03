@@ -9,6 +9,12 @@ import {
   ROW_HEIGHT,
   ROW_HP,
   cableSignal,
+  assessConnection,
+  cableWarnings,
+  removeRow,
+  addRow,
+  rackRows,
+  routedModules,
   connect,
   freePosition,
   placeModule,
@@ -73,10 +79,12 @@ export function Rack({
   const [message, setMessage] = useState(
     'Add a module, then drag or click from an output to an input.',
   )
-  const [rowCount, setRowCount] = useState(2)
+  const [selectedOutput, setSelectedOutput] = useState<string | null>(null)
+  const wireGesture = useRef<{ x: number; y: number; dragged: boolean } | null>(null)
   const [confirmNew, setConfirmNew] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
-  const rows = Math.max(rowCount, ...patch.modules.map((m) => m.row + 1))
+  const routed = routedModules(patch)
+  const rows = rackRows(patch)
   const height = rows * ROW_HEIGHT
   useLayoutEffect(() => {
     const element = surface.current
@@ -126,6 +134,7 @@ export function Rack({
     setPointer(null)
     setTarget(null)
     setReplacement(null)
+    wireGesture.current = null
   }
   function cancel() {
     clearWire()
@@ -137,6 +146,8 @@ export function Rack({
       if (event.key === 'Escape') {
         cancel()
         setMenu(null)
+        setConfirmNew(false)
+        setDeleteId(null)
         setMessage('Cancelled')
       }
     }
@@ -153,28 +164,14 @@ export function Rack({
       window.removeEventListener('pointercancel', clearWire)
     }
   }, [])
-  function candidate(to: JackRef): { valid: boolean; uncertain?: boolean; message: string } {
-    if (!wire) return { valid: false, message: '' }
-    try {
-      connect(patch, wire.from, to, true, wire.moving)
-      const signal = cableSignal(patch, wire.from)
-      const occupied = patch.cables.some((c) => keyOf(c.to) === keyOf(to) && c.id !== wire.moving)
-      return {
-        valid: true,
-        uncertain: signal === 'any',
-        message: occupied
-          ? `Replace ${to.module} ${to.jack} connection?`
-          : `${keyOf(wire.from)} → ${keyOf(to)} · ${signal === 'any' ? 'signal unresolved until its source is connected' : signal}`,
-      }
-    } catch (error) {
-      return { valid: false, message: error instanceof Error ? error.message : String(error) }
-    }
+  function candidate(to: JackRef) {
+    return wire ? assessConnection(patch, wire.from, to, wire.moving) : null
   }
   function finish(to: JackRef) {
     if (!wire) return
     const result = candidate(to)
-    setMessage(result.message)
-    if (!result.valid) {
+    setMessage(result?.message ?? '')
+    if (!result || result.kind === 'blocked') {
       cancel()
       return
     }
@@ -188,7 +185,6 @@ export function Rack({
   function place(row: number, hp: number) {
     if (!placement) return
     if (edit((p) => placeModule(p, placement.type, row, hp, placement.moving))) {
-      setRowCount(Math.max(rows, row + 1))
       setMessage(`${getModuleSpec(placement.type).name} placed`)
     }
     setPlacement(null)
@@ -196,17 +192,7 @@ export function Rack({
   }
   const currentCable = patch.cables.find((c) => c.id === selectedCable)
   const module = patch.modules.find((m) => m.id === selected)
-  const warnings = patch.cables.flatMap((c) => {
-    const signal = cableSignal(patch, c.from)
-    const split = patch.cables.filter((other) => keyOf(other.from) === keyOf(c.from)).length > 1
-    const from = patch.modules.find((m) => m.id === c.from.module)
-    const to = patch.modules.find((m) => m.id === c.to.module)
-    return signal === 'audio' && split
-      ? [`${c.from.module}: audio split plays each connected branch; levels add.`]
-      : from?.type === 'reverb' && to?.type === 'delay'
-        ? ['Strudel applies delay before reverb, regardless of cable order.']
-        : []
-  })
+  const warnings = patch.cables.flatMap((c) => cableWarnings(patch, c))
   return (
     <>
       <aside
@@ -225,10 +211,15 @@ export function Rack({
                     type="button"
                     draggable
                     className={`chip cat-${spec.category}`}
-                    disabled={!!spec.unique && patch.modules.some((m) => m.type === spec.id)}
                     aria-label={`Add ${spec.name}`}
                     title={`${spec.title} · ${spec.hp} HP · click to add or drag onto a rail`}
                     onDragStart={(event) => {
+                      const existing = spec.unique && patch.modules.find((m) => m.type === spec.id)
+                      if (existing) {
+                        event.preventDefault()
+                        select(existing.id)
+                        return
+                      }
                       event.dataTransfer.setData('text/plain', spec.id)
                       setPlacement({ type: spec.id })
                     }}
@@ -237,10 +228,14 @@ export function Rack({
                       setGhost(null)
                     }}
                     onClick={() => {
+                      const existing = spec.unique && patch.modules.find((m) => m.type === spec.id)
+                      if (existing) {
+                        select(existing.id)
+                        return
+                      }
                       for (let row = 0; row <= rows; row++)
                         if (freePosition(patch, spec.id, row, 0) !== null) {
                           edit((p) => placeModule(p, spec.id, row))
-                          setRowCount(Math.max(rows, row + 1))
                           break
                         }
                     }}
@@ -287,12 +282,22 @@ export function Rack({
               setGhost({ row, hp })
               if (hp === null) setMessage('No room here — drop on + Add row')
             }}
+            onDragLeave={(event) => {
+              if (
+                !(event.relatedTarget instanceof Node) ||
+                !event.currentTarget.contains(event.relatedTarget)
+              )
+                setGhost(null)
+            }}
             onDrop={(event) => {
               event.preventDefault()
               if (ghost?.hp !== null && ghost) place(ghost.row, ghost.hp)
             }}
             onPointerMove={(event) => {
               if (wire && surface.current) {
+                const gesture = wireGesture.current
+                if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 4)
+                  gesture.dragged = true
                 const b = surface.current.getBoundingClientRect()
                 setPointer({ x: event.clientX - b.left, y: event.clientY - b.top })
               }
@@ -307,11 +312,14 @@ export function Rack({
                 <span className="row-label">
                   {row + 1} / {ROW_HP} HP
                 </span>
-                {!patch.modules.some((m) => m.row === row) && row === rows - 1 && rows > 1 && (
+                {!patch.modules.some((m) => m.row === row) && rows > 1 && (
                   <button
                     type="button"
                     className="remove-row"
-                    onClick={() => setRowCount(rows - 1)}
+                    aria-label={`Remove row ${row + 1}`}
+                    onClick={() => {
+                      edit((p) => removeRow(p, row))
+                    }}
                   >
                     Remove row
                   </button>
@@ -326,7 +334,7 @@ export function Rack({
                   aria-label={`${spec.name} ${m.id}`}
                   data-jacks={LOOK_LAYOUT[m.look].jacks}
                   data-module={m.id}
-                  className={`module-panel cat-${spec.category} family-${spec.family} look-${m.look} ${selected === m.id ? 'selected' : ''}`}
+                  className={`module-panel cat-${spec.category} family-${spec.family} look-${m.look} ${selected === m.id ? 'selected' : ''} ${!routed.has(m.id) ? 'inactive' : ''}`}
                   style={{ left: m.hp * HP, top: m.row * ROW_HEIGHT + 20, width: spec.hp * HP }}
                 >
                   <button
@@ -336,6 +344,13 @@ export function Rack({
                     aria-pressed={selected === m.id}
                     draggable
                     onClick={() => select(m.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Delete' && !spec.unique) {
+                        event.preventDefault()
+                        select(m.id)
+                        setDeleteId(m.id)
+                      }
+                    }}
                     onDragStart={(event) => {
                       event.dataTransfer.setData('text/plain', m.id)
                       setPlacement({ type: m.type, moving: m.id })
@@ -379,14 +394,25 @@ export function Rack({
                           <button
                             type="button"
                             data-jack={keyOf(ref)}
-                            className={`jack signal-${jack.signal} ${connected ? 'connected' : ''} ${state ? (state.valid ? 'valid' : 'blocked') : ''}`}
+                            className={`jack signal-${state && state.kind !== 'blocked' ? state.signal : jack.signal} ${connected ? 'connected' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
                             aria-label={`${m.id} ${jack.label} ${jack.direction}`}
                             title={
-                              state?.message ?? `${jack.label} · ${jack.signal} ${jack.direction}`
+                              state?.message ??
+                              (wire && jack.direction === 'out'
+                                ? 'Choose an input. Output-to-output is blocked.'
+                                : `${jack.label} · ${jack.signal} ${jack.direction}`)
                             }
                             onPointerDown={(event) => {
                               if (jack.direction === 'out' && event.button === 0) {
+                                if (wire) return
+                                wireGesture.current = {
+                                  x: event.clientX,
+                                  y: event.clientY,
+                                  dragged: false,
+                                }
+                                setSelectedOutput(keyOf(ref))
                                 setWire({ from: ref })
+                                setMessage('Choose an input. Escape cancels.')
                                 setPointer(points[keyOf(ref)] ?? null)
                                 setReplacement(null)
                               }
@@ -394,23 +420,42 @@ export function Rack({
                             onPointerEnter={() => {
                               if (wire && jack.direction === 'in') {
                                 setTarget(ref)
-                                setMessage(candidate(ref).message)
+                                setMessage(candidate(ref)?.message ?? '')
                               }
                             }}
-                            onPointerLeave={() => setTarget(null)}
+                            onPointerLeave={() => {
+                              setTarget(null)
+                              if (wire) setMessage('Choose an input. Escape cancels.')
+                            }}
                             onPointerUp={() => {
                               if (wire && jack.direction === 'in') finish(ref)
+                              else if (
+                                wire &&
+                                jack.direction === 'out' &&
+                                (keyOf(ref) !== keyOf(wire.from) || wireGesture.current?.dragged)
+                              ) {
+                                cancel()
+                                setMessage('Choose an input. Output-to-output is blocked.')
+                              }
                             }}
                             onClick={(event) => {
                               if (event.detail === 0) {
                                 if (jack.direction === 'out') setWire({ from: ref })
                                 else finish(ref)
-                              } else if (!wire && jack.direction === 'out') setWire({ from: ref })
+                              }
                             }}
                           />
                           <span>
                             {jack.label}
-                            {state ? (state.uncertain ? ' △' : state.valid ? ' ✓' : ' ×') : ''}
+                            {state
+                              ? state.kind === 'blocked'
+                                ? ' ×'
+                                : state.kind === 'valid'
+                                  ? ' ✓'
+                                  : ' △'
+                              : wire && jack.direction === 'out'
+                                ? ' ×'
+                                : ''}
                           </span>
                           {jack.direction === 'out' &&
                             (patch.cables.filter((c) => keyOf(c.from) === keyOf(ref)).length > 1 ||
@@ -438,11 +483,14 @@ export function Rack({
                       )
                     })}
                   </div>
-                  <span className="module-id">{m.id}</span>
+                  <span className="module-id">
+                    {m.id}
+                    {!routed.has(m.id) ? ' · inactive' : ''}
+                  </span>
                 </section>
               )
             })}
-            {placement && ghost?.hp !== null && ghost && (
+            {placement && ghost?.hp !== null && ghost && ghost.row < rows && (
               <div
                 className="placement-ghost"
                 style={{
@@ -456,14 +504,20 @@ export function Rack({
             )}
             <svg className="cables" width={ROW_HP * HP} height={height} aria-label="Patch cables">
               {patch.cables.map((c) => {
-                const a = points[keyOf(c.from)],
+                const start = points[keyOf(c.from)],
                   b = points[keyOf(c.to)]
+                const siblings = patch.cables.filter((other) => keyOf(other.from) === keyOf(c.from))
+                const offset =
+                  (siblings.findIndex((other) => other.id === c.id) - (siblings.length - 1) / 2) * 5
+                const a = start && { x: start.x + offset, y: start.y }
+                const warning = cableWarnings(patch, c).join(' ')
                 return a && b ? (
                   <g
                     key={c.id}
-                    className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''}`}
+                    className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''}`}
                   >
                     <path d={curve(a, b)} className="cable-shadow" />
+                    <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
                     <path
                       d={curve(a, b)}
                       onClick={() => {
@@ -473,6 +527,7 @@ export function Rack({
                     >
                       <title>
                         {keyOf(c.from)} → {keyOf(c.to)}
+                        {warning ? ` · △ ${warning}` : ''}
                       </title>
                     </path>
                   </g>
@@ -494,16 +549,24 @@ export function Rack({
           type="button"
           className="add-row"
           disabled={locked}
-          onClick={() => setRowCount(rows + 1)}
+          onClick={() => edit(addRow)}
           onDragOver={(event) => {
-            if (placement) event.preventDefault()
+            if (placement) {
+              event.preventDefault()
+              setGhost({ row: rows, hp: 0 })
+              setMessage(`${getModuleSpec(placement.type).name} · new row, HP 0`)
+            }
           }}
+          onDragLeave={() => setGhost(null)}
           onDrop={(event) => {
             event.preventDefault()
             place(rows, 0)
           }}
         >
           + Add row
+          {placement && ghost?.row === rows
+            ? ` · ${getModuleSpec(placement.type).name} · ${getModuleSpec(placement.type).hp} HP at 0`
+            : ''}
         </button>
         <div className="rack-status" aria-live="polite">
           {message}
@@ -516,7 +579,11 @@ export function Rack({
         {confirmNew && (
           <fieldset className="replace-prompt">
             <legend>Replace this patch?</legend>
-            <button type="button" onClick={() => setConfirmNew(false)}>
+            <button
+              type="button"
+              ref={(element) => element?.focus()}
+              onClick={() => setConfirmNew(false)}
+            >
               Cancel
             </button>
             <button
@@ -539,7 +606,7 @@ export function Rack({
                   select(null)
                   cancel()
                   setSelectedCable(null)
-                  setRowCount(2)
+                  setSelectedOutput(null)
                   setConfirmNew(false)
                   setMessage('New silent patch')
                 }
@@ -559,14 +626,19 @@ export function Rack({
               }{' '}
               cables?
             </legend>
-            <button type="button" onClick={() => setDeleteId(null)}>
+            <button
+              type="button"
+              ref={(element) => element?.focus()}
+              onClick={() => setDeleteId(null)}
+            >
               Cancel
             </button>
             <button
               type="button"
               onClick={() => {
                 if (edit((p) => removeModule(p, deleteId))) {
-                  select(null)
+                  const index = patch.modules.findIndex((m) => m.id === deleteId)
+                  select(patch.modules[index + 1]?.id ?? patch.modules[index - 1]?.id ?? null)
                   cancel()
                   setDeleteId(null)
                 }
@@ -700,6 +772,28 @@ export function Rack({
             </button>
           ))}
         </details>
+        {selectedOutput && !locked && (
+          <div
+            className="connections output-connections"
+            aria-label={`${selectedOutput} destinations`}
+          >
+            <strong>{selectedOutput} destinations</strong>
+            {patch.cables
+              .filter((c) => keyOf(c.from) === selectedOutput)
+              .map((c) => (
+                <button
+                  type="button"
+                  key={c.id}
+                  onClick={() => {
+                    setSelectedCable(c.id)
+                    cancel()
+                  }}
+                >
+                  Select cable to {keyOf(c.to)}
+                </button>
+              ))}
+          </div>
+        )}
         {currentCable && !locked && (
           <div className="selection-tools">
             <span>
@@ -710,6 +804,7 @@ export function Rack({
               onClick={() => {
                 edit((p) => removeCable(p, currentCable.id))
                 setSelectedCable(null)
+                setMessage('Cable removed')
               }}
             >
               Remove cable

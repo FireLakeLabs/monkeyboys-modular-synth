@@ -84,6 +84,7 @@ export function saveLayout(document: SourceDocument, patch = document.patch): So
     })),
     cables: patch.cables,
     names: patch.names,
+    ...(patch.rows === undefined ? {} : { rows: patch.rows }),
   }
   const source = `${body}${body.endsWith('\n') ? '' : '\n'}${writeLayout(layout)}`
   const result = read(source)

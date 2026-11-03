@@ -113,6 +113,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     modules: patch.modules.map((module) => ({ ...module, bindings: [] })),
     cables: patch.cables,
     names: { ...patch.names },
+    ...(patch.rows === undefined ? {} : { rows: patch.rows }),
   }
   const out = [...nodes.values()].find((node) => node.spec.id === 'out')
   const tempo = out

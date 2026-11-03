@@ -27,6 +27,7 @@ export interface RackLayout {
   modules: (PlacedModule & { bindings: Binding[] })[]
   cables: Cable[]
   names: Record<string, string>
+  rows?: number
 }
 
 export interface Owner {
