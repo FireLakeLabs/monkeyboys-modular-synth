@@ -123,6 +123,15 @@ and checkpoints draft history at acceptance. Chromium-native composition and the
 full replacement browser suites are verified there; physical OS IME/device
 coverage remains unverified.
 
+## Undo and redo (#63, decided 3 November 2026)
+
+Use app-owned accepted-document history for rack and code, including saved rack
+identity. Each acceptance is one step; a continuous knob pointer gesture groups
+its live values. CodeMirror owns only unfinished draft undo/redo. Once that local
+undo is exhausted, Undo discards the remaining draft before traversing accepted
+history. Acceptance checkpoints local history. Recovery starts a fresh session
+history, and undo never starts stopped audio. See the [contract and proof](undo-redo.md).
+
 ## Rack metadata in the editor (#54/#68, decided 3 November 2026)
 
 Keep the v1 file format and fold its trailing rack comment block to one line by

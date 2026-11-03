@@ -2,6 +2,9 @@
 import { EditorView } from '@codemirror/view'
 import { Text } from '@codemirror/state'
 import { foldedRanges } from '@codemirror/language'
+import { undoDepth } from '@codemirror/commands'
+
+export const draftUndoDepth = () => undoDepth(editorView().state)
 
 export function editorView() {
   const content = document.querySelector('.cm-content')

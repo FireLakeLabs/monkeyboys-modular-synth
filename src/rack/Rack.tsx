@@ -35,7 +35,11 @@ import {
   renameOutput,
 } from './model'
 
-export type RackEdit = (action: (patch: Patch) => Patch, point?: Point) => boolean
+export type RackEdit = (
+  action: (patch: Patch) => Patch,
+  point?: Point,
+  historyGroup?: object,
+) => boolean
 interface Point {
   x: number
   y: number
@@ -90,9 +94,13 @@ export function Rack({
   const rememberOrigin = (event: { target: EventTarget }) => {
     if (event.target instanceof HTMLElement) editOrigin.current = event.target
   }
-  const edit: RackEdit = (action) => {
+  const edit: RackEdit = (action, _point, historyGroup) => {
     const bounds = editOrigin.current?.getBoundingClientRect()
-    return requestEdit(action, bounds ? { x: bounds.left, y: bounds.bottom + 8 } : undefined)
+    return requestEdit(
+      action,
+      bounds ? { x: bounds.left, y: bounds.bottom + 8 } : undefined,
+      historyGroup,
+    )
   }
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null)
   const [allLooks, setAllLooks] = useState(false)
@@ -530,7 +538,13 @@ export function Rack({
                           {...(m.type === 'code' && sourceModules.includes(m.id)
                             ? { editSource: () => showCode(m.id) }
                             : {})}
-                          commit={(value) => edit((p) => setValue(p, m.id, control.id, value))}
+                          commit={(value, historyGroup) =>
+                            edit(
+                              (p) => setValue(p, m.id, control.id, value),
+                              undefined,
+                              historyGroup,
+                            )
+                          }
                         />
                       ))}
                   </div>

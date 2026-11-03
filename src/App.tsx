@@ -29,6 +29,7 @@ import { mayHaveOutput, strudelUrl } from './workspace/transport'
 import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { createAutosave } from './workspace/autosave'
 import { RestorePrompt } from './workspace/RestorePrompt'
+import { createDocumentHistory } from './workspace/history'
 import { PatchLibrary } from './library/PatchLibrary'
 import { readLibraryPatch } from './library/load'
 import { assessDocumentConnection } from './workspace/connections'
@@ -66,6 +67,8 @@ export default function App() {
   const [autosave] = useState(() => createAutosave())
   const [recovery, setRecovery] = useState(() => autosave.load())
   const [document, setDocument] = useState(() => fromPatch(starterPatch()))
+  const [history] = useState(() => createDocumentHistory(document))
+  const draggingKnob = useRef(false)
   const [draft, setDraft] = useState(document.source)
   const [phase, setPhase] = useState<'readable' | 'editing' | 'invalid'>('readable')
   const [diagnostic, setDiagnostic] = useState<Extract<ReadResult, { kind: 'invalid' }> | null>(
@@ -120,7 +123,8 @@ export default function App() {
   }, [])
 
   const install = useCallback(
-    (next: SourceDocument) => {
+    (next: SourceDocument, record = true, historyGroup?: object) => {
+      if (record) history.accept(next, historyGroup)
       setRefusedEdit(null)
       workRevision.current++
       current.current = { document: next, draft: next.source, phase: 'readable' }
@@ -132,8 +136,53 @@ export default function App() {
       draftSaved.current = autosave.save(next)
       playback.update(next).catch((failure: unknown) => setError(String(failure)))
     },
-    [autosave, playback],
+    [autosave, playback, history],
   )
+
+  useEffect(() => {
+    const start = (event: PointerEvent) => {
+      if (event.button === 0 && event.target instanceof Element && event.target.closest('.knob'))
+        draggingKnob.current = true
+    }
+    const end = () => {
+      draggingKnob.current = false
+    }
+    window.addEventListener('pointerdown', start, true)
+    window.addEventListener('pointerup', end)
+    window.addEventListener('pointercancel', end)
+    window.addEventListener('blur', end)
+    return () => {
+      window.removeEventListener('pointerdown', start, true)
+      window.removeEventListener('pointerup', end)
+      window.removeEventListener('pointercancel', end)
+      window.removeEventListener('blur', end)
+    }
+  }, [])
+
+  function stepHistory(direction: 'undo' | 'redo') {
+    if (
+      composing ||
+      editor.current?.composing ||
+      draggingKnob.current ||
+      recovery ||
+      replacing ||
+      pendingReplacement ||
+      libraryOpen
+    )
+      return false
+    if (current.current.phase !== 'readable') {
+      if (direction === 'redo') return false
+      install(current.current.document, false)
+      return true
+    }
+    const next = history.step(direction)
+    if (!next) return false
+    cancelReplacement()
+    install(next, false)
+    setSelected(null)
+    setRackGeneration((generation) => generation + 1)
+    return true
+  }
 
   function changeDraft(source: string) {
     setRefusedEdit(null)
@@ -226,7 +275,17 @@ export default function App() {
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
       if (!(event.ctrlKey || event.metaKey) || event.altKey) return
-      if (event.key === '.') {
+      if (event.key.toLowerCase() === 'z' && !event.isComposing) {
+        if (event.target instanceof Node && editor.current?.dom.contains(event.target)) return
+        if (
+          event.target instanceof Element &&
+          event.target.closest('input, textarea, [contenteditable]')
+        )
+          return
+        event.preventDefault()
+        event.stopPropagation()
+        if (!event.repeat) stepHistory(event.shiftKey ? 'redo' : 'undo')
+      } else if (event.key === '.') {
         event.preventDefault()
         event.stopPropagation()
         playback.stop().catch((failure: unknown) => setError(String(failure)))
@@ -245,7 +304,7 @@ export default function App() {
     else if (current.current.phase === 'readable') playAccepted()
   }
 
-  const edit: RackEdit = (action, point = { x: 220, y: 150 }) => {
+  const edit: RackEdit = (action, point = { x: 220, y: 150 }, historyGroup) => {
     if (current.current.phase !== 'readable' || composing) return false
     setRefusedEdit(null)
     const accepted = current.current.document
@@ -257,7 +316,7 @@ export default function App() {
       return false
     }
     try {
-      install(editDocument(accepted, next))
+      install(editDocument(accepted, next), true, historyGroup)
       return true
     } catch (failure) {
       if (failure instanceof RackEditRefused) {
@@ -424,6 +483,22 @@ export default function App() {
         >
           Patch library
         </button>
+        <button
+          type="button"
+          onClick={() => stepHistory('undo')}
+          disabled={composing || replacing || (!history.canUndo && !locked)}
+          title="Ctrl/Cmd+Z"
+        >
+          Undo
+        </button>
+        <button
+          type="button"
+          onClick={() => stepHistory('redo')}
+          disabled={composing || replacing || locked || !history.canRedo}
+          title="Shift+Ctrl/Cmd+Z"
+        >
+          Redo
+        </button>
         <output className="transport-status" aria-live="polite">
           {emptyOutput ? 'Nothing reaches OUT yet' : status}
         </output>
@@ -437,7 +512,10 @@ export default function App() {
               key={`${out?.id}:${typeof out?.values.bpm === 'number' ? out.values.bpm : tempoControl.default}:${rackGeneration}`}
               control={tempoControl}
               value={typeof out?.values.bpm === 'number' ? out.values.bpm : tempoControl.default}
-              commit={(value) => !!out && edit((p) => setValue(p, out.id, tempoControl.id, value))}
+              commit={(value, historyGroup) =>
+                !!out &&
+                edit((p) => setValue(p, out.id, tempoControl.id, value), undefined, historyGroup)
+              }
             />
           )}
         </fieldset>
@@ -569,6 +647,7 @@ export default function App() {
               change={changeDraft}
               composing={setComposing}
               editingModule={setEditingModule}
+              stepHistory={stepHistory}
             />
           </Suspense>
           {diagnostic && (
@@ -666,7 +745,8 @@ export default function App() {
           hasDraft={recovery.draft !== recovery.document.source}
           restore={() => {
             cleanSource.current = null
-            install(recovery.document)
+            history.reset(recovery.document)
+            install(recovery.document, false)
             if (recovery.draft !== recovery.document.source) changeDraft(recovery.draft)
             setRecovery(null)
           }}

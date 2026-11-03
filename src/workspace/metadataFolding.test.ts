@@ -6,10 +6,27 @@ import { foldRackMetadata, metadataFolding } from './metadataFolding'
 import { editorChanges } from './editorChanges'
 import { fromPatch } from './document'
 import { starterPatch } from '../rack/model'
+import { history, undo, redo } from '@codemirror/commands'
 
 const code = '$: note("c3")'
 const block = `\n\n${RACK_MARKER}\n// {"version":999}\n`
 const source = code + block
+
+it('undoes and redoes an unaccepted whole-file paste including protected metadata', () => {
+  let state = EditorState.create({ doc: source, extensions: [metadataFolding, history()] })
+  const replacement = source.replace('c3', 'd4').replace('999', '123')
+  state = state.update({
+    changes: { from: 0, to: source.length, insert: replacement },
+    userEvent: 'input.paste',
+  }).state
+  const dispatch = (transaction: import('@codemirror/state').Transaction) => {
+    state = transaction.state
+  }
+  expect(undo({ state, dispatch })).toBe(true)
+  expect(state.doc.toString()).toBe(source)
+  expect(redo({ state, dispatch })).toBe(true)
+  expect(state.doc.toString()).toBe(replacement)
+})
 
 function editor(text = source) {
   const state = EditorState.create({

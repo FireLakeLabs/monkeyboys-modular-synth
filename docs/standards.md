@@ -201,6 +201,15 @@ advisory scans separate from the deterministic local gate: their results depend
 on changing network data. Follow [skill provenance](../.agents/README.md) when
 updating imported instructions.
 
+The #63 [history contract](undo-redo.md) has deterministic exact-source, saved
+rack/reopen identity, gesture grouping and redo branching checks. Its separate
+browser suite covers actual draft/accepted shortcut ownership, replacement,
+recovery and live engine updates, plus real Strudel mute/undo/redo PCM. Knob grouping is passed explicitly by pointer commits; the browser regression
+rejects absorbing a preceding input blur commit and failed before that fix. This
+Chromium event-order regression remains outside shared CI with the other browser
+checks. Session history is not persisted; physical listening and other browsers
+remain unverified.
+
 ## Documentation status ownership
 
 Review guidance: link to `LICENSE` for project licensing and to the build plan for

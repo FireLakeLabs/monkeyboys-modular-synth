@@ -192,9 +192,12 @@ try {
   await accepted()
   await editor.press('x')
   await accepted()
-  const checkpoint = await sourceText()
-  await editor.press('ControlOrMeta+z')
-  assert.equal(await sourceText(), checkpoint)
+  assert.equal(
+    await page.evaluate(async () => {
+      return (await import('/scripts/editor-browser.mjs')).draftUndoDepth()
+    }),
+    0,
+  )
   await code(saved)
   pass('unaccepted typing can be undone locally; accepting source checkpoints local history')
 
