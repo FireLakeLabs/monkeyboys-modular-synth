@@ -1,0 +1,157 @@
+{
+  "browser": "156.0.8078.4",
+  "checks": [
+    "Silent starter shows code and one metadata fold while retaining the complete file",
+    "Enveloped synth folds automatically on library load; category-coloured code stays visible",
+    "Copy, Export, Open and native whole-file paste preserve exact source and restore complete saved rack identity",
+    "Unfolded metadata, its separator and select-all deletion are protected from keyboard edits",
+    "Keyboard Enter and continued typing add a code line before the protected separator",
+    "Code edits refold metadata after acceptance; unfinished comments retain fold/protection; Revert restores source",
+    "Only the reader-recognized trailing block folds; strings, block comments and earlier marker comments stay visible; unknown metadata exports unchanged",
+    "EOF diagnostic points to code line 1, metadata has no line numbers even unfolded, and invalid draft export stays exact"
+  ],
+  "physicalListening": false,
+  "pageErrors": [],
+  "feedback": {
+    "browser": "156.0.8078.4",
+    "checks": [
+      "family/category/named-output styling, all VCF spans, exact retained source",
+      "real rack value rewrite maps backward selection and both scroll axes; Show in code uses live geometry",
+      "unaccepted typing can be undone locally; accepting source checkpoints local history",
+      "invalid drafts clear selection highlights; accepted source restores current ownership",
+      "native Chromium IME composition defers parsing, clears stale highlights and commits exact Japanese text",
+      "typing beyond a CODE span retains Cyber editing focus through an invalid draft; blur clears it and Revert restores source",
+      "Cyber cursor stays solid except while its block is being edited",
+      "selection does not reparse treatments; playback renders retain the same decorations and treatment count",
+      "real final ITER/JUX events drive 400 ms Alien/Instrument feedback; opaque voice has none; PCM remains nonzero",
+      "changing reduced motion during playback clears active fades",
+      "Stop cancels active fades and pending event visuals",
+      "reduced motion suppresses pulses/blinking; widths and cable paths remain identical",
+      "replacement and surfaced errors clear obsolete activity",
+      "semicolon-free bare voices after tempo and const declarations play with attributable activity"
+    ],
+    "physicalListening": false,
+    "pcmRms": 0.060371471942179136
+  },
+  "workspaceErrors": {
+    "browser": "156.0.8078.4",
+    "ui": [
+      "issue #44 spills long CODE/CV voice onto fixed rails; layout failure retains exact draft and rack; Export/Stop/Revert/correction recover without autoplay",
+      "invalid draft export is byte exact; accepted rack retained/locked; Revert restores saved identity without Play",
+      "adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Play disabled after confirmed Stop and require explicit Play after correction",
+      "older failure is labeled as older work; current valid code has no invented runtime underline",
+      "failed Stop reports unknown audio, refuses Open/New, retains source and supports Retry Stop",
+      "pending evaluation/Stop warning does not claim cancellation; edits cancel pending Open replacement",
+      "confirmed Open stays silent and preserves valid unsupported CODE; no unhandled browser errors",
+      "Cancel and Escape invalidate New replacement while Stop is pending",
+      "imported invalid CRLF draft exports exact bytes with exact editor-state line endings"
+    ],
+    "engine": [
+      "fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails",
+      "real adapter resume rejection and construction throw retain work; retry/correction needs explicit Play",
+      "real scheduler Stop failure reports unknown state; explicit Stop retry recovers",
+      "missing sample is reported in a workspace banner and automatically stops scheduling",
+      "undecodable sample reports failure; registered manifests never claim verified decoding",
+      "late output throw reaches workspace banner and automatically stops scheduling",
+      "real never-settling evaluation permits immediate Stop and exact export; replay refused until reload, then explicit Play succeeds",
+      "settled abandoned evaluation cannot restart its scheduler; explicit Play can recover without reload"
+    ],
+    "pcm": {
+      "play": {
+        "rms": 0.014431961638314476,
+        "samples": 51200
+      },
+      "invalidDraft": {
+        "rms": 0.011261887376699468,
+        "samples": 98304
+      },
+      "afterStop": {
+        "rms": 0,
+        "samples": 204800
+      }
+    },
+    "physicalListening": false
+  },
+  "autosave": {
+    "browser": "156.0.8078.4",
+    "checks": [
+      "Readable typing and a rack look edit save the canonical file immediately",
+      "Repeated reloads retain the offer; restore/export preserve exact source, module/cable IDs, positions, looks, names, values and empty rows; no AudioContext is created",
+      "Closing immediately after an invalid edit retains exact draft and readable rack; restore stays stopped, Export retains the draft and Revert recovers the readable file",
+      "A draft shorter than the styled readable file restores exactly without stale decoration ranges or page errors",
+      "A corrected draft replaces the recovery copy; explicit discard returns to the silent starter and removes the next restore offer",
+      "access: storage failure stays quiet, editing/export work, and navigation warns before losing an unsaved draft",
+      "quota: storage failure stays quiet, editing/export work, and navigation warns before losing an unsaved draft"
+    ]
+  },
+  "library": {
+    "verifyLibraryUI": [
+      "Nested collections expand/collapse; attribution, exact Export current and Cancel retain current draft/rack",
+      "Malformed library source reports failure while retaining draft/rack",
+      "All entries load exact source and matching rack without autoplay",
+      "Helper/CODE survives edits; reload restores original; export/reopen preserves source and changed rack look independently",
+      "Shared New confirmation installs silent MIX/OUT starter"
+    ],
+    "verifyLibraryUIErrors": [],
+    "verifyLibraryRackEditing": [
+      "enveloped-synth: CV, effect insertion, extra mixer channel and export identity passed",
+      "quantized-sequence: CV, effect insertion, extra mixer channel and export identity passed",
+      "lfo-sweep: CV, effect insertion, extra mixer channel and export identity passed",
+      "filter-envelope: CV, effect insertion, extra mixer channel and export identity passed",
+      "drum-machine: CV, effect insertion, extra mixer channel and export identity passed",
+      "echo-room: CV, effect insertion, extra mixer channel and export identity passed",
+      "iter-jux: CV, effect insertion, extra mixer channel and export identity passed",
+      "custom-helper: CV, effect insertion, extra mixer channel and export identity passed",
+      "layered-sketch: CV, effect insertion, extra mixer channel and export identity passed",
+      "Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay"
+    ],
+    "verifyLibraryRackEditingErrors": []
+  },
+  "static": {
+    "command": "npm run check",
+    "passed": true,
+    "unitPassed": 751,
+    "inheritedExpectedFailures": 17,
+    "guardrailsPassed": 40
+  },
+  "afterMainRebase": {
+    "base": "91ffb420784ae7fccdcb8309276cbcdada8e8975",
+    "static": {
+      "command": "npm run check",
+      "passed": true,
+      "unitPassed": 775,
+      "inheritedExpectedFailures": 0,
+      "guardrailsPassed": 40
+    },
+    "metadata": {
+      "browser": "156.0.8078.4",
+      "checks": [
+        "Silent starter shows code and one metadata fold while retaining the complete file",
+        "Enveloped synth folds automatically on library load; category-coloured code stays visible",
+        "Copy, Export, Open and native whole-file paste preserve exact source and restore complete saved rack identity",
+        "Unfolded metadata, its separator and select-all deletion are protected from keyboard edits",
+        "Keyboard Enter and continued typing add a code line before the protected separator",
+        "Code edits refold metadata after acceptance; unfinished comments retain fold/protection; Revert restores source",
+        "Only the reader-recognized trailing block folds; strings, block comments and earlier marker comments stay visible; unknown metadata exports unchanged",
+        "EOF diagnostic points to code line 1, metadata has no line numbers even unfolded, and invalid draft export stays exact"
+      ],
+      "physicalListening": false,
+      "pageErrors": []
+    },
+    "libraryRackEditing": {
+      "checks": [
+        "enveloped-synth: CV, effect insertion, extra mixer channel and export identity passed",
+        "quantized-sequence: CV, effect insertion, extra mixer channel and export identity passed",
+        "lfo-sweep: CV, effect insertion, extra mixer channel and export identity passed",
+        "filter-envelope: CV, effect insertion, extra mixer channel and export identity passed",
+        "drum-machine: CV, effect insertion, extra mixer channel and export identity passed",
+        "echo-room: CV, effect insertion, extra mixer channel and export identity passed",
+        "iter-jux: CV, effect insertion, extra mixer channel and export identity passed",
+        "custom-helper: CV, effect insertion, extra mixer channel and export identity passed",
+        "layered-sketch: CV, effect insertion, extra mixer channel and export identity passed",
+        "Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay"
+      ],
+      "pageErrors": []
+    }
+  }
+}

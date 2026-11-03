@@ -7,12 +7,13 @@ import {
   Text,
   Transaction,
 } from '@codemirror/state'
-import { Decoration, EditorView, keymap, lineNumbers, type DecorationSet } from '@codemirror/view'
+import { Decoration, EditorView, keymap, type DecorationSet } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { javascript } from '@codemirror/lang-javascript'
 import type { SourceDocument } from '../reader/types'
 import { sourceSegments, sourceTreatments, type SourceTreatment } from './highlighting'
 import { editorChanges } from './editorChanges'
+import { foldRackMetadata, metadataFolding } from './metadataFolding'
 
 const setSourceDecorations = StateEffect.define<DecorationSet>()
 const sourceDecorations = StateField.define<DecorationSet>({
@@ -92,7 +93,7 @@ export function SourceEditor(props: {
         doc: Text.of(current.current.props.source.split('\n')),
         extensions: [
           EditorState.lineSeparator.of('\n'),
-          lineNumbers(),
+          metadataFolding,
           javascript(),
           draftHistory.current.of(history()),
           keymap.of([...defaultKeymap, ...historyKeymap]),
@@ -103,6 +104,11 @@ export function SourceEditor(props: {
               '&': { height: '100%' },
               '.cm-scroller': { overflow: 'auto' },
               '.cm-gutters': { background: '#15171b', color: '#9aa0a8' },
+              '.cm-foldPlaceholder': {
+                background: '#23272d',
+                color: '#9aa0a8',
+                borderColor: '#3e454d',
+              },
               '&.cm-focused .cm-cursor': { borderLeftColor: '#e4e6ea' },
             },
             { dark: true },
@@ -137,6 +143,7 @@ export function SourceEditor(props: {
         ],
       }),
     })
+    view.dispatch({ effects: foldRackMetadata(view.state) })
     const editor = current.current.props.editor
     editor.current = view
     return () => {

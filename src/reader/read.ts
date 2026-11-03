@@ -7,6 +7,7 @@ import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { nextPosition } from '../patch/layout'
 import { matchRouting, matchScopes, readLayout } from './layout'
+import { codeEnd } from './metadata'
 import { chain, parseSource, scalar, type Call, type ParsedScope } from './syntax'
 import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } from './types'
 
@@ -961,13 +962,17 @@ export function tryRead(source: string): ReadResult {
       typeof error.loc.column !== 'number'
     )
       throw error
+    const offset = Math.min(error.pos, codeEnd(source))
+    const lines = source.slice(0, offset).split(/\r\n|\r|\n/)
+    const line = lines.length
+    const column = lines.at(-1)?.length ?? 0
     return {
       kind: 'invalid',
       source,
-      offset: error.pos,
-      line: error.loc.line,
-      column: error.loc.column,
-      message: error.message,
+      offset,
+      line,
+      column,
+      message: error.message.replace(/\(\d+:\d+\)$/, `(${line}:${column})`),
     }
   }
 }

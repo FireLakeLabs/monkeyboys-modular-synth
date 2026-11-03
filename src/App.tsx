@@ -171,7 +171,9 @@ export default function App() {
           return
         }
         const next =
-          result.document.layout === 'invalid' ? result.document : saveLayout(result.document)
+          result.document.layout === 'invalid' || result.document.layout === 'restored'
+            ? result.document
+            : saveLayout(result.document)
         validateRack(next.patch)
         current.current = { document: next, draft: next.source, phase: 'readable' }
         setDocument(next)
