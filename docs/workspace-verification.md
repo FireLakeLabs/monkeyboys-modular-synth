@@ -1,5 +1,10 @@
 # Looks and live workspace verification (#7 / #8)
 
+Baseline verified 2 November 2026. Later [#35 structural edits](structural-edit-verification.md),
+[#36 audio recovery](audio-recovery.md) and [#37 feedback](feedback-verification.md)
+extend these observations. The [build plan](build-plan.md#current-status-and-remaining-work)
+owns current implementation status.
+
 The rack and editable source now share one accepted `SourceDocument`. The draft
 and scheduled audio are separate revisions. Run `npm ci` with Node 24.22.2 and
 `npm run check`, then `npm run dev -- --host 0.0.0.0` for the reproductions below.
@@ -113,8 +118,10 @@ the readable rack and exact source stayed current. Correcting source after an
 error requires explicit Play. Metadata-only look changes do not re-evaluate audio;
 source changes use the existing serialized playback/Stop-intent boundary.
 
-No human listening, other-browser/mobile behavior, universal audible equivalence,
-late sample/decode error detection or arbitrary-JavaScript cancellation is claimed.
-The engine's existing never-settling evaluation and side-effect limits remain.
-Runtime failures get a generic banner; only parser diagnostics claim a source
-location. The UI labels sample status unavailable rather than inferring success.
+This baseline made no claim of human listening, other-browser/mobile behavior,
+universal audible equivalence, late sample/decode error detection or arbitrary
+JavaScript cancellation. #36 subsequently verified observable resource/output
+reporting and Stop during pending evaluation; arbitrary evaluation and side effects
+remain uninterruptible. Runtime failures still get a generic banner; only parser
+diagnostics claim a source location. The current UI distinguishes manifest
+registration from decoding/output readiness without inferring sample success.

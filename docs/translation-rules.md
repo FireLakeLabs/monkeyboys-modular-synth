@@ -111,16 +111,18 @@ matching and mapped to a final voice's routing. Their source ranges remain part
 of the retained document and do not consume a module identity. Never infer
 ownership from a literal integer alone. Imported shared, patterned, computed or
 otherwise unrepresentable orbit routing stays exact source/CODE; do not silently
-renumber, relocate or append an overriding orbit to it. Import normalization
-requires explicit user intent in the future reader/workspace work.
+renumber, relocate or append an overriding orbit to it. Import normalization would require explicit user intent; the shipped reader
+preserves such routing as source/CODE.
 
 Adding, deleting or reordering final voices can renumber the allocation. Engine
 integration (#4) must distinguish this structural replacement from a parameter
 edit and reset the old global effect buses when the allocation changes, so tails
 cannot transfer to a different voice. It must also reset buses when loading a
-new patch. Do not reset them on every knob edit. This spike decides the contract;
-allocator/generator integration and its graph/round-trip tests remain with #3/#4.
-See [engine findings](engine-spike.md) for runtime evidence and limitations.
+new patch. Do not reset them on every knob edit. This is implemented by the
+allocator/generator and playback structural replacement boundary; see
+[generator/reader checks](reader-verification.md#observed-proof) and
+[playback evidence](playback-verification.md#playback-contract). The
+[engine findings](engine-spike.md) retain the original runtime observations.
 
 ## Generated code conventions
 
@@ -214,8 +216,9 @@ propagate through named outputs; the generator adds no overriding routing to
 those voices. Positive integer literal orbits in active CODE (including shared
 named expressions) are reserved before allocating generated voices from the
 remaining positive integers. This avoids overwriting an imported bus. Dynamic
-routing hidden behind arbitrary code cannot be inferred;
-full imported-document routing ownership remains #6 work.
+routing hidden behind arbitrary code cannot be inferred. The reader verifies
+complete generator provenance before treating routing as owned; otherwise it
+retains routing in source/CODE. See [reader projection](reader-verification.md#projection-and-preservation).
 
 Numbers have at most three decimal places. CODE literals remain verbatim. The
 writer does not mutate the patch and always writes a complete trailing rack block.

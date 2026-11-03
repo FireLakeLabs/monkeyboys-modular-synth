@@ -65,7 +65,8 @@ A module’s category colour is used for its dot on the panel and for the code i
   sharing remain later. Loading uses the guarded workspace replacement path and
   leaves audio stopped. See [entry and loading contract](patch-library.md).
 
-Owner choices for #9–#12, approved 2 November 2026. The
+Owner choices for #9–#12, approved 2 November 2026. Current implementation and
+issue status live in the [build plan](build-plan.md#current-status-and-remaining-work). The
 [interaction handoff](interaction-proposal.md) gives detailed flows and remaining
 technical limits; [interaction evidence](interaction-verification.md) records
 production acceptance for #9–#11.
@@ -81,7 +82,8 @@ production acceptance for #9–#11.
 - **Runtime failure:** request Stop after a surfaced evaluation/construction
   failure. Stop ends scheduling; notes and tails may ring out. Arbitrary-code
   side effects do not roll back, and unreported late errors or never-settling
-  evaluations remain engine limits.
+  evaluations remain engine limits. The [#36 recovery contract](audio-recovery.md)
+  defines observable late errors and Stop independent of pending evaluation.
 
 ## Brand
 

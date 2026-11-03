@@ -32,7 +32,7 @@ a missing sample, an output callback that throws, and a never-settling evaluatio
 Mocks establish workspace behavior at the adapter boundary; they do not establish
 Strudel's ability to observe a failure or cancel execution.
 
-## Resolved workspace contract
+## Original workspace contract — before #36
 
 - Draft source, accepted readable rack and scheduling status are independent.
   A valid rack can coexist with stopped, pending or unknown scheduling. “Pattern
@@ -70,7 +70,7 @@ Strudel's ability to observe a failure or cancel execution.
   Manual Stop and explicit Play are available; their availability is not a
   promise that Strudel clears its rejected sample cache.
 
-## Acceptance matrix
+## Original acceptance matrix — before #36
 
 | Condition / acceptance                                                            | Evidence                                                                                                                            | Result / remaining owner                                                                           |
 | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -114,9 +114,13 @@ audio failure. Error ownership now compares only accepted source and treats an
 editing/invalid draft as a newer revision. The browser regression covers editable
 incomplete source, exact export and available Stop after each adapter failure.
 
-The suite deliberately exposes unmet #36 criteria. Do not close #12 until #36
-provides observable resource/output reporting and supported recovery, this audit
-is updated with its results, and the remaining end-to-end acceptance is rerun.
+This original run deliberately exposed the then-unmet #36 criteria. The subsequent
+[audio recovery audit](audio-recovery.md#reproduction-and-evidence) and
+[run data](audio-recovery-results.json) supply observable resource/output reporting,
+supported recovery and the rerun. #12 remains open in GitHub; its issue-level
+acceptance reconciliation should use those results. Universal failure detection,
+resource readiness, arbitrary-code interruption and physical listening are not
+claimed. See the [current status owner](build-plan.md#current-status-and-remaining-work).
 
 ## Long imported voices (#44)
 

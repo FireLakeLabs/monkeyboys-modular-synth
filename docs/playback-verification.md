@@ -1,10 +1,13 @@
 # Generated patch playback (#4)
 
-The app's top-bar transport now plays `generate(patch)`, with a small
-SEQ → OSC → VCF → VCA → OUT fixture and catalog-driven cutoff, tempo and
-volume sliders. This is the playable integration slice; module placement,
-cables, knob gestures and code import remain the following build steps.
-The sounding fixture is not the New patch template (which remains silent).
+Historical #4 integration slice, verified 2 November 2026: the top-bar transport
+played `generate(patch)` using a SEQ → OSC → VCF → VCA → OUT fixture and
+catalog-driven cutoff, tempo and volume sliders. The fixture/reproduction below
+records that run; the current app starts with a silent MIX → OUT rack. For
+current controls and editing use [rack](rack-verification.md),
+[workspace](workspace-verification.md) and [interaction evidence](interaction-verification.md).
+The [build plan](build-plan.md#current-status-and-remaining-work) owns status;
+[#36 recovery](audio-recovery.md) supersedes the earlier serialized-Stop limit.
 
 ## Reproduce
 
@@ -39,8 +42,9 @@ available for detailed scheduling, PCM, samples and independent effect buses.
 - Patch preparation validates through the generator before accepting the edit
   or touching audio. Framework-independent playback owns current playback intent
   and serializes operations. Superseded queued edits are skipped; an active
-  evaluation finishes before Stop. A never-settling evaluation can still block
-  Stop, as documented in the engine spike.
+  evaluation originally finished before Stop in this baseline. #36 now calls Stop
+  outside that queue and guards abandoned installation/query results; it cannot
+  interrupt the arbitrary evaluation itself. See the recovery contract above.
 - A value edit replaces the running pattern through `evaluate`, with no hush
   or effect reset. Existing/scheduled notes are not rewritten; lookahead and
   the next event bound when a sound change arrives.
@@ -56,8 +60,9 @@ available for detailed scheduling, PCM, samples and independent effect buses.
   requests Stop. Only confirmed Stop is described as stopped; Stop failure
   reports unknown audio state. Fixing values does not automatically retry.
 - Playing confirms scheduling, not successful decoding/output of every sample.
-  Unreported late sample/output errors, arbitrary-code side effects and precise
-  runtime-to-module mapping retain the [engine spike's limits](engine-spike.md).
+  Observable late sample/output errors now request Stop under the #36 contract.
+  Unreported errors, arbitrary-code side effects and precise runtime-to-module
+  mapping retain the limits documented there.
 
 ## Observed evidence — 2 November 2026
 

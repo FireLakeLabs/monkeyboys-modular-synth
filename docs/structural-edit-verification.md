@@ -3,7 +3,7 @@
 Verified 2 November 2026 with Node 24.22.2, the T3 server browser on Linux,
 and its real Strudel/WebAudio adapter at 48 kHz. Physical speaker output was not
 heard. See the [supported matrix and refusal contract](translation-rules.md#imported-structural-edits-35)
-and [saved-state contract](patch-format.md#planned-structural-source-mutations-35).
+and [saved-state contract](patch-format.md#structural-source-mutation-plans-35).
 
 ## Reproduce
 

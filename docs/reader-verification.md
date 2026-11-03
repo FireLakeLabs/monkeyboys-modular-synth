@@ -1,5 +1,9 @@
 # Code reader (#6)
 
+Baseline verified 2 November 2026 for #6. Later [workspace integration](workspace-verification.md)
+and [#35 structural plans](structural-edit-verification.md) extend this evidence;
+[current status](build-plan.md#current-status-and-remaining-work) is owned by the build plan.
+
 `src/reader/index.ts` exports `read(source)` and `tryRead(source)`. Parsing never
 executes JavaScript or initializes audio. The reader returns a source document:
 
@@ -13,9 +17,8 @@ This follows the #1/#14 decision rather than the issue's original
 `read(code): Patch` shorthand. A graph alone cannot preserve comments, helpers,
 quote spelling or arbitrary JavaScript. `generate(patch)` still writes a new
 rack-owned file; `generate(document)` preserves the imported file exactly and
-rejects direct mutation of its graph. The workspace integration and source-aware
-rack edit operations remain #8; callers must not regenerate imported documents
-from `document.patch`.
+rejects direct mutation of its graph. The workspace uses source-aware rack edit operations (see the linked evidence);
+callers must not regenerate imported documents from `document.patch`.
 
 `tryRead` returns either a parsed document or an invalid draft with Acorn's UTF-16
 offset, 1-based line and 0-based column. An invalid draft contains no graph or
@@ -94,6 +97,6 @@ No browser audio was played or heard for this pure reader change. Event equality
 does not prove audible equivalence for every arbitrary JavaScript program or
 late audio failure. Preserving the complete original document is the guarantee
 for unsupported code. The [workspace](workspace-verification.md) now integrates live editing, metadata
-replacement and proven literal/name splices. Sounding structural edits to imported
-source without a preservation plan are refused. Precise runtime error mapping
+replacement and proven literal/name splices. The [#35 preservation matrix](translation-rules.md#imported-structural-edits-35)
+defines supported structural edits; edits without a proven plan are refused. Precise runtime error mapping
 remains unverified; parser locations are independent of runtime stacks.
