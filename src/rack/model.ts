@@ -424,6 +424,36 @@ export function draggedValue(control: KnobControl, position: number): number {
   )
 }
 
+/** Keyboard movement follows the drag taper, with at least one allowed catalog step. */
+export function keyboardValue(
+  control: KnobControl,
+  value: number,
+  key: string,
+  fine = false,
+): number | null {
+  if (key === 'Home') return control.min
+  if (key === 'End') return control.max
+  if (key === 'Backspace') return control.default
+  const direction =
+    key === 'ArrowUp' || key === 'ArrowRight'
+      ? 1
+      : key === 'ArrowDown' || key === 'ArrowLeft'
+        ? -1
+        : 0
+  if (!direction) return null
+  if (control.detents) {
+    const ordered = [...control.detents].sort((a, b) => direction * (a - b))
+    return ordered.find((n) => direction * (n - value) > 0) ?? value
+  }
+  const movement = draggedValue(
+    control,
+    normalized(control, value) + direction / (fine ? 1000 : 100),
+  )
+  return direction * (movement - value) > 0
+    ? movement
+    : snap(control, value + direction * control.step)
+}
+
 export function setLook(patch: Patch, id: string, look: LookId, family = false): Patch {
   const module = patch.modules.find((m) => m.id === id)
   if (!module) throw new Error('Unknown module')

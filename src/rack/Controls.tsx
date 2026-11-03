@@ -3,7 +3,7 @@ import type { Control, KnobControl } from '../modules/types'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { isGrid, isSteps } from '../codegen/graph'
 import { drumText, drumView, stepView } from '../patch/notation'
-import { depthControl, draggedValue, normalized, sequenceText, snap } from './model'
+import { depthControl, draggedValue, keyboardValue, normalized, sequenceText, snap } from './model'
 
 const focusEditor = (element: HTMLInputElement | null) => element?.focus()
 
@@ -55,8 +55,16 @@ export function Numeric({
       <button
         type="button"
         className="knob"
-        aria-label={`Drag ${control.label}`}
-        title="Drag vertically · Shift for fine control · double-click to reset"
+        // A rotary control uses custom pointer capture and logarithmic keyboard movement.
+        // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+        role="slider"
+        aria-label={control.label}
+        aria-valuemin={control.min}
+        aria-valuemax={control.max}
+        aria-valuenow={value}
+        aria-valuetext={`${control.label} ${value}${control.unit ? ` ${control.unit}` : ''}`}
+        aria-orientation="vertical"
+        title="Drag or use arrows · Shift for fine control · Home/End for limits · Backspace or double-click to reset"
         style={{ transform: `rotate(${-135 + normalized(control, value) * 270}deg)` }}
         onPointerDown={(event) => {
           if (event.button !== 0) return
@@ -84,6 +92,12 @@ export function Numeric({
         onLostPointerCapture={cancelDrag}
         onKeyDown={(event) => {
           if (event.key === 'Escape') cancelDrag()
+          const next = keyboardValue(control, value, event.key, event.shiftKey)
+          if (next !== null) {
+            event.preventDefault()
+            drag.current = null
+            commit(next)
+          }
         }}
         onDoubleClick={() => {
           drag.current = null
@@ -105,6 +119,7 @@ export function Numeric({
             }}
           >
             {value}
+            {control.unit && <> {control.unit}</>}
           </button>
         ) : (
           <input
@@ -131,20 +146,7 @@ export function Numeric({
             }}
           />
         )}
-        {control.unit && <small>{control.unit}</small>}
       </label>
-      <button
-        type="button"
-        className="reset"
-        aria-label={`Reset ${control.label}`}
-        onClick={() => {
-          commit(control.default)
-          setDraft(null)
-          setError('')
-        }}
-      >
-        Reset
-      </button>
       {error && (
         <small className="control-error" role="alert">
           {error}

@@ -96,7 +96,9 @@ technical limits; [interaction evidence](interaction-verification.md) records
 production acceptance for #9–#11.
 
 - **Values in v1:** typed values and vertical knob dragging, Shift for fine
-  control, double-click to reset to the catalog default. This expands the prior
+  control, double-click or focused Backspace to reset to the catalog default. Knobs also
+  expose slider semantics, arrow/Shift-arrow stepping and Home/End (#92); see
+  [panel input and zoom](design.md#panel-controls-and-rack-zoom-81-82-84-92-94-95). This expands the prior
   v1 scope; touch remains later.
 - **Occupied inputs:** offer Replace / Cancel before replacing a cable; preserve
   the old connection until confirmation.
