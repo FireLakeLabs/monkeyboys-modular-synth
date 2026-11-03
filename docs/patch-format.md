@@ -192,6 +192,9 @@ and other browsers/devices were not verified. The full workspace error/recovery
 suite also passed after making its reload step choose Restore explicitly.
 `npm run check` passed: 615 unit cases, 53 inherited expected failures, 40
 guardrails, formatting/skill integrity, lint, TypeScript and production build.
+After rebasing onto `686e80d` (#65), the full gate passed again (699 unit cases,
+19 inherited expected failures, 40 guardrails), as did the complete recovery
+browser suite. The recovery behavior diff remained unchanged.
 
 ## Structural source mutation plans (#35)
 
