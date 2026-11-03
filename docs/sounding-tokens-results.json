@@ -1,0 +1,34 @@
+{
+  "browser": "156.0.8078.4",
+  "checks": [
+    "generated exercise tokens highlight through real scheduled Strudel events and clear on Stop",
+    "imported shared/later voices retain original UTF-16 token positions without marking opaque calls or changing source",
+    "draft mismatch clears immediately; Revert resumes mapped tokens; runtime reduced motion clears and suppresses pulses",
+    "replacement with unmapped numeric/single-quoted code never claims token activity",
+    "replacement and evaluation failure remove obsolete token marks",
+    "trance drives CodeMirror effects with no editor React renders, treatment work or reparses; delivery waits for audio time; Stop cancels future marks"
+  ],
+  "physicalListening": false,
+  "trance": {
+    "before": {
+      "counters": [
+        78,
+        16,
+        141
+      ],
+      "events": 17
+    },
+    "after": {
+      "counters": [
+        78,
+        16,
+        141
+      ],
+      "events": 77
+    }
+  },
+  "deliveryLeadSeconds": {
+    "max": 0.004728571428570305,
+    "count": 79
+  }
+}

@@ -38,6 +38,44 @@ function deferred() {
 }
 
 describe('patch playback', () => {
+  it('forwards source feedback without publishing React snapshots and cancels obsolete playback', async () => {
+    const patch = demoPatch()
+    const playback = createPlayback(patch)
+    const changedState = vi.fn()
+    const unsubscribeState = playback.subscribe(changedState)
+    const feedback = vi.fn()
+    const unsubscribeSource = playback.subscribeSourceFeedback(feedback)
+    await playback.play()
+    const [source, options] = vi.mocked(engine.play).mock.calls.at(-1) ?? []
+    if (!source || !options?.sourceFeedback) throw new Error('Missing source feedback')
+    changedState.mockClear()
+    feedback.mockClear()
+    const event = { source, spans: [{ start: 0, end: 1 }] }
+    options.sourceFeedback(event)
+    expect(feedback).toHaveBeenLastCalledWith(event)
+    expect(changedState).not.toHaveBeenCalled()
+
+    // A metadata-only volume edit keeps the live pattern and its source offsets.
+    const quieter = changed(patch, 'out', 'vol', 0.3)
+    await playback.update(quieter)
+    expect(engine.play).toHaveBeenCalledTimes(1)
+    options.sourceFeedback(event)
+    expect(feedback).toHaveBeenLastCalledWith({ ...event, source: generate(quieter) })
+
+    await playback.update(changed(quieter, 'vcf', 'cutoff', 2000))
+    feedback.mockClear()
+    options.sourceFeedback(event)
+    expect(feedback).not.toHaveBeenCalled()
+    const latest = vi.mocked(engine.play).mock.calls.at(-1)?.[1]?.sourceFeedback
+    await playback.stop()
+    expect(feedback).toHaveBeenLastCalledWith(null)
+    feedback.mockClear()
+    latest?.(event)
+    expect(feedback).not.toHaveBeenCalled()
+    unsubscribeSource()
+    unsubscribeState()
+  })
+
   it('keeps a newer Stop authoritative when an older evaluation rejects', async () => {
     let reject = (_error: Error) => {}
     vi.mocked(engine.play).mockReturnValueOnce(
@@ -131,6 +169,7 @@ describe('patch playback', () => {
     expect(engine.play).toHaveBeenLastCalledWith(generate(patch), {
       volume: 0.8,
       resetEffects: true,
+      sourceFeedback: expect.any(Function),
     })
     expect(playback.getSnapshot().status).toBe('playing')
   })
@@ -144,6 +183,7 @@ describe('patch playback', () => {
     expect(engine.play).toHaveBeenLastCalledWith(generate(next), {
       volume: 0.8,
       resetEffects: false,
+      sourceFeedback: expect.any(Function),
     })
     expect(engine.stop).not.toHaveBeenCalled()
   })
@@ -173,6 +213,7 @@ describe('patch playback', () => {
     expect(engine.play).toHaveBeenLastCalledWith(generate(next), {
       volume: 0.8,
       resetEffects: false,
+      sourceFeedback: expect.any(Function),
     })
     expect(playback.getSnapshot().status).toBe('playing')
   })
@@ -198,6 +239,7 @@ describe('patch playback', () => {
     expect(engine.play).toHaveBeenLastCalledWith(generate(changed(patch, 'vcf', 'cutoff', 4000)), {
       volume: 0.8,
       resetEffects: true,
+      sourceFeedback: expect.any(Function),
     })
   })
 
@@ -210,6 +252,7 @@ describe('patch playback', () => {
     expect(engine.play).toHaveBeenLastCalledWith(generate(next), {
       volume: 0.25,
       resetEffects: true,
+      sourceFeedback: expect.any(Function),
     })
   })
 
@@ -334,7 +377,11 @@ it('plays retained source, skips look-only reevaluation, and keeps stopped sourc
   const doc = saveLayout(read("// keep custom code\n$: note('c3').s('sine').lpf(800)\n"))
   const playback = createPlayback(doc)
   await playback.play()
-  expect(engine.play).toHaveBeenLastCalledWith(doc.source, { volume: 0.8, resetEffects: true })
+  expect(engine.play).toHaveBeenLastCalledWith(doc.source, {
+    volume: 0.8,
+    resetEffects: true,
+    sourceFeedback: expect.any(Function),
+  })
   const filter = doc.patch.modules.find((m) => m.type === 'vcf')
   if (!filter) throw new Error('Missing filter')
   const looked = editDocument(doc, setLook(doc.patch, filter.id, 'vintage'))
@@ -346,7 +393,11 @@ it('plays retained source, skips look-only reevaluation, and keeps stopped sourc
   expect(engine.play).toHaveBeenCalledTimes(1)
   expect(playback.getSnapshot().status).toBe('stopped')
   await playback.play()
-  expect(engine.play).toHaveBeenLastCalledWith(edited.source, { volume: 0.8, resetEffects: true })
+  expect(engine.play).toHaveBeenLastCalledWith(edited.source, {
+    volume: 0.8,
+    resetEffects: true,
+    sourceFeedback: expect.any(Function),
+  })
 })
 
 it('applies edits to executable code after an invalid layout block', async () => {
@@ -358,7 +409,11 @@ it('applies edits to executable code after an invalid layout block', async () =>
   const edited = read(`${original}$: note('c5').s('sine')\n`)
   await playback.update(edited)
   expect(engine.play).toHaveBeenCalledTimes(2)
-  expect(engine.play).toHaveBeenLastCalledWith(edited.source, { volume: 0.8, resetEffects: false })
+  expect(engine.play).toHaveBeenLastCalledWith(edited.source, {
+    volume: 0.8,
+    resetEffects: false,
+    sourceFeedback: expect.any(Function),
+  })
 })
 
 it('opens a file only after Stop succeeds and leaves accepted source edits silent', async () => {
@@ -373,7 +428,11 @@ it('opens a file only after Stop succeeds and leaves accepted source edits silen
   await playback.update(read(loaded))
   expect(engine.play).toHaveBeenCalledTimes(1)
   await playback.play()
-  expect(engine.play).toHaveBeenLastCalledWith(source, { volume: 0.8, resetEffects: true })
+  expect(engine.play).toHaveBeenLastCalledWith(source, {
+    volume: 0.8,
+    resetEffects: true,
+    sourceFeedback: expect.any(Function),
+  })
 })
 
 it('does not accept a replacement file when Stop fails', async () => {

@@ -320,7 +320,9 @@ try {
       const { editorDecorations } = await import('/scripts/editor-browser.mjs')
       return (
         window.treatmentReads === window.readsBeforePlay &&
-        editorDecorations() === window.savedDecorations
+        window.savedDecorations
+          .filter((decorations) => decorations.size > 0)
+          .every((decorations) => editorDecorations().includes(decorations))
       )
     }),
   )

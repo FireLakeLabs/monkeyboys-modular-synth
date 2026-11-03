@@ -443,6 +443,11 @@
   background: #f293ba30;
   box-shadow: inset 0 -1px #f293ba;
 }
+.source-sounding {
+  background: #f4a46266;
+  box-shadow: inset 0 -2px #f4a462;
+  border-radius: 2px;
+}
 @media (prefers-reduced-motion: reduce) {
   .source-surface .cm-content {
     caret-animation: manual;

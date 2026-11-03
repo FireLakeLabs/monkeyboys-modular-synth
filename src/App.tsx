@@ -560,6 +560,7 @@ export default function App() {
           <Suspense fallback={<output className="source-surface">Loading source editor…</output>}>
             <SourceEditor
               editor={editor}
+              sourceFeedback={playback.subscribeSourceFeedback}
               source={draft}
               document={locked ? null : document}
               selected={selected}
