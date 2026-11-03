@@ -93,3 +93,9 @@ BPM 120. The full 12-check browser suite, including real PCM, passes afterward.
 After rebasing onto `e44907a` (#69), the App/editor integration retains opener
 diagnostics and gutter markers. The full gate and 12-check history/PCM browser
 suite passed again, as did the existing code-application and feedback suites.
+
+Sol round 2 approved the grouping fix with no new findings, independently
+rerunning the BPM blur regression and the recording-adapter suite. After a later
+rebase onto `cbee5d7` (#77 reader aliases), the undo behavior diff stayed unchanged;
+`npm run check` passed with 833 unit cases and 40 guardrails, and all 12 history
+browser checks passed again, including real Strudel mute/undo/redo PCM.
