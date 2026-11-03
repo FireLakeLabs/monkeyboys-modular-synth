@@ -440,5 +440,175 @@
     "savedRackIdentity": true,
     "renderedRackIdentity": true,
     "physicalListening": false
+  },
+  "afterMainRebase": {
+    "base": "3de7423b6cf5aa445380765fe9539ec1d29eb03a",
+    "reason": "#75 library rack editing landed; preserved rack refusal/conversion callback and composition guard",
+    "gate": {
+      "passed": 604,
+      "expectedFailuresInherited": 53,
+      "guardrails": 40
+    },
+    "bundleViteReported": {
+      "initialRaw": 518820,
+      "initialGzip": 145030,
+      "editorRaw": 402714,
+      "editorGzip": 137400
+    },
+    "feedback": {
+      "browser": "156.0.8078.4",
+      "checks": [
+        "family/category/named-output styling, all VCF spans, exact retained source",
+        "real rack value rewrite maps backward selection and both scroll axes; Show in code uses live geometry",
+        "unaccepted typing can be undone locally; accepting source checkpoints local history",
+        "invalid drafts clear selection highlights; accepted source restores current ownership",
+        "native Chromium IME composition defers parsing, clears stale highlights and commits exact Japanese text",
+        "typing beyond a CODE span retains Cyber editing focus through an invalid draft; blur clears it and Revert restores source",
+        "Cyber cursor stays solid except while its block is being edited",
+        "selection does not reparse treatments; playback renders retain the same decorations and treatment count",
+        "real final ITER/JUX events drive 400 ms Alien/Instrument feedback; opaque voice has none; PCM remains nonzero",
+        "changing reduced motion during playback clears active fades",
+        "Stop cancels active fades and pending event visuals",
+        "reduced motion suppresses pulses/blinking; widths and cable paths remain identical",
+        "replacement and surfaced errors clear obsolete activity",
+        "semicolon-free bare voices after tempo and const declarations play with attributable activity"
+      ],
+      "physicalListening": false,
+      "pcmRms": 0.05921491801183635
+    },
+    "errors": {
+      "browser": "156.0.8078.4",
+      "ui": [
+        "issue #44 spills long CODE/CV voice onto fixed rails; layout failure retains exact draft and rack; Export/Stop/Revert/correction recover without autoplay",
+        "invalid draft export is byte exact; accepted rack retained/locked; Revert restores saved identity without Play",
+        "adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Stop available and require explicit Play after correction",
+        "older failure is labeled as older work; current valid code has no invented runtime underline",
+        "failed Stop reports unknown audio, refuses Open/New, retains source and supports Retry Stop",
+        "pending evaluation/Stop warning does not claim cancellation; edits cancel pending Open replacement",
+        "confirmed Open stays silent and preserves valid unsupported CODE; no unhandled browser errors",
+        "Cancel and Escape invalidate New replacement while Stop is pending",
+        "imported invalid CRLF draft exports exact bytes with exact editor-state line endings"
+      ],
+      "engine": [
+        "fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails",
+        "real adapter resume rejection and construction throw retain work; retry/correction needs explicit Play",
+        "real scheduler Stop failure reports unknown state; explicit Stop retry recovers",
+        "missing sample is reported in a workspace banner and automatically stops scheduling",
+        "undecodable sample reports failure; registered manifests never claim verified decoding",
+        "late output throw reaches workspace banner and automatically stops scheduling",
+        "real never-settling evaluation permits immediate Stop and exact export; replay refused until reload, then explicit Play succeeds",
+        "settled abandoned evaluation cannot restart its scheduler; explicit Play can recover without reload"
+      ],
+      "pcm": {
+        "play": {
+          "rms": 0.014284599223443691,
+          "samples": 51200
+        },
+        "invalidDraft": {
+          "rms": 0.011266127498928101,
+          "samples": 98304
+        },
+        "afterStop": {
+          "rms": 0,
+          "samples": 204800
+        }
+      },
+      "physicalListening": false
+    },
+    "library": {
+      "ui": [
+        "Nested collections expand/collapse; attribution, exact Export current and Cancel retain current draft/rack",
+        "Malformed library source reports failure while retaining draft/rack",
+        "All entries load exact source and matching rack without autoplay",
+        "Helper/CODE survives edits; reload restores original; export/reopen preserves source and changed rack look independently",
+        "Shared New confirmation installs silent MIX/OUT starter"
+      ],
+      "rack": [
+        "enveloped-synth: CV, effect insertion, extra mixer channel and export identity passed",
+        "quantized-sequence: CV, effect insertion, extra mixer channel and export identity passed",
+        "lfo-sweep: CV, effect insertion, extra mixer channel and export identity passed",
+        "filter-envelope: CV, effect insertion, extra mixer channel and export identity passed",
+        "drum-machine: CV, effect insertion, extra mixer channel and export identity passed",
+        "echo-room: CV, effect insertion, extra mixer channel and export identity passed",
+        "iter-jux: CV, effect insertion, extra mixer channel and export identity passed",
+        "custom-helper: CV, effect insertion, extra mixer channel and export identity passed",
+        "layered-sketch: CV, effect insertion, extra mixer channel and export identity passed",
+        "Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay"
+      ],
+      "signals": [
+        {
+          "id": "enveloped-synth",
+          "rms": 0.0030491167488101967,
+          "samples": 3989504,
+          "events": 32,
+          "sounds": ["sawtooth"]
+        },
+        {
+          "id": "quantized-sequence",
+          "rms": 0.0028694014539420425,
+          "samples": 6979584,
+          "events": 56,
+          "sounds": ["triangle"]
+        },
+        {
+          "id": "lfo-sweep",
+          "rms": 0.0018363412487538522,
+          "samples": 8755200,
+          "events": 16,
+          "sounds": ["sawtooth"]
+        },
+        {
+          "id": "filter-envelope",
+          "rms": 0.0019935632743820803,
+          "samples": 10166272,
+          "events": 24,
+          "sounds": ["square"]
+        },
+        {
+          "id": "drum-machine",
+          "rms": 0.0050420120202378125,
+          "samples": 12339200,
+          "events": 38,
+          "sounds": ["bd", "sd", "hh"]
+        },
+        {
+          "id": "echo-room",
+          "rms": 0.0011293365152653292,
+          "samples": 14198784,
+          "events": 20,
+          "sounds": ["triangle"]
+        },
+        {
+          "id": "iter-jux",
+          "rms": 0.0011986187233121158,
+          "samples": 17385472,
+          "events": 72,
+          "sounds": ["sine"]
+        },
+        {
+          "id": "custom-helper",
+          "rms": 0.0011038883804172879,
+          "samples": 19685376,
+          "events": 20,
+          "sounds": ["triangle"]
+        },
+        {
+          "id": "switch-angel-trance-demo",
+          "rms": 0.008409686041388814,
+          "samples": 45506560,
+          "events": 232,
+          "sounds": ["bd", "supersaw", "pulse"]
+        },
+        {
+          "id": "layered-sketch",
+          "rms": 0.0006543167347297916,
+          "samples": 59248640,
+          "events": 60,
+          "sounds": ["sawtooth", "triangle", "bd", "hh"]
+        }
+      ],
+      "stopFailure": "Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover",
+      "errors": []
+    }
   }
 }

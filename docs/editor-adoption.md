@@ -121,9 +121,26 @@ the library module's UI, signal and Stop-failure groups as documented in
 
 ## Static proof
 
-`npm run check` passes: formatting, skill integrity, lint, 230 unit tests,
+The initial adoption `npm run check` passed: formatting, skill integrity, lint, 230 unit tests,
 40 guardrail tests, TypeScript and production build. The spike's disjoint-edit
 and exact mixed-ending tests moved beside the production diff adapter; draft
 history ownership is now exercised through the actual editor in the browser.
 Source bytes, restored saved rack identity and nonzero audio signal were checked
 separately; none establishes universal audible equivalence.
+
+## Retest after concurrent main changes
+
+Rebased onto `3de7423` after [#102](https://github.com/FireLakeLabs/monkeyboys-modular-synth/pull/102)
+landed #75. The App conflict preserved the new rack refusal/conversion callback
+and this issue's composition guard. `npm run check` passed again: 604 unit cases,
+53 inherited expected failures and 40 guardrails, with lint, TypeScript and build.
+The full feedback and workspace error suites passed again. The expanded library
+suite passed all nine exercise rack edits, showcase refusal/conversion, ten-patch
+PCM and Stop recovery, with no page errors.
+
+The final integrated build reports 518.82 kB raw / 145.03 kB gzip initial JS;
+#75 added authored library metadata. The lazy editor remains 402.71 kB raw /
+137.40 kB gzip. The alternating load comparison above predates these concurrent
+main changes and is retained as dated evidence, not a new timing claim for the
+larger library build. Updated browser results and final bundle observations are
+recorded under `afterMainRebase` in the combined evidence.
