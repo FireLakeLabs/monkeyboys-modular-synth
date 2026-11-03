@@ -1,0 +1,98 @@
+{
+  "status": "passed",
+  "modules": 29,
+  "rows": 8,
+  "cycles": 4,
+  "events": {
+    "bd:default": 16,
+    "supersaw:2": 76,
+    "supersaw:3": 76,
+    "pulse:4": 64
+  },
+  "bpm": 140,
+  "firstPCM": [
+    {
+      "output": "master",
+      "rms": 0.17137680652778428,
+      "samples": 184320
+    },
+    {
+      "output": "orbit1",
+      "rms": 0.1383078906721852,
+      "samples": 184320
+    },
+    {
+      "output": "orbit2",
+      "rms": 0.1291948531616192,
+      "samples": 184320
+    },
+    {
+      "output": "orbit3",
+      "rms": 0.0821658531186206,
+      "samples": 184320
+    },
+    {
+      "output": "orbit4",
+      "rms": 0.04841420095972786,
+      "samples": 184320
+    }
+  ],
+  "secondPCM": [
+    {
+      "output": "master",
+      "rms": 0.17136677735826056,
+      "samples": 184320
+    },
+    {
+      "output": "orbit1",
+      "rms": 0.14248805955370542,
+      "samples": 184320
+    },
+    {
+      "output": "orbit2",
+      "rms": 0.12335812806646948,
+      "samples": 184320
+    },
+    {
+      "output": "orbit3",
+      "rms": 0.08408100108306267,
+      "samples": 184320
+    },
+    {
+      "output": "orbit4",
+      "rms": 0.04921732427245134,
+      "samples": 184320
+    }
+  ],
+  "reopenedPCM": [
+    {
+      "output": "master",
+      "rms": 0.15703613119447235,
+      "samples": 184320
+    },
+    {
+      "output": "orbit1",
+      "rms": 0.14354360958677473,
+      "samples": 184320
+    },
+    {
+      "output": "orbit2",
+      "rms": 0.10349388923532687,
+      "samples": 184320
+    },
+    {
+      "output": "orbit3",
+      "rms": 0.08206827205295848,
+      "samples": 184320
+    },
+    {
+      "output": "orbit4",
+      "rms": 0.04936953838374655,
+      "samples": 184320
+    }
+  ],
+  "exactSource": true,
+  "savedRackIdentity": true,
+  "renderedRackIdentity": true,
+  "physicalListening": false
+}

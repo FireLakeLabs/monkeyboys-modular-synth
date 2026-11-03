@@ -300,7 +300,8 @@ describe('numeric gestures and source ownership', () => {
     expect(keyboardValue(rate, 1, 'ArrowLeft', true)).toBe(0.5)
     expect(keyboardValue(level, 0.8, 'ArrowUp')).toBe(0.85)
     expect(keyboardValue(level, 0.8, 'ArrowDown', true)).toBe(0.75)
-    expect(keyboardValue(level, 1, 'ArrowUp')).toBe(1)
+    expect(keyboardValue(level, 1, 'ArrowUp')).toBe(1.05)
+    expect(keyboardValue(level, 2, 'ArrowUp')).toBe(2)
     expect(keyboardValue(level, 0.8, 'Tab')).toBeNull()
   })
   it('maps selection to exact generated calls for repeated modules, CV, tempo and mixer gain', () => {

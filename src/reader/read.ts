@@ -14,6 +14,14 @@ import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } f
 
 type Output = { module: PlacedModule; jack: string }
 
+function canonicalCall(name: string): string {
+  return (
+    CATALOG.find((spec) => Object.hasOwn(spec.strudelAliases ?? {}, name))?.strudelAliases?.[
+      name
+    ] ?? name
+  )
+}
+
 /** Catalog ownership selects the adapter; contextual s() is shared by OSC/DRUMS. */
 function owner(name: string, source: boolean): string | undefined {
   if (name === 's') return source ? 'drums' : 'osc'
@@ -286,6 +294,40 @@ function project(
   }
   function expression(scope: ParsedScope): Output {
     const { root, calls } = scope
+    const savedScope = saved?.scopes.find(
+      (item) =>
+        item.id === scope.descriptor.id &&
+        descriptor([item.root, item.calls]) ===
+          descriptor([scope.descriptor.root, scope.descriptor.calls]),
+    )
+    // New adapters must not replace an older file's explicit CODE owners.
+    // Check the receiver before projecting it, as well as later suffixes.
+    // Exact bytes and the independent saved-graph validation remain required.
+    function retainedCode(index: number, receiver = false) {
+      const begin = receiver ? scope.start : calls[index]?.start
+      return (
+        savedScope &&
+        saved?.modules.flatMap((module) =>
+          module.type === 'code'
+            ? module.bindings.flatMap((binding) => {
+                const indices = binding.calls
+                const end =
+                  calls[indices.at(-1) ?? -1]?.end ??
+                  (receiver && !calls.length ? scope.end : undefined)
+                return binding.scope === savedScope.id &&
+                  binding.role === 'module' &&
+                  (indices[0] === index || (receiver && !calls.length && !indices.length)) &&
+                  indices.every((value, offset) => value === index + offset) &&
+                  begin !== undefined &&
+                  end !== undefined &&
+                  source.slice(begin, end) === module.values['text']
+                  ? [{ indices, text: source.slice(begin, end) }]
+                  : []
+              })
+            : [],
+        )[0]
+      )
+    }
     // Acorn omits receiver parentheses from object.end. A suffix starting there
     // would contain an unmatched ')'; preserve the complete expression instead.
     if (
@@ -303,7 +345,12 @@ function project(
     let upstream: Output | undefined
     let start = 0
     let group: PlacedModule | undefined
-    if (root.type === 'Identifier') {
+    const receiver = retainedCode(0, true)
+    if (receiver) {
+      upstream = code(scope, receiver.indices, receiver.text)
+      start = (receiver.indices.at(-1) ?? -1) + 1
+    }
+    if (!upstream && root.type === 'Identifier') {
       upstream = resolve(root.name)
       if (!upstream && fits('lfo', 'shape', root.name)) {
         group = add('lfo', { shape: root.name, rate: 1 })
@@ -340,7 +387,15 @@ function project(
       const call = calls[index]
       if (!call) continue
       if (routing?.get(scope.descriptor.id)?.call === index) continue
-      const type = owner(call.name, false)
+      const opaque = retainedCode(index)
+      if (opaque) {
+        upstream = code(scope, opaque.indices, opaque.text, upstream)
+        group = undefined
+        index = opaque.indices.at(-1) ?? index
+        continue
+      }
+      const name = canonicalCall(call.name)
+      const type = owner(name, false)
       if (
         type === 'mix' &&
         call.name === 'postgain' &&
@@ -354,7 +409,7 @@ function project(
         }
       }
       if (type === 'env') {
-        const prefix = call.name.endsWith('attack') ? call.name.slice(0, -6) : undefined
+        const prefix = name.endsWith('attack') ? name.slice(0, -6) : undefined
         const ids = ['atk', 'dec', 'sus', 'rel']
         const methods = ['attack', 'decay', 'sustain', 'release']
         const envelope = calls.slice(index, index + 4)
@@ -363,7 +418,7 @@ function project(
           envelope.length === 4 &&
           envelope.every(
             (item, offset) =>
-              item.name === `${prefix}${methods[offset]}` &&
+              canonicalCall(item.name) === `${prefix}${methods[offset]}` &&
               item.args.length === 1 &&
               typeof scalar(item.args[0]) === 'number' &&
               fits('env', ids[offset] ?? '', scalar(item.args[0]) ?? ''),
@@ -507,7 +562,8 @@ function project(
         }
         case 'quant': {
           const value = scalar(call.args[0])
-          const [root, scale, extra] = typeof value === 'string' ? value.split(':') : []
+          const [writtenRoot, scale, extra] = typeof value === 'string' ? value.split(':') : []
+          const root = writtenRoot && writtenRoot.charAt(0).toUpperCase() + writtenRoot.slice(1)
           if (
             call.args.length === 1 &&
             root &&

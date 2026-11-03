@@ -101,3 +101,66 @@ identity on reopening the exported file. Analysis taps disconnect afterward.
 The test requires WebAudio and the pinned sample resources over the network, so
 it remains separate from the deterministic CI gate. PCM establishes an output
 signal rather than physical listening or subjective mix quality.
+
+## Common-call reader acceptance (#77)
+
+Measured on 3 November 2026, before and after the #77 adapters, against the exact
+bundled source (same SHA-256 above):
+
+| Projection        | Before | After |
+| ----------------- | -----: | ----: |
+| All modules       |     29 |    29 |
+| CODE              |     17 |    14 |
+| QUANT             |      0 |     2 |
+| VCA               |      0 |     1 |
+| Fixed 64-HP rails |      9 |     8 |
+
+Both `.scale("g:minor")` calls now appear as QUANT in their original chain
+positions, and `.gain(1.4)` appears as an editable VCA. `.dec(.1)` stays CODE
+because a partial envelope cannot supply all ENV controls without inventing
+values; the custom `.o(2/3/4)` calls stay CODE because they lack generator routing
+provenance. See the complete [mapping contract](translation-rules.md#common-imported-calls-77).
+Existing source-owned files with saved CODE keep those exact owners; fresh plain
+imports receive the new projection.
+
+The new regression suite first failed on the four missing ENV alias groups and
+on lowercase scale/above-unity gain. It now checks all sixteen ENV aliases and
+all twelve lowercase roots using actual pinned Strudel functions, with source
+and saved rack identity assertions kept separate. A legacy saved-file regression
+also failed before the CODE retention fix; forged saved text remains invalid.
+
+Browser observations in this session used Chromium and the real pinned engine:
+[`verifyTrance()`](../scripts/trance-check.mjs) passed initial Play, repeated
+load/Play, Stop and exported-file reopen. The
+[recorded result](reader-aliases-results.json) has identical four-cycle event
+snapshots (16 kick, 76 + 76 supersaw, 64 pulse), 140 BPM and nonzero measured PCM
+on master plus all four orbits in each run. Source, saved rack state and visible
+module positions/looks survived separately. The probe now accepts clean Open's
+immediate replacement as well as the dirty-workspace confirmation path.
+
+A second browser fixture used
+`n("0 2 4").s("sine").scale("g:minor").att(.02).dec(.3).sus(.6).rel(.2).gain(1.4)`.
+It displayed QUANT, ENV and a VCA with range 0–2. Typing DEC 0.4 preserved the
+short `.dec` spelling and every other source token; ArrowUp on LEVEL changed
+1.4 to 1.45. Export/Open restored the full rack and exact edited source, with
+audio stopped. These observations complement the deterministic event tests;
+physical speakers/headphones and other browsers were not checked.
+
+`npm run check` passed with 820 tests, 40 guardrails, formatting/skill integrity,
+lint, TypeScript and the production build. Browser checks remain separate from
+that shared gate and require the engine/sample resources. The private design
+canvas boards were not available in this harness; no look or panel layout was
+changed.
+
+Sol round 1 found an additional legacy-file case: an entire voice saved as CODE
+before QUANT passthrough support was lost during root projection. A fixture
+captured through the base reader/save/edit path at `92e40810` reproduces the
+invalid-metadata failure. The retention check now runs before receiver projection
+as well as at suffixes; the regression verifies the saved CODE look, identities,
+positions, complete call ownership and exact source after reopen.
+The same legacy fixture also opened in the browser as CODE → MIX → OUT with
+its saved Bare board look visible, exact export and audio stopped.
+
+After rebasing onto `e44907a` (#118), the complete gate passed again with 829
+tests and 40 guardrails. The reviewed change's stable patch ID was unchanged.
+Sol approved in two rounds after the saved whole-voice compatibility fix.

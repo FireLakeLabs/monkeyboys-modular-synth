@@ -238,8 +238,8 @@ export async function verifyTrance() {
     const input = document.querySelector('input[type=file]')
     input.files = transfer.files
     input.dispatchEvent(new Event('change', { bubbles: true }))
-    await until(() => document.querySelector('.replace-prompt'))
-    button('Open patch').click()
+    await until(() => source() === saved || document.querySelector('.replace-prompt'))
+    if (document.querySelector('.replace-prompt')) button('Open patch').click()
     await until(() => source() === saved)
     await until(() =>
       document.querySelector('.sync-status').textContent.startsWith('Rack matches code'),

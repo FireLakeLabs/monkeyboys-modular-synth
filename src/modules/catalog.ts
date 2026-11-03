@@ -115,8 +115,8 @@ export const QUANT: ModuleSpec = {
     },
   ],
   jacks: [
-    { id: 'in', label: 'IN', direction: 'in', signal: 'pattern' },
-    { id: 'out', label: 'OUT', direction: 'out', signal: 'pattern' },
+    { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'any' },
   ],
   strudel: ['scale'],
   orderSensitive: true,
@@ -254,7 +254,7 @@ export const VCA: ModuleSpec = {
       id: 'level',
       label: 'LEVEL',
       min: 0,
-      max: 1,
+      max: 2,
       step: 0.05,
       default: 0.8,
       modulation: { min: -1, max: 1, default: -0.5 },
@@ -302,6 +302,24 @@ export const ENV: ModuleSpec = {
     'bpsustain',
     'bprelease',
   ],
+  strudelAliases: {
+    att: 'attack',
+    dec: 'decay',
+    sus: 'sustain',
+    rel: 'release',
+    lpa: 'lpattack',
+    lpd: 'lpdecay',
+    lps: 'lpsustain',
+    lpr: 'lprelease',
+    hpa: 'hpattack',
+    hpd: 'hpdecay',
+    hps: 'hpsustain',
+    hpr: 'hprelease',
+    bpa: 'bpattack',
+    bpd: 'bpdecay',
+    bps: 'bpsustain',
+    bpr: 'bprelease',
+  },
   orderSensitive: false,
 }
 
@@ -561,8 +579,12 @@ export function paletteModules(category: PaletteCategory, query: string): Module
   return CATALOG.filter(
     (spec) =>
       (spec.paletteCategory ?? spec.category) === category &&
-      [spec.name, spec.title, spec.paletteCall, ...spec.strudel].some((text) =>
-        text.toLowerCase().includes(filter),
-      ),
+      [
+        spec.name,
+        spec.title,
+        spec.paletteCall,
+        ...spec.strudel,
+        ...Object.keys(spec.strudelAliases ?? {}),
+      ].some((text) => text.toLowerCase().includes(filter)),
   )
 }
