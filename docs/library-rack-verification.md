@@ -21,7 +21,8 @@ before/after conversion and after the intended CV edit. The fixture explicitly
 states its filter settings. It excludes the deliberately assigned orbit field;
 this does not claim universal equivalence for arbitrary imported setup/routing.
 
-`npm run check` passed: runtime, formatting, skill integrity, lint, 245 unit tests,
+`npm run check` passed: runtime, formatting, skill integrity, lint, 605 passing unit tests
+(with 53 inherited expected failures from the [#64 suite](literal-edit-verification.md)),
 40 guardrail checks, TypeScript and production build. Browser checks remain outside
 the shared CI gate because they require Chromium, WebAudio and sample resources.
 
@@ -58,5 +59,4 @@ focused regression failed before moving setup-name reservation ahead of output
 name validation and passed afterward; an ordinary `kick` name remains valid.
 No findings were declined. Review usage was not exposed. The behavior fix was
 made locally without a second reviewer, following the T3 small-finding rule.
-The diff changed from 3,651 insertions / 79 deletions to the final recorded PR diff;
-most lines are authored rack metadata for the nine exercise files.
+Most added lines are authored rack metadata for the nine exercise files.
