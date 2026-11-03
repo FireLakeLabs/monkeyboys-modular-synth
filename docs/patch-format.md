@@ -41,6 +41,15 @@ The marker stays `// ── @monkeyboy rack v1 ──`. The remaining lines cont
 JSON object, each prefixed with `// `, through end of file. It is a trailing
 comment block, so the saved file remains executable Strudel.
 
+The [code view](metadata-folding.md) folds the trailing block to one line by
+default and protects it from typing, cut, deletion and partial paste, including
+when unfolded. Whole-file paste and Open replace the full document; Copy and
+Export include every metadata byte. A file whose saved rack is fully restored
+is accepted without restamping its metadata. Code edits that require
+reconciliation still write a current envelope. Metadata lines have no editor
+line numbers, and EOF syntax errors are capped at the end of code. This leaves
+the v1 format unchanged (#54/#68).
+
 The v1 envelope uses these fields:
 
 - `version: 1` validates the metadata format independently of the JavaScript.

@@ -23,6 +23,12 @@ const pass = (group, name) => {
   process.stdout.write(`PASS ${group}: ${name}\n`)
 }
 const source = (page) => page.getByRole('textbox', { name: 'Strudel source', exact: true })
+async function replaceSource(page, text) {
+  await source(page).waitFor()
+  await page.evaluate(async (value) => {
+    ;(await import('/scripts/editor-browser.mjs')).replaceSource(value)
+  }, text)
+}
 async function sourceText(page) {
   return page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource())
 }
@@ -39,7 +45,7 @@ async function accepted(page) {
   )
 }
 async function code(page, text) {
-  await source(page).fill(text)
+  await replaceSource(page, text)
   await accepted(page)
 }
 async function patch(page) {
@@ -97,7 +103,7 @@ try {
   const failedLayout = longSaved.replace('"hp": 0', '"hp": 64')
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(page, 'Pattern scheduled')
-  await source(page).fill(failedLayout)
+  await replaceSource(page, failedLayout)
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
@@ -112,7 +118,7 @@ try {
   await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
   assert.equal(await sourceText(page), longSaved)
   assert.deepEqual(await patch(page), longRack)
-  await source(page).fill(failedLayout)
+  await replaceSource(page, failedLayout)
   await page.waitForFunction(
     () => document.querySelector('.cm-content')?.getAttribute('aria-invalid') === 'true',
   )
@@ -129,7 +135,7 @@ try {
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(page, 'Pattern scheduled')
   const invalid = '// exact draft 🐒\n$: note('
-  await source(page).fill(invalid)
+  await replaceSource(page, invalid)
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
@@ -166,7 +172,7 @@ try {
     await waitStatus(page, 'Scheduling stopped after error')
     assert.equal(await sourceText(page), retained)
     assert.match(await page.locator('.error details').textContent(), new RegExp(detail))
-    await source(page).fill('$: note(')
+    await replaceSource(page, '$: note(')
     await page.waitForFunction(
       () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
       undefined,
@@ -252,7 +258,7 @@ try {
   await open(page, '$: note("a3").s("sine")\n')
   await page.getByRole('button', { name: 'Open patch', exact: true }).click()
   await waitStatus(page, 'Stopping… · audio state unknown')
-  await source(page).fill('// work typed during Stop\n$: note("e3").s("sine")\n')
+  await replaceSource(page, '// work typed during Stop\n$: note("e3").s("sine")\n')
   await accepted(page)
   await page.waitForFunction(
     () => document.querySelector('.code')?.textContent.includes('Still waiting for audio'),
@@ -384,7 +390,7 @@ try {
   }
   results.pcm.play = await rms()
   assert(results.pcm.play.rms > 0.001)
-  await source(audio).fill('$: note(')
+  await replaceSource(audio, '$: note(')
   await audio.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )

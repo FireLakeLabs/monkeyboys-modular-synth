@@ -121,6 +121,16 @@ and checkpoints draft history at acceptance. Chromium-native composition and the
 full replacement browser suites are verified there; physical OS IME/device
 coverage remains unverified.
 
+## Rack metadata in the editor (#54/#68, decided 3 November 2026)
+
+Keep the v1 file format and fold its trailing rack comment block to one line by
+default with CodeMirror. The reader's comment-aware marker detection owns the
+boundary; marker-like strings and earlier comments remain visible. Metadata is
+read only even when unfolded, while whole-file paste and Open can replace it.
+Copy and Export retain the complete file. A compact v2 format (#74) is not
+planned; revisit only if exported file size becomes a problem. See the
+[editor contract and verification](metadata-folding.md).
+
 ## Brand
 
 - Logo: a plain smiley — orange circle `#F4A462` with dark features `#1a1b20`. See `public/favicon.svg`.

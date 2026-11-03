@@ -11,6 +11,7 @@ import { CATALOG, ENV, OUT, VCF } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
 import { parseSource, type ParsedScope } from './syntax'
+import { rackMarker } from './metadata'
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -114,13 +115,7 @@ export type SavedLayout =
   | { kind: 'valid'; layout: RackLayout; patch: Patch; generated: string }
 
 export function readLayout(source: string): SavedLayout {
-  let marker: number | undefined
-  parse(source, {
-    ecmaVersion: 'latest',
-    onComment: (block, text, start) => {
-      if (!block && `//${text}` === RACK_MARKER) marker = start
-    },
-  })
+  const marker = rackMarker(source)
   if (marker === undefined) return { kind: 'absent' }
   try {
     const lines = source.slice(marker).split(/\r?\n/).slice(1)

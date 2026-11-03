@@ -70,8 +70,14 @@ async function accepted() {
     document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
   )
 }
+async function replaceSource(text) {
+  await editor.waitFor()
+  await page.evaluate(async (value) => {
+    ;(await import('/scripts/editor-browser.mjs')).replaceSource(value)
+  }, text)
+}
 async function code(text) {
-  await editor.fill(text)
+  await replaceSource(text)
   await accepted()
   await page.evaluate(async () => {
     const view = (await import('/scripts/editor-browser.mjs')).editorView()
@@ -191,7 +197,7 @@ try {
   await code(saved)
   pass('unaccepted typing can be undone locally; accepting source checkpoints local history')
 
-  await editor.fill('$: note(')
+  await replaceSource('$: note(')
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
