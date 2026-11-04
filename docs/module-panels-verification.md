@@ -58,8 +58,8 @@ sampler. Ten regressions (N, BEGIN, END, LOOP, CUT, each direct and after BANK)
 failed with changed events, then passed after retaining those neutral setters as
 CODE regardless of owner reuse. They independently check exact source and saved
 rack identity, and the browser REPL compares original/regenerated events too.
-The workflow's state-loss extension permits a focused fourth review of this
-remaining control-state preservation finding.
+Sol round 4 approved the control-state preservation fix; all 212 focused
+panel tests passed independently, with no open findings.
 
 ## Browser and runtime proof
 
@@ -97,3 +97,25 @@ not verified. Output pair correctness is proven in code/events; hearing physical
 channels 3/4 requires a capable interface. #130 owns SMOOTH LFO, ENV and CV SEQ
 integration; when it lands second it must verify those sources against these
 catalog-owned mixer CV targets. No Wave 3 work is included.
+
+## Full browser CI follow-up
+
+The first hosted run passed the new panel/PCM suite but rejected the old
+no-scrolling panel assertion and found Fit-rack rail clipping at 1024px. The
+same output-panel script reproduced the clipping locally before the fix. Dense
+patch boxes now scroll within the fixed rail height, mixer name fields fit their
+panels, and scrolling any descendant updates measured cable endpoints.
+
+The visual guard now scrolls each control into view and rejects unreachable or
+horizontally clipped controls, retaining catalog width, text size and jack target
+checks. Contrast sampling excludes text clipped outside its scrolling surface;
+the trance control hit test scrolls controls into view before checking actual
+pointer ownership. All 61 module/look combinations passed at 100%, 75% and Fit,
+all ten looks passed visible-label contrast, and all 29 trance panels passed
+control hit testing without changing source. The output-panel suite passed at
+1600px, 1024px and 900px, including native insertion/replacement and real PCM.
+
+A new panel browser regression scrolls the MIX CV1 jack at Fit and checks live
+cable endpoints and exact source. Routing the old viewport-only scroll listener
+into the same browser fixture failed with `Cable end detached from jack`; the
+capturing listener passed. The existing panel/PCM/REPL checks also passed.

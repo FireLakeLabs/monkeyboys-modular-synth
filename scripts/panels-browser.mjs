@@ -94,6 +94,30 @@ try {
     assert(source.includes(example.call))
     results.controls.push(`${example.type}.${example.control}`)
   }
+  await suite('jackScrollFixture')
+  await synced()
+  await page.getByRole('button', { name: 'Fit rack', exact: true }).click()
+  await page.waitForFunction(() => {
+    const box = document.querySelector('[data-module="mix1"] .patch-box')
+    return box.scrollHeight > box.clientHeight
+  })
+  const beforeJackScroll = await suite('source')
+  const jack = panel('mix1').locator('[data-jack="mix1:cv1"]')
+  await jack.scrollIntoViewIfNeeded()
+  await page.waitForFunction(() => {
+    const jack = document.querySelector('[data-jack="mix1:cv1"]')
+    const box = jack.closest('.patch-box').getBoundingClientRect()
+    const rect = jack.getBoundingClientRect()
+    return rect.top >= box.top && rect.bottom <= box.bottom
+  })
+  await page.waitForTimeout(50)
+  results.jackScroll = await page.evaluate(async () =>
+    (await import('/scripts/rack-feel-check.mjs')).inspectCables(),
+  )
+  assert.equal(await suite('source'), beforeJackScroll)
+  process.stdout.write(
+    'PASS scrolling mixer jacks retain cable endpoints and exact source at Fit zoom\n',
+  )
   await suite('loadCase', 4)
   await synced()
   assert.equal(await panel('osc1').getByRole('slider', { name: 'PW', exact: true }).count(), 1)

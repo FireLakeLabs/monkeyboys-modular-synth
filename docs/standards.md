@@ -351,3 +351,12 @@ Explicit neutral SMPL setters over opaque upstream patterns stay CODE even when
 reusing an established sampler. Ten #129 event/source/saved-identity regressions
 failed before this guard (all five new sampler settings, with and without BANK)
 and pass afterward; the browser REPL independently compares the same forms.
+
+The #129 browser guard scrolls dense controls into view while retaining fixed
+catalog widths, readable text and jack targets. The output-panel suite rejects
+Fit-rack rail clipping at desktop and mid-width sizes. A MIX jack-scroll fixture
+checks actual cable endpoints and unchanged source: the old viewport-only
+listener fails with a detached endpoint, while capturing descendant scrolls
+passes. Contrast and pointer checks inspect painted, reachable controls rather
+than clipped DOM rectangles. These checks run in full browser acceptance;
+static/unit checks do not prove the geometry or native hit targets.

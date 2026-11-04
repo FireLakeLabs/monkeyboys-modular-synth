@@ -261,13 +261,12 @@ export function Rack({
     for (const part of element.querySelectorAll('.module-panel, .patch-box, [data-jack]'))
       observer.observe(part)
     window.addEventListener('resize', measure)
-    const scroll = viewport.current
-    scroll?.addEventListener('scroll', measure)
+    element.addEventListener('scroll', measure, true)
     return () => {
       element.removeEventListener('contextmenu', contextMenu)
       observer.disconnect()
       window.removeEventListener('resize', measure)
-      scroll?.removeEventListener('scroll', measure)
+      element.removeEventListener('scroll', measure, true)
     }
   }, [patch, rows, locked, select, scale, outputScale])
 

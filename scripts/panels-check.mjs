@@ -1,3 +1,4 @@
+import { getModuleSpec } from '../src/modules/catalog.ts'
 import { connect, placeModule, setValue } from '../src/rack/model.ts'
 import { generate } from '../src/codegen/generate.ts'
 import { read } from '../src/reader/index.ts'
@@ -39,6 +40,27 @@ export function crossfader() {
     patch = setValue(patch, 'mix1', `ch${n}`, level)
     patch = setValue(patch, `lfo${n}`, 'depth', depth)
     patch = setValue(patch, 'mix1', `name${n}`, `voice${n}`)
+  }
+  return load(patch)
+}
+export function jackScrollFixture() {
+  let patch = placeModule(fixture('osc', { wave: 'sine' }), 'lfo', 3)
+  patch = connect(patch, { module: 'lfo1', jack: 'out' }, { module: 'mix1', jack: 'cv1' })
+  const positions = new Map()
+  let hp = 0
+  for (const id of ['seq1', 'osc1', 'lfo1', 'mix1']) {
+    const module = patch.modules.find((module) => module.id === id)
+    positions.set(id, hp)
+    hp += getModuleSpec(module.type).hp
+  }
+  patch = {
+    ...patch,
+    rows: 3,
+    modules: patch.modules.map((module) => ({
+      ...module,
+      row: 0,
+      hp: positions.get(module.id) ?? 0,
+    })),
   }
   return load(patch)
 }

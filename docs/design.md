@@ -207,6 +207,12 @@ this describes routing, independently of transport or emitted source ranges.
 The badge beneath the panel shows only its ID, avoiding status text wrapping over
 the jack labels.
 
+Dense panels keep their catalog width and rail height. Controls scroll inside
+the panel; a crowded patch box also scrolls within a bounded area so Fit rack
+cannot push jacks beyond the rails. Jack targets retain their minimum size, and
+cable endpoints follow scrolling inside either the rail viewport or a patch box.
+Mixer name inputs use the same bounded field width as selectors.
+
 Signal type has a shape as well as its unchanged colour: pattern cables are
 dotted and jack centers square; audio cables are solid and centers circular;
 mod cables are dashed and centers diamond-shaped. These marks remain inside
