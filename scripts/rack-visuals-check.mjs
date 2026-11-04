@@ -133,6 +133,41 @@ try {
     'Native cable connection brightens the spare OSC and changes its accessible name; disconnection restores dimming',
   )
 
+  // These outputs already have cables: their centers must still receive native
+  // pointer input above the cable SVG in both Hardware and Alien panels.
+  for (const [sourceJack, input] of [
+    ['osc1:out', 'mix1:in2'],
+    ['jux1:out', 'mix1:in3'],
+  ]) {
+    await page.evaluate(() => window.scrollTo(0, 0))
+    await page.locator(`[data-jack="${sourceJack}"]`).click({ timeout: 3000 })
+    await page.locator(`[data-jack="${input}"]`).click({ timeout: 3000 })
+    const connection = page.getByRole('button', { name: `${sourceJack} → ${input}`, exact: true })
+    await connection.click()
+    await button('Remove cable').click()
+  }
+  await page.evaluate(() => window.scrollTo(0, 0))
+  const beforeReplace = await source()
+  await page.locator('[data-jack="osc2:out"]').click()
+  await page.locator('[data-jack="mix1:in1"]').click({ timeout: 3000 })
+  await page.locator('.replace-prompt').getByRole('button', { name: 'Cancel', exact: true }).click()
+  assert.equal(await source(), beforeReplace)
+  await page.locator('[data-jack="osc2:out"]').click()
+  await page.locator('[data-jack="mix1:in1"]').click({ timeout: 3000 })
+  await page
+    .locator('.replace-prompt')
+    .getByRole('button', { name: 'Replace', exact: true })
+    .click()
+  assert.equal(
+    await page.getByRole('button', { name: 'reverb1:out → mix1:in1', exact: true }).count(),
+    0,
+  )
+  await button('Undo').click()
+  assert.equal(await source(), beforeReplace)
+  pass(
+    'Connected Hardware/Alien outputs accept fan-out; occupied input supports Cancel, Replace and exact Undo',
+  )
+
   const before = await source()
   await button('Select seq1').click()
   await page.mouse.move(20, 20)

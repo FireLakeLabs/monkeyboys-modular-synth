@@ -7,9 +7,11 @@ Vite and headless Chromium 156.0.8078.4. The
 ## Deterministic gate
 
 `npm ci` and `npm run check` passed: formatting, skill integrity, lint,
-846 Vitest tests, 40 guardrails, TypeScript and production build. No catalog,
+861 Vitest tests, 40 guardrails, TypeScript and production build. No catalog,
 generator, reader, executable-code or saved-layout format changes were needed.
 Existing look round trips still check source preservation and exact saved identity.
+The full gate and browser suite passed again after rebasing onto `0ba7265`;
+the captures include the patch-name and module-menu changes from that base.
 
 ## Browser observations
 
@@ -38,6 +40,13 @@ It writes screenshots and JSON results and never starts audio.
 - Native output/input clicks connect the isolated OSC to MIX: its surface and
   band brighten and “not connected to OUT” leaves its accessible name. Removing
   that cable restores the dimming and accessible state.
+- Sol review found that panel isolation trapped connected jacks beneath the
+  cable SVG. The new native regression first failed at `osc1:out` with
+  “cable path intercepts pointer events”. The dimming surface now paints before
+  positioned panel content without isolating any panel. Connected Hardware and
+  Alien outputs accept fan-out, and an occupied MIX input supports Cancel,
+  Replace and exact-source Undo. This checks actual jack-center clicks without
+  forced input or Dim cables hiding the problem.
 - Native selection fades only unrelated cables. Hovering VCF overrides a selected
   SEQ; leaving VCF restores SEQ emphasis. Dim cables reduces every cable to 8%
   opacity and removes cable hit interception. Toggling and focus leave the exact

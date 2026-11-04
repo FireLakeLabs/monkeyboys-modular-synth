@@ -1,7 +1,6 @@
 /* Every panel uses the same catalog width and control tree. */
 .module-panel {
   --panel-ink: #ecece9;
-  isolation: isolate;
 }
 .look-instrument .module-header {
   background: var(--category);
@@ -10,13 +9,12 @@
 .look-instrument .module-header small {
   color: inherit;
 }
-/* Dim the surface, not the text or controls. The isolated layer stays above
-   the panel paint and below its children, including on the light looks. */
+/* Positioned panel content paints above this first child. Keep panels out of
+   stacking contexts so their jacks can stay above the cable SVG. */
 .module-panel.inactive::before {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: -1;
   background: #090a0c40;
   border-radius: inherit;
   pointer-events: none;
@@ -50,9 +48,11 @@
   order: 0;
 }
 .module-panel .module-controls {
+  position: relative;
   order: 2;
 }
 .module-panel .patch-box {
+  position: relative;
   order: 3;
 }
 .module-panel[data-jacks='top'] .patch-box {
@@ -393,9 +393,6 @@
   opacity: 0;
   background: var(--category);
   box-shadow: 0 0 9px var(--category);
-}
-.family-alien {
-  isolation: isolate;
 }
 @media (prefers-reduced-motion: reduce) {
   .activity-glow {

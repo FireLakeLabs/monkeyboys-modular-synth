@@ -239,6 +239,14 @@ valid jack. Focused regressions cover imported CV refusal, accepted replacement
 and saved identity; the [separate browser probe](interaction-verification.md#cable-refusal-preview-76)
 covers blocked styling, local hover/focus reasons and conversion consent.
 
+The #85/#86/#96/#88 [rack visual acceptance](rack-visuals-verification.md)
+checks panel contrast, signal markings and cable fading in Chromium. Its native
+connected-jack regression rejects a panel stacking context that lets cable paths
+intercept fan-out and occupied-input replacement. The same browser script runs
+locally for this feature; like the existing browser suites, it remains outside
+shared CI until Chromium provisioning is added. Static checks do not establish
+pointer hit priority.
+
 The #77 [common-call regressions](../src/reader/aliases.test.ts) separately check
 source bytes, complete saved rack identity and real Strudel events for lowercase
 scale roots, above-unity gain and all sixteen short ENV aliases. Saved-file
