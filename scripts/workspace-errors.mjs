@@ -16,6 +16,7 @@ const results = {
   ui: [],
   engine: [],
   pcm: {},
+  events: {},
   physicalListening: false,
 }
 const pass = (group, name) => {
@@ -100,35 +101,51 @@ try {
     if (sourceBody(saved) !== original) throw new Error('Long voice executable source changed')
   }, longVoice)
   assert(new Set(longRack.modules.map((module) => module.row)).size > 2)
-  // A legacy/corrupt saved layout must fail before replacing the accepted rack.
-  const failedLayout = longSaved.replace('"hp": 0', '"hp": 64')
+  // Invalid saved positions retain the exact file, with a valid projected rack
+  // and an explicit replacement boundary before rack edits are allowed.
+  const failedLayout = longSaved.replace('"hp": 0', '"hp": 104')
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(page, 'Playing')
   await replaceSource(page, failedLayout)
-  await page.waitForFunction(
-    () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
+  await page.getByRole('button', { name: 'Replace rack metadata', exact: true }).waitFor()
+  await accepted(page)
+  assert.equal(await sourceText(page), failedLayout)
+  await page.evaluate(async () => {
+    const { read } = await import('/src/reader/index.ts')
+    const { validateRack } = await import('/src/rack/model.ts')
+    const document = read((await import('/scripts/editor-browser.mjs')).editorSource())
+    if (document.layout !== 'invalid') throw new Error('Off-rail metadata was trusted')
+    validateRack(document.patch)
+  })
+  const projectedRack = await patch(page)
+  await assert.rejects(
+    () => page.getByRole('button', { name: 'Add VCF', exact: true }).click({ timeout: 500 }),
+    /Timeout/,
   )
   assert.equal(await sourceText(page), failedLayout)
-  assert.match(await page.getByRole('alert').textContent(), /extends past the rail/)
+  assert.deepEqual(await patch(page), projectedRack)
   assert.equal(await page.locator('.module-panel').count(), longRack.modules.length)
   const failedDownload = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await failedDownload).path(), 'utf8'), failedLayout)
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(page, 'Ready')
-  await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
+  await code(page, longSaved)
   assert.equal(await sourceText(page), longSaved)
   assert.deepEqual(await patch(page), longRack)
   await replaceSource(page, failedLayout)
-  await page.waitForFunction(
-    () => document.querySelector('.cm-content')?.getAttribute('aria-invalid') === 'true',
-  )
+  await page.getByRole('button', { name: 'Replace rack metadata', exact: true }).click()
+  await page.waitForFunction(async () => {
+    const { read } = await import('/src/reader/index.ts')
+    return read((await import('/scripts/editor-browser.mjs')).editorSource()).layout === 'restored'
+  })
+  assert.equal(await status(page).textContent(), 'Ready')
   await code(page, longVoice.replace('.room(.6)', '.room(.7)'))
   assert.equal(await status(page).textContent(), 'Ready')
   assert.match(await sourceText(page), /room\(\.7\)/)
   pass(
     'ui',
-    'issue #44 spills long CODE/CV voice onto fixed rails; layout failure retains exact draft and rack; Export/Stop/Revert/correction recover without autoplay',
+    'issue #44 spills long CODE/CV voice onto fixed rails; invalid metadata retains exact file and valid projected rack; Export/Stop and explicit metadata replacement recover without autoplay',
   )
   await code(page, '// retained 🐒\n$: note("c3").s("sine").lpf(800)\n')
   const original = await sourceText(page)
@@ -341,20 +358,32 @@ try {
   await real.addInitScript(() => {
     // oxlint-disable-next-line typescript/unbound-method -- Invoke with the original AudioNode receiver below.
     const connect = AudioNode.prototype.connect
+    const outputs = new Map()
     window.probes = []
+    window.recoveryTriggers = 0
     AudioNode.prototype.connect = function (...args) {
       const result = connect.apply(this, args)
       if (args[0] instanceof AudioDestinationNode) {
-        const analyser = this.context.createAnalyser()
+        // Sum output branches per context. Averaging separate analysers would
+        // dilute the measured signal as silent or expired branches accumulate.
+        let analyser = outputs.get(this.context)
+        if (!analyser) {
+          analyser = this.context.createAnalyser()
+          outputs.set(this.context, analyser)
+          window.probes.push(analyser)
+        }
         connect.call(this, analyser)
-        window.probes.push(analyser)
       }
       return result
     }
   })
   const audio = await real.newPage()
   await audio.goto(base)
-  await code(audio, '$: note("c3 e3").s("sine").gain(0.15)\n')
+  // Sustain across each gate so short PCM windows do not depend on note decay.
+  await code(
+    audio,
+    '$: note("c3 e3").s("sine").attack(0).decay(0).sustain(1).release(.05).gain(.15).onTrigger(() => { globalThis.recoveryTriggers++; }, false)\n',
+  )
   assert.match(
     await audio.locator('.audio-note').textContent(),
     /unknown; audio has not initialized/,
@@ -389,20 +418,46 @@ try {
       return { rms: Math.sqrt(sum / count), samples: count }
     })
   }
+  await audio.waitForFunction(() => window.recoveryTriggers > 0)
   results.pcm.play = await rms()
   assert(results.pcm.play.rms > 0.001)
+  // Silent output branches do not change the sound and must not dilute the probe.
+  await audio.evaluate(() => {
+    const context = window.probes[0].context
+    window.silentProbeBranches = Array.from({ length: 64 }, () => {
+      const node = context.createGain()
+      node.connect(context.destination)
+      return node
+    })
+  })
+  results.pcm.silentBranches = await rms()
+  assert(results.pcm.silentBranches.rms > results.pcm.play.rms * 0.8)
+  assert(results.pcm.silentBranches.rms < results.pcm.play.rms * 1.2)
+  await audio.evaluate(() => window.silentProbeBranches.forEach((node) => node.disconnect()))
+  const triggersBeforeDraft = await audio.evaluate(() => window.recoveryTriggers)
+  results.events.beforeDraft = triggersBeforeDraft
   await replaceSource(audio, '$: note(')
   await audio.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
+  // Require future onsets, rather than mistaking a note's tail for continued scheduling.
+  await audio.waitForFunction(
+    (before) => window.recoveryTriggers >= before + 2,
+    triggersBeforeDraft,
+  )
+  results.events.afterDraft = await audio.evaluate(() => window.recoveryTriggers)
   results.pcm.invalidDraft = await rms()
   assert(results.pcm.invalidDraft.rms > 0.001)
   await audio.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(audio, 'Ready')
+  const triggersAtStop = await audio.evaluate(() => window.recoveryTriggers)
+  results.events.atStop = triggersAtStop
   // Observe after the test synth's release; Stop itself does not promise immediate silence.
   await audio.waitForTimeout(1500)
   results.pcm.afterStop = await rms()
   assert(results.pcm.afterStop.rms < 0.00001)
+  results.events.afterStop = await audio.evaluate(() => window.recoveryTriggers)
+  assert.equal(results.events.afterStop, triggersAtStop)
   pass(
     'engine',
     'fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails',

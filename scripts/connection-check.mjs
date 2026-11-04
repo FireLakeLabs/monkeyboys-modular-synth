@@ -45,6 +45,15 @@ export async function verifyConnectionTargets() {
   assert(target.title === reason, 'Hover title differs from visible reason')
   assert(!document.querySelector('.rack-edit-refusal'), 'Refusal appeared before drop')
   assert(!target.classList.contains('valid'), 'Refused target looks valid')
+  const bounds = target.getBoundingClientRect()
+  target.dispatchEvent(
+    new PointerEvent('pointermove', {
+      bubbles: true,
+      buttons: 1,
+      clientX: bounds.left + bounds.width / 2,
+      clientY: bounds.top + bounds.height / 2,
+    }),
+  )
   target.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }))
   await until(() => document.querySelector('.rack-edit-refusal'))
   assert(editorSource() === before, 'Blocked drop changed source')

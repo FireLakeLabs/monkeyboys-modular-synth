@@ -10,6 +10,7 @@
     "lint": "oxlint --deny-warnings --report-unused-disable-directives",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:browser": "playwright test",
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

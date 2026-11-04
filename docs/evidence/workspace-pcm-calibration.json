@@ -1,0 +1,70 @@
+{
+  "dateUtc": "2026-11-04",
+  "hostedFailure": {
+    "head": "e20d8ac0e0ebdfbc20604302fd2b1eebf974857f",
+    "url": "https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/41778255641",
+    "invalidDraftRms": 0.0009934009536789637,
+    "requiredRms": 0.001,
+    "passedGroups": 26,
+    "failedGroups": 1
+  },
+  "regression": {
+    "command": "npm run test:browser -- --grep workspace-errors",
+    "fixture": "Sustained sine notes with short release; add 64 silent output branches without changing the sound.",
+    "requiredAmplitudeRatio": [0.8, 1.2],
+    "oldPerConnectionProbe": {
+      "outcome": "failed calibration assertion",
+      "pcm": {
+        "play": {
+          "rms": 0.02338005711189054,
+          "samples": 51200
+        },
+        "silentBranches": {
+          "rms": 0.003151282077282774,
+          "samples": 3354624
+        }
+      }
+    },
+    "combinedProbe": {
+      "outcome": "passed complete recovery suite",
+      "browser": "156.0.8078.4",
+      "pcm": {
+        "play": {
+          "rms": 0.023145837678557588,
+          "samples": 51200
+        },
+        "silentBranches": {
+          "rms": 0.025554546582974902,
+          "samples": 51200
+        },
+        "invalidDraft": {
+          "rms": 0.02543088373763524,
+          "samples": 51200
+        },
+        "afterStop": {
+          "rms": 0,
+          "samples": 51200
+        }
+      },
+      "scheduledOnsets": {
+        "beforeDraft": 2,
+        "afterDraft": 4,
+        "atStop": 4,
+        "afterStop": 4
+      }
+    }
+  },
+  "broaderVerification": {
+    "command": "taskset -c 0-3 npm run test:browser",
+    "parallelWorkers": 2,
+    "passedGroups": 27,
+    "failures": 0,
+    "retries": 0,
+    "skips": 0
+  },
+  "limits": [
+    "Controlled calibration regression reproduces the measurement defect; it is not a replay of the exact hosted scheduling phase.",
+    "The earlier five-pair timing comparison predates this coverage correction and was not repeated.",
+    "Physical listening and calibration of other legacy probes remain unverified."
+  ]
+}

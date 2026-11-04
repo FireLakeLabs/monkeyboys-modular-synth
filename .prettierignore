@@ -7,3 +7,7 @@ package-lock.json
 # Preserve the original design export verbatim.
 docs/design/design-canvas.html
 cdk.out/
+
+# Generated browser acceptance reports.
+playwright-report/
+test-results/

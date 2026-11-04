@@ -111,7 +111,7 @@ verification; record them in [deployment evidence](deployment-verification.md).
 | Persistence                    | Versioned metadata validation, unknown-block preservation, explicit replacement and full saved-state restoration, including volume, bypass and empty rows. See [workspace](workspace-verification.md) and [row checks](interaction-verification.md#saved-rows-and-source-preservation). | Ambiguous external edits reset affected identity/layout; unknown versions are retained, not migrated speculatively.                                                 |
 | Audio engine                   | Adapter/transport tests and [browser recovery evidence](audio-recovery.md) cover initialization, retry, Stop intent, abandoned evaluation, resources/output and structural effect resets.                                                                                               | Uninterruptible evaluation/side effects, unreported errors, resource readiness and runtime source mapping retain explicit limits. Physical listening is unverified. |
 | Executable code import         | Reader never executes source; playback runs user JavaScript through Strudel.                                                                                                                                                                                                            | No sandbox, isolation or side-effect rollback. Parsing does not establish execution safety.                                                                         |
-| Browser verification           | Project scripts and committed reports cover rack/workspace, interactions, feedback, errors and library loading.                                                                                                                                                                         | Suites need Chromium/external resources and run outside shared CI; physical listening and broad browser/device coverage remain unverified.                          |
+| Browser verification           | Project scripts and committed reports cover rack/workspace, interactions, feedback, errors and library loading.                                                                                                                                                                         | Runs in a separate [browser workflow](ci.md#full-browser-acceptance); external resources, physical listening and broad browser/device coverage remain limits.       |
 | Property testing               | Focused deterministic behavior fixtures exist.                                                                                                                                                                                                                                          | Seeded generative properties/shrinking remain later work, not implemented enforcement.                                                                              |
 | Assets and offline use         | [Sample sources and caching](engine-spike.md#samples-and-deployment) and [fonts/design](design.md) are documented.                                                                                                                                                                      | No app-managed offline cache; source registration does not prove every resource is available or decoded.                                                            |
 
@@ -147,7 +147,8 @@ check covers generated/imported tokens, opaque/unmapped spans, motion, errors an
 the trance demo without event-driven editor renders or parsing.
 The separate [real-browser feedback check](feedback-verification.md)
 requires actual pulses, nonzero PCM, native IME and reduced-motion behavior;
-shared CI still lacks Chromium/network provisioning for that suite.
+the separate [browser workflow](ci.md#full-browser-acceptance) now provisions
+Chromium and runs this suite after every main push.
 
 Resolve open product questions in the owning spec and issue before encoding them
 as expected test results. Do not invent graph, persistence, or audio behavior to
@@ -177,9 +178,10 @@ The #45 library behavior tests require unique collection/patch IDs, active
 source-bound coverage of every shipped module, exact original source on load,
 and independently reopened saved rack state. Shared deterministic tests also
 cover preparation failure, confirmed Stop and cancellation. The separate
-[library browser check](patch-library.md#browser-verification) verifies actual
+[library browser check](patch-library.md#original-45-browser-verification) verifies actual
 dialog interactions, exports, loading and real-engine PCM; it needs browser/audio
-and external sample resources and is not part of the shared CI gate.
+and external sample resources; it runs in the separate
+[browser workflow](ci.md#full-browser-acceptance), outside the deterministic gate.
 
 The #44 reader placement regressions use the exact reported CODE/CV source to
 check fixed-rail validity, exact executable source and saved rack identity
@@ -202,9 +204,18 @@ This browser check is a narrow exception to the shared local/CI gate: it require
 provisioned Chromium and its real-engine group reaches external sample sources.
 It currently runs separately from `npm run check`; the [#36 audit](audio-recovery.md) adds real resource/output errors,
 scheduler Stop failure, pending evaluation recovery and fresh-context activation;
-CI automation remains a follow-up until browser provisioning and network isolation
-are added. The deterministic transport regressions do run in the shared
-gate. Do not infer render coverage from those unit tests.
+the separate [browser workflow](ci.md#full-browser-acceptance) now provisions
+Chromium and executes it after every main push. Network isolation is not claimed.
+The deterministic transport regressions do run in the shared gate. Do not infer render coverage from those unit tests.
+
+The workspace recovery browser probe calibrates its combined output analyser by
+adding silent branches without changing the expected signal. That regression
+failed with the former per-connection averaging and passed after the probe summed
+branches per audio context. A sustained fixture and two future note onsets prove
+that invalid drafts retain scheduling; Stop must end further onsets and reach
+the existing PCM silence threshold. See the [hosted failure and correction](ci.md#hosted-pcm-probe-correction).
+This is real-browser/engine coverage, not physical listening or a calibration of
+every other legacy audio probe.
 
 Use [correct](../.agents/skills/correct/SKILL.md) for a correction that reveals a
 preventable failure class. Prefer structure, then types, lint, and behavioral
@@ -222,8 +233,8 @@ rack/reopen identity, gesture grouping and redo branching checks. Its separate
 browser suite covers actual draft/accepted shortcut ownership, replacement,
 recovery and live engine updates, plus real Strudel mute/undo/redo PCM. Knob grouping is passed explicitly by pointer commits; the browser regression
 rejects absorbing a preceding input blur commit and failed before that fix. This
-Chromium event-order regression remains outside shared CI with the other browser
-checks. Session history is not persisted; physical listening and other browsers
+Chromium event-order regression runs in the separate
+[browser workflow](ci.md#full-browser-acceptance). Session history is not persisted; physical listening and other browsers
 remain unverified.
 
 ## Documentation status ownership
@@ -252,15 +263,15 @@ The #85/#86/#96/#88 [rack visual acceptance](rack-visuals-verification.md)
 checks panel contrast, signal markings and cable fading in Chromium. Its native
 connected-jack regression rejects a panel stacking context that lets cable paths
 intercept fan-out and occupied-input replacement. The same browser script runs
-locally for this feature; like the existing browser suites, it remains outside
-shared CI until Chromium provisioning is added. Static checks do not establish
+locally and in the separate [browser workflow](ci.md#full-browser-acceptance).
+Static checks do not establish
 pointer hit priority.
 
 The [cable-control clarity regression](cable-visibility-verification.md) extends
 that browser script with explicit All/Focus/Dim modes, visible selected/hovered
 ownership, active styling/pressed state, native hover-out and keyboard changes,
 and exact-source checks. It first failed against the former toggle. These checks
-share the browser-provisioning exception above; the shared gate does not prove
+run in that browser workflow; the deterministic gate does not prove
 visual state clarity.
 
 The #77 [common-call regressions](../src/reader/aliases.test.ts) separately check
@@ -274,4 +285,5 @@ Partial envelopes and unproven orbit aliases remain CODE under the
 The #91 [mid-width browser regression](mid-width-verification.md) rejects page
 scrolling and checks pane reachability, horizontal palette geometry, source/rack
 selection, Show in code focus, exact source and draft undo across view changes.
-It remains outside the shared gate with the other Chromium browser checks.
+It runs in the separate [browser workflow](ci.md#full-browser-acceptance), outside
+the deterministic gate.

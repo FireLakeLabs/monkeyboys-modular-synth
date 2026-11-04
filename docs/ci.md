@@ -16,6 +16,132 @@ are documented in [deployment operations](deployment.md). Pull-request checks
 do not receive AWS credentials. Hosting/rollback behavior tests run alongside
 the guardrail tests.
 
+## Full browser acceptance
+
+[Browser acceptance](../.github/workflows/browser.yml) runs on **every push to
+main**, including each merge, and supports manual dispatch. Changes to its workflow,
+runner, scripts or dependencies also trigger it on pull requests, so CI changes
+can be verified before merging. Runs have no concurrency cancellation or pending-run
+replacement; each main commit gets its own checkout and report.
+
+The workflow installs the locked dependencies and Playwright Chromium with its
+Linux system dependencies, then runs `npm run test:browser`. It has read-only
+repository access, no deployment credentials, and pinned actions. It is separate
+from `npm run check` and deployment: network/sample failures fail the browser job
+without changing the deterministic gate or production publishing policy.
+
+To reproduce locally with the pinned Node version:
+
+```sh
+npm ci
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
+Playwright starts and stops its own Vite dev server on `127.0.0.1:5173`; that port
+must be free. Two workers run independent groups in parallel, with fresh browser
+contexts, separate evidence directories and no automatic retries. Multi-step
+scripts retain their internal order. To diagnose a concurrency-sensitive failure,
+run `npm run test:browser -- --workers=1`. The [runner](../tests/browser/suites.spec.mjs) executes
+the existing workspace-error/recovery, editor-feedback, autosave, metadata,
+code-application, history, sounding-token, module-behavior, rack-visual and
+output-panel scripts. It also runs cable targets, grids, library UI/on-ramp/rack
+editing, literal identity, error positions, editor status, CODE conversion, patch
+names, all module looks and mid-width workspace probes, plus library
+PCM/Cancel/Stop recovery and trance playback/events/export/reopen. Code application
+and history include their real-engine modes. The original script assertions
+remain authoritative. The historical two-build editor-load benchmark
+and manual engine-spike page are experiments, not acceptance suites, and are not
+run by this command.
+
+The real-engine groups require network sample manifests and audio resources.
+Nonzero WebAudio PCM and scheduler events establish output for the tested patches;
+they do not establish physical listening, sound quality or other-browser coverage.
+HTML reports, JSON results, child-script logs and available screenshots/traces
+are retained under `playwright-report/` and `test-results/`, including partial
+failure evidence, and uploaded for 14 days. Open `playwright-report/index.html`
+or use `npx playwright show-report` to inspect the report.
+
+### Observed browser baseline
+
+On 3 November 2026, the runner exercised the application at `ce70a85` using
+Chromium `156.0.8078.4`, Node `24.22.2` and locked dependencies. Nine groups passed
+in the initial full run. The trance probe timed out waiting for a replacement
+prompt that #61 intentionally removed for clean library loads. After correcting
+that stale probe expectation, its focused rerun passed playback, events, PCM and
+exact source/rack export/reopen checks. All ten groups therefore passed against
+the same application revision; no application source changed. The repository
+gate also passed (731 tests, 17 expected failures and 40 guardrail tests).
+Physical listening was not performed. Hosted workflow activation awaits merging
+the workflow to main; local results alone do not prove hosted execution.
+
+### Modernized browser baseline
+
+On 4 November 2026 (UTC), after rebasing onto `f68df45`, all 27 groups passed in
+one full run with no retries, using the same Node and Chromium versions above.
+The runner includes the acceptance probes added since the original baseline.
+Existing probes now follow the current Playing status, pinned OUT, invalid
+metadata preservation and opener-diagnostic contracts. Geometry comparisons
+restore the same rack scroll position before comparing cable paths.
+
+`npm run check` also passed: 929 unit cases, 42 guardrails, the committed reader
+corpus gate, formatting/skill integrity, lint, TypeScript and production build.
+Application code is unchanged. Real-engine events and nonzero PCM were observed;
+physical listening was not performed. Hosted checks for this rebased revision
+remain separate evidence from these local results.
+
+### Bounded parallel execution
+
+On 4 November 2026 (UTC), five alternating full runs per configuration compared
+the original serial worker with `fullyParallel: true` and two workers. Median
+wall time for the complete test command fell from **380.3 s** (range
+379.8–381.1 s) to **195.2 s** (range 194.9–195.7 s), a **48.7% reduction**.
+All 270 group executions passed on their first attempt, with no skips. The
+[timings and environment](evidence/browser-parallel-timings.json) retain each run,
+the shared 27-group manifest, actual worker overlap and an excluded profiling run.
+At the benchmarked revision `e20d8ac`, no assertions, sample waits or timing
+thresholds changed. These timings predate the PCM-probe correction below and
+are not a new benchmark of that correction.
+
+The comparison used Node 24.22.2, Chromium 156.0.8078.4, locked dependencies,
+`CI=1` and the same Vite application on a Linux AMD Ryzen 7 PRO 6850U machine
+with 16 logical CPUs. Dependency/Vite caches were warm after the excluded
+profiling run; browser contexts were fresh and real sample resources still used
+the network. Timing includes Vite/browser startup, all assertions and reporting,
+but excludes dependency and Chromium installation.
+
+The separate profile sampled machine CPU every two seconds: median busy time
+was 14.1%, peak 23.1%, and maximum I/O wait 0.1%. Independent groups can overlap
+the existing scheduling, sample/PCM and accepted-edit waits without saturating
+this machine. Two worker slots and the longer ordered library groups still
+limit scaling. Two workers bound runner load; a higher worker count was not
+evaluated. These local measurements do not establish a hosted CI speedup or
+guarantee absence of future flakes. Real-engine event and PCM checks passed;
+physical listening remains unverified.
+
+### Hosted PCM-probe correction
+
+The first [two-worker hosted run](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/41778255641)
+passed 26 groups but failed the workspace recovery probe: the invalid-draft PCM
+window measured RMS 0.0009934 against its unchanged 0.001 threshold. The probe
+averaged one analyser per output connection, so silent or expired branches could
+dilute the reported signal. Its decaying fixture also made short windows depend
+on note phase. The local timing runs did not establish hosted reliability.
+
+The recovery probe now sums output branches into one analyser per audio context
+and uses a sustained, short-release fixture. A calibration regression adds 64
+silent branches and requires PCM to remain within 20% of the original signal;
+it failed with the old probe and passed with the corrected probe. Invalid drafts
+must retain at least two future scheduled note onsets as well as nonzero PCM.
+Stop must end those onsets and reach the same existing silence threshold after
+release. Thresholds and the zero-retry policy remain unchanged. Application code
+is unchanged; this correction is browser-test instrumentation and coverage.
+The [calibration evidence](evidence/workspace-pcm-calibration.json) records the
+controlled failure and corrected PCM/onset observations. All 27 groups passed
+with two workers constrained to four logical CPUs
+(`taskset -c 0-3 npm run test:browser`), and the final focused recovery suite
+passed again. This local check is separate from hosted revalidation.
+
 ## Observed GitHub status
 
 Verified on 2 November 2026: the [repository](https://github.com/FireLakeLabs/monkeyboys-modular-synth)

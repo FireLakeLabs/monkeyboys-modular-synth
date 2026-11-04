@@ -52,6 +52,7 @@ async function expectSource(page, source) {
       id: p.dataset.module,
       look: [...p.classList].find((c) => c.startsWith('look-')).slice(5),
       left: p.style.left,
+      right: p.style.right,
       top: p.style.top,
     })),
   )
@@ -60,7 +61,8 @@ async function expectSource(page, source) {
     reopened.modules.map((m) => ({
       id: m.id,
       look: m.look,
-      left: `${m.hp * 12}px`,
+      left: m.type === 'out' ? '' : `${m.hp * 12}px`,
+      right: m.type === 'out' ? '8px' : '',
       top: `${m.row * 440 + 20}px`,
     })),
   )
@@ -87,7 +89,7 @@ try {
     const { fromPatch } = await import('/src/workspace/document.ts')
     const { renameOutput, placeModule, setLook } = await import('/src/rack/model.ts')
     let patch = renameOutput(demoPatch(), 'osc1:out', 'lead')
-    patch = placeModule(patch, 'out', 1, 20, 'out1')
+    patch = placeModule(patch, 'osc', 1, 20, 'osc1')
     patch = setLook(patch, 'osc1', 'instrument')
     return fromPatch(patch).source
   })

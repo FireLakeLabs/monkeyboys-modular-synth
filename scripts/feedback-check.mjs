@@ -239,6 +239,9 @@ try {
   )
   await page.locator('[data-module="code1"]').click({ button: 'right' })
   await page.getByRole('button', { name: 'Show in code', exact: true }).click()
+  await page.waitForFunction(
+    () => getComputedStyle(document.querySelector('.cyber-cursor')).animationName === 'cyber-edit',
+  )
   assert.equal(
     await page.locator('.cyber-cursor').evaluate((e) => getComputedStyle(e).animationName),
     'cyber-edit',
@@ -305,6 +308,10 @@ try {
     return {
       rms: Math.sqrt(sum / count),
       animations: window.animationsSeen,
+      rackScroll: {
+        top: document.querySelector('.rack-scroll').scrollTop,
+        left: document.querySelector('.rack-scroll').scrollLeft,
+      },
       widths: Array.from(document.querySelectorAll('[data-module]')).map((e) => [
         e.dataset.module,
         e.getBoundingClientRect().width,
@@ -377,6 +384,21 @@ try {
   )
   await page.waitForTimeout(900)
   assert.equal(await page.evaluate(() => window.animationsSeen.length), countAtStop)
+  // Show in code can scroll the rack while revealing the CODE panel. Compare
+  // motion geometry at the same scroll position, including the pinned OUT cable.
+  await page.locator('.rack-scroll').evaluate((element, scroll) => {
+    element.scrollTop = scroll.top
+    element.scrollLeft = scroll.left
+  }, audio.rackScroll)
+  await page.waitForFunction(
+    (expected) =>
+      JSON.stringify(
+        Array.from(document.querySelectorAll('.cable > path:not(.cable-shadow)')).map((e) =>
+          e.getAttribute('d'),
+        ),
+      ) === JSON.stringify(expected),
+    audio.cables,
+  )
   const geometry = await page.evaluate(() => ({
     widths: Array.from(document.querySelectorAll('[data-module]')).map((e) => [
       e.dataset.module,

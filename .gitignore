@@ -28,3 +28,7 @@ cdk.out
 
 # Local reader coverage reports (wild sources are only fetched in memory)
 /reports/reader/
+
+# Browser acceptance reports
+playwright-report/
+test-results/
