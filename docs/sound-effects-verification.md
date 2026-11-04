@@ -3,7 +3,8 @@
 Observed 4 November 2026 on Node 24.22.2, locked core 1.2.6 / superdough 1.3.0.
 The [catalog contract](module-spec.md#sound-sources-and-voice-effects-131) records
 all eleven panels, jacks, defaults, supported ranges and engine limitations.
-Issue #134 is open during this implementation; rule 4's fixed chain applies.
+Issue #134 merged during implementation. Final checks use its ordered-chain contract
+on main at `7699774`, including the complete active stage sets of compound panels.
 
 ## Independent claims
 
@@ -17,8 +18,8 @@ Issue #134 is open during this implementation; rule 4's fixed chain applies.
   envelopes (including numeric envelope defaults), coarse-only and depth-only
   phaser calls. Speculative failed PAN projection restores the reader cursor;
   the pre-change trance source/projection/generation digests remain unchanged.
-- Fixed-chain checks retain generated events and explain reverse ordering and
-  shared distortion setters. PAN uses existing CV bindings; its rack reopens
+- Ordered-chain checks retain native imported events, generate FX for reversed or
+  repeated rack stages, and recognize the bare arguments as modules. PAN uses existing CV bindings; its rack reopens
   with OSC's dedicated FM OP route intact. Unsupported arguments stay exact CODE.
 - `scripts/sound-effects-browser.mjs` runs in the browser acceptance workflow.
   The shared geometry probe checked all **34 Hardware panels in each of four
@@ -26,7 +27,7 @@ Issue #134 is open during this implementation; rule 4's fixed chain applies.
   reachable controls and live jack/cable geometry. The drawbar edit used native
   keyboard input, changed partial 2 from .5 to 1, retained saved rack identity,
   and changed the count to eight with eight reachable sliders. A native eight-move pointer drag is restored by one Undo.
-- In Chromium 156.0.8078.4, **31 forms produced nonzero real WebAudio PCM** and
+- In Chromium 156.0.8078.4, **31 base forms produced nonzero real WebAudio PCM** and
   scheduled events with exact source and saved identity retained. Each probe
   sampled 122,880 values. Nullary `.shape()` was preserved and recorded as an
   engine limitation; its lack of a numeric amount caused the initial actual
@@ -37,7 +38,13 @@ Issue #134 is open during this implementation; rule 4's fixed chain applies.
 PAN CV also ran in stereo: SMOOTH/ENV changed within-note balance, STEP stayed
 stable within a sustained note, and CV SEQ reached the left channel. All four source modes restored the
 complete saved rack. SMOOTH/ENV depth .25 wrote native `depthabs: .5`; import
-divides the AudioParam scale back into panel units. The final combined browser run passed all assertions in one session.
+divides the AudioParam scale back into panel units. The final integrated browser run passed all assertions in one session. It also
+played five ordered/native paths: repeated DRIVE, FOLDER→LO-FI, LO-FI→FOLDER,
+COMP→VCF and PAN→SHIFT, with two FX calls on each inverted/repeated path and
+native calls on the matching LO-FI→FOLDER path. Every path retained exact source,
+saved identity and pinned-engine events and produced nonzero PCM. Three reset
+forms and a nullary DRIVE after samples also produced PCM; shared FM OP retained
+one rendered panel, the edited oscillator look and exact source through save.
 
 Shared-preview geometry passed. Its Play action timed out twice (15 s and 3 s);
 Playwright provided the real playback/PCM and native-input proof. The private
@@ -93,7 +100,11 @@ outputs this effect, separately from the CPU micro-measurement.
 - The reader coverage manifest includes the new exercise with MIT provenance;
   its new baseline is fully mapped. Existing patch baselines do not regress.
 
-The existing trance acceptance also passed: 29 modules, four voices and four-cycle
+The existing ordered-effects browser suite also passed after integration: native,
+reordered and repeated VCF/send paths, source edits, save identity and actual
+PCM. [Raw ordered baseline](evidence/sound-effects-ordered-baseline.json).
+
+The existing trance acceptance also passed after integration: 29 modules, four voices and four-cycle
 onset snapshots survived repeated Play and export/reopen. Master and all four
 orbit probes produced nonzero PCM, with exact source and saved/rendered rack
 identity retained. [Raw trance result](evidence/sound-effects-trance.json). The
@@ -101,8 +112,24 @@ standard Playwright runner's port 5173 was occupied by another wave-three thread
 the same committed trance functions ran in an independent Playwright context
 against this worktree's server on 5131.
 
-The deterministic gate passed 1,508 tests and 43 guardrails, formatting, skill
-integrity, lint, reader coverage, TypeScript and the production build.
+Before integration the deterministic gate passed 1,508 tests and 43 guardrails.
+The integrated gate passed 1,556 tests and 43 guardrails, plus lint, formatting,
+skill integrity, reader coverage, TypeScript and build.
+
+## Sol review corrections
+
+Round 1 (GPT-6.1 Sol, high) found three should-fix bugs. Twelve focused cases
+failed before the fixes and passed afterwards: explicit coarse/transient/phaser
+reset values, all eight nullary DRIVE methods after sample sources, and shared
+FM OP identity after an added comment and look edit. Unsafe reset omissions stay
+CODE; scalar and nullary audio imports share one sampler boundary; repeated
+operator owners reconcile only when their effective saved values agree. These
+regressions run in the normal gate. Usage was not exposed.
+
+The following integration with #134 replaces the earlier fixed-order warning
+implementation with its catalog stage membership, native import provenance and
+informational chain notes. The final source, rack and events checks cover both
+representations.
 
 Review/CI/merge results are recorded in the pull request; the raw browser and CPU
 records above are dated observations rather than promises about every device.

@@ -682,6 +682,8 @@ select:focus-visible {
   color: #b7bdc6;
   font-size: 12px;
   margin: 6px 0;
+}
+
 .drawbar-control {
   min-width: 0;
   border: 0;

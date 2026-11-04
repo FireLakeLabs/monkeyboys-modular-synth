@@ -246,5 +246,6 @@ Eleven Hardware panels extend the catalog with noise, additive/FM synthesis and
 voice effects, plus HARMONIC drawbars and the OSC FM jack. Exact imported source,
 saved CODE/rack identity and pinned-engine events have separate checks; see the
 [contract, engine limits and SHIFT cost](module-spec.md#sound-sources-and-voice-effects-131)
-and [acceptance record](sound-effects-verification.md). Ordered FX remain owned
-by #134; this change follows the current fixed-chain rule.
+and [acceptance record](sound-effects-verification.md). These effects integrate
+with merged #134: native matching paths, inline reordered/repeated stages, and
+source-preserved native imports.

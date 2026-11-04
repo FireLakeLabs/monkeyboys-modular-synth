@@ -400,3 +400,10 @@ speculative PAN projection restores its placement cursor before CODE fallback.
 The separate browser suite covers four Hardware looks, real PCM and native
 harmonic drawbar editing. The [SHIFT measurement](sound-effects-verification.md#shift-cost)
 is a CPU-only processor cost, not a browser polyphony or continuity guarantee.
+
+The #131 Sol regressions failed in twelve cases before fixing explicit default
+resets, nullary sample-effect boundaries and shared FM OP saves. Reset setters
+that cannot be omitted safely retain exact CODE; scalar/nullary sound calls use
+one sampler boundary; operator source matching requires equal effective values
+before sharing a saved owner. Compound effect planning compares every active
+catalog rank after #134 integration, preventing hidden LO-FI/COMP repeats.

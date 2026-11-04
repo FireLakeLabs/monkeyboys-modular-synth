@@ -1,0 +1,250 @@
+{
+  "results": [
+    {
+      "name": "native",
+      "events": [
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "cutoff": 800,
+          "resonance": 1,
+          "delay": 0.4,
+          "delaytime": 0.375,
+          "delayfeedback": 0.5,
+          "room": 0.5,
+          "roomsize": 4,
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "cutoff": 800,
+          "resonance": 1,
+          "delay": 0.4,
+          "delaytime": 0.375,
+          "delayfeedback": 0.5,
+          "room": 0.5,
+          "roomsize": 4,
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "cutoff": 800,
+          "resonance": 1,
+          "delay": 0.4,
+          "delaytime": 0.375,
+          "delayfeedback": 0.5,
+          "room": 0.5,
+          "roomsize": 4,
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "cutoff": 800,
+          "resonance": 1,
+          "delay": 0.4,
+          "delaytime": 0.375,
+          "delayfeedback": 0.5,
+          "room": 0.5,
+          "roomsize": 4,
+          "postgain": 0.8,
+          "orbit": 1
+        }
+      ],
+      "pcm": {
+        "rms": 0.009664251288301413,
+        "samples": 71680
+      },
+      "note": "You hear: VCF (vcf1) → DELAY (delay1) → REVERB (reverb1). Native effects use the fixed voice chain; DELAY/REVERB are orbit sends."
+    },
+    {
+      "name": "reordered",
+      "events": [
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "FX": [
+            {
+              "room": 0.5,
+              "roomsize": 4
+            },
+            {
+              "delay": 0.4,
+              "delaytime": 0.375,
+              "delayfeedback": 0.5
+            },
+            {
+              "cutoff": 800,
+              "resonance": 1
+            }
+          ],
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "FX": [
+            {
+              "room": 0.5,
+              "roomsize": 4
+            },
+            {
+              "delay": 0.4,
+              "delaytime": 0.375,
+              "delayfeedback": 0.5
+            },
+            {
+              "cutoff": 800,
+              "resonance": 1
+            }
+          ],
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "FX": [
+            {
+              "room": 0.5,
+              "roomsize": 4
+            },
+            {
+              "delay": 0.4,
+              "delaytime": 0.375,
+              "delayfeedback": 0.5
+            },
+            {
+              "cutoff": 800,
+              "resonance": 1
+            }
+          ],
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "FX": [
+            {
+              "room": 0.5,
+              "roomsize": 4
+            },
+            {
+              "delay": 0.4,
+              "delaytime": 0.375,
+              "delayfeedback": 0.5
+            },
+            {
+              "cutoff": 800,
+              "resonance": 1
+            }
+          ],
+          "postgain": 0.8,
+          "orbit": 1
+        }
+      ],
+      "pcm": {
+        "rms": 0.005190699009633153,
+        "samples": 71680
+      },
+      "note": "You hear: REVERB (reverb1) → DELAY (delay1) → VCF (vcf1). FX stages run in cable order; inline DELAY/REVERB keep their tails per note."
+    },
+    {
+      "name": "repeated",
+      "events": [
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "FX": [
+            {
+              "cutoff": 800,
+              "resonance": 1
+            },
+            {
+              "cutoff": 800,
+              "resonance": 1
+            }
+          ],
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "FX": [
+            {
+              "cutoff": 800,
+              "resonance": 1
+            },
+            {
+              "cutoff": 800,
+              "resonance": 1
+            }
+          ],
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "FX": [
+            {
+              "cutoff": 800,
+              "resonance": 1
+            },
+            {
+              "cutoff": 800,
+              "resonance": 1
+            }
+          ],
+          "postgain": 0.8,
+          "orbit": 1
+        },
+        {
+          "note": "c3",
+          "s": "sawtooth",
+          "gain": 0.15,
+          "FX": [
+            {
+              "cutoff": 800,
+              "resonance": 1
+            },
+            {
+              "cutoff": 800,
+              "resonance": 1
+            }
+          ],
+          "postgain": 0.8,
+          "orbit": 1
+        }
+      ],
+      "pcm": {
+        "rms": 0.005901727992241576,
+        "samples": 71680
+      },
+      "note": "You hear: VCF (vcf1) → VCF (vcf2). FX stages run in cable order; inline DELAY/REVERB keep their tails per note."
+    }
+  ],
+  "importedLiteral": true,
+  "nativeOverrideNote": "You hear: VCF (vcf1, vcf2) — later native setters override matching controls. Native effects use the fixed voice chain; DELAY/REVERB are orbit sends.",
+  "djModeSwitches": 2,
+  "physicalListening": false
+}

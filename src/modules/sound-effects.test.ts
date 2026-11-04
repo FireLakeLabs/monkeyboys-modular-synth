@@ -161,24 +161,6 @@ it('retains previously saved whole-voice and suffix CODE ownership', () => {
   }
 })
 
-it('shows the fixed engine order on reversed new-effect cables and warns about shared distortion stages', async () => {
-  const { cableWarnings } = await import('../rack/model')
-  for (const [call, warning] of [
-    ['.pan(0.3).stretch(1.5)', 'SHIFT → PAN'],
-    ['.soft(0.5).vowel("a")', 'FORMANT → waveshaper'],
-    ['.soft(0.5).fold(0.6)', 'last setter wins'],
-  ]) {
-    const source = `note("c3").s("sine")${call}`
-    const doc = read(`$: ${source}\n`)
-    expect(
-      doc.patch.cables
-        .flatMap((c) => cableWarnings(doc.patch, c))
-        .some((w) => w.includes(warning ?? '')),
-    ).toBe(true)
-    expect(events(voice(generate(doc.patch)))).toEqual(events(source))
-  }
-})
-
 it('keeps downstream placement when an unsupported argument falls back to CODE', () => {
   const a = read('$: note("c3").s("sine").pan(rand).gain(0.2)\n')
   const b = read('$: note("c3").s("sine").unmapped(rand).gain(0.2)\n')
@@ -225,14 +207,6 @@ it.each(['SMOOTH', 'STEP', 'ENV', 'CV SEQ'])(
     expect(events(voice(generate(doc.patch)))).toEqual(events(voice(code)))
   },
 )
-
-it('distinguishes separate filter stages and skips inert nullary distortion warnings', async () => {
-  const { cableWarnings } = await import('../rack/model')
-  for (const calls of ['.lpf(800).hpf(200)', '.soft().vowel("a")']) {
-    const doc = read(`$: note("c3").s("sine")${calls}\n`)
-    expect(doc.patch.cables.flatMap((c) => cableWarnings(doc.patch, c))).toEqual([])
-  }
-})
 
 it.each([
   '.coarse(4).coarse(1)',
@@ -300,6 +274,10 @@ it('preserves shared FM OP ownership after source comments and a look edit', asy
   const edited = editDocument(doc, next)
   expect(sourceBody(edited.source)).toBe(`// retain shared operator\n${sourceBody(original)}`)
   expect(read(edited.source).patch).toEqual(next)
+  const adjusted = editDocument(edited, setValue(edited.patch, 'fmop1', 'index', 3))
+  expect(sourceBody(adjusted.source)).toBe(sourceBody(edited.source).replaceAll('.fm(2)', '.fm(3)'))
+  expect(read(adjusted.source).patch).toEqual(adjusted.patch)
+  expect(adjusted.patch.modules.filter((m) => m.type === 'fmop')).toHaveLength(1)
   const expected = parseSource(original)
     .scopes.filter((s) => s.kind === 'voice')
     .map((s) => events(original.slice(s.start, s.end)))
@@ -308,4 +286,77 @@ it('preserves shared FM OP ownership after source comments and a look edit', asy
       .scopes.filter((s) => s.kind === 'voice')
       .map((s) => events(edited.source.slice(s.start, s.end))),
   ).toEqual(expected)
+})
+
+function soundChain(types: string[]) {
+  let patch = starterPatch()
+  for (const [i, type] of ['seq', 'osc', ...types].entries())
+    patch = placeModule(patch, type, i + 1)
+  patch = connect(patch, { module: 'seq1', jack: 'note' }, { module: 'osc1', jack: 'note' })
+  let from = { module: 'osc1', jack: 'out' }
+  const effects = patch.modules.filter((m) => types.includes(m.type))
+  for (const effect of effects) {
+    patch = connect(patch, from, { module: effect.id, jack: 'in' })
+    from = { module: effect.id, jack: 'out' }
+  }
+  if (types.includes('pan')) patch = setValue(patch, 'pan1', 'pan', 0.3)
+  return connect(patch, from, { module: 'mix1', jack: 'in1' })
+}
+it.each([
+  ['pan', 'shift'],
+  ['drive', 'drive'],
+  ['drive', 'folder'],
+  ['comp', 'vcf'],
+  ['folder', 'lofi'],
+])('writes and reopens ordered %s → %s stages', (a, b) => {
+  const patch = soundChain([a, b])
+  const code = generate(patch)
+  expect(sourceBody(code)).toContain('.FX(')
+  expect(read(code).patch).toEqual(patch)
+  const doc = read(sourceBody(code))
+  expect(
+    doc.patch.modules.filter((m) => m.type === a || m.type === b).every((m) => m.fx === true),
+  ).toBe(true)
+  expect(events(voice(generate(doc.patch)))).toEqual(events(voice(code)))
+  expect(read(saveLayout(doc).source).patch).toEqual(saveLayout(doc).patch)
+})
+it('keeps matching new stages native and treats every compound stage as active', () => {
+  const code = generate(soundChain(['shift', 'formant', 'lofi', 'folder', 'pan', 'phaser']))
+  expect(sourceBody(code)).not.toContain('.FX(')
+  // Both LO-FIs have a coarse stage, despite their different first active calls.
+  let patch = soundChain(['lofi', 'lofi'])
+  patch = setValue(patch, 'lofi1', 'bitsMode', 'off')
+  expect(sourceBody(generate(patch)).match(/\.FX\(/g)).toHaveLength(2)
+})
+it('preserves imported native resets and fixed ordering without inventing FX', async () => {
+  const { effectNotes } = await import('../rack/model')
+  const source = '$: note("c3").s("sine").pan(0.3).stretch(1.5)\n'
+  const doc = read(source)
+  expect(sourceBody(generate(doc.patch))).not.toContain('.FX(')
+  expect(effectNotes(doc.patch)[0]).toContain('SHIFT (shift1) → PAN (pan1)')
+  expect(events(voice(generate(doc.patch)))).toEqual(events(voice(source)))
+})
+
+it('retains PAN CV scaling and ownership inside ordered FX', () => {
+  let patch = soundChain(['pan', 'shift'])
+  patch = placeModule(patch, 'lfo', 5)
+  patch = connect(patch, { module: 'lfo1', jack: 'out' }, { module: 'pan1', jack: 'cv' })
+  patch = setValue(patch, 'lfo1', 'depth', 0.25)
+  const source = generate(patch)
+  expect(sourceBody(source)).toContain('.FX(pan(0.3).lfo(')
+  expect(sourceBody(source)).toContain('depthabs: 0.5')
+  expect(read(source).patch).toEqual(patch)
+  const doc = read(sourceBody(source))
+  expect(read(saveLayout(doc).source).patch).toEqual(saveLayout(doc).patch)
+  expect(events(voice(generate(doc.patch)))).toEqual(events(voice(source)))
+})
+it('shows both actual native COMP stages around an intervening filter', async () => {
+  const { effectNotes } = await import('../rack/model')
+  const doc = read(
+    '$: note("c3").s("sine").compressor("-20:4:10:.005:.1").transient(.5).lpf(800)\n',
+  )
+  const note = effectNotes(doc.patch)[0] ?? ''
+  expect(note.indexOf('[transient]')).toBeGreaterThan(-1)
+  expect(note.indexOf('[transient]')).toBeLessThan(note.indexOf('VCF'))
+  expect(note.indexOf('VCF')).toBeLessThan(note.indexOf('[compressor]'))
 })

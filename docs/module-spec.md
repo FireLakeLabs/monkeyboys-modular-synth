@@ -627,6 +627,7 @@ mode. Native 24 dB and local FX ladder settings remain supported.
 See [rule 4](translation-rules.md#4-effect-stages-follow-cable-order-134),
 [send/orbit semantics](translation-rules.md#effect-orbits) and
 [acceptance evidence](ordered-effects-verification.md).
+
 ## Sound sources and voice effects (#131)
 
 All eleven panels are Hardware. The table is checked against the installed
@@ -653,13 +654,18 @@ CV SEQ using the existing catalog adapters; depth is −1…1, default .5.
 | PAN      | 10  | PAN 0–1/.01; .5                                                                                                                | `.pan(.3)`; 0 left, .5 center, 1 right. CV depth uses these panel units; superdough maps the base to StereoPanner's −1…1. SMOOTH/ENV depth therefore writes twice the panel depth and divides by two on import; STEP/CV SEQ retain the 0–1 call argument.                                                                                                                            |
 | SHIFT    | 10  | SHIFT −3.9–4/.01; 1.5                                                                                                          | `.stretch(1.5)`; see the pinned-engine limits and measured cost below.                                                                                                                                                                                                                                                                                                               |
 
-Sound settings follow [translation rule 4](translation-rules.md#4-sound-settings-ignore-order-pattern-changes-dont)
-until #134 supplies ordered chains. The fixed main chain is SHIFT → transient →
-VCF → FORMANT → coarse → crush → legacy shape → distortion → compressor → PAN →
-PHASER, followed by orbit sends DELAY then REVERB. COMP therefore spans two
-positions. DRIVE's non-shape algorithms and FOLDER set the **same** distortion
-stage: a later setter wins. Reversed cables display the effective active-stage
-order; shared stages get an overwrite warning. No serial DSP is invented.
+Effects follow [translation rule 4](translation-rules.md#4-effect-stages-follow-cable-order-134)
+after integration with merged #134. New rack paths use native calls when the
+complete set of active stages is increasing and unrepeated; other paths use one
+`.FX(...)` argument per panel in cable order. The catalog order now includes
+SHIFT and transient before filters, plus all named distortion algorithms and
+FOLDER at the distortion stage. LO-FI occupies coarse and crush, and COMP spans
+transient and compressor. Planning compares every active stage of these compound
+panels, preventing a hidden repeat or inversion from overwriting another panel.
+Native imports retain their fixed-order setters; explicit reset setters that
+would expose an earlier value if omitted remain exact CODE. Rack notes show
+inline cable order or native stage order, including both parts of compound
+panels. Send/orbit behavior retains #134's contract.
 
 New `drawbars` values are finite numeric arrays in v1 metadata, validated for
 length/range at graph/mutation boundaries. Catalog array bindings retain exact
@@ -674,8 +680,9 @@ conversion. See the independent [source/rack/event/browser acceptance](sound-eff
   description does not match this pinned phase vocoder: nonnegative `x` shifts
   peaks by `1+x`; negative `x` uses `max(0,1+x/4)`. Thus 1.5 is ×2.5 pitch and
   −1.5 is ×.625 pitch. Event duration is unchanged; reverse sampling remains
-  `speed(-x)`. The panel stops at −3.9 to avoid the zero-ratio clamp. The engine
-  schedules SHIFT voices 40 ms early for its 2048-frame overlap-add window.
+  `speed(-x)`. The panel stops at −3.9 to avoid the zero-ratio clamp. For an outer native stretch call, the engine schedules the voice 40 ms early
+  for its 2048-frame overlap-add window. Inline FX stretch does not trigger that
+  outer scheduling compensation and retains its processing latency.
 - **SHIFT cost:** on 4 November 2026, Node 24.22.2, AMD Ryzen 7 PRO 6850U (16 logical CPUs),
   48 kHz mono/128-frame blocks, the exact shipped worklet consumed a median
   **27.08 CPU ms per voice-second** (five interleaved runs, 25.70–37.38); four

@@ -46,8 +46,8 @@ function events(expression) {
     JSON.stringify(a).localeCompare(JSON.stringify(b)),
   )
 }
-export async function verifySoundForm(index) {
-  const form = forms[index]
+export async function verifySoundForm(index, override) {
+  const form = override ?? forms[index]
   assert(form && original, 'Prepare proof first, then choose a valid form')
   const stop = document.querySelector('.topbar .play[aria-label=Stop]')
   if (stop) stop.click()
@@ -209,5 +209,102 @@ export async function verifyPanCV(mode) {
     spread,
     energy,
     savedIdentity: true,
+  }
+}
+
+export async function verifyOrderedSound(types) {
+  const { connect, placeModule, setValue, starterPatch, effectNotes } =
+    await import('../src/rack/model.ts')
+  let patch = starterPatch()
+  for (const [i, type] of ['seq', 'osc', ...types].entries())
+    patch = placeModule(patch, type, i + 1)
+  patch = setValue(patch, 'seq1', 'steps', 'c3*2')
+  patch = connect(patch, { module: 'seq1', jack: 'note' }, { module: 'osc1', jack: 'note' })
+  let from = { module: 'osc1', jack: 'out' }
+  for (const module of patch.modules.filter((m) => types.includes(m.type))) {
+    patch = connect(patch, from, { module: module.id, jack: 'in' })
+    from = { module: module.id, jack: 'out' }
+  }
+  if (types.includes('pan')) patch = setValue(patch, 'pan1', 'pan', 0.3)
+  patch = connect(patch, from, { module: 'mix1', jack: 'in1' })
+  const code = generate(patch)
+  const identity = (value) =>
+    JSON.stringify(value, (_key, item) =>
+      item && typeof item === 'object' && !Array.isArray(item)
+        ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b)))
+        : item,
+    )
+  assert(identity(read(code).patch) === identity(patch), 'Ordered sound rack identity')
+  const scope = parseSource(code).scopes.find((s) => s.kind === 'voice')
+  assert(scope, 'Ordered voice')
+  const expression = code.slice(scope.start, scope.end)
+  const result = await verifySoundForm(-1, { type: types[0], expression })
+  return {
+    ...result,
+    types,
+    fxCalls: (expression.match(/\.FX\(/g) ?? []).length,
+    note: effectNotes(patch)[0],
+  }
+}
+export async function verifyReviewForms() {
+  const results = []
+  for (const call of [
+    '.coarse(4).coarse(1)',
+    '.transient(.5).transient(0)',
+    '.phaserdepth(.3).phaserdepth(.75)',
+  ]) {
+    const type = call.startsWith('.coarse')
+      ? 'lofi'
+      : call.startsWith('.transient')
+        ? 'comp'
+        : 'phaser'
+    results.push(await verifySoundForm(-1, { type, expression: 'note("c3*2").s("sine")' + call }))
+  }
+  results.push(await verifySoundForm(-1, { type: 'drive', expression: 's("bd*2").soft()' }))
+  return results
+}
+export async function verifySharedOperatorSave() {
+  const { connect, placeModule, setLook, starterPatch } = await import('../src/rack/model.ts')
+  const { editDocument } = await import('../src/workspace/document.ts')
+  document.querySelector('.topbar .play[aria-label=Stop]')?.click()
+  await until(() => document.querySelector('.transport-status')?.textContent === 'Ready')
+  let patch = starterPatch()
+  for (const [i, type] of ['seq', 'osc', 'seq', 'osc', 'fmop'].entries())
+    patch = placeModule(patch, type, i + 1)
+  for (const channel of [1, 2]) {
+    patch = connect(
+      patch,
+      { module: `seq${channel}`, jack: 'note' },
+      { module: `osc${channel}`, jack: 'note' },
+    )
+    patch = connect(
+      patch,
+      { module: 'fmop1', jack: 'out' },
+      { module: `osc${channel}`, jack: 'fm' },
+    )
+    patch = connect(
+      patch,
+      { module: `osc${channel}`, jack: 'out' },
+      { module: 'mix1', jack: `in${channel}` },
+    )
+  }
+  const source = generate(patch),
+    doc = read('// preserve sharing\n' + source)
+  const edited = editDocument(doc, setLook(doc.patch, 'osc1', 'vintage'))
+  await load(edited.source)
+  assert(
+    document.querySelectorAll('[data-module="fmop1"]').length === 1,
+    'Shared operator rendered once',
+  )
+  assert(
+    document.querySelector('[data-module="osc1"]').classList.contains('look-vintage'),
+    'Saved oscillator look',
+  )
+  assert(editorSource() === edited.source, 'Shared operator source preserved')
+  return {
+    operators: 1,
+    look: 'vintage',
+    savedIdentity: JSON.stringify(read(edited.source).patch) === JSON.stringify(edited.patch),
+    sourceExact: true,
   }
 }

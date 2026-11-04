@@ -1786,6 +1786,16 @@ export function paletteModules(category: PaletteCategory, query: string): Module
 
 /** superdough 1.3.0 per-voice stage order. Bindings select membership, including future modules. */
 export const VOICE_EFFECT_ORDER: Readonly<Record<string, number>> = {
+  stretch: -2,
+  transient: -1,
+  soft: 8,
+  hard: 8,
+  cubic: 8,
+  diode: 8,
+  asym: 8,
+  sinefold: 8,
+  chebyshev: 8,
+  fold: 8,
   lpf: 1,
   hpf: 2,
   bpf: 3,

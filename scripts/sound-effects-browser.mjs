@@ -39,8 +39,29 @@ try {
     results.forms.push(result)
     process.stdout.write(`PASS ${i} ${result.type} ${result.rms}\n`)
   }
+  results.ordered = []
+  for (const types of [
+    ['drive', 'drive'],
+    ['folder', 'lofi'],
+    ['lofi', 'folder'],
+    ['comp', 'vcf'],
+    ['pan', 'shift'],
+  ])
+    results.ordered.push(
+      await page.evaluate(
+        async (types) =>
+          (await import('/scripts/sound-effects-check.mjs')).verifyOrderedSound(types),
+        types,
+      ),
+    )
+  results.reviewForms = await page.evaluate(async () =>
+    (await import('/scripts/sound-effects-check.mjs')).verifyReviewForms(),
+  )
   await page.evaluate(async () =>
     (await import('/scripts/sound-effects-check.mjs')).finishSoundProof(),
+  )
+  results.sharedFM = await page.evaluate(async () =>
+    (await import('/scripts/sound-effects-check.mjs')).verifySharedOperatorSave(),
   )
   results.panCV = []
   for (const mode of ['SMOOTH', 'STEP', 'ENV', 'CV SEQ'])

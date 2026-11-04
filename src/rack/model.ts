@@ -1,8 +1,8 @@
-import { planEffects } from '../codegen/effects'
 import { effectRank } from '../modules/effects'
+import { activeEffectRanks, planEffects } from '../codegen/effects'
 import { generate } from '../codegen/generate'
 import { graph, isSteps, requireNode } from '../codegen/graph'
-import { getModuleSpec } from '../modules/catalog'
+import { getModuleSpec, VOICE_EFFECT_ORDER } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { JackSignal, KnobControl } from '../modules/types'
 import type { Cable, ControlValue, JackRef, Patch, PlacedModule } from '../patch/types'
@@ -325,21 +325,24 @@ export function effectNotes(patch: Patch): string[] {
         .filter((path) => path.length > 0)
         .map((path) => {
           const stages = path.filter((n) => inline.has(n.module.id) || n.module.fx === true)
-          const native = path
-            .filter((n) => !stages.includes(n))
-            .sort((a, b) => (effectRank(a.module) ?? 0) - (effectRank(b.module) ?? 0))
+          const native = path.filter((n) => !stages.includes(n))
           const label = (node: (typeof path)[number]) => `${node.spec.name} (${node.module.id})`
           const groups = new Map<number, typeof native>()
           for (const node of native) {
-            const rank = effectRank(node.module) ?? 0
-            groups.set(rank, [...(groups.get(rank) ?? []), node])
+            for (const rank of activeEffectRanks(node))
+              groups.set(rank, [...(groups.get(rank) ?? []), node])
           }
-          const nativeLabels = [...groups.values()].map((group) => {
-            const first = group[0]
-            if (!first) return ''
-            if (group.length === 1) return label(first)
-            return `${[...new Set(group.map((n) => n.spec.name))].join('/')} (${group.map((n) => n.module.id).join(', ')}) — later native setters override matching controls`
-          })
+          const nativeLabels = [...groups.entries()]
+            .sort(([a], [b]) => a - b)
+            .map(([rank, group]) => {
+              const first = group[0]
+              if (!first) return ''
+              if (group.length === 1)
+                return activeEffectRanks(first).length > 1
+                  ? `${label(first)} [${Object.entries(VOICE_EFFECT_ORDER).find(([, value]) => value === rank)?.[0]}]`
+                  : label(first)
+              return `${[...new Set(group.map((n) => n.spec.name))].join('/')} (${group.map((n) => n.module.id).join(', ')}) — later native setters override matching controls`
+            })
           return `You hear: ${[...stages.map(label), ...nativeLabels].join(' → ')}. ${stages.length ? 'FX stages run in cable order; inline DELAY/REVERB keep their tails per note.' : 'Native effects use the fixed voice chain; DELAY/REVERB are orbit sends.'}`
         }),
     ),
