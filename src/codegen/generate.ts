@@ -1,3 +1,4 @@
+import { packSetup } from '../samples/packs'
 import { parse, tokenizer } from 'acorn'
 import { planEffects } from './effects'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
@@ -117,6 +118,7 @@ export function generateDocument(
   const nodes = graph(patch)
   const { inline: inlineEffects } = planEffects(nodes)
   const functions: GeneratedDocument['functions'] = {}
+  const cartridges = packSetup(patch.cartridges ?? [])
   const prelude = patch.prelude ?? ''
   const setup = parseSource(prelude, { lastExpressionIsVoice: false })
   if (setup.scopes.some((scope) => scope.kind !== 'declaration'))
@@ -124,6 +126,7 @@ export function generateDocument(
   const layout: RackLayout = {
     version: 1,
     ...(patch.name === undefined ? {} : { name: patch.name }),
+    ...(patch.cartridges === undefined ? {} : { cartridges: patch.cartridges }),
     scopes: setup.scopes.map((scope) => scope.descriptor),
     ...(patch.prelude === undefined ? {} : { prelude }),
     modules: patch.modules.map((module) => ({ ...module, bindings: [] })),
@@ -694,7 +697,8 @@ export function generateDocument(
 
   const source = out ? input(out) : undefined
   const voices = source ? emit(source) : []
-  const lines: string[] = prelude ? [`${prelude}\n`] : []
+  const lines: string[] = cartridges ? [cartridges.trimEnd()] : []
+  if (prelude) lines.push(`${prelude}\n`)
   const ranges: GeneratedDocument['ranges'] = {}
   function write(expression: CodeExpression, prefix = '') {
     const offset = lines.join('\n').length + (lines.length ? 1 : 0) + prefix.length

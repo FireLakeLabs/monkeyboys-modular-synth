@@ -73,6 +73,10 @@ export async function stop() {
   if (state.stop === 'pending') await new Promise(resolve => { state.releaseStop = resolve });
 }
 export async function setVolume() {}
+const samplePacks = [];
+export const getSamplePacks = () => samplePacks;
+export const getSampleWarnings = () => samplePacks;
+export const subscribeSamplePacks = () => () => {};
 export const getResourceStatus = () => 'unknown';
 export const subscribe = () => () => {};
 `
@@ -395,11 +399,10 @@ try {
   )
   const saved = await sourceText(audio)
   await audio.getByRole('button', { name: 'Play', exact: true }).click()
-  await waitStatus(audio, 'Audio error')
-  assert.equal(await sourceText(audio), saved)
-  failManifest = false
-  await audio.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(audio, 'Playing')
+  assert.equal(await sourceText(audio), saved)
+  await audio.locator('.cartridge-error').first().waitFor()
+  failManifest = false
   async function rms() {
     return audio.evaluate(async () => {
       let sum = 0,
@@ -460,7 +463,7 @@ try {
   assert.equal(results.events.afterStop, triggersAtStop)
   pass(
     'engine',
-    'fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails',
+    'fresh-context real manifest failure keeps unrelated synth playing and retains source; PCM continues through syntax error and ceases after Stop/tails',
   )
   await real.close()
 
@@ -583,7 +586,13 @@ try {
   const hungDraft = await sourceText(hang)
   const hungDownload = hang.waitForEvent('download')
   await hang.getByRole('button', { name: 'Export', exact: true }).click()
-  assert.equal(await readFile(await (await hungDownload).path(), 'utf8'), hungDraft)
+  assert.equal(
+    await readFile(await (await hungDownload).path(), 'utf8'),
+    await hang.evaluate(
+      async (text) => (await import('/scripts/editor-browser.mjs')).expectedExport(text),
+      hungDraft,
+    ),
+  )
   assert.equal(await status(hang).textContent(), 'Ready')
   await code(hang, '$: note("c3").s("sine")\n')
   await hang.getByRole('button', { name: 'Play', exact: true }).click()

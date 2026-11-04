@@ -111,3 +111,12 @@ Stop plus release time. Physical speakers/headphones were **not heard**; no
 subjective or cross-device audible-continuity claim is made. The browser suite
 remains separate from the deterministic shared gate because it needs Chromium
 and external sample resources.
+
+## Cartridge manifest failures (#137)
+
+The [cartridge adapter](cartridges.md#engine-api-for-138) now catches and reports
+individual manifest failures without rejecting initialization or unrelated
+voices. Its per-pack registration snapshots supply the bay LEDs and inventory;
+the aggregate diagnostic can still report a failure. This supersedes the older
+all-or-nothing factory-prebake behavior above. Late sample decode/output/query
+logs retain the existing Stop/recovery contract and uncertain attribution.

@@ -1,3 +1,5 @@
+import { FACTORY_PACKS, manifestUrl, packKey, type SamplePack } from '../samples/packs'
+import { sampleInventory, type SampleSound } from '../samples/manifest'
 import { read } from '../reader'
 import { activityPlan, type GridStep } from './activity'
 import { sourceLocations } from './sourceLocations'
@@ -12,22 +14,11 @@ export interface SourceFeedback {
 /** Browser audio and Strudel evaluation stay behind this adapter. */
 type StrudelWeb = typeof import('@strudel/web')
 
-// Pin manifests and audio bases separately: upstream manifests can contain moving _base URLs.
-const SAMPLE_SOURCES = [
-  {
-    map: 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json',
-    base: 'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/',
-  },
-  {
-    map: 'https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json',
-    base: 'https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/',
-  },
-] as const
-
 export type ResourceStatus = 'unknown' | 'loading' | 'registered' | 'failed'
 export type EngineEvent =
   | { type: 'resources'; status: ResourceStatus }
   | { type: 'failure'; message: string }
+  | { type: 'sample-packs' }
   | { type: 'activity'; modules: string[]; steps: GridStep[] }
   | { type: 'activity-clear' }
 
@@ -45,6 +36,89 @@ function resourceStatus(status: ResourceStatus) {
   listeners.forEach((listener) => listener({ type: 'resources', status }))
 }
 
+/** Registered means manifest registration, never decoded/audio readiness. */
+export interface SamplePackResource {
+  key: string
+  pack: SamplePack
+  status: ResourceStatus
+  sounds: readonly SampleSound[]
+  base: string | null
+  names: readonly string[]
+  sampleCount: number | null
+  error: string | null
+}
+let samplePacks: readonly SamplePackResource[] = []
+let sampleWarnings: readonly string[] = []
+let failedManifest = false
+export const getSampleWarnings = () => sampleWarnings
+export const getSamplePacks = () => samplePacks
+export function subscribeSamplePacks(listener: () => void): () => void {
+  return subscribe((event) => {
+    if (event.type === 'sample-packs') listener()
+  })
+}
+function publishPack(resource: SamplePackResource) {
+  samplePacks = [...samplePacks.filter((pack) => pack.key !== resource.key), resource]
+  listeners.forEach((listener) => listener({ type: 'sample-packs' }))
+}
+
+/** Recover a single manifest failure without rejecting the whole pattern evaluation. */
+async function registerPack(
+  strudel: StrudelWeb,
+  source: string | Record<string, unknown>,
+  base?: string,
+) {
+  const operation = evaluating
+  const pack: SamplePack = {
+    source: typeof source === 'string' ? source : `inline:${JSON.stringify(source)}`,
+    ...(base === undefined ? {} : { base }),
+  }
+  const key = packKey(pack)
+  const resource = { key, pack, names: [], sounds: [], base: null, sampleCount: null, error: null }
+  publishPack({ ...resource, status: 'loading' })
+  try {
+    const url = typeof source === 'string' ? manifestUrl(source) : undefined
+    if (typeof source === 'string' && !url) {
+      // Other installed sampler prefixes stay executable and source-owned; inventory is unknown.
+      await strudel.samples(source, base)
+      publishPack({ ...resource, status: 'registered' })
+      return
+    }
+    let map: unknown = source
+    if (url) {
+      const response = await fetch(url)
+      if (!response.ok) throw new Error(`HTTP ${response.status} loading ${url}`)
+      map = await response.json()
+    }
+    const inventory = sampleInventory(map)
+    // Inventory validation establishes an object, but leaves sampler-owned bank semantics intact.
+    if (!map || typeof map !== 'object' || Array.isArray(map))
+      throw new Error('Invalid sample manifest')
+    const manifest = Object.fromEntries(Object.entries(map))
+    const resolvedBase =
+      typeof manifest._base === 'string' ? manifest._base : url ? new URL('.', url).href : undefined
+    await strudel.samples(manifest, base || resolvedBase)
+    publishPack({
+      ...resource,
+      ...inventory,
+      base: base || resolvedBase || null,
+      status: 'registered',
+    })
+  } catch (failure) {
+    const error = failure instanceof Error ? failure.message : String(failure)
+    if (operation) operation.failedManifest = true
+    publishPack({ ...resource, status: 'failed', error })
+    resourceStatus('failed')
+  }
+}
+
+function failedFactoryManifest(): boolean {
+  return samplePacks.some(
+    (resource) =>
+      resource.status === 'failed' && FACTORY_PACKS.some((pack) => packKey(pack) === resource.key),
+  )
+}
+
 let ready: Promise<StrudelWeb> | null = null
 let initialized: StrudelWeb | null = null
 let pending: Promise<void> = Promise.resolve()
@@ -57,6 +131,7 @@ let cancelActive: (() => void) | undefined
 let evaluating:
   | {
       epoch: number
+      failedManifest: boolean
       offline?: boolean
       activity: (hap: unknown) => string[]
       steps: (hap: unknown) => GridStep[]
@@ -143,6 +218,16 @@ function observeLogs() {
     // Evaluation errors belong to the submitted revision and reject play() instead.
     if (message.startsWith('[eval]')) return
     if (('type' in detail && detail.type === 'error') || /^\[[^\]]+\] error:/.test(message)) {
+      if (failedManifest && /sound .+ not found! Is it loaded\?/.test(message)) {
+        // A failed manifest cannot name its unavailable sounds. Report the missing voice
+        // without inventing pack attribution or stopping voices whose resources did load.
+        if (!sampleWarnings.includes(message)) {
+          sampleWarnings = [...sampleWarnings, message]
+          listeners.forEach((listener) => listener({ type: 'sample-packs' }))
+        }
+        resourceStatus('failed')
+        return
+      }
       clearActivity()
       resourceStatus('failed')
       if (bouncing) {
@@ -171,15 +256,20 @@ function load(): Promise<StrudelWeb> {
             }
           },
           prebake: () =>
-            Promise.all(SAMPLE_SOURCES.map(({ map, base }) => strudel.samples(map, base))),
+            Promise.all(
+              FACTORY_PACKS.map(({ source, base }) => registerPack(strudel, source, base)),
+            ),
           onEvalError: (error) => {
             throw error
           },
           // The hook runs immediately before scheduler.setPattern in core 1.2.6.
           editPattern: (pattern) => {
             if (!evaluating || evaluating.epoch !== epoch) throw cancelled()
+            if (!evaluating.offline && !allowed) throw cancelled()
+            // The previous pattern keeps scheduling while setup awaits a manifest.
+            // Adopt its replacement's resource policy only at scheduler installation.
+            failedManifest = evaluating.failedManifest
             if (evaluating.offline) return pattern
-            if (!allowed) throw cancelled()
             const operation = evaluating
             const current = operation.epoch
             // start() can yield after installing the pattern but before its first tick.
@@ -204,10 +294,13 @@ function load(): Promise<StrudelWeb> {
             if (started && !allowed) strudel.hush()
           },
         })
+        await strudel.evalScope({ samples: (source, base) => registerPack(strudel, source, base) })
         initialized = strudel
         // Lazy import misses initStrudel's first-mousedown listener.
         await strudel.initAudio()
-        resourceStatus('registered')
+        resourceStatus(
+          samplePacks.some((pack) => pack.status === 'failed') ? 'failed' : 'registered',
+        )
         return strudel
       })
       .catch((error: unknown) => {
@@ -294,6 +387,7 @@ export function play(
       allowed = true
       const operation = {
         epoch: current,
+        failedManifest: failedFactoryManifest(),
         activity: activity.modules,
         steps: activity.steps,
         activityRevision: visualRevision,
@@ -359,6 +453,7 @@ export async function bounce(
       checkEpoch(current)
       const operation = {
         epoch: current,
+        failedManifest: failedFactoryManifest(),
         offline: true,
         activity: () => [],
         steps: () => [],

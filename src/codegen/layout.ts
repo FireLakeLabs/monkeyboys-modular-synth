@@ -1,3 +1,4 @@
+import type { SamplePack } from '../samples/packs'
 import { parse, type Expression } from 'acorn'
 import { chain, nestedScope, type ParsedScope } from '../reader/syntax'
 import type { RailHp } from '../patch/layout'
@@ -30,6 +31,7 @@ export interface RackLayout {
   /** Accepted executable source for source-owned files; never another rack block. */
   source?: string
   prelude?: string
+  cartridges?: SamplePack[]
   version: 1
   scopes: Scope[]
   modules: (PlacedModule & { bindings: Binding[] })[]

@@ -333,3 +333,15 @@ same. Lambda source receives teal ink while CODE retains its dashed underline.
 Widths stay catalog-owned and cable endpoints follow measured live jacks.
 Connections list entries include “function λ”, keeping their selection/removal
 path available when cables are faded. See [acceptance evidence](function-loops-verification.md).
+
+## Cartridge rail (#137)
+
+The bay sits above the rack toolbar and scrolls its cartridge row horizontally.
+Each card shows pack name, source, branch/pin, file count and a textual status
+beside its LED. Counts/status are unknown before registration. Factory and
+source-owned cards have no Eject action. Bay-owned ejection uses an inline
+confirmation with Cancel when sample modules or opaque CODE may depend on it.
+Seating takes a GitHub shortcut or manifest URL through a labeled form. The bay
+shares the code/rack draft lock and accepted-document history. It never changes
+module widths or cable geometry. Short panes retain a usable minimum case height
+and scroll the rack pane. See the [source and engine contract](cartridges.md).

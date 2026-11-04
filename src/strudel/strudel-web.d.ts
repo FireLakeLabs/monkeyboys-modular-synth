@@ -64,6 +64,7 @@ declare module '@strudel/web' {
   /** Stops scheduling; existing notes and effect tails can ring out. */
   export function hush(): void
   /** Registers a sample source, e.g. 'github:tidalcycles/dirt-samples'. */
+  export function evalScope(scope: { samples: typeof samples }): Promise<unknown>
   export function samples(
     source: string | Record<string, unknown>,
     baseUrl?: string,

@@ -1,3 +1,4 @@
+import { expectedExport } from './editor-browser.mjs'
 // Import from the Vite dev server in the harness browser; no audio is started.
 import { editorSource, replaceSource } from './editor-browser.mjs'
 import { libraryPatches } from '../src/library/catalog.ts'
@@ -85,7 +86,7 @@ export async function verifyPatchNames() {
   assert(editorSource() === saved, 'Escape committed a rename')
   const download = await exported()
   assert(download.filename === 'Café - lead ☀.strudel', 'Wrong export filename')
-  assert(download.source === saved, 'Export changed saved source')
+  assert(download.source === expectedExport(saved), 'Export changed saved source')
   checks.push('Enter, Escape, Undo/Redo and sanitized Unicode export retain exact saved source')
 
   await rename('Other patch', null)

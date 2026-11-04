@@ -1,3 +1,4 @@
+import type { SamplePack } from '../samples/packs'
 import type { RailHp } from './layout'
 import type { LookId } from '../modules/looks'
 
@@ -54,6 +55,8 @@ export interface Patch {
   names: Record<string, string>
   /** Opaque setup statements retained by an explicit rack conversion. */
   prelude?: string
+  /** Bay-owned setup, proven against executable source before restoration. */
+  cartridges?: SamplePack[]
   /** Optional saved rail count, including empty rows; old files derive it from modules. */
   rows?: number
   /** Rail width in HP; older files default to 64. */

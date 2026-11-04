@@ -268,3 +268,16 @@ saved rack identity and engine events have independent checks. Imported loop
 literal/layout edits preserve source; imported loop rewiring uses the existing
 explicit Make rack-editable flow. See [the contract](translation-rules.md#function-loops-135)
 and [verification](function-loops-verification.md).
+
+## Sample cartridge bay (#137, decided 3 November 2026)
+
+The bay owns setup it writes: seat adds a `samples()` call and eject removes it,
+with confirmation when modules may still use its sounds. Other imported setup
+stays source-owned unless saved metadata and executable source prove ownership.
+Factory cartridges always stay seated. Readable Copy/Export/Open in Strudel write
+their pinned manifests and audio bases explicitly, without duplicating existing
+exact calls; factories precede user packs so overrides preserve their sound.
+User GitHub shortcuts keep following their branch and show it on the label.
+A failed manifest is reported per cartridge without stopping unrelated voices;
+registered manifests do not claim decoded audio readiness. See the
+[format and resource API](cartridges.md), including raw recovery export behavior.

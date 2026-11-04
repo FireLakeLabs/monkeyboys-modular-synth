@@ -112,6 +112,12 @@ export function parseSource(
       if (
         expression.type === 'CallExpression' &&
         expression.callee.type === 'Identifier' &&
+        expression.callee.name === 'samples'
+      )
+        continue
+      if (
+        expression.type === 'CallExpression' &&
+        expression.callee.type === 'Identifier' &&
         OUT.strudel.includes(expression.callee.name)
       )
         add(expression, 'tempo')
