@@ -109,7 +109,7 @@ Each look is a set of layout rules plus tokens applied to a module’s control l
 | Look            | Panel                                                                                                                                                | Name type                                                                   | Knobs                                                | Jacks                                             | Layout rule                                                                                   |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | **Powder coat** | Painted in the category’s dark colour (sound `#9A4F22`, shape `#8E3457`, mod `#2B567F`, fx `#5A3E8F`, pattern `#7A6512`, util `#474C55`), fine grain | Barlow Condensed 700, 26 px, off-white                                      | Black with off-white indicator and printed tick ring | Silver nut; outputs labelled on an off-white chip | Jacks along the bottom; printed signal-flow line above them                                   |
-| **Instrument**  | Brushed aluminium                                                                                                                                    | Barlow Condensed 700 on a black band, category-colour status light          | Knurled with a dark cap, tick ring                   | Silver nut; outputs on a black chip               | Jacks along the bottom inside an outlined patch box; dark recessed display in category colour |
+| **Instrument**  | Brushed aluminium                                                                                                                                    | Barlow Condensed 700 on a category-colour band with dark text, status light | Knurled with a dark cap, tick ring                   | Silver nut; outputs on a black chip               | Jacks along the bottom inside an outlined patch box; dark recessed display in category colour |
 | **Vintage lab** | Matte black, grain                                                                                                                                   | Barlow Condensed 600, letter-spaced, centred, off-white with a rule beneath | Chrome skirt, black cap                              | Ring coloured by signal type                      | **Jacks along the top**, under the name; controls below                                       |
 | **Learner**     | Warm white, 14 px corners, 2 px dark outline, offset shadow                                                                                          | Fredoka 600, lower case                                                     | Category-coloured, outlined, white pointer dot       | Ring coloured by signal type                      | Jacks along the bottom; rounded white display                                                 |
 
@@ -185,3 +185,29 @@ receive no invented playhead. Reduced motion replaces moving cell flashes with
 a steady grid outline after its first sounding event. Stop, playback replacement,
 surfaced errors and motion changes clear the old feedback. This affects neither
 saved source nor rack geometry. See the [browser evidence](feedback-verification.md#module-menu-and-step-playheads-89-90).
+
+## Rack visual hierarchy (#85, #86, #96, #88)
+
+The #58 decision keeps new Hardware modules in Instrument and gives their header
+bands the existing category colours; Powder coat remains available. Band text
+uses dark ink. Modules with no graph path to OUT dim their panel surface and
+Instrument band, retaining contrasting labels and controls. Their accessible
+module names add “not connected to OUT”. Reconnecting a path brightens them;
+this describes routing, independently of transport or emitted source ranges.
+The badge beneath the panel shows only its ID, avoiding status text wrapping over
+the jack labels.
+
+Signal type has a shape as well as its unchanged colour: pattern cables are
+dotted and jack centers square; audio cables are solid and centers circular;
+mod cables are dashed and centers diamond-shaped. These marks remain inside
+each look's outer jack geometry. Connected passthrough jacks inherit the upstream
+signal; unresolved jacks have a dotted circular center. Jack accessible names
+include the signal type. Cable warnings retain their text and mark the plug
+collar, leaving the signal stroke pattern intact. Cables have no flow animation.
+
+Hovering a panel fades unrelated cables, taking precedence over the selected
+module; leaving restores the selection's cable emphasis. **Dim cables** in the
+rack toolbar fades all cables. Faded cables allow pointer input through to
+controls; the Connections list still selects them for removal or repatching.
+The toggle and hover/selection emphasis are local view state and do not write
+source or rack metadata. See [browser and contrast evidence](rack-visuals-verification.md).

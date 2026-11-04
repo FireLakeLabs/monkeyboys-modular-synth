@@ -2,6 +2,30 @@
 .module-panel {
   --panel-ink: #ecece9;
 }
+.look-instrument .module-header {
+  background: var(--category);
+  color: #181b20;
+}
+.look-instrument .module-header small {
+  color: inherit;
+}
+/* Positioned panel content paints above this first child. Keep panels out of
+   stacking contexts so their jacks can stay above the cable SVG. */
+.module-panel.inactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #090a0c40;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.module-panel.inactive {
+  box-shadow: none;
+}
+.look-instrument.inactive .module-header {
+  background: color-mix(in srgb, var(--category) 30%, #15171b);
+  color: #e4e6ea;
+}
 .cat-pattern {
   --paint: #7a6512;
 }
@@ -24,9 +48,11 @@
   order: 0;
 }
 .module-panel .module-controls {
+  position: relative;
   order: 2;
 }
 .module-panel .patch-box {
+  position: relative;
   order: 3;
 }
 .module-panel[data-jacks='top'] .patch-box {
@@ -96,6 +122,9 @@
   font-family: 'Fredoka', sans-serif;
   text-transform: lowercase;
   letter-spacing: 0;
+}
+.look-learner.inactive .module-header small {
+  opacity: 1;
 }
 .look-learner .knob {
   background: var(--category);
@@ -238,6 +267,26 @@
 .look-bare .patch-box {
   border-color: #b99e3b;
 }
+/* Signal marks stay independent of a look's outer jack geometry. */
+.jack::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid #f4f4f0;
+  background: #12161a;
+  pointer-events: none;
+}
+.jack.signal-audio::after,
+.jack.signal-any::after {
+  border-radius: 50%;
+}
+.jack.signal-mod::after {
+  inset: 3px;
+  transform: rotate(45deg);
+}
+.jack.signal-any::after {
+  border-style: dotted;
+}
 .module-menu {
   margin: 0;
   position: fixed;
@@ -344,9 +393,6 @@
   opacity: 0;
   background: var(--category);
   box-shadow: 0 0 9px var(--category);
-}
-.family-alien {
-  isolation: isolate;
 }
 @media (prefers-reduced-motion: reduce) {
   .activity-glow {

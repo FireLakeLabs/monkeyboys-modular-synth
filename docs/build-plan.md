@@ -77,6 +77,12 @@ Issues #89 and #90 polish the module menu and add scheduled-event SEQ/DRUMS grid
 feedback, including steady reduced-motion outlines. See the [contract](design.md#module-menu-and-grid-activity-89-90)
 and [separate browser proof](feedback-verification.md#module-menu-and-step-playheads-89-90).
 
+Issues #85, #86, #96 and #88 add Instrument category bands under the #58
+decision, readable dimmed panels for modules without a path to OUT, signal
+stroke/jack markings and hover/selection/global cable fading. See the
+[design contract](design.md#rack-visual-hierarchy-85-86-96-88) and
+[browser acceptance](rack-visuals-verification.md).
+
 ## Built-in patch library
 
 Issues #61, #83, #93, #71 and #87 refine replacement, placement, keyboard file

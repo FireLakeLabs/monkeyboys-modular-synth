@@ -170,6 +170,9 @@ export function Rack({
   const [hintPoint, setHintPoint] = useState<Point | null>(null)
   const [replacement, setReplacement] = useState<JackRef | null>(null)
   const [selectedCable, setSelectedCable] = useState<string | null>(null)
+  const [hoveredModule, setHoveredModule] = useState<string | null>(null)
+  const [dimCables, setDimCables] = useState(false)
+  const cableFocus = hoveredModule ?? selected
   const [placement, setPlacement] = useState<Placement | null>(null)
   const [ghost, setGhost] = useState<{ row: number; hp: number } | null>(null)
   const [message, setMessage] = useState(
@@ -400,6 +403,13 @@ export function Rack({
             RACK <small>{patch.modules.length} modules</small>
           </h2>
           <div className="rack-zoom">
+            <button
+              type="button"
+              aria-pressed={dimCables}
+              onClick={() => setDimCables((value) => !value)}
+            >
+              Dim cables
+            </button>
             <button type="button" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>
               Fit rack
             </button>
@@ -476,6 +486,10 @@ export function Rack({
               if (ghost) place(ghost.row, ghost.hp)
             }}
             onPointerMove={(event) => {
+              const panel = document
+                .elementsFromPoint(event.clientX, event.clientY)
+                .find((element) => element.matches('[data-module]'))
+              setHoveredModule(panel?.getAttribute('data-module') ?? null)
               if (wire && surface.current) {
                 const gesture = wireGesture.current
                 if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 4)
@@ -487,6 +501,7 @@ export function Rack({
                 })
               }
             }}
+            onPointerLeave={() => setHoveredModule(null)}
             onPointerUp={(event) => {
               if (wire && event.target instanceof Element && !event.target.closest('[data-jack]'))
                 cancel()
@@ -516,7 +531,7 @@ export function Rack({
               return (
                 <section
                   key={m.id}
-                  aria-label={`${spec.name} ${m.id}`}
+                  aria-label={`${spec.name} ${m.id}${!routed.has(m.id) ? ' · not connected to OUT' : ''}`}
                   data-jacks={LOOK_LAYOUT[m.look].jacks}
                   data-module={m.id}
                   data-editing={editingModule === m.id}
@@ -603,13 +618,20 @@ export function Rack({
                       const connected = patch.cables.some(
                         (c) => keyOf(c.from) === keyOf(ref) || keyOf(c.to) === keyOf(ref),
                       )
+                      const incoming = patch.cables.find((c) => keyOf(c.to) === keyOf(ref))
+                      const signal =
+                        state && state.kind !== 'blocked'
+                          ? state.signal
+                          : jack.signal !== 'any'
+                            ? jack.signal
+                            : cableSignal(patch, incoming?.from ?? ref)
                       return (
                         <div key={jack.id} className={`jack-label jack-${jack.direction}`}>
                           <button
                             type="button"
                             data-jack={keyOf(ref)}
-                            className={`jack signal-${state && state.kind !== 'blocked' ? state.signal : jack.signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
-                            aria-label={`${m.id} ${jack.label} ${jack.direction}`}
+                            className={`jack signal-${signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
+                            aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}`}
                             aria-describedby={
                               wire && target && keyOf(target) === keyOf(ref)
                                 ? 'cable-target-hint'
@@ -619,7 +641,7 @@ export function Rack({
                               state?.message ??
                               (wire && jack.direction === 'out'
                                 ? 'Choose an input. Output-to-output is blocked.'
-                                : `${jack.label} · ${jack.signal} ${jack.direction}`)
+                                : `${jack.label} · ${signal === 'any' ? 'unresolved signal' : signal} ${jack.direction}`)
                             }
                             onPointerDown={(event) => {
                               if (jack.direction === 'out' && event.button === 0) {
@@ -707,10 +729,7 @@ export function Rack({
                       )
                     })}
                   </div>
-                  <span className="module-id">
-                    {m.id}
-                    {!routed.has(m.id) ? ' · inactive' : ''}
-                  </span>
+                  <span className="module-id">{m.id}</span>
                 </section>
               )
             })}
@@ -738,7 +757,7 @@ export function Rack({
                 return a && b ? (
                   <g
                     key={c.id}
-                    className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''}`}
+                    className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${dimCables || (cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
                   >
                     <path d={curve(a, b)} className="cable-shadow" />
                     <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
