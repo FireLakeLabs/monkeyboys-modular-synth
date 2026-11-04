@@ -182,3 +182,19 @@ new saved-state integration. S5 (pointer geometry) and S6 (sound-source exclusio
 are resolved; S1–S4 remain resolved, with no new findings. Four rounds used
 GPT-6.1 Sol on high effort; usage was not exposed. The diff against integrated
 main before this final evidence note is 44 files (+2,882/−128).
+
+## Final integration with nested steps (#147)
+
+PR #161 landed during the final fetch/push. The branch was rebased onto
+`23401a1`, which includes every other wave-three item. Production changes applied
+without conflicts; the activity-test oracle and browser-suite list retained
+#147's nested-step behavior alongside the loop and opaque-CODE cases. The new
+committed dependency/lockfile was installed with `npm ci` on Node 24.22.2.
+
+Two additional integration tests retain backticks and CRLF during an enclosing
+loop edit and splice a multiline CV SEQ literal inside a function without
+changing its raw line endings. They separately prove exact source, saved rack
+identity and generated events. RATCHET remains a text control; the test does not
+apply #147's notation-tray editing guarantees to it. The final deterministic
+gate passed 1,807 unit tests and 43 guardrails. A fresh-server complete browser
+run includes the added nested-step suite as well as function loops and effects.

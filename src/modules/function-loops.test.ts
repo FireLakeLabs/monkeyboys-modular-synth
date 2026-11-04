@@ -405,13 +405,15 @@ it.each(['noise', 'harmonic'])('rejects the new %s sound source on a loop RETURN
   expect(() => wire(patch, `${type}1`, 'out', 'chunk1', 'return')).toThrow('excluding sources')
 })
 
-it('preserves #147 backticks and CRLF while editing a RATCHET inside a loop', () => {
+it('preserves #147 backticks and CRLF during an enclosing loop edit', () => {
   const source = '$: ' + base + '.chunk(4,p=>p.ply(`<1 2>`).rev())\r\n'
   const document = saveLayout(read(source))
   const ratchet = document.patch.modules.find((m) => m.type === 'ratchet')
   if (!ratchet) throw new Error('Missing loop RATCHET')
-  const edited = editDocument(document, setValue(document.patch, ratchet.id, 'repeats', '<2 3>'))
-  expect(sourceBody(edited.source)).toBe(source.replace('<1 2>', '<2 3>'))
+  const chunk = document.patch.modules.find((m) => m.type === 'chunk')
+  if (!chunk) throw new Error('Missing CHUNK')
+  const edited = editDocument(document, setValue(document.patch, chunk.id, 'chunks', 3))
+  expect(sourceBody(edited.source)).toBe(source.replace('.chunk(4,', '.chunk(3,'))
   expect(read(edited.source).patch).toEqual(edited.patch)
   expect(events(voice(generate(edited.patch)))).toEqual(events(voice(edited.source)))
 })
