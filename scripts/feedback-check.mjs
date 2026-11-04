@@ -201,6 +201,8 @@ try {
   await code(saved)
   pass('unaccepted typing can be undone locally; accepting source checkpoints local history')
 
+  // Accepted undo clears rack selection; establish the selection this check exercises.
+  await page.getByRole('button', { name: 'Select vcf1', exact: true }).click()
   await replaceSource('$: note(')
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',

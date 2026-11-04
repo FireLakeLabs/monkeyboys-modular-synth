@@ -73,6 +73,8 @@ export async function stop() {
   if (state.stop === 'pending') await new Promise(resolve => { state.releaseStop = resolve });
 }
 export async function setVolume() {}
+export async function loadSamplePacks() {}
+export async function auditionSample() { throw new Error('Sample audition unavailable in recording fixture'); }
 const samplePacks = [];
 export const getSamplePacks = () => samplePacks;
 export const getSampleWarnings = () => samplePacks;
@@ -404,7 +406,9 @@ try {
   await audio.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(audio, 'Playing')
   assert.equal(await sourceText(audio), saved)
+  await audio.locator('.cartridge-bay summary').click()
   await audio.locator('.cartridge-error').first().waitFor()
+  assert.match(await audio.locator('.cartridge-bay summary').textContent(), /Pack warning/)
   failManifest = false
   async function rms() {
     return audio.evaluate(async () => {

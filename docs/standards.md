@@ -1,5 +1,12 @@
 # Engineering standards
 
+The [rack layout browser regressions](../tests/browser/rack-layout.spec.mjs) guard
+the cartridge disclosure, usable rack height, and fitted MIX cables: clipped jack
+targets cannot leave cables dangling on other rails. Both checks failed before
+the fixes. Scrolling the output jack back into view restores its cable at the
+measured endpoint, without changing the source. This is part of browser acceptance,
+separate from the deterministic gate; physical listening is not covered.
+
 This is the enforcement inventory. Product behavior remains defined by the
 [decisions](decisions.md), [module spec](module-spec.md), [translation rules](translation-rules.md),
 and [patch format](patch-format.md). Skills supply procedures, not competing

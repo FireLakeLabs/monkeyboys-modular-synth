@@ -177,14 +177,16 @@ try {
   pass('SCOPE reads nonzero per-voice PCM; header tracks the real scheduler cycle')
   const scope = page.locator('[data-module]').filter({ has: page.locator('.scope-display') })
   await scope.getByRole('combobox', { name: 'VIEW', exact: true }).selectOption('spectrum')
-  assert(
-    await page.evaluate(async () => {
+  await page.waitForFunction(
+    async () => {
       const url = performance
         .getEntriesByType('resource')
         .map((r) => r.name)
         .find((n) => n.includes('/src/strudel/engine.ts'))
       return (await import(url)).scopeData(1, 'spectrum')?.some(Number.isFinite)
-    }),
+    },
+    undefined,
+    { timeout: 5000 },
   )
   pass('SCOPE VIEW changes to live spectrum without a source rewrite or playback restart')
   await context.tracing.start({ screenshots: true, snapshots: true })

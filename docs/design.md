@@ -174,7 +174,16 @@ state and changes neither source nor saved rack positions. Cable measurements,
 wire pointers and module placement convert viewport coordinates back to rack
 coordinates. Fit leaves an extra 24 screen pixels below the rails for wrapped
 jack targets. Jacks reserve at least 24 screen pixels, growing their layout boxes
-when zoomed out and wrapping into additional rows as needed.
+when zoomed out and wrapping into additional rows as needed. Cables whose jack
+centres are clipped inside a scrolling patch box are hidden until the jacks
+return into view; their connections and saved positions remain intact.
+
+The cartridge bay starts collapsed, with keyboard-accessible pack controls under
+its disclosure. Pack warnings remain signposted in the summary. The rack frame
+retains at least 430 px of height on desktop even with the bay expanded; short
+workspaces scroll the rack pane instead of shrinking the rails and pinned OUT
+into thumbnails. The mid-width workspace retains its 200 px minimum so the rack
+and code views fit alongside each other.
 
 See the [browser matrix, screenshots and verification limits](rack-feel-verification.md).
 
@@ -358,7 +367,7 @@ follow the existing look/zoom rules. See [acceptance and limits](sound-crate.md)
 
 ## Cartridge rail (#137)
 
-The bay sits above the rack toolbar and scrolls its cartridge row horizontally.
+The collapsible bay sits above the rack toolbar and scrolls its cartridge row horizontally.
 Each card shows pack name, source, branch/pin, file count and a textual status
 beside its LED. Counts/status are unknown before registration. Factory and
 source-owned cards have no Eject action. Bay-owned ejection uses an inline

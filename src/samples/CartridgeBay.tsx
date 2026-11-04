@@ -23,6 +23,12 @@ export function CartridgeBay({
     pack: SamplePack
     users: string[]
   } | null>(null)
+  const entries = cartridges(document)
+  const failedPack = entries.some(
+    ({ pack }) =>
+      pack && resources.find((resource) => resource.key === packKey(pack))?.status === 'failed',
+  )
+  const hasWarning = Boolean(warnings.length || error || failedPack)
   function eject(pack: SamplePack) {
     try {
       install(ejectPack(document, pack))
@@ -33,13 +39,17 @@ export function CartridgeBay({
     }
   }
   return (
-    <section className="cartridge-bay" aria-label="Sample cartridge bay">
-      <div className="cartridge-heading">
+    <details className="cartridge-bay" aria-label="Sample cartridge bay" data-warning={hasWarning}>
+      <summary className="cartridge-heading">
         <h2>CARTRIDGES</h2>
-        <span>Sample packs · manifests, not decoded audio</span>
-      </div>
+        <span>
+          {hasWarning
+            ? 'Pack warning · expand for details'
+            : 'Sample packs · manifests, not decoded audio'}
+        </span>
+      </summary>
       <ul className="cartridges">
-        {cartridges(document).map((entry, index) => {
+        {entries.map((entry, index) => {
           const { pack } = entry
           const resource = pack && resources.find((r) => r.key === packKey(pack))
           const label = pack ? packLabel(pack) : { name: 'samples()', branch: 'computed source' }
@@ -134,6 +144,6 @@ export function CartridgeBay({
           </button>
         </fieldset>
       )}
-    </section>
+    </details>
   )
 }

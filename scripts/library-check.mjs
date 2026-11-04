@@ -427,7 +427,7 @@ export async function verifyLibraryStopFailure() {
 }
 
 /** #75: drive the actual rack controls, separately from pure graph tests. */
-export async function verifyLibraryRackEditing() {
+export async function verifyLibraryRackEditing(patchIds) {
   const { libraryPatches } = await import('../src/library/catalog.ts')
   const { read } = await import('../src/reader/index.ts')
   const { generate } = await import('../src/codegen/generate.ts')
@@ -461,7 +461,8 @@ export async function verifyLibraryRackEditing() {
     return rect
   }
   const results = []
-  for (const entry of libraryPatches().filter((entry) => entry.id !== 'switch-angel-trance-demo')) {
+  const entries = libraryPatches().filter((entry) => !patchIds || patchIds.includes(entry.id))
+  for (const entry of entries.filter((entry) => entry.id !== 'switch-angel-trance-demo')) {
     await load(entry.title)
     assert(sourceBody(source()) === sourceBody(entry.source), `${entry.id}: initial source differs`)
     await choose(entry.title)
@@ -509,7 +510,8 @@ export async function verifyLibraryRackEditing() {
     )
   }
 
-  const showcase = libraryPatches().find((entry) => entry.id === 'switch-angel-trance-demo')
+  const showcase = entries.find((entry) => entry.id === 'switch-angel-trance-demo')
+  if (!showcase) return results
   await load(showcase.title)
   assert(sourceBody(source()) === sourceBody(showcase.source), 'Showcase was rewritten on load')
   await add('VCF')
@@ -602,7 +604,7 @@ export async function verifyOnRampUI() {
     }
   }
   for (const [query, names] of [
-    ['  seQ  ', ['Add SEQ', 'Add DRUMS', 'Add CHORD', 'Add CV SEQ']],
+    ['  seQ  ', ['Add SEQ', 'Add GATES', 'Add DRUMS', 'Add CHORD', 'Add CV SEQ']],
     ['.LPF()', ['Add VCF']],
     ['no-such-module', []],
   ]) {
