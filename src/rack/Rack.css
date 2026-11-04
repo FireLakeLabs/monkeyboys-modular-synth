@@ -50,6 +50,32 @@
   border-radius: 10px;
   background: #090a0c;
 }
+.cable-visibility {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  max-width: 260px;
+}
+.cable-mode-mark {
+  display: inline-block;
+  width: 1em;
+}
+.cable-visibility button[aria-pressed='true'] {
+  background: #f4a462;
+  color: #181b20;
+  border-color: #f4a462;
+}
+.cable-visibility-state {
+  flex-basis: 100%;
+  color: #c2c7cf;
+  overflow-wrap: anywhere;
+}
 .rack-zoom,
 .rack-zoom label {
   display: flex;
