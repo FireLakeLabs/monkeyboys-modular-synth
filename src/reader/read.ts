@@ -1,8 +1,9 @@
-import { tokenizer, type Expression, type Node } from 'acorn'
+import { parseExpressionAt, tokenizer, type Expression, type Node } from 'acorn'
 import { graph } from '../codegen/graph'
 import { generate } from '../codegen/generate'
 import { descriptor, type RackLayout } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
+import { matchControlCall } from '../modules/bindings'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { nextPosition } from '../patch/layout'
@@ -49,9 +50,8 @@ function fits(type: string, id: string, value: number | string): boolean {
   }
 }
 
-function jux(expression: Expression | undefined): string | undefined {
-  if (expression?.type === 'Identifier' && ['rev', 'press'].includes(expression.name))
-    return expression.name
+function transformKey(expression: Expression | undefined): string | undefined {
+  if (expression?.type === 'Identifier') return descriptor(['identifier', expression.name])
   if (
     expression?.type !== 'ArrowFunctionExpression' ||
     expression.params.length !== 1 ||
@@ -68,11 +68,8 @@ function jux(expression: Expression | undefined): string | undefined {
     call?.args.length !== 1
   )
     return undefined
-  return call.name === 'fast' && scalar(call.args[0]) === 2
-    ? 'fast2'
-    : call.name === 'iter' && scalar(call.args[0]) === 4
-      ? 'iter4'
-      : undefined
+  const value = scalar(call.args[0])
+  return value === undefined ? undefined : descriptor([call.name, value])
 }
 
 function project(
@@ -280,15 +277,17 @@ function project(
     depths.set(signal.module.id, uses)
     if (sameDepth) signal.module.values['depth'] = top - base
     else delete signal.module.values['depth']
+    const jack = getModuleSpec(target.type).jacks.find((jack) => jack.cvTarget === control)
+    if (!jack) return false
     target.values[control] = base
-    wire(signal, target, 'cv')
+    wire(signal, target, jack.id)
     // CV values are coupled expressions; no scalar edit is advertised for them.
     bind(
       signal.module,
       scope,
       [index],
       {},
-      { role: 'cv', target: { module: target.id, jack: 'cv', control } },
+      { role: 'cv', target: { module: target.id, jack: jack.id, control } },
     )
     bind(target, scope, [index])
     return true
@@ -436,23 +435,25 @@ function project(
             literal(target, 'level', gain, scope, index + 4)
           }
         }
+        const jack = target && getModuleSpec(target.type).jacks.find((jack) => jack.cvTarget)
         if (
           valid &&
           target &&
-          !patch.cables.some((cable) => cable.to.module === target?.id && cable.to.jack === 'cv')
+          jack?.cvTarget &&
+          !patch.cables.some((cable) => cable.to.module === target?.id && cable.to.jack === jack.id)
         ) {
           const env = add('env')
           envelope.forEach((call, offset) => {
             const id = ids[offset]
             if (id) literal(env, id, call, scope, index + offset)
           })
-          wire(output(env), target, 'cv')
+          wire(output(env), target, jack.id)
           for (const binding of bindings.filter((binding) => binding.module === env.id)) {
             binding.role = 'cv'
             binding.target = {
               module: target.id,
-              jack: 'cv',
-              control: target.type === 'vcf' ? 'cutoff' : 'level',
+              jack: jack.id,
+              control: jack.cvTarget,
             }
           }
           group = target
@@ -503,89 +504,62 @@ function project(
           continue
         }
       }
-      switch (type) {
-        case 'osc':
-          id = call.name === 's' ? 'wave' : 'tune'
-          merge = id === 'tune'
-          break
-        case 'smpl':
-          id = call.name
-          values = { bank: '', speed: 1 }
-          merge = true
-          break
-        case 'drums':
-          if (call.name === 'degradeBy' && group?.type === 'drums') {
-            id = 'drop'
-            merge = true
-          }
-          break
-        case 'vcf': {
-          const mode = call.name.slice(0, 2)
-          id = call.name.endsWith('f')
-            ? 'cutoff'
-            : call.name.endsWith('q')
-              ? 'res'
-              : call.name.endsWith('env')
-                ? 'envAmt'
-                : undefined
-          values = { mode }
-          merge = id !== 'cutoff' && group?.values['mode'] === mode
-          break
-        }
-        case 'vca':
-          id = 'level'
-          break
-        case 'delay':
-          id = (
-            { delay: 'mix', delaytime: 'time', delayfeedback: 'fdbk' } as Record<string, string>
-          )[call.name]
-          merge = call.name !== 'delay'
-          break
-        case 'reverb':
-          id = call.name === 'room' ? 'room' : 'size'
-          merge = call.name !== 'room'
-          break
-        case 'iter':
-          id = 'steps'
-          break
-        case 'jux': {
+      const spec = type ? getModuleSpec(type) : undefined
+      const matched = spec && matchControlCall(spec, name)
+      if (matched) {
+        id = matched.control.id
+        values = { ...spec?.readDefaults, ...matched.values }
+        merge =
+          matched.binding.read === 'merge' &&
+          Object.entries(matched.values).every(([id, value]) => group?.values[id] === value)
+        const form = matched.binding.argument
+        if (form.kind === 'transform') {
           const arg = call.args[0]
+          const key =
+            call.args.length === 1 && arg?.type !== 'SpreadElement' ? transformKey(arg) : undefined
           const right =
-            call.args.length === 1 && arg?.type !== 'SpreadElement' ? jux(arg) : undefined
-          if (right) {
-            group = add('jux', { right })
+            key &&
+            Object.entries(form.expressions).find(
+              ([, text]) =>
+                transformKey(parseExpressionAt(text, 0, { ecmaVersion: 'latest' })) === key,
+            )?.[0]
+          if (right && type) {
+            group = add(type, { ...values, [id]: right })
             wire(upstream, group)
             bind(group, scope, [index])
             upstream = output(group)
             continue
           }
-          break
-        }
-        case 'quant': {
+          id = undefined
+        } else if (form.kind === 'scale') {
           const value = scalar(call.args[0])
           const [writtenRoot, scale, extra] = typeof value === 'string' ? value.split(':') : []
           const root = writtenRoot && writtenRoot.charAt(0).toUpperCase() + writtenRoot.slice(1)
           if (
+            type &&
             call.args.length === 1 &&
             root &&
             scale &&
             !extra &&
-            fits('quant', 'root', root) &&
-            fits('quant', 'scale', scale)
+            fits(type, form.root, root) &&
+            fits(type, id, scale)
           ) {
-            group = add('quant', { root, scale })
+            group = add(type, { ...values, [form.root]: root, [id]: scale })
             wire(upstream, group)
             bind(group, scope, [index])
             upstream = output(group)
             continue
           }
-          break
+          id = undefined
         }
+      } else if (type === 'drums' && call.name === 'degradeBy' && group?.type === 'drums') {
+        id = 'drop'
+        merge = true
       }
       if (type && id) {
         const arg = call.args[0]
         const candidate = scalar(arg)
-        const numericCV = (type === 'vcf' && id === 'cutoff') || type === 'vca'
+        const numericCV = spec?.jacks.some((jack) => jack.cvTarget === id)
         if (
           (candidate !== undefined && call.args.length === 1 && fits(type, id, candidate)) ||
           (numericCV && arg && arg.type !== 'SpreadElement' && candidate === undefined)

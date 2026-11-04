@@ -4,6 +4,36 @@ The sixteen v1 modules. For each: its controls, value ranges and defaults, its j
 
 The machine-readable version of this spec is [`src/modules/catalog.ts`](../src/modules/catalog.ts). The app already consumes it for the module library. **The catalog is the runtime source of truth** and this document describes it; keep the two in step.
 
+## Call bindings (#128)
+
+Knob and switch controls may declare `call` in the catalog. The generator visits
+bound controls in their catalog order; the reader uses the same bindings after
+resolving source/chained context and catalog aliases.
+
+- `method`: a literal call name, or `{ control, names }` selecting a call from
+  another switch (VCF's MODE maps to `lpf`/`hpf`/`bpf`, for example).
+- `argument`: `{ kind: 'number' }`, `{ kind: 'string' }`,
+  `{ kind: 'scale', root: 'root' }` for a quoted tonic/scale pair, or
+  `{ kind: 'transform', expressions }` for JUX's catalog-owned expressions.
+  Scale shares its call with ROOT; MODE selects methods rather than writing a call.
+- Control `omitAt`: the exact number or string at which its call is omitted.
+  Missing `omitAt` means always write. It is independent of the rack default.
+- `read: 'merge'`: attach to the adjacent module of the same type when that
+  control has not been read already; selected method variants must also agree.
+  Otherwise a call starts a new module. Module `readDefaults` records source-only
+  omission defaults (SMPL's empty bank and speed 1).
+- `enabledBy`: omit this companion setting when the named control is at its
+  omission value (DELAY and REVERB bypass).
+- `withEnvelope`: write only with an ENV at the named CV jack. `envelope` places
+  the dedicated ADSR group `before` or `after` this call; filter envelopes use
+  the method selector's value as their prefix.
+
+CV jacks retain `cvTarget`, the bound numeric control ID. Generator and reader
+use that data for LFO scaling, cable endpoints and saved CV ownership. ENV's
+ordered ADSR groups, source/rate notation, mixer traversal, output tempo and CODE
+preservation remain dedicated adapters; these bindings do not change v1 files.
+See [translation details](translation-rules.md#catalog-call-bindings-128).
+
 ## Palette (#79)
 
 The catalog owns `paletteCall`, a representative Strudel expression shown on each

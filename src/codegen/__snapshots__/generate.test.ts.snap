@@ -1,0 +1,99 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CV routing > names shared LFO signals once and scales separately at each destination 1`] = `"a8699e987c1eba9b12da5492f213cbc29dd21f510cc4adc727dda0af35d0931f"`;
+
+exports[`CV routing > names shared LFO signals once and scales separately at each destination 2`] = `"a8699e987c1eba9b12da5492f213cbc29dd21f510cc4adc727dda0af35d0931f"`;
+
+exports[`CV routing > names shared LFO signals once and scales separately at each destination 3`] = `"a8699e987c1eba9b12da5492f213cbc29dd21f510cc4adc727dda0af35d0931f"`;
+
+exports[`CV routing > preserves a trailing CODE comment on a CV signal without swallowing range scaling 1`] = `"c298e81d3995983dee0a1f814fe463f5da4d8ad124106d37bd07b32e9836a85f"`;
+
+exports[`CV routing > routes ENV into bp filter and VCA without a standalone const 1`] = `"f5500913e87bd4ff777fcadee88ba9575d139f7701c8c8a463fb8e337f0c645e"`;
+
+exports[`CV routing > routes ENV into bp filter and VCA without a standalone const 2`] = `"f5500913e87bd4ff777fcadee88ba9575d139f7701c8c8a463fb8e337f0c645e"`;
+
+exports[`CV routing > routes ENV into hp filter and VCA without a standalone const 1`] = `"19e884fba1fb0cfd5c77d1d108b9540db71efbaad9f4520f72db7b8386f16068"`;
+
+exports[`CV routing > routes ENV into hp filter and VCA without a standalone const 2`] = `"19e884fba1fb0cfd5c77d1d108b9540db71efbaad9f4520f72db7b8386f16068"`;
+
+exports[`CV routing > routes ENV into lp filter and VCA without a standalone const 1`] = `"3e0d2537e7d8e4c20e6bf3a2afa7c7fb549d3e4409d0b63f864b2160aed1edcd"`;
+
+exports[`CV routing > routes ENV into lp filter and VCA without a standalone const 2`] = `"3e0d2537e7d8e4c20e6bf3a2afa7c7fb549d3e4409d0b63f864b2160aed1edcd"`;
+
+exports[`CV routing > routes LFO into vca with target units 1`] = `"e6b85ac83f7b54dfbef35830e3eaaecf63de81e9b9aa84ba0a6a6cd3104434e8"`;
+
+exports[`CV routing > routes LFO into vca with target units 2`] = `"5ab0fbc5a9ed606a7b6f672dd8c02f51148530c4963b367d88ed00f6e386e139"`;
+
+exports[`CV routing > routes LFO into vcf with target units 1`] = `"184384f21357e74d24112b2ca5b6e37b672986fd504bdf263547bfc87145159c"`;
+
+exports[`CV routing > routes LFO into vcf with target units 2`] = `"484e5bbb31f67c7e2777b903255b5452a2844d5d90d4445eba10516259e51d55"`;
+
+exports[`mixing and fan-out > expands nested mixer channels with both gains and final branch transforms 1`] = `"eb8682a52827e2e48244d30be5c0cde3a4e4e5661f02ccbe9821a2ea2cb42390"`;
+
+exports[`mixing and fan-out > expands nested mixer channels with both gains and final branch transforms 2`] = `"eb8682a52827e2e48244d30be5c0cde3a4e4e5661f02ccbe9821a2ea2cb42390"`;
+
+exports[`mixing and fan-out > expands nested mixer channels with both gains and final branch transforms 3`] = `"eb8682a52827e2e48244d30be5c0cde3a4e4e5661f02ccbe9821a2ea2cb42390"`;
+
+exports[`mixing and fan-out > names each leaf of a split mixer bus without generating stack() 1`] = `"1b1fb2b1672d106c8f4eeca4871b72c77de26029bb25cfade554233509ee76c2"`;
+
+exports[`mixing and fan-out > orders dependent named outputs before their users, despite reverse rack order 1`] = `"1c1c9df557e8fe1ea6648062c73327f536b8276ec5358fae1b3de7a2be6e3fcf"`;
+
+exports[`mixing and fan-out > orders dependent named outputs before their users, despite reverse rack order 2`] = `"1c1c9df557e8fe1ea6648062c73327f536b8276ec5358fae1b3de7a2be6e3fcf"`;
+
+exports[`mixing and fan-out > orders dependent named outputs before their users, despite reverse rack order 3`] = `"1c1c9df557e8fe1ea6648062c73327f536b8276ec5358fae1b3de7a2be6e3fcf"`;
+
+exports[`mixing and fan-out > orders final voices by channel, regardless of cable/module order; bypass retains orbit allocation 1`] = `"a2caf398a1b48bd53905f69f50e307706d13407523158a38aa6a0868d54a540d"`;
+
+exports[`mixing and fan-out > orders final voices by channel, regardless of cable/module order; bypass retains orbit allocation 2`] = `"3c4ced99531997f31c0b6962e1bf9df4339b51fefdc56cad5c58a57543e23f66"`;
+
+exports[`mixing and fan-out > preserves source-owned orbit routing through multiple named dependencies 1`] = `"a0829252f149bec3ce5448bf7485b988dff06d372abf61176345d74c0d0004c2"`;
+
+exports[`mixing and fan-out > reserves CODE-owned orbit 1 before routing ordinary voices 1`] = `"b8daa75be634733489f6587ba6ea5aec3a83f1a8e94425bddd73365876698e42"`;
+
+exports[`mixing and fan-out > reserves CODE-owned orbit 2 before routing ordinary voices 1`] = `"0ebc700a7bcd18b284999744e3792215400caa825cfb5b5b9209584c7448feb1"`;
+
+exports[`patch → Strudel > compresses repeating drum rows, omits empty rows and writes a sample bank 1`] = `"8e92b8d0e4232615842986a11c3e7321cbd9e6d98d75bf46144fe52b04cbfab4"`;
+
+exports[`patch → Strudel > does not reorder pattern transforms or repeated settings 1`] = `"1c71159e945bd2ecafdcb74ee0ebb4578a29894f955bf6222cc3cfb453acd667"`;
+
+exports[`patch → Strudel > does not reorder pattern transforms or repeated settings 2`] = `"78f9878a40a9ba458ded385bff8fa9bf31accaead64ad4b7b1a3c2accb6ec037"`;
+
+exports[`patch → Strudel > emits one voice in cable order with catalog defaults and dedicated routing 1`] = `"dcb61111635b92054ad06de2a09417b8fbfa70fc4a1309c0ff2fd087aa40c38c"`;
+
+exports[`patch → Strudel > handles all-on, non-repeating and empty grids, plus drop and sample speed 1`] = `"c13b9bbdf96209a17f2281b0766189e6d4e556873228903d46819ff4e1f4659a"`;
+
+exports[`patch → Strudel > handles all-on, non-repeating and empty grids, plus drop and sample speed 2`] = `"db7362c92f55537bc328d46fe0d4850965b10dc4aa2e218b96724b53e6a319b3"`;
+
+exports[`patch → Strudel > handles all-on, non-repeating and empty grids, plus drop and sample speed 3`] = `"031d0a7820c9ac52c10040a6f12f29f943f1506190eccd12046f5929e483a99a"`;
+
+exports[`patch → Strudel > is silent for a starter, an empty patch, or chains that do not reach OUT 1`] = `"df04a2d49a9edfae176c5029da965f3a731492878b8fb1714c032d04f14fe980"`;
+
+exports[`patch → Strudel > is silent for a starter, an empty patch, or chains that do not reach OUT 2`] = `"bab2cb33745df84408145f905ec6bb2284db07fd1f471bc4b08e169c393ac4ae"`;
+
+exports[`patch → Strudel > is silent for a starter, an empty patch, or chains that do not reach OUT 3`] = `"1ef8a63f74b529543dd96a4467890d070a14e3c01a4b789ef1c2ceb8d9a5345b"`;
+
+exports[`patch → Strudel > is silent for a starter, an empty patch, or chains that do not reach OUT 4`] = `"c36d4e7de2686412b87d1c39f4e9e7c4b7bcd764af109781457315b9335361f8"`;
+
+exports[`patch → Strudel > keeps CODE-owned orbit routing and never appends an overriding orbit 1`] = `"6587f357d6462e3732d6d197fbbbbf8cc35cae1d651366be18c71f15e7d4aa91"`;
+
+exports[`patch → Strudel > keeps richer source mini notation in text mode and escapes it as a JS literal 1`] = `"1ce974b2c6264a2ade2dfd7325f5b44a851d998db61ab51bd68346d8f5725e9a"`;
+
+exports[`patch → Strudel > omits only the catalog omission values and rounds numbers to three decimals 1`] = `"0a0e3bb7319318bfc53a74f8852c94c7d26997a44100fef94b80cdf68fc53fe6"`;
+
+exports[`patch → Strudel > omits only the catalog omission values and rounds numbers to three decimals 2`] = `"5f515966ea991772b81fa17edc20a2df73d6cb325961c323344b4d92fcda00ab"`;
+
+exports[`patch → Strudel > omits only the catalog omission values and rounds numbers to three decimals 3`] = `"9193f00ff1d6803936850be9d74e132a6970db5460abc47638160ec8b2cf5a6d"`;
+
+exports[`patch → Strudel > preserves exact CODE fragments, callbacks, comments and complete source expressions 1`] = `"e8cfb2a117fcfa2fe423aca42dfb7e0d4fd4147c17778fefd31a5f517fe3a7a2"`;
+
+exports[`patch → Strudel > preserves exact CODE fragments, callbacks, comments and complete source expressions 2`] = `"56b95f9866b09b6d7b9b2d4122c45e43cde171c8364cc18aa27bc58d0a0f2e4a"`;
+
+exports[`patch → Strudel > writes JUX option fast2 1`] = `"c55c99f31c8a8c01831e4aa2d475fde52e661c6c196546f3b8b2a3a219307766"`;
+
+exports[`patch → Strudel > writes JUX option iter4 1`] = `"31348868737b0c208f356b8349f7af45ac7ac45ca45cb98980d4df7bd3c2c27e"`;
+
+exports[`patch → Strudel > writes JUX option press 1`] = `"eb325afdfdb6071549f4ef28311ffb612d4b09e0859eb9280f88844ab3dacb26"`;
+
+exports[`patch → Strudel > writes JUX option rev 1`] = `"f37ff7294be48c0e086b7719b3801fc7ed3ed1ff588d11ae25dd92f583fa3fcf"`;
+
+exports[`patch → Strudel > writes degree mode, length, rate, quantization and tuning 1`] = `"348a6cd43ab4b84db91809a59bb1286f0c60da5426f3fe664c88200ecf1e725d"`;

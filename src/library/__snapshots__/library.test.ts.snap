@@ -1,0 +1,99 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`built-in patch library > custom-helper: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "25b184dd5d088a7965fe450c804cf35abcb3f228fd40e32ddd75118d864706e5",
+  "projection": "13a40576b93ecf5b67c944030b3c1798dff46080458c5f385375696d7abe5965",
+}
+`;
+
+exports[`built-in patch library > drum-machine: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "344c4df4d9f212b6dbce08553c16f4bec92ff99e1f0893f8499b32ff75b294f5",
+  "projection": "25da160c1be93f14482313b930dfc61104c4fe404e826fed5cb57debc47fd341",
+}
+`;
+
+exports[`built-in patch library > echo-room: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "9c29d216591396533a406520763a8f7a49982e35bbdacfe35c7e68c1995c0390",
+  "projection": "ac910ec84e227b40f01c543bdc6b03707a524c9543c92d7db9b4b8b6a8035acc",
+}
+`;
+
+exports[`built-in patch library > enveloped-synth: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "33c76b1b51e4127cc8fe4c0839f5f1cc8817f0eff71a8ec02d668082ab44985a",
+  "projection": "e0c168564be4a5161b3c8185e6b26bf6524e9f3d6ec72162335a8041cea907bd",
+}
+`;
+
+exports[`built-in patch library > filter-envelope: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "525152980db7e8e00d49b27b51f8bf42ee5c8f01022310dba3525e1712baa53f",
+  "projection": "a5dfae6750e3f18a5632249a5a7d9418001cb4bfc36067016fd420becc8135ac",
+}
+`;
+
+exports[`built-in patch library > first-effects: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "59bd2b92c12fbe33925f7d342f9d92e579058db68d11ed43279d9c05e12ac5ff",
+  "projection": "b12512f33c9697ba8f711c22adf19d94b3eafbe111520b12bc310df9c0b29601",
+}
+`;
+
+exports[`built-in patch library > first-notes: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "5089ead074f16d3ec61740f37d63268eab2ef46c9f411e50c69f46ed401b68a7",
+  "projection": "27f294869d40ae7dcdddd4821d1d72f582e32cbd92e7d29da8c08f8c6fd7b965",
+}
+`;
+
+exports[`built-in patch library > first-sounds: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "1f55706a0e57399db284ba60e813a196fe1f14c3e0b69364c927962a7b573de8",
+  "projection": "1cfdf106a263f8067edf3e7a3fd6c44068d6060c1e609b49006904630327a4c7",
+}
+`;
+
+exports[`built-in patch library > iter-jux: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "ecc14af194999e8bc2c12a9801c62dab8d849bacdfed2da90371bf0651976fa2",
+  "projection": "e1979730f77789b8cc2881fbb13a3b5b9427d0ac10e060151ac512552ca12f32",
+}
+`;
+
+exports[`built-in patch library > layered-sketch: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "a697379f9d172e051a49af375a41fa990445c0aeadcddc73f9d8013a08e7a986",
+  "projection": "58081354914d763be8df9c737548db23923387f98fb110b2d553a33a1de45862",
+}
+`;
+
+exports[`built-in patch library > lfo-sweep: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "f7061880110dfd626a301d7b95c747fa259731244367f7f618c3abccf9314f05",
+  "projection": "d4c9cdfd8285eca18a956b8c22186a50cfdb82481c325b04f10f4dcfc83fcea5",
+}
+`;
+
+exports[`built-in patch library > pattern-effects: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "463ab84e1ba9f3bfd1260bc6af0e9a5190a306548815850bb23043319b8f6020",
+  "projection": "572d3fb098c9a2f48c1783ac1cbc950dc19b3215d1e107892ceb46cc98844148",
+}
+`;
+
+exports[`built-in patch library > quantized-sequence: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "3140b170bebf2feeaad0c0cf5907f4c4e7b15be2364bae61df00989d8f24363e",
+  "projection": "331034c8d0d788704b6c4cff1731ac6a136cc04b75c221517751c8303b32b072",
+}
+`;
+
+exports[`built-in patch library > switch-angel-trance-demo: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "73919d707b3b76e5d5edb4d9697733a4851872616d621fec413d13f461417da1",
+  "projection": "7bfd58bef22fe1aa4d45aae7a34acb7c00eb4f0f81fc9202e57ff2cf8949c6e4",
+}
+`;

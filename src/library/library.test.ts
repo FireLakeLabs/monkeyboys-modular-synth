@@ -126,8 +126,19 @@ describe('built-in patch library', () => {
   }
 
   for (const entry of libraryPatches()) {
-    it(`${entry.id}: preserves exact source and independently restores saved rack state`, () => {
+    it(`${entry.id}: preserves exact source and independently restores saved rack state`, async () => {
       const original = readLibraryPatch(entry)
+      // Frozen before #128, including source ownership and full saved rack state.
+      const digest = async (text: string) => {
+        const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
+        return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join(
+          '',
+        )
+      }
+      expect({
+        generated: await digest(generate(original.patch)),
+        projection: await digest(JSON.stringify(original)),
+      }).toMatchSnapshot()
       expect(generate(original)).toBe(entry.source)
       const out = original.patch.modules.find((m) => m.type === 'out')
       if (!out) throw new Error('Missing output')
