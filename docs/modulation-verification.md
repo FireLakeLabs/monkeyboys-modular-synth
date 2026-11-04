@@ -20,7 +20,7 @@ control edits, graph refusals and unsupported object/CODE preservation.
 and jack, proving every source uses those bindings without a module adapter,
 including a patched base at its omission value.
 
-`npm run check` passed 1000 unit cases, 42 guardrails, formatting, skill integrity, lint, the reader corpus gate, TypeScript and production build.
+`npm run check` passed 1006 unit cases, 43 guardrails, formatting, skill integrity, lint, the reader corpus gate, TypeScript and production build.
 
 Existing generator/library digest fixtures retain their original hashes. The new
 original **Sample, scale and mix CV** exercise covers every added utility and
@@ -40,7 +40,7 @@ SMOOTH/sampled/pitch sources with inactive fields, and additive generic ENV on
 native-envelope targets. Derived rates now retain full precision; source
 restoration tracks the fields each adapter actually represents; generic ENV on
 native targets remains CODE. Save/reopen, look edits and real event checks pass.
-The slowest pitch rate also passes at the minimum and maximum catalog tempos.
+The slowest pitch rate also passes at the minimum and maximum catalog tempos. After rebasing onto #140, `npm ci` ran its new audio-pool postinstall patch; the complete gate passed again against that installed engine.
 
 ## Observed browser and PCM proof
 
