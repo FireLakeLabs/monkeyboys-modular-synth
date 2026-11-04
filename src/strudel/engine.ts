@@ -381,6 +381,8 @@ export function play(
       checkEpoch(current)
       await strudel.getAudioContext().resume()
       checkEpoch(current)
+      // superdough's controller reset disconnects/clears both orbit effects and
+      // audio buses. Structural routing replacement must never reuse old bus nodes.
       if (options.resetEffects) strudel.resetGlobalEffects()
       if (options.volume !== undefined) volume = options.volume
       applyVolume(strudel)

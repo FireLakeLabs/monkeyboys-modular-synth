@@ -375,3 +375,17 @@ before user setup and preserve the complete saved rack. Existing exact calls
 are reused. Source read/generate still retains exact imported bytes; raw draft
 and invalid/unknown-metadata exports remain unchanged for recovery. See the
 [ownership, ordering and API contract](cartridges.md).
+
+## Multi-input routing identity (#136)
+
+The v1 graph format needs no cable-kind field. An audio output connected to a
+catalog `cvTarget` is an audio-mod cable; derive this per connection, since the
+same output can also carry ordinary audio to MIX. GATES, SWITCH, AUX and DUCK use
+catalog controls and explicit jack-to-jack connections. Bus IDs and DUCK orbit
+targets are derived executable routing, never editable rack control values.
+
+A complete generator-validated program/metadata match restores the full graph,
+including private send/trigger voices and named SWITCH inputs. Edited or
+unproven cross-voice calls retain source ownership; do not infer their graph
+from integer bus/orbit addresses. Exact source, complete rack identity and engine
+events are checked independently in the [routing matrix](routing-verification.md).

@@ -1,0 +1,212 @@
+{
+  "browser": "156.0.8078.4",
+  "forms": [
+    {
+      "kind": "gates",
+      "events": 20,
+      "rms": 0.009957749507030846,
+      "sampleRate": 48000,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "busKeys": [],
+      "physicalListening": false
+    },
+    {
+      "kind": "switch",
+      "events": 4,
+      "rms": 0.01208258493212087,
+      "sampleRate": 48000,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "busKeys": [],
+      "physicalListening": false
+    },
+    {
+      "kind": "aux",
+      "events": 36,
+      "rms": 0.014142658025262165,
+      "sampleRate": 48000,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "busKeys": ["1"],
+      "physicalListening": false
+    },
+    {
+      "kind": "duck",
+      "events": 36,
+      "rms": 0.01423928379096514,
+      "targetGain": {
+        "min": 0.10953723639249802,
+        "max": 1
+      },
+      "sampleRate": 48000,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "busKeys": [],
+      "physicalListening": false
+    },
+    {
+      "kind": "audio-mod",
+      "events": 8,
+      "rms": 0.012219601029980385,
+      "sampleRate": 48000,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "busKeys": ["1"],
+      "physicalListening": false
+    }
+  ],
+  "looks": [
+    {
+      "look": "powder",
+      "dash": "3px, 7px",
+      "inner": "rgb(125, 185, 246)",
+      "outer": "rgb(244, 164, 98)",
+      "jack": "vcf1 CV in · audio-mod",
+      "mark": "≋"
+    },
+    {
+      "look": "instrument",
+      "dash": "3px, 7px",
+      "inner": "rgb(125, 185, 246)",
+      "outer": "rgb(244, 164, 98)",
+      "jack": "vcf1 CV in · audio-mod",
+      "mark": "≋"
+    },
+    {
+      "look": "vintage",
+      "dash": "3px, 7px",
+      "inner": "rgb(125, 185, 246)",
+      "outer": "rgb(244, 164, 98)",
+      "jack": "vcf1 CV in · audio-mod",
+      "mark": "≋"
+    },
+    {
+      "look": "learner",
+      "dash": "3px, 7px",
+      "inner": "rgb(125, 185, 246)",
+      "outer": "rgb(244, 164, 98)",
+      "jack": "vcf1 CV in · audio-mod",
+      "mark": "≋"
+    }
+  ],
+  "panels": [
+    {
+      "look": "powder",
+      "kind": "gates",
+      "jacks": 1,
+      "width": 120
+    },
+    {
+      "look": "powder",
+      "kind": "switch",
+      "jacks": 5,
+      "width": 144
+    },
+    {
+      "look": "powder",
+      "kind": "aux",
+      "jacks": 5,
+      "width": 144
+    },
+    {
+      "look": "powder",
+      "kind": "duck",
+      "jacks": 3,
+      "width": 144
+    },
+    {
+      "look": "instrument",
+      "kind": "gates",
+      "jacks": 1,
+      "width": 120
+    },
+    {
+      "look": "instrument",
+      "kind": "switch",
+      "jacks": 5,
+      "width": 144
+    },
+    {
+      "look": "instrument",
+      "kind": "aux",
+      "jacks": 5,
+      "width": 144
+    },
+    {
+      "look": "instrument",
+      "kind": "duck",
+      "jacks": 3,
+      "width": 144
+    },
+    {
+      "look": "vintage",
+      "kind": "gates",
+      "jacks": 1,
+      "width": 120
+    },
+    {
+      "look": "vintage",
+      "kind": "switch",
+      "jacks": 5,
+      "width": 144
+    },
+    {
+      "look": "vintage",
+      "kind": "aux",
+      "jacks": 5,
+      "width": 144
+    },
+    {
+      "look": "vintage",
+      "kind": "duck",
+      "jacks": 3,
+      "width": 144
+    },
+    {
+      "look": "learner",
+      "kind": "gates",
+      "jacks": 1,
+      "width": 120
+    },
+    {
+      "look": "learner",
+      "kind": "switch",
+      "jacks": 5,
+      "width": 144
+    },
+    {
+      "look": "learner",
+      "kind": "aux",
+      "jacks": 5,
+      "width": 144
+    },
+    {
+      "look": "learner",
+      "kind": "duck",
+      "jacks": 3,
+      "width": 144
+    }
+  ],
+  "physicalListening": false,
+  "nativeGateEdit": true,
+  "reset": {
+    "knobRetainsBus": true,
+    "reservationRenumbersAndResets": true,
+    "replayResets": true
+  },
+  "audioRate": {
+    "baseline": {
+      "carrier": -61.37986755371094,
+      "lower": -143.43362426757812,
+      "upper": -142.77288818359375
+    },
+    "modulated": {
+      "carrier": -61.37977600097656,
+      "lower": -73.24022674560547,
+      "upper": -73.64450073242188
+    },
+    "withinNoteAudioRate": true,
+    "physicalListening": false
+  }
+}

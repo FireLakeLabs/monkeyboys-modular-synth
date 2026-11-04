@@ -95,7 +95,7 @@ export interface StepsControl {
   id: string
   label: string
   maxSteps: number
-  token?: 'note' | 'number'
+  token?: 'note' | 'number' | 'gate'
   default: readonly string[]
 }
 

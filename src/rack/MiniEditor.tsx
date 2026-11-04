@@ -15,7 +15,7 @@ import { layoutMini, type MiniPiece } from '../patch/miniLayout'
 import { subscribe } from '../strudel/engine'
 import './MiniEditor.css'
 
-type Token = 'note' | 'number' | 'sample' | 'chord'
+type Token = 'note' | 'number' | 'sample' | 'chord' | 'gate'
 const cellKey = (c: Cell) => `${c.span.start}:${c.span.end}`
 const focusInput = (element: HTMLInputElement | null) => {
   element?.focus()
@@ -147,15 +147,17 @@ export function MiniEditor({
   }, [tray, activeCell])
   const maxLevel = Math.max(1, ...unique.map((p) => Number(p.cell.text) || 0))
   const fallback =
-    token === 'number'
-      ? '0'
-      : token === 'sample'
-        ? layout?.rows[active?.lane ?? 0] === 'mix'
-          ? 'bd'
-          : (layout?.rows[active?.lane ?? 0] ?? 'bd')
-        : token === 'chord'
-          ? 'Cm7'
-          : 'c3'
+    token === 'gate'
+      ? 'x'
+      : token === 'number'
+        ? '0'
+        : token === 'sample'
+          ? layout?.rows[active?.lane ?? 0] === 'mix'
+            ? 'bd'
+            : (layout?.rows[active?.lane ?? 0] ?? 'bd')
+          : token === 'chord'
+            ? 'Cm7'
+            : 'c3'
 
   function freezeCell(selectedCell: Cell) {
     editing.current = selectedCell.span
@@ -417,7 +419,7 @@ export function MiniEditor({
                   width: `${(piece.width / width) * 100}%`,
                   height: piece.height,
                   zIndex: piece.depth + 1,
-                  '--mini-level': `${Math.max(0, Math.min(100, ((Number(c.text) || 0) / maxLevel) * 100))}%`,
+                  '--mini-level': `${Math.max(0, Math.min(100, token === 'gate' ? (rest ? 0 : 100) : ((Number(c.text) || 0) / maxLevel) * 100))}%`,
                 } as CSSProperties
               }
               onFocus={(event) => {
@@ -434,7 +436,7 @@ export function MiniEditor({
               }}
               onDoubleClick={openOrEdit}
             >
-              {token === 'number' && !c.layers && (
+              {(token === 'number' || token === 'gate') && !c.layers && (
                 <span className="mini-level" aria-hidden="true" />
               )}
               <span className="mini-label">

@@ -770,3 +770,24 @@ converted. See [translation and persistence](translation-rules.md#function-loops
 
 A closed nonempty chain whose controls all bypass their calls writes `x => x`,
 preserving identity instead of selecting the empty-loop preset.
+
+## Multi-input routing (#136)
+
+All four panels are Hardware. Catalog widths stay fixed across Hardware looks.
+AUX and DUCK are Utility; GATES and SWITCH are Pattern.
+
+| Module | HP  | Controls/defaults                                           | Inputs                            | Output                            |
+| ------ | --- | ----------------------------------------------------------- | --------------------------------- | --------------------------------- |
+| GATES  | 10  | Nested GATES steps `x ~ x x ~ x ~ x`; legacy array limit 64 | None                              | GATE, pattern, into SEQ GATE only |
+| SWITCH | 12  | Nested numeric SELECT `<0 0 1 2>`; legacy array limit 64    | Pattern 1–4                       | Pattern OUT                       |
+| AUX    | 12  | No scalar controls; bus allocated by graph                  | Audio SEND 1–4                    | Audio OUT (bus return)            |
+| DUCK   | 12  | ATTACK 0–4 s/.01, .2; DEPTH 0–1/.01, .8                     | Audio IN (target), SIDE (trigger) | Audio OUT (target)                |
+
+SEQ gains a GATE input requiring GATES; NOTE and its 10-HP width are unchanged.
+Every catalog CV jack also accepts audio, using the audio-mod cable and the
+pinned engine's native relative bus modulation. TUNE modulates frequency rather
+than semitone pattern values. An unpatched AUX or incomplete DUCK remains saved
+state. Cyclic voice/modulation routing is rejected at the graph boundary.
+
+See [translation, allocation, ownership and reset rules](translation-rules.md#multi-input-and-cross-voice-routing-136)
+and [separate deterministic/browser evidence](routing-verification.md).

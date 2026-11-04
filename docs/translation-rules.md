@@ -2,7 +2,7 @@
 
 How a patch becomes Strudel, and how Strudel becomes a patch. These rules apply in both directions.
 
-## The four kinds of cable
+## The five kinds of cable
 
 | Cable        | Colour                            | Carries                                                                                                                                               | In Strudel                                                        |
 | ------------ | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -10,6 +10,11 @@ How a patch becomes Strudel, and how Strudel becomes a patch. These rules apply 
 | **Audio**    | orange `#F4A462`                  | The sound itself, from a source through filter, amp and effects to the mixer.                                                                         | One chain of methods on a pattern: `.s() .lpf() .gain() .delay()` |
 | **Mod**      | blue `#7DB9F6`                    | A value that moves on its own. Into a CV jack, it turns that knob for you.                                                                            | Signals scaled with `.range()`: `sine`, `saw`, `perlin`, `rand`   |
 | **Function** | teal `#8CF5DA`, long/short dashed | A local chain between SEND and RETURN, with λ jack centers.                                                                                           | `x => x.a().b()`                                                  |
+
+Audio outputs entering CV use the fifth kind, **audio-mod**: an orange double
+stroke with a blue dashed center and a `≋` jack mark. They write `.bus(n)` on the
+source and `.bmod({ b: n, c: "control" })` on the destination; see
+[multi-input routing](#multi-input-and-cross-voice-routing-136).
 
 Passthrough chain jacks retain their incoming signal. SEND/RETURN carries a local function rather than an audible voice; see [function loops](#function-loops-135).
 
@@ -612,3 +617,73 @@ RETURN paths are not merged with the outer effect path. An inner `.FX(...)`
 keeps both its lambda `loop` path and argument `fx` address. Native imported
 setters retain their execution choice. Incomplete function chains contribute no
 sounding effect stages or audible-chain note.
+
+## Multi-input and cross-voice routing (#136)
+
+The fifth cable kind is **audio-mod**: orange with a blue dashed center, a double
+stroke, and `≋` CV jack centers. Its accessible signal name and Connections entry
+say **audio-mod**. It connects an audio output to a catalog CV input. Ordinary
+pattern, audio, modulation and function cables retain their existing marks.
+
+- **GATES → SEQ GATE** writes `note("c2 eb2 g2").struct("x ~ x x ~ x ~ x")`.
+  GATES supplies rhythm while SEQ supplies pitch. SEQ RATE precedes `struct`;
+  imported timing after `struct` stays a separate transform after that rhythm.
+  GATES uses the shared nested editor and has no standalone audible output.
+- **SWITCH** writes `"<0 0 1 2>".pick([a, b, c, d])`. Inputs 1–4 correspond to
+  zero-based selectors 0–3. Array values in the panel write a cycle alternative;
+  text mini-notation retains its exact timing. Empty inputs are `silence`.
+  Each input is one pattern expression. Named input declarations retain their
+  source bindings and independent rack identities. A selector can use all the
+  existing mini-notation timing operators, rather than a second timing engine.
+- **AUX** has four SEND inputs and one audio OUT. Every sender writes `.bus(n)`;
+  the return starts `s("bus").n(n)` and passes through the ordinary processing
+  chain to MIX. Its return opens once per cycle with the engine's native envelope.
+- **DUCK** carries the target voice through IN/OUT; the trigger voice patches
+  into SIDE. The trigger writes `.duck(n).duckattack(.2).duckdepth(.8)` for the
+  orbit of each final channel reached by that DUCK. Nested mixers and fan-out
+  retain all target orbits (`.duck("1:2")`). Renumbering channels retargets DUCK;
+  a source-owned target orbit is refused rather than normalized or guessed.
+  An active DUCK feeding only AUX/CV sends is refused: those taps precede orbit
+  output, so there is no audible channel orbit there to duck.
+- **Audio → CV** writes `.bus(n)` on a private sender and
+  `.bmod({ b: n, c: "lpf" })` on the destination. The explicit catalog call name
+  keeps targeting correct when later companion settings are emitted. OSC TUNE
+  targets `freq`: this engine modulates oscillator frequency, in relative
+  frequency units, rather than applying an event-sampled semitone transpose.
+  Other controls use native `bmod` relative depth (1), including MIX postgain.
+  The CV input retains its ordinary base knob and supports one incoming cable.
+
+AUX and audio-mod share one positive integer bus namespace. Allocate from 1 in
+OUT's deterministic dependency traversal order; one AUX owns one bus, and every
+CV fan-out from the same output shares its source bus. Skip literal source-owned
+addresses found in CODE/setup sends, returns and bus modulators. This is separate
+from orbit allocation. Knobs, looks and other presentation changes retain bus
+addresses. Final audible voices take the ordinary orbit slots first; private
+send/trigger voices follow, each with its own orbit. Bus send and SIDE branches
+are independent voice paths for effect-order planning.
+
+Send/trigger patterns run as private voices with `.dry(0).delay(0).room(0)`.
+This prevents both dry sound and global send tails leaking into the audible mix.
+Patching the source into MIX as well adds one audible branch. Sends are pre-mixer:
+MIX level/mute/solo controls the dry channel, independently of AUX/CV/SIDE sends.
+As in native superdough, `.bus()` taps postgain **before orbit delay/reverb**;
+inline FX processing before the tap stays in the signal. Audio fan-out evaluates
+patterns separately, so random/noise branches are independent realizations.
+
+Playback compares the actual generated bus allocation as well as module/cable
+topology. A structural replacement, new patch, or changed allocation calls the
+engine's `resetGlobalEffects()`, whose pinned controller disconnects and clears
+**both** audio buses and orbit effects. Parameter edits retain existing nodes.
+An explicit Stop/replay also resets routing. Arbitrary imported setup side
+effects remain outside the app's rollback contract.
+
+Exact writer-validated executable syntax proves a saved routing graph as a whole,
+including private voices and multi-input connections. The reader restores that
+graph only after validating its complete metadata against the writer. A bus
+integer is never provenance. Imported AUX/DUCK/bmod routing, changed bus calls,
+computed routing and unsupported SWITCH forms remain source-owned CODE.
+Untouched documents retain every source byte; saving/reopening preserves their
+independently projected rack. GATES and four-reference SWITCH forms also have
+source-aware adapters; unsupported or ambiguous forms retain CODE. Safe canonical
+rack edits regenerate the complete graph; unsafe edits to source-owned routing
+use the existing refusal/explicit conversion flow.

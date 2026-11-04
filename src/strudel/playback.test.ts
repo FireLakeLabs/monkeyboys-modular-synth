@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { routingFixture } from '../testing/routingCases'
+import { connect, setValue } from '../rack/model'
 import { generate } from '../codegen/generate'
 import { demoPatch } from '../patch/demo'
 import type { Patch } from '../patch/types'
@@ -485,4 +487,35 @@ it('does not accept a replacement file when Stop fails', async () => {
   )
   expect(engine.play).toHaveBeenCalledTimes(1)
   expect(playback.getSnapshot().error).toContain('Stop failed')
+})
+
+it('replaces audio buses on allocation changes but retains them for knob edits', async () => {
+  const patch = routingFixture('audio-mod')
+  const playback = createPlayback(patch)
+  await playback.play()
+  expect(engine.play).toHaveBeenLastCalledWith(
+    expect.any(String),
+    expect.objectContaining({ resetEffects: true }),
+  )
+  const edited = setValue(patch, 'vcf1', 'cutoff', 900)
+  await playback.update(edited)
+  expect(engine.play).toHaveBeenLastCalledWith(
+    expect.any(String),
+    expect.objectContaining({ resetEffects: false }),
+  )
+  // Setup can reserve a bus without changing a module/cable. The actual allocation matters.
+  const reserved = { ...edited, prelude: 'const external = s("sine").bus(1)' }
+  await playback.update(reserved)
+  expect(engine.play).toHaveBeenLastCalledWith(
+    expect.stringContaining('.bus(2)'),
+    expect.objectContaining({ resetEffects: true }),
+  )
+  await playback.update(
+    connect(reserved, { module: 'osc1', jack: 'out' }, { module: 'mix1', jack: 'in2' }),
+  )
+  expect(engine.play).toHaveBeenLastCalledWith(
+    expect.any(String),
+    expect.objectContaining({ resetEffects: true }),
+  )
+  await playback.stop()
 })

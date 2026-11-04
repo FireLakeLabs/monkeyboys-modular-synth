@@ -329,6 +329,11 @@ it('accounts for every catalog module/control without silently skipping new cont
       ...SOUND_CONTROLS,
 
       ...FUNCTION_CONTROLS,
+      // Multi-input adapters have separate source/rack/event proofs in routing.test.ts.
+      'gates.steps',
+      'switch.steps',
+      'duck.attack',
+      'duck.depth',
       // Coupled modulation expressions have their own independent source/rack/event matrix.
       // See modulation.test.ts; these are not independent scalar call arguments.
       'lfo.mode',

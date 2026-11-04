@@ -281,3 +281,14 @@ User GitHub shortcuts keep following their branch and show it on the label.
 A failed manifest is reported per cartridge without stopping unrelated voices;
 registered manifests do not claim decoded audio readiness. See the
 [format and resource API](cartridges.md), including raw recovery export behavior.
+
+## Multi-input routing (#136, decided 4 November 2026)
+
+Use the issue's proposed silent CV source and shared AUX defaults. AUX has four
+SENDs and one return OUT. DUCK carries its target through IN/OUT and takes the
+trigger on SIDE, so targeting follows final channel orbits rather than a numeric
+panel setting. AUX and audio-mod share deterministic positive bus allocation;
+private sends are independent pre-mixer voices with dry and global wet output
+suppressed. Audio-mod uses the two-tone double/dashed cable and `≋` jack mark.
+The [translation contract](translation-rules.md#multi-input-and-cross-voice-routing-136)
+records native tap/depth semantics, provenance and structural reset behavior.

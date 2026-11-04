@@ -1,6 +1,10 @@
 import { getModuleSpec } from '../modules/catalog'
 import type { LibraryPatch } from './catalog'
 import seqSource from './patches/modules/seq.strudel?raw'
+import gatesSource from './patches/modules/gates.strudel?raw'
+import switchSource from './patches/modules/switch.strudel?raw'
+import auxSource from './patches/modules/aux.strudel?raw'
+import duckSource from './patches/modules/duck.strudel?raw'
 import drumsSource from './patches/modules/drums.strudel?raw'
 import quantSource from './patches/modules/quant.strudel?raw'
 import clockSource from './patches/modules/clock.strudel?raw'
@@ -51,6 +55,31 @@ import codeSource from './patches/modules/code.strudel?raw'
 
 /** One small, rack-owned starting point per shipped module. */
 export const MODULE_EXERCISES: readonly LibraryPatch[] = [
+  {
+    type: 'gates',
+    source: gatesSource,
+    description: 'Independent gate rhythm and pitch sequence.',
+    tryThis: 'Turn a GATES rest into x and compare the attacks without changing SEQ pitch.',
+  },
+  {
+    type: 'switch',
+    source: switchSource,
+    description: 'Four patterns chosen by a cycle selector.',
+    tryThis: 'Change SWITCH SELECT to <0 1 2 3> and compare one note per cycle.',
+  },
+  {
+    type: 'aux',
+    source: auxSource,
+    description: 'Two voices share a filtered send/return bus.',
+    tryThis: 'Turn the return VCF CUTOFF to 400 and compare both voices together.',
+  },
+  {
+    type: 'duck',
+    source: duckSource,
+    description: 'A bass pulse ducks the other mixer channel.',
+    tryThis: 'Set DUCK DEPTH to 0 and compare the sustained target voice.',
+  },
+
   {
     type: 'seq',
     source: seqSource,

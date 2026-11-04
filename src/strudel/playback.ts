@@ -1,3 +1,5 @@
+import { graph } from '../codegen/graph'
+import { routingPlan } from '../codegen/routing'
 import { generate } from '../codegen/generate'
 import { sourceBody } from '../workspace/document'
 import type { SourceDocument } from '../reader/types'
@@ -30,6 +32,7 @@ function prepare(input: Patch | SourceDocument) {
     source: sourceBody(code),
     volume,
     topology: JSON.stringify({
+      buses: [...routingPlan(graph(patch), patch).buses],
       modules: patch.modules.map((module) => [
         module.id,
         module.type,
