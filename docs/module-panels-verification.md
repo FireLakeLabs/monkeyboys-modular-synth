@@ -21,7 +21,7 @@ mixer CV inputs, and nested levels folded into one final postgain. The real
 core/mini/tonal event algebra is queried over four cycles. Unit event checks do
 not simulate REPL label filtering; that is independently exercised below.
 
-Two focused regressions were observed failing before their fixes:
+Focused regressions were observed failing before their fixes:
 
 - Without omitted-time inference, SYNC 3/16 imported as fixed `.delaytime(.375)`.
   The regression failed on the unexpected delaytime call, then passed with the
@@ -32,6 +32,14 @@ Two focused regressions were observed failing before their fixes:
   syntax and call ownership now retain that historical saved projection; the
   original source, IDs, layout and values survive save/reopen. New imports infer
   SYNC; external code changes are reprojected instead of trusting stale values.
+
+Sol round 1 identified repeated imported `postgain` setters incorrectly becoming
+nested mixers, and enclosing labels disappearing when `stack()` was expanded.
+Five added cases failed before the fixes. Earlier setters now remain CODE; a
+terminal scalar setter retains Strudel's last-setter behavior, including explicit
+unity after opaque settings. Expanded stack leaves inherit mute/solo/name.
+The checks separately compare source bytes, saved identity and actual events;
+the browser REPL also compares original versus regenerated labelled stacks.
 
 ## Browser and runtime proof
 

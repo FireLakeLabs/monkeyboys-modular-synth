@@ -141,6 +141,15 @@ function project(
     const receiver = input && patch.modules.find((module) => module.id === input.from.module)
     return receiver && input ? needsSampler({ module: receiver, jack: input.from.jack }) : false
   }
+  function hasOpaqueInput(from: Output): boolean {
+    if (from.module.type === 'code') return true
+    return patch.cables
+      .filter((cable) => cable.to.module === from.module.id)
+      .some((cable) => {
+        const module = patch.modules.find((module) => module.id === cable.from.module)
+        return module ? hasOpaqueInput({ module, jack: cable.from.jack }) : false
+      })
+  }
   function bind(
     module: PlacedModule,
     scope: ParsedScope,
@@ -543,7 +552,13 @@ function project(
         calls.slice(index + 1).every((call) => ['orbit', 'channels'].includes(call.name))
       ) {
         const value = scalar(call.args[0])
-        if (call.args.length === 1 && typeof value === 'number' && fits('mix', 'ch1', value)) {
+        if (
+          call.args.length === 1 &&
+          typeof value === 'number' &&
+          fits('mix', 'ch1', value) &&
+          !(value === 1 && hasOpaqueInput(upstream))
+        ) {
+          // An explicit unity setter must not disappear over an earlier opaque setter.
           gains.set(scope.descriptor.id, { call, index })
           continue
         }
@@ -858,7 +873,8 @@ function project(
       // Preserve DRUMS' existing unseeded drop control; a seeded gate is CHANCE.
       const drumDrop =
         name === 'degradeBy' && group?.type === 'drums' && calls[index + 1]?.name !== 'seed'
-      const matched = !drumDrop && spec && matchControlCall(spec, name)
+      // MIX setters belong only to the dedicated terminal-gain adapter.
+      const matched = !drumDrop && spec && type !== 'mix' ? matchControlCall(spec, name) : undefined
       const activation =
         matched && matched.binding.when
           ? { [matched.binding.when.control]: matched.binding.when.value }

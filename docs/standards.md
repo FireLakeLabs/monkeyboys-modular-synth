@@ -328,3 +328,14 @@ from the catalog and verifies every added module without relaxing overflow,
 jack-target or font-size assertions. The live library signal suite also covers
 the new utility exercise. These guardrails replace assumptions that the initial
 sixteen-module catalog and direct core queries cover later module additions.
+
+
+The #129 [panel regressions](../src/codegen/panels.test.ts) reject competing MIX
+reader paths that turn repeated `postgain` setters into multiplied buses, and
+stack expansion that drops enclosing mute/solo/name labels. Five cases failed
+before the fixes. Only the dedicated terminal adapter projects MIX gains;
+earlier setters stay CODE, including explicit unity overrides when necessary.
+The shared gate checks event/source/saved-identity behavior, and the separate
+[panel browser suite](module-panels-verification.md) compares original and
+regenerated stack labels through the pinned REPL. Physical listening and
+multichannel hardware remain unverified.

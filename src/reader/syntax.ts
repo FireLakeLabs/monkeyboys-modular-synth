@@ -78,7 +78,7 @@ export function parseSource(
       expression.callee.name === 'stack' &&
       expression.arguments.every((arg) => arg.type !== 'SpreadElement')
     ) {
-      for (const arg of expression.arguments) add(arg, kind)
+      for (const arg of expression.arguments) add(arg, kind, anchor, label)
       return
     }
     const parsed = chain(expression)

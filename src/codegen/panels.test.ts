@@ -247,3 +247,58 @@ it('preserves an older source-owned rack whose delay had no MODE control', async
   expect(generate(restored)).toBe(legacy)
   expect(read(saveLayout(restored).source).patch).toEqual(restored.patch)
 })
+
+it.each([0.8, 1])('keeps imported repeated postgain setters at their final value %s', (final) => {
+  const source = `$: note("c3").s("sine").postgain(.5).postgain(${final}).orbit(3)\n`
+  const doc = read(source)
+  expect(doc.patch.modules.filter((module) => module.type === 'mix')).toHaveLength(1)
+  expect(
+    doc.patch.modules
+      .filter((module) => module.type === 'code')
+      .map((module) => module.values.text),
+  ).toContain('.postgain(.5)')
+  expect(events(generate(doc.patch))).toEqual(events(source))
+  expect(generate(doc)).toBe(source)
+  const saved = saveLayout(doc)
+  expect(read(saved.source).patch).toEqual(doc.patch)
+})
+
+it.each([
+  ['_$', 'on', 'off', ''],
+  ['S$', 'off', 'on', ''],
+  ['bass', 'off', 'off', 'bass'],
+] as const)(
+  'retains the enclosing %s label on imported stack voices',
+  (label, mute, solo, name) => {
+    const source = `${label}: stack(note("c3").s("sine"),note("e3").s("sine"))\n`
+    const doc = read(source)
+    const mixer = doc.patch.modules.find((module) => module.type === 'mix')
+    expect(mixer?.values).toMatchObject({
+      mute1: mute,
+      mute2: mute,
+      solo1: solo,
+      solo2: solo,
+      name1: name,
+      name2: name,
+    })
+    const regenerated = sourceBody(generate(doc.patch))
+    if (label === 'bass') {
+      expect(regenerated).toContain('bass: ')
+      expect(regenerated).toContain('bass2: ')
+    } else
+      expect(regenerated.match(new RegExp(`^${label.replace('$', '\\$')}: `, 'gm'))).toHaveLength(2)
+    expect(generate(doc)).toBe(source)
+    const saved = saveLayout(doc)
+    expect(read(saved.source).patch).toEqual(doc.patch)
+  },
+)
+
+it('retains final setters over a shared declaration with an earlier postgain', () => {
+  const source =
+    'const panelVoice = note("c3").s("sine").postgain(.5)\n$: panelVoice.postgain(1).orbit(3)\n$: panelVoice.postgain(.8).orbit(4)\n'
+  const doc = read(source)
+  expect(events(generate(doc.patch))).toEqual(events(source))
+  expect(generate(doc)).toBe(source)
+  const saved = saveLayout(doc)
+  expect(read(saved.source).patch).toEqual(doc.patch)
+})

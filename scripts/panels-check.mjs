@@ -54,6 +54,21 @@ export async function pinnedLabels() {
     const pattern = await repl.evaluate(source, false)
     result.push(pattern.queryArc(0, 1).map((h) => h.value))
   }
+  for (const label of ['_$', 'S$', 'bass']) {
+    const source = `${label}: stack(note("c3").s("sine"),note("e3").s("sine"))\n$: note("g3").s("sine")`
+    const original = await repl.evaluate(source, false)
+    const expected = original
+      .queryArc(0, 1)
+      .map((h) => h.value.note)
+      .sort()
+    const regenerated = await repl.evaluate(generate(read(source).patch), false)
+    const actual = regenerated
+      .queryArc(0, 1)
+      .map((h) => h.value.note)
+      .sort()
+    if (JSON.stringify(actual) !== JSON.stringify(expected))
+      throw new Error(`Stack label ${label} changed events`)
+  }
   repl.stop()
   return result
 }
