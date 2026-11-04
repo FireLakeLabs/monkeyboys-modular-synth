@@ -113,3 +113,9 @@ The real Chromium review suite also passes both inherited-bank target refusals
 with exact source/saved ownership unchanged, mixed-bank sibling refusal, and
 Ctrl+. followed by Play with measured PCM while the audition's sample fetch is
 still held. Releasing that fetch cannot dispatch the cancelled audible trigger.
+
+Sol round 2 approved the current behavior diff and marked S1/S2/S3 resolved, with
+no new blocker or should-fix findings. The reviewer independently reran all
+73 focused cases. Both rounds used gpt-6.1-sol on high; usage was unavailable.
+During review the diff grew from 37 files (+2,386/−14) to 37 (+2,698/−14), mostly
+focused regressions, browser proof and documentation for those three fixes.
