@@ -99,10 +99,10 @@ function branches(
   function visit(id: string, path: string): Branch[] {
     const module = patch.modules.find((module) => module.id === id)
     if (!module) return []
-    if (['seq', 'drums', 'lfo'].includes(module.type)) return [{ key: path, modules: [id] }]
-    const inputs = getModuleSpec(module.type).jacks.filter(
-      (jack) => jack.direction === 'in' && !jack.cvTarget,
-    )
+    const spec = getModuleSpec(module.type)
+    if (['seq', 'drums', 'lfo'].includes(module.type) || spec.source)
+      return [{ key: path, modules: [id] }]
+    const inputs = spec.jacks.filter((jack) => jack.direction === 'in' && !jack.cvTarget)
     if (module.type === 'code' && !patch.cables.some((cable) => cable.to.module === id)) {
       const text = module.values.text
       return typeof text === 'string' && !text.trimStart().startsWith('.')

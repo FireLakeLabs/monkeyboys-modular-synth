@@ -77,10 +77,24 @@ exports[`built-in patch library > lfo-sweep: preserves exact source and independ
 }
 `;
 
+exports[`built-in patch library > pattern-alien: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "9c7ec33ac2d9cdef17fcbe80ac1fcd9a75db67c000e946804a53398918c46155",
+  "projection": "52fea1f2ec3e555c50813640703b10dd7a00ae96e7e8df9361687e53b80cf222",
+}
+`;
+
 exports[`built-in patch library > pattern-effects: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "f0a9e6923971cd5deb629d9c348044dc22a663b576f20737a64632a93d688da2",
   "projection": "1e1a4643c5b6caaac6b33e4390c9a9582a8ac091656c71409692e61fa86d6d04",
+}
+`;
+
+exports[`built-in patch library > pattern-hardware: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "9ee4ab5754038c408de9e90668a34f046e2058681dc8c865ba8702853f54d298",
+  "projection": "de73f85e13cfa76298e29a76e667e60ad571e758cbb7ff99a338fe0cb80ae737",
 }
 `;
 

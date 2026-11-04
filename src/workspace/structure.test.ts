@@ -271,3 +271,20 @@ it('produces the intended real Strudel event values and times independently of s
   const restored = editDocument(silent, connect(silent.patch, input.from, input.to))
   expect(events(restored.source)).toEqual(events(voice.source))
 })
+
+it('removes a transform and reconnects an imported CHORD branch without rewriting its source', () => {
+  const source =
+    '// keep\n$: chord("<Cm7 Fm7 G7>").voicing().arp("0 1 2 1").rev().s("sine") // tail\n'
+  const original = saveLayout(read(source))
+  const arp = id(original.patch, 'arp')
+  const osc = id(original.patch, 'osc')
+  const next = connect(
+    removeModule(original.patch, id(original.patch, 'rev')),
+    { module: arp, jack: 'out' },
+    { module: osc, jack: 'note' },
+  )
+  const edited = editDocument(original, next)
+  expect(sourceBody(edited.source)).toBe(source.replace('.rev()', ''))
+  expect(read(edited.source).layout).toBe('restored')
+  expect(read(edited.source).patch).toEqual(next)
+})

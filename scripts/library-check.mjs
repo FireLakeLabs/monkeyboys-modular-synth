@@ -574,6 +574,7 @@ export async function verifyLibraryRackEditing() {
 
 /** #79/#80: run at 1440 px before the signal group. */
 export async function verifyOnRampUI() {
+  const { CATALOG } = await import('../src/modules/catalog.ts')
   const { PATCH_LIBRARY, libraryPatches } = await import('../src/library/catalog.ts')
   const { read } = await import('../src/reader/index.ts')
   const { generate } = await import('../src/codegen/generate.ts')
@@ -585,7 +586,7 @@ export async function verifyOnRampUI() {
   }
   const filter = document.querySelector('.module-filter input')
   type(filter, '')
-  await until(() => document.querySelectorAll('.chip').length === 16)
+  await until(() => document.querySelectorAll('.chip').length === CATALOG.length)
   assert(
     [...document.querySelectorAll('.library h3')].map((e) => e.textContent).join('|') ===
       'Pattern|Sound|Shape|Modulate|Effects|Utility',
@@ -600,7 +601,7 @@ export async function verifyOnRampUI() {
     }
   }
   for (const [query, names] of [
-    ['  seQ  ', ['Add SEQ', 'Add DRUMS']],
+    ['  seQ  ', ['Add SEQ', 'Add DRUMS', 'Add CHORD']],
     ['.LPF()', ['Add VCF']],
     ['no-such-module', []],
   ]) {
@@ -614,7 +615,7 @@ export async function verifyOnRampUI() {
   }
   assert(document.querySelector('.library output'), 'Missing no-results message')
   type(filter, '')
-  await until(() => document.querySelectorAll('.chip').length === 16)
+  await until(() => document.querySelectorAll('.chip').length === CATALOG.length)
 
   const entries = libraryPatches(PATCH_LIBRARY[0].children)
   const results = []

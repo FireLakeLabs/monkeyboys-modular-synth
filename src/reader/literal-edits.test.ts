@@ -4,6 +4,7 @@ import { generate } from '../codegen/generate'
 import { RACK_MARKER } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
+import { PATTERN_CONTROLS } from '../modules/pattern-time.fixtures'
 import { drumView, stepView } from '../patch/notation'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
 import { editDocument, saveLayout } from '../workspace/document'
@@ -320,6 +321,7 @@ it('accounts for every catalog module/control without silently skipping new cont
         cases.map((edit) => `${type}.${edit.control}`),
       ),
       ...nonLiteral,
+      ...PATTERN_CONTROLS,
     ].sort(),
   ).toEqual(
     CATALOG.flatMap((spec) => spec.controls.map((control) => `${spec.id}.${control.id}`)).sort(),

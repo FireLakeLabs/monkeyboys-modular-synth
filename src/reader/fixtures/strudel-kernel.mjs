@@ -2,6 +2,7 @@
 export * from '@strudel/core/pattern.mjs'
 export * from '@strudel/core/signal.mjs'
 export * from '@strudel/core/controls.mjs'
+export * from '@strudel/core/euclid.mjs'
 export * from '@strudel/core/util.mjs'
 export * from '@strudel/core/logger.mjs'
 export { default as Fraction } from '@strudel/core/fraction.mjs'

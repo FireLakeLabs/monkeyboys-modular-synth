@@ -297,3 +297,19 @@ scrolling and checks pane reachability, horizontal palette geometry, source/rack
 selection, Show in code focus, exact source and draft undo across view changes.
 It runs in the separate [browser workflow](ci.md#full-browser-acceptance), outside
 the deterministic gate.
+
+The #132 [pattern/time acceptance](pattern-time-verification.md) enumerates all
+supported call forms, with independent exact-source, saved-identity, literal-edit
+and pinned-engine onset-event checks. Every mode has an order-sensitive partner;
+commuting transforms are not presented as event changes. Catalog time-span rules
+reject empty/reversed zoom/compress spans at mutation/generation boundaries.
+The separate browser suite checks real scheduling and output PCM, all family
+looks at fixed catalog widths, and live cable endpoints. These checks do not
+establish physical listening or other-browser/device coverage.
+
+The #132 palette/Fit correction is guarded by the existing
+`scripts/output-panel-browser.mjs` group in the full browser workflow. Its actual
+1024-px rail-clipping assertion failed with the expanded call lists and passed
+with compact catalog representatives; no assertion was weakened. This is a
+browser layout check, not a static string-length limit; see the
+[hosted regression](pattern-time-verification.md#hosted-palettefit-regression).

@@ -137,3 +137,111 @@ test('trance playback, events and export/reopen', async ({ page }, info) => {
     await page.evaluate(async () => (await import('/scripts/trance-check.mjs')).verifyTrance()),
   )
 })
+
+// #132: each supported call reaches the actual pinned browser engine.
+test('pattern and time module forms, source, rack identity and PCM', async ({ page }, info) => {
+  const prepared = await page.evaluate(async () =>
+    (await import('/scripts/pattern-time-check.mjs')).preparePatternProof(),
+  )
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await expect(page.locator('.transport-status')).toHaveText('Playing', { timeout: 30_000 })
+  const forms = []
+  try {
+    for (let index = 0; index < prepared.forms; index++)
+      forms.push(
+        await page.evaluate(
+          async (index) =>
+            (await import('/scripts/pattern-time-check.mjs')).verifyPatternForm(index),
+          index,
+        ),
+      )
+  } finally {
+    await page.evaluate(async () =>
+      (await import('/scripts/pattern-time-check.mjs')).finishPatternProof(),
+    )
+    await record(info, { forms, physicalListening: false })
+  }
+})
+
+test('pattern module numeric and text controls preserve imported source', async ({
+  page,
+}, info) => {
+  const source = '$: note("c3 e3").s("sine").euclidRot(3, 8, 2).ply("<1 2 4>")\n'
+  await page.evaluate(async (source) => {
+    ;(await import('/scripts/editor-browser.mjs')).enableAutoApply()
+    await (await import('/scripts/rack-feel-check.mjs')).load(source)
+  }, source)
+  const euclid = page.locator('[data-module="euclid1"]')
+  await euclid.getByRole('button', { name: 'Set PULSES', exact: true }).click()
+  await euclid.getByRole('textbox', { name: 'PULSES', exact: true }).fill('5')
+  await euclid.getByRole('textbox', { name: 'PULSES', exact: true }).press('Enter')
+  const ratchet = page.locator('[data-module="ratchet1"]')
+  await ratchet.getByRole('textbox', { name: 'REPEATS', exact: true }).fill('<2 3>')
+  await ratchet.getByRole('button', { name: 'Apply', exact: true }).click()
+  const result = await page.evaluate(async () => {
+    const source = (await import('/scripts/editor-browser.mjs')).editorSource()
+    const { read } = await import('/src/reader/index.ts')
+    const { sourceBody, saveLayout } = await import('/src/workspace/document.ts')
+    const document = read(source)
+    const saved = saveLayout(document)
+    return {
+      source: sourceBody(source),
+      identity:
+        read(saved.source).layout === 'restored' &&
+        JSON.stringify(read(saved.source).patch) === JSON.stringify(saved.patch),
+    }
+  })
+  expect(result.source).toBe(
+    source.replace('euclidRot(3', 'euclidRot(5').replace('<1 2 4>', '<2 3>'),
+  )
+  expect(result.identity).toBe(true)
+  await page.evaluate(
+    async (source) => {
+      await (await import('/scripts/rack-feel-check.mjs')).load(source)
+    },
+    source.replace('<1 2 4>', '<4 5>'),
+  )
+  await expect(ratchet.getByRole('textbox', { name: 'REPEATS', exact: true })).toHaveValue('<4 5>')
+  await record(info, result)
+})
+
+test('imported CHORD branch accepts native deletion and keyboard reconnection', async ({
+  page,
+}, info) => {
+  test.setTimeout(30_000)
+  const source =
+    '// keep\n$: chord("<Cm7 Fm7 G7>").voicing().arp("0 1 2 1").rev().s("sine") // tail\n'
+  await page.evaluate(async (source) => {
+    ;(await import('/scripts/editor-browser.mjs')).enableAutoApply()
+    await (await import('/scripts/rack-feel-check.mjs')).load(source)
+  }, source)
+  await page.getByRole('button', { name: 'Select rev1', exact: true }).click()
+  await page.getByRole('button', { name: 'Delete rev1 and attached cables', exact: true }).click()
+  await page.getByRole('button', { name: 'Delete module', exact: true }).click()
+  await page.locator('[data-jack="arp1:out"]').press('Enter')
+  await page.locator('[data-jack="osc1:note"]').press('Enter')
+  await page.waitForFunction(async () =>
+    (await import('/scripts/editor-browser.mjs')).editorSource().includes('.arp('),
+  )
+  const result = await page.evaluate(async () => {
+    const source = (await import('/scripts/editor-browser.mjs')).editorSource()
+    const { read } = await import('/src/reader/index.ts')
+    const { sourceBody, saveLayout } = await import('/src/workspace/document.ts')
+    const document = read(source)
+    const saved = saveLayout(document)
+    return {
+      source: sourceBody(source),
+      restored: read(saved.source).layout,
+      identity: JSON.stringify(read(saved.source).patch) === JSON.stringify(saved.patch),
+      types: document.patch.modules.map((m) => m.type),
+    }
+  })
+  expect(result.source).toContain('// keep')
+  expect(result.source).toContain('// tail')
+  expect(result.source).toContain('.arp("0 1 2 1")')
+  expect(result.source).not.toContain('.rev()')
+  expect(result.restored).toBe('restored')
+  expect(result.identity).toBe(true)
+  expect(result.types).not.toContain('rev')
+  await record(info, result)
+})

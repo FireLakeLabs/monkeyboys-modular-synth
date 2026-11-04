@@ -1,3 +1,5 @@
+import patternHardware from './patches/pattern-hardware.strudel?raw'
+import patternAlien from './patches/pattern-alien.strudel?raw'
 import firstSounds from './patches/first-sounds.strudel?raw'
 import firstNotes from './patches/first-notes.strudel?raw'
 import firstEffects from './patches/first-effects.strudel?raw'
@@ -100,6 +102,33 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
           url: 'https://strudel.cc/workshop/pattern-effects/',
         },
         exercises: ['seq', 'osc', 'jux', 'vca', 'mix', 'out'],
+      },
+    ],
+  },
+  {
+    kind: 'collection',
+    id: 'pattern-time',
+    title: 'Pattern and time',
+    children: [
+      {
+        kind: 'patch',
+        id: 'pattern-hardware',
+        title: 'Chords, clocks and gates',
+        description:
+          'Arpeggiate voiced chords alongside a swung, Euclidean ratchet with seeded chance.',
+        source: patternHardware,
+        attribution,
+        exercises: ['chord', 'arp', 'clock', 'euclid', 'ratchet', 'chance'],
+      },
+      {
+        kind: 'patch',
+        id: 'pattern-alien',
+        title: 'A ribbon of time',
+        description:
+          'Reverse and shuffle a melody, loop a ribbon, zoom into it, then warp and echo its events.',
+        source: patternAlien,
+        attribution,
+        exercises: ['rev', 'shuffle', 'ribbon', 'time-lens', 'warp', 'echo'],
       },
     ],
   },

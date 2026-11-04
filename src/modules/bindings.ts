@@ -1,5 +1,11 @@
 import type { CallBinding, ModuleSpec } from './types'
 
+export function tupleControls(binding: CallBinding, method: string): readonly string[] {
+  return binding.argument.kind === 'tuple'
+    ? (binding.argument.byMethod?.[method] ?? binding.argument.controls)
+    : []
+}
+
 export function callMethod(binding: CallBinding, value: (id: string) => string): string {
   const method = binding.method
   if (typeof method === 'string') return method
@@ -22,4 +28,14 @@ export function matchControlCall(spec: ModuleSpec, name: string) {
     }
   }
   return undefined
+}
+
+// Pattern-time fractions must retain their timing, rather than round away part of a cycle.
+export function patternNumber(value: number): string {
+  for (let denominator = 2; denominator <= 64; denominator++) {
+    const numerator = value * denominator
+    if (Number.isInteger(numerator) && String(value).length > 6)
+      return `${numerator}/${denominator}`
+  }
+  return String(value)
 }

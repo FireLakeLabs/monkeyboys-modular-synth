@@ -13,11 +13,9 @@ describe('issue #44 long imported voices', () => {
     expect(new Set(document.patch.modules.map((module) => module.row)).size).toBeGreaterThan(2)
     expect(document.patch.modules.some((module) => module.type === 'lfo')).toBe(true)
     expect(document.patch.modules.some((module) => module.type === 'delay')).toBe(true)
-    expect(
-      document.patch.modules
-        .filter((module) => module.type === 'code')
-        .map((module) => module.values.text),
-    ).toContain('.palindrome()')
+    expect(document.patch.modules.find((module) => module.type === 'rev')?.values.mode).toBe(
+      'palindrome',
+    )
     for (const module of document.patch.modules)
       expect(module.hp + getModuleSpec(module.type).hp).toBeLessThanOrEqual(64)
   })

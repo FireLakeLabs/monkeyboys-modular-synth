@@ -1,6 +1,6 @@
 import { parse, tokenizer } from 'acorn'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
-import { callMethod } from '../modules/bindings'
+import { callMethod, tupleControls, patternNumber } from '../modules/bindings'
 import { drumText } from '../patch/notation'
 import type { Patch } from '../patch/types'
 import type { SourceDocument } from '../reader/types'
@@ -191,7 +191,8 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     const jack = node.spec.jacks.find((item) => item.cvTarget === id)
     const cable = jack ? node.inputs.get(jack.id) : undefined
     const source = cable ? requireNode(nodes, cable.from.module) : undefined
-    if (!source || source.spec.id === 'env') return { text: numeric(base) }
+    if (!source || source.spec.id === 'env')
+      return { text: node.spec.orderSensitive ? patternNumber(base) : numeric(base) }
     // LFO may travel through Alien/CODE transformations before reaching CV.
     let lfo: Node | undefined = source
     while (lfo && lfo.spec.id !== 'lfo') lfo = input(lfo)
@@ -233,6 +234,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     for (const item of controls) {
       if (!('call' in item) || !item.call) continue
       const binding = item.call
+      if (binding.when && s(binding.when.control) !== binding.when.value) continue
       if (omitted(node, item.id) || (binding.enabledBy && omitted(node, binding.enabledBy)))
         continue
       const jack = node.spec.jacks.find((jack) =>
@@ -249,6 +251,16 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       let argument: string
       let mod: ReturnType<typeof modulation> | undefined
       switch (binding.argument.kind) {
+        case 'tuple':
+          argument = tupleControls(binding, callMethod(binding, s))
+            .map((id) => {
+              const candidate = value(node, id)
+              if (typeof candidate === 'number') return patternNumber(candidate)
+              if (typeof candidate === 'string') return quote(candidate)
+              throw new Error('Tuple arguments require scalar controls')
+            })
+            .join(', ')
+          break
         case 'number':
           mod = modulation(node, item.id)
           argument = mod.text
@@ -285,6 +297,12 @@ export function generateDocument(patch: Patch): GeneratedDocument {
   }
 
   function raw(node: Node): CodeExpression[] {
+    if (node.spec.source) {
+      const { method, control, suffix } = node.spec.source
+      let expression = append(blank(), `${method}(${quote(string(node, control))})`, node)
+      for (const method of suffix) expression = append(expression, `.${method}()`, node)
+      return [expression]
+    }
     switch (node.spec.id) {
       case 'env':
         throw new Error('ENV has no standalone expression')

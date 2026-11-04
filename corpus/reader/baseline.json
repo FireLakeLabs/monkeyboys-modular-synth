@@ -1,8 +1,8 @@
 {
   "$total": {
-    "mappedCallShare": 0.875,
-    "readableVoiceShare": 0.7894736842105263,
-    "codeFreePatchShare": 0.8571428571428571,
+    "mappedCallShare": 0.8958333333333334,
+    "readableVoiceShare": 0.8181818181818182,
+    "codeFreePatchShare": 0.875,
     "parseFailures": 0,
     "codeBlocks": 15,
     "unmappedCalls": 15,
@@ -106,7 +106,23 @@
     "codeBlocks": 0,
     "unmappedCalls": 0
   },
+  "pattern-alien": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
   "pattern-effects": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "pattern-hardware": {
     "mappedCallShare": 1,
     "readableVoiceShare": 1,
     "codeFreePatchShare": 1,

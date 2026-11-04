@@ -27,13 +27,23 @@ try {
   const matrix = await page.evaluate(async () =>
     (await import('/scripts/rack-feel-check.mjs')).verifyPanels(),
   )
+  const combinations = await page.evaluate(async () => {
+    const { CATALOG } = await import('/src/modules/catalog.ts')
+    const { looksFor } = await import('/src/modules/looks.ts')
+    return CATALOG.reduce((sum, spec) => sum + looksFor(spec.family).length, 0)
+  })
   assert.equal(
     matrix.reduce((sum, row) => sum + row.panels, 0),
-    183,
+    combinations * 3,
   )
-  pass('61 module/look combinations at 100%, 75% and Fit retain widths, controls and jack targets')
+  pass(
+    `${combinations} module/look combinations at 100%, 75% and Fit retain widths, controls and jack targets`,
+  )
 
+  // The 104-HP family fixture must be visible when sampling painted pixels.
+  await button('Focus rack').click()
   results.dimmedContrast = await dimmedLabelContrast(page)
+  await button('Restore workspace').click()
   pass(
     'Visible default labels in all ten dimmed looks exceed 4.5:1 against sampled painted backgrounds',
   )

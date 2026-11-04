@@ -66,8 +66,20 @@
     "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
   },
   {
+    "id": "pattern-alien",
+    "path": "src/library/patches/pattern-alien.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
     "id": "pattern-effects",
     "path": "src/library/patches/pattern-effects.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "pattern-hardware",
+    "path": "src/library/patches/pattern-hardware.strudel",
     "license": "MIT",
     "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
   },

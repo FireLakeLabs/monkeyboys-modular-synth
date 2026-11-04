@@ -125,6 +125,11 @@ export function parseSource(
 export function scalar(
   expression: CallExpression['arguments'][number] | undefined,
 ): number | string | undefined {
+  if (expression?.type === 'BinaryExpression' && expression.operator === '/') {
+    const left = expression.left.type === 'PrivateIdentifier' ? undefined : scalar(expression.left)
+    const right = scalar(expression.right)
+    if (typeof left === 'number' && typeof right === 'number' && right !== 0) return left / right
+  }
   if (
     expression?.type === 'Literal' &&
     (typeof expression.value === 'string' || typeof expression.value === 'number')
