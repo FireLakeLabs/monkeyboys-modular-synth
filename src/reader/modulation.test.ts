@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { generate, generateDocument } from '../codegen/generate'
 import { graph } from '../codegen/graph'
-import { connect, placeModule, setValue, starterPatch } from '../rack/model'
+import { connect, placeModule, setLook, setValue, starterPatch } from '../rack/model'
 import { editDocument, saveLayout, sourceBody } from '../workspace/document'
 import { read } from './read'
 import { parseSource } from './syntax'
@@ -302,3 +302,64 @@ it('does not invent a target range for an unscaled signal argument', () => {
   expect(doc.patch.modules.some((m) => m.type === 'lfo')).toBe(false)
   expect(generate(doc)).toBe(source)
 })
+
+it.each([40, 120, 240])(
+  'retains OSC modulation ownership at the slowest pitch LFO rate, BPM %i',
+  (bpm) => {
+    const patch = setValue(fixture('osc', 'tune', 'lfo', { rate: 16 }), 'out1', 'bpm', bpm)
+    const doc = read(generate(patch))
+    expect(doc.bindings.some((b) => b.module === 'lfo1' && b.role === 'cv')).toBe(true)
+    expect(read(saveLayout(doc).source).patch).toEqual(patch)
+    const changed = editDocument(doc, setLook(patch, 'osc1', 'powder'))
+    expect(read(changed.source).patch).toEqual(changed.patch)
+  },
+)
+
+it.each(['smooth and sampled', 'pitch and filter LFO', 'pitch and filter ENV'])(
+  'restores shared sources with adapter-specific fields: %s',
+  (scenario) => {
+    let patch = fixture('vcf', 'cutoff', scenario === 'pitch and filter ENV' ? 'env' : 'lfo')
+    const source = scenario === 'pitch and filter ENV' ? 'env1' : 'lfo1'
+    if (scenario === 'smooth and sampled') {
+      patch = placeModule(placeModule(patch, 'samplehold', 8), 'vca', 9)
+      patch = connect(patch, { module: source, jack: 'out' }, { module: 'samplehold1', jack: 'in' })
+      patch = connect(patch, { module: 'samplehold1', jack: 'out' }, { module: 'vca1', jack: 'cv' })
+      patch = connect(patch, { module: 'vcf1', jack: 'out' }, { module: 'vca1', jack: 'in' })
+      patch = connect(patch, { module: 'vca1', jack: 'out' }, { module: 'mix1', jack: 'in1' }, true)
+    } else {
+      patch = connect(patch, { module: source, jack: 'out' }, { module: 'osc1', jack: 'tune' })
+      patch = setValue(patch, source, 'depth', 2)
+      if (source === 'lfo1') {
+        patch = setValue(
+          setValue(setValue(patch, source, 'shape', 'tri'), source, 'skew', 0.25),
+          source,
+          'rate',
+          6,
+        )
+      }
+    }
+    patch = { ...patch, names: generateDocument(patch).layout.names }
+    const doc = read(generate(patch))
+    expect(read(saveLayout(doc).source).patch).toEqual(patch)
+    const changed = editDocument(doc, setLook(patch, 'vcf1', 'powder'))
+    expect(read(changed.source).patch).toEqual(changed.patch)
+    expect(events(generate(changed.patch))).toEqual(events(generate(patch)))
+  },
+)
+
+it.each(['gain(.8)', 'lpf(800).lpq(1)'])(
+  'retains additive generic ENV as CODE on native-envelope target %s',
+  (target) => {
+    const control = target.startsWith('gain') ? 'gain' : 'lpf'
+    const envelope = `.env({c:"${control}",a:.01,d:.2,s:.5,r:.1,depthabs:-.5})`
+    const source = `$: note("c3").s("sine").${target}${envelope}.orbit(1)`
+    const doc = read(source)
+    expect(doc.patch.modules.some((m) => m.type === 'env')).toBe(false)
+    expect(doc.patch.modules.filter((m) => m.type === 'code').map((m) => m.values.text)).toContain(
+      envelope,
+    )
+    expect(generate(doc)).toBe(source)
+    expect(events(generate(doc.patch))).toEqual(events(source))
+    expect(read(saveLayout(doc).source).patch).toEqual(doc.patch)
+  },
+)

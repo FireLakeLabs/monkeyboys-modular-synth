@@ -70,6 +70,7 @@ and CV SEQ return absolute values in destination units. They do not receive an
 additional destination `.range()`. Source imports recognize these forms without
 evaluation; unsupported configs retain CODE. Coupled imported edits that cannot
 preserve source are refused through the existing explicit conversion flow.
+Generic ENV objects on native VCA/filter targets retain CODE, preserving their additive behavior rather than substituting native ADSR. Shared saved sources reconcile only fields represented by each adapter, retaining inactive pitch/sampling settings.
 Exact source, complete saved identity and real engine events are checked
 independently; [browser PCM](modulation-verification.md) proves within-note motion.
 
@@ -344,7 +345,7 @@ routing hidden behind arbitrary code cannot be inferred. The reader verifies
 complete generator provenance before treating routing as owned; otherwise it
 retains routing in source/CODE. See [reader projection](reader-verification.md#projection-and-preservation).
 
-Numbers have at most three decimal places. CODE literals remain verbatim. The
+Control values have at most three decimal places; derived modulation Hz/sync rates retain full precision. CODE literals remain verbatim. The
 writer does not mutate the patch and always writes a complete trailing rack block.
 
 An explicitly saved output name keeps its declaration even when only one branch

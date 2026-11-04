@@ -339,7 +339,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
               const cps = typeof tempo === 'number' ? tempo / 240 : 0.5
               expression = append(
                 expression,
-                `.vib(${numeric(cps / number(source, 'rate'))}).vibmod(${numeric(depth)})`,
+                `.vib(${String(cps / number(source, 'rate'))}).vibmod(${numeric(depth)})`,
                 source,
                 'cv',
                 target,
@@ -362,7 +362,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
                 ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(method)
               )
             const config = smooth
-              ? `c: ${quote(method)}, sync: ${numeric(1 / number(source, 'rate'))}, depthabs: ${numeric(downward ? -depth : depth)}, dc: ${downward ? -1 : 0}, shape: ${quote(shape ?? 'sine')}, skew: ${numeric(number(source, 'skew'))}`
+              ? `c: ${quote(method)}, sync: ${String(1 / number(source, 'rate'))}, depthabs: ${numeric(downward ? -depth : depth)}, dc: ${downward ? -1 : 0}, shape: ${quote(shape ?? 'sine')}, skew: ${numeric(number(source, 'skew'))}`
               : `c: ${quote(method)}, a: ${numeric(number(source, 'atk'))}, d: ${numeric(number(source, 'dec'))}, s: ${numeric(number(source, 'sus'))}, r: ${numeric(number(source, 'rel'))}, depthabs: ${numeric(depth)}`
             expression = append(
               expression,

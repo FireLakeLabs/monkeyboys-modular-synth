@@ -20,7 +20,7 @@ control edits, graph refusals and unsupported object/CODE preservation.
 and jack, proving every source uses those bindings without a module adapter,
 including a patched base at its omission value.
 
-`npm run check` passed 992 unit cases, 42 guardrails, formatting, skill integrity, lint, the reader corpus gate, TypeScript and production build.
+`npm run check` passed 1000 unit cases, 42 guardrails, formatting, skill integrity, lint, the reader corpus gate, TypeScript and production build.
 
 Existing generator/library digest fixtures retain their original hashes. The new
 original **Sample, scale and mix CV** exercise covers every added utility and
@@ -31,6 +31,16 @@ readable voices, 13/15 CODE-free patches, with zero parse failures and the same
 fifteen CODE blocks/unmapped calls. This is representation coverage, not audio
 proof. Existing native ENV/alias, source-preservation and saved CODE regressions
 remain in the gate.
+
+## Sol review regressions
+
+The first Sol round found three source/rack round-trip defects. Six focused
+regressions failed before the fixes: RATE 16 pitch LFO ownership, shared
+SMOOTH/sampled/pitch sources with inactive fields, and additive generic ENV on
+native-envelope targets. Derived rates now retain full precision; source
+restoration tracks the fields each adapter actually represents; generic ENV on
+native targets remains CODE. Save/reopen, look edits and real event checks pass.
+The slowest pitch rate also passes at the minimum and maximum catalog tempos.
 
 ## Observed browser and PCM proof
 

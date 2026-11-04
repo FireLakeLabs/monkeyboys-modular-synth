@@ -81,13 +81,14 @@ function project(
   scopes: ParsedScope[],
   saved?: RackLayout,
   snapshot?: ParsedScope[],
-): { patch: Patch; bindings: SourceBinding[] } {
+): { patch: Patch; bindings: SourceBinding[]; represented: Map<string, Set<string>> } {
   const patch: Patch = { version: 1, modules: [], cables: [], names: {} }
   if (saved?.name !== undefined) patch.name = saved.name
   if (saved?.prelude !== undefined && source.startsWith(saved.prelude))
     patch.prelude = saved.prelude
   if (saved?.railHp !== undefined) patch.railHp = saved.railHp
   const bindings: SourceBinding[] = []
+  const represented = new Map<string, Set<string>>()
   const reserved = new Set(saved?.modules.map((module) => module.id))
   const routing = saved && snapshot ? matchRouting(saved.scopes, scopes, snapshot) : undefined
   const gains = new Map<string, { value: number; index: number }>()
@@ -110,6 +111,7 @@ function project(
     const module = { id, type, ...position, look: DEFAULT_LOOK[spec.family], values }
     if (type !== 'out') hp += spec.hp
     patch.modules.push(module)
+    if (type === 'env' || type === 'lfo') represented.set(id, new Set(Object.keys(values)))
     return module
   }
   function output(module: PlacedModule): Output {
@@ -182,6 +184,7 @@ function project(
     if (call.args.length !== 1 || value === undefined || !arg || !fits(module.type, id, value))
       return false
     module.values[id] = value
+    represented.get(module.id)?.add(id)
     bind(module, scope, [index], literalControls(id, arg))
     return true
   }
@@ -281,6 +284,8 @@ function project(
     ]
     const sameDepth = uses.every((use) => Math.abs(use.value - (top - base)) < 1e-9)
     if (!sameDepth && !uses.every((use) => use.isDefault)) return false
+    represented.get(signal.module.id)?.add('mode')
+    represented.get(signal.module.id)?.add('depth')
     depths.set(signal.module.id, uses)
     if (sameDepth) signal.module.values['depth'] = top - base
     else delete signal.module.values['depth']
@@ -588,7 +593,11 @@ function project(
             (config.dc === -1
               ? !frequencyTarget && config.depthabs >= 0
               : frequencyTarget || config.depthabs >= 0)
+          const nativeEnvelope =
+            (targetControl.kind === 'knob' && targetControl.call?.envelope) ||
+            spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack.id)
           const valid =
+            !(call.name === 'env' && nativeEnvelope) &&
             compatibleBias &&
             !data.pitch &&
             Object.keys(config).every((key) => allowed.includes(key)) &&
@@ -691,12 +700,16 @@ function project(
             call.name === 'vib'
               ? add('lfo', { mode: 'SMOOTH', shape: 'sine', rate, depth })
               : add('env', { depth })
+          if (call.name === 'vib') represented.get(module.id)?.delete('shape')
           const count = call.name === 'vib' ? 2 : 5
           if (call.name === 'penv')
             envelopeCalls.forEach((c, i) => {
               const id = ['atk', 'dec', 'sus', 'rel'][i]
               const v = scalar(c.args[0])
-              if (id && v !== undefined) module.values[id] = v
+              if (id && v !== undefined) {
+                module.values[id] = v
+                represented.get(module.id)?.add(id)
+              }
             })
           wire(output(module), group, jack.id)
           bind(
@@ -1073,7 +1086,7 @@ function project(
       patch.names[`${signal.module.id}:${signal.jack}`] = name
   }
   graph(patch)
-  return { patch, bindings }
+  return { patch, bindings, represented }
 }
 
 /** Parse without executing any JavaScript. Syntax errors throw with Acorn's location. */
@@ -1089,6 +1102,7 @@ export function read(source: string): SourceDocument {
         projected.bindings,
         saved.layout,
         matchScopes(saved.layout.scopes, snapshot.scopes, true),
+        projected.represented,
       )
       // The generator can omit inactive controls that are nevertheless explicit
       // in imported source (for example lpenv without an ENV cable).
@@ -1143,7 +1157,7 @@ export function read(source: string): SourceDocument {
       // All executable statements agree, including declarations and statement order.
       // It is now safe to restore omitted/bypassed/disconnected state and cables.
       const matches = matchScopes(saved.layout.scopes, parsed.scopes, true)
-      restore(projection.patch, projection.bindings, saved.layout, matches)
+      restore(projection.patch, projection.bindings, saved.layout, matches, projection.represented)
       projection.patch = saved.patch
       const controls = projection.bindings
       projection.bindings = saved.layout.modules.flatMap((module) =>
@@ -1183,6 +1197,7 @@ export function read(source: string): SourceDocument {
         projection.bindings,
         saved.layout,
         matchScopes(saved.layout.scopes, parsed.scopes),
+        projection.represented,
       )
       layout = 'reconciled'
       diagnostics.push(
@@ -1193,7 +1208,8 @@ export function read(source: string): SourceDocument {
   return {
     kind: 'source',
     source,
-    ...projection,
+    patch: projection.patch,
+    bindings: projection.bindings,
     layout,
     diagnostics,
     patchRevision: JSON.stringify(projection.patch),
@@ -1205,6 +1221,7 @@ function restore(
   bindings: SourceBinding[],
   saved: RackLayout,
   matches: ReturnType<typeof matchScopes>,
+  represented: Map<string, Set<string>>,
 ): void {
   if (saved.railHp !== undefined) patch.railHp = saved.railHp
   const rename = new Map<string, string>()
@@ -1249,6 +1266,16 @@ function restore(
     if (candidates.length !== 1) continue
     const old = candidates[0]
     if (!old) continue
+    // Only controls expressed by this adapter constrain a shared source. The saved
+    // binding proves ownership; final graph/source comparison still checks semantics.
+    const written = represented.get(module.id)
+    if (written)
+      for (const c of getModuleSpec(module.type).controls) {
+        if (written.has(c.id)) continue
+        const stored = old.values[c.id]
+        if (stored === undefined) delete module.values[c.id]
+        else module.values[c.id] = stored
+      }
     // An absent shared depth means target-owned defaults, even when they differ in units.
     if (['env', 'lfo'].includes(module.type) && old.values['depth'] === undefined) {
       const defaults = own.flatMap((b) => {

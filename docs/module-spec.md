@@ -55,7 +55,7 @@ sensitivity; chip text wraps instead of truncating. Module widths are unchanged.
 - **Jacks:** `in` / `out`, with signal type `pattern`, `audio`, `mod`, or `any` (Alien and Cyber jacks pass through whatever enters).
 - **CV inputs** modulate one named control (`cvTarget`). See [rule 3](translation-rules.md#3-a-cable-into-cv-modulates-a-control).
 - **Defaults** are what a freshly added module shows. “Omitted at X” means the generator writes nothing for that control when it holds X.
-- Numbers are written with up to three decimals, no trailing zeros.
+- Control values are written with up to three decimals, no trailing zeros. Derived modulation frequencies and reciprocal sync rates retain full numeric precision so valid boundary periods still read back.
 - Function names below were checked against `@strudel/web` 1.3.0.
 
 ---
@@ -306,7 +306,7 @@ For downward gain modulation, the pinned engine requires positive magnitude and
 Native vibrato is a sine; SHAPE and SKEW are inactive there. Its Hz rate derives
 from OUT tempo divided by 240 and the LFO period.
 
-Generic ENV writes `.env({ c: "control", a, d, s, r, depthabs })` after the base
+Generic ENV on a target without a native envelope writes `.env({ c: "control", a, d, s, r, depthabs })` after the base
 control call. OSC TUNE uses `.penv(depth).pattack(a).pdecay(d).psustain(s).prelease(r)`.
 Native VCA/filter ADSR and aliases keep their original forms and amount units.
 
