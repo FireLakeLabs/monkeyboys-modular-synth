@@ -105,6 +105,20 @@ export async function verifyOutputPanel() {
       document.querySelector('.code').getBoundingClientRect().width === 0,
       'Focus retains code',
     )
+    const focusBounds = output.getBoundingClientRect().toJSON()
+    const frameBounds = document.querySelector('.rack-frame').getBoundingClientRect()
+    assert(frameBounds.height < innerHeight, 'Focused frame grew beyond the window')
+    choose('[aria-label="Rack zoom"]', '1.5')
+    await pause()
+    scroller.scrollTo({ left: 250, top: 600 })
+    await pause()
+    const focusedAfter = output.getBoundingClientRect()
+    assert(scroller.scrollTop > 0, 'Focused rails did not scroll internally')
+    assert(
+      focusedAfter.top >= 0 && focusedAfter.bottom <= innerHeight,
+      'Focused OUT left the viewport',
+    )
+    assert(focusBounds.y === focusedAfter.y, 'OUT moved during focused rail scrolling')
     inspectCables()
     button('Restore workspace').click()
     await pause()

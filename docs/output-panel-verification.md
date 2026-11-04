@@ -35,7 +35,9 @@ Observed in Chromium 156.0.8078.4:
   stayed fixed. Cables from rails 1, 2 and 3 retained measured jack endpoints
   through scrolling, manual zoom, Fit, looks and focus/restore.
 - Focus hides palette and code and restores the prior view without changing
-  source. Width changes retain positions; an off-rail reduction is refused.
+  source. Focused three-rail manual zoom and internal scrolling keep OUT inside
+  the viewport at mid widths; this assertion failed before the focus-mode flex
+  layout fix identified in Sol review. Width changes retain positions; an off-rail reduction is refused.
   OUT BPM updates the header and `setcpm`; VOL changes metadata alone.
 - Native palette clicks produce SEQ → OSC → VCF → MIX before pinned OUT without
   moving MIX. Native LFO dragging displays its ghost before dropping on rail 2.

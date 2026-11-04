@@ -710,6 +710,7 @@
   display: none;
 }
 .workspace[data-rack-focus='true'] .rack {
-  display: block;
+  display: flex;
+  flex-direction: column;
   flex: 1;
 }
