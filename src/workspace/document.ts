@@ -1,3 +1,4 @@
+import { notationLiteral } from '../reader/notationLiteral'
 import { parse, tokenizer } from 'acorn'
 import { isGrid, isSteps } from '../codegen/graph'
 import { drumText } from '../patch/notation'
@@ -268,7 +269,39 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
         throw new RackEditRefused(
           `Cannot safely edit ${module.id} ${control.label}; edit its code instead`,
         )
-      for (const span of spans) edits.push({ ...span, text })
+      for (const span of spans) {
+        const nextText = notation ?? (typeof value === 'string' ? value : undefined)
+        const oldText = typeof old === 'string' ? old : undefined
+        const literal =
+          oldText === undefined ? undefined : notationLiteral(document.source, span, oldText)
+        // Template cooking normalizes line endings; map mini boundaries back to
+        // original bytes while keeping delimiters and untouched raw trivia.
+        if (
+          (control.kind === 'steps' ||
+            control.kind === 'grid' ||
+            (control.kind === 'text' && control.notation)) &&
+          nextText !== undefined &&
+          oldText !== undefined &&
+          literal &&
+          !nextText.includes(literal.quote) &&
+          !nextText.includes('\\') &&
+          (literal.quote === '`' ? !nextText.includes('${') : !/[\r\n]/.test(nextText))
+        ) {
+          let start = 0,
+            end = oldText.length,
+            nextEnd = nextText.length
+          while (start < end && start < nextEnd && oldText[start] === nextText[start]) start++
+          while (end > start && nextEnd > start && oldText[end - 1] === nextText[nextEnd - 1]) {
+            end--
+            nextEnd--
+          }
+          edits.push({
+            start: literal.boundaries[start] ?? span.start + 1,
+            end: literal.boundaries[end] ?? span.end - 1,
+            text: nextText.slice(start, nextEnd),
+          })
+        } else edits.push({ ...span, text })
+      }
     }
   }
   for (const [key, name] of Object.entries(next.names)) {

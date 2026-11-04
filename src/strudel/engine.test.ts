@@ -418,7 +418,12 @@ it('delivers attributable visuals at audio time, retains default output, and cle
   await play(`$: note('c3').s('sine').iter(4)`)
   const callback = web.observe.mock.calls.at(-1)?.[0]
   expect(web.observe.mock.calls.at(-1)?.[1]).toBe(false)
-  callback?.({ context: { __monkeyboyActivity: 1, __monkeyboyStep: [0, 0] } }, 10, 0.5, 10.2)
+  callback?.(
+    { context: { __monkeyboyActivity: 1, __monkeyboyStep0: [0, 0, 0, [{ start: 1, end: 3 }]] } },
+    10,
+    0.5,
+    10.2,
+  )
   expect(events.filter((event) => event.type === 'activity')).toEqual([])
   // Wall time alone must not fire a visual while the audio clock is suspended.
   await vi.advanceTimersByTimeAsync(200)
@@ -428,7 +433,7 @@ it('delivers attributable visuals at audio time, retains default output, and cle
   expect(events).toContainEqual({
     type: 'activity',
     modules: expect.arrayContaining(['seq1', 'osc1', 'iter1']),
-    steps: [{ module: 'seq1', index: 0 }],
+    steps: [{ module: 'seq1', control: 'steps', start: 0, end: 2, position: 0, cycle: 0 }],
   })
   callback?.({ context: { __monkeyboyActivity: 1 } }, 10.2, 0.5, 11)
   events.length = 0

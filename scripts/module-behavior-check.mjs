@@ -33,10 +33,13 @@ await context.addInitScript(() => {
   // oxlint-disable-next-line typescript/unbound-method -- Called with its original Element receiver.
   const animate = Element.prototype.animate
   Element.prototype.animate = function (frames, options) {
-    if (this.hasAttribute('data-step'))
+    if (this.hasAttribute('data-mini-start'))
       window.cellFlashes.push({
         module: this.closest('[data-module]')?.dataset.module,
-        index: Number(this.dataset.step),
+        index:
+          this.closest('[data-module]')?.dataset.module === 'drums1'
+            ? Math.round(Number(this.dataset.miniTimeStart) * 8)
+            : Number(this.dataset.miniStart),
         at: performance.now(),
       })
     return animate.call(this, frames, options)
@@ -71,7 +74,8 @@ async function stop() {
 const cellAnimations = () =>
   page.evaluate(
     () =>
-      document.getAnimations().filter((a) => a.effect?.target?.hasAttribute('data-step')).length,
+      document.getAnimations().filter((a) => a.effect?.target?.hasAttribute('data-mini-start'))
+        .length,
   )
 async function destructive(button) {
   return button.evaluate((e) => {
@@ -164,7 +168,7 @@ try {
     [...new Set(flashes.filter((f) => f.module === 'seq1').map((f) => f.index))].sort(
       (a, b) => a - b,
     ),
-    [0, 2, 3],
+    [0, 5, 8],
   )
   const leads = await page.evaluate(() => window.deliveryLeads)
   assert(leads.length > 0 && leads.every((lead) => lead <= 0.0051))
@@ -199,8 +203,8 @@ try {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.waitForFunction(
     () =>
-      document.getAnimations().filter((a) => a.effect?.target?.hasAttribute('data-step')).length ===
-      0,
+      document.getAnimations().filter((a) => a.effect?.target?.hasAttribute('data-mini-start'))
+        .length === 0,
   )
   await page.waitForFunction(() => document.querySelectorAll('.playing-grid').length > 0)
   await code('$: note("c3 [e3 g3]*2").s("sine").gain(0.1)\n')
@@ -215,7 +219,7 @@ try {
   await code(fixture)
   await status('Playing')
   await page.waitForFunction(() =>
-    document.getAnimations().some((a) => a.effect?.target?.hasAttribute('data-step')),
+    document.getAnimations().some((a) => a.effect?.target?.hasAttribute('data-mini-start')),
   )
   await page.evaluate(async () => {
     await (

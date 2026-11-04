@@ -1,10 +1,13 @@
 # Nested step editor study
 
 Design study for [#146](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/146).
-It blocks the build in [#147](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/147).
+The production build is tracked in [#147](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/147).
 Open the [interactive storyboard](design/nested-step-editor.html) locally to try every
 construct and gesture at real module widths. The storyboard simulates: its small parser,
 playhead and randomness are stand-ins, and it neither plays sound nor writes a patch.
+
+Production implementation and acceptance are documented in [verification](nested-step-editor-verification.md).
+The historical study below describes the pre-implementation prototype.
 
 Machine-readable results are in [`nested-step-editor-results.json`](nested-step-editor-results.json).
 The parser prototype is not merged; see [Reproducing the evidence](#reproducing-the-evidence).

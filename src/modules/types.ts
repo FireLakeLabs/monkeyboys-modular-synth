@@ -89,12 +89,13 @@ export interface SwitchControl extends CallControl {
   omitAt?: string
 }
 
-/** SEQ's step editor. Each step is a token: a note, a degree, '~' for a rest, or '<a b>'. */
+/** Shared lossless mini-notation editor; arrays retain the legacy rack format. */
 export interface StepsControl {
   kind: 'steps'
   id: string
   label: string
   maxSteps: number
+  token?: 'note' | 'number'
   default: readonly string[]
 }
 
@@ -114,6 +115,8 @@ export interface GridControl {
 
 /** CODE's editor. */
 export interface TextControl extends CallControl {
+  notation?: 'chord'
+
   kind: 'text'
   id: string
   label: string

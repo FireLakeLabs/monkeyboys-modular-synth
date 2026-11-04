@@ -75,6 +75,7 @@ export function Rack({
   locked,
   showCode,
   sourceModules,
+  escapedNotation,
   conversions,
   conversionStopped,
   convertCode,
@@ -87,6 +88,7 @@ export function Rack({
   showCode: (id: string) => void
   editingModule: string | null
   emptyOutput: boolean
+  escapedNotation: readonly string[]
   sourceModules: readonly string[]
   conversions: readonly CodeConversion[]
   conversionStopped: boolean
@@ -420,6 +422,7 @@ export function Rack({
                   patch={patch}
                   module={m}
                   control={control}
+                  notationEscaped={escapedNotation.includes(`${m.id}:${control.id}`)}
                   {...(m.type === 'code' && sourceModules.includes(m.id)
                     ? { editSource: () => showCode(m.id) }
                     : {})}

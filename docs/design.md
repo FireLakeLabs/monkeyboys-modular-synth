@@ -186,15 +186,18 @@ menu, selection tools and confirmation. Escape and an outside primary click
 close the menu and return focus to that module's header; Show in code retains its
 editor-focus action. There is no Close menu item.
 
-SEQ and DRUMS grid cells flash on sounding events for up to 400 ms, replacing the
-previous cell flash on the next event. DRUMS highlights the current column across
-its rows. Capture the original source cell before rate/Alien transforms, and
+The shared SEQ, DRUMS, CV SEQ and CHORD editors flash sounding source cells for
+up to 400 ms, replacing the previous cell flash on the next event. Since #147,
+DRUMS identifies the sounding nested cell in its own row rather than inventing
+equal columns across rows. Capture the original source location and copy position
+before rate/Alien transforms, and
 deliver it through #37's scheduled AudioContext-time boundary. Rests and dropped
-events have no independent tick; text notation and opaque/unattributed voices
-receive no invented playhead. Reduced motion replaces moving cell flashes with
+events have no independent tick; text cells match their contained leaf locations,
+while whole-text notation and opaque/unattributed voices receive no invented playhead. Reduced motion replaces moving cell flashes with
 a steady grid outline after its first sounding event. Stop, playback replacement,
 surfaced errors and motion changes clear the old feedback. This affects neither
-saved source nor rack geometry. See the [browser evidence](feedback-verification.md#module-menu-and-step-playheads-89-90).
+saved source nor rack geometry. See the [original browser evidence](feedback-verification.md#module-menu-and-step-playheads-89-90)
+and [nested acceptance](nested-step-editor-verification.md).
 
 ## Rack visual hierarchy (#85, #86, #96, #88)
 

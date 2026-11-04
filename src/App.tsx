@@ -608,6 +608,13 @@ export default function App() {
           locked={locked || document.layout === 'invalid'}
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}
+          escapedNotation={document.bindings.flatMap((b) =>
+            Object.entries(b.controls).flatMap(([id, span]) =>
+              document.source.slice(span.start, span.end).includes('\\')
+                ? [`${b.module}:${id}`]
+                : [],
+            ),
+          )}
           conversions={conversions}
           conversionStopped={audio.status === 'stopped' && audio.scheduling === 'stopped'}
           convertCode={(id) => {

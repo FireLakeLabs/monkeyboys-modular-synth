@@ -6,7 +6,8 @@ import { patternNumber } from '../modules/bindings'
 import type { Control, KnobControl } from '../modules/types'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { isGrid, isSteps } from '../codegen/graph'
-import { drumText, drumView, stepView } from '../patch/notation'
+import { drumText } from '../patch/notation'
+import { MiniEditor } from './MiniEditor'
 import { depthControl, draggedValue, keyboardValue, normalized, sequenceText, snap } from './model'
 
 const focusEditor = (element: HTMLInputElement | null) => element?.focus()
@@ -173,15 +174,15 @@ export function ControlEditor({
   control,
   commit,
   editSource,
+  notationEscaped = false,
 }: {
   patch: Patch
   module: PlacedModule
   control: Control
   commit: Commit
+  notationEscaped?: boolean
   editSource?: () => void
 }) {
-  const [error, setError] = useState('')
-  const [textMode, setTextMode] = useState(false)
   const drawbarGesture = useRef<object | undefined>(undefined)
   const value = controlValue(module, control)
   if (!controlEnabled(getModuleSpec(module.type), module.values, control)) return null
@@ -277,6 +278,19 @@ export function ControlEditor({
         </label>
       )
     case 'text':
+      if (control.notation && typeof value === 'string')
+        return (
+          <MiniEditor
+            escaped={notationEscaped}
+            text={value}
+            label={control.label}
+            token={control.notation}
+            moduleId={module.id}
+            controlId={control.id}
+            width={getModuleSpec(module.type).hp * 12 - 16}
+            commit={commit}
+          />
+        )
       if (editSource)
         return (
           <div className="text-control">
@@ -306,158 +320,32 @@ export function ControlEditor({
     case 'steps': {
       if (!isSteps(value)) return null
       const text = typeof value === 'string' ? value : sequenceText(module, value)
-      const view = stepView(text, control)
-      if (textMode || view.kind === 'text')
-        return (
-          <TextEditor
-            key={text}
-            label="Step notation"
-            notation
-            value={text}
-            reason={view.kind === 'text' ? view.reason : undefined}
-            backToGrid={view.kind === 'grid' ? () => setTextMode(false) : undefined}
-            commit={(next) => {
-              const applied = commit(next)
-              if (applied) setTextMode(false)
-              return applied
-            }}
-          />
-        )
-      const steps = typeof value === 'string' ? view.value : value
       return (
-        <fieldset className="step-editor">
-          <legend>{control.label}</legend>
-          <div className="steps">
-            {Array.from({ length: control.maxSteps }, (_, index) => (
-              <input
-                key={`${index}:${steps[index] ?? '~'}`}
-                aria-label={`Step ${index + 1}`}
-                data-step={index}
-                defaultValue={steps[index] ?? '~'}
-                onBlur={(event) => {
-                  const token = event.target.value.trim()
-                  const parsed = stepView(token, control)
-                  if (parsed.kind !== 'grid' || parsed.value.length !== 1) {
-                    setError('Enter a note, degree, ~, or <a b>')
-                    return
-                  }
-                  if (token === (steps[index] ?? '~')) {
-                    setError('')
-                    return
-                  }
-                  const next = Array.from({ length: Math.max(steps.length, index + 1) }, (_, i) =>
-                    i === index ? token : (steps[i] ?? '~'),
-                  )
-                  if (commit(typeof value === 'string' ? next.join(' ') : next)) setError('')
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') event.currentTarget.blur()
-                }}
-              />
-            ))}
-          </div>
-          <button type="button" onClick={() => setTextMode(true)}>
-            Text mode
-          </button>
-          {error && <small role="alert">{error}</small>}
-        </fieldset>
+        <MiniEditor
+          escaped={notationEscaped}
+          text={text}
+          label={control.label}
+          token={control.token ?? 'note'}
+          moduleId={module.id}
+          controlId={control.id}
+          commit={commit}
+        />
       )
     }
     case 'grid': {
       if (!isGrid(value)) return null
       const text = typeof value === 'string' ? value : drumText(value)
-      const view = drumView(text, control)
-      if (textMode || (typeof value === 'string' && view.kind === 'text'))
-        return (
-          <TextEditor
-            key={text}
-            label="Drum notation"
-            notation
-            value={text}
-            reason={view.kind === 'text' ? view.reason : undefined}
-            backToGrid={view.kind === 'grid' ? () => setTextMode(false) : undefined}
-            commit={(next) => {
-              const applied = commit(next)
-              if (applied) setTextMode(false)
-              return applied
-            }}
-          />
-        )
-      const rows = typeof value === 'string' ? (view.kind === 'grid' ? view.value : []) : value
-      const count = rows[0]?.steps.length ?? control.default[0]?.steps.length ?? 8
       return (
-        <fieldset className="grid-editor">
-          <legend>{control.label}</legend>
-          <select
-            aria-label="Drum step count"
-            value={count}
-            onChange={(event) =>
-              commit(
-                rows.map((row) => ({
-                  ...row,
-                  steps: Array.from(
-                    { length: Number(event.target.value) },
-                    (_, i) => row.steps[i] ?? 0,
-                  ),
-                })),
-              )
-            }
-          >
-            {control.stepCounts.map((n) => (
-              <option key={n} value={n}>
-                {n} steps
-              </option>
-            ))}
-          </select>
-          {rows.map((row, index) => (
-            <div key={index} className="drum-row">
-              <input
-                key={row.sample}
-                aria-label={`Sample ${index + 1}`}
-                defaultValue={row.sample}
-                onBlur={(event) => {
-                  const sample = event.target.value.trim() || '~'
-                  if (sample === row.sample) return
-                  commit(rows.map((r, i) => (i === index ? { ...r, sample } : r)))
-                }}
-              />
-              <div className="drum-cells" style={{ gridTemplateColumns: `repeat(${count}, 1fr)` }}>
-                {row.steps.map((step, i) => (
-                  <button
-                    type="button"
-                    key={i}
-                    aria-label={`${row.sample} step ${i + 1}`}
-                    data-step={i}
-                    aria-pressed={step === 1}
-                    onClick={() =>
-                      commit(
-                        rows.map((r, j) =>
-                          j === index
-                            ? { ...r, steps: r.steps.map((s, k) => (k === i ? (s ? 0 : 1) : s)) }
-                            : r,
-                        ),
-                      )
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() =>
-              commit([
-                ...rows,
-                { sample: 'cp', steps: Array.from({ length: count }, () => 0 as const) },
-              ])
-            }
-          >
-            + Voice
-          </button>
-          <button type="button" onClick={() => setTextMode(true)}>
-            Text mode
-          </button>
-        </fieldset>
+        <MiniEditor
+          escaped={notationEscaped}
+          text={text}
+          label={control.label}
+          token="sample"
+          moduleId={module.id}
+          controlId={control.id}
+          width={109}
+          commit={commit}
+        />
       )
     }
   }

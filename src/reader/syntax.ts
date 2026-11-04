@@ -128,6 +128,8 @@ export function parseSource(
 export function scalar(
   expression: CallExpression['arguments'][number] | undefined,
 ): number | string | undefined {
+  if (expression?.type === 'TemplateLiteral' && expression.expressions.length === 0)
+    return expression.quasis[0]?.value.cooked ?? undefined
   if (expression?.type === 'BinaryExpression' && expression.operator === '/') {
     const left = expression.left.type === 'PrivateIdentifier' ? undefined : scalar(expression.left)
     const right = scalar(expression.right)

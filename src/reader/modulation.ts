@@ -6,6 +6,7 @@ import type { ControlValue } from '../patch/types'
 
 export interface ModPattern {
   type: string
+  literal?: { start: number; end: number }
   values: Record<string, ControlValue>
   inputs: ModPattern[]
   start: number
@@ -31,7 +32,14 @@ export function modPattern(
 ): ModPattern | undefined {
   const literal = scalar(arg)
   if (numericNotation(literal))
-    return { type: 'cvseq', values: { steps: literal }, inputs: [], start: arg.start, end: arg.end }
+    return {
+      type: 'cvseq',
+      values: { steps: literal },
+      literal: { start: arg.start, end: arg.end },
+      inputs: [],
+      start: arg.start,
+      end: arg.end,
+    }
   const parsed = chain(arg)
   let result: ModPattern | undefined
   let index = 0
@@ -71,6 +79,7 @@ export function modPattern(
       result = {
         type: 'cvseq',
         values: { steps: value },
+        literal: { start: first.args[0].start, end: first.args[0].end },
         inputs: [],
         start: first.start,
         end: first.end,

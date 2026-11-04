@@ -60,14 +60,14 @@ describe('source-owned workspace', () => {
       control: 'steps',
       source: "note('c2 e2 g2').s('sine')",
       value: ['d2', 'e2', 'g2'],
-      expected: `note("d2 e2 g2").s('sine')`,
+      expected: `note('d2 e2 g2').s('sine')`,
     },
     {
       type: 'drums',
       control: 'grid',
       source: "s('[bd ~]*4').bank('RolandTR808')",
       value: [{ sample: 'bd', steps: [1, 0, 1, 0, 1, 0, 1, 1] }],
-      expected: `s("bd ~ bd ~ bd ~ bd bd").bank('RolandTR808')`,
+      expected: `s('bd ~ bd ~ bd ~ bd bd').bank('RolandTR808')`,
     },
   ] as const)(
     'splices $type grid edits into source and restores exact rack identity',
