@@ -244,13 +244,15 @@ export function readLayout(source: string): SavedLayout {
               !record(binding.target) ||
               typeof binding.target.module !== 'string' ||
               typeof binding.target.jack !== 'string' ||
-              typeof binding.target.control !== 'string'
+              typeof binding.target.control !== 'string' ||
+              (binding.target.path !== undefined && typeof binding.target.path !== 'string')
             )
               throw new Error('Invalid CV target')
             target = {
               module: binding.target.module,
               jack: binding.target.jack,
               control: binding.target.control,
+              ...(typeof binding.target.path === 'string' ? { path: binding.target.path } : {}),
             }
           }
           return { scope: binding.scope, calls, role: binding.role, ...(target ? { target } : {}) }

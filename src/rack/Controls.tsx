@@ -1,3 +1,4 @@
+import { controlValue } from '../modules/values'
 import { useRef, useState } from 'react'
 import { patternNumber } from '../modules/bindings'
 import type { Control, KnobControl } from '../modules/types'
@@ -179,7 +180,7 @@ export function ControlEditor({
 }) {
   const [error, setError] = useState('')
   const [textMode, setTextMode] = useState(false)
-  const value = module.values[control.id] ?? control.default
+  const value = controlValue(module, control)
   switch (control.kind) {
     case 'knob': {
       const knob = depthControl(patch, module, control)

@@ -33,7 +33,7 @@ describe('explicit rack conversion', () => {
     const converted = makeRackEditable(document, next)
     expect(converted.patch).toEqual({ ...next, prelude: 'const turn = x => x.hurry(2);' })
     expect(sourceBody(converted.source)).toContain('.chunk(4, turn)')
-    expect(sourceBody(converted.source)).toContain('.lpf(sine')
+    expect(sourceBody(converted.source)).toContain('.lfo({ c: "lpf"')
     expect(sourceBody(converted.source)).toBe(sourceBody(generate(converted.patch)))
     expect(read(converted.source).patch).toEqual(converted.patch)
     const out = converted.patch.modules.find((module) => module.type === 'out')
@@ -118,7 +118,12 @@ it('checks real Strudel events separately from source and reopened identity', as
   const { document, next } = proposedCV()
   const modulated = makeRackEditable(document, next)
   expect(events(modulated.source)).toEqual(
-    events(fixture.replace('.lpf(800)', '.lpf(sine.range(800, 2400).slow(4))')),
+    events(
+      fixture.replace(
+        '.lpf(800)',
+        '.lpf(800).lfo({ c: "lpf", sync: .25, depthabs: 1600, dc: 0, shape: "sine", skew: .5 })',
+      ),
+    ),
   )
   expect(events(modulated.source)).not.toEqual(events(fixture))
 })

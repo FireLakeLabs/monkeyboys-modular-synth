@@ -80,3 +80,10 @@ export function drumText(rows: readonly GridRow[]): string {
       .join(', ') || '~'
   )
 }
+
+/** Numeric mini-notation is data. Other expressions remain source-owned CODE. */
+export function numericNotation(value: unknown): value is string {
+  return (
+    typeof value === 'string' && /\d/.test(value) && /^[\d\s.+\-<>[\]~_*/!@?,|()%:]+$/.test(value)
+  )
+}

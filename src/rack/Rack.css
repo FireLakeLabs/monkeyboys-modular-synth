@@ -244,6 +244,63 @@
     11px 'Barlow Condensed',
     sans-serif;
 }
+/* Dense catalog panels use rows without changing their HP or text size. */
+.module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
+    :has(> :nth-child(4)),
+    :has(> .switch-control)
+  ) {
+  padding-block: 8px;
+  gap: 1px;
+}
+.module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
+    :has(> :nth-child(4)),
+    :has(> .switch-control)
+  )
+  .numeric-control {
+  flex-direction: row;
+  width: 100%;
+}
+.module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
+    :has(> :nth-child(4)),
+    :has(> .switch-control)
+  )
+  .numeric-control
+  .knob {
+  flex-shrink: 0;
+  margin: 0 2px;
+}
+.module-controls:has(> .switch-control) > .switch-control {
+  gap: 2px;
+}
+/* A sequence grid keeps its mode label beside the select to reserve knob space. */
+.module-controls:has(> .step-editor):has(> .switch-control) {
+  padding-block: 4px;
+}
+.module-controls:has(> .step-editor) > .switch-control {
+  flex-direction: row;
+  align-items: center;
+}
+.module-controls:has(> .step-editor) > .switch-control select {
+  flex: 1;
+  min-width: 0;
+}
+/* Four plain level controls can share two compact rows on a wider panel. */
+.module-controls:has(> .numeric-control:nth-child(4):last-child):not(:has(> .switch-control))
+  .numeric-control {
+  width: calc(50% - 1px);
+}
+.module-controls:has(> .numeric-control:nth-child(4):last-child):not(:has(> .switch-control))
+  .knob {
+  margin-inline: 0;
+}
+.module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
+    :has(> :nth-child(4)),
+    :has(> .switch-control)
+  )
+  .numeric-control
+  label {
+  min-width: 0;
+}
 .knob {
   position: relative;
   display: block;

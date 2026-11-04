@@ -48,7 +48,8 @@ code-application, history, sounding-token, module-behavior, rack-visual and
 output-panel scripts. It also runs cable targets, grids, library UI/on-ramp/rack
 editing, literal identity, error positions, editor status, CODE conversion, patch
 names, all module looks and mid-width workspace probes, plus library
-PCM/Cancel/Stop recovery and trance playback/events/export/reopen. Code application
+PCM/Cancel/Stop recovery, trance playback/events/export/reopen, and generalized
+modulation controls/within-note PCM. Code application
 and history include their real-engine modes. The original script assertions
 remain authoritative. The historical two-build editor-load benchmark
 and manual engine-spike page are experiments, not acceptance suites, and are not

@@ -77,6 +77,13 @@ exports[`built-in patch library > lfo-sweep: preserves exact source and independ
 }
 `;
 
+exports[`built-in patch library > modulation-utilities: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "cc4be441d9c8db66df2b58c5bf799239072d695966247ba3a4a73cb0ec4e926a",
+  "projection": "949fe7501f00a4cf427380544106d57ac0bcd071a42ee844c41e40ae3570afde",
+}
+`;
+
 exports[`built-in patch library > pattern-alien: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "9c7ec33ac2d9cdef17fcbe80ac1fcd9a75db67c000e946804a53398918c46155",

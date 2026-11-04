@@ -66,7 +66,7 @@ export interface KnobControl extends CallControl {
   /** The generator writes nothing when the knob holds this value. */
   omitAt?: number
   /** LFO depth in this target control's units. */
-  modulation?: { min: number; max: number; default: number }
+  modulation?: { min: number; max: number; default: number; pitch?: boolean }
 }
 
 export interface SwitchOption {
@@ -144,6 +144,8 @@ export interface ModuleSpec {
   readDefaults?: Readonly<Record<string, number | string>>
   /** An atomic pattern source followed by its required nullary calls. */
   source?: { method: string; control: string; suffix: readonly string[] }
+  /** Behavior of absent fields in older saved patches; new modules store the new defaults. */
+  legacyDefaults?: Readonly<Record<string, number | string>>
   controls: readonly Control[]
   jacks: readonly Jack[]
   /**
@@ -153,6 +155,10 @@ export interface ModuleSpec {
   strudel: readonly string[]
   /** Pinned-engine aliases; source spelling is retained by the reader. */
   strudelAliases?: Readonly<Record<string, string>>
+  /** Engine waveform names for audio-rate LFOs (pattern names remain unchanged). */
+  smoothShapes?: Readonly<Record<string, string>>
+  /** Pattern-valued modulation source/utility, interpreted inside a CV argument. */
+  modSource?: 'sequence' | 'sampleHold' | 'attenuverter' | 'mix'
   /** True when the module changes the pattern itself, so its position in the chain matters. */
   orderSensitive: boolean
   /** True when a rack may contain at most one. */

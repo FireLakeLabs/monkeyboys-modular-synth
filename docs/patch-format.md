@@ -49,7 +49,7 @@ interface Patch {
 - Saved rack identity compares object contents independently of key insertion
   order, while retaining module and cable array order. Adding `rows` after
   widening a rail must not reject a layout-only move.
-- `values` holds one entry per control id from the catalog; missing entries mean “catalog default”.
+- `values` holds one entry per control id from the catalog; missing entries mean the catalog default, except declared `legacyDefaults` (LFO MODE remains STEP in older v1 racks). New modules explicitly store controls whose defaults changed.
 - A cable always runs from an `out` jack to an `in` jack. An `out` jack may have many cables; an `in` jack has at most one.
 
 ## The layout comment block
@@ -98,7 +98,7 @@ call. Scopes include the tempo expression, declarations, and final voices.
 
 A module binding contains `scope`, `calls` (zero-based indices into that scope),
 and `role` (`module`, `cv`, `mixer`, or `tempo`). CV bindings also have
-`target: {module, jack, control}`. Several bindings can belong to the same module;
+`target: {module, jack, control, path?}`. Optional `path` records a nested modulation input route (`in`, `in2`, or slash-separated combinations), distinguishing same-type sources inside one utility argument without guessing identities from values. Several bindings can belong to the same module;
 several modules can bind the same outer call for CV or folded mixer gain. An
 empty call list binds a root-only expression (for example an unscaled `sine`).
 Omitted/bypassed/disconnected modules have no sounding bindings. A final scope's
@@ -146,8 +146,9 @@ reader of the old proposed `lead.2` line format to migrate.
   channels or changing voice order. Parsed gains and their editable spans follow
   those channels; saved unoccupied channel levels remain silent state. Folded
   nested buses or ambiguous endpoints do not establish channel ownership.
-- Context-specific ENV calls can share a saved identity only through matched CV
-  targets and saved call bindings, with equal parsed envelope values. Divergent
+- Context-specific ENV/SMOOTH LFO calls can share a saved identity only through matched CV
+  targets and saved call bindings, with equal effective source settings. An absent
+  shared depth permits independently verified target-unit defaults. Divergent
   uses remain separate modules; equal values alone never merge independent ENVs.
 - Known generator-owned final-voice orbit routing does not consume module IDs.
   Imported routing stays source-owned unless its ownership is established.
@@ -173,7 +174,7 @@ reader of the old proposed `lead.2` line format to migrate.
 Every saved `modules` entry also retains its `values` object, including omitted
 controls, OUT volume, bypassed settings, and disconnected CODE drafts. `cables`
 retains the complete patch cable array, including IDs and disconnected paths.
-Missing control entries still mean catalog defaults. Positions, looks and values
+Missing control entries mean catalog defaults or their explicit `legacyDefaults` compatibility values. Positions, looks and values
 are preserved even for modules with no source bindings. `names` includes any
 names allocated by the writer. These fields allow exact rack-state recovery from
 an untouched generated document, separately from sounding-code reconstruction.
@@ -312,7 +313,7 @@ semantics, generated event values and saved graph identity remain separate check
 
 A new call adapter does not replace an existing file's explicit saved CODE
 owners. For an unchanged scope, the reader retains a contiguous saved CODE
-fragment only when its complete call bytes match the stored text. It still
+fragment only when its complete call bytes match the stored text, allowing the generator’s leading indentation outside the CODE tokens. It still
 checks source ownership and generated graph agreement independently. Altered
 source reprojects conservatively; forged CODE text invalidates metadata instead
 of overriding executable source. Plain files without saved CODE use the new

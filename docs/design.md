@@ -157,7 +157,11 @@ detent; Home/End reach the range limits. Slider semantics announce the label,
 range, current number and unit. All changes use the existing commit boundary,
 including source preservation and live playback updates.
 
-Panels group switches before knobs after sequence/grid/text editors, with the
+Panels with switches or four or more controls use compact numeric rows, except
+for drum grids and text editors; four plain level controls can share two rows.
+SEQ places its mode label beside the select. This keeps the #130 controls inside
+their fixed width and height across looks. Panels group switches before knobs
+after sequence/grid/text editors, with the
 same visual and keyboard order. Compact drum rows place the sample beside its
 step cells. The v1 controls fit the existing catalog widths, so this change does
 not widen modules or relocate saved patches. Panel labels are at least 11 px;
@@ -168,7 +172,8 @@ The rack toolbar offers Fit rack and manual 75%, 100%, 125% and 150% zoom.
 Fit recalculates when the viewport or row count changes; zoom is local view
 state and changes neither source nor saved rack positions. Cable measurements,
 wire pointers and module placement convert viewport coordinates back to rack
-coordinates. Jacks reserve at least 24 screen pixels, growing their layout boxes
+coordinates. Fit leaves an extra 24 screen pixels below the rails for wrapped
+jack targets. Jacks reserve at least 24 screen pixels, growing their layout boxes
 when zoomed out and wrapping into additional rows as needed.
 
 See the [browser matrix, screenshots and verification limits](rack-feel-verification.md).

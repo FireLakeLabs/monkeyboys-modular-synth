@@ -231,7 +231,7 @@ describe('rack editing', () => {
     expect(sounding(next)).not.toContain('$:')
   })
   it('uses target units and resets LFO depth when repatched, including passthroughs', () => {
-    let patch = add(add(demoPatch(), 'lfo'), 'iter')
+    let patch = setValue(add(add(demoPatch(), 'lfo'), 'iter'), 'lfo1', 'mode', 'STEP')
     patch = connect(patch, ref('lfo1', 'out'), ref('iter1', 'in'))
     patch = connect(patch, ref('iter1', 'out'), ref('vcf1', 'cv'))
     const lfo = patch.modules.find((m) => m.id === 'lfo1')

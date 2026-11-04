@@ -313,3 +313,18 @@ The #132 palette/Fit correction is guarded by the existing
 with compact catalog representatives; no assertion was weakened. This is a
 browser layout check, not a static string-length limit; see the
 [hosted regression](pattern-time-verification.md#hosted-palettefit-regression).
+The #130 [modulation matrix](../src/reader/modulation.test.ts) separately checks
+exact source, saved graph identity and real pinned-engine events for generalized
+CV and utilities. Catalog compatibility defaults preserve legacy STEP LFOs.
+The [browser/PCM acceptance](modulation-verification.md) verifies actual controls
+and within-note motion; it runs in the existing separate browser workflow.
+
+The #130 CI run caught nested explicit-mini arguments being parsed twice by
+the REPL. The modulation event guard now runs generated forms through the pinned
+REPL transpiler, including inline/named CV SEQ utility inputs; it failed with
+`cannot parse as numeral: "object"` on the old writer and passes with plain-string
+parser arguments. The existing browser matrix now derives module/look counts
+from the catalog and verifies every added module without relaxing overflow,
+jack-target or font-size assertions. The live library signal suite also covers
+the new utility exercise. These guardrails replace assumptions that the initial
+sixteen-module catalog and direct core queries cover later module additions.

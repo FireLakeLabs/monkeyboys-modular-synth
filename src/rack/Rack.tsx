@@ -201,9 +201,14 @@ export function Rack({
   const railHp = railWidth(patch)
   const rows = rackRows(patch)
   const height = rows * ROW_HEIGHT
+  // Leave room below the last rail for inverse-scaled jack targets that wrap.
   const fitScale = Math.max(
     0.1,
-    Math.min(1, (viewportSize.width - 36) / (railHp * HP), (viewportSize.height - 36) / height),
+    Math.min(
+      1,
+      (viewportSize.width - 36) / (railHp * HP),
+      (viewportSize.height - 36 - 24) / height,
+    ),
   )
   const scale = zoom === 'fit' ? fitScale : zoom
   const outputScale = Math.max(0.1, Math.min(1, viewportSize.height / 430))

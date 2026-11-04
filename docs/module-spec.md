@@ -53,9 +53,9 @@ sensitivity; chip text wraps instead of truncating. Module widths are unchanged.
 
 - **Width** is in HP. 1 HP = 12 px at 100% zoom. A module is the same width in every look.
 - **Jacks:** `in` / `out`, with signal type `pattern`, `audio`, `mod`, or `any` (Alien and Cyber jacks pass through whatever enters).
-- **CV inputs** modulate one named control (`cvTarget`). See [rule 3](translation-rules.md#3-a-cable-into-cv-turns-a-number-into-a-pattern).
+- **CV inputs** modulate one named control (`cvTarget`). See [rule 3](translation-rules.md#3-a-cable-into-cv-modulates-a-control).
 - **Defaults** are what a freshly added module shows. “Omitted at X” means the generator writes nothing for that control when it holds X.
-- Numbers are written with up to three decimals, no trailing zeros.
+- Control values are written with up to three decimals, no trailing zeros. Derived modulation frequencies and reciprocal sync rates retain full numeric precision so valid boundary periods still read back.
 - Function names below were checked against `@strudel/web` 1.3.0.
 
 ---
@@ -147,6 +147,7 @@ Hardware · Sound · 9 HP
 | Jack | Dir | Signal  |
 | ---- | --- | ------- |
 | NOTE | in  | pattern |
+| TUNE | in  | mod     |
 | OUT  | out | audio   |
 
 ```js
@@ -255,17 +256,19 @@ may mix within a complete, ordered ADSR group. Existing VCA/VCF target rules
 still apply; partial envelopes such as `.dec(.1)` stay CODE because filling
 missing parameters would invent settings. Source spelling survives literal edits.
 
-The envelope fires on every event, so there is no gate input. In v1 an ENV can only be patched into VCA or VCF CV jacks; anything else is blocked. One ENV may feed both (fan-out).
+The envelope fires on every event, so there is no gate input. ENV may feed any CV jack, including OSC TUNE and catalog extensions. One ENV may fan out to multiple targets. Native VCA/filter calls above remain unchanged; other targets use the [generalized adapter](#generalized-cv-130). DEPTH is bipolar in the destination's units (fallback −1 to 1, default 0.5); native VCA uses LEVEL and native VCF uses ENV AMT instead.
 
 ### LFO — Low-frequency oscillator
 
 Hardware · Modulate · 8 HP
 
-| Control | Kind          | Range                                            | Default                       | Writes                                                 |
-| ------- | ------------- | ------------------------------------------------ | ----------------------------- | ------------------------------------------------------ |
-| SHAPE   | switch        | sine · tri · saw · isaw · square · perlin · rand | sine                          | the signal name                                        |
-| RATE    | knob          | 0.25–16 cycles, detented                         | 4                             | `.slow(x)`; omitted at 1; below 1 written `.fast(1/x)` |
-| DEPTH   | knob, bipolar | in the target’s units                            | depends on target (see below) | the top of `.range()`                                  |
+| Control | Kind          | Range                                            | Default                       | Writes                                                            |
+| ------- | ------------- | ------------------------------------------------ | ----------------------------- | ----------------------------------------------------------------- |
+| MODE    | switch        | SMOOTH · STEP                                    | SMOOTH for new modules        | per-voice `.lfo()` or sampled signal                              |
+| SKEW    | knob          | 0–1, step 0.01                                   | 0.5                           | `.lfo({ skew })`, saved but inactive in STEP/native pitch vibrato |
+| SHAPE   | switch        | sine · tri · saw · isaw · square · perlin · rand | sine                          | the signal name                                                   |
+| RATE    | knob          | 0.25–16 cycles, detented                         | 4                             | `.slow(x)`; omitted at 1; below 1 written `.fast(1/x)`            |
+| DEPTH   | knob, bipolar | in the target’s units                            | depends on target (see below) | the top of `.range()`                                             |
 
 | Jack | Dir | Signal |
 | ---- | --- | ------ |
@@ -278,12 +281,68 @@ sine.range(800, 2400).slow(4)   // into VCF CV: CUTOFF 800, DEPTH +1600
 The target ranges/defaults below are owned by each target knob’s `modulation`
 data in the catalog. A missing LFO depth value uses that target default.
 
-The LFO writes nothing by itself; it replaces the number of the control it is patched into: `.range(knob, knob + depth)`. DEPTH is bipolar and takes the units of its target, so it is reset to the target’s default when re-patched:
+In STEP mode the LFO writes nothing by itself; it replaces the number of the control it is patched into: `.range(knob, knob + depth)`. DEPTH is bipolar and takes the units of its target, so it is reset to the target’s default when re-patched:
 
 | Target     | DEPTH range         | Default |
 | ---------- | ------------------- | ------- |
 | VCF CUTOFF | −10000 to +10000 Hz | +1600   |
 | VCA LEVEL  | −1 to +1            | −0.5    |
+
+### Generalized CV (#130)
+
+Both LFO modes, ENV and CV SEQ route by the jack's `cvTarget` and the control's
+shared `call` binding. DEPTH bounds/defaults live on the target's `modulation`
+data; OSC TUNE adds `{ min: -24, max: 24, default: 2, pitch: true }` in semitones.
+Repatching LFO/ENV resets explicit depth to the new target defaults. Shared
+sources without explicit depth keep independent target defaults.
+
+SMOOTH writes the base call followed by
+`.lfo({ c: "lpf", sync: .25, depthabs: 1600, dc: 0, shape: "sine", skew: .5 })`.
+The supported engine shapes are sine, tri, ramp, saw and square; catalog `saw`
+maps to engine `ramp`, and `isaw` to engine `saw`. `perlin`/`rand` remain STEP.
+For downward gain modulation, the pinned engine requires positive magnitude and
+`dc: -1`, avoiding its inverted signed-depth clamp. OSC TUNE writes
+`.vib(hz).vibmod(semitones)` for SMOOTH and `.transpose(signal)` for STEP.
+Native vibrato is a sine; SHAPE and SKEW are inactive there. Its Hz rate derives
+from OUT tempo divided by 240 and the LFO period.
+
+Generic ENV on a target without a native envelope writes `.env({ c: "control", a, d, s, r, depthabs })` after the base
+control call. OSC TUNE uses `.penv(depth).pattack(a).pdecay(d).psustain(s).prelease(r)`.
+Native VCA/filter ADSR and aliases keep their original forms and amount units.
+
+### S&H — Sample and hold
+
+Hardware · Modulate · 8 HP. IN and OUT are mod jacks. STEPS is 1–64 per cycle,
+step 1, default 8. Writes `.segment(n)`. It explicitly samples an LFO (including
+SMOOTH) or numeric CV pattern; a following utility/CV destination uses that
+pattern. A bare sampled normalized LFO yields values 0–1; use ATTENUVERTER to
+map them to frequencies or another destination's units.
+
+### ATTENUVERTER
+
+Hardware · Modulate · 10 HP. IN and OUT are mod jacks. AMOUNT: −2 to 2, step
+0.01, default 1. MIN/MAX: −20000 to 20000, step 0.01, defaults 0/1. SCALE:
+LINEAR (default) or EXP. Writes `.mul(amount).range(min, max)` or `.rangex(min, max)`;
+EXP requires positive endpoints. IN takes STEP LFO, S&H, CV SEQ or another utility.
+Output values are absolute destination units, without a second automatic range.
+
+### MOD MIX — Modulation mixer
+
+Hardware · Modulate · 8 HP. A/B are mod inputs; OUT is mod. No knobs. Writes
+`a.add(b)`; both inputs must be connected before it changes a CV argument.
+Inputs accept numeric patterns as above. Named outputs and nested utilities retain
+shared wiring on export/reopen. Utility cycles and audio/pattern signal mistakes
+remain invalid; per-voice ENV cannot be a standalone pattern input.
+
+### CV SEQ — Control value sequencer
+
+Hardware · Modulate · 10 HP. STEPS uses the shared 1–16-cell step editor, with
+default values 400, 800, 1200. OUT is mod. Array steps write a cycle alternation
+such as `.lpf("<400 800 1200>")`; imported numeric mini-notation retains its exact
+timing/spelling. Utility arguments wrap it in `mini('…')`. Values are absolute
+in the destination's units, including semitones at OSC TUNE. Explicit parser arguments use single quotes so the REPL does not parse them twice. Rich notation uses
+text mode; non-numeric tokens are refused. A pattern may produce several events
+inside one note; this is distinct from audio-rate modulation.
 
 ---
 

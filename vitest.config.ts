@@ -14,6 +14,6 @@ export default defineConfig({
   },
   test: {
     include: ['src/**/*.test.ts'],
-    server: { deps: { inline: [/@strudel\/(mini|tonal)/] } },
+    server: { deps: { inline: [/@strudel\/(mini|tonal|transpiler)/] } },
   },
 })
