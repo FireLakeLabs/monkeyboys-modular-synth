@@ -261,3 +261,8 @@ fixtures protect existing suffix and whole-voice CODE ownership when adapters ar
 edits and forged saved text exercise that boundary's conservative rejection.
 Partial envelopes and unproven orbit aliases remain CODE under the
 [translation contract](translation-rules.md#common-imported-calls-77).
+
+The #91 [mid-width browser regression](mid-width-verification.md) rejects page
+scrolling and checks pane reachability, horizontal palette geometry, source/rack
+selection, Show in code focus, exact source and draft undo across view changes.
+It remains outside the shared gate with the other Chromium browser checks.
