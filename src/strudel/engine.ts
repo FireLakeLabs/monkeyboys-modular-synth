@@ -366,39 +366,51 @@ export function loadSamplePacks(packs: readonly SamplePack[]): Promise<void> {
 export function auditionSample(name: string, index: number): Promise<void> {
   const current = epoch
   return enqueue(async () => {
-    if (!Number.isInteger(index) || index < 0 || !/^[\w-]+$/.test(name))
-      throw new Error('Invalid sound variant')
-    const strudel = await load()
-    checkEpoch(current)
-    if (bouncing) throw new Error('Wait for Bounce before auditioning')
-    await strudel.getAudioContext().resume()
-    applyVolume(strudel)
-    checkEpoch(current)
-    const tracked = (async () => {
-      const value = { s: name, n: index, note: name.startsWith('wt_') ? 60 : 36, orbit: -1 }
-      // The pinned sampler discards a cold trigger when decoding misses its onset.
-      // A silent trigger warms its own sample/table cache before the audible onset.
-      await strudel.superdough(
-        { ...value, gain: 0 },
-        strudel.getAudioContext().currentTime + 0.05,
-        0.01,
-        0.5,
-        0,
-      )
+    let cancel = () => {}
+    const cancellation = new Promise<never>((_resolve, reject) => {
+      cancel = () => reject(cancelled())
+    })
+    cancelActive = cancel
+    const work = (async () => {
+      if (!Number.isInteger(index) || index < 0 || !/^[\w-]+$/.test(name))
+        throw new Error('Invalid sound variant')
+      const strudel = await load()
       checkEpoch(current)
-      await strudel.superdough(
-        { ...value, gain: 0.7 },
-        strudel.getAudioContext().currentTime + 0.05,
-        0.8,
-        0.5,
-        0,
-      )
+      if (bouncing) throw new Error('Wait for Bounce before auditioning')
+      await strudel.getAudioContext().resume()
+      applyVolume(strudel)
+      checkEpoch(current)
+      const tracked = (async () => {
+        const value = { s: name, n: index, note: name.startsWith('wt_') ? 60 : 36, orbit: -1 }
+        // The pinned sampler discards a cold trigger when decoding misses its onset.
+        // A silent trigger warms its own sample/table cache before the audible onset.
+        await strudel.superdough(
+          { ...value, gain: 0 },
+          strudel.getAudioContext().currentTime + 0.05,
+          0.01,
+          0.5,
+          0,
+        )
+        checkEpoch(current)
+        await strudel.superdough(
+          { ...value, gain: 0.7 },
+          strudel.getAudioContext().currentTime + 0.05,
+          0.8,
+          0.5,
+          0,
+        )
+      })()
+      outputWork.add(tracked)
+      try {
+        await tracked
+      } finally {
+        outputWork.delete(tracked)
+      }
     })()
-    outputWork.add(tracked)
     try {
-      await tracked
+      await Promise.race([work, cancellation])
     } finally {
-      outputWork.delete(tracked)
+      if (cancelActive === cancel) cancelActive = undefined
     }
   })
 }

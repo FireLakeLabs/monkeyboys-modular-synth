@@ -744,9 +744,12 @@ A DRUMS drop splices the chosen row's sounding atoms, retaining rests, grouping,
 indices on other rows and timing modifiers. With one effective downstream sampler
 bank/index, the operation makes those settings explicit in the other atoms before
 clearing the sampler overrides. This preserves other rows while allowing a card
-from a different bank. Different sampler banks/indices on a fan-out, or a downstream
-sound selector, require dropping on the sampler instead; the operation refuses
-atomically rather than changing another voice's sound.
+from a different bank. Different sampler banks/indices on a fan-out (including an
+unbanked SPLICE/WAVETABLE sibling), or a downstream sound selector, require dropping
+on the sampler instead; the operation refuses atomically rather than changing another
+voice's sound. A SPLICE/WAVETABLE selection under an inherited nonempty sampler bank
+also refuses, naming the BANK to clear. No shared upstream setting is changed
+implicitly by those drops.
 
 The reader recognizes a single literal `wt_` selector with neutral import defaults.
 A literal sample followed by a supported slice/splice/chop/striate can own a SPLICE

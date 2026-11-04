@@ -74,6 +74,7 @@ export function replaceDrumRow(text: string, row: number, choice: SoundChoice): 
 function unbankDrums(patch: Patch, moduleId: string, text: string): { patch: Patch; text: string } {
   const samplers = new Set<string>()
   const visited = new Set<string>()
+  let unbankedConsumer = false
   function visit(id: string) {
     if (visited.has(id)) return
     visited.add(id)
@@ -81,6 +82,10 @@ function unbankDrums(patch: Patch, moduleId: string, text: string): { patch: Pat
     if (!module) return
     if (module.type === 'smpl') {
       samplers.add(id)
+      return
+    }
+    if (getModuleSpec(module.type).soundSource) {
+      unbankedConsumer = true
       return
     }
     for (const cable of patch.cables.filter((cable) => cable.from.module === id))
@@ -101,7 +106,9 @@ function unbankDrums(patch: Patch, moduleId: string, text: string): { patch: Pat
       n = get('n')
     return { id, bank: typeof bank === 'string' ? bank : '', n: typeof n === 'number' ? n : 0 }
   })
-  if (new Set(settings.map(({ bank, n }) => JSON.stringify([bank, n]))).size > 1)
+  const signatures = settings.map(({ bank, n }) => JSON.stringify([bank, n]))
+  if (unbankedConsumer) signatures.push(JSON.stringify(['', 0]))
+  if (new Set(signatures).size > 1)
     throw new Error('This row feeds different sampler banks or indices; drop on each SMPL instead')
   const setting = settings[0]
   if (!setting || (!setting.bank && !setting.n)) return { patch, text }
@@ -129,6 +136,26 @@ function unbankDrums(patch: Patch, moduleId: string, text: string): { patch: Pat
     patch = setValue(patch, id, 'n', 0)
   }
   return { patch, text }
+}
+
+function requireNeutralBanks(patch: Patch, moduleId: string, visited = new Set<string>()) {
+  if (visited.has(moduleId)) return
+  visited.add(moduleId)
+  const module = patch.modules.find((module) => module.id === moduleId)
+  if (!module) return
+  const spec = getModuleSpec(module.type)
+  if (module.type === 'smpl') {
+    const control = spec.controls.find((control) => control.id === 'bank')
+    if (control && controlValue(module, control))
+      throw new Error(
+        `Clear ${moduleId} BANK before choosing this sample, or drop on SMPL instead.`,
+      )
+  }
+  for (const cable of patch.cables.filter((cable) => cable.to.module === moduleId)) {
+    const jack = spec.jacks.find((jack) => jack.id === cable.to.jack)
+    if (jack && !jack.cvTarget && !['gate', 'side', 'return'].includes(jack.id))
+      requireNeutralBanks(patch, cable.from.module, visited)
+  }
 }
 export function dropSound(
   patch: Patch,
@@ -161,5 +188,6 @@ export function dropSound(
     patch = setValue(patch, moduleId, 'n', 0)
     return setValue(patch, moduleId, target.control, soundToken(choice))
   }
+  if (spec.soundSource) requireNeutralBanks(patch, moduleId)
   return setValue(patch, moduleId, target.control, soundToken(choice))
 }

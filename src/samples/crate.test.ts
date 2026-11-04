@@ -270,3 +270,54 @@ it('retains a saved slicing suffix CODE without introducing a default slicer in 
   expect(generate(document)).toBe(source)
   expect(events(voice(generate(document.patch)))).toEqual(events('s("arpy").chop(4).postgain(.8)'))
 })
+
+it.each(['splice', 'wavetable'])(
+  'refuses a %s card under an inherited sampler bank without mutating the rack',
+  (type) => {
+    let patch = starterPatch()
+    for (const [row, kind] of ['drums', 'smpl', type].entries())
+      patch = placeModule(patch, kind, row + 1)
+    patch = connect(patch, { module: 'drums1', jack: 'out' }, { module: 'smpl1', jack: 'in' })
+    patch = connect(
+      patch,
+      { module: 'smpl1', jack: 'out' },
+      { module: `${type}1`, jack: type === 'wavetable' ? 'note' : 'in' },
+    )
+    patch = connect(patch, { module: `${type}1`, jack: 'out' }, { module: 'mix1', jack: 'in1' })
+    const source = generate(patch)
+    expect(() =>
+      dropSound(patch, `${type}1`, { name: type === 'wavetable' ? 'wt_test' : 'breaks165', n: 0 }),
+    ).toThrow('Clear smpl1 BANK')
+    expect(generate(patch)).toBe(source)
+    const neutral = setValue(patch, 'smpl1', 'bank', '')
+    const chosen = dropSound(neutral, `${type}1`, {
+      name: type === 'wavetable' ? 'wt_test' : 'breaks165',
+      n: 0,
+    })
+    expect(read(generate(chosen)).patch).toEqual(chosen)
+    expect(events(voice(generate(chosen)))).toEqual(
+      events(
+        type === 'wavetable'
+          ? 's("[bd ~]*4, [~ ~ sd ~]*2, [~ hh]*4").s("wt_test:0").wt(.4).warp(.2).warpmode("spin").postgain(.8)'
+          : 's("[bd ~]*4, [~ ~ sd ~]*2, [~ hh]*4").s("breaks165:0").slice(4,"0 1 2 3").postgain(.8)',
+      ),
+    )
+  },
+)
+it('refuses qualifying a shared DRUMS row across banked and unbanked consumers', () => {
+  let patch = starterPatch()
+  for (const [row, type] of ['drums', 'smpl', 'splice'].entries())
+    patch = placeModule(patch, type, row + 1)
+  patch = setValue(patch, 'drums1', 'grid', 'bd, hh')
+  patch = connect(patch, { module: 'drums1', jack: 'out' }, { module: 'smpl1', jack: 'in' })
+  patch = connect(patch, { module: 'drums1', jack: 'out' }, { module: 'splice1', jack: 'in' })
+  patch = connect(patch, { module: 'smpl1', jack: 'out' }, { module: 'mix1', jack: 'in1' })
+  patch = connect(patch, { module: 'splice1', jack: 'out' }, { module: 'mix1', jack: 'in2' })
+  patch = { ...patch, names: { 'drums1:out': 'beat' } }
+  const before = generate(patch)
+  expect(() => dropSound(patch, 'drums1', { name: 'sd', n: 0 }, 0)).toThrow(
+    'different sampler banks',
+  )
+  expect(generate(patch)).toBe(before)
+  expect(read(before).patch).toEqual(patch)
+})

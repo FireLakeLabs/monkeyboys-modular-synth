@@ -5,7 +5,7 @@ import { read } from '/src/reader/index.ts'
 import { generate } from '/src/codegen/generate.ts'
 import { sourceBody } from '/src/workspace/document.ts'
 import * as model from '/src/rack/model.ts'
-import { getSamplePacks } from '/src/strudel/engine.ts'
+import { getSamplePacks, loadSamplePacks } from '/src/strudel/engine.ts'
 import { SOUND_MIME } from '/src/samples/crate.ts'
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 const assert = (value, message) => {
@@ -203,5 +203,139 @@ export async function verifySoundCrate() {
     return { results, physicalListening: false }
   } finally {
     window.fetch = fetch
+  }
+}
+
+/** Review regressions: real DOM refusal plus transport recovery over a held sample fetch. */
+export async function verifyCrateReview() {
+  const measure = installAudioProbe()
+  const nativeFetch = window.fetch
+  const pack = { source: 'https://crate-review.example.test/strudel.json' }
+  const delayed = 'https://crate-review.example.test/delayed.wav'
+  const audio =
+    'https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/arpy/arpy01.wav'
+  const bytes = await nativeFetch(audio).then((response) => response.arrayBuffer())
+  let release = () => {}
+  let held = false
+  window.fetch = async (...args) => {
+    const input = args[0]
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+    if (url === pack.source)
+      return new Response(
+        JSON.stringify({
+          _base: '',
+          reviewhit: [audio],
+          stalledhit: [delayed],
+          wt_review: [
+            'https://raw.githubusercontent.com/bubobubobubobubo/dough-waveforms/125801fa9a799117fd0a0350a195ab7c2f4cdf13/wt_dbass/AKWF_dbass_0039_reworked.wav',
+          ],
+        }),
+      )
+    if (url === delayed) {
+      held = true
+      await new Promise((resolve) => {
+        release = resolve
+      })
+      return new Response(bytes)
+    }
+    return nativeFetch(...args)
+  }
+  function fixture(split) {
+    let patch = { ...model.starterPatch(), cartridges: [pack], railHp: 104 }
+    for (const [index, type] of ['drums', 'smpl', 'splice', 'wavetable'].entries())
+      patch = model.placeModule(patch, type, index + 1)
+    patch = model.setValue(patch, 'drums1', 'grid', 'bd, hh')
+    patch = model.connect(patch, { module: 'drums1', jack: 'out' }, { module: 'smpl1', jack: 'in' })
+    patch = model.connect(
+      patch,
+      { module: split ? 'drums1' : 'smpl1', jack: 'out' },
+      { module: 'splice1', jack: 'in' },
+    )
+    patch = model.connect(
+      patch,
+      { module: 'smpl1', jack: 'out' },
+      { module: 'wavetable1', jack: 'note' },
+    )
+    patch = model.connect(patch, { module: 'smpl1', jack: 'out' }, { module: 'mix1', jack: 'in1' })
+    patch = model.connect(
+      patch,
+      { module: 'splice1', jack: 'out' },
+      { module: 'mix1', jack: 'in2' },
+    )
+    patch = model.connect(
+      patch,
+      { module: 'wavetable1', jack: 'out' },
+      { module: 'mix1', jack: 'in3' },
+    )
+    return patch
+  }
+  async function apply(patch) {
+    replaceSource(generate(patch))
+    button('Apply code').click()
+    await until(() => status() === 'Playing')
+    button('Stop').click()
+    await until(() => status() === 'Ready')
+  }
+  function drop(module, selector, name) {
+    const transfer = new DataTransfer()
+    transfer.setData(SOUND_MIME, JSON.stringify({ name, n: 0 }))
+    document
+      .querySelector(`[data-module="${module}"] ${selector}`)
+      .dispatchEvent(
+        new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: transfer }),
+      )
+  }
+  try {
+    await loadSamplePacks([pack])
+    await apply(fixture(false))
+    for (const [module, name] of [
+      ['splice1', 'reviewhit'],
+      ['wavetable1', 'wt_review'],
+    ]) {
+      const before = editorSource()
+      drop(module, '.sample-slot select', name)
+      await until(() => document.body.textContent.includes('Clear smpl1 BANK'))
+      assert(editorSource() === before, `${module} inherited-bank refusal changed source`)
+      assert(
+        read(editorSource()).layout === 'restored',
+        `${module} refusal changed saved ownership`,
+      )
+    }
+    await apply(fixture(true))
+    const before = editorSource()
+    drop('drums1', '.mini-row-name', 'reviewhit')
+    await until(() => document.body.textContent.includes('different sampler banks'))
+    assert(editorSource() === before, 'Mixed-bank fan-out refusal changed source')
+    button('SOUNDS').click()
+    await until(() => button('Audition stalledhit:0'))
+    button('Audition stalledhit:0').click()
+    await until(() => held)
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: '.', ctrlKey: true, bubbles: true, cancelable: true }),
+    )
+    await pause(0)
+    await until(() => {
+      const play = button('Play')
+      if (status() !== 'Ready' || !play) return false
+      play.click()
+      return true
+    })
+    await until(() => status() === 'Playing')
+    const pcm = await measure()
+    assert(pcm.rms > 0.0001, 'Play recovery has no output while cold audition is still held')
+    assert(editorSource() === before, 'Stop/Play recovery changed source')
+    release()
+    button('Stop').click()
+    await until(() => status() === 'Ready')
+    return {
+      inheritedBanks: 'Both target refusals preserve exact source and saved rack',
+      fanOut: 'Banked/unbanked siblings refuse atomically',
+      stalledAudition: 'Global Stop then Play produces PCM before sample fetch is released',
+      pcm,
+      physicalListening: false,
+    }
+  } finally {
+    release()
+    window.fetch = nativeFetch
   }
 }

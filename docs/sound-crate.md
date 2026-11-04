@@ -22,15 +22,18 @@ trigger first warms the engine's own sample/table cache: the installed sampler
 discards cold notes whose decoding misses their onset. The audible trigger then
 uses an onset 50 ms ahead and a separate negative orbit, outside the generator's
 positive voice allocation. Stop invalidates pending audition intent before an
-audible trigger; in-flight output is tracked for offline/live context transitions.
+audible trigger and releases its queued operation even while decoding is held;
+in-flight output remains tracked for offline/live context transitions.
 This does not add a decoded-readiness guarantee or clear upstream rejected caches.
 
 The [catalog and module contract](module-spec.md#sample-fed-panels-138) own controls,
 widths, drop slots and wavetable filtering. Drops are one patch/history edit.
 SMPL selections use `s("name:n")`, clearing conflicting BANK/N overrides. A banked
 DRUMS row first qualifies the other sounding atoms before clearing the sampler
-overrides, preserving their sounds. Ambiguous different-bank fan-out and downstream
-sound selectors refuse the row edit and direct the user to SMPL. REVERB IR remains
+overrides, preserving their sounds. Ambiguous different-bank fan-out, including
+unbanked sample-fed siblings, and downstream sound selectors refuse the row edit
+and direct the user to SMPL. SPLICE/WAVETABLE drops below an inherited nonempty
+sampler BANK refuse with the owner ID and a clearing instruction. REVERB IR remains
 inactive when ROOM is bypassed. Source-owned edits keep the established conversion
 gate; no drag silently regenerates unsupported source.
 
@@ -93,3 +96,20 @@ bus retention/replacement, audio-rate sidebands, actual REPL solo behavior and
 leading-rest DUCK startup/replacement/replay after restarting the pre-integration
 dev server with forced dependency optimization. Its initial old-server run had
 reported the already-fixed missing DUCK target error; no routing code was changed.
+
+## Sol review regressions
+
+Round 1 used gpt-6.1-sol on high and returned three should-fix findings. S1 found
+inherited sampler banks misdirecting SPLICE/WAVETABLE choices; S2 found a banked
+DRUMS branch rewriting an unbanked sibling; S3 found a stalled cold audition holding
+Play's operation queue after Stop. Four focused regressions failed before the fixes
+(two S1 destinations, S2 fan-out and S3 recovery) and now pass. Cancellation reuses
+the engine's existing operation boundary; a separate check proves Bounce retains
+the live context until the cancelled trigger settles. No findings were declined.
+Provider-reported usage was unavailable. The full gate passes 2,266 tests and
+43 guardrails after these changes.
+
+The real Chromium review suite also passes both inherited-bank target refusals
+with exact source/saved ownership unchanged, mixed-bank sibling refusal, and
+Ctrl+. followed by Play with measured PCM while the audition's sample fetch is
+still held. Releasing that fetch cannot dispatch the cancelled audible trigger.

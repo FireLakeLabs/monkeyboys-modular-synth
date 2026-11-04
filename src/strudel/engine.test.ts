@@ -682,3 +682,57 @@ it('Stop during a cold audition prevents its eventual audible onset', async () =
   await rejected
   expect(web.superdough.mock.calls.some(([value]) => value.gain > 0)).toBe(false)
 })
+
+it('Stop releases a stalled audition so Play recovers before the cold trigger finishes', async () => {
+  let release = () => {}
+  web.superdough.mockReturnValueOnce(
+    new Promise((resolve) => {
+      release = () => resolve(undefined)
+    }),
+  )
+  const { auditionSample, stop, play } = await import('./engine')
+  const audition = auditionSample('bd', 0).catch((error: unknown) => error)
+  await vi.waitFor(() => expect(web.superdough).toHaveBeenCalledTimes(1))
+  await stop()
+  const playing = play('recovered')
+  try {
+    await vi.waitFor(() => expect(web.evaluate).toHaveBeenCalledWith('recovered'), {
+      timeout: 200,
+      interval: 10,
+    })
+  } finally {
+    release()
+    await Promise.allSettled([audition, playing])
+  }
+  expect(await audition).toBeInstanceOf(Error)
+  expect(web.superdough.mock.calls.some(([value]) => value.gain > 0)).toBe(false)
+})
+
+it('keeps cancelled audition output on the live context until Bounce can swap safely', async () => {
+  let release = () => {}
+  const live = web.getAudioContext()
+  web.superdough.mockReturnValueOnce(
+    new Promise((resolve) => {
+      release = () => resolve(undefined)
+    }),
+  )
+  web.evaluate.mockResolvedValue({ queryArc: () => [] })
+  const { auditionSample, stop, bounce } = await import('./engine')
+  const audition = auditionSample('bd', 0).catch((error: unknown) => error)
+  await vi.waitFor(() => expect(web.superdough).toHaveBeenCalledTimes(1))
+  await stop()
+  const rendering = bounce('bounce after cancelled audition', {
+    cycles: 1,
+    name: 'Patch',
+    volume: 0.5,
+  })
+  await vi.waitFor(() =>
+    expect(web.evaluate).toHaveBeenCalledWith('bounce after cancelled audition', false),
+  )
+  expect(web.getAudioContext()).toBe(live)
+  expect(web.renderPatternAudio).not.toHaveBeenCalled()
+  release()
+  await Promise.all([audition, rendering])
+  expect(web.renderPatternAudio).toHaveBeenCalledTimes(1)
+  expect(web.getAudioContext()).toBe(live)
+})

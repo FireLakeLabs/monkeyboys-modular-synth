@@ -243,6 +243,11 @@ WAVETABLE's `wt_` prefix limits choices to seated inventories. Unavailable impor
 values remain visible and saved. These panels use the existing four Hardware
 looks at fixed catalog widths. See [crate and tape acceptance](sound-crate.md).
 
+A SPLICE/WAVETABLE card below a known nonempty SMPL BANK is refused atomically,
+with the sampler ID and an instruction to clear BANK or drop on SMPL. A shared
+DRUMS row checks unbanked sample-fed consumers as well as sampler banks/indices
+before qualifying names; incompatible siblings require per-sampler edits.
+
 ---
 
 ## Shaping
