@@ -46,6 +46,9 @@ interface Patch {
   reader reconciliation use the saved width; smaller windows zoom or scroll.
   Invalid widths or off-rail saved positions invalidate metadata while retaining
   the executable source unchanged. Unknown metadata is never silently replaced.
+- Saved rack identity compares object contents independently of key insertion
+  order, while retaining module and cable array order. Adding `rows` after
+  widening a rail must not reject a layout-only move.
 - `values` holds one entry per control id from the catalog; missing entries mean “catalog default”.
 - A cable always runs from an `out` jack to an `in` jack. An `out` jack may have many cables; an `in` jack has at most one.
 

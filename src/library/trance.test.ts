@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { generate } from '../codegen/generate'
 import { read } from '../reader'
-import { validateRack, setLook, setValue } from '../rack/model'
+import { validateRack, placeModule, setLook, setRailWidth, setValue } from '../rack/model'
 import { editDocument, saveLayout, sourceBody } from '../workspace/document'
 import { readLibraryPatch } from './load'
 import { libraryPatches } from './catalog'
@@ -76,4 +76,25 @@ describe('issue #46 supplied Switch Angel demo', () => {
     expect(sourceBody(tempo.source)).toBe(source.replace('setCpm(140/4)', 'setCpm(138/4)'))
     expect(readLibraryPatch({ source }).source).toBe(source)
   })
+
+  it.each([84, 104] as const)(
+    'moves the orbit CODE block onto a widened %i HP rail without changing source or identity',
+    (railHp) => {
+      const document = saveLayout(readLibraryPatch({ source }))
+      const widened = editDocument(document, setRailWidth(document.patch, railHp))
+      const next = placeModule(widened.patch, 'code', 1, 59, 'code4')
+      const moved = editDocument(widened, next)
+      expect(moved.patch.modules.find((module) => module.id === 'code4')).toMatchObject({
+        row: 1,
+        hp: 59,
+        values: { text: '\n  .o(2)' },
+      })
+      expect(moved.patch.railHp).toBe(railHp)
+      expect(sourceBody(moved.source)).toBe(source)
+      expect(moved.patch).toEqual(next)
+      const reopened = read(moved.source)
+      expect(reopened.layout).toBe('restored')
+      expect(reopened.patch).toEqual(next)
+    },
+  )
 })

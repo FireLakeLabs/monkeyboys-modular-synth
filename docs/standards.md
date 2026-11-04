@@ -93,6 +93,11 @@ The [build plan](build-plan.md#current-status-and-remaining-work) owns feature a
 issue status. This inventory distinguishes implemented checks from their limits;
 a requirement in this table is not evidence of enforcement.
 
+The [trance layout regressions](../src/library/trance.test.ts) enforce moving the
+imported `.o(2)` CODE block onto widened 84/104 HP rails, preserving exact source
+and complete saved rack identity after reopen. They failed before the save check
+ignored object key insertion order.
+
 Hosting IAM trust is checked by the synthesized-template regression in
 `scripts/hosting.test.mts`, using the repository's observed immutable GitHub OIDC
 subject as an independent fixture. It rejects the old name-only trust format.
