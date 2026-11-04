@@ -205,9 +205,17 @@ signal; unresolved jacks have a dotted circular center. Jack accessible names
 include the signal type. Cable warnings retain their text and mark the plug
 collar, leaving the signal stroke pattern intact. Cables have no flow animation.
 
-Hovering a panel fades unrelated cables, taking precedence over the selected
-module; leaving restores the selection's cable emphasis. **Dim cables** in the
-rack toolbar fades all cables. Faded cables allow pointer input through to
-controls; the Connections list still selects them for removal or repatching.
-The toggle and hover/selection emphasis are local view state and do not write
-source or rack metadata. See [browser and contrast evidence](rack-visuals-verification.md).
+The rack toolbar's **Cables** group has three exclusive modes: **All** shows
+every cable even when a module is selected or hovered; **Focus** fades unrelated
+cables; **Dim** fades every cable. Focus is the default, retaining #88's behavior:
+hover takes precedence over selection, and leaving restores the selected module's
+cable emphasis. The active mode has a checkmark, contrasting background and
+pressed semantics. A visible readout says whether all cables are visible/dimmed
+or identifies the module controlling Focus and whether it is hovered or selected.
+This separates “show all” from the former toggle's ambiguous return to Focus.
+
+Faded cables allow pointer input through to controls; the Connections list still
+selects them for removal or repatching. Modes and hover/selection emphasis are
+local view state and do not write source or rack metadata. See
+[browser and contrast evidence](rack-visuals-verification.md) and the
+[control-clarity follow-up](cable-visibility-verification.md).

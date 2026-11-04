@@ -169,6 +169,9 @@ try {
   )
 
   const before = await source()
+  const visibility = page.getByRole('group', { name: 'Cable visibility', exact: true })
+  await visibility.waitFor({ timeout: 3000 })
+  assert.equal(await button('Focus cables').getAttribute('aria-pressed'), 'true')
   await button('Select seq1').click()
   await page.mouse.move(20, 20)
   async function checkFade(id) {
@@ -183,15 +186,44 @@ try {
     for (const cable of cables) assert.equal(cable.opacity < 0.1, !cable.title.includes(id + ':'))
   }
   await checkFade('seq1')
+  assert.match(await visibility.innerText(), /seq1.*selected/)
   await panel('vcf1').locator('.module-header').hover()
   await checkFade('vcf1')
+  assert.match(await visibility.innerText(), /vcf1.*hovered/)
   await page.mouse.move(20, 20)
   await checkFade('seq1')
+  assert.match(await visibility.innerText(), /seq1.*selected/)
   pass(
     'Selection fades unrelated cables; native hover takes precedence and leaving restores selection',
   )
+  const cableOpacities = () =>
+    page
+      .locator('.cable')
+      .evaluateAll((cables) => cables.map((cable) => Number(getComputedStyle(cable).opacity)))
+  await button('All cables').click()
+  assert((await cableOpacities()).every((opacity) => opacity === 1))
+  assert.match(await visibility.innerText(), /All cables visible/)
+  await panel('vcf1').locator('.module-header').hover()
+  assert((await cableOpacities()).every((opacity) => opacity === 1))
+  await page.mouse.move(20, 20)
+  assert((await cableOpacities()).every((opacity) => opacity === 1))
+  await button('Focus cables').click()
+  await checkFade('seq1')
   await button('Dim cables').click()
   assert.equal(await button('Dim cables').getAttribute('aria-pressed'), 'true')
+  assert.match(await visibility.innerText(), /All cables dimmed/)
+  const activeStyle = await button('Dim cables').evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  )
+  assert.notEqual(
+    activeStyle,
+    await button('All cables').evaluate((element) => getComputedStyle(element).backgroundColor),
+  )
+  assert.equal(await visibility.locator('button[aria-pressed=true]').count(), 1)
+  await panel('vcf1').locator('.module-header').hover()
+  assert((await cableOpacities()).every((opacity) => opacity <= 0.1))
+  await page.mouse.move(20, 20)
+  assert((await cableOpacities()).every((opacity) => opacity <= 0.1))
   assert(
     await page
       .locator('.cable')
@@ -204,16 +236,23 @@ try {
         ),
       ),
   )
-  await button('Dim cables').click()
+  await button('All cables').click()
+  assert((await cableOpacities()).every((opacity) => opacity === 1))
+  await button('Focus cables').focus()
+  await page.keyboard.press('Space')
+  await checkFade('seq1')
   assert.equal(await source(), before)
   pass(
     'Dim cables fades every cable, lets controls receive pointer input and changes no saved source',
+  )
+  pass(
+    'All/Focus/Dim visibly identify one active mode, explain hover/selection and support keyboard changes without source edits',
   )
   await button('Dim cables').click()
   await panel('jux1').locator('select').selectOption('fast2')
   assert.equal(await panel('jux1').locator('select').inputValue(), 'fast2')
   await panel('jux1').locator('select').selectOption('rev')
-  await button('Dim cables').click()
+  await button('Focus cables').click()
   assert.match(await page.locator('[data-jack="jux1:out"]').getAttribute('aria-label'), /audio/)
   pass('JUX RIGHT remains operable through dimmed cables; passthrough jacks announce audio')
 

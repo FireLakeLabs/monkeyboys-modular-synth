@@ -53,6 +53,11 @@ interface Placement {
   type: string
   moving?: string
 }
+const CABLE_MODES = [
+  { id: 'all', label: 'All' },
+  { id: 'focus', label: 'Focus' },
+  { id: 'dim', label: 'Dim' },
+] as const
 const keyOf = (ref: JackRef) => `${ref.module}:${ref.jack}`
 const curve = (a: Point, b: Point) =>
   `M ${a.x} ${a.y} Q ${(a.x + b.x) / 2} ${Math.max(a.y, b.y) + Math.min(120, 28 + Math.abs(a.x - b.x) / 5)} ${b.x} ${b.y}`
@@ -171,8 +176,17 @@ export function Rack({
   const [replacement, setReplacement] = useState<JackRef | null>(null)
   const [selectedCable, setSelectedCable] = useState<string | null>(null)
   const [hoveredModule, setHoveredModule] = useState<string | null>(null)
-  const [dimCables, setDimCables] = useState(false)
+  const [cableVisibility, setCableVisibility] =
+    useState<(typeof CABLE_MODES)[number]['id']>('focus')
   const cableFocus = hoveredModule ?? selected
+  const cableVisibilityText =
+    cableVisibility === 'all'
+      ? 'All cables visible'
+      : cableVisibility === 'dim'
+        ? 'All cables dimmed'
+        : cableFocus
+          ? `Focus: ${cableFocus} (${hoveredModule ? 'hovered' : 'selected'})`
+          : 'Focus: no module · all visible'
   const [placement, setPlacement] = useState<Placement | null>(null)
   const [ghost, setGhost] = useState<{ row: number; hp: number } | null>(null)
   const [message, setMessage] = useState(
@@ -402,14 +416,31 @@ export function Rack({
           <h2>
             RACK <small>{patch.modules.length} modules</small>
           </h2>
+          <fieldset
+            className="cable-visibility"
+            aria-label="Cable visibility"
+            aria-describedby="cable-visibility-state"
+          >
+            <span>Cables</span>
+            {CABLE_MODES.map(({ id, label }) => (
+              <button
+                key={id}
+                type="button"
+                aria-label={`${label} cables`}
+                aria-pressed={cableVisibility === id}
+                onClick={() => setCableVisibility(id)}
+              >
+                <span className="cable-mode-mark" aria-hidden="true">
+                  {cableVisibility === id ? '✓' : ''}
+                </span>
+                {label}
+              </button>
+            ))}
+            <span id="cable-visibility-state" className="cable-visibility-state">
+              {cableVisibilityText}
+            </span>
+          </fieldset>
           <div className="rack-zoom">
-            <button
-              type="button"
-              aria-pressed={dimCables}
-              onClick={() => setDimCables((value) => !value)}
-            >
-              Dim cables
-            </button>
             <button type="button" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>
               Fit rack
             </button>
@@ -757,7 +788,7 @@ export function Rack({
                 return a && b ? (
                   <g
                     key={c.id}
-                    className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${dimCables || (cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
+                    className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
                   >
                     <path d={curve(a, b)} className="cable-shadow" />
                     <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />

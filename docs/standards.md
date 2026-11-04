@@ -247,6 +247,13 @@ locally for this feature; like the existing browser suites, it remains outside
 shared CI until Chromium provisioning is added. Static checks do not establish
 pointer hit priority.
 
+The [cable-control clarity regression](cable-visibility-verification.md) extends
+that browser script with explicit All/Focus/Dim modes, visible selected/hovered
+ownership, active styling/pressed state, native hover-out and keyboard changes,
+and exact-source checks. It first failed against the former toggle. These checks
+share the browser-provisioning exception above; the shared gate does not prove
+visual state clarity.
+
 The #77 [common-call regressions](../src/reader/aliases.test.ts) separately check
 source bytes, complete saved rack identity and real Strudel events for lowercase
 scale roots, above-unity gain and all sixteen short ENV aliases. Saved-file
