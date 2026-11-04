@@ -193,7 +193,7 @@ try {
   await page.waitForFunction(() => document.querySelector('[aria-invalid=true]'))
   assert.match(
     await page.getByRole('alert').textContent(),
-    /Line 1, column 9: Unexpected token \(1:8\)/,
+    /Line 1, column 8: Unclosed '\(' \(1:7\)/,
   )
   await folded()
   assert.equal(await exportSource(), invalid)

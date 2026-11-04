@@ -44,7 +44,7 @@ export async function verifyLiteralIdentity() {
       module('vca', 29),
       module('env', 37),
       module('mix', 47, { ch1: 1, ch2: 1, ch3: 0.8, ch4: 1 }),
-      module('out', 59),
+      module('out', 0),
     ],
     cables: [
       wire('seq', 'osc', 'note'),
@@ -58,9 +58,6 @@ export async function verifyLiteralIdentity() {
     ],
     names: { 'seq1:note': 'phrase', 'vcf1:out': 'lead' },
   }
-  // Keep each module within the fixed rail.
-  patch.modules.at(-1).hp = 0
-  patch.modules.at(-1).row = 1
   const initial = generate(patch)
   const results = []
   for (const [token, replacement, type, control, value] of [

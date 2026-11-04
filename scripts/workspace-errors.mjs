@@ -100,35 +100,51 @@ try {
     if (sourceBody(saved) !== original) throw new Error('Long voice executable source changed')
   }, longVoice)
   assert(new Set(longRack.modules.map((module) => module.row)).size > 2)
-  // A legacy/corrupt saved layout must fail before replacing the accepted rack.
-  const failedLayout = longSaved.replace('"hp": 0', '"hp": 64')
+  // Invalid saved positions retain the exact file, with a valid projected rack
+  // and an explicit replacement boundary before rack edits are allowed.
+  const failedLayout = longSaved.replace('"hp": 0', '"hp": 104')
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(page, 'Playing')
   await replaceSource(page, failedLayout)
-  await page.waitForFunction(
-    () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
+  await page.getByRole('button', { name: 'Replace rack metadata', exact: true }).waitFor()
+  await accepted(page)
+  assert.equal(await sourceText(page), failedLayout)
+  await page.evaluate(async () => {
+    const { read } = await import('/src/reader/index.ts')
+    const { validateRack } = await import('/src/rack/model.ts')
+    const document = read((await import('/scripts/editor-browser.mjs')).editorSource())
+    if (document.layout !== 'invalid') throw new Error('Off-rail metadata was trusted')
+    validateRack(document.patch)
+  })
+  const projectedRack = await patch(page)
+  await assert.rejects(
+    () => page.getByRole('button', { name: 'Add VCF', exact: true }).click({ timeout: 500 }),
+    /Timeout/,
   )
   assert.equal(await sourceText(page), failedLayout)
-  assert.match(await page.getByRole('alert').textContent(), /extends past the rail/)
+  assert.deepEqual(await patch(page), projectedRack)
   assert.equal(await page.locator('.module-panel').count(), longRack.modules.length)
   const failedDownload = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export', exact: true }).click()
   assert.equal(await readFile(await (await failedDownload).path(), 'utf8'), failedLayout)
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(page, 'Ready')
-  await page.getByRole('button', { name: 'Revert to last readable code', exact: true }).click()
+  await code(page, longSaved)
   assert.equal(await sourceText(page), longSaved)
   assert.deepEqual(await patch(page), longRack)
   await replaceSource(page, failedLayout)
-  await page.waitForFunction(
-    () => document.querySelector('.cm-content')?.getAttribute('aria-invalid') === 'true',
-  )
+  await page.getByRole('button', { name: 'Replace rack metadata', exact: true }).click()
+  await page.waitForFunction(async () => {
+    const { read } = await import('/src/reader/index.ts')
+    return read((await import('/scripts/editor-browser.mjs')).editorSource()).layout === 'restored'
+  })
+  assert.equal(await status(page).textContent(), 'Ready')
   await code(page, longVoice.replace('.room(.6)', '.room(.7)'))
   assert.equal(await status(page).textContent(), 'Ready')
   assert.match(await sourceText(page), /room\(\.7\)/)
   pass(
     'ui',
-    'issue #44 spills long CODE/CV voice onto fixed rails; layout failure retains exact draft and rack; Export/Stop/Revert/correction recover without autoplay',
+    'issue #44 spills long CODE/CV voice onto fixed rails; invalid metadata retains exact file and valid projected rack; Export/Stop and explicit metadata replacement recover without autoplay',
   )
   await code(page, '// retained 🐒\n$: note("c3").s("sine").lpf(800)\n')
   const original = await sourceText(page)

@@ -257,13 +257,15 @@ export async function verifyTrance() {
       .map((panel) => ({
         id: panel.dataset.module,
         left: panel.style.left,
+        right: panel.style.right,
         top: panel.style.top,
       }))
       .sort((a, b) => a.id.localeCompare(b.id))
     const expected = savedRack.modules
       .map((module) => ({
         id: module.id,
-        left: `${module.hp * HP}px`,
+        left: module.type === 'out' ? '' : `${module.hp * HP}px`,
+        right: module.type === 'out' ? '8px' : '',
         top: `${module.row * ROW_HEIGHT + 20}px`,
       }))
       .sort((a, b) => a.id.localeCompare(b.id))

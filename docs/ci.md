@@ -41,10 +41,14 @@ npm run test:browser
 Playwright starts and stops its own Vite dev server on `127.0.0.1:5173`; that port
 must be free. One worker runs the suites sequentially, with fresh browser contexts
 and no automatic retries. The [runner](../tests/browser/suites.spec.mjs) executes
-the existing workspace-error/recovery, editor-feedback and autosave scripts, plus
-cable targets, grids, library UI/replacement/rack editing, library PCM/Cancel/Stop
-recovery, and trance playback/events/export/reopen probes. The original script
-assertions remain authoritative. The historical two-build editor-load benchmark
+the existing workspace-error/recovery, editor-feedback, autosave, metadata,
+code-application, history, sounding-token, module-behavior, rack-visual and
+output-panel scripts. It also runs cable targets, grids, library UI/on-ramp/rack
+editing, literal identity, error positions, editor status, CODE conversion, patch
+names, all module looks and mid-width workspace probes, plus library
+PCM/Cancel/Stop recovery and trance playback/events/export/reopen. Code application
+and history include their real-engine modes. The original script assertions
+remain authoritative. The historical two-build editor-load benchmark
 and manual engine-spike page are experiments, not acceptance suites, and are not
 run by this command.
 
@@ -68,6 +72,21 @@ the same application revision; no application source changed. The repository
 gate also passed (731 tests, 17 expected failures and 40 guardrail tests).
 Physical listening was not performed. Hosted workflow activation awaits merging
 the workflow to main; local results alone do not prove hosted execution.
+
+### Modernized browser baseline
+
+On 4 November 2026 (UTC), after rebasing onto `f68df45`, all 27 groups passed in
+one full run with no retries, using the same Node and Chromium versions above.
+The runner includes the acceptance probes added since the original baseline.
+Existing probes now follow the current Playing status, pinned OUT, invalid
+metadata preservation and opener-diagnostic contracts. Geometry comparisons
+restore the same rack scroll position before comparing cable paths.
+
+`npm run check` also passed: 929 unit cases, 42 guardrails, the committed reader
+corpus gate, formatting/skill integrity, lint, TypeScript and production build.
+Application code is unchanged. Real-engine events and nonzero PCM were observed;
+physical listening was not performed. Hosted checks for this rebased revision
+remain separate evidence from these local results.
 
 ## Observed GitHub status
 

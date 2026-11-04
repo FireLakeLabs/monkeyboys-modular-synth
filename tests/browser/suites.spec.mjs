@@ -6,11 +6,24 @@ const execute = promisify(execFile)
 
 // These suites already own their browser contexts and assertions. Retain their
 // partial JSON/screenshots and stdout/stderr even when a child exits with failure.
-for (const script of ['workspace-errors', 'feedback-check', 'autosave-check']) {
+for (const script of [
+  'workspace-errors',
+  'feedback-check',
+  'autosave-check',
+  'metadata-check',
+  'code-application-check',
+  'history-check',
+  'sounding-tokens-check',
+  'module-behavior-check',
+  'rack-visuals-check',
+  'output-panel-browser',
+]) {
   test(script, async ({ baseURL }, info) => {
     const output = info.outputPath('evidence')
     try {
-      const result = await execute(process.execPath, [`scripts/${script}.mjs`, baseURL, output], {
+      const args = [`scripts/${script}.mjs`, baseURL, output]
+      if (script === 'code-application-check' || script === 'history-check') args.push('--real')
+      const result = await execute(process.execPath, args, {
         timeout: 280_000,
         maxBuffer: 16 * 1024 * 1024,
       })
@@ -46,16 +59,38 @@ for (const [script, verify] of [
   ['library-check', 'verifyReplacementConfirmation'],
   ['library-check', 'verifyLibraryUI'],
   ['library-check', 'verifyLibraryRackEditing'],
+  ['library-check', 'verifyOnRampUI'],
+  ['literal-identity-check', 'verifyLiteralIdentity'],
+  ['error-positions-browser', 'checkErrorPositions'],
+  ['editor-status-browser', 'checkEditorStatus'],
+  ['code-conversion-check', 'verifyCodeConversion'],
+  ['code-conversion-check', 'verifyConversionPlayback'],
+  ['patch-names-check', 'verifyPatchNames'],
+  ['rack-feel-check', 'verifyPanels'],
 ]) {
   test(verify, async ({ page }, info) => {
     const result = await page.evaluate(
       async ({ script, verify }) => {
+        if (verify === 'verifyPanels')
+          (await import('/scripts/editor-browser.mjs')).enableAutoApply()
         const suite = await import(`/scripts/${script}.mjs`)
         return suite[verify]()
       },
       { script, verify },
     )
     await record(info, result)
+  })
+}
+
+for (const width of [1024, 900]) {
+  test(`mid-width workspace at ${width}px`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: 768 })
+    await record(
+      info,
+      await page.evaluate(async () =>
+        (await import('/scripts/mid-width-check.mjs')).verifyMidWidth(),
+      ),
+    )
   })
 }
 
@@ -66,7 +101,7 @@ test('library audio, replacement Cancel and Stop recovery', async ({ page }, inf
     window.measureLibrary = suite.installAudioProbe()
   })
   await page.getByRole('button', { name: 'Play', exact: true }).click()
-  await expect(page.locator('.transport-status')).toHaveText('Pattern scheduled', {
+  await expect(page.locator('.transport-status')).toHaveText('Playing', {
     timeout: 30_000,
   })
   const result = await page.evaluate(async () => {
@@ -82,7 +117,7 @@ test('library audio, replacement Cancel and Stop recovery', async ({ page }, inf
 test('trance playback, events and export/reopen', async ({ page }, info) => {
   await page.evaluate(async () => (await import('/scripts/trance-check.mjs')).loadTrance())
   await page.getByRole('button', { name: 'Play', exact: true }).click()
-  await expect(page.locator('.transport-status')).toHaveText('Pattern scheduled', {
+  await expect(page.locator('.transport-status')).toHaveText('Playing', {
     timeout: 30_000,
   })
   await record(

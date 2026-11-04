@@ -224,8 +224,8 @@ rack/reopen identity, gesture grouping and redo branching checks. Its separate
 browser suite covers actual draft/accepted shortcut ownership, replacement,
 recovery and live engine updates, plus real Strudel mute/undo/redo PCM. Knob grouping is passed explicitly by pointer commits; the browser regression
 rejects absorbing a preceding input blur commit and failed before that fix. This
-Chromium event-order regression remains outside shared CI with the other browser
-checks. Session history is not persisted; physical listening and other browsers
+Chromium event-order regression runs in the separate
+[browser workflow](ci.md#full-browser-acceptance). Session history is not persisted; physical listening and other browsers
 remain unverified.
 
 ## Documentation status ownership
@@ -254,15 +254,15 @@ The #85/#86/#96/#88 [rack visual acceptance](rack-visuals-verification.md)
 checks panel contrast, signal markings and cable fading in Chromium. Its native
 connected-jack regression rejects a panel stacking context that lets cable paths
 intercept fan-out and occupied-input replacement. The same browser script runs
-locally for this feature; like the existing browser suites, it remains outside
-shared CI until Chromium provisioning is added. Static checks do not establish
+locally and in the separate [browser workflow](ci.md#full-browser-acceptance).
+Static checks do not establish
 pointer hit priority.
 
 The [cable-control clarity regression](cable-visibility-verification.md) extends
 that browser script with explicit All/Focus/Dim modes, visible selected/hovered
 ownership, active styling/pressed state, native hover-out and keyboard changes,
 and exact-source checks. It first failed against the former toggle. These checks
-share the browser-provisioning exception above; the shared gate does not prove
+run in that browser workflow; the deterministic gate does not prove
 visual state clarity.
 
 The #77 [common-call regressions](../src/reader/aliases.test.ts) separately check
@@ -276,4 +276,5 @@ Partial envelopes and unproven orbit aliases remain CODE under the
 The #91 [mid-width browser regression](mid-width-verification.md) rejects page
 scrolling and checks pane reachability, horizontal palette geometry, source/rack
 selection, Show in code focus, exact source and draft undo across view changes.
-It remains outside the shared gate with the other Chromium browser checks.
+It runs in the separate [browser workflow](ci.md#full-browser-acceptance), outside
+the deterministic gate.
