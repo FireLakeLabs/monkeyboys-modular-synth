@@ -1,7 +1,17 @@
+import { getModuleSpec } from '../modules/catalog'
+import { isGrid, isSteps } from '../codegen/graph'
+import { drumText, drumView, stepView } from '../patch/notation'
+import { sequenceText } from '../rack/model'
 import { parseSource, type ParsedScope } from '../reader/syntax'
 import type { SourceDocument } from '../reader/types'
 
 const ACTIVITY = '__monkeyboyActivity'
+const STEP = '__monkeyboyStep'
+
+export interface GridStep {
+  module: string
+  index: number
+}
 
 /** Context-only decoration of evaluated voices. Saved/editor source is never instrumented. */
 export function activityPlan(document: SourceDocument) {
@@ -64,7 +74,8 @@ export function activityPlan(document: SourceDocument) {
     return [...new Set(own)]
   }
   const mapping = new Map<number, string[]>()
-  const insertions: { at: number; length: number }[] = []
+  const insertions: { at: number; text: string }[] = []
+  const grids: { module: string; count: number }[] = []
   let code = document.source
   if (safe)
     for (const scope of scopes.filter((scope) => scope.kind === 'voice').reverse()) {
@@ -76,10 +87,49 @@ export function activityPlan(document: SourceDocument) {
       // Reader-owned voices are call/identifier chains. Append context without a
       // leading parenthesis, which could join semicolon-free top-level statements.
       const inserted = `.withContext(context => ({...context, ${ACTIVITY}: ${key}}))`
-      insertions.push({ at: scope.end, length: inserted.length })
-      code = code.slice(0, scope.end) + inserted + code.slice(scope.end)
+      insertions.push({ at: scope.end, text: inserted })
     }
-  insertions.sort((a, b) => a.at - b.at)
+  // Capture the cell at the source, before rate/reverse/iteration can move its event.
+  // Only sources reaching a fully attributed voice receive grid feedback.
+  for (const binding of document.bindings) {
+    if (![...mapping.values()].some((ids) => ids.includes(binding.module))) continue
+    const module = modules.get(binding.module)
+    if (!module || !['seq', 'drums'].includes(module.type)) continue
+    const control = getModuleSpec(module.type).controls.find(
+      (c) => c.kind === 'steps' || c.kind === 'grid',
+    )
+    if (!control) continue
+    const value = module.values[control.id] ?? control.default
+    let count = 0
+    if (control.kind === 'steps' && isSteps(value)) {
+      const view = stepView(
+        typeof value === 'string' ? value : sequenceText(module, value),
+        control,
+      )
+      if (view.kind === 'grid') count = view.value.length
+    } else if (control.kind === 'grid' && isGrid(value)) {
+      const view = drumView(typeof value === 'string' ? value : drumText(value), control)
+      if (view.kind === 'grid') count = view.value[0]?.steps.length ?? 0
+    }
+    if (!count) continue
+    const scope = scopes.find((s) => s.descriptor.id === binding.scope)
+    const call = scope?.calls[binding.calls[0] ?? -1]
+    if (!call || !['note', 'n', 's'].includes(call.name)) continue
+    const key = grids.length
+    grids.push({ module: module.id, count })
+    insertions.push({
+      at: call.end,
+      text: `.withHap(hap => hap.setContext({...hap.context, ${STEP}: [${key}, Math.floor(hap.whole.begin.cyclePos().mul(${count}).valueOf())]}))`,
+    })
+  }
+  // At an equal offset, source decoration precedes final-voice decoration.
+  insertions.sort(
+    (a, b) =>
+      a.at - b.at ||
+      Number(a.text.startsWith('.withContext')) - Number(b.text.startsWith('.withContext')),
+  )
+  for (const insertion of [...insertions].reverse())
+    code = code.slice(0, insertion.at) + insertion.text + code.slice(insertion.at)
   return {
     code,
     sourceOffset(this: void, offset: number): number | null {
@@ -87,10 +137,27 @@ export function activityPlan(document: SourceDocument) {
       for (const insertion of insertions) {
         const start = insertion.at + shift
         if (offset <= start) break
-        if (offset < start + insertion.length) return null
-        shift += insertion.length
+        if (offset < start + insertion.text.length) return null
+        shift += insertion.text.length
       }
       return offset - shift
+    },
+    steps(this: void, hap: unknown): GridStep[] {
+      const context: unknown =
+        hap && typeof hap === 'object' && 'context' in hap ? hap.context : undefined
+      const step: unknown =
+        context && typeof context === 'object' && STEP in context ? context[STEP] : undefined
+      if (!Array.isArray(step) || step.length !== 2) return []
+      const [key, index]: unknown[] = step
+      if (
+        typeof key !== 'number' ||
+        !Number.isSafeInteger(key) ||
+        typeof index !== 'number' ||
+        !Number.isSafeInteger(index)
+      )
+        return []
+      const grid = grids[key]
+      return grid && index >= 0 && index < grid.count ? [{ module: grid.module, index }] : []
     },
     modules(this: void, hap: unknown): string[] {
       const context: unknown =

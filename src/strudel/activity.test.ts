@@ -1,5 +1,5 @@
 import { parseSource } from '../reader/syntax'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { read } from '../reader'
 import { activityPlan } from './activity'
 
@@ -74,4 +74,67 @@ it.each([
       .program.body.filter((statement) => statement.type !== 'EmptyStatement')
       .map((statement) => statement.type)
   expect(statements(plan.code)).toEqual(statements(source))
+})
+
+let runtime: Record<string, unknown>
+beforeAll(async () => {
+  const entries = ['@strudel/core', '@strudel/mini/mini.mjs']
+  const loaded: Record<string, unknown>[] = await Promise.all(
+    entries.map((entry) => import(/* @vite-ignore */ entry)),
+  )
+  runtime = Object.assign({}, ...loaded)
+  if (typeof runtime.miniAllStrings !== 'function') throw new Error('Missing mini parser')
+  runtime.miniAllStrings()
+})
+
+function query(source: string): unknown[] {
+  // Repository-owned expressions only; no user code or browser audio runs here.
+  // oxlint-disable-next-line typescript/no-implied-eval
+  const result: unknown = new Function(
+    ...Object.keys(runtime),
+    `return (${source}).queryArc(0, 2).sort((a,b) => a.whole.begin.compare(b.whole.begin))`,
+  )(...Object.values(runtime))
+  if (!Array.isArray(result)) throw new Error('Missing events')
+  return result
+}
+
+it.each([
+  ['note("c3 ~ e3 g3").fast(2).s("sine")', [0, 2, 3, 0, 2, 3, 0, 2, 3, 0, 2, 3]],
+  ['note("c3 <e3 f3> g3 a3").slow(2).s("sine")', [0, 1, 2, 3]],
+  ['note("c3 e3 g3 a3").s("sine").jux(rev)', [0, 3, 1, 2, 2, 1, 3, 0, 0, 3, 1, 2, 2, 1, 3, 0]],
+  ['s("[bd ~]*4, hh*8")', [0, 0, 1, 2, 2, 3, 4, 4, 5, 6, 6, 7, 0, 0, 1, 2, 2, 3, 4, 4, 5, 6, 6, 7]],
+])('maps sounding events to original grid cells through transforms: %s', (source, indices) => {
+  const document = read(source)
+  const plan = activityPlan(document)
+  const haps = query(plan.code)
+  const module = document.patch.modules.find((m) => ['seq', 'drums'].includes(m.type))
+  expect(haps.map((hap) => plan.steps(hap))).toEqual(
+    indices.map((index) => [{ module: module?.id, index }]),
+  )
+  const sound = (haps: unknown[]) =>
+    JSON.stringify(haps, (key, value: unknown) =>
+      key === 'context' ? undefined : typeof value === 'bigint' ? String(value) : value,
+    )
+  expect(sound(haps)).toBe(sound(query(source)))
+  expect(document.source).toBe(source)
+})
+
+it('does not invent grid positions for text notation, opaque code, or invalid event context', () => {
+  for (const source of [
+    'note("c3 [e3 g3]*2").s("sine")',
+    's("[bd ~]*3")',
+    'note("c3 e3").chunk(4, x => x.rev())',
+  ]) {
+    const plan = activityPlan(read(source))
+    expect(query(plan.code).flatMap((hap) => plan.steps(hap))).toEqual([])
+  }
+  const plan = activityPlan(read('note("c3 e3").s("sine")'))
+  for (const context of [
+    null,
+    {},
+    { __monkeyboyStep: [0, -1] },
+    { __monkeyboyStep: [0, 99] },
+    { __monkeyboyStep: ['0', 1] },
+  ])
+    expect(plan.steps({ context })).toEqual([])
 })

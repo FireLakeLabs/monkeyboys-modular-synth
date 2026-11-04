@@ -353,3 +353,44 @@
     display: none;
   }
 }
+
+.module-menu button:has(.look-swatch) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.module-menu .look-swatch {
+  position: relative;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 34px;
+  padding: 2px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+.look-swatch .knob {
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+}
+.look-swatch .knob span {
+  left: 7px;
+  height: 6px;
+}
+.rack button.destructive {
+  color: #ffb4b4;
+  background: #491f28;
+  border: 1px solid #ae5366;
+}
+.rack button.destructive:hover,
+.rack button.destructive:focus-visible {
+  color: #fff;
+  background: #732d3d;
+}
+.rack button.destructive:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

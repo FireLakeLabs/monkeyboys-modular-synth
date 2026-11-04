@@ -533,3 +533,7 @@ select:focus-visible {
   color: #f4a462;
   background: #131417;
 }
+
+.playing-grid {
+  box-shadow: inset 0 0 0 1px #e6d35f;
+}

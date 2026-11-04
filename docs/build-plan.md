@@ -73,6 +73,10 @@ rack zoom described in [design](design.md#panel-controls-and-rack-zoom-81-82-84-
 See the [61-combination browser matrix and screenshot evidence](rack-feel-verification.md).
 Catalog widths and saved positions remain unchanged.
 
+Issues #89 and #90 polish the module menu and add scheduled-event SEQ/DRUMS grid
+feedback, including steady reduced-motion outlines. See the [contract](design.md#module-menu-and-grid-activity-89-90)
+and [separate browser proof](feedback-verification.md#module-menu-and-step-playheads-89-90).
+
 ## Built-in patch library
 
 Issues #61, #83, #93, #71 and #87 refine replacement, placement, keyboard file

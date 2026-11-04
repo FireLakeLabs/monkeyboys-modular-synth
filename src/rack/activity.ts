@@ -9,11 +9,40 @@ export function observeActivity(
   function clear() {
     animations.forEach((animation) => animation.cancel())
     animations.clear()
+    surface
+      .querySelectorAll('.playing-grid')
+      .forEach((grid) => grid.classList.remove('playing-grid'))
   }
   motion.addEventListener('change', clear)
   const unsubscribe = engine.subscribe((event) => {
     if (event.type === 'activity-clear') clear()
-    if (event.type !== 'activity' || motion.matches) return
+    if (event.type !== 'activity') return
+    for (const step of event.steps) {
+      const panel = Array.from(surface.querySelectorAll<HTMLElement>('[data-module]')).find(
+        (p) => p.dataset.module === step.module,
+      )
+      if (!panel) continue
+      const grid = panel.querySelector('.step-editor, .grid-editor')
+      if (motion.matches) {
+        grid?.classList.add('playing-grid')
+        continue
+      }
+      for (const cell of panel.querySelectorAll<HTMLElement>('[data-step]')) {
+        animations.get(cell)?.cancel()
+        animations.delete(cell)
+        if (cell.dataset.step !== String(step.index)) continue
+        const animation = cell.animate(
+          [
+            { boxShadow: 'inset 0 0 0 2px #fff3a0', filter: 'brightness(1.6)' },
+            { boxShadow: 'none', filter: 'brightness(1)' },
+          ],
+          { duration: 400, easing: 'ease-out' },
+        )
+        animations.set(cell, animation)
+        animation.onfinish = () => animations.delete(cell)
+      }
+    }
+    if (motion.matches) return
     for (const panel of surface.querySelectorAll<HTMLElement>('[data-module]')) {
       if (!event.modules.includes(panel.dataset.module ?? '')) continue
       const element = panel.matches('.family-alien')

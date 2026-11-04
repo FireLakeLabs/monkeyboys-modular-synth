@@ -99,3 +99,43 @@ to map absent hap voice IDs; final tests require actual Alien/Instrument pulses.
 PCM evidence establishes that the observer leaves output enabled for the tested
 patch. Physical speakers were **not heard**; subjective clicks, other browsers,
 arbitrary large programs, physical OS IMEs and user-code side effects remain unverified.
+
+## Module menu and step playheads (#89, #90)
+
+Observed 3 November 2026 with Node 24.22.2 and Chromium 156.0.8078.4 on Linux.
+The archived design boards were available; the private live canvas was not
+accessed. Reproduce against a Vite development server:
+
+```sh
+node scripts/module-behavior-check.mjs http://127.0.0.1:5173 /tmp/monkeyboy-module-behavior
+node scripts/feedback-check.mjs http://127.0.0.1:5173 /tmp/monkeyboy-feedback
+node scripts/sounding-tokens-check.mjs http://127.0.0.1:5173 /tmp/monkeyboy-sounding-tokens
+```
+
+The [raw results](module-behavior-results.json) distinguish browser observations
+from physical listening. All six new browser checks passed: four Hardware and
+three each Alien/Cyber swatches, matching destructive styles, Escape/outside focus
+return, real SEQ sounding cells with rate/rests, all eight DRUMS columns, steady
+reduced-motion outlines, runtime preference changes, exact saved source and
+Stop/replacement/construction-error cleanup. Observed delivery was at most 4 ms
+before the audio target, within the existing 5 ms tolerance. Browser development
+first exposed immediate dismissal by the opening right-click's release, then
+Escape ordering that lost focus restoration; the final suite verifies both.
+
+The existing 14-check feedback and seven-check sounding-token suites also passed,
+including original source locations after transient observers, IME, mapped
+selection/scroll and nonzero WebAudio PCM (RMS 0.06037). No physical output was
+heard. Other browsers/devices and universal audible equivalence remain unverified.
+These suites require Chromium and external sample resources and run separately
+from shared CI.
+
+The focused real-Strudel event regressions first failed because no step
+attribution existed. They now verify fast/slow, alternations, rests, reversed JUX
+branches and compressed drum rows, with unchanged event values/times and exact
+retained source; text/opaque events remain unmapped. The fake-clock engine check
+proves cell attribution waits for the live audio clock and clears on Stop,
+replacement and error. `npm run check` passes: 851 tests, 40 guardrails, formatting,
+skill integrity, lint, TypeScript and production build.
+
+[Module menu screenshot](evidence/module-menu.png) ·
+[Playing grids screenshot](evidence/step-playheads.png)
