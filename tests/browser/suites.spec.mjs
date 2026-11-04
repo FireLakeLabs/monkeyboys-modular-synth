@@ -301,6 +301,6 @@ test('generalized modulation controls and within-note PCM', async ({ page }, inf
   })
   expect(saved.layout).toBe('restored')
   expect(saved.steps).toBe('<0 400>')
-  expect(saved.source).toContain('.add(mini("<0 400>"))')
+  expect(saved.source).toContain(".add(mini('<0 400>'))")
   await record(info, { proof, saved, controls: ['MODE', 'SKEW', 'CV SEQ Step 1'] })
 })

@@ -20,7 +20,7 @@ control edits, graph refusals and unsupported object/CODE preservation.
 and jack, proving every source uses those bindings without a module adapter,
 including a patched base at its omission value.
 
-`npm run check` passed 1006 unit cases, 43 guardrails, formatting, skill integrity, lint, the reader corpus gate, TypeScript and production build.
+`npm run check` passed 1009 unit cases, 43 guardrails, formatting, skill integrity, lint, the reader corpus gate, TypeScript and production build.
 
 Existing generator/library digest fixtures retain their original hashes. The new
 original **Sample, scale and mix CV** exercise covers every added utility and
@@ -100,3 +100,22 @@ modulator after the folded final `.postgain()` and prove SMOOTH/STEP, ENV and CV
 SEQ, including nested constant mixer factors. The thread landing second owns
 that integration check. Physical listening, other browsers and devices remain
 unverified; they are separate from the measured Chromium acceptance above.
+
+## Full-suite CI corrections
+
+The first full browser CI run exposed LFO panel overflow, Fit clipping after
+adding OSC TUNE, a stale sixteen-module palette count, and a real playback error
+in the new utility exercise. The REPL parsed `mini("…")` twice: its double-quoted
+argument had already become a Pattern. The writer now uses `mini('…')`, and named
+CV SEQ declarations hold the resulting Pattern directly. The reader retains
+unsupported double-parsed explicit-mini forms as CODE. A pinned REPL-transpiled
+event regression failed on the old writer for inline and named sequence inputs;
+it passes with the corrected code.
+
+Dense and switch-based panels use compact numeric rows without reducing text
+sizes or changing HP. Fit reserves another jack target below the last rail. The
+same browser matrix that failed on LFO now covers all 77 module/look combinations
+at 100%, 75% and Fit; the 1024/900-pixel Fit reproductions retain the rails and
+live jack centers. Palette/matrix counts come from the catalog rather than the
+original sixteen-module list. No overflow, contrast, jack-size or font-size
+assertion was removed.

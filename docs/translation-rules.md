@@ -46,7 +46,7 @@ select the same control for every CV source, including future mixer channel jack
 .lpf(sine.slow(4).range(800, 2400)) // STEP, sampled once per event
 .lpf("<400 800 1200>") // CV SEQ, absolute values
 .postgain(.2).env({ c: "postgain", a: .01, d: .2, s: .5, r: .1, depthabs: .4 })
-.lpf(sine.segment(8).mul(1).range(400, 2400).add(mini("<0 200>"))) // utilities
+.lpf(sine.segment(8).mul(1).range(400, 2400).add(mini('<0 200>'))) // utilities
 ```
 
 New LFOs default to SMOOTH. Missing MODE in old v1 racks means STEP through

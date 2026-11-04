@@ -183,6 +183,21 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     return expression
   }
 
+  function cvSequence(node: Node): string {
+    const steps = value(node, 'steps')
+    if (!isSteps(steps)) throw new Error('Invalid CV SEQ steps')
+    return typeof steps === 'string' ? steps : `<${steps.join(' ')}>`
+  }
+
+  function namedOutput(node: Node): boolean {
+    const output = node.spec.jacks.find((j) => j.direction === 'out')
+    return (
+      output !== undefined &&
+      ((node.outputs.get(output.id)?.length ?? 0) >= 2 ||
+        patch.names[`${node.module.id}:${output.id}`] !== undefined)
+    )
+  }
+
   function modulation(
     node: Node,
     id: string,
@@ -208,7 +223,10 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       }
       trace(source)
       return {
-        text: signal.text,
+        text:
+          source.spec.modSource === 'sequence' && !namedOutput(source)
+            ? quote(cvSequence(source))
+            : signal.text,
         paths,
         modules: [...paths.keys()],
       }
@@ -396,10 +414,10 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       case 'env':
         throw new Error('ENV has no standalone expression')
       case 'cvseq': {
-        const steps = value(node, 'steps')
-        if (!isSteps(steps)) throw new Error('Invalid CV SEQ steps')
-        const text = typeof steps === 'string' ? steps : `<${steps.join(' ')}>`
-        return [append(blank(true), quote(text), node)]
+        // Double-quoted strings are already mini-notation in the REPL. Keep this
+        // explicit parser argument a plain JS string to avoid parsing a Pattern.
+        const literal = quote(cvSequence(node)).slice(1, -1)
+        return [append(blank(true), `mini('${literal}')`, node)]
       }
       case 'samplehold':
       case 'attenuverter':
@@ -408,9 +426,6 @@ export function generateDocument(patch: Patch): GeneratedDocument {
         if (!upstream) return []
         let expression = emit(upstream)[0]
         if (!expression) return []
-        // Quoted CV SEQ mini-notation becomes an explicit numeric pattern inside utilities.
-        if (upstream.spec.modSource === 'sequence')
-          expression = { ...expression, text: `mini(${expression.text})` }
         expression = { ...expression, inline: true }
         if (node.spec.modSource === 'sampleHold')
           expression = append(expression, `.segment(${numeric(number(node, 'rate'))})`, node)
@@ -430,11 +445,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
           const second = other && emit(other)[0]
           if (!second) return []
           const additionStart = expression.text.length
-          expression = append(
-            expression,
-            `.add(${other.spec.modSource === 'sequence' ? `mini(${second.text})` : second.text})`,
-            node,
-          )
+          expression = append(expression, `.add(${second.text})`, node)
           const end = expression.text.length
           expression.owners.push(
             ...second.owners.map((owner) => ({ ...owner, start: additionStart, end })),
@@ -508,8 +519,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
   function emit(node: Node): CodeExpression[] {
     const output = node.spec.jacks.find((jack) => jack.direction === 'out')
     const key = `${node.module.id}:${output?.id ?? ''}`
-    if (!output || ((node.outputs.get(output.id)?.length ?? 0) < 2 && !patch.names[key]))
-      return raw(node)
+    if (!output || !namedOutput(node)) return raw(node)
     const parent = activeDefinitions.at(-1)
     let definition = definitions.get(key)
     if (!definition) {

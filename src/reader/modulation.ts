@@ -61,24 +61,16 @@ export function modPattern(
   } else {
     const first = parsed.calls[0]
     const value = scalar(first?.args[0])
-    if (first?.name === 'mini' && first.args.length === 1 && numericNotation(value)) {
+    if (
+      first?.name === 'mini' &&
+      first.args.length === 1 &&
+      first.args[0]?.type === 'Literal' &&
+      first.args[0].raw?.startsWith("'") &&
+      numericNotation(value)
+    ) {
       result = {
         type: 'cvseq',
         values: { steps: value },
-        inputs: [],
-        start: first.start,
-        end: first.end,
-      }
-      index = 1
-    } else if (
-      first?.name === 'mini' &&
-      first.args.length === 1 &&
-      first.args[0]?.type === 'Identifier' &&
-      isReference(first.args[0].name)
-    ) {
-      result = {
-        type: 'reference',
-        values: { name: first.args[0].name },
         inputs: [],
         start: first.start,
         end: first.end,

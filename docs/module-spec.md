@@ -339,8 +339,8 @@ remain invalid; per-voice ENV cannot be a standalone pattern input.
 Hardware · Modulate · 10 HP. STEPS uses the shared 1–16-cell step editor, with
 default values 400, 800, 1200. OUT is mod. Array steps write a cycle alternation
 such as `.lpf("<400 800 1200>")`; imported numeric mini-notation retains its exact
-timing/spelling. Utility arguments wrap it in `mini("…")`. Values are absolute
-in the destination's units, including semitones at OSC TUNE. Rich notation uses
+timing/spelling. Utility arguments wrap it in `mini('…')`. Values are absolute
+in the destination's units, including semitones at OSC TUNE. Explicit parser arguments use single quotes so the REPL does not parse them twice. Rich notation uses
 text mode; non-numeric tokens are refused. A pattern may produce several events
 inside one note; this is distinct from audio-rate modulation.
 

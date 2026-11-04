@@ -2,7 +2,7 @@ setcpm(120/4)
 
 $: note("c2 c2 eb2 g2 c3 bb2 g2 eb2")
   .s("sawtooth")
-  .lpf(sine.slow(4).segment(8).mul(1).range(300, 1500).add(mini("<0 200 500>")))
+  .lpf(sine.slow(4).segment(8).mul(1).range(300, 1500).add(mini('<0 200 500>')))
   .lpq(1)
   .gain(0.15)
   .postgain(0.8)

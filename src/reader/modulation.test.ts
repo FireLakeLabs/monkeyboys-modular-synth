@@ -10,6 +10,7 @@ import { parseSource } from './syntax'
 import type { Patch } from '../patch/types'
 
 let runtime: Record<string, unknown>
+let replCompile: (source: string) => string
 beforeAll(async () => {
   runtime = Object.assign(
     {},
@@ -21,8 +22,23 @@ beforeAll(async () => {
   )
   if (typeof runtime.miniAllStrings !== 'function') throw new Error('Missing mini parser')
   runtime.miniAllStrings()
+  const transpilerEntry = '@strudel/transpiler/transpiler.mjs'
+  const transpiler: Record<string, unknown> = await import(/* @vite-ignore */ transpilerEntry)
+  if (typeof transpiler.transpiler !== 'function') throw new Error('Missing pinned transpiler')
+  const compile = transpiler.transpiler
+  replCompile = (source) => {
+    const result: unknown = compile(source, { emitMiniLocations: false, emitWidgets: false })
+    if (
+      !result ||
+      typeof result !== 'object' ||
+      !('output' in result) ||
+      typeof result.output !== 'string'
+    )
+      throw new Error('Invalid transpiler output')
+    return result.output
+  }
 })
-function events(source: string): unknown {
+function events(source: string, throughRepl = false): unknown {
   const parsed = parseSource(source)
   const declarations = parsed.scopes
     .filter((s) => s.kind === 'declaration')
@@ -35,10 +51,11 @@ function events(source: string): unknown {
         `(${source.slice(s.start, s.end)}).queryArc(0, 4).map(h => ({ value: h.value, begin: h.whole.begin.toString(), end: h.whole.end.toString() }))`,
     )
   // Repository-owned fixtures only, using the pinned real engine without browser audio.
+  const body = throughRepl
+    ? replCompile(`${declarations}\n[${voices.join(',')}];`)
+    : `${declarations}\nreturn [${voices.join(',')}];`
   // oxlint-disable-next-line typescript/no-implied-eval
-  return new Function(...Object.keys(runtime), `${declarations}\nreturn [${voices.join(',')}];`)(
-    ...Object.values(runtime),
-  )
+  return new Function(...Object.keys(runtime), body)(...Object.values(runtime))
 }
 function fixture(
   target: string,
@@ -84,6 +101,7 @@ describe.each(targets)('$type $control generalized CV', ({ type, control }) => {
       expect(doc.patch.modules.some((m) => m.type === 'code')).toBe(false)
       expect(doc.bindings.some((b) => b.module === `${source}1` && b.role === 'cv')).toBe(true)
       expect(read(saveLayout(doc).source).patch).toEqual(patch)
+      expect(events(generated.code, true)).toEqual(events(generated.code))
     })
     it(`${name}: exact source and real engine events survive a source-owned round trip`, () => {
       const body = sourceBody(generate(fixture(type, control, source, values)))
@@ -144,7 +162,7 @@ for (const [chain, expected] of [
 
 it('mixes two numeric sequences and supports exponential attenuverter mapping', () => {
   const source =
-    '$: note("c3*4").s("sine").lpf(mini("400 800").add(mini("0 200"))).lpq(1).orbit(1)\n'
+    '$: note("c3*4").s("sine").lpf(mini(\'400 800\').add(mini(\'0 200\'))).lpq(1).orbit(1)\n'
   const doc = read(source)
   expect(doc.patch.modules.filter((m) => m.type === 'cvseq')).toHaveLength(2)
   expect(doc.patch.modules.some((m) => m.type === 'modmix')).toBe(true)
@@ -238,7 +256,7 @@ const coupledCases = [
   ['attenuverter', 'min', 100, '.range(100, 1500)'],
   ['attenuverter', 'max', 2000, '.range(300, 2000)'],
   ['attenuverter', 'scale', 'EXP', '.rangex(300, 1500)'],
-  ['cvseq', 'steps', '<0 400>', 'mini("<0 400>")'],
+  ['cvseq', 'steps', '<0 400>', "mini('<0 400>')"],
 ] as const
 it.each(coupledCases)(
   'edits coupled %s.%s and independently reopens its saved identity',
@@ -363,3 +381,20 @@ it.each(['gain(.8)', 'lpf(800).lpq(1)'])(
     expect(read(saveLayout(doc).source).patch).toEqual(doc.patch)
   },
 )
+
+it.each([false, true])(
+  'runs CV SEQ utility inputs through the actual REPL transpiler (named=%s)',
+  (named) => {
+    let patch = read(utilitiesSource).patch
+    if (named) patch = { ...patch, names: { ...patch.names, 'cvseq1:out': 'values' } }
+    const code = generate(patch)
+    expect(events(code, true)).toEqual(events(code))
+  },
+)
+
+it('keeps explicit mini arguments that the REPL parses twice as CODE', () => {
+  const source = '$: note("c3").s("sine").lpf(mini("<400 800>"))'
+  const doc = read(source)
+  expect(doc.patch.modules.some((m) => m.type === 'cvseq')).toBe(false)
+  expect(generate(doc)).toBe(source)
+})
