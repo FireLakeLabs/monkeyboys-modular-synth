@@ -49,7 +49,7 @@ export const SEQ: ModuleSpec = {
     },
   ],
   jacks: [{ id: 'note', label: 'NOTE', direction: 'out', signal: 'pattern' }],
-  strudel: ['note', 'n', 'fast', 'slow'],
+  strudel: ['note', 'n', 'fast'],
   orderSensitive: true,
 }
 
@@ -86,7 +86,7 @@ export const DRUMS: ModuleSpec = {
     },
   ],
   jacks: [{ id: 'out', label: 'OUT', direction: 'out', signal: 'pattern' }],
-  strudel: ['s', 'degradeBy'],
+  strudel: ['s'],
   orderSensitive: true,
 }
 
@@ -635,11 +635,408 @@ export const CODE: ModuleSpec = {
   orderSensitive: true,
 }
 
-/** Every v1 module, in library order. */
+/** Pattern transforms preserve their incoming signal, before or after sound selection. */
+const patternJacks = [
+  { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
+  { id: 'out', label: 'OUT', direction: 'out', signal: 'any' },
+] as const
+
+export const CLOCK: ModuleSpec = {
+  id: 'clock',
+  name: 'CLOCK',
+  title: 'Clock divider and swing',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 12,
+  paletteCall: '.slow().swingBy().late()',
+  readDefaults: { division: 1, swing: 0, offset: 0 },
+  controls: [
+    {
+      kind: 'knob',
+      id: 'division',
+      label: 'DIV',
+      min: 0.25,
+      max: 16,
+      step: 0.25,
+      default: 2,
+      omitAt: 1,
+      call: { method: 'slow', argument: { kind: 'number' } },
+    },
+    {
+      kind: 'knob',
+      id: 'swing',
+      label: 'SWING',
+      min: 0,
+      max: 1,
+      step: 0.01,
+      default: 1 / 3,
+      omitAt: 0,
+      call: {
+        method: 'swingBy',
+        argument: { kind: 'tuple', controls: ['swing', 'grid'] },
+        read: 'merge',
+      },
+    },
+    { kind: 'knob', id: 'grid', label: 'GRID', min: 1, max: 16, step: 1, default: 4 },
+    {
+      kind: 'knob',
+      id: 'offset',
+      label: 'OFFSET',
+      min: -1,
+      max: 1,
+      step: 0.125,
+      default: 0.125,
+      omitAt: 0,
+      call: { method: 'late', argument: { kind: 'number' }, read: 'merge' },
+    },
+  ],
+  jacks: patternJacks,
+  strudel: ['slow', 'swingBy', 'late'],
+  orderSensitive: true,
+}
+
+export const EUCLID: ModuleSpec = {
+  id: 'euclid',
+  name: 'EUCLID',
+  title: 'Euclidean rhythm',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 12,
+  paletteCall: '.euclidRot()',
+  readDefaults: { rotation: 0 },
+  controls: [
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      options: opts('gate', 'legato'),
+      default: 'gate',
+      call: {
+        method: { control: 'mode', names: { gate: 'euclidRot', legato: 'euclidLegatoRot' } },
+        argument: {
+          kind: 'tuple',
+          controls: ['pulses', 'steps', 'rotation'],
+          byMethod: { euclidLegato: ['pulses', 'steps'] },
+        },
+      },
+    },
+    { kind: 'knob', id: 'pulses', label: 'PULSES', min: 0, max: 32, step: 1, default: 3 },
+    { kind: 'knob', id: 'steps', label: 'STEPS', min: 1, max: 32, step: 1, default: 8 },
+    { kind: 'knob', id: 'rotation', label: 'ROTATE', min: -32, max: 32, step: 1, default: 2 },
+  ],
+  jacks: patternJacks,
+  strudel: ['euclidRot', 'euclidLegatoRot'],
+  strudelAliases: { euclidrot: 'euclidRot', euclidLegato: 'euclidLegatoRot' },
+  orderSensitive: true,
+}
+
+export const RATCHET: ModuleSpec = {
+  id: 'ratchet',
+  name: 'RATCHET',
+  title: 'Patterned repeats',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 10,
+  paletteCall: '.ply("…")',
+  controls: [
+    {
+      kind: 'text',
+      id: 'repeats',
+      label: 'REPEATS',
+      default: '<1 2 4>',
+      call: { method: 'ply', argument: { kind: 'string' } },
+    },
+  ],
+  jacks: patternJacks,
+  strudel: ['ply'],
+  orderSensitive: true,
+}
+
+export const CHANCE: ModuleSpec = {
+  id: 'chance',
+  name: 'CHANCE',
+  title: 'Seeded Bernoulli gate',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 10,
+  paletteCall: '.degradeBy().seed()',
+  readDefaults: { drop: 0, mode: 'unseeded' },
+  controls: [
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'RANDOM',
+      options: opts('unseeded', 'seeded'),
+      default: 'seeded',
+    },
+    {
+      kind: 'knob',
+      id: 'drop',
+      label: 'DROP',
+      min: 0,
+      max: 1,
+      step: 0.05,
+      default: 0.3,
+      omitAt: 0,
+      call: { method: 'degradeBy', argument: { kind: 'number' } },
+    },
+    {
+      kind: 'knob',
+      id: 'seed',
+      label: 'SEED',
+      min: 0,
+      max: 65535,
+      step: 1,
+      default: 1,
+      call: {
+        method: 'seed',
+        argument: { kind: 'number' },
+        read: 'merge',
+        when: { control: 'mode', value: 'seeded' },
+      },
+    },
+  ],
+  jacks: patternJacks,
+  strudel: ['degradeBy', 'seed'],
+  orderSensitive: true,
+}
+
+export const CHORD: ModuleSpec = {
+  id: 'chord',
+  name: 'CHORD',
+  title: 'Chord sequencer',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 12,
+  paletteCall: 'chord("…").voicing()',
+  source: { method: 'chord', control: 'chords', suffix: ['voicing'] },
+  controls: [{ kind: 'text', id: 'chords', label: 'CHORDS', default: '<Cm7 Fm7 G7>' }],
+  jacks: [{ id: 'out', label: 'OUT', direction: 'out', signal: 'pattern' }],
+  strudel: ['chord', 'voicing'],
+  orderSensitive: true,
+}
+
+export const ARP: ModuleSpec = {
+  id: 'arp',
+  name: 'ARP',
+  title: 'Arpeggiator',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 10,
+  paletteCall: '.arp("…")',
+  controls: [
+    {
+      kind: 'text',
+      id: 'indices',
+      label: 'INDICES',
+      default: '0 1 2 1',
+      call: { method: 'arp', argument: { kind: 'string' } },
+    },
+  ],
+  jacks: patternJacks,
+  strudel: ['arp'],
+  orderSensitive: true,
+}
+
+export const REV: ModuleSpec = {
+  id: 'rev',
+  name: 'REV / PALINDROME',
+  title: 'Reverse and alternate cycles',
+  family: 'alien',
+  category: 'alien',
+  paletteCategory: 'pattern',
+  hp: 14,
+  paletteCall: '.rev() / .palindrome()',
+  controls: [
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      options: opts('rev', 'palindrome'),
+      default: 'rev',
+      call: {
+        method: { control: 'mode', names: { rev: 'rev', palindrome: 'palindrome' } },
+        argument: { kind: 'tuple', controls: [] },
+      },
+    },
+  ],
+  jacks: patternJacks,
+  strudel: ['rev', 'palindrome'],
+  orderSensitive: true,
+}
+
+export const SHUFFLE: ModuleSpec = {
+  id: 'shuffle',
+  name: 'SHUFFLE',
+  title: 'Reorder cycle slices',
+  family: 'alien',
+  category: 'alien',
+  paletteCategory: 'pattern',
+  hp: 10,
+  paletteCall: '.shuffle() / .scramble()',
+  controls: [
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      options: opts('shuffle', 'scramble'),
+      default: 'shuffle',
+      call: {
+        method: { control: 'mode', names: { shuffle: 'shuffle', scramble: 'scramble' } },
+        argument: { kind: 'tuple', controls: ['slices'] },
+      },
+    },
+    { kind: 'knob', id: 'slices', label: 'SLICES', min: 1, max: 32, step: 1, default: 8 },
+  ],
+  jacks: patternJacks,
+  strudel: ['shuffle', 'scramble'],
+  orderSensitive: true,
+}
+
+export const RIBBON: ModuleSpec = {
+  id: 'ribbon',
+  name: 'RIBBON',
+  title: 'Loop a slice of time',
+  family: 'alien',
+  category: 'alien',
+  paletteCategory: 'pattern',
+  hp: 10,
+  paletteCall: '.rib()',
+  controls: [
+    {
+      kind: 'knob',
+      id: 'offset',
+      label: 'OFFSET',
+      min: 0,
+      max: 65535,
+      step: 0.25,
+      default: 45,
+      call: { method: 'rib', argument: { kind: 'tuple', controls: ['offset', 'cycles'] } },
+    },
+    { kind: 'knob', id: 'cycles', label: 'CYCLES', min: 0.125, max: 16, step: 0.125, default: 2 },
+  ],
+  jacks: patternJacks,
+  strudel: ['rib'],
+  strudelAliases: { ribbon: 'rib' },
+  orderSensitive: true,
+}
+
+export const TIME_LENS: ModuleSpec = {
+  id: 'time-lens',
+  name: 'TIME LENS',
+  title: 'Zoom, linger and compress',
+  family: 'alien',
+  category: 'alien',
+  paletteCategory: 'pattern',
+  hp: 12,
+  paletteCall: '.zoom() / .linger() / .compress()',
+  controls: [
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      options: opts('zoom', 'linger', 'compress'),
+      default: 'zoom',
+      call: {
+        method: {
+          control: 'mode',
+          names: { zoom: 'zoom', linger: 'linger', compress: 'compress' },
+        },
+        argument: {
+          kind: 'tuple',
+          controls: ['start', 'end'],
+          byMethod: { linger: ['length'] },
+          ascending: ['start', 'end'],
+        },
+      },
+    },
+    { kind: 'knob', id: 'start', label: 'START', min: 0, max: 0.99, step: 0.01, default: 0.25 },
+    { kind: 'knob', id: 'end', label: 'END', min: 0.01, max: 1, step: 0.01, default: 0.75 },
+    { kind: 'knob', id: 'length', label: 'LENGTH', min: 0.01, max: 1, step: 0.01, default: 0.25 },
+  ],
+  jacks: patternJacks,
+  strudel: ['zoom', 'linger', 'compress'],
+  orderSensitive: true,
+}
+
+export const WARP: ModuleSpec = {
+  id: 'warp',
+  name: 'WARP',
+  title: 'Break, press and hurry',
+  family: 'alien',
+  category: 'alien',
+  paletteCategory: 'pattern',
+  hp: 10,
+  paletteCall: '.brak() / .press() / .hurry()',
+  controls: [
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      options: opts('brak', 'press', 'hurry'),
+      default: 'brak',
+      call: {
+        method: { control: 'mode', names: { brak: 'brak', press: 'press', hurry: 'hurry' } },
+        argument: { kind: 'tuple', controls: [], byMethod: { hurry: ['rate'] } },
+      },
+    },
+    { kind: 'knob', id: 'rate', label: 'RATE', min: 0.25, max: 8, step: 0.25, default: 2 },
+  ],
+  jacks: patternJacks,
+  strudel: ['brak', 'press', 'hurry'],
+  orderSensitive: true,
+}
+
+export const ECHO: ModuleSpec = {
+  id: 'echo',
+  name: 'ECHO',
+  title: 'Pattern echoes',
+  family: 'alien',
+  category: 'alien',
+  paletteCategory: 'pattern',
+  hp: 12,
+  paletteCall: '.echo()',
+  controls: [
+    {
+      kind: 'knob',
+      id: 'times',
+      label: 'TIMES',
+      min: 1,
+      max: 16,
+      step: 1,
+      default: 3,
+      call: {
+        method: 'echo',
+        argument: { kind: 'tuple', controls: ['times', 'time', 'feedback'] },
+      },
+    },
+    {
+      kind: 'knob',
+      id: 'time',
+      label: 'TIME',
+      min: 0.015625,
+      max: 1,
+      step: 0.015625,
+      default: 0.125,
+    },
+    { kind: 'knob', id: 'feedback', label: 'FEEDBACK', min: 0, max: 1, step: 0.05, default: 0.5 },
+  ],
+  jacks: patternJacks,
+  strudel: ['echo'],
+  orderSensitive: true,
+}
+
+/** Every shipped module, in library order. */
 export const CATALOG: readonly ModuleSpec[] = [
   SEQ,
   DRUMS,
   QUANT,
+  CLOCK,
+  EUCLID,
+  RATCHET,
+  CHANCE,
+  CHORD,
+  ARP,
   OSC,
   SMPL,
   VCF,
@@ -652,6 +1049,12 @@ export const CATALOG: readonly ModuleSpec[] = [
   OUT,
   ITER,
   JUX,
+  REV,
+  SHUFFLE,
+  RIBBON,
+  TIME_LENS,
+  WARP,
+  ECHO,
   CODE,
 ]
 

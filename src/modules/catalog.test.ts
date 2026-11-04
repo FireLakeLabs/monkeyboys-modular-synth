@@ -22,8 +22,24 @@ const V1_MODULES = [
 ]
 
 describe('module catalog', () => {
-  it('contains exactly the v1 modules', () => {
-    expect(CATALOG.map((m) => m.id).sort()).toEqual([...V1_MODULES].sort())
+  it('retains the v1 modules and ships the twelve pattern/time modules', () => {
+    expect(CATALOG.map((m) => m.id).sort()).toEqual(
+      [
+        ...V1_MODULES,
+        'clock',
+        'euclid',
+        'ratchet',
+        'chance',
+        'chord',
+        'arp',
+        'rev',
+        'shuffle',
+        'ribbon',
+        'time-lens',
+        'warp',
+        'echo',
+      ].sort(),
+    )
   })
 
   it('has unique module ids', () => {
@@ -68,6 +84,11 @@ describe('module catalog', () => {
   it('keeps call bindings and their dependencies within the owning module', () => {
     for (const spec of CATALOG) {
       const control = (id: string) => spec.controls.find((item) => item.id === id)
+      if (spec.source) {
+        expect(control(spec.source.control)?.kind, spec.id).toBe('text')
+        for (const name of [spec.source.method, ...spec.source.suffix])
+          expect(spec.strudel).toContain(name)
+      }
       for (const item of spec.controls) {
         if (!('call' in item) || !item.call) continue
         const binding = item.call
@@ -87,13 +108,27 @@ describe('module catalog', () => {
           for (const name of Object.values(binding.method.names))
             expect(spec.strudel, where).toContain(name)
         }
-        expect(binding.argument.kind === 'number', where).toBe(item.kind === 'knob')
+        if (binding.argument.kind !== 'tuple')
+          expect(binding.argument.kind === 'number', where).toBe(item.kind === 'knob')
+        else {
+          for (const id of [
+            ...binding.argument.controls,
+            ...Object.values(binding.argument.byMethod ?? {}).flat(),
+          ])
+            expect(['knob', 'text', 'switch'], where).toContain(control(id)?.kind)
+        }
         if (binding.argument.kind === 'scale')
           expect(control(binding.argument.root)?.kind, where).toBe('switch')
         if (binding.argument.kind === 'transform' && item.kind === 'switch')
           expect(Object.keys(binding.argument.expressions).sort(), where).toEqual(
             item.options.map((option) => option.value).sort(),
           )
+        if (binding.when) {
+          const selector = control(binding.when.control)
+          expect(selector?.kind, where).toBe('switch')
+          if (selector?.kind === 'switch')
+            expect(selector.options.map((option) => option.value)).toContain(binding.when.value)
+        }
         if (binding.enabledBy) expect(control(binding.enabledBy), where).toHaveProperty('omitAt')
         if (binding.withEnvelope)
           expect(
@@ -103,7 +138,10 @@ describe('module catalog', () => {
       }
       for (const [id, value] of Object.entries(spec.readDefaults ?? {})) {
         const item = control(id)
-        expect(item, `${spec.id}.${id}`).toHaveProperty('omitAt', value)
+        if (item?.kind === 'knob') {
+          expect(value).toBeGreaterThanOrEqual(item.min)
+          expect(value).toBeLessThanOrEqual(item.max)
+        } else expect(item, `${spec.id}.${id}`).toBeDefined()
       }
     }
   })

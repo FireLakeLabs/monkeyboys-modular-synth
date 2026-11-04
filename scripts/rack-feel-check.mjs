@@ -30,7 +30,9 @@ export async function load(source) {
 export async function loadLook(look) {
   const specs = CATALOG.filter((spec) => looksFor(spec.family).includes(look))
   assert(specs.length, `Unknown look ${look}`)
-  let patch = emptyPatch()
+  // Keep the growing family matrix in a full-width case so Fit tests panel
+  // geometry rather than shrinking an ever-taller collection to minimum zoom.
+  let patch = { ...emptyPatch(), railHp: 104 }
   for (const spec of [
     ...specs,
     ...CATALOG.filter((spec) => spec.id === 'out' && !specs.includes(spec)),
@@ -114,7 +116,11 @@ export function inspectPanels(look) {
       jack.getBoundingClientRect(),
     )
     for (const [index, rect] of jacks.entries()) {
-      assert(rect.width >= 23.99 && rect.height >= 23.99, `${id}: jack smaller than 24px`)
+      // Chromium rounds fractional zoom geometry to 1/64 of a CSS pixel.
+      assert(
+        rect.width >= 24 - 1 / 64 && rect.height >= 24 - 1 / 64,
+        `${id}: jack smaller than 24px`,
+      )
       for (const other of jacks.slice(index + 1))
         assert(
           rect.right <= other.left ||
@@ -135,6 +141,10 @@ export function inspectPanels(look) {
   return panels.length
 }
 export async function verifyPanels(zooms = [1, 0.75, 'fit']) {
+  const focus = [...document.querySelectorAll('button')].find(
+    (button) => button.textContent === 'Focus rack',
+  )
+  focus?.click()
   const results = []
   for (const look of [
     'powder',
@@ -158,9 +168,14 @@ export async function verifyPanels(zooms = [1, 0.75, 'fit']) {
     }
   }
   assert(
-    results.reduce((sum, result) => sum + result.panels, 0) === 61 * zooms.length,
+    results.reduce((sum, result) => sum + result.panels, 0) ===
+      CATALOG.reduce((sum, spec) => sum + looksFor(spec.family).length, 0) * zooms.length,
     'Missing module/look combination',
   )
+  if (focus)
+    [...document.querySelectorAll('button')]
+      .find((button) => button.textContent === 'Restore workspace')
+      ?.click()
   return results
 }
 export async function loadEnveloped() {

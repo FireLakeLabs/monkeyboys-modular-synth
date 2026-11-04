@@ -137,3 +137,70 @@ test('trance playback, events and export/reopen', async ({ page }, info) => {
     await page.evaluate(async () => (await import('/scripts/trance-check.mjs')).verifyTrance()),
   )
 })
+
+// #132: each supported call reaches the actual pinned browser engine.
+test('pattern and time module forms, source, rack identity and PCM', async ({ page }, info) => {
+  const prepared = await page.evaluate(async () =>
+    (await import('/scripts/pattern-time-check.mjs')).preparePatternProof(),
+  )
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await expect(page.locator('.transport-status')).toHaveText('Playing', { timeout: 30_000 })
+  const forms = []
+  try {
+    for (let index = 0; index < prepared.forms; index++)
+      forms.push(
+        await page.evaluate(
+          async (index) =>
+            (await import('/scripts/pattern-time-check.mjs')).verifyPatternForm(index),
+          index,
+        ),
+      )
+  } finally {
+    await page.evaluate(async () =>
+      (await import('/scripts/pattern-time-check.mjs')).finishPatternProof(),
+    )
+    await record(info, { forms, physicalListening: false })
+  }
+})
+
+test('pattern module numeric and text controls preserve imported source', async ({
+  page,
+}, info) => {
+  const source = '$: note("c3 e3").s("sine").euclidRot(3, 8, 2).ply("<1 2 4>")\n'
+  await page.evaluate(async (source) => {
+    ;(await import('/scripts/editor-browser.mjs')).enableAutoApply()
+    await (await import('/scripts/rack-feel-check.mjs')).load(source)
+  }, source)
+  const euclid = page.locator('[data-module="euclid1"]')
+  await euclid.getByRole('button', { name: 'Set PULSES', exact: true }).click()
+  await euclid.getByRole('textbox', { name: 'PULSES', exact: true }).fill('5')
+  await euclid.getByRole('textbox', { name: 'PULSES', exact: true }).press('Enter')
+  const ratchet = page.locator('[data-module="ratchet1"]')
+  await ratchet.getByRole('textbox', { name: 'REPEATS', exact: true }).fill('<2 3>')
+  await ratchet.getByRole('button', { name: 'Apply', exact: true }).click()
+  const result = await page.evaluate(async () => {
+    const source = (await import('/scripts/editor-browser.mjs')).editorSource()
+    const { read } = await import('/src/reader/index.ts')
+    const { sourceBody, saveLayout } = await import('/src/workspace/document.ts')
+    const document = read(source)
+    const saved = saveLayout(document)
+    return {
+      source: sourceBody(source),
+      identity:
+        read(saved.source).layout === 'restored' &&
+        JSON.stringify(read(saved.source).patch) === JSON.stringify(saved.patch),
+    }
+  })
+  expect(result.source).toBe(
+    source.replace('euclidRot(3', 'euclidRot(5').replace('<1 2 4>', '<2 3>'),
+  )
+  expect(result.identity).toBe(true)
+  await page.evaluate(
+    async (source) => {
+      await (await import('/scripts/rack-feel-check.mjs')).load(source)
+    },
+    source.replace('<1 2 4>', '<4 5>'),
+  )
+  await expect(ratchet.getByRole('textbox', { name: 'REPEATS', exact: true })).toHaveValue('<4 5>')
+  await record(info, result)
+})

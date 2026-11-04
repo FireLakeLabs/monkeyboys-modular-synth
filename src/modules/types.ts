@@ -24,8 +24,18 @@ export interface CallBinding {
     | { kind: 'string' }
     | { kind: 'scale'; root: string }
     | { kind: 'transform'; expressions: Readonly<Record<string, string>> }
+    | {
+        kind: 'tuple'
+        controls: readonly string[]
+        /** Mode-specific arity, including nullary transforms. */
+        byMethod?: Readonly<Record<string, readonly string[]>>
+        /** An active time span must have a strictly increasing start and end. */
+        ascending?: readonly [string, string]
+      }
   /** Continue the adjacent module when this control has not already been read. */
   read?: 'merge'
+  /** Emit only in this mode; reading the call activates that mode. */
+  when?: { control: string; value: string }
   /** Suppress companion effect settings when the effect is bypassed. */
   enabledBy?: string
   /** Only write this call with a directly connected ENV. */
@@ -95,7 +105,7 @@ export interface GridControl {
 }
 
 /** CODE's editor. */
-export interface TextControl {
+export interface TextControl extends CallControl {
   kind: 'text'
   id: string
   label: string
@@ -130,6 +140,8 @@ export interface ModuleSpec {
   paletteCategory?: PaletteCategory
   /** Source-only defaults for omitted calls, distinct from new rack defaults. */
   readDefaults?: Readonly<Record<string, number | string>>
+  /** An atomic pattern source followed by its required nullary calls. */
+  source?: { method: string; control: string; suffix: readonly string[] }
   controls: readonly Control[]
   jacks: readonly Jack[]
   /**

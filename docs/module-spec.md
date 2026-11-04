@@ -1,12 +1,12 @@
-# Module spec (v1)
+# Module spec
 
-The sixteen v1 modules. For each: its controls, value ranges and defaults, its jacks, and the Strudel it writes and reads.
+The sixteen v1 modules and subsequent catalog additions. For each: its controls, value ranges and defaults, its jacks, and the Strudel it writes and reads.
 
 The machine-readable version of this spec is [`src/modules/catalog.ts`](../src/modules/catalog.ts). The app already consumes it for the module library. **The catalog is the runtime source of truth** and this document describes it; keep the two in step.
 
 ## Call bindings (#128)
 
-Knob and switch controls may declare `call` in the catalog. The generator visits
+Knob, switch and text controls may declare `call` in the catalog. The generator visits
 bound controls in their catalog order; the reader uses the same bindings after
 resolving source/chained context and catalog aliases.
 
@@ -83,7 +83,7 @@ n("0 3 5 <7 10>")        // DEGREE mode, usually into QUANT
 note("c2 eb2").fast(2)   // RATE 2
 ```
 
-**Reads:** `note("…")` or `n("…")` whose mini-notation is a flat list of up to 16 tokens, rests and flat `<…>` alternations. The same grid is available for rack-built, imported and library patches, including after code edits (#66). Anything richer (`[ ]` sub-divisions, `*`, Euclidean rhythms) opens the SEQ in **text mode**: the string is shown and edited as text, and the module is still a SEQ. A `.fast(x)` or `.slow(x)` directly after sets RATE (`slow(x)` → 1/x).
+**Reads:** `note("…")` or `n("…")` whose mini-notation is a flat list of up to 16 tokens, rests and flat `<…>` alternations. The same grid is available for rack-built, imported and library patches, including after code edits (#66). Anything richer (`[ ]` sub-divisions, `*`, Euclidean rhythms) opens the SEQ in **text mode**: the string is shown and edited as text, and the module is still a SEQ. An adjacent `.fast(x)` sets RATE. Since #132, `.slow(x)` reads as a separate CLOCK module to retain its cable position.
 
 ### DRUMS — Trigger sequencer
 
@@ -431,3 +431,54 @@ Cyber · 14 HP · order-sensitive
 | OUT  | out | any    |
 
 Holds any Strudel the app cannot turn into controls. In a chain, its text must be a method call fragment starting with `.`. With nothing patched into IN, the text must be a complete expression and the block acts as a voice’s source. When a module for the code later exists, the app offers to swap it in.
+
+## Pattern and time (#132)
+
+These twelve modules use the existing family looks and fixed catalog widths.
+Except CHORD, each has passthrough IN/OUT jacks (`any`), retaining the incoming
+pattern, audio or modulation signal. Every module is order-sensitive, including
+when placed after OSC/SMPL. CHORD has a pattern OUT and no input; connect it to
+OSC's NOTE input, optionally through ARP or other pattern transforms.
+
+The forms below are verified against the locked `@strudel/core` 1.2.6,
+`@strudel/tonal` 1.2.6 and `@strudel/web` 1.3.0 packages. Numeric arguments accept
+finite literals and literal division such as `1/3`; untouched source retains its
+spelling and comments. Unsupported expressions/arity remain CODE. New pattern
+arguments retain exact numeric precision, with compact rational expressions for
+small fractions; existing sound-setting formatting is unchanged.
+
+| Hardware module | HP  | Controls: range, step; new-rack default                                               | Writes / reads                                                                                                                                                                                                                                                                                              |
+| --------------- | --- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CLOCK           | 12  | DIV 0.25–16, 0.25; 2. SWING 0–1, 0.01; 1/3. GRID 1–16, 1; 4. OFFSET −1–1, 0.125; 1/8. | `.slow(2).swingBy(1/3, 4).late(0.125)`. DIV 1, SWING 0 and OFFSET 0 omit their respective calls. Missing source calls use those neutral values. GRID applies to swing only.                                                                                                                                 |
+| EUCLID          | 12  | MODE gate / legato; gate. PULSES 0–32, 1; 3. STEPS 1–32, 1; 8. ROTATE −32–32, 1; 2.   | `.euclidRot(3, 8, 2)` / `.euclidLegatoRot(3, 8, 2)`. Reads `euclidrot` and two-argument `.euclidLegato(3, 8)` (rotation 0). Zero pulses are silent.                                                                                                                                                         |
+| RATCHET         | 10  | REPEATS text; `<1 2 4>`.                                                              | `.ply("<1 2 4>")`. The literal is mini-notation, including alternating repeat counts.                                                                                                                                                                                                                       |
+| CHANCE          | 10  | RANDOM unseeded / seeded; seeded. DROP 0–1, 0.05; 0.3. SEED 0–65535, 1; 1.            | `.degradeBy(0.3).seed(1)`. DROP 0 omits degradation; unseeded omits seed. Source degradation without seed stays unseeded. Seed 0 is an active seed, not an omission value: it can isolate upstream randomness from an outer seed. Adjacent seed attaches to the gate; repeated seeds remain separate nodes. |
+| CHORD           | 12  | CHORDS text; `<Cm7 Fm7 G7>`.                                                          | `chord("<Cm7 Fm7 G7>").voicing()`, an atomic source with its required voicing call. Chord names use the pinned tonal library. A bare chord control or other voicing arguments stay CODE.                                                                                                                    |
+| ARP             | 10  | INDICES text; `0 1 2 1`.                                                              | `.arp("0 1 2 1")`, selecting indices from simultaneously stacked notes, including CHORD's voicing.                                                                                                                                                                                                          |
+
+| Alien module     | HP  | Controls: range, step; new-rack default                                                                           | Writes / reads                                                                                                                                                                                                               |
+| ---------------- | --- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| REV / PALINDROME | 14  | MODE rev / palindrome; rev.                                                                                       | `.rev()` / `.palindrome()`. One module with two modes.                                                                                                                                                                       |
+| SHUFFLE          | 10  | MODE shuffle / scramble; shuffle. SLICES 1–32, 1; 8.                                                              | `.shuffle(8)` / `.scramble(8)`.                                                                                                                                                                                              |
+| RIBBON           | 10  | OFFSET 0–65535, 0.25; 45. CYCLES 0.125–16, 0.125; 2.                                                              | `.rib(45, 2)`; also reads `.ribbon(45, 2)`.                                                                                                                                                                                  |
+| TIME LENS        | 12  | MODE zoom / linger / compress; zoom. START 0–0.99, 0.01; 0.25. END 0.01–1, 0.01; 0.75. LENGTH 0.01–1, 0.01; 0.25. | `.zoom(0.25, 0.75)`, `.linger(0.25)`, `.compress(0.25, 0.75)`. START/END apply to zoom/compress and must strictly increase; LENGTH applies to linger. Inactive values remain saved. WINDOW belongs to #135's function loops. |
+| WARP             | 10  | MODE brak / press / hurry; brak. RATE 0.25–8, 0.25; 2.                                                            | `.brak()`, `.press()`, `.hurry(2)`. RATE applies only to hurry. This is a panel name, not ownership of Strudel's unrelated wavetable `.warp()` control.                                                                      |
+| ECHO             | 12  | TIMES 1–16, 1; 3. TIME 0.015625–1, 0.015625; 0.125. FEEDBACK 0–1, 0.05; 0.5.                                      | `.echo(3, 0.125, 0.5)`. These are repeated pattern events; the pinned engine writes decreasing gain for each repetition.                                                                                                     |
+
+CLOCK now owns standalone `.slow()` calls, including immediately after SEQ;
+SEQ's adjacent `.fast()` still sets RATE. LFO's dedicated rate handling remains
+unchanged. DRUMS retains its existing unseeded adjacent `.degradeBy()` DROP
+control; when immediately followed by `.seed()`, the pair reads as CHANCE.
+Existing saved CODE owners remain CODE until explicitly converted.
+
+Multi-argument and nullary transforms use a catalog `argument` of
+`{ kind: 'tuple', controls: [...] }`. `byMethod` selects another argument list
+for a method or import alias (including an empty list); `ascending` declares an
+active start/end constraint enforced by the graph/mutation boundary. A binding's
+`when: { control, value }` controls emission and activates that mode on import.
+CHORD's catalog `source: { method, control, suffix }` describes its source literal
+and required nullary suffixes. Text controls can carry string call bindings.
+No module definitions are duplicated in panel components.
+
+See the [acceptance record](pattern-time-verification.md) for distinct source,
+saved rack, event, browser and PCM evidence.

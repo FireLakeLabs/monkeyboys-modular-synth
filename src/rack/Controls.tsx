@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { patternNumber } from '../modules/bindings'
 import type { Control, KnobControl } from '../modules/types'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { isGrid, isSteps } from '../codegen/graph'
@@ -125,7 +126,7 @@ export function Numeric({
               setError('')
             }}
           >
-            {value}
+            {patternNumber(value)}
             {control.unit && <> {control.unit}</>}
           </button>
         ) : (
@@ -224,7 +225,7 @@ export function ControlEditor({
         )
       return (
         <TextEditor
-          label="CODE source"
+          label={module.type === 'code' ? 'CODE source' : control.label}
           value={typeof value === 'string' ? value : control.default}
           commit={commit}
         />

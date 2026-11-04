@@ -1,5 +1,6 @@
 import { isRailHp } from '../patch/layout'
 import { getModuleSpec } from '../modules/catalog'
+import { callMethod, tupleControls } from '../modules/bindings'
 import { looksFor } from '../modules/looks'
 import type { Control, GridRow, JackSignal, ModuleSpec } from '../modules/types'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
@@ -121,6 +122,20 @@ export function graph(patch: Patch): Map<string, Node> {
     for (const [id, candidate] of Object.entries(module.values)) {
       if (!validValue(control(node, id), candidate, node))
         throw new Error(`Invalid control value: ${module.id}.${id}`)
+    }
+    for (const item of spec.controls) {
+      if (!('call' in item) || item.call?.argument.kind !== 'tuple') continue
+      const span = item.call.argument.ascending
+      const active = tupleControls(
+        item.call,
+        callMethod(item.call, (id) => string(node, id)),
+      )
+      if (
+        span &&
+        span.every((id) => active.includes(id)) &&
+        number(node, span[0]) >= number(node, span[1])
+      )
+        throw new Error(`${module.id}: ${span[0]} must be less than ${span[1]}`)
     }
     nodes.set(module.id, node)
   }

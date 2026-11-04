@@ -48,7 +48,7 @@ An unpatched knob writes a plain number. Patch an LFO into it and the number is 
 
 ### 4. Sound settings ignore order; pattern changes don’t
 
-Strudel runs filters and effects in its own fixed chain, so their order in the code does not change the sound. If the cables say otherwise, the rack flags that cable and shows the order you will actually hear. Modules that rewrite the pattern — QUANT, every Alien module, every Cyber block, SEQ’s rate — act in cable order, and the generator must preserve it.
+Strudel runs filters and effects in its own fixed chain, so their order in the code does not change the sound. If the cables say otherwise, the rack flags that cable and shows the order you will actually hear. Modules that rewrite the pattern — QUANT, the [pattern/time modules](module-spec.md#pattern-and-time-132), every Alien module, every Cyber block, SEQ’s rate — act in cable order, and the generator must preserve it.
 
 ```js
 // these two sound the same
@@ -424,3 +424,22 @@ missing controls to the executable source.
 
 See the [conversion checks](../src/workspace/codeConversion.test.ts) and
 [separate browser observations](code-conversion-verification.md).
+
+## Pattern/time call bindings (#132)
+
+The [module table](module-spec.md#pattern-and-time-132) records the pinned-engine
+forms, families, controls, widths and omissions. Tuple argument lists, mode-specific
+arity, conditional seed emission and the CHORD source are catalog-owned. Cable
+traversal writes every call in place, before or after sound selection. A repeated
+setting starts another node instead of overwriting an earlier call. CHANCE keeps
+seed zero distinct from an absent seed; otherwise a surrounding random context
+could change its events. A seeded DRUMS gate reads as CHANCE, while the old
+unseeded DROP form retains its existing DRUMS owner.
+
+Literal division is parsed without executing code. Pattern arguments retain
+numeric precision instead of rounding swing to three decimal places. Imported
+fractions and comments remain byte-exact; safe argument edits replace only their
+own literal/division span. Mode/arity changes on imported files retain the existing
+conservative editing/refusal contract. Saved CODE ownership remains authoritative.
+Source bytes, saved rack identity and actual onset events have independent
+[acceptance checks](pattern-time-verification.md); PCM is measured separately.

@@ -3,7 +3,7 @@ import { graph } from '../codegen/graph'
 import { generate } from '../codegen/generate'
 import { descriptor, type RackLayout } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
-import { matchControlCall } from '../modules/bindings'
+import { matchControlCall, tupleControls } from '../modules/bindings'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { nextPosition, railWidth } from '../patch/layout'
@@ -184,8 +184,8 @@ function project(
   function literalControls(id: string, arg: Node | undefined): Record<string, Span> {
     if (
       !arg ||
-      !['Literal', 'UnaryExpression'].includes(arg.type) ||
-      (arg.type === 'UnaryExpression' && /\/[/*]/.test(source.slice(arg.start, arg.end)))
+      !['Literal', 'UnaryExpression', 'BinaryExpression'].includes(arg.type) ||
+      /\/[/*]/.test(source.slice(arg.start, arg.end))
     )
       return {}
     return { [id]: { start: arg.start, end: arg.end } }
@@ -364,6 +364,31 @@ function project(
     const initial = calls[0]
     if (!upstream && initial && initial.start === root.start) {
       const type = owner(initial.name, true)
+      const form = type && getModuleSpec(type).source
+      if (
+        type &&
+        form &&
+        initial.name === form.method &&
+        initial.args.length === 1 &&
+        typeof scalar(initial.args[0]) === 'string' &&
+        form.suffix.every(
+          (name, offset) =>
+            calls[offset + 1]?.name === name && calls[offset + 1]?.args.length === 0,
+        )
+      ) {
+        const text = scalar(initial.args[0])
+        if (typeof text === 'string') {
+          group = add(type, { [form.control]: text })
+          bind(
+            group,
+            scope,
+            Array.from({ length: form.suffix.length + 1 }, (_, i) => i),
+            literalControls(form.control, initial.args[0]),
+          )
+          upstream = output(group)
+          start = form.suffix.length + 1
+        }
+      }
       if (type === 'seq' || type === 'drums') {
         const id = type === 'seq' ? 'steps' : 'grid'
         const value = scalar(initial.args[0])
@@ -467,10 +492,9 @@ function project(
       let id: string | undefined
       let values: Record<string, ControlValue> = {}
       let merge = false
-      if (type === 'seq' && group?.type === 'seq' && ['fast', 'slow'].includes(call.name)) {
+      if (group?.type === 'seq' && call.name === 'fast') {
         const value = scalar(call.args[0])
-        const rate =
-          typeof value === 'number' ? (call.name === 'slow' ? 1 / value : value) : undefined
+        const rate = typeof value === 'number' ? value : undefined
         if (
           rate !== undefined &&
           fits('seq', 'rate', rate) &&
@@ -508,15 +532,69 @@ function project(
         }
       }
       const spec = type ? getModuleSpec(type) : undefined
-      const matched = spec && matchControlCall(spec, name)
+      // Preserve DRUMS' existing unseeded drop control; a seeded gate is CHANCE.
+      const drumDrop =
+        name === 'degradeBy' && group?.type === 'drums' && calls[index + 1]?.name !== 'seed'
+      const matched = !drumDrop && spec && matchControlCall(spec, name)
+      const activation =
+        matched && matched.binding.when
+          ? { [matched.binding.when.control]: matched.binding.when.value }
+          : {}
       if (matched) {
         id = matched.control.id
-        values = { ...spec?.readDefaults, ...matched.values }
+        values = { ...spec?.readDefaults, ...matched.values, ...activation }
         merge =
           matched.binding.read === 'merge' &&
           Object.entries(matched.values).every(([id, value]) => group?.values[id] === value)
+        if (merge && spec?.orderSensitive && group?.type === type) {
+          const rank = spec.controls.indexOf(matched.control)
+          // A grouped node writes in catalog order. Keep earlier/repeated calls
+          // as separate nodes when grouping would move them through a transform.
+          merge = !bindings.some(
+            (binding) =>
+              binding.module === group?.id &&
+              binding.scope === scope.descriptor.id &&
+              binding.calls.some((index) => {
+                const previous = calls[index]
+                const owned = previous && matchControlCall(spec, canonicalCall(previous.name))
+                return owned && spec.controls.indexOf(owned.control) >= rank
+              }),
+          )
+        }
         const form = matched.binding.argument
-        if (form.kind === 'transform') {
+        if (form.kind === 'tuple' && type) {
+          const ids = tupleControls(matched.binding, call.name)
+          const args = call.args.map((arg) => scalar(arg))
+          if (
+            args.length === ids.length &&
+            ids.every((id, i) => {
+              const candidate = args[i]
+              return candidate !== undefined && fits(type, id, candidate)
+            })
+          ) {
+            const reuse =
+              merge &&
+              group?.type === type &&
+              !bindings.some(
+                (binding) =>
+                  binding.module === group?.id && ids.some((id) => id in binding.controls),
+              )
+            const module = reuse && group ? group : add(type, values)
+            Object.assign(module.values, activation)
+            const controls: Record<string, Span> = {}
+            ids.forEach((id, i) => {
+              const candidate = args[i]
+              if (candidate !== undefined) module.values[id] = candidate
+              Object.assign(controls, literalControls(id, call.args[i]))
+            })
+            if (!reuse) wire(upstream, module)
+            bind(module, scope, [index], controls)
+            group = module
+            upstream = output(module)
+            continue
+          }
+          id = undefined
+        } else if (form.kind === 'transform') {
           const arg = call.args[0]
           const key =
             call.args.length === 1 && arg?.type !== 'SpreadElement' ? transformKey(arg) : undefined
@@ -555,32 +633,34 @@ function project(
           }
           id = undefined
         }
-      } else if (type === 'drums' && call.name === 'degradeBy' && group?.type === 'drums') {
+      } else if (drumDrop) {
         id = 'drop'
         merge = true
       }
-      if (type && id) {
+      const scalarType = drumDrop ? 'drums' : type
+      if (scalarType && id) {
         const arg = call.args[0]
         const candidate = scalar(arg)
         const numericCV = spec?.jacks.some((jack) => jack.cvTarget === id)
         if (
-          (candidate !== undefined && call.args.length === 1 && fits(type, id, candidate)) ||
+          (candidate !== undefined && call.args.length === 1 && fits(scalarType, id, candidate)) ||
           (numericCV && arg && arg.type !== 'SpreadElement' && candidate === undefined)
         ) {
           const reuse =
             merge &&
-            group?.type === type &&
+            group?.type === scalarType &&
             !bindings.some((binding) => binding.module === group?.id && id in binding.controls)
-          const module = reuse && group ? group : add(type, values)
+          const module = reuse && group ? group : add(scalarType, values)
           const accepted =
             candidate === undefined && arg && arg.type !== 'SpreadElement'
               ? lfo(arg, module, id, scope, index)
               : literal(module, id, call, scope, index)
           if (accepted) {
+            Object.assign(module.values, activation)
             if (
               !reuse &&
               needsSampler(upstream) &&
-              getModuleSpec(type).jacks.some(
+              getModuleSpec(scalarType).jacks.some(
                 (jack) => jack.direction === 'in' && jack.signal === 'audio',
               )
             ) {
