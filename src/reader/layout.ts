@@ -13,7 +13,7 @@ import {
 import { CATALOG, ENV, OUT, VCF } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
-import { parseSource, type ParsedScope } from './syntax'
+import { parseSource, bindingScope, type ParsedScope } from './syntax'
 import { rackMarker } from './metadata'
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -95,6 +95,8 @@ function patchFrom(value: unknown): Patch {
         configurable: true,
       })
     }
+    if (item.functionParameter !== undefined && typeof item.functionParameter !== 'string')
+      throw new Error('Invalid function parameter')
     return {
       id: item.id,
       type: item.type,
@@ -103,6 +105,9 @@ function patchFrom(value: unknown): Patch {
       look,
       ...(item.fx === true || item.fx === 'native' ? { fx: item.fx } : {}),
       values,
+      ...(typeof item.functionParameter === 'string'
+        ? { functionParameter: item.functionParameter }
+        : {}),
     }
   })
   const cables: Cable[] = value.cables.map((item: unknown) => {
@@ -238,7 +243,21 @@ export function readLayout(source: string): SavedLayout {
               binding.role !== 'tempo')
           )
             throw new Error('Invalid source binding')
-          const scope = scopes.find((scope) => scope.id === binding.scope)
+          if (
+            binding.loop !== undefined &&
+            (!Array.isArray(binding.loop) ||
+              !binding.loop.every(
+                (i: unknown) => typeof i === 'number' && Number.isSafeInteger(i) && i >= 0,
+              ))
+          )
+            throw new Error('Invalid function address')
+          const loop = Array.isArray(binding.loop)
+            ? binding.loop.filter((i: unknown): i is number => typeof i === 'number')
+            : undefined
+          const scope = bindingScope(snapshot.scopes, {
+            scope: binding.scope,
+            ...(loop ? { loop } : {}),
+          })
           const calls = binding.calls.map((call: unknown) => {
             if (
               !scope ||
@@ -275,6 +294,7 @@ export function readLayout(source: string): SavedLayout {
             throw new Error('Invalid FX argument')
           return {
             scope: binding.scope,
+            ...(loop ? { loop } : {}),
             calls,
             role: binding.role,
             ...(typeof binding.fx === 'number' ? { fx: binding.fx } : {}),
@@ -353,8 +373,11 @@ export function matchScopes(
   saved: readonly Scope[],
   next: readonly ParsedScope[],
   unchangedSnapshot = false,
-): Map<string, { saved: Scope; calls: Map<number, number>; exact: boolean }> {
-  const result = new Map<string, { saved: Scope; calls: Map<number, number>; exact: boolean }>()
+): Map<string, { saved: Scope; current: Scope; calls: Map<number, number>; exact: boolean }> {
+  const result = new Map<
+    string,
+    { saved: Scope; current: Scope; calls: Map<number, number>; exact: boolean }
+  >()
   const current = next.map((scope) => scope.descriptor)
   if (
     unchangedSnapshot &&
@@ -369,6 +392,7 @@ export function matchScopes(
       if (now)
         result.set(now.id, {
           saved: scope,
+          current: now,
           calls: new Map(now.calls.map((_, i) => [i, i])),
           exact: true,
         })
@@ -404,7 +428,12 @@ export function matchScopes(
           unique(previous.calls, (item) => modeMethod(item.name), modeMethod(call.name)))
       if (old) calls.set(index, previous.calls.indexOf(old))
     })
-    result.set(scope.id, { saved: previous, calls, exact: full(previous) === full(scope) })
+    result.set(scope.id, {
+      saved: previous,
+      current: scope,
+      calls,
+      exact: full(previous) === full(scope),
+    })
   }
   return result
 }

@@ -463,7 +463,7 @@ it('clears pending visuals after an evaluation failure and leaves opaque code un
   const { play, subscribe } = await import('./engine')
   const events: import('./engine').EngineEvent[] = []
   subscribe((event) => events.push(event))
-  await play(`$: note('c3').s('sine').chunk(4, x => x.rev())`)
+  await play(`$: note('c3').s('sine').chunkBack(4, x => x.rev())`)
   web.observe.mock.calls.at(-1)?.[0]({ context: { __monkeyboyActivity: 1 } }, 10, 0.5, 10)
   expect(events.filter((event) => event.type === 'activity')).toEqual([])
   await play(`$: note('c3').s('sine')`)

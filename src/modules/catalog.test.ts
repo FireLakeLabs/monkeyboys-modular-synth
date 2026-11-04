@@ -53,6 +53,11 @@ describe('module catalog', () => {
         'time-lens',
         'warp',
         'echo',
+        'chunk',
+        'every',
+        'sometimes',
+        'off',
+        'layer',
       ].sort(),
     )
   })

@@ -48,6 +48,12 @@
     "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
   },
   {
+    "id": "function-loops",
+    "path": "src/library/patches/function-loops.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
     "id": "iter-jux",
     "path": "src/library/patches/iter-jux.strudel",
     "license": "MIT",

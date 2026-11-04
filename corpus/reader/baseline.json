@@ -1,8 +1,8 @@
 {
   "$total": {
-    "mappedCallShare": 0.9142857142857143,
-    "readableVoiceShare": 0.8461538461538461,
-    "codeFreePatchShare": 0.8888888888888888,
+    "mappedCallShare": 0.918918918918919,
+    "readableVoiceShare": 0.8518518518518519,
+    "codeFreePatchShare": 0.8947368421052632,
     "parseFailures": 0,
     "codeBlocks": 15,
     "unmappedCalls": 15,
@@ -75,6 +75,14 @@
     "unmappedCalls": 0
   },
   "first-sounds": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "function-loops": {
     "mappedCallShare": 1,
     "readableVoiceShare": 1,
     "codeFreePatchShare": 1,

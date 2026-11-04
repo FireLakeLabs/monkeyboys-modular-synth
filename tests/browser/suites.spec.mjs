@@ -20,6 +20,8 @@ for (const script of [
   'panels-browser',
   'sound-effects-browser',
   'nested-steps-browser',
+
+  'function-loops-browser',
 ]) {
   test(script, async ({ baseURL }, info) => {
     const output = info.outputPath('evidence')

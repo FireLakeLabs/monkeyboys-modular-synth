@@ -712,3 +712,33 @@ select:focus-visible {
 .drawbars output {
   font-size: 12px;
 }
+
+.signal-function {
+  --signal: #8cf5da;
+}
+.cable.signal-function path:not(.cable-shadow),
+.provisional.signal-function {
+  stroke-dasharray: 16 4 3 4;
+}
+.function-role {
+  display: block;
+  max-width: 70px;
+  font-size: 11px;
+  white-space: normal;
+  text-align: center;
+}
+.jack.signal-function::after {
+  content: 'λ';
+  inset: 0;
+  border: 0;
+  background: #12161a;
+  color: #f4f4f0;
+  font: bold 14px/16px monospace;
+  border-radius: 2px;
+}
+
+.jack-state-mark {
+  display: inline-block;
+  width: 1.1em;
+  text-align: center;
+}

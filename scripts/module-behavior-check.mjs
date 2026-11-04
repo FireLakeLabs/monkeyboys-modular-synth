@@ -128,7 +128,7 @@ try {
 
   for (const [fixture, id, count] of [
     ['$: note("c3").s("sine").iter(4)\n', 'iter1', 3],
-    ['$: note("c3").s("sine").chunk(4, x => x.rev())\n', 'code1', 3],
+    ['$: note("c3").s("sine").chunkBack(4, x => x.rev())\n', 'code1', 3],
   ]) {
     await code(fixture)
     await panel(id).click({ button: 'right' })

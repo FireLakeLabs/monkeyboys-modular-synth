@@ -1,7 +1,7 @@
 import { effectRank } from '../modules/effects'
 import { activeEffectRanks, planEffects } from '../codegen/effects'
 import { generate } from '../codegen/generate'
-import { graph, isSteps, requireNode } from '../codegen/graph'
+import { graph, functionMembers, isSteps, requireNode } from '../codegen/graph'
 import { getModuleSpec, VOICE_EFFECT_ORDER } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { JackSignal, KnobControl } from '../modules/types'
@@ -280,12 +280,22 @@ export function connect(
   return validateRack(next)
 }
 
-export function cableSignal(patch: Patch, from: JackRef): JackSignal {
+export function cableSignal(
+  patch: Patch,
+  from: JackRef,
+  members: ReadonlyMap<string, string> = functionMembers(graph(patch)),
+): JackSignal {
   const module = patch.modules.find((m) => m.id === from.module)
   const jack = module && getModuleSpec(module.type).jacks.find((j) => j.id === from.jack)
+  if (jack?.cvTarget) return jack.signal
+  if (
+    jack?.signal === 'function' ||
+    (members.has(from.module) && ['in', 'out'].includes(from.jack))
+  )
+    return 'function'
   if (jack?.signal !== 'any') return jack?.signal ?? 'any'
   const input = patch.cables.find((c) => c.to.module === from.module && c.to.jack === 'in')
-  return input ? cableSignal(patch, input.from) : 'any'
+  return input ? cableSignal(patch, input.from, members) : 'any'
 }
 
 function pathContains(
@@ -293,14 +303,17 @@ function pathContains(
   id: string,
   type: string,
   direction: 'upstream' | 'downstream',
+  seen = new Set<string>(),
 ): boolean {
+  if (seen.has(id)) return false
+  seen.add(id)
   if (patch.modules.find((m) => m.id === id)?.type === type) return true
   return patch.cables.some((c) =>
     direction === 'upstream'
       ? c.to.module === id &&
         c.to.jack !== 'cv' &&
-        pathContains(patch, c.from.module, type, direction)
-      : c.from.module === id && pathContains(patch, c.to.module, type, direction),
+        pathContains(patch, c.from.module, type, direction, seen)
+      : c.from.module === id && pathContains(patch, c.to.module, type, direction, seen),
   )
 }
 
@@ -402,7 +415,10 @@ export function depthControl(
   if (!['lfo', 'env'].includes(module.type) || control.id !== 'depth') return control
   const nodes = graph(patch)
   const targets: KnobControl[] = []
+  const visited = new Set<string>()
   function visit(id: string) {
+    if (visited.has(id)) return
+    visited.add(id)
     const node = requireNode(nodes, id)
     for (const cables of node.outputs.values())
       for (const cable of cables) {

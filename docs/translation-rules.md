@@ -2,15 +2,16 @@
 
 How a patch becomes Strudel, and how Strudel becomes a patch. These rules apply in both directions.
 
-## The three kinds of cable
+## The four kinds of cable
 
-| Cable       | Colour           | Carries                                                                                                                                               | In Strudel                                                        |
-| ----------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| **Pattern** | yellow `#E6D35F` | Events in time: which note, and when. Hardware usually splits this into pitch and gate cables; a Strudel event carries both, so here it is one cable. | Mini-notation strings: `note("c e g")`, `s("bd hh")`              |
-| **Audio**   | orange `#F4A462` | The sound itself, from a source through filter, amp and effects to the mixer.                                                                         | One chain of methods on a pattern: `.s() .lpf() .gain() .delay()` |
-| **Mod**     | blue `#7DB9F6`   | A value that moves on its own. Into a CV jack, it turns that knob for you.                                                                            | Signals scaled with `.range()`: `sine`, `saw`, `perlin`, `rand`   |
+| Cable        | Colour                            | Carries                                                                                                                                               | In Strudel                                                        |
+| ------------ | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Pattern**  | yellow `#E6D35F`                  | Events in time: which note, and when. Hardware usually splits this into pitch and gate cables; a Strudel event carries both, so here it is one cable. | Mini-notation strings: `note("c e g")`, `s("bd hh")`              |
+| **Audio**    | orange `#F4A462`                  | The sound itself, from a source through filter, amp and effects to the mixer.                                                                         | One chain of methods on a pattern: `.s() .lpf() .gain() .delay()` |
+| **Mod**      | blue `#7DB9F6`                    | A value that moves on its own. Into a CV jack, it turns that knob for you.                                                                            | Signals scaled with `.range()`: `sine`, `saw`, `perlin`, `rand`   |
+| **Function** | teal `#8CF5DA`, long/short dashed | A local chain between SEND and RETURN, with λ jack centers.                                                                                           | `x => x.a().b()`                                                  |
 
-Alien and Cyber jacks accept any cable type; the cable keeps the colour of whatever enters.
+Passthrough chain jacks retain their incoming signal. SEND/RETURN carries a local function rather than an audible voice; see [function loops](#function-loops-135).
 
 ## The six rules
 
@@ -116,7 +117,8 @@ Anything the reader cannot map goes into a Cyber CODE block that carries it thro
 
 ```js
   .jux(rev)                   // JUX, alien
-  .chunk(4, x => x.hurry(2))  // CODE, cyber
+  .chunk(4, x => x.hurry(2))  // CHUNK with WARP inside its function loop
+  .chunkBack(4, x => x.hurry(2)) // CODE, cyber
 ```
 
 ### 6. Split an output and it gets a name
@@ -558,3 +560,55 @@ inventing imported owners for folded mixer paths. Source-owned files with any
 other formatting or code retain their exact source snapshot and the existing
 independent projection/ownership validation. Unrepresentable folded pattern gains
 remain CODE in their original call position, including before opaque routing.
+
+## Function loops (#135)
+
+Catalog `functionLoop` owns the method, scalar argument controls, optional method
+variants/arity, default function, SEND role and optional active mode. Generation
+walks the closed RETURN chain back to SEND, emitting its transforms in cable order
+as the final argument: `.chunk(4, x => x.ply("2").rev())`. Nested loop modules
+recursively emit their own callbacks. Incomplete/empty loops use the preset;
+JUX still uses RIGHT. Function outputs stay local, without fan-out declarations.
+CODE separators protect line comments from swallowing following calls or closers.
+No app-only playback adapter is introduced.
+
+The reader never evaluates callbacks. A synchronous arrow with one identifier
+parameter and a receiver chain on that identifier can project into SEND/RETURN.
+All readable calls become modules. If a call is unsupported, the whole suffix of
+that lambda becomes one exact CODE in that loop; an independently readable outer
+loop stays visible around an inner CODE fallback. The original parameter is
+saved as optional `functionParameter` so opaque references keep their meaning.
+An identity lambda, a block/async callback, or a body not rooted in its parameter
+stays whole-call CODE. Unknown function identifiers and unsupported arity/ranges
+also stay whole-call CODE. `rev` is the new modules' empty preset; the four existing
+JUX forms still read as RIGHT presets without loop members. Numeric `.ply(2)`
+reads as RATCHET's text value `2`; new generation quotes its mini-notation.
+
+Bindings keep the top-level scope, plus optional `loop: number[]` locating each
+containing call's final lambda, and local `calls` inside that body. Exact source
+snapshots independently verify these addresses, controls and graph semantics.
+External changes restore nested identities only when the complete enclosing
+lambda matches; ambiguous changes auto-place. Source-aware scalar edits carry
+fresh descriptors while retaining IDs, comments and lambda identifiers. Source
+owned loop wiring changes are refused through the existing explicit conversion
+flow; generated racks support normal connection, replacement, deletion and undo.
+
+Graph validation permits one chain per loop, nested loops and attached CV. It
+rejects sources, modulation utilities, MIX, OUT, branches, shared members, named
+function outputs, wrong-owner RETURN and recursive containment. Broken chains
+remain saved and do not sound in place of the preset. TIME LENS must be in WINDOW
+before its loop can be connected; a connected loop prevents an incompatible mode
+switch. This does not change ordinary audio/modulation cycle rejection.
+
+The [acceptance record](function-loops-verification.md) separates exact-source,
+saved-state, event, browser and PCM evidence.
+
+A closed nonempty chain whose controls all bypass their calls writes `x => x`,
+preserving identity instead of selecting the empty-loop preset.
+
+Effect order is planned independently for the main voice and each closed function
+body. SEND is the local receiver boundary, not an audio feedback connection;
+RETURN paths are not merged with the outer effect path. An inner `.FX(...)`
+keeps both its lambda `loop` path and argument `fx` address. Native imported
+setters retain their execution choice. Incomplete function chains contribute no
+sounding effect stages or audible-chain note.

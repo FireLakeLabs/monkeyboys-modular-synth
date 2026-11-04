@@ -1,4 +1,6 @@
 import soundEffects from './patches/sound-effects.strudel?raw'
+
+import functionLoops from './patches/function-loops.strudel?raw'
 import patternHardware from './patches/pattern-hardware.strudel?raw'
 import patternAlien from './patches/pattern-alien.strudel?raw'
 import utilities from './patches/modulation-utilities.strudel?raw'
@@ -273,6 +275,27 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
     id: 'alien',
     title: 'Alien',
     children: [
+      {
+        kind: 'patch',
+        id: 'function-loops',
+        title: 'Function loops',
+        description:
+          'SEND and RETURN turn a chain into a function. Change CHUNK size, EVERY cycle, chance, delayed copy and parallel layer; repatch a loop to change its transform.',
+        source: functionLoops,
+        attribution,
+        exercises: [
+          'chunk',
+          'every',
+          'sometimes',
+          'off',
+          'layer',
+          'time-lens',
+          'jux',
+          'ratchet',
+          'rev',
+          'iter',
+        ],
+      },
       {
         kind: 'patch',
         id: 'iter-jux',

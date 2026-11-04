@@ -20,10 +20,23 @@ export function planEffects(nodes: Map<string, Node>) {
   // A shared stage must use the same representation in every branch. Propagate
   // inline membership across overlapping paths before writing named declarations.
   const paths: Node[][] = []
+  const loops = new Set<string>()
   function stagePaths(node: Node, tail: Node[] = []) {
     const path = activeEffectRank(node) === undefined ? tail : [node, ...tail]
+    const returned = node.inputs.get('return')
+    if (returned && returned.from.jack !== 'send' && !loops.has(node.module.id)) {
+      loops.add(node.module.id)
+      let upstream: typeof returned | undefined = returned
+      while (upstream && upstream.from.jack !== 'send')
+        upstream = requireNode(nodes, upstream.from.module).inputs.get('in')
+      if (upstream?.from.module === node.module.id)
+        stagePaths(requireNode(nodes, returned.from.module))
+    }
     const inputs = [...node.inputs].filter(
-      ([id]) => !node.spec.jacks.find((j) => j.id === id)?.cvTarget,
+      ([id, cable]) =>
+        id !== 'return' &&
+        cable.from.jack !== 'send' &&
+        !node.spec.jacks.find((j) => j.id === id)?.cvTarget,
     )
     if (!inputs.length) paths.push(path)
     for (const [, cable] of inputs) stagePaths(requireNode(nodes, cable.from.module), path)

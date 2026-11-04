@@ -1,4 +1,5 @@
 import { parse, type Expression } from 'acorn'
+import { chain, nestedScope, type ParsedScope } from '../reader/syntax'
 import type { RailHp } from '../patch/layout'
 import type { Cable, PlacedModule } from '../patch/types'
 
@@ -6,6 +7,8 @@ export const RACK_MARKER = '// ── @monkeyboy rack v1 ──'
 
 export interface Binding {
   scope: string
+  /** Outer call indices leading into nested final-argument lambdas. */
+  loop?: number[]
   calls: number[]
   /** Argument in an outer FX call. */
   fx?: number
@@ -182,21 +185,48 @@ export function bindScope(
     ...(orbit === undefined ? {} : { routing: { call: parsed.calls.length - 1, orbit } }),
   }
   layout.scopes.push(scope)
+  const program = parse(`(${expression.text}\n)`, { ecmaVersion: 'latest' })
+  const statement = program.body[0]
+  if (statement?.type !== 'ExpressionStatement') throw new Error('Expected expression')
+  const top: ParsedScope = {
+    ...chain(statement.expression),
+    expression: statement.expression,
+    start: 1,
+    end: expression.text.length + 1,
+    kind: 'voice' as const,
+    descriptor: scope,
+  }
+  const scopes = [top]
+  function descend(current: ParsedScope) {
+    current.calls.forEach((_call, i) => {
+      const child = nestedScope(current, i)
+      if (child) {
+        scopes.push(child)
+        descend(child)
+      }
+    })
+  }
+  descend(top)
   for (const owner of expression.owners) {
     const module = layout.modules.find((item) => item.id === owner.module)
     if (!module) throw new Error(`Unknown binding owner: ${owner.module}`)
-    const calls = parsed.calls.flatMap((call, index) =>
+    const local =
+      scopes
+        .filter((candidate) => candidate.start - 1 <= owner.start && candidate.end - 1 >= owner.end)
+        .at(-1) ?? top
+    const calls = local.calls.flatMap((call, index) =>
       // A chained call's range starts at its receiver's end, including whitespace.
       (
         owner.fx === undefined
-          ? call.end > owner.start && call.end <= owner.end
-          : call.start <= owner.start && call.end >= owner.end
+          ? call.end - 1 > owner.start && call.end - 1 <= owner.end
+          : call.start - 1 <= owner.start && call.end - 1 >= owner.end
       )
         ? [index]
         : [],
     )
     module.bindings.push({
       scope: id,
+      ...(local.loop ? { loop: local.loop } : {}),
       calls,
       role: owner.role,
       ...(owner.fx === undefined ? {} : { fx: owner.fx }),

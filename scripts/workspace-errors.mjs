@@ -301,13 +301,13 @@ try {
     'pending evaluation/Stop warning does not claim cancellation; edits cancel pending Open replacement',
   )
 
-  await open(page, '// unsupported preserved\n$: note("g3").s("sine").chunk(4, x => x.rev())\n')
+  await open(page, '// unsupported preserved\n$: note("g3").s("sine").chunkBack(4, x => x.rev())\n')
   await page.getByRole('button', { name: 'Open patch', exact: true }).click()
   await page.waitForFunction(() =>
     document.querySelector('.cm-content')?.textContent.includes('// unsupported preserved'),
   )
   await accepted(page)
-  assert.match(await sourceText(page), /chunk\(4, x => x.rev\(\)\)/)
+  assert.match(await sourceText(page), /chunkBack\(4, x => x.rev\(\)\)/)
   assert((await patch(page)).modules.some((module) => module.type === 'code'))
   assert.equal(await status(page).textContent(), 'Ready')
   assert.deepEqual(errors, [])

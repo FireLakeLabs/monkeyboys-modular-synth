@@ -14,7 +14,7 @@ import type { Patch } from '../patch/types'
 import { editDocument, saveLayout, sourceBody } from './document'
 
 const fixture =
-  "// exact 🐒\r\nconst helper = x => x.rev(); // unrelated\r\nconst lead = note('c3 e3').s('sine'); // shared\r\n$: lead.lpf(/* cutoff */ 800).gain(.25); // first\r\n$: lead.chunk(4, x => x.rev()).gain(.15).orbit(7); // opaque routing\r\n"
+  "// exact 🐒\r\nconst helper = x => x.rev(); // unrelated\r\nconst lead = note('c3 e3').s('sine'); // shared\r\n$: lead.lpf(/* cutoff */ 800).gain(.25); // first\r\n$: lead.chunkBack(4, x => x.rev()).gain(.15).orbit(7); // opaque routing\r\n"
 const id = (patch: Patch, type: string) => {
   const module = patch.modules.find((module) => module.type === type)
   if (!module) throw new Error(`Missing ${type}`)
@@ -246,7 +246,7 @@ it('produces the intended real Strudel event values and times independently of s
     return run(...Object.values(runtime))
   }
   const source =
-    "const lead = note('c3').s('sine');\n$: lead;\n$: lead.chunk(4,x=>x.rev()).gain(.15).orbit(7);\n"
+    "const lead = note('c3').s('sine');\n$: lead;\n$: lead.chunkBack(4,x=>x.rev()).gain(.15).orbit(7);\n"
   let original = saveLayout(read(source))
   original = editDocument(original, placeModule(original.patch, 'delay', 3))
   const delay = id(original.patch, 'delay')

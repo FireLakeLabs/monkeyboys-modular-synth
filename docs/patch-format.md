@@ -338,3 +338,25 @@ adapters. See the [legacy-file regression](../src/reader/aliases.test.ts).
 The existing v1 JSON field retains every bar, module ID, look, position and cable;
 no format-version change is needed. The graph validates finite 0–1 values and
 1–16 entries before generation or mutation. Unsupported source arrays stay CODE.
+
+## Function-loop ownership (#135)
+
+V1 retains the same cable shape and marker. SEND/RETURN are catalog jacks; cable
+kind is derived from endpoints and loop membership. Optional per-module
+`functionParameter: string` preserves an imported lambda identifier (new loops
+use `x`). Graph validation requires a valid identifier on a loop owner.
+
+A binding may carry `loop: number[]`: each index identifies a call whose final
+argument is the next single-parameter receiver-chain lambda. `calls` then indexes
+that innermost chain. Absent `loop` keeps the original top-level address format,
+including old JUX presets and saved CODE. Scope descriptors still contain the
+entire nested AST. Readers validate every path against the source snapshot and
+independently compare projected ownership and graph semantics before trusting
+saved state. Exact generated files restore incomplete loops and disconnected
+members as well as closed nested loops. External edits do not infer nested module
+identity from a changed callback's ordinal. See [verification](function-loops-verification.md).
+
+A binding inside an ordered effect stage within a function carries both `loop`
+and `fx`. Resolve the lambda path first, its local `calls` next, and the FX
+argument last. Source and graph validation preserve both addresses; no format
+version or old JUX/CODE ownership is replaced by this combination.

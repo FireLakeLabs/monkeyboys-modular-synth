@@ -1,5 +1,5 @@
 import { parse, type CallExpression, type Expression } from 'acorn'
-import { descriptor, type Scope } from '../codegen/layout'
+import { descriptor, type Scope, type Binding } from '../codegen/layout'
 import { OUT } from '../modules/catalog'
 import type { Span } from './types'
 
@@ -15,6 +15,7 @@ export interface ParsedScope extends Span {
   calls: Call[]
   kind: 'voice' | 'declaration' | 'tempo'
   label?: string
+  loop?: number[]
 }
 
 export function chain(expression: Expression): { root: Expression; calls: Call[] } {
@@ -148,4 +149,74 @@ export function scalar(
   )
     return (expression.operator === '-' ? -1 : 1) * expression.argument.value
   return undefined
+}
+
+/** A reference in an argument cannot be interpreted as a global CV/declaration. */
+export function usesParameter(value: unknown, name: string): boolean {
+  if (typeof value !== 'object' || value === null) return false
+  if ('type' in value && value.type === 'Identifier' && 'name' in value) return value.name === name
+  if (
+    'type' in value &&
+    value.type === 'ArrowFunctionExpression' &&
+    'params' in value &&
+    Array.isArray(value.params) &&
+    value.params.some(
+      (p: unknown) =>
+        p &&
+        typeof p === 'object' &&
+        'type' in p &&
+        p.type === 'Identifier' &&
+        'name' in p &&
+        p.name === name,
+    )
+  )
+    return false
+  return Object.entries(value).some(([key, child]) => {
+    if ((key === 'property' || key === 'key') && 'computed' in value && value.computed === false)
+      return false
+    return usesParameter(child, name)
+  })
+}
+
+/** Only a synchronous single-parameter receiver chain can become a rack function. */
+export function nestedScope(parent: ParsedScope, index: number): ParsedScope | undefined {
+  const call = parent.calls[index]
+  const lambda = call?.args.at(-1)
+  if (
+    lambda?.type !== 'ArrowFunctionExpression' ||
+    lambda.async ||
+    lambda.params.length !== 1 ||
+    lambda.params[0]?.type !== 'Identifier' ||
+    lambda.body.type === 'BlockStatement'
+  )
+    return undefined
+  const parsed = chain(lambda.body)
+  if (
+    parsed.root.type !== 'Identifier' ||
+    parsed.root.name !== lambda.params[0].name ||
+    lambda.body.start !== parsed.root.start
+  )
+    return undefined
+  return {
+    ...parsed,
+    expression: lambda.body,
+    start: lambda.body.start,
+    end: lambda.body.end,
+    descriptor: {
+      id: parent.descriptor.id,
+      root: descriptor(parsed.root),
+      calls: parsed.calls.map((c) => ({ name: c.name, arguments: descriptor(c.args) })),
+    },
+    kind: 'declaration',
+    loop: [...(parent.loop ?? []), index],
+  }
+}
+
+export function bindingScope(
+  scopes: readonly ParsedScope[],
+  binding: Pick<Binding, 'scope' | 'loop'>,
+): ParsedScope | undefined {
+  let scope = scopes.find((item) => item.descriptor.id === binding.scope)
+  for (const index of binding.loop ?? []) scope = scope && nestedScope(scope, index)
+  return scope
 }

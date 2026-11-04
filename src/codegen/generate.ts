@@ -2,6 +2,7 @@ import { parse, tokenizer } from 'acorn'
 import { planEffects } from './effects'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { callMethod, tupleControls, patternNumber, controlEnabled } from '../modules/bindings'
+import { loopMethod, loopControls } from '../modules/functions'
 import { drumText } from '../patch/notation'
 import type { Patch } from '../patch/types'
 import type { SourceDocument } from '../reader/types'
@@ -96,6 +97,7 @@ export interface GeneratedDocument {
   code: string
   ranges: Record<string, { start: number; end: number }[]>
   layout: RackLayout
+  functions: Record<string, string>
 }
 
 export function generate(patch: Patch | SourceDocument): string {
@@ -114,6 +116,7 @@ export function generateDocument(
 ): GeneratedDocument {
   const nodes = graph(patch)
   const { inline: inlineEffects } = planEffects(nodes)
+  const functions: GeneratedDocument['functions'] = {}
   const prelude = patch.prelude ?? ''
   const setup = parseSource(prelude, { lastExpressionIsVoice: false })
   if (setup.scopes.some((scope) => scope.kind !== 'declaration'))
@@ -381,6 +384,52 @@ export function generateDocument(
       return expression
     }
     const s = (id: string) => string(node, id)
+    const method = loopMethod(node.spec, node.module)
+    if (method) {
+      const args = loopControls(node.spec, method).map((id) => patternNumber(number(node, id)))
+      const returned = node.inputs.get('return')
+      let body = blank(true)
+      const parameter = node.module.functionParameter ?? 'x'
+      body.text = parameter
+      function walk(cable: typeof returned): CodeExpression | undefined {
+        if (!cable) return undefined
+        if (cable.from.module === node.module.id && cable.from.jack === 'send') return body
+        const child = requireNode(nodes, cable.from.module)
+        const upstream = walk(child.inputs.get('in'))
+        return upstream && transform(child, upstream)
+      }
+      const transformed = returned ? walk(returned) : undefined
+      const preset =
+        node.spec.id === 'jux'
+          ? node.spec.controls.flatMap((c) =>
+              'call' in c && c.call?.argument.kind === 'transform'
+                ? [c.call.argument.expressions[s(c.id)]]
+                : [],
+            )[0]
+          : node.spec.functionLoop?.preset
+      const hasBody = transformed && returned && returned.from.jack !== 'send'
+      const callback = hasBody
+        ? `${parameter} => ${transformed.text}${transformed.inline ? '' : '\n'}`
+        : preset
+      if (!callback) throw new Error('Missing function preset')
+      functions[node.module.id] = callback
+      const prefix = `.${method}(${args.length ? args.join(', ') + ', ' : ''}`
+      expression = append(expression, `${prefix}${callback})`, node)
+      if (hasBody) {
+        const owner = expression.owners.at(-1)
+        if (!owner) throw new Error('Missing function owner')
+        const offset = owner.start + prefix.length + parameter.length + 4
+        expression.owners.push(
+          ...transformed.owners.map((o) => ({
+            ...o,
+            start: offset + o.start,
+            end: offset + o.end,
+          })),
+        )
+        expression.sourceRouting ||= transformed.sourceRouting
+      }
+      return expression
+    }
     const controls = node.spec.controls.filter((item) => 'call' in item && item.call)
     if (!controls.length) throw new Error(`Not a chain module: ${node.spec.id}`)
     for (const item of controls) {
@@ -760,5 +809,5 @@ export function generateDocument(
   })
   const body = `${lines.join('\n')}\n`
   parse(body, { ecmaVersion: 'latest' })
-  return { code: `${body}${writeLayout(layout)}`, ranges, layout }
+  return { code: `${body}${writeLayout(layout)}`, ranges, layout, functions }
 }

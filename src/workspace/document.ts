@@ -125,8 +125,9 @@ function stampLayout(
       ...module,
       bindings: bindings
         .filter((b) => b.module === module.id)
-        .map(({ scope, calls, role, target, fx }) => ({
+        .map(({ scope, loop, calls, role, target, fx }) => ({
           scope,
+          ...(loop ? { loop } : {}),
           calls,
           role,
           ...(target ? { target } : {}),
