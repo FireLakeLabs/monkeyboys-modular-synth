@@ -17,15 +17,19 @@ const require = (condition, message) => {
   if (!condition) throw new Error(message)
 }
 
-export function sustainedPatch(mode = 'SMOOTH', depth = 0.4) {
+export function sustainedPatch(
+  mode = 'SMOOTH',
+  depth = 0.4,
+  { target = 'vca', nested = false, source = 'lfo' } = {},
+) {
   let patch = starterPatch()
-  for (const type of ['seq', 'osc', 'code', 'vca', 'lfo']) patch = placeModule(patch, type, 1)
+  for (const type of ['seq', 'osc', 'code', 'vca', source]) patch = placeModule(patch, type, 1)
   for (const [from, to, jack] of [
     ['seq1', 'osc1', 'note'],
     ['osc1', 'code1', 'in'],
     ['code1', 'vca1', 'in'],
     ['vca1', 'mix1', 'in1'],
-    ['lfo1', 'vca1', 'cv'],
+    [`${source}1`, target === 'mix' ? 'mix1' : 'vca1', target === 'mix' ? 'cv1' : 'cv'],
   ])
     patch = connect(
       patch,
@@ -36,19 +40,35 @@ export function sustainedPatch(mode = 'SMOOTH', depth = 0.4) {
     ['seq1', 'steps', 'c3/8'],
     ['osc1', 'wave', 'sine'],
     ['code1', 'text', '.attack(.01).decay(.01).sustain(1).release(.01)'],
-    ['vca1', 'level', 0.2],
-    ['lfo1', 'mode', mode],
-    ['lfo1', 'rate', 0.5],
-    ['lfo1', 'depth', depth],
+    ['vca1', 'level', target === 'mix' ? 1 : 0.2],
+    ...(source === 'lfo'
+      ? [
+          ['lfo1', 'mode', mode],
+          ['lfo1', 'rate', 0.5],
+          ['lfo1', 'depth', depth],
+        ]
+      : source === 'env'
+        ? [
+            ['env1', 'depth', depth],
+            ['env1', 'atk', 2],
+          ]
+        : [['cvseq1', 'steps', '<.2 .6>']]),
   ])
     patch = setValue(patch, module, id, value)
+  if (target === 'mix') patch = setValue(patch, 'mix1', 'ch1', 0.2)
+  if (nested) {
+    patch = placeModule(patch, 'mix', 3)
+    patch = setValue(patch, 'mix2', 'ch1', 0.5)
+    patch = connect(patch, { module: 'mix1', jack: 'out' }, { module: 'mix2', jack: 'in1' })
+    patch = connect(patch, { module: 'mix2', jack: 'out' }, { module: 'out1', jack: 'in' }, true)
+  }
   return patch
 }
 
-export async function measureSustained(mode = 'SMOOTH', depth = 0.4) {
+export async function measureSustained(mode = 'SMOOTH', depth = 0.4, options = {}) {
   await stop()
   await pause(300)
-  const patch = sustainedPatch(mode, depth)
+  const patch = sustainedPatch(mode, depth, options)
   const code = generate(patch)
   const document = read(code)
   require(identity(document.patch) === identity(patch), 'Generated rack identity')
@@ -82,9 +102,11 @@ export async function measureSustained(mode = 'SMOOTH', depth = 0.4) {
   const ratio = high / low
   require(globalThis.modulationOnsets.length ===
     1, `Expected one note, got ${globalThis.modulationOnsets.length}`)
-  require(mode === 'SMOOTH' ? ratio > 1.5 : ratio < 1.1, `Within-note ${mode} ratio ${ratio}`)
+  if (!options.source || options.source === 'lfo')
+    require(mode === 'SMOOTH' ? ratio > 1.5 : ratio < 1.1, `Within-note ${mode} ratio ${ratio}`)
   return {
     mode,
+    ...options,
     depth,
     sampleRate: ac.sampleRate,
     low,

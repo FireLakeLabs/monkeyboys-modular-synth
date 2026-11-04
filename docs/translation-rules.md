@@ -492,9 +492,12 @@ must override stale saved mixer values, without changing the orbit allocation.
 The channel OUTPUT pair emits `.channels("3:4")` before final `.orbit(n)` and
 omits the default `1:2`. For nested buses, mute/solo flags accumulate, the last
 nonempty name and last nondefault output pair on the path win, and scalar or
-STEP LFO levels multiply into a single final `.postgain()` after transforms.
+STEP LFO/CV SEQ levels multiply into a single final `.postgain()` after transforms.
 Constant factors are folded; patterned factors use `.mul()` with a signal as the
-receiver. CV ownership records the actual mixer jack/level from the catalog.
+receiver. SMOOTH LFO and ENV use #130's shared per-voice modulator after that
+folded gain, scaling their absolute depth by the remaining bus factors. Their
+AudioParam contributions retain the pinned engine's additive semantics.
+CV ownership records the actual mixer jack/level and utility path from the catalog.
 Imported unrepresentable products remain exact CODE, while generated files
 recover the full nested saved rack. Imports with custom orbits retain CODE and
 never gain overriding routing. Conditional settings and default omission do not
@@ -513,3 +516,10 @@ with active defaults. An explicit final default output pair after opaque earlier
 settings remains CODE so omission cannot expose an earlier routing pair. Mixed
 `delaytime`/`delaysync` calls also remain CODE: explicit seconds win in the pinned
 engine regardless of call order. Previously saved CODE ownership remains exact.
+
+Canonical executable source that exactly equals generation of its current rack
+keeps generated metadata when saved. Its entire graph is thereby proven without
+inventing imported owners for folded mixer paths. Source-owned files with any
+other formatting or code retain their exact source snapshot and the existing
+independent projection/ownership validation. Unrepresentable folded pattern gains
+remain CODE in their original call position, including before opaque routing.

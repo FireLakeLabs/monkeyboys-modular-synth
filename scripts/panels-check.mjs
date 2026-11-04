@@ -38,7 +38,7 @@ export function crossfader() {
     patch = placeModule(patch, 'lfo', 6 + n)
     patch = connect(patch, { module: `lfo${n}`, jack: 'out' }, { module: 'mix1', jack: `cv${n}` })
     patch = setValue(patch, 'mix1', `ch${n}`, level)
-    patch = setValue(patch, `lfo${n}`, 'depth', depth)
+    patch = setValue(setValue(patch, `lfo${n}`, 'mode', 'STEP'), `lfo${n}`, 'depth', depth)
     patch = setValue(patch, 'mix1', `name${n}`, `voice${n}`)
   }
   return load(patch)

@@ -94,9 +94,8 @@ Shared T3 preview loaded the app, but two Apply clicks timed out after 15000 ms;
 the repository's Playwright harness supplied the interaction/runtime proof.
 Physical listening, multichannel hardware output and other browsers/devices were
 not verified. Output pair correctness is proven in code/events; hearing physical
-channels 3/4 requires a capable interface. #130 owns SMOOTH LFO, ENV and CV SEQ
-integration; when it lands second it must verify those sources against these
-catalog-owned mixer CV targets. No Wave 3 work is included.
+channels 3/4 requires a capable interface. #130 landed first; integrated MIX
+verification is recorded below. No Wave 3 work is included.
 
 ## Full browser CI follow-up
 
@@ -110,7 +109,7 @@ The visual guard now scrolls each control into view and rejects unreachable or
 horizontally clipped controls, retaining catalog width, text size and jack target
 checks. Contrast sampling excludes text clipped outside its scrolling surface;
 the trance control hit test scrolls controls into view before checking actual
-pointer ownership. All 103 module/look combinations passed at 100%, 75% and Fit,
+pointer ownership. All 119 module/look combinations passed at 100%, 75% and Fit,
 all ten looks passed visible-label contrast, and all 29 trance panels passed
 control hit testing without changing source. The output-panel suite passed at
 1600px, 1024px and 900px, including native insertion/replacement and real PCM.
@@ -127,3 +126,49 @@ had also captured RATCHET's REPEATS field and removed Apply. Compact fields are
 now limited to MIX; pattern text retains its existing Apply workflow. No peer
 assertion was changed. The playhead-cleanup check passed after restarting the
 dev server with the rebased source, without changing that check or playback code.
+
+## Integration after #130 merged
+
+Rebased onto main `0f6d04b`, preserving #130's generalized modulation and #132's
+pattern/time work. A fresh `npm ci` applied the locked audio-pool patches on
+Node 24.22.2. `npm run check` passed 1,416 unit cases, 43 guardrails and build;
+reader coverage remains 135/150 mapped calls, 19/23 fully readable voices and
+15/17 CODE-free patches, with zero parse/fetch failures.
+
+The shared target matrix now includes all four MIX jacks with SMOOTH LFO, STEP
+LFO, ENV and CV SEQ. It initially failed 27 cases on missing modulation/projection
+and generated-save ownership, then passed. Sixteen additional nested cases query
+the pinned engine and REPL transpiler against independently written expected
+expressions: a .2 level through an outer .5 becomes one .1 postgain; SMOOTH/ENV
+absolute .4 depth becomes .2. STEP and CV SEQ multiply their event levels by .5.
+All cases independently check exact source, generated/reopened rack identity,
+plain imports and saved imports. The focused panel/modulation suites pass 327
+cases. Folded pattern products stay CODE at their original position; eight nested
+save regressions failed until that order was retained.
+
+The generator and reader reuse #130's catalog-driven per-voice modulation
+adapters; MIX has no separate waveform or envelope definitions. Canonical Save
+retains generated metadata when executable bytes exactly equal the current
+writer output, preserving folded paths and non-first channel identities.
+Noncanonical imported source still follows its existing ownership proof.
+
+The focused real Chromium PCM suite passed SMOOTH upward/downward, STEP, ENV and
+CV SEQ through a nested MIX. Each run verifies one sustained onset, exact saved
+rack identity, nonzero PCM for more than 100 sampled windows and an outer .5
+factor. SMOOTH's within-note high/low RMS ratio exceeded 1.5; STEP stayed below
+1.1. ENV and CV SEQ were observed executing with output; event semantics are
+separately proven by the matrix. Physical listening is not claimed.
+
+Observed nested MIX PCM at 48 kHz: upward SMOOTH RMS .02231–.06262
+(ratio 2.806), downward .00570–.02078 (3.646), STEP .04214–.04271 (1.013),
+ENV .04213–.05362 and CV SEQ .02107–.02135. These are measured destination
+PCM, separate from event/source/identity checks.
+
+The combined full browser run passed 33 of 34 groups; the smaller-height panel
+matrix found REVERB's 15000 Hz readout overflowing its 40px row at Fit. Narrow
+numeric rows now wrap the readout below the knob while retaining font size,
+knob geometry and catalog HP. The unchanged matrix, contrast and output-panel
+checks verify that correction. A separate failing-before regression also keeps
+an out-of-panel-range LFO gain and an unsupported postgain modulation object
+before opaque routing when saved; both pass with preserved events, exact bytes
+and reopened identity.

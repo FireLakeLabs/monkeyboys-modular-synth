@@ -593,10 +593,13 @@ Unrepresentable arguments remain exact CODE. Imported simultaneous ordinary
 filter and DJ calls use separate VCFs so neither setting is lost.
 
 MIX adds **CV 1–4**, mod inputs targeting `ch1`–`ch4`. Each level has bipolar
-DEPTH −1…1, default −.5, in gain units. Today's STEP LFO replaces that channel's
-scalar gain with `signal.range(level, level + depth)`. Opposite depths on two
-LFOs produce complementary levels. #130 owns SMOOTH LFO, ENV and CV SEQ support.
-Nested levels, including patterned levels, multiply into one final `postgain`;
+DEPTH −1…1, default −.5, in gain units. STEP LFO replaces that channel's
+scalar gain with `signal.range(level, level + depth)`; CV SEQ supplies its numeric
+pattern directly. Opposite LFO depths produce complementary levels. With #130
+merged, SMOOTH LFO and ENV use its shared per-voice adapters targeting postgain
+after folding the mixer levels. An outer constant level scales both the base
+and absolute modulation depth. These use the pinned engine's additive AudioParam
+semantics. Nested scalar/pattern levels multiply into one final `postgain`;
 repeating `postgain` calls would overwrite earlier levels. See the
 [label and nested-routing decisions](translation-rules.md#mixer-channel-labels-and-routing-129)
 and [dated verification](module-panels-verification.md).

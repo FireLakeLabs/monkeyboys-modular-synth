@@ -175,7 +175,7 @@ it('accepts STEP LFOs on all four mixer levels and folds nested levels into one 
       { module: 'lfo1', jack: 'out' },
       { module: 'mix1', jack: `cv${channel}` },
     )
-    patch = setValue(patch, 'lfo1', 'depth', 0.6)
+    patch = setValue(setValue(patch, 'lfo1', 'mode', 'STEP'), 'lfo1', 'depth', 0.6)
     const source = generate(patch)
     expect(source).toContain('.postgain(sine.slow(4).range(0.2, 0.8))')
     expect(read(source).patch).toEqual(patch)
@@ -400,3 +400,20 @@ for (const bank of ['', '.bank("RolandTR909")']) {
     },
   )
 }
+
+it('keeps an unrepresentable mixer LFO before opaque routing when saved', () => {
+  const source = '$: note("c3").s("sine").postgain(sine.slow(100).range(.2,.8)).orbit(3)\n'
+  const doc = read(source)
+  expect(generate(doc)).toBe(source)
+  expect(events(generate(doc.patch))).toEqual(events(source))
+  expect(read(saveLayout(doc).source).patch).toEqual(doc.patch)
+})
+
+it('retains unsupported postgain modulation objects through import and save', () => {
+  const source =
+    '$: note("c3").s("sine").postgain(.2).lfo({c:"postgain",sync:.25,depthabs:.3,dc:0,shape:"perlin",skew:.5}).orbit(3)\n'
+  const doc = read(source)
+  expect(generate(doc)).toBe(source)
+  expect(events(generate(doc.patch))).toEqual(events(source))
+  expect(read(saveLayout(doc).source).patch).toEqual(doc.patch)
+})

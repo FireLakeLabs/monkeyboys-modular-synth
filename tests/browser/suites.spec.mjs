@@ -305,3 +305,31 @@ test('generalized modulation controls and within-note PCM', async ({ page }, inf
   expect(saved.source).toContain(".add(mini('<0 400>'))")
   await record(info, { proof, saved, controls: ['MODE', 'SKEW', 'CV SEQ Step 1'] })
 })
+
+test('mixer generalized CV preserves nested gain and within-note PCM', async ({ page }, info) => {
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  const results = []
+  for (const [mode, depth, source] of [
+    ['SMOOTH', 0.4, 'lfo'],
+    ['SMOOTH', -0.15, 'lfo'],
+    ['STEP', 0.4, 'lfo'],
+    ['STEP', 0.4, 'env'],
+    ['STEP', 0.4, 'cvseq'],
+  ]) {
+    results.push(
+      await page.evaluate(
+        async ({ mode, depth, source }) =>
+          (await import('/scripts/modulation-browser.mjs')).measureSustained(mode, depth, {
+            target: 'mix',
+            nested: true,
+            source,
+          }),
+        { mode, depth, source },
+      ),
+    )
+  }
+  process.stdout.write(
+    `MIX PCM ${JSON.stringify(results.map(({ mode, source, depth, low, high, ratio, sampleRate }) => ({ mode, source, depth, low, high, ratio, sampleRate })))}\n`,
+  )
+  await record(info, results)
+})

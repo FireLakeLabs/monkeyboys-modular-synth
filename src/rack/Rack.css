@@ -260,6 +260,8 @@
   )
   .numeric-control {
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   width: 100%;
 }
 .module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
@@ -301,7 +303,8 @@
   )
   .numeric-control
   label {
-  min-width: 0;
+  flex: 1;
+  min-width: 60px;
 }
 .knob {
   position: relative;

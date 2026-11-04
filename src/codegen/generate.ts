@@ -29,6 +29,18 @@ const chainedCode = (text: string): boolean =>
   tokenizer(text, { ecmaVersion: 'latest' }).getToken().type.label === '.'
 const numeric = (value: number, precision = 3): string => String(Number(value.toFixed(precision)))
 const quote = (value: string): string => JSON.stringify(value)
+function product(factors: readonly string[]): string {
+  const constant = factors
+    .filter((factor) => Number.isFinite(Number(factor)))
+    .reduce((result, factor) => result * Number(factor), 1)
+  const signals = factors.filter((factor) => !Number.isFinite(Number(factor)))
+  return signals.length
+    ? [...signals, ...(constant === 1 ? [] : [numeric(constant)])].reduce(
+        (left, right) => (left ? `${left}.mul(${right})` : right),
+        '',
+      )
+    : numeric(constant)
+}
 interface CodeExpression extends LayoutExpression {
   inline: boolean
 }
@@ -224,7 +236,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       trace(source)
       return {
         text:
-          source.spec.modSource === 'sequence' && !namedOutput(source)
+          source.spec.modSource === 'sequence' && !namedOutput(source) && node.spec.id !== 'mix'
             ? quote(cvSequence(source))
             : signal.text,
         paths,
@@ -255,6 +267,73 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       ],
       sourceRouting: signal.sourceRouting,
     }
+  }
+
+  function audioModulation(
+    expression: CodeExpression,
+    node: Node,
+    id: string,
+    depthScale = '1',
+  ): CodeExpression {
+    const item = control(node, id)
+    if (item.kind !== 'knob' || !item.call || !item.modulation) return expression
+    const binding = item.call
+    const jack = node.spec.jacks.find((jack) => jack.cvTarget === id)
+    const cable = jack && node.inputs.get(jack.id)
+    const source = cable && requireNode(nodes, cable.from.module)
+    if (!source || !jack) return expression
+    const target = { module: node.module.id, jack: jack.id, control: id }
+    const env = source.spec.id === 'env' ? source : undefined
+    const smooth = source.spec.id === 'lfo' && string(source, 'mode') === 'SMOOTH'
+    const genericEnv =
+      env &&
+      !binding.envelope &&
+      !binding.withEnvelope &&
+      !node.spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack?.id)
+    if (smooth || genericEnv) {
+      const depth = source.module.values['depth'] ?? item.modulation.default
+      if (typeof depth !== 'number' || depth < item.modulation.min || depth > item.modulation.max)
+        throw new Error(`Modulation depth outside target range: ${node.module.id}.${item.id}`)
+      if (item.modulation.pitch) {
+        if (smooth) {
+          const cps = typeof tempo === 'number' ? tempo / 240 : 0.5
+          expression = append(
+            expression,
+            `.vib(${String(cps / number(source, 'rate'))}).vibmod(${numeric(depth)})`,
+            source,
+            'cv',
+            target,
+          )
+        } else {
+          expression = append(expression, `.penv(${numeric(depth)})`, source, 'cv', target)
+          expression = envelope(expression, source, target, 'p')
+        }
+      } else {
+        const method = callMethod(binding, (id) => string(node, id))
+        const shape = smooth ? source.spec.smoothShapes?.[string(source, 'shape')] : undefined
+        if (smooth && !shape) throw new Error('This waveform requires STEP mode')
+        // superdough 1.3.0 derives an inverted clamp for negative depth on gain.
+        // A positive magnitude with a downward DC bias keeps the output moving.
+        const downward =
+          smooth &&
+          depth < 0 &&
+          !(
+            number(node, item.id) >= 30 &&
+            ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(method)
+          )
+        const config = smooth
+          ? `c: ${quote(method)}, sync: ${String(1 / number(source, 'rate'))}, depthabs: ${product([numeric(downward ? -depth : depth), depthScale])}, dc: ${downward ? -1 : 0}, shape: ${quote(shape ?? 'sine')}, skew: ${numeric(number(source, 'skew'))}`
+          : `c: ${quote(method)}, a: ${numeric(number(source, 'atk'))}, d: ${numeric(number(source, 'dec'))}, s: ${numeric(number(source, 'sus'))}, r: ${numeric(number(source, 'rel'))}, depthabs: ${product([numeric(depth), depthScale])}`
+        expression = append(
+          expression,
+          `.${smooth ? 'lfo' : 'env'}({ ${config} })`,
+          source,
+          'cv',
+          target,
+        )
+      }
+    }
+    return expression
   }
 
   function transform(node: Node, expression: CodeExpression, skipControl?: string): CodeExpression {
@@ -342,61 +421,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
             },
           })
       }
-      if (source && target && item.kind === 'knob' && item.modulation) {
-        const smooth = source.spec.id === 'lfo' && string(source, 'mode') === 'SMOOTH'
-        const genericEnv =
-          env &&
-          !binding.envelope &&
-          !binding.withEnvelope &&
-          !node.spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack?.id)
-        if (smooth || genericEnv) {
-          const depth = source.module.values['depth'] ?? item.modulation.default
-          if (
-            typeof depth !== 'number' ||
-            depth < item.modulation.min ||
-            depth > item.modulation.max
-          )
-            throw new Error(`Modulation depth outside target range: ${node.module.id}.${item.id}`)
-          if (item.modulation.pitch) {
-            if (smooth) {
-              const cps = typeof tempo === 'number' ? tempo / 240 : 0.5
-              expression = append(
-                expression,
-                `.vib(${String(cps / number(source, 'rate'))}).vibmod(${numeric(depth)})`,
-                source,
-                'cv',
-                target,
-              )
-            } else {
-              expression = append(expression, `.penv(${numeric(depth)})`, source, 'cv', target)
-              expression = envelope(expression, source, target, 'p')
-            }
-          } else {
-            const method = callMethod(binding, s)
-            const shape = smooth ? source.spec.smoothShapes?.[string(source, 'shape')] : undefined
-            if (smooth && !shape) throw new Error('This waveform requires STEP mode')
-            // superdough 1.3.0 derives an inverted clamp for negative depth on gain.
-            // A positive magnitude with a downward DC bias keeps the output moving.
-            const downward =
-              smooth &&
-              depth < 0 &&
-              !(
-                number(node, item.id) >= 30 &&
-                ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(method)
-              )
-            const config = smooth
-              ? `c: ${quote(method)}, sync: ${String(1 / number(source, 'rate'))}, depthabs: ${numeric(downward ? -depth : depth)}, dc: ${downward ? -1 : 0}, shape: ${quote(shape ?? 'sine')}, skew: ${numeric(number(source, 'skew'))}`
-              : `c: ${quote(method)}, a: ${numeric(number(source, 'atk'))}, d: ${numeric(number(source, 'dec'))}, s: ${numeric(number(source, 'sus'))}, r: ${numeric(number(source, 'rel'))}, depthabs: ${numeric(depth)}`
-            expression = append(
-              expression,
-              `.${smooth ? 'lfo' : 'env'}({ ${config} })`,
-              source,
-              'cv',
-              target,
-            )
-          }
-        }
-      }
+      expression = audioModulation(expression, node, item.id)
       if (binding.envelope === 'after' && env)
         expression = envelope(
           expression,
@@ -509,6 +534,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
                 control: `ch${channel}`,
                 gain: mod.text,
                 cvModules: mod.modules ?? [],
+                cvPaths: mod.paths ?? new Map(),
                 mute: string(node, `mute${channel}`) === 'on',
                 solo: string(node, `solo${channel}`) === 'on',
                 name: string(node, `name${channel}`),
@@ -619,18 +645,16 @@ export function generateDocument(patch: Patch): GeneratedDocument {
   }
   voices.forEach((original) => {
     const factors = original.mixers.map((mixer) => mixer.gain)
-    const constant = factors
-      .filter((factor) => Number.isFinite(Number(factor)))
-      .reduce((product, factor) => product * Number(factor), 1)
-    const signals = factors.filter((factor) => !Number.isFinite(Number(factor)))
-    const gain = signals.length
-      ? [...signals, ...(constant === 1 ? [] : [numeric(constant)])].reduce(
-          (left, right) => (left ? `${left}.mul(${right})` : right),
-          '',
-        )
-      : numeric(constant)
+    const gain = product(factors)
     let voice = original
-    if (gain !== '1') {
+    if (
+      gain !== '1' ||
+      original.mixers.some((mixer) => {
+        const node = requireNode(nodes, mixer.module)
+        const jack = node.spec.jacks.find((j) => j.cvTarget === mixer.control)
+        return jack && node.inputs.has(jack.id)
+      })
+    ) {
       voice = append(voice, `.postgain(${gain})`)
       const start = voice.text.lastIndexOf('.postgain(')
       for (const mixer of original.mixers) {
@@ -641,13 +665,25 @@ export function generateDocument(patch: Patch): GeneratedDocument {
           voice.owners.push({
             module,
             role: 'cv',
-            target: { module: mixer.module, jack: jack.id, control: mixer.control },
+            target: {
+              module: mixer.module,
+              jack: jack.id,
+              control: mixer.control,
+              ...(mixer.cvPaths.get(module) ? { path: mixer.cvPaths.get(module) ?? '' } : {}),
+            },
             start,
             end: voice.text.length,
           })
         }
       }
     }
+    for (const [index, mixer] of original.mixers.entries())
+      voice = audioModulation(
+        voice,
+        requireNode(nodes, mixer.module),
+        mixer.control,
+        product(factors.filter((_factor, i) => i !== index)),
+      )
     const channels = original.mixers.findLast((mixer) => mixer.channels !== '1:2')?.channels
     if (channels) {
       voice = append(voice, `.channels(${quote(channels)})`)

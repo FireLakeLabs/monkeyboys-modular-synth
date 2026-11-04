@@ -64,12 +64,16 @@ function fixture(
   values: Record<string, number | string> = {},
 ): Patch {
   let patch = starterPatch()
-  for (const type of ['seq', 'osc', ...(target === 'osc' ? [] : [target]), source])
+  for (const type of ['seq', 'osc', ...(['osc', 'mix'].includes(target) ? [] : [target]), source])
     patch = placeModule(patch, type, patch.modules.length)
   patch = connect(patch, { module: 'seq1', jack: 'note' }, { module: 'osc1', jack: 'note' })
-  if (target !== 'osc')
+  if (!['osc', 'mix'].includes(target))
     patch = connect(patch, { module: 'osc1', jack: 'out' }, { module: `${target}1`, jack: 'in' })
-  patch = connect(patch, { module: `${target}1`, jack: 'out' }, { module: 'mix1', jack: 'in1' })
+  patch = connect(
+    patch,
+    { module: target === 'mix' ? 'osc1' : `${target}1`, jack: 'out' },
+    { module: 'mix1', jack: target === 'mix' ? `in${control.slice(-1)}` : 'in1' },
+  )
   const jack = getModuleSpec(target).jacks.find((j) => j.cvTarget === control)
   if (!jack) throw new Error('Missing target jack')
   patch = connect(
@@ -83,7 +87,7 @@ function fixture(
 
 const targets = CATALOG.flatMap((spec) =>
   spec.jacks.filter((j) => j.cvTarget).map((j) => ({ type: spec.id, control: j.cvTarget ?? '' })),
-).filter((t) => t.type !== 'mix')
+)
 describe.each(targets)('$type $control generalized CV', ({ type, control }) => {
   for (const [source, values] of [
     ['lfo', { mode: 'SMOOTH' }],
@@ -398,3 +402,37 @@ it('keeps explicit mini arguments that the REPL parses twice as CODE', () => {
   expect(doc.patch.modules.some((m) => m.type === 'cvseq')).toBe(false)
   expect(generate(doc)).toBe(source)
 })
+
+for (const channel of [1, 2, 3, 4]) {
+  for (const [source, settings, expected] of [
+    [
+      'lfo',
+      { mode: 'SMOOTH', depth: 0.4 },
+      '.postgain(.1).lfo({c:"postgain",sync:.25,depthabs:.2,dc:0,shape:"sine",skew:.5})',
+    ],
+    ['lfo', { mode: 'STEP', depth: 0.4 }, '.postgain(sine.slow(4).range(.2,.6).mul(.5))'],
+    ['env', { depth: 0.4 }, '.postgain(.1).env({c:"postgain",a:.01,d:.2,s:.5,r:.1,depthabs:.2})'],
+    ['cvseq', { steps: '<.2 .6>' }, ".postgain(mini('<.2 .6>').mul(.5))"],
+  ] as const) {
+    it(`MIX channel ${channel} nested ${source} ${'mode' in settings ? settings.mode : ''} folds levels and retains independent source/rack/events`, () => {
+      let patch = fixture('mix', `ch${channel}`, source, settings)
+      patch = setValue(patch, 'seq1', 'steps', 'c3')
+      patch = setValue(patch, 'osc1', 'wave', 'sine')
+      patch = setValue(patch, 'mix1', `ch${channel}`, 0.2)
+      patch = placeModule(patch, 'mix', patch.modules.length)
+      patch = setValue(patch, 'mix2', 'ch1', 0.5)
+      patch = connect(patch, { module: 'mix1', jack: 'out' }, { module: 'mix2', jack: 'in1' })
+      patch = connect(patch, { module: 'mix2', jack: 'out' }, { module: 'out1', jack: 'in' }, true)
+      const code = generate(patch)
+      expect(sourceBody(code).match(/\.postgain\(/g)).toHaveLength(1)
+      expect(generate(read(code))).toBe(code)
+      expect(read(code).patch).toEqual(patch)
+      expect(read(saveLayout(read(code)).source).patch).toEqual(patch)
+      expect(events(code, true)).toEqual(events(`$: note("c3").s("sine")${expected}.orbit(1)`))
+      const plain = read(sourceBody(code))
+      expect(generate(plain)).toBe(sourceBody(code))
+      expect(events(generate(plain.patch), true)).toEqual(events(code, true))
+      expect(read(saveLayout(plain).source).patch).toEqual(plain.patch)
+    })
+  }
+}

@@ -329,7 +329,6 @@ jack-target or font-size assertions. The live library signal suite also covers
 the new utility exercise. These guardrails replace assumptions that the initial
 sixteen-module catalog and direct core queries cover later module additions.
 
-
 The #129 [panel regressions](../src/codegen/panels.test.ts) reject competing MIX
 reader paths that turn repeated `postgain` setters into multiplied buses, and
 stack expansion that drops enclosing mute/solo/name labels. Five cases failed
@@ -365,3 +364,18 @@ The #132 imported pattern-control browser check also guards #129 integration:
 RATCHET retains its Apply action and external source refresh rather than using
 the MIX-only compact text editor. It failed on a missing Apply before narrowing
 the editor dispatch; the peer's assertion remains unchanged.
+
+The combined #129/#130 CV matrix includes all four MIX jacks and all four source
+modes. It failed on missing emission/projection and saved ownership before the
+integration. Nested cases compare actual pinned-engine/REPL events with literal
+expected expressions, while exact source and saved identity remain separate.
+The browser workflow measures within-note SMOOTH/STEP behavior and ENV/CV SEQ
+output through a nested bus. Canonical Save retains generated metadata only on
+an exact executable-byte match; other source still needs independent ownership
+proof. Folded pattern gain CODE keeps its original position before opaque routing.
+
+The small-height panel matrix rejects overflowing numeric values at Fit, including
+REVERB's five-digit LP. Narrow numeric rows wrap the readout instead of shrinking
+text or knob geometry. The same unchanged browser assertion guards that fix.
+A mixer import regression separately rejects moving an unsupported LFO gain past
+opaque routing when saved, checking events, bytes and reopened state.

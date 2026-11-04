@@ -91,7 +91,8 @@ function project(
   const represented = new Map<string, Set<string>>()
   const reserved = new Set(saved?.modules.map((module) => module.id))
   const routing = saved && snapshot ? matchRouting(saved.scopes, scopes, snapshot) : undefined
-  const gains = new Map<string, { call: Call; index: number }>()
+  const gains = new Map<string, { call: Call; index: number; upstream: Output }>()
+  const mixerModulations = new Map<string, { index: number; upstream: Output }[]>()
   const outputChannels = new Map<string, { value: string; index: number }>()
   const depths = new Map<string, { value: number; isDefault: boolean }[]>()
   let row = 0
@@ -238,6 +239,29 @@ function project(
     }
     return output(module)
   }
+  function retainDeferredCode(
+    scope: ParsedScope,
+    index: number,
+    upstream: Output,
+    target: Patch['cables'][number]['to'],
+  ) {
+    const call = scope.calls[index]
+    if (!call) return
+    const cable = patch.cables.find(
+      (cable) =>
+        cable.from.module === upstream.module.id &&
+        cable.from.jack === upstream.jack &&
+        ((cable.to.module === target.module && cable.to.jack === target.jack) ||
+          bindings.some(
+            (binding) =>
+              binding.module === cable.to.module &&
+              binding.scope === scope.descriptor.id &&
+              binding.calls.some((later) => later > index),
+          )),
+    )
+    const opaque = code(scope, [index], source.slice(call.start, call.end), upstream)
+    if (cable) cable.from = { module: opaque.module.id, jack: opaque.jack }
+  }
   function lfo(
     arg: Expression,
     target: PlacedModule,
@@ -363,6 +387,130 @@ function project(
       )
     bind(target, scope, [index])
     return true
+  }
+
+  function audioCV(
+    call: Call,
+    targetModule: PlacedModule,
+    scope: ParsedScope,
+    index: number,
+    controlId?: string,
+  ): boolean {
+    if (
+      !['lfo', 'env'].includes(call.name) ||
+      call.args.length !== 1 ||
+      call.args[0]?.type === 'SpreadElement'
+    )
+      return false
+    const config = modConfig(call.args[0])
+    const spec = getModuleSpec(targetModule.type)
+    const targetControl = spec.controls.find(
+      (item) =>
+        item.kind === 'knob' &&
+        item.call &&
+        (controlId === undefined || item.id === controlId) &&
+        spec.jacks.some((j) => j.cvTarget === item.id) &&
+        ((config?.c === undefined &&
+          canonicalCall(scope.calls[index - 1]?.name ?? '') ===
+            callMethod(item.call, (id) => {
+              const v = targetModule.values[id] ?? spec.controls.find((c) => c.id === id)?.default
+              return typeof v === 'string' ? v : ''
+            })) ||
+          config?.c ===
+            callMethod(item.call, (id) => {
+              const value =
+                targetModule.values[id] ?? spec.controls.find((c) => c.id === id)?.default
+              return typeof value === 'string' ? value : ''
+            })),
+    )
+    const jack = targetControl && spec.jacks.find((j) => j.cvTarget === targetControl.id)
+    const data = targetControl?.kind === 'knob' ? targetControl.modulation : undefined
+    if (
+      config &&
+      targetControl &&
+      jack &&
+      data &&
+      typeof config.depthabs === 'number' &&
+      config.depthabs >= data.min &&
+      config.depthabs <= data.max &&
+      !patch.cables.some((c) => c.to.module === targetModule.id && c.to.jack === jack.id)
+    ) {
+      const allowed =
+        call.name === 'lfo'
+          ? ['c', 'sync', 'depthabs', 'dc', 'shape', 'skew']
+          : ['c', 'a', 'd', 's', 'r', 'depthabs']
+      const shape = Object.entries(getModuleSpec('lfo').smoothShapes ?? {}).find(
+        ([, value]) => value === config.shape,
+      )?.[0]
+      const rate = typeof config.sync === 'number' ? 1 / config.sync : undefined
+      const targetMethod =
+        targetControl.kind === 'knob' && targetControl.call
+          ? callMethod(targetControl.call, (id) => {
+              const v = targetModule.values[id] ?? spec.controls.find((c) => c.id === id)?.default
+              return typeof v === 'string' ? v : ''
+            })
+          : ''
+      const base = targetModule.values[targetControl.id] ?? targetControl.default
+      const frequencyTarget =
+        typeof base === 'number' &&
+        base >= 30 &&
+        ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(targetMethod)
+      const compatibleBias =
+        call.name !== 'lfo' ||
+        (config.dc === -1
+          ? !frequencyTarget && config.depthabs >= 0
+          : frequencyTarget || config.depthabs >= 0)
+      const nativeEnvelope =
+        (targetControl.kind === 'knob' && targetControl.call?.envelope) ||
+        spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack.id)
+      const valid =
+        !(call.name === 'env' && nativeEnvelope) &&
+        compatibleBias &&
+        !data.pitch &&
+        Object.keys(config).every((key) => allowed.includes(key)) &&
+        (call.name === 'lfo'
+          ? rate !== undefined &&
+            fits('lfo', 'rate', rate) &&
+            (config.dc === 0 || config.dc === -1) &&
+            typeof shape === 'string' &&
+            fits('lfo', 'shape', shape) &&
+            typeof config.skew === 'number' &&
+            fits('lfo', 'skew', config.skew)
+          : ['a', 'd', 's', 'r'].every((key, i) =>
+              fits('env', ['atk', 'dec', 'sus', 'rel'][i] ?? '', config[key] ?? ''),
+            ))
+      if (valid) {
+        const module =
+          call.name === 'lfo'
+            ? add('lfo', {
+                mode: 'SMOOTH',
+                rate: rate ?? 1,
+                shape: shape ?? 'sine',
+                skew: config.skew ?? 0.5,
+                depth: config.dc === -1 ? -config.depthabs : config.depthabs,
+              })
+            : add('env', {
+                atk: config.a ?? 0,
+                dec: config.d ?? 0,
+                sus: config.s ?? 0,
+                rel: config.r ?? 0,
+                depth: config.depthabs,
+              })
+        wire(output(module), targetModule, jack.id)
+        bind(
+          module,
+          scope,
+          [index],
+          {},
+          {
+            role: 'cv',
+            target: { module: targetModule.id, jack: jack.id, control: targetControl.id },
+          },
+        )
+        return true
+      }
+    }
+    return false
   }
 
   function expression(scope: ParsedScope): Output {
@@ -552,11 +700,31 @@ function project(
               typeof scalar(call.args[0]) === 'string'
             ? group.type
             : owner(name, false)
+      const mixerModulation = (call: Call) =>
+        ['lfo', 'env'].includes(call.name) &&
+        call.args.length === 1 &&
+        call.args[0]?.type !== 'SpreadElement' &&
+        modConfig(call.args[0])?.c === 'postgain'
+      if (
+        gains.has(scope.descriptor.id) &&
+        mixerModulation(call) &&
+        calls
+          .slice(index + 1)
+          .every((call) => ['orbit', 'channels'].includes(call.name) || mixerModulation(call))
+      ) {
+        mixerModulations.set(scope.descriptor.id, [
+          ...(mixerModulations.get(scope.descriptor.id) ?? []),
+          { index, upstream },
+        ])
+        continue
+      }
       if (
         type === 'mix' &&
         call.name === 'postgain' &&
         scope.kind === 'voice' &&
-        calls.slice(index + 1).every((call) => ['orbit', 'channels'].includes(call.name))
+        calls
+          .slice(index + 1)
+          .every((call) => ['orbit', 'channels'].includes(call.name) || mixerModulation(call))
       ) {
         const value = scalar(call.args[0])
         if (
@@ -566,11 +734,19 @@ function project(
           !(value === 1 && hasOpaqueInput(upstream))
         ) {
           // An explicit unity setter must not disappear over an earlier opaque setter.
-          gains.set(scope.descriptor.id, { call, index })
+          gains.set(scope.descriptor.id, { call, index, upstream })
           continue
         }
-        if (call.args.length === 1 && call.args[0]?.type === 'CallExpression') {
-          gains.set(scope.descriptor.id, { call, index })
+        if (
+          call.args.length === 1 &&
+          (numericNotation(value) ||
+            (call.args[0]?.type === 'CallExpression' &&
+              (modPattern(call.args[0], (name) => declarations.has(name)) ||
+                chain(call.args[0]).calls.every((item) =>
+                  ['range', 'slow', 'fast'].includes(item.name),
+                ))))
+        ) {
+          gains.set(scope.descriptor.id, { call, index, upstream })
           continue
         }
       }
@@ -590,119 +766,7 @@ function project(
           continue
         }
       }
-      if (
-        ['lfo', 'env'].includes(call.name) &&
-        group &&
-        call.args.length === 1 &&
-        call.args[0]?.type !== 'SpreadElement'
-      ) {
-        const config = modConfig(call.args[0])
-        const spec = getModuleSpec(group.type)
-        const targetControl = spec.controls.find(
-          (item) =>
-            item.kind === 'knob' &&
-            item.call &&
-            spec.jacks.some((j) => j.cvTarget === item.id) &&
-            ((config?.c === undefined &&
-              canonicalCall(calls[index - 1]?.name ?? '') ===
-                callMethod(item.call, (id) => {
-                  const v = group?.values[id] ?? spec.controls.find((c) => c.id === id)?.default
-                  return typeof v === 'string' ? v : ''
-                })) ||
-              config?.c ===
-                callMethod(item.call, (id) => {
-                  const value = group?.values[id] ?? spec.controls.find((c) => c.id === id)?.default
-                  return typeof value === 'string' ? value : ''
-                })),
-        )
-        const jack = targetControl && spec.jacks.find((j) => j.cvTarget === targetControl.id)
-        const data = targetControl?.kind === 'knob' ? targetControl.modulation : undefined
-        if (
-          config &&
-          targetControl &&
-          jack &&
-          data &&
-          typeof config.depthabs === 'number' &&
-          config.depthabs >= data.min &&
-          config.depthabs <= data.max &&
-          !patch.cables.some((c) => c.to.module === group?.id && c.to.jack === jack.id)
-        ) {
-          const allowed =
-            call.name === 'lfo'
-              ? ['c', 'sync', 'depthabs', 'dc', 'shape', 'skew']
-              : ['c', 'a', 'd', 's', 'r', 'depthabs']
-          const shape = Object.entries(getModuleSpec('lfo').smoothShapes ?? {}).find(
-            ([, value]) => value === config.shape,
-          )?.[0]
-          const rate = typeof config.sync === 'number' ? 1 / config.sync : undefined
-          const targetMethod =
-            targetControl.kind === 'knob' && targetControl.call
-              ? callMethod(targetControl.call, (id) => {
-                  const v = group?.values[id] ?? spec.controls.find((c) => c.id === id)?.default
-                  return typeof v === 'string' ? v : ''
-                })
-              : ''
-          const base = group.values[targetControl.id] ?? targetControl.default
-          const frequencyTarget =
-            typeof base === 'number' &&
-            base >= 30 &&
-            ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(targetMethod)
-          const compatibleBias =
-            call.name !== 'lfo' ||
-            (config.dc === -1
-              ? !frequencyTarget && config.depthabs >= 0
-              : frequencyTarget || config.depthabs >= 0)
-          const nativeEnvelope =
-            (targetControl.kind === 'knob' && targetControl.call?.envelope) ||
-            spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack.id)
-          const valid =
-            !(call.name === 'env' && nativeEnvelope) &&
-            compatibleBias &&
-            !data.pitch &&
-            Object.keys(config).every((key) => allowed.includes(key)) &&
-            (call.name === 'lfo'
-              ? rate !== undefined &&
-                fits('lfo', 'rate', rate) &&
-                (config.dc === 0 || config.dc === -1) &&
-                typeof shape === 'string' &&
-                fits('lfo', 'shape', shape) &&
-                typeof config.skew === 'number' &&
-                fits('lfo', 'skew', config.skew)
-              : ['a', 'd', 's', 'r'].every((key, i) =>
-                  fits('env', ['atk', 'dec', 'sus', 'rel'][i] ?? '', config[key] ?? ''),
-                ))
-          if (valid) {
-            const module =
-              call.name === 'lfo'
-                ? add('lfo', {
-                    mode: 'SMOOTH',
-                    rate: rate ?? 1,
-                    shape: shape ?? 'sine',
-                    skew: config.skew ?? 0.5,
-                    depth: config.dc === -1 ? -config.depthabs : config.depthabs,
-                  })
-                : add('env', {
-                    atk: config.a ?? 0,
-                    dec: config.d ?? 0,
-                    sus: config.s ?? 0,
-                    rel: config.r ?? 0,
-                    depth: config.depthabs,
-                  })
-            wire(output(module), group, jack.id)
-            bind(
-              module,
-              scope,
-              [index],
-              {},
-              {
-                role: 'cv',
-                target: { module: group.id, jack: jack.id, control: targetControl.id },
-              },
-            )
-            continue
-          }
-        }
-      }
+      if (group && audioCV(call, group, scope, index)) continue
       if (group?.type === 'osc' && ['vib', 'penv'].includes(call.name)) {
         const pitch = getModuleSpec(group.type).controls.find(
           (c) => c.kind === 'knob' && c.modulation?.pitch,
@@ -1142,6 +1206,7 @@ function project(
       depths.clear()
       previousDepths.forEach((value, key) => depths.set(key, value))
       gains.delete(scope.descriptor.id)
+      mixerModulations.delete(scope.descriptor.id)
       resolved.clear()
       resolvedBefore.forEach((value, key) => {
         const module = patch.modules.find((module) => module.id === value.module.id)
@@ -1186,7 +1251,8 @@ function project(
         } else if (
           arg &&
           arg.type !== 'SpreadElement' &&
-          lfo(arg, bus, `ch${channel}`, voice.scope, gain.index)
+          (lfo(arg, bus, `ch${channel}`, voice.scope, gain.index) ||
+            patternCV(arg, bus, `ch${channel}`, voice.scope, gain.index))
         ) {
           const binding = bindings.find(
             (binding) =>
@@ -1196,18 +1262,17 @@ function project(
           )
           if (binding) binding.role = 'mixer'
         } else {
-          // Preserve an unrepresentable folded gain as a final CODE setting.
-          const opaque = code(
-            voice.scope,
-            [gain.index],
-            source.slice(gain.call.start, gain.call.end),
-            voice.output,
-          )
-          const cable = patch.cables.find(
-            (cable) => cable.to.module === bus?.id && cable.to.jack === `in${channel}`,
-          )
-          if (cable) cable.from = { module: opaque.module.id, jack: opaque.jack }
+          // Keep opaque gain at its original receiver, before later routing CODE.
+          retainDeferredCode(voice.scope, gain.index, gain.upstream, {
+            module: bus.id,
+            jack: `in${channel}`,
+          })
         }
+      }
+      for (const { index, upstream } of mixerModulations.get(voice.scope.descriptor.id) ?? []) {
+        const call = voice.scope.calls[index]
+        if (call && !audioCV(call, bus, voice.scope, index, `ch${channel}`))
+          retainDeferredCode(voice.scope, index, upstream, { module: bus.id, jack: `in${channel}` })
       }
       const channels = outputChannels.get(voice.scope.descriptor.id)
       if (channels) {

@@ -214,6 +214,10 @@ MUTE, SOLO and channel NAME live in executable Strudel labels (`_$:`, `S$:`,
 `bass:`), so pasting into the REPL retains their behavior. They do not remove
 voices or renumber effect orbits. Mute takes precedence over solo; names and
 nested routing follow the [translation rule](translation-rules.md#mixer-channel-labels-and-routing-129).
-Per-channel output pairs and level CV are catalog-owned. #129 supports existing
-STEP LFOs; #130 owns generalized modulation. Saved layout, exact source and
-engine events remain separate acceptance checks.
+Per-channel output pairs and level CV are catalog-owned. #130 landed first;
+#129 integrates its shared SMOOTH/STEP LFO, ENV and CV SEQ adapters with MIX.
+Scalar/pattern levels fold into one postgain before per-voice audio modulation;
+outer bus factors scale absolute modulation depths. Canonical generated source
+retains generated metadata on Save; other source keeps its independent imported
+ownership proof. Saved layout, exact source and engine events remain separate
+acceptance checks.

@@ -51,6 +51,7 @@ export interface CodeExpression {
     control: string
     gain: string
     cvModules: string[]
+    cvPaths: Map<string, string>
     mute: boolean
     solo: boolean
     name: string
