@@ -110,7 +110,7 @@ The visual guard now scrolls each control into view and rejects unreachable or
 horizontally clipped controls, retaining catalog width, text size and jack target
 checks. Contrast sampling excludes text clipped outside its scrolling surface;
 the trance control hit test scrolls controls into view before checking actual
-pointer ownership. All 61 module/look combinations passed at 100%, 75% and Fit,
+pointer ownership. All 103 module/look combinations passed at 100%, 75% and Fit,
 all ten looks passed visible-label contrast, and all 29 trance panels passed
 control hit testing without changing source. The output-panel suite passed at
 1600px, 1024px and 900px, including native insertion/replacement and real PCM.
@@ -119,3 +119,11 @@ A new panel browser regression scrolls the MIX CV1 jack at Fit and checks live
 cable endpoints and exact source. Routing the old viewport-only scroll listener
 into the same browser fixture failed with `Cable end detached from jack`; the
 capturing listener passed. The existing panel/PCM/REPL checks also passed.
+
+After rebasing onto `23c6f98` (#132), the full deterministic gate passed 1,292
+unit tests and 43 guardrails, retaining the peer's tuple/time bindings. Its
+existing pattern text browser test failed because the new compact text editor
+had also captured RATCHET's REPEATS field and removed Apply. Compact fields are
+now limited to MIX; pattern text retains its existing Apply workflow. No peer
+assertion was changed. The playhead-cleanup check passed after restarting the
+dev server with the rebased source, without changing that check or playback code.

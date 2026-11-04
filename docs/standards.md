@@ -360,3 +360,8 @@ listener fails with a detached endpoint, while capturing descendant scrolls
 passes. Contrast and pointer checks inspect painted, reachable controls rather
 than clipped DOM rectangles. These checks run in full browser acceptance;
 static/unit checks do not prove the geometry or native hit targets.
+
+The #132 imported pattern-control browser check also guards #129 integration:
+RATCHET retains its Apply action and external source refresh rather than using
+the MIX-only compact text editor. It failed on a missing Apply before narrowing
+the editor dispatch; the peer's assertion remains unchanged.

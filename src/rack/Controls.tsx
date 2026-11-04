@@ -227,7 +227,7 @@ export function ControlEditor({
             </button>
           </div>
         )
-      if (module.type !== 'code' && control.id !== 'accent')
+      if (module.type === 'mix')
         return (
           <StringEditor
             label={control.label}
@@ -241,7 +241,7 @@ export function ControlEditor({
           label={module.type === 'code' ? 'CODE source' : control.label}
           value={typeof value === 'string' ? value : control.default}
           commit={commit}
-          notation={module.type !== 'code'}
+          notation={control.id === 'accent'}
         />
       )
     case 'steps': {
