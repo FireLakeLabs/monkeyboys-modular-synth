@@ -162,3 +162,21 @@ coordinates. Jacks reserve at least 24 screen pixels, growing their layout boxes
 when zoomed out and wrapping into additional rows as needed.
 
 See the [browser matrix, screenshots and verification limits](rack-feel-verification.md).
+
+## Module menu and grid activity (#89, #90)
+
+Look choices show miniature panels using the existing look/category styles, with
+labels and a selected checkmark. Delete uses the same destructive colors in the
+menu, selection tools and confirmation. Escape and an outside primary click
+close the menu and return focus to that module's header; Show in code retains its
+editor-focus action. There is no Close menu item.
+
+SEQ and DRUMS grid cells flash on sounding events for up to 400 ms, replacing the
+previous cell flash on the next event. DRUMS highlights the current column across
+its rows. Capture the original source cell before rate/Alien transforms, and
+deliver it through #37's scheduled AudioContext-time boundary. Rests and dropped
+events have no independent tick; text notation and opaque/unattributed voices
+receive no invented playhead. Reduced motion replaces moving cell flashes with
+a steady grid outline after its first sounding event. Stop, playback replacement,
+surfaced errors and motion changes clear the old feedback. This affects neither
+saved source nor rack geometry. See the [browser evidence](feedback-verification.md#module-menu-and-step-playheads-89-90).

@@ -1,5 +1,5 @@
 import { read } from '../reader'
-import { activityPlan } from './activity'
+import { activityPlan, type GridStep } from './activity'
 import { sourceLocations } from './sourceLocations'
 import type { Span } from '../reader/types'
 
@@ -28,7 +28,7 @@ export type ResourceStatus = 'unknown' | 'loading' | 'registered' | 'failed'
 export type EngineEvent =
   | { type: 'resources'; status: ResourceStatus }
   | { type: 'failure'; message: string }
-  | { type: 'activity'; modules: string[] }
+  | { type: 'activity'; modules: string[]; steps: GridStep[] }
   | { type: 'activity-clear' }
 
 let resources: ResourceStatus = 'unknown'
@@ -56,6 +56,7 @@ let evaluating:
   | {
       epoch: number
       activity: (hap: unknown) => string[]
+      steps: (hap: unknown) => GridStep[]
       activityRevision: number
       feedback: ((hap: unknown) => () => void) | undefined
     }
@@ -72,6 +73,7 @@ function clearActivity() {
 }
 function scheduleActivity(
   modules: string[],
+  steps: GridStep[],
   target: number,
   revision: number,
   strudel: StrudelWeb,
@@ -102,7 +104,7 @@ function scheduleActivity(
       if (modules.length)
         listeners.forEach((listener) => {
           try {
-            listener({ type: 'activity', modules })
+            listener({ type: 'activity', modules, steps })
           } catch {
             /* Visual observers cannot break audio. */
           }
@@ -166,6 +168,7 @@ function load(): Promise<StrudelWeb> {
             const observed = pattern.onTrigger((hap, _now, _cps, target) => {
               scheduleActivity(
                 operation.activity(hap),
+                operation.steps(hap),
                 target,
                 operation.activityRevision,
                 strudel,
@@ -240,6 +243,7 @@ export function play(
   let activity = {
     code,
     modules: (_hap: unknown): string[] => [],
+    steps: (_hap: unknown): GridStep[] => [],
     sourceOffset: (offset: number): number | null => offset,
   }
   try {
@@ -271,6 +275,7 @@ export function play(
       const operation = {
         epoch: current,
         activity: activity.modules,
+        steps: activity.steps,
         activityRevision: visualRevision,
         feedback: options.sourceFeedback
           ? (hap: unknown) => {

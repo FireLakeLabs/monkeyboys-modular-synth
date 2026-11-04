@@ -110,6 +110,7 @@ export function Rack({
     )
   }
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null)
+  const menuElement = useRef<HTMLDialogElement>(null)
   const [allLooks, setAllLooks] = useState(false)
   const menuModule = patch.modules.find((m) => m.id === menu?.id)
   const surface = useRef<HTMLDivElement>(null)
@@ -136,6 +137,32 @@ export function Rack({
         ?.querySelector('.needs-source')
         ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
   }, [emptyOutput])
+  useEffect(() => {
+    if (!menu || locked) return undefined
+    const id = menu.id
+    const element = menuElement.current
+    element?.querySelector<HTMLButtonElement>('button[aria-pressed="true"]')?.focus()
+    function dismiss() {
+      setMenu(null)
+      Array.from(surface.current?.querySelectorAll<HTMLElement>('[data-module]') ?? [])
+        .find((panel) => panel.dataset.module === id)
+        ?.querySelector<HTMLButtonElement>('.module-header')
+        ?.focus()
+    }
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') dismiss()
+    }
+    const outside = (event: PointerEvent) => {
+      if (event.button === 0 && event.target instanceof Node && !element?.contains(event.target))
+        dismiss()
+    }
+    window.addEventListener('keydown', escape, true)
+    window.addEventListener('pointerup', outside)
+    return () => {
+      window.removeEventListener('keydown', escape, true)
+      window.removeEventListener('pointerup', outside)
+    }
+  }, [menu, locked])
   const [points, setPoints] = useState<Record<string, Point>>({})
   const [wire, setWire] = useState<Wiring | null>(null)
   const [pointer, setPointer] = useState<Point | null>(null)
@@ -803,6 +830,7 @@ export function Rack({
             </button>
             <button
               type="button"
+              className="destructive"
               onClick={() => {
                 if (edit((p) => removeModule(p, deleteId))) {
                   const index = patch.modules.findIndex((m) => m.id === deleteId)
@@ -845,6 +873,7 @@ export function Rack({
         {menu && menuModule && !locked && (
           <dialog
             open
+            ref={menuElement}
             className="module-menu"
             aria-label={`${menuModule.id} menu`}
             style={{ left: Math.max(8, menu.x), top: Math.max(8, menu.y) }}
@@ -863,8 +892,16 @@ export function Rack({
                     setMenu(null)
                   }}
                 >
-                  {menuModule.look === look ? '✓ ' : ''}
-                  {LOOK_LABELS[look]}
+                  <span
+                    aria-hidden="true"
+                    className={`module-panel look-swatch look-${look} cat-${getModuleSpec(menuModule.type).category}`}
+                  >
+                    <span className="knob">
+                      <span />
+                    </span>
+                  </span>
+                  <span>{LOOK_LABELS[look]}</span>
+                  {menuModule.look === look && <span aria-hidden="true">✓</span>}
                 </button>
               ))}
               <label>
@@ -898,15 +935,13 @@ export function Rack({
             <button
               type="button"
               disabled={!!getModuleSpec(menuModule.type).unique}
+              className="destructive"
               onClick={() => {
                 setDeleteId(menuModule.id)
                 setMenu(null)
               }}
             >
               Delete
-            </button>
-            <button type="button" onClick={() => setMenu(null)}>
-              Close menu
             </button>
           </dialog>
         )}
@@ -921,6 +956,7 @@ export function Rack({
             <button
               type="button"
               disabled={!!getModuleSpec(module.type).unique}
+              className="destructive"
               onClick={() => setDeleteId(module.id)}
             >
               Delete {module.id} and attached cables

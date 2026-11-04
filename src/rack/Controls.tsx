@@ -258,6 +258,7 @@ export function ControlEditor({
               <input
                 key={`${index}:${steps[index] ?? '~'}`}
                 aria-label={`Step ${index + 1}`}
+                data-step={index}
                 defaultValue={steps[index] ?? '~'}
                 onBlur={(event) => {
                   const token = event.target.value.trim()
@@ -352,6 +353,7 @@ export function ControlEditor({
                     type="button"
                     key={i}
                     aria-label={`${row.sample} step ${i + 1}`}
+                    data-step={i}
                     aria-pressed={step === 1}
                     onClick={() =>
                       commit(
