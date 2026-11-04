@@ -134,13 +134,14 @@ function stampLayout(
   }
   const source = `${body}${body.endsWith('\n') ? '' : '\n'}${writeLayout(layout)}`
   const result = read(source)
-  const { name: actualName, ...actualRack } = result.patch
-  const { name: expectedName, ...expectedRack } = patch
-  if (
-    result.layout !== 'restored' ||
-    actualName !== expectedName ||
-    JSON.stringify(actualRack) !== JSON.stringify(expectedRack)
-  )
+  // Object key insertion order is not rack state; module and cable array order is.
+  const identity = (rack: Patch) =>
+    JSON.stringify(rack, (_key, value: unknown) =>
+      typeof value === 'object' && value !== null && !Array.isArray(value)
+        ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)))
+        : value,
+    )
+  if (result.layout !== 'restored' || identity(result.patch) !== identity(patch))
     throw new Error(
       `Cannot prove saved rack identity for this edit: ${result.diagnostics.join('; ')}. Edit the code instead.`,
     )
