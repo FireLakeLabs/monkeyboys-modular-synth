@@ -112,6 +112,7 @@ function stampLayout(
 ): SourceDocument {
   const layout: RackLayout = {
     version: 1,
+    ...(patch.name === undefined ? {} : { name: patch.name }),
     ...(patch.prelude === undefined ? {} : { prelude: patch.prelude }),
     source: body,
     scopes,
@@ -132,7 +133,13 @@ function stampLayout(
   }
   const source = `${body}${body.endsWith('\n') ? '' : '\n'}${writeLayout(layout)}`
   const result = read(source)
-  if (result.layout !== 'restored' || JSON.stringify(result.patch) !== JSON.stringify(patch))
+  const { name: actualName, ...actualRack } = result.patch
+  const { name: expectedName, ...expectedRack } = patch
+  if (
+    result.layout !== 'restored' ||
+    actualName !== expectedName ||
+    JSON.stringify(actualRack) !== JSON.stringify(expectedRack)
+  )
     throw new Error(
       `Cannot prove saved rack identity for this edit: ${result.diagnostics.join('; ')}. Edit the code instead.`,
     )

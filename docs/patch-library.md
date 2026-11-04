@@ -65,8 +65,8 @@ See [palette and Start here verification](on-ramp-verification.md).
 The [#55 owner decision](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/55#issuecomment-6612111085)
 chooses both approaches. The nine module exercises (including Three-voice sketch)
 are committed as generator-style `.strudel` files with complete validated rack
-metadata. Loading still preserves their exact stored source; no load-time rewrite
-is needed. Their attribution remains in the library detail pane. The
+metadata. Loading preserves their exact executable source and stamps the entry title in
+[rack metadata](patch-format.md#patch-names-62). Their attribution remains in the library detail pane. The
 Start here collection (#80) follows this authoring rule too.
 
 Showcase entries keep the exact attributed source, including comments and
@@ -106,8 +106,8 @@ A new intent cancels any pending one. Browsing and selecting never stop audio
 or execute code.
 
 Library loading first reads the original string into a fresh `SourceDocument`
-and validates its rack. Invalid source or invalid saved layout fails before
-Stop. It then uses `prepareReplacement` to await confirmed Stop and verifies
+and validates its rack, then stamps the entry title in rack metadata. Invalid
+source or invalid saved layout fails before Stop. It then uses `prepareReplacement` to await confirmed Stop and verifies
 that neither the replacement intent nor the current work revision changed.
 Only then does it install source and rack together and clear old rack gestures
 and selection. Cancel/Close/Escape, newer work, validation failure and Stop
@@ -121,8 +121,8 @@ Confirmation actions stay orange in every placement; the warning names New or th
 specific library patch/file being loaded.
 
 Successful loading leaves playback stopped until explicit Play. It does not
-normalize formatting, append rack metadata on load, or regenerate source from
-the rack. Unsupported expressions remain CODE and helper declarations/comments
+normalize executable formatting or regenerate source from the rack. The
+[patch name](patch-format.md#patch-names-62) is saved in trailing metadata. Unsupported expressions remain CODE and helper declarations/comments
 remain in the retained document. Loading is parsing, not execution or sandboxing.
 Editing uses the normal source-aware workspace behavior and does not mutate the
 built-in source. Reloading the entry restores that original.

@@ -37,6 +37,8 @@ export interface Cable {
 
 export interface Patch {
   version: 1
+  /** Optional display name, saved only in rack metadata. */
+  name?: string
   modules: PlacedModule[]
   cables: Cable[]
   /** Fan-out names, retained after reducing to one branch; keyed "moduleId:jackId". */

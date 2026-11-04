@@ -17,6 +17,7 @@ same format. Collection nesting and browser selection do not enter rack metadata
 ```ts
 interface Patch {
   version: 1
+  name?: string            // patch title, separate from output names
   modules: PlacedModule[]   // what is in the rack, where, in which look, with which values
   cables: Cable[]           // output jack → input jack
   names: Record<string, string>  // "moduleId:jackId" → name, retained after a split
@@ -53,6 +54,7 @@ the v1 format unchanged (#54/#68).
 The v1 envelope uses these fields:
 
 - `version: 1` validates the metadata format independently of the JavaScript.
+- Optional `name`: the patch's display title; see [patch names](#patch-names-62).
 - `scopes`: saved opaque IDs, an optional named declaration anchor, and full
   root/call syntax descriptors from the accepted source revision.
 - `modules`: stable module `id`, catalog `type`, `row`, `hp`, `look`, and source
@@ -170,6 +172,36 @@ A live program differing from its snapshot receives conservative reconciliation.
 Snapshots cannot contain nested rack blocks. Copy/Export save the exact current
 draft; Open reads plain `.strudel` files. Chosen names survive reducing a split
 to one branch. See [workspace evidence and limits](workspace-verification.md).
+
+## Patch names (#62)
+
+The editable header title is stored as optional `name: string` in `Patch` and
+in the existing v1 trailing rack envelope. It is presentation metadata, distinct
+from fan-out `names`; renaming never changes executable Strudel, module IDs,
+wiring, layout or control values. No format version bump is needed. Older
+files, plain Strudel and New patches omit it and display **Untitled patch**.
+A non-string name makes the metadata invalid under the existing preservation
+policy; it does not invalidate the executable source.
+
+Enter or blur commits a trimmed title; Escape cancels the input. An empty title
+becomes **Untitled patch**. The field is unavailable while code is unapplied or
+metadata needs explicit replacement, so a rename cannot discard a draft or
+unknown metadata. Accepted-document Undo/Redo and local recovery retain the title
+with the complete file. External code edits retaining valid metadata retain its
+name even when sounding module identity requires reconciliation.
+
+Loading a library entry uses its title, stamping only validated rack metadata
+before guarded replacement. The bundled original and every executable byte
+(including attributed showcase comments and formatting) stay unchanged. Copy and
+Export still write the complete current draft. Export uses the current accepted
+name as the filename stem, replaces filesystem separators, reserved punctuation
+and control characters with `-`, strips trailing dots/space and avoids a duplicate
+`.strudel` suffix. An empty sanitized stem falls back to **Untitled patch**.
+The full display title remains in metadata regardless of filename sanitation.
+Open restores it from metadata rather than the external filename; older unnamed
+files still open byte-for-byte under the default title.
+
+See [unit and browser verification](patch-names-verification.md).
 
 ## Local workspace recovery (#60)
 
