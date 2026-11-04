@@ -1,5 +1,6 @@
 import { planEffects } from '../codegen/effects'
 import { effectRank } from '../modules/effects'
+import { isLoopChain, loopControls } from '../modules/functions'
 import { controlValue } from '../modules/values'
 import { parseExpressionAt, tokenizer, type Expression, type Node } from 'acorn'
 import { graph } from '../codegen/graph'
@@ -13,7 +14,16 @@ import { nextPosition, railWidth } from '../patch/layout'
 import { matchRouting, matchScopes, readLayout } from './layout'
 import { codeEnd } from './metadata'
 import { unclosedBracket } from './diagnostics'
-import { chain, parseSource, scalar, type Call, type ParsedScope } from './syntax'
+import {
+  chain,
+  parseSource,
+  scalar,
+  nestedScope,
+  usesParameter,
+  bindingScope,
+  type Call,
+  type ParsedScope,
+} from './syntax'
 import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } from './types'
 
 import { numericNotation } from '../patch/notation'
@@ -181,13 +191,15 @@ function project(
     wire(from, sampler)
     return output(sampler)
   }
-  function hasOpaqueInput(from: Output): boolean {
+  function hasOpaqueInput(from: Output, visited = new Set<string>()): boolean {
+    if (visited.has(from.module.id)) return false
+    visited.add(from.module.id)
     if (from.module.type === 'code') return true
     return patch.cables
       .filter((cable) => cable.to.module === from.module.id)
       .some((cable) => {
         const module = patch.modules.find((module) => module.id === cable.from.module)
-        return module ? hasOpaqueInput({ module, jack: cable.from.jack }) : false
+        return module ? hasOpaqueInput({ module, jack: cable.from.jack }, visited) : false
       })
   }
   function bind(
@@ -204,6 +216,7 @@ function project(
       (binding) =>
         binding.module === module.id &&
         binding.scope === scope.descriptor.id &&
+        descriptor(binding.loop) === descriptor(scope.loop) &&
         binding.role === semantic.role &&
         descriptor(binding.target) === descriptor(semantic.target),
     )
@@ -215,6 +228,7 @@ function project(
       bindings.push({
         module: module.id,
         scope: scope.descriptor.id,
+        ...(scope.loop ? { loop: scope.loop } : {}),
         calls: indices,
         ...semantic,
         start,
@@ -295,6 +309,7 @@ function project(
             (binding) =>
               binding.module === cable.to.module &&
               binding.scope === scope.descriptor.id &&
+              descriptor(binding.loop) === descriptor(scope.loop) &&
               binding.calls.some((later) => later > index),
           )),
     )
@@ -557,14 +572,21 @@ function project(
     return false
   }
 
-  function expression(scope: ParsedScope, initialOutput?: Output): Output {
+  function expression(scope: ParsedScope, receiverOutput?: Output): Output {
     const { root, calls } = scope
-    const savedScope = saved?.scopes.find(
-      (item) =>
-        item.id === scope.descriptor.id &&
-        descriptor([item.root, item.calls]) ===
-          descriptor([scope.descriptor.root, scope.descriptor.calls]),
-    )
+    const previous =
+      saved &&
+      snapshot &&
+      bindingScope(snapshot, {
+        scope: scope.descriptor.id,
+        ...(scope.loop ? { loop: scope.loop } : {}),
+      })
+    const savedScope =
+      previous &&
+      descriptor([previous.descriptor.root, previous.descriptor.calls]) ===
+        descriptor([scope.descriptor.root, scope.descriptor.calls])
+        ? previous.descriptor
+        : undefined
     // New adapters must not replace an older file's explicit CODE owners.
     // Check the receiver before projecting it, as well as later suffixes.
     // Exact bytes and the independent saved-graph validation remain required.
@@ -580,6 +602,7 @@ function project(
                   calls[indices.at(-1) ?? -1]?.end ??
                   (receiver && !calls.length ? scope.end : undefined)
                 return binding.scope === savedScope.id &&
+                  descriptor(binding.loop) === descriptor(scope.loop) &&
                   binding.role === 'module' &&
                   (indices[0] === index || (receiver && !calls.length && !indices.length)) &&
                   indices.every((value, offset) => value === index + offset) &&
@@ -594,7 +617,7 @@ function project(
         )[0]
       )
     }
-    if (scope.kind === 'declaration' && !retainedCode(0, true)) {
+    if (!scope.loop && scope.kind === 'declaration' && !retainedCode(0, true)) {
       const pattern = modPattern(scope.expression, (name) => declarations.has(name))
       if (pattern) {
         function insert(item: ModPattern): Output {
@@ -642,10 +665,10 @@ function project(
         calls.map((_, index) => index),
         source.slice(scope.start, scope.end),
       )
-    let upstream: Output | undefined = initialOutput
+    let upstream: Output | undefined = receiverOutput
     let start = 0
     let group: PlacedModule | undefined
-    const receiver = retainedCode(0, true)
+    const receiver = !receiverOutput && retainedCode(0, true)
     if (receiver) {
       upstream = code(scope, receiver.indices, receiver.text)
       start = (receiver.indices.at(-1) ?? -1) + 1
@@ -736,7 +759,7 @@ function project(
     for (let index = start; index < calls.length; index++) {
       const call = calls[index]
       if (!call) continue
-      if (routing?.get(scope.descriptor.id)?.call === index) continue
+      if (!scope.loop && routing?.get(scope.descriptor.id)?.call === index) continue
       const opaque = retainedCode(index)
       if (opaque) {
         upstream = code(scope, opaque.indices, opaque.text, upstream)
@@ -1078,6 +1101,116 @@ function project(
           continue
         }
       }
+      const loopSpec = type ? getModuleSpec(type) : undefined
+      const loop = loopSpec?.functionLoop
+      const loopVariant =
+        loop &&
+        (typeof loop.method === 'string'
+          ? loop.method === name
+            ? {}
+            : undefined
+          : Object.entries(loop.method.names).find(([, method]) => method === name))
+      const loopValues: Record<string, ControlValue> | undefined = Array.isArray(loopVariant)
+        ? typeof loop?.method === 'object'
+          ? { [loop.method.control]: loopVariant[0] }
+          : undefined
+        : loopVariant
+      const legacyTransform =
+        loopSpec?.id === 'jux' &&
+        call.args.length === 1 &&
+        call.args[0]?.type !== 'SpreadElement' &&
+        (() => {
+          const key = transformKey(call.args[0])
+          return (
+            key &&
+            loopSpec.controls.some(
+              (c) =>
+                'call' in c &&
+                c.call?.argument.kind === 'transform' &&
+                Object.values(c.call.argument.expressions).some(
+                  (text) =>
+                    transformKey(parseExpressionAt(text, 0, { ecmaVersion: 'latest' })) === key,
+                ),
+            )
+          )
+        })()
+      if (loop && loopSpec && loopValues && !legacyTransform) {
+        const ids = loopControls(loopSpec, name)
+        const args = call.args.slice(0, -1).map((arg) => scalar(arg))
+        const callback = call.args.at(-1)
+        const child = nestedScope(scope, index)
+        const preset = callback?.type === 'Identifier' && callback.name === loop.preset
+        const valid =
+          call.args.length === ids.length + 1 &&
+          ids.every((id, i) => args[i] !== undefined && fits(loopSpec.id, id, args[i])) &&
+          (name !== 'within' ||
+            (typeof args[0] === 'number' && typeof args[1] === 'number' && args[0] < args[1]))
+        if (valid && (preset || (child && child.calls.length > 0))) {
+          const module = add(loopSpec.id, {
+            ...loopValues,
+            ...(loop.when ? { [loop.when.control]: loop.when.value } : {}),
+          })
+          const controls: Record<string, Span> = {}
+          ids.forEach((id, i) => {
+            const arg = args[i]
+            if (arg !== undefined) module.values[id] = arg
+            Object.assign(controls, literalControls(id, call.args[i]))
+          })
+          wire(upstream, module)
+          bind(module, scope, [index], controls)
+          if (
+            child &&
+            callback?.type === 'ArrowFunctionExpression' &&
+            callback.params[0]?.type === 'Identifier'
+          ) {
+            const parameter = callback.params[0].name
+            if (parameter !== 'x') module.functionParameter = parameter
+            const checkpoint = {
+              modules: patch.modules.length,
+              cables: patch.cables.length,
+              bindings: bindings.length,
+            }
+            const refersToParameter = child.calls.some((call) =>
+              call.args.some((arg) => usesParameter(arg, parameter)),
+            )
+            let result = refersToParameter ? undefined : expression(child, { module, jack: 'send' })
+            if (
+              !result ||
+              patch.modules
+                .slice(checkpoint.modules)
+                .some(
+                  (m) =>
+                    bindings.some(
+                      (b) =>
+                        b.module === m.id &&
+                        b.role === 'module' &&
+                        descriptor(b.loop) === descriptor(child.loop),
+                    ) &&
+                    (!isLoopChain(getModuleSpec(m.type)) || m.type === 'code'),
+                )
+            ) {
+              patch.modules.splice(checkpoint.modules)
+              patch.cables.splice(checkpoint.cables)
+              bindings.splice(checkpoint.bindings)
+              result = code(
+                child,
+                child.calls.map((_, i) => i),
+                source.slice(child.root.end, child.end),
+                { module, jack: 'send' },
+              )
+            }
+            wire(result, module, 'return')
+          }
+          group = module
+          upstream = output(module)
+          continue
+        }
+      }
+      if (loopValues && !legacyTransform) {
+        upstream = code(scope, [index], source.slice(call.start, call.end), upstream)
+        group = undefined
+        continue
+      }
       const spec = type ? getModuleSpec(type) : undefined
       // Preserve DRUMS' existing unseeded drop control; a seeded gate is CHANCE.
       const drumDrop =
@@ -1116,6 +1249,7 @@ function project(
             (binding) =>
               binding.module === group?.id &&
               binding.scope === scope.descriptor.id &&
+              descriptor(binding.loop) === descriptor(scope.loop) &&
               binding.calls.some((index) => {
                 const previous = calls[index]
                 const owned = previous && matchControlCall(spec, canonicalCall(previous.name))
@@ -1221,6 +1355,19 @@ function project(
             continue
           }
           id = undefined
+        } else if (
+          form.kind === 'string' &&
+          type === 'ratchet' &&
+          call.args.length === 1 &&
+          typeof scalar(call.args[0]) === 'number'
+        ) {
+          const repeats = scalar(call.args[0])
+          const module = add(type, { repeats: String(repeats) })
+          wire(upstream, module)
+          bind(module, scope, [index], literalControls('repeats', call.args[0]))
+          group = module
+          upstream = output(module)
+          continue
         } else if (form.kind === 'transform') {
           const arg = call.args[0]
           const key =
@@ -1343,7 +1490,11 @@ function project(
       upstream = code(scope, [index], source.slice(call.start, call.end), upstream)
       group = undefined
     }
-    for (const binding of bindings.filter((binding) => binding.scope === scope.descriptor.id)) {
+    for (const binding of bindings.filter(
+      (binding) =>
+        binding.scope === scope.descriptor.id &&
+        descriptor(binding.loop) === descriptor(scope.loop),
+    )) {
       // A pre-129 source snapshot owns its historical projection, including absent MODE.
       // Only exact saved syntax and call ownership justify retaining that saved state.
       const legacyDelay =
@@ -1601,7 +1752,7 @@ export function read(source: string): SourceDocument {
       // Every sounding binding must also be justified by the reader, not just valid indices.
       const actual = (bindings: SourceBinding[]) =>
         bindings
-          .map((b) => [b.module, b.scope, b.role, b.calls, b.target, b.fx])
+          .map((b) => [b.module, b.scope, b.loop, b.role, b.calls, b.target, b.fx])
           .sort((a, b) => descriptor(a).localeCompare(descriptor(b)))
       const expected = saved.layout.modules.flatMap((m) =>
         m.bindings.map((b) => ({ ...b, module: m.id, start: 0, end: 0, controls: {} })),
@@ -1645,23 +1796,30 @@ export function read(source: string): SourceDocument {
       projection.bindings = saved.layout.modules.flatMap((module) =>
         module.bindings.flatMap((binding) => {
           const index = saved.layout.scopes.findIndex((scope) => scope.id === binding.scope)
-          const scope = parsed.scopes[index]
+          const scope = bindingScope(parsed.scopes, binding)
           const old = saved.layout.scopes[index]
           if (
             !scope ||
             !old ||
-            descriptor([scope.descriptor.root, scope.descriptor.calls]) !==
-              descriptor([old.root, old.calls])
+            descriptor([
+              parsed.scopes[index]?.descriptor.root,
+              parsed.scopes[index]?.descriptor.calls,
+            ]) !== descriptor([old.root, old.calls])
           )
             return []
           const calls = binding.calls.flatMap((index) => scope.calls[index] ?? [])
           const editable =
-            controls.find((item) => item.module === module.id && item.scope === scope.descriptor.id)
-              ?.controls ?? {}
+            controls.find(
+              (item) =>
+                item.module === module.id &&
+                item.scope === scope.descriptor.id &&
+                descriptor(item.loop) === descriptor(binding.loop),
+            )?.controls ?? {}
           return [
             {
               module: module.id,
               scope: scope.descriptor.id,
+              ...(binding.loop ? { loop: binding.loop } : {}),
               calls: binding.calls,
               role: binding.role,
               ...(binding.fx === undefined ? {} : { fx: binding.fx }),
@@ -1727,35 +1885,48 @@ function restore(
         own.some((binding) => {
           const match = matches.get(binding.scope)
           if (!match) return false
-          const calls = binding.calls.map((index) => match.calls.get(index))
+          const path = binding.loop
+          const first = path?.[0]
+          const mapped = first === undefined ? undefined : match.calls.get(first)
+          if (
+            first !== undefined &&
+            (mapped === undefined ||
+              descriptor(match.current.calls[first]) !== descriptor(match.saved.calls[mapped]))
+          )
+            return false
+          const loop = path && mapped !== undefined ? [mapped, ...path.slice(1)] : undefined
+          const calls = binding.calls.map((index) => (path ? index : match.calls.get(index)))
           const oldBindings = old.bindings.filter(
             (oldBinding) =>
               oldBinding.scope === match.saved.id &&
               oldBinding.role === binding.role &&
+              descriptor(oldBinding.loop) === descriptor(loop) &&
               (binding.fx === undefined
                 ? oldBinding.fx === undefined
-                : oldBinding.fx !== undefined &&
-                  binding.calls.some((index) => {
-                    const oldIndex = match.calls.get(index)
-                    const previous =
-                      oldIndex === undefined ? undefined : match.saved.calls[oldIndex]
-                    const current = currentScopes.find((s) => s.descriptor.id === binding.scope)
-                      ?.calls[index]
-                    if (!previous || !current || previous.name !== 'FX' || current.name !== 'FX')
-                      return false
-                    const oldArgs: unknown = JSON.parse(previous.arguments)
-                    if (!Array.isArray(oldArgs)) return false
-                    if (descriptor(oldArgs) === descriptor(current.args))
-                      return oldBinding.fx === binding.fx
-                    if (oldArgs.length === 1 && current.args.length === 1)
-                      return oldBinding.fx === 0 && binding.fx === 0
-                    const key = descriptor(current.args[binding.fx ?? -1])
-                    return (
-                      descriptor(oldArgs[oldBinding.fx ?? -1]) === key &&
-                      oldArgs.filter((a) => descriptor(a) === key).length === 1 &&
-                      current.args.filter((a) => descriptor(a) === key).length === 1
-                    )
-                  })) &&
+                : path
+                  ? oldBinding.fx === binding.fx
+                  : oldBinding.fx !== undefined &&
+                    binding.calls.some((index) => {
+                      const oldIndex = match.calls.get(index)
+                      const previous =
+                        oldIndex === undefined ? undefined : match.saved.calls[oldIndex]
+                      const current = currentScopes.find((s) => s.descriptor.id === binding.scope)
+                        ?.calls[index]
+                      if (!previous || !current || previous.name !== 'FX' || current.name !== 'FX')
+                        return false
+                      const oldArgs: unknown = JSON.parse(previous.arguments)
+                      if (!Array.isArray(oldArgs)) return false
+                      if (descriptor(oldArgs) === descriptor(current.args))
+                        return oldBinding.fx === binding.fx
+                      if (oldArgs.length === 1 && current.args.length === 1)
+                        return oldBinding.fx === 0 && binding.fx === 0
+                      const key = descriptor(current.args[binding.fx ?? -1])
+                      return (
+                        descriptor(oldArgs[oldBinding.fx ?? -1]) === key &&
+                        oldArgs.filter((a) => descriptor(a) === key).length === 1 &&
+                        current.args.filter((a) => descriptor(a) === key).length === 1
+                      )
+                    })) &&
               (!['env', 'lfo'].includes(module.type) ||
                 oldBinding.target?.module === rename.get(binding.target?.module ?? '')) &&
               oldBinding.target?.jack === binding.target?.jack &&

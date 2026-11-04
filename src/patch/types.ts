@@ -27,6 +27,8 @@ export interface PlacedModule {
   look: LookId
   /** One entry per control id; a missing entry means the catalog default. */
   values: Record<string, ControlValue>
+  /** Imported callback identifier; preserves references inside opaque loop bodies. */
+  functionParameter?: string
 }
 
 export interface JackRef {

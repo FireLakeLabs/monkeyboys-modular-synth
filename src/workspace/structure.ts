@@ -112,7 +112,9 @@ function branches(
     const spec = getModuleSpec(module.type)
     if (['seq', 'drums', 'lfo'].includes(module.type) || spec.source)
       return [{ key: path, modules: [id] }]
-    const inputs = spec.jacks.filter((jack) => jack.direction === 'in' && !jack.cvTarget)
+    const inputs = spec.jacks.filter(
+      (jack) => jack.direction === 'in' && !jack.cvTarget && jack.id !== 'return',
+    )
     if (module.type === 'code' && !patch.cables.some((cable) => cable.to.module === id)) {
       const text = module.values.text
       return typeof text === 'string' && !text.trimStart().startsWith('.')
@@ -193,6 +195,8 @@ const signature = (scope: OwnedScope, emitted: Set<string>): string =>
 
 /** A plan never mutates the accepted document. Its result still needs semantic reader validation. */
 export function planStructure(document: SourceDocument, next: Patch, body: string): StructurePlan {
+  if (document.bindings.some((binding) => binding.loop))
+    refuse('function-loop wiring remains source-owned; make the rack editable to repatch it')
   const before = generated(document.patch)
   const emitted = new Set(
     [...before.values()].flatMap((scope) =>

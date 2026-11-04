@@ -56,6 +56,13 @@ exports[`built-in patch library > first-sounds: preserves exact source and indep
 }
 `;
 
+exports[`built-in patch library > function-loops: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "6d8ab4188496b2ece98c7ca13c12f273d839e41a9177abba1f0372b94b5194e4",
+  "projection": "f7bba44dd88e3f615c22fb38eefefc0e06472a2993785ff3100d4ce8890a9037",
+}
+`;
+
 exports[`built-in patch library > iter-jux: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "77ee596de42ae8b5c2295276927e27bdc1555288c5904c66dd86d586a16a68f3",

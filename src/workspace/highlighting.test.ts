@@ -7,7 +7,7 @@ import { sourceSegments, sourceTreatments } from './highlighting'
 describe('source presentation', () => {
   it('keeps exact source and does not highlight a neighboring Cyber fragment', () => {
     const document = read(
-      `// 🐒 keep spacing\n$: note('c3').s('sine').lpf(800).chunk(4, x => x.rev()).lpq(2)\n`,
+      `// 🐒 keep spacing\n$: note('c3').s('sine').lpf(800).chunkBack(4, x => x.rev()).lpq(2)\n`,
     )
     const vcf = document.patch.modules.find((m) => m.type === 'vcf')
     const segments = sourceSegments(document.source, sourceTreatments(document), vcf?.id ?? null)
@@ -57,4 +57,11 @@ $: note('e3').s('sine').lpf(wave.range(800, 2400))
       { start: 0, text: 'note(', className: '' },
     ])
   })
+})
+
+it('uses teal lambda ink while preserving the CODE fallback treatment inside a loop', () => {
+  const doc = read('$: note("c3").s("sine").chunk(4,p=>p.iter(3).rev()).off(.25,q=>q.color("red"))')
+  const segments = sourceSegments(doc.source, sourceTreatments(doc), null)
+  expect(segments.find((s) => s.text.includes('.iter(3)'))?.className).toContain('source-function')
+  expect(segments.find((s) => s.text.includes('.color('))?.className).toContain('source-cyber')
 })

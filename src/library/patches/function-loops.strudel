@@ -1,0 +1,805 @@
+setcpm(120/4)
+
+$: note("c3 e3 g3 b3")
+  .s("sine")
+  .chunk(4, x => x.ply("2").rev())
+  .firstOf(4, x => x.rev())
+  .sometimesBy(0.5, x => x.iter(3))
+  .off(0.125, x => x.gain(0.5))
+  .superimpose(x => x.rev())
+  .within(0.25, 0.75, x => x.rev())
+  .jux(x => x.ply("2").rev())
+  .gain(0.1)
+  .orbit(1)
+
+// ── @monkeyboy rack v1 ──
+// {
+//   "version": 1,
+//   "scopes": [
+//     {
+//       "id": "scope1",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"setcpm\"},\"arguments\":[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":120},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "setcpm",
+//           "arguments": "[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":120},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}]"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "scope2",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"c3 e3 g3 b3\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"c3 e3 g3 b3\"}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"sine\"}]"
+//         },
+//         {
+//           "name": "chunk",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":4},{\"type\":\"ArrowFunctionExpression\",\"id\":null,\"expression\":true,\"generator\":false,\"async\":false,\"params\":[{\"type\":\"Identifier\",\"name\":\"x\"}],\"body\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"Identifier\",\"name\":\"x\"},\"property\":{\"type\":\"Identifier\",\"name\":\"ply\"},\"computed\":false,\"optional\":false},\"arguments\":[{\"type\":\"Literal\",\"value\":\"2\"}],\"optional\":false},\"property\":{\"type\":\"Identifier\",\"name\":\"rev\"},\"computed\":false,\"optional\":false},\"arguments\":[],\"optional\":false}}]"
+//         },
+//         {
+//           "name": "firstOf",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":4},{\"type\":\"ArrowFunctionExpression\",\"id\":null,\"expression\":true,\"generator\":false,\"async\":false,\"params\":[{\"type\":\"Identifier\",\"name\":\"x\"}],\"body\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"Identifier\",\"name\":\"x\"},\"property\":{\"type\":\"Identifier\",\"name\":\"rev\"},\"computed\":false,\"optional\":false},\"arguments\":[],\"optional\":false}}]"
+//         },
+//         {
+//           "name": "sometimesBy",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.5},{\"type\":\"ArrowFunctionExpression\",\"id\":null,\"expression\":true,\"generator\":false,\"async\":false,\"params\":[{\"type\":\"Identifier\",\"name\":\"x\"}],\"body\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"Identifier\",\"name\":\"x\"},\"property\":{\"type\":\"Identifier\",\"name\":\"iter\"},\"computed\":false,\"optional\":false},\"arguments\":[{\"type\":\"Literal\",\"value\":3}],\"optional\":false}}]"
+//         },
+//         {
+//           "name": "off",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.125},{\"type\":\"ArrowFunctionExpression\",\"id\":null,\"expression\":true,\"generator\":false,\"async\":false,\"params\":[{\"type\":\"Identifier\",\"name\":\"x\"}],\"body\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"Identifier\",\"name\":\"x\"},\"property\":{\"type\":\"Identifier\",\"name\":\"gain\"},\"computed\":false,\"optional\":false},\"arguments\":[{\"type\":\"Literal\",\"value\":0.5}],\"optional\":false}}]"
+//         },
+//         {
+//           "name": "superimpose",
+//           "arguments": "[{\"type\":\"ArrowFunctionExpression\",\"id\":null,\"expression\":true,\"generator\":false,\"async\":false,\"params\":[{\"type\":\"Identifier\",\"name\":\"x\"}],\"body\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"Identifier\",\"name\":\"x\"},\"property\":{\"type\":\"Identifier\",\"name\":\"rev\"},\"computed\":false,\"optional\":false},\"arguments\":[],\"optional\":false}}]"
+//         },
+//         {
+//           "name": "within",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.25},{\"type\":\"Literal\",\"value\":0.75},{\"type\":\"ArrowFunctionExpression\",\"id\":null,\"expression\":true,\"generator\":false,\"async\":false,\"params\":[{\"type\":\"Identifier\",\"name\":\"x\"}],\"body\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"Identifier\",\"name\":\"x\"},\"property\":{\"type\":\"Identifier\",\"name\":\"rev\"},\"computed\":false,\"optional\":false},\"arguments\":[],\"optional\":false}}]"
+//         },
+//         {
+//           "name": "jux",
+//           "arguments": "[{\"type\":\"ArrowFunctionExpression\",\"id\":null,\"expression\":true,\"generator\":false,\"async\":false,\"params\":[{\"type\":\"Identifier\",\"name\":\"x\"}],\"body\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"CallExpression\",\"callee\":{\"type\":\"MemberExpression\",\"object\":{\"type\":\"Identifier\",\"name\":\"x\"},\"property\":{\"type\":\"Identifier\",\"name\":\"ply\"},\"computed\":false,\"optional\":false},\"arguments\":[{\"type\":\"Literal\",\"value\":\"2\"}],\"optional\":false},\"property\":{\"type\":\"Identifier\",\"name\":\"rev\"},\"computed\":false,\"optional\":false},\"arguments\":[],\"optional\":false}}]"
+//         },
+//         {
+//           "name": "gain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.1}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 10,
+//         "orbit": 1
+//       }
+//     }
+//   ],
+//   "modules": [
+//     {
+//       "id": "seq1",
+//       "type": "seq",
+//       "row": 0,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "c3 e3 g3 b3",
+//         "mode": "note",
+//         "rate": 1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc1",
+//       "type": "osc",
+//       "row": 0,
+//       "hp": 10,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "sine"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "chunk1",
+//       "type": "chunk",
+//       "row": 0,
+//       "hp": 19,
+//       "look": "crystal",
+//       "values": {
+//         "chunks": 4
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             2
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "ratchet1",
+//       "type": "ratchet",
+//       "row": 0,
+//       "hp": 31,
+//       "look": "instrument",
+//       "values": {
+//         "repeats": "2"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             2
+//           ],
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "rev1",
+//       "type": "rev",
+//       "row": 0,
+//       "hp": 41,
+//       "look": "crystal",
+//       "values": {
+//         "mode": "rev"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             2
+//           ],
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "every1",
+//       "type": "every",
+//       "row": 1,
+//       "hp": 0,
+//       "look": "crystal",
+//       "values": {
+//         "mode": "first",
+//         "cycles": 4
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             3
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "rev2",
+//       "type": "rev",
+//       "row": 1,
+//       "hp": 12,
+//       "look": "crystal",
+//       "values": {
+//         "mode": "rev"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             3
+//           ],
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "sometimes1",
+//       "type": "sometimes",
+//       "row": 1,
+//       "hp": 26,
+//       "look": "crystal",
+//       "values": {
+//         "mode": "events",
+//         "probability": 0.5
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             4
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "iter1",
+//       "type": "iter",
+//       "row": 1,
+//       "hp": 40,
+//       "look": "crystal",
+//       "values": {
+//         "steps": 3
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             4
+//           ],
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "off1",
+//       "type": "off",
+//       "row": 1,
+//       "hp": 50,
+//       "look": "crystal",
+//       "values": {
+//         "time": 0.125
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             5
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vca1",
+//       "type": "vca",
+//       "row": 2,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "level": 0.5
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             5
+//           ],
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "layer1",
+//       "type": "layer",
+//       "row": 2,
+//       "hp": 8,
+//       "look": "crystal",
+//       "values": {},
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             6
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "rev3",
+//       "type": "rev",
+//       "row": 2,
+//       "hp": 20,
+//       "look": "crystal",
+//       "values": {
+//         "mode": "rev"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             6
+//           ],
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "time-lens1",
+//       "type": "time-lens",
+//       "row": 2,
+//       "hp": 34,
+//       "look": "crystal",
+//       "values": {
+//         "mode": "window",
+//         "start": 0.25,
+//         "end": 0.75
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             7
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "rev4",
+//       "type": "rev",
+//       "row": 2,
+//       "hp": 46,
+//       "look": "crystal",
+//       "values": {
+//         "mode": "rev"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             7
+//           ],
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "jux1",
+//       "type": "jux",
+//       "row": 3,
+//       "hp": 0,
+//       "look": "crystal",
+//       "values": {},
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             8
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "ratchet2",
+//       "type": "ratchet",
+//       "row": 3,
+//       "hp": 10,
+//       "look": "instrument",
+//       "values": {
+//         "repeats": "2"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             8
+//           ],
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "rev5",
+//       "type": "rev",
+//       "row": 3,
+//       "hp": 20,
+//       "look": "crystal",
+//       "values": {
+//         "mode": "rev"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "loop": [
+//             8
+//           ],
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vca2",
+//       "type": "vca",
+//       "row": 3,
+//       "hp": 34,
+//       "look": "instrument",
+//       "values": {
+//         "level": 0.1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             9
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "mix1",
+//       "type": "mix",
+//       "row": 4,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "ch1": 1,
+//         "ch2": 1,
+//         "ch3": 1,
+//         "ch4": 1
+//       },
+//       "bindings": []
+//     },
+//     {
+//       "id": "out2",
+//       "type": "out",
+//       "look": "instrument",
+//       "values": {},
+//       "bindings": [
+//         {
+//           "scope": "scope1",
+//           "calls": [
+//             0
+//           ],
+//           "role": "tempo"
+//         }
+//       ]
+//     }
+//   ],
+//   "cables": [
+//     {
+//       "id": "cable1",
+//       "from": {
+//         "module": "seq1",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "osc1",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "cable2",
+//       "from": {
+//         "module": "osc1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "chunk1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable3",
+//       "from": {
+//         "module": "chunk1",
+//         "jack": "send"
+//       },
+//       "to": {
+//         "module": "ratchet1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable4",
+//       "from": {
+//         "module": "ratchet1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "rev1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable5",
+//       "from": {
+//         "module": "rev1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "chunk1",
+//         "jack": "return"
+//       }
+//     },
+//     {
+//       "id": "cable6",
+//       "from": {
+//         "module": "chunk1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "every1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable7",
+//       "from": {
+//         "module": "every1",
+//         "jack": "send"
+//       },
+//       "to": {
+//         "module": "rev2",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable8",
+//       "from": {
+//         "module": "rev2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "every1",
+//         "jack": "return"
+//       }
+//     },
+//     {
+//       "id": "cable9",
+//       "from": {
+//         "module": "every1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "sometimes1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable10",
+//       "from": {
+//         "module": "sometimes1",
+//         "jack": "send"
+//       },
+//       "to": {
+//         "module": "iter1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable11",
+//       "from": {
+//         "module": "iter1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "sometimes1",
+//         "jack": "return"
+//       }
+//     },
+//     {
+//       "id": "cable12",
+//       "from": {
+//         "module": "sometimes1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "off1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable13",
+//       "from": {
+//         "module": "off1",
+//         "jack": "send"
+//       },
+//       "to": {
+//         "module": "vca1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable14",
+//       "from": {
+//         "module": "vca1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "off1",
+//         "jack": "return"
+//       }
+//     },
+//     {
+//       "id": "cable15",
+//       "from": {
+//         "module": "off1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "layer1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable16",
+//       "from": {
+//         "module": "layer1",
+//         "jack": "send"
+//       },
+//       "to": {
+//         "module": "rev3",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable17",
+//       "from": {
+//         "module": "rev3",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "layer1",
+//         "jack": "return"
+//       }
+//     },
+//     {
+//       "id": "cable18",
+//       "from": {
+//         "module": "layer1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "time-lens1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable19",
+//       "from": {
+//         "module": "time-lens1",
+//         "jack": "send"
+//       },
+//       "to": {
+//         "module": "rev4",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable20",
+//       "from": {
+//         "module": "rev4",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "time-lens1",
+//         "jack": "return"
+//       }
+//     },
+//     {
+//       "id": "cable21",
+//       "from": {
+//         "module": "time-lens1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "jux1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable22",
+//       "from": {
+//         "module": "jux1",
+//         "jack": "send"
+//       },
+//       "to": {
+//         "module": "ratchet2",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable23",
+//       "from": {
+//         "module": "ratchet2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "rev5",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable24",
+//       "from": {
+//         "module": "rev5",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "jux1",
+//         "jack": "return"
+//       }
+//     },
+//     {
+//       "id": "cable25",
+//       "from": {
+//         "module": "jux1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vca2",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable27",
+//       "from": {
+//         "module": "vca2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "mix1",
+//         "jack": "in1"
+//       }
+//     },
+//     {
+//       "id": "cable28",
+//       "from": {
+//         "module": "mix1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "out2",
+//         "jack": "in"
+//       }
+//     }
+//   ],
+//   "names": {}
+// }

@@ -20,7 +20,7 @@ describe('event attribution', () => {
   })
   it('leaves opaque, side-effecting and unmapped events unattributed', () => {
     for (const source of [
-      `$: note('c3').s('sine').chunk(4, x => x.rev())`,
+      `$: note('c3').s('sine').chunkBack(4, x => x.rev())`,
       `all(x => x.rev());\n$: note('c3').s('sine')`,
       `const unused = all(x => x.rev());\n$: note('c3').s('sine')`,
     ]) {
@@ -41,7 +41,7 @@ describe('event attribution', () => {
     const iter = document.patch.modules.find((m) => m.type === 'iter')?.id
     expect(plan.modules({ context: { __monkeyboyActivity: 1 } })).toContain(iter)
     expect(plan.modules({ context: { __monkeyboyActivity: 2 } })).not.toContain(iter)
-    const opaque = `note('c3').chunk(4, x => x.rev())`
+    const opaque = `note('c3').chunkBack(4, x => x.rev())`
     expect(activityPlan(read(opaque)).code).toBe(opaque)
   })
 })
@@ -151,7 +151,7 @@ it.each([
 })
 
 it('does not invent grid positions for text notation, opaque code, or invalid event context', () => {
-  for (const source of ['note("c3 \\te3").s("sine")', 'note("c3 e3").chunk(4, x => x.rev())']) {
+  for (const source of ['note("c3 \\te3").s("sine")', 'note("c3 e3").chunkBack(4, x => x.rev())']) {
     const plan = activityPlan(read(source))
     expect(query(plan.code).flatMap((hap) => plan.steps(hap))).toEqual([])
   }
@@ -164,4 +164,18 @@ it('does not invent grid positions for text notation, opaque code, or invalid ev
     { __monkeyboyStep: ['0', 1] },
   ])
     expect(plan.steps({ context })).toEqual([])
+})
+
+it('preserves sounding events through nested function loops and attributes their modules', () => {
+  const source = 'note("c3 e3 g3 b3").s("sine").chunk(4,x=>x.off(.25,y=>y.ply(2).rev()).iter(3))'
+  const doc = read(source)
+  const plan = activityPlan(doc)
+  const sound = (haps: unknown[]) =>
+    JSON.stringify(haps, (key, value: unknown) =>
+      key === 'context' ? undefined : typeof value === 'bigint' ? String(value) : value,
+    )
+  expect(sound(query(plan.code))).toBe(sound(query(source)))
+  expect(plan.modules({ context: { __monkeyboyActivity: 1 } })).toEqual(
+    expect.arrayContaining(['chunk1', 'off1', 'ratchet1', 'rev1']),
+  )
 })

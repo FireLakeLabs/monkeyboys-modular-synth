@@ -506,6 +506,7 @@
 .source-token {
   color: var(--category);
 }
+.source-function,
 .source-alien {
   color: #8cf5da;
   text-shadow: 0 0 6px #8cf5da66;

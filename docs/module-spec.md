@@ -503,7 +503,7 @@ Alien · 10 HP · order-sensitive
 | IN   | in  | any    |
 | OUT  | out | any    |
 
-Left ear plays the pattern; right ear plays it transformed. **Reads** `.jux(f)` when `f` is one of the four options; any other function makes the whole call a CODE block.
+Left ear plays the pattern; right ear plays it transformed. **Reads** the four presets unchanged. A supported custom lambda becomes a SEND/RETURN loop; see [function loops](#function-loops-135).
 
 ---
 
@@ -548,14 +548,14 @@ small fractions; existing sound-setting formatting is unchanged.
 | CHORD           | 12  | CHORDS nested editor; `<Cm7 Fm7 G7>`.                                                                      | `chord("<Cm7 Fm7 G7>").voicing()`, an atomic source with its required voicing call. Chord names use the pinned tonal library. A bare chord control or other voicing arguments stay CODE.                                                                                                                    |
 | ARP             | 10  | INDICES text; `0 1 2 1`.                                                                                   | `.arp("0 1 2 1")`, selecting indices from simultaneously stacked notes, including CHORD's voicing.                                                                                                                                                                                                          |
 
-| Alien module     | HP  | Controls: range, step; new-rack default                                                                           | Writes / reads                                                                                                                                                                                                               |
-| ---------------- | --- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| REV / PALINDROME | 14  | MODE rev / palindrome; rev.                                                                                       | `.rev()` / `.palindrome()`. One module with two modes.                                                                                                                                                                       |
-| SHUFFLE          | 10  | MODE shuffle / scramble; shuffle. SLICES 1–32, 1; 8.                                                              | `.shuffle(8)` / `.scramble(8)`.                                                                                                                                                                                              |
-| RIBBON           | 10  | OFFSET 0–65535, 0.25; 45. CYCLES 0.125–16, 0.125; 2.                                                              | `.rib(45, 2)`; also reads `.ribbon(45, 2)`.                                                                                                                                                                                  |
-| TIME LENS        | 12  | MODE zoom / linger / compress; zoom. START 0–0.99, 0.01; 0.25. END 0.01–1, 0.01; 0.75. LENGTH 0.01–1, 0.01; 0.25. | `.zoom(0.25, 0.75)`, `.linger(0.25)`, `.compress(0.25, 0.75)`. START/END apply to zoom/compress and must strictly increase; LENGTH applies to linger. Inactive values remain saved. WINDOW belongs to #135's function loops. |
-| WARP             | 10  | MODE brak / press / hurry; brak. RATE 0.25–8, 0.25; 2.                                                            | `.brak()`, `.press()`, `.hurry(2)`. RATE applies only to hurry. This is a panel name, not ownership of Strudel's unrelated wavetable `.warp()` control.                                                                      |
-| ECHO             | 12  | TIMES 1–16, 1; 3. TIME 0.015625–1, 0.015625; 0.125. FEEDBACK 0–1, 0.05; 0.5.                                      | `.echo(3, 0.125, 0.5)`. These are repeated pattern events; the pinned engine writes decreasing gain for each repetition.                                                                                                     |
+| Alien module     | HP  | Controls: range, step; new-rack default                                                                                    | Writes / reads                                                                                                                                                                                                                                                                              |
+| ---------------- | --- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| REV / PALINDROME | 14  | MODE rev / palindrome; rev.                                                                                                | `.rev()` / `.palindrome()`. One module with two modes.                                                                                                                                                                                                                                      |
+| SHUFFLE          | 10  | MODE shuffle / scramble; shuffle. SLICES 1–32, 1; 8.                                                                       | `.shuffle(8)` / `.scramble(8)`.                                                                                                                                                                                                                                                             |
+| RIBBON           | 10  | OFFSET 0–65535, 0.25; 45. CYCLES 0.125–16, 0.125; 2.                                                                       | `.rib(45, 2)`; also reads `.ribbon(45, 2)`.                                                                                                                                                                                                                                                 |
+| TIME LENS        | 12  | MODE zoom / linger / compress / window; zoom. START 0–0.99, 0.01; 0.25. END 0.01–1, 0.01; 0.75. LENGTH 0.01–1, 0.01; 0.25. | `.zoom(0.25, 0.75)`, `.linger(0.25)`, `.compress(0.25, 0.75)`. START/END apply to zoom/compress and must strictly increase; LENGTH applies to linger. Inactive values remain saved. WINDOW writes `.within(START, END, fn)` through SEND/RETURN; see [function loops](#function-loops-135). |
+| WARP             | 10  | MODE brak / press / hurry; brak. RATE 0.25–8, 0.25; 2.                                                                     | `.brak()`, `.press()`, `.hurry(2)`. RATE applies only to hurry. This is a panel name, not ownership of Strudel's unrelated wavetable `.warp()` control.                                                                                                                                     |
+| ECHO             | 12  | TIMES 1–16, 1; 3. TIME 0.015625–1, 0.015625; 0.125. FEEDBACK 0–1, 0.05; 0.5.                                               | `.echo(3, 0.125, 0.5)`. These are repeated pattern events; the pinned engine writes decreasing gain for each repetition.                                                                                                                                                                    |
 
 CLOCK now owns standalone `.slow()` calls, including immediately after SEQ;
 SEQ's adjacent `.fast()` still sets RATE. LFO's dedicated rate handling remains
@@ -731,3 +731,42 @@ Pinned implementation evidence: core `pattern.mjs` (`_distortWithAlg`),
 `controls.mjs` (compressor, FM, phaser, coarse, stretch); superdough `synth.mjs`
 (noise/user oscillator), `helpers.mjs` (FM/dynamics), `superdough.mjs` (chain and
 40-ms latency), and `worklets.mjs` (phase-vocoder remapping and 2048-frame window).
+
+## Function loops (#135)
+
+All modules below are Alien, order-sensitive and in the Pattern palette. IN/OUT
+retain the incoming pattern/audio/mod signal. SEND is a function output and
+RETURN a function input; every cable inside the loop carries function signal,
+even through an audio-setting transform. λ centers, a teal long/short dashed
+stroke, visible SEND roles and source hover distinguish them without colour.
+Existing JUX (10 HP) and TIME LENS (12 HP) widths do not change.
+
+| Module           | HP  | Controls and defaults                                                   | Writes                                                                          | SEND role                |
+| ---------------- | --- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------ |
+| CHUNK            | 12  | CHUNKS 1–32 integer; 4                                                  | `.chunk(4, fn)`                                                                 | 1 of 4 chunks            |
+| EVERY            | 12  | CYCLE first / last; first. CYCLES 1–32 integer; 4                       | `.firstOf(4, fn)` / `.lastOf(4, fn)`                                            | first/last of 4 cycles   |
+| SOMETIMES        | 14  | MODE events / cycles / often / rarely; events. CHANCE 0–1, step .05; .5 | `.sometimesBy(.5, fn)` / `.someCyclesBy(.5, fn)` / `.often(fn)` / `.rarely(fn)` | mode selection           |
+| OFF              | 12  | TIME −4…4 cycles, step 1/64; 1/8                                        | `.off(.125, fn)`                                                                | copy delayed .125 cycles |
+| LAYER            | 12  | No scalar controls                                                      | `.superimpose(fn)`                                                              | parallel copy            |
+| TIME LENS WINDOW | 12  | Existing START/END, strictly increasing                                 | `.within(.25, .75, fn)`                                                         | window                   |
+| JUX              | 10  | Existing RIGHT preset, used when empty                                  | `.jux(fn)`                                                                      | right ear                |
+
+New modules use `rev` as the empty-loop preset. JUX retains all four old presets.
+CHANCE is hidden in often/rarely modes while its inactive value remains saved.
+TIME LENS's existing non-window calls and values retain their behavior. These
+forms were checked against `@strudel/core` 1.2.6; often and rarely mean per-event
+probabilities .75 and .25 respectively. Arbitrary function identifiers are not
+mapped to invented rack transforms.
+
+A loop accepts catalog chain transforms (including audio settings and CODE),
+with CV sources connected to their CV jacks, and may contain another loop module.
+Sources, OSC/SMPL, pattern-modulation utilities, MIX and OUT stay outside loops.
+Branches, cross-returns and recursive containment are rejected. Incomplete chains
+are silent saved state until closed and generation uses the preset. A custom
+readable lambda becomes loop modules; an unsupported receiver-chain suffix is
+one CODE inside the loop, with the original callback identifier retained. Other
+callback shapes remain whole-call CODE. Existing saved CODE is never silently
+converted. See [translation and persistence](translation-rules.md#function-loops-135).
+
+A closed nonempty chain whose controls all bypass their calls writes `x => x`,
+preserving identity instead of selecting the empty-loop preset.

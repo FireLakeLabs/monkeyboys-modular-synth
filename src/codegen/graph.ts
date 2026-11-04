@@ -1,4 +1,6 @@
 import { effectRank } from '../modules/effects'
+import { isLoopChain, loopMethod } from '../modules/functions'
+import { parse } from 'acorn'
 import { controlValue } from '../modules/values'
 import { numericNotation } from '../patch/notation'
 import { isRailHp } from '../patch/layout'
@@ -138,6 +140,13 @@ export function graph(patch: Patch): Map<string, Node> {
       !looksFor(spec.family).includes(module.look)
     )
       throw new Error(`Invalid layout: ${module.id}`)
+    if (module.functionParameter !== undefined) {
+      if (!spec.functionLoop || !/^[A-Za-z_$][\w$]*$/.test(module.functionParameter))
+        throw new Error('Invalid function parameter')
+      parse(`(${module.functionParameter} => ${module.functionParameter})`, {
+        ecmaVersion: 'latest',
+      })
+    }
     const node: Node = { module, spec, inputs: new Map(), outputs: new Map() }
     for (const [id, candidate] of Object.entries(module.values)) {
       if (!validValue(control(node, id), candidate, node))
@@ -214,32 +223,108 @@ export function graph(patch: Patch): Map<string, Node> {
     to.inputs.set(input.id, cable)
     from.outputs.set(output.id, [...(from.outputs.get(output.id) ?? []), cable])
   }
+  const loops = functionMembers(nodes)
+  for (const key of Object.keys(patch.names)) {
+    const [id, jack] = key.split(':')
+    if (jack === 'send' || (id && loops.has(id)))
+      throw new Error('Function outputs are local to their loop and cannot be named')
+  }
   const visited = new Set<string>()
   const visiting = new Set<string>()
   function visit(node: Node): void {
     if (visiting.has(node.module.id)) throw new Error('Patch cycles are not supported')
     if (visited.has(node.module.id)) return
     visiting.add(node.module.id)
-    for (const cable of node.inputs.values()) visit(requireNode(nodes, cable.from.module))
+    for (const cable of node.inputs.values()) {
+      if (cable.from.jack !== 'send') visit(requireNode(nodes, cable.from.module))
+    }
     visiting.delete(node.module.id)
     visited.add(node.module.id)
   }
   for (const node of nodes.values()) visit(node)
-  function signal(node: Node): JackSignal {
+  function signal(node: Node, jack = 'out'): JackSignal {
+    if (jack === 'send' || loops.has(node.module.id)) return 'function'
     const output = node.spec.jacks.find((jack) => jack.direction === 'out')
     if (output?.signal !== 'any') return output?.signal ?? 'any'
     const input = node.inputs.get('in')
-    return input ? signal(requireNode(nodes, input.from.module)) : 'any'
+    return input ? signal(requireNode(nodes, input.from.module), input.from.jack) : 'any'
   }
   for (const node of nodes.values()) {
     for (const [id, cable] of node.inputs) {
       const input = node.spec.jacks.find((jack) => jack.id === id)
-      const actual = signal(requireNode(nodes, cable.from.module))
+      const actual = signal(requireNode(nodes, cable.from.module), cable.from.jack)
+      if (actual === 'function' && id === 'in' && loops.has(node.module.id)) continue
       if (actual !== 'any' && input?.signal !== 'any' && input?.signal !== actual)
         throw new Error(`Incompatible cable signal: ${cable.id}`)
     }
   }
   return nodes
+}
+
+/** Incomplete SEND chains are saved but do not replace the preset until RETURN is connected. */
+export function functionMembers(nodes: Map<string, Node>): Map<string, string> {
+  const members = new Map<string, string>()
+  for (const owner of nodes.values()) {
+    if (!owner.spec.functionLoop) continue
+    const sends = owner.outputs.get('send') ?? []
+    if (sends.length > 1) throw new Error('Function loops require a single chain')
+    if (sends.length && !loopMethod(owner.spec, owner.module))
+      throw new Error('Select the function mode before connecting SEND')
+    let cable = sends[0]
+    const seen = new Set<string>([owner.module.id])
+    while (cable) {
+      const node = requireNode(nodes, cable.to.module)
+      if (cable.to.jack === 'return') {
+        if (node !== owner) throw new Error('Function RETURN must close its own SEND')
+        break
+      }
+      if (cable.to.jack !== 'in' || !isLoopChain(node.spec))
+        throw new Error('Function loops accept chain modules, excluding sources, MIX and OUT')
+      if (seen.has(node.module.id)) throw new Error('Function loop cycle')
+      if (members.has(node.module.id) && members.get(node.module.id) !== owner.module.id)
+        throw new Error('A module cannot belong to two function loops')
+      seen.add(node.module.id)
+      members.set(node.module.id, owner.module.id)
+      const next = node.outputs.get('out') ?? []
+      if (next.length > 1) throw new Error('Function loops require a single chain')
+      cable = next[0]
+    }
+  }
+  for (const owner of nodes.values()) {
+    let cable = owner.inputs.get('return')
+    if (cable && !loopMethod(owner.spec, owner.module))
+      throw new Error('Select the function mode before connecting RETURN')
+    const seen = new Set<string>()
+    while (cable) {
+      if (cable.from.jack === 'send') {
+        if (cable.from.module !== owner.module.id)
+          throw new Error('Function RETURN must close its own SEND')
+        break
+      }
+      const node = requireNode(nodes, cable.from.module)
+      if (cable.from.jack !== 'out' || !isLoopChain(node.spec))
+        throw new Error('Function loops accept chain modules, excluding sources, MIX and OUT')
+      if (seen.has(node.module.id) || node === owner) throw new Error('Function loop cycle')
+      seen.add(node.module.id)
+      if (members.has(node.module.id) && members.get(node.module.id) !== owner.module.id)
+        throw new Error('Function RETURN must close its own SEND')
+      members.set(node.module.id, owner.module.id)
+      if ((node.outputs.get('out')?.length ?? 0) > 1)
+        throw new Error('Function loops require a single chain')
+      cable = node.inputs.get('in')
+    }
+  }
+  // Nesting is ownership, not signal feedback. Reject recursive containment.
+  for (const id of members.keys()) {
+    const seen = new Set<string>([id])
+    let parent = members.get(id)
+    while (parent) {
+      if (seen.has(parent)) throw new Error('Function loop nesting cycle')
+      seen.add(parent)
+      parent = members.get(parent)
+    }
+  }
+  return members
 }
 
 export function requireNode(nodes: Map<string, Node>, id: string): Node {

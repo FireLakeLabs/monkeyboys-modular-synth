@@ -240,3 +240,31 @@ orbit sends. Final-voice orbit allocation is unchanged. The pinned engine cannot
 isolate 24 dB filter duplication per FX stage; refuse that ordered mode rather
 than misrepresent it. See [rule 4](translation-rules.md#4-effect-stages-follow-cable-order-134)
 for reader limits and [verification](ordered-effects-verification.md) for evidence.
+
+## Function loops (#135, decided 3 November 2026)
+
+SEND/RETURN turns a chain into the final function argument of CHUNK, EVERY,
+SOMETIMES, OFF, LAYER, JUX and TIME LENS WINDOW. Function cables use Alien teal
+`#8CF5DA`, a long/short dashed stroke and λ jack centers. SEND shows its role
+(for example, “1 of 4 chunks” or “right ear”); cable and jack hover show the
+lambda. The lambda has matching teal code ink.
+
+Loops nest and accept chain transforms, including effects, CODE and CV on their
+controls. Sources (including OSC/SMPL), modulation utilities, MIX and OUT cannot
+be loop members. Each loop is one local chain: no branching, named function
+outputs, shared members, cross-loop RETURN or recursive containment. Incomplete
+chains are savable; until SEND reaches RETURN, generation uses the preset.
+Empty loops use `rev`, except JUX, which retains its four existing presets.
+New modules use fixed catalog widths and Alien looks; existing widths stay fixed.
+
+The reader accepts synchronous single-identifier arrow functions rooted in that
+identifier. Readable calls become loop modules; an unsupported call keeps the
+entire corresponding lambda suffix in one CODE inside that loop, preserving
+its parameter and references. Blocks, async callbacks, non-receiver expressions,
+unknown function identifiers and unsupported arguments remain whole-call CODE.
+Existing JUX preset forms and explicit saved CODE owners remain unchanged.
+Nested source addresses extend v1 with an optional `loop` path; untouched source,
+saved rack identity and engine events have independent checks. Imported loop
+literal/layout edits preserve source; imported loop rewiring uses the existing
+explicit Make rack-editable flow. See [the contract](translation-rules.md#function-loops-135)
+and [verification](function-loops-verification.md).

@@ -897,6 +897,11 @@ export const ITER: ModuleSpec = {
   orderSensitive: true,
 }
 
+const loopJacks = [
+  { id: 'send', label: 'SEND', direction: 'out', signal: 'function' },
+  { id: 'return', label: 'RETURN', direction: 'in', signal: 'function' },
+] as const
+
 export const JUX: ModuleSpec = {
   id: 'jux',
   name: 'JUX',
@@ -906,6 +911,7 @@ export const JUX: ModuleSpec = {
   hp: 10,
   paletteCall: '.jux()',
   paletteCategory: 'pattern',
+  functionLoop: { method: 'jux', controls: [], preset: 'rev', role: 'right ear' },
   controls: [
     {
       kind: 'switch',
@@ -935,6 +941,7 @@ export const JUX: ModuleSpec = {
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'any' },
+    ...loopJacks,
   ],
   strudel: ['jux'],
   orderSensitive: true,
@@ -1258,17 +1265,24 @@ export const TIME_LENS: ModuleSpec = {
   paletteCategory: 'pattern',
   hp: 12,
   paletteCall: '.zoom()',
+  functionLoop: {
+    method: 'within',
+    controls: ['start', 'end'],
+    preset: 'rev',
+    role: 'window',
+    when: { control: 'mode', value: 'window' },
+  },
   controls: [
     {
       kind: 'switch',
       id: 'mode',
       label: 'MODE',
-      options: opts('zoom', 'linger', 'compress'),
+      options: opts('zoom', 'linger', 'compress', 'window'),
       default: 'zoom',
       call: {
         method: {
           control: 'mode',
-          names: { zoom: 'zoom', linger: 'linger', compress: 'compress' },
+          names: { zoom: 'zoom', linger: 'linger', compress: 'compress', window: 'within' },
         },
         argument: {
           kind: 'tuple',
@@ -1282,8 +1296,8 @@ export const TIME_LENS: ModuleSpec = {
     { kind: 'knob', id: 'end', label: 'END', min: 0.01, max: 1, step: 0.01, default: 0.75 },
     { kind: 'knob', id: 'length', label: 'LENGTH', min: 0.01, max: 1, step: 0.01, default: 0.25 },
   ],
-  jacks: patternJacks,
-  strudel: ['zoom', 'linger', 'compress'],
+  jacks: [...patternJacks, ...loopJacks],
+  strudel: ['zoom', 'linger', 'compress', 'within'],
   orderSensitive: true,
 }
 
@@ -1714,6 +1728,140 @@ export const SHIFT: ModuleSpec = {
   orderSensitive: false,
 }
 
+/** Higher-order pattern transforms; loop syntax and panel controls share this data. */
+export const FUNCTION_MODULES: readonly ModuleSpec[] = [
+  {
+    id: 'chunk',
+    name: 'CHUNK',
+    title: 'Transform rotating chunks',
+    family: 'alien',
+    category: 'alien',
+    paletteCategory: 'pattern',
+    hp: 12,
+    paletteCall: '.chunk(4, x => x.rev())',
+    functionLoop: {
+      method: 'chunk',
+      controls: ['chunks'],
+      preset: 'rev',
+      role: '1 of {chunks} chunks',
+    },
+    controls: [
+      { kind: 'knob', id: 'chunks', label: 'CHUNKS', min: 1, max: 32, step: 1, default: 4 },
+    ],
+    jacks: [...patternJacks, ...loopJacks],
+    strudel: ['chunk'],
+    orderSensitive: true,
+  },
+  {
+    id: 'every',
+    name: 'EVERY',
+    title: 'Transform selected cycles',
+    family: 'alien',
+    category: 'alien',
+    paletteCategory: 'pattern',
+    hp: 12,
+    paletteCall: '.firstOf() .lastOf()',
+    functionLoop: {
+      method: { control: 'mode', names: { first: 'firstOf', last: 'lastOf' } },
+      controls: ['cycles'],
+      preset: 'rev',
+      role: '{mode} of {cycles} cycles',
+    },
+    controls: [
+      {
+        kind: 'switch',
+        id: 'mode',
+        label: 'CYCLE',
+        options: opts('first', 'last'),
+        default: 'first',
+      },
+      { kind: 'knob', id: 'cycles', label: 'CYCLES', min: 1, max: 32, step: 1, default: 4 },
+    ],
+    jacks: [...patternJacks, ...loopJacks],
+    strudel: ['firstOf', 'lastOf'],
+    orderSensitive: true,
+  },
+  {
+    id: 'sometimes',
+    name: 'SOMETIMES',
+    title: 'Transform by probability',
+    family: 'alien',
+    category: 'alien',
+    paletteCategory: 'pattern',
+    hp: 14,
+    paletteCall: '.sometimesBy() .someCyclesBy() .often() .rarely()',
+    functionLoop: {
+      method: {
+        control: 'mode',
+        names: { events: 'sometimesBy', cycles: 'someCyclesBy', often: 'often', rarely: 'rarely' },
+      },
+      controls: ['probability'],
+      byMethod: { often: [], rarely: [] },
+      preset: 'rev',
+      role: '{mode} selection',
+    },
+    controls: [
+      {
+        kind: 'switch',
+        id: 'mode',
+        label: 'MODE',
+        options: opts('events', 'cycles', 'often', 'rarely'),
+        default: 'events',
+      },
+      {
+        kind: 'knob',
+        id: 'probability',
+        label: 'CHANCE',
+        min: 0,
+        max: 1,
+        step: 0.05,
+        default: 0.5,
+        when: [{ control: 'mode', values: ['events', 'cycles'] }],
+      },
+    ],
+    jacks: [...patternJacks, ...loopJacks],
+    strudel: ['sometimesBy', 'someCyclesBy', 'often', 'rarely'],
+    orderSensitive: true,
+  },
+  {
+    id: 'off',
+    name: 'OFF',
+    title: 'Layer a delayed transform',
+    family: 'alien',
+    category: 'alien',
+    paletteCategory: 'pattern',
+    hp: 12,
+    paletteCall: '.off(1/8, x => x.rev())',
+    functionLoop: {
+      method: 'off',
+      controls: ['time'],
+      preset: 'rev',
+      role: 'copy delayed {time} cycles',
+    },
+    controls: [
+      { kind: 'knob', id: 'time', label: 'TIME', min: -4, max: 4, step: 0.015625, default: 0.125 },
+    ],
+    jacks: [...patternJacks, ...loopJacks],
+    strudel: ['off'],
+    orderSensitive: true,
+  },
+  {
+    id: 'layer',
+    name: 'LAYER',
+    title: 'Superimpose a transformed copy',
+    family: 'alien',
+    category: 'alien',
+    paletteCategory: 'pattern',
+    hp: 12,
+    paletteCall: '.superimpose(x => x.rev())',
+    functionLoop: { method: 'superimpose', controls: [], preset: 'rev', role: 'parallel copy' },
+    controls: [],
+    jacks: [...patternJacks, ...loopJacks],
+    strudel: ['superimpose'],
+    orderSensitive: true,
+  },
+]
+
 /** Every shipped module, in library order. */
 export const CATALOG: readonly ModuleSpec[] = [
   SEQ,
@@ -1752,6 +1900,7 @@ export const CATALOG: readonly ModuleSpec[] = [
   OUT,
   ITER,
   JUX,
+  ...FUNCTION_MODULES,
   REV,
   SHUFFLE,
   RIBBON,

@@ -322,3 +322,14 @@ from native orbit sends. Reordering supported effects does not mark cables or
 connection targets as warnings. Audio fan-out retains its existing level warning. Repeated native setters share
 one listed stage with an explanation that later setters override matching
 controls; explicit FX stages remain separate.
+
+## Function cables (#135)
+
+SEND/RETURN jacks use λ centers and announce “function”; SEND's visible role also
+appears in its accessible name. Cables are Alien teal with a long/short dash
+pattern (`16 4 3 4`), distinct from modulation's uniform dashes and pattern dots.
+Their hover text names the loop role and generated lambda; jack hover does the
+same. Lambda source receives teal ink while CODE retains its dashed underline.
+Widths stay catalog-owned and cable endpoints follow measured live jacks.
+Connections list entries include “function λ”, keeping their selection/removal
+path available when cables are faded. See [acceptance evidence](function-loops-verification.md).

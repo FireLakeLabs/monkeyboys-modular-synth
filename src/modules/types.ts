@@ -11,7 +11,7 @@ export type Category = 'pattern' | 'sound' | 'shape' | 'mod' | 'fx' | 'util' | '
 export type PaletteCategory = Exclude<Category, 'alien' | 'cyber'>
 
 /** What a cable carries. */
-export type Signal = 'pattern' | 'audio' | 'mod'
+export type Signal = 'pattern' | 'audio' | 'mod' | 'function'
 
 /** Passthrough transforms retain their incoming signal. */
 export type JackSignal = Signal | 'any'
@@ -168,6 +168,15 @@ export interface ModuleSpec {
   source?: { method: string; control: string; suffix: readonly string[] }
   /** Behavior of absent fields in older saved patches; new modules store the new defaults. */
   legacyDefaults?: Readonly<Record<string, number | string>>
+  /** SEND/RETURN wraps a chain as the final function argument. */
+  functionLoop?: {
+    method: CallBinding['method']
+    controls: readonly string[]
+    byMethod?: Readonly<Record<string, readonly string[]>>
+    preset: string
+    role: string
+    when?: { control: string; value: string }
+  }
   controls: readonly Control[]
   jacks: readonly Jack[]
   /**

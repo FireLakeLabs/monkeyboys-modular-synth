@@ -6,6 +6,8 @@ import { RACK_MARKER } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
 import { SOUND_CONTROLS } from '../modules/sound-effects.fixtures'
+
+import { FUNCTION_CONTROLS } from '../modules/function-loops.fixtures'
 import { PATTERN_CONTROLS } from '../modules/pattern-time.fixtures'
 import { drumView, stepView } from '../patch/notation'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
@@ -174,10 +176,10 @@ const edits: Record<string, readonly EditCase[]> = {
   code: [
     {
       control: 'text',
-      before: '.chunk(4, x => x.hurry(2))',
-      after: '.chunk(3, x => x.hurry(2))',
-      token: '.chunk(4,',
-      replacement: '.chunk(3,',
+      before: '.chunkBack(4, x => x.hurry(2))',
+      after: '.chunkBack(3, x => x.hurry(2))',
+      token: '.chunkBack(4,',
+      replacement: '.chunkBack(3,',
     },
   ],
 }
@@ -325,6 +327,8 @@ it('accounts for every catalog module/control without silently skipping new cont
       ...nonLiteral,
       ...PATTERN_CONTROLS,
       ...SOUND_CONTROLS,
+
+      ...FUNCTION_CONTROLS,
       // Coupled modulation expressions have their own independent source/rack/event matrix.
       // See modulation.test.ts; these are not independent scalar call arguments.
       'lfo.mode',

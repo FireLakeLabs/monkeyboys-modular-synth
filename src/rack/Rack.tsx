@@ -7,6 +7,9 @@ import {
   type ReactNode,
   type CSSProperties,
 } from 'react'
+import { generateDocument } from '../codegen/generate'
+import { functionMembers, graph } from '../codegen/graph'
+import { loopRole } from '../modules/functions'
 import { LOOK_LABELS, looksFor } from '../modules/looks'
 import { LOOK_LAYOUT } from '../looks/layout'
 import { PALETTE_CATEGORIES, paletteModules, getModuleSpec } from '../modules/catalog'
@@ -350,6 +353,18 @@ export function Rack({
   }
   const currentCable = patch.cables.find((c) => c.id === selectedCable)
   const module = patch.modules.find((m) => m.id === selected)
+  const loopInfo = useMemo(() => {
+    const members = functionMembers(graph(patch))
+    const { functions } = generateDocument(patch)
+    return { members, functions }
+  }, [patch])
+  function functionLabel(from: JackRef): string {
+    const id = from.jack === 'send' ? from.module : loopInfo.members.get(from.module)
+    const owner = patch.modules.find((module) => module.id === id)
+    if (!owner) return ''
+    const spec = getModuleSpec(owner.type)
+    return `function · ${loopRole(spec, owner)} · ${loopInfo.functions[owner.id] ?? 'Close RETURN and connect the module to OUT to write the function'}`
+  }
   const warnings = patch.cables.flatMap((c) => cableWarnings(patch, c))
   const renderModules = (modules: Patch['modules']) =>
     modules.map((m) => {
@@ -457,16 +472,14 @@ export function Rack({
               const signal =
                 state && state.kind !== 'blocked'
                   ? state.signal
-                  : jack.signal !== 'any'
-                    ? jack.signal
-                    : cableSignal(patch, incoming?.from ?? ref)
+                  : cableSignal(patch, incoming?.from ?? ref, loopInfo.members)
               return (
                 <div key={jack.id} className={`jack-label jack-${jack.direction}`}>
                   <button
                     type="button"
                     data-jack={keyOf(ref)}
                     className={`jack signal-${signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
-                    aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}`}
+                    aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}${jack.id === 'send' ? ` · ${loopRole(spec, m)}` : ''}`}
                     aria-describedby={
                       wire && target && keyOf(target) === keyOf(ref)
                         ? 'cable-target-hint'
@@ -474,9 +487,10 @@ export function Rack({
                     }
                     title={
                       state?.message ??
-                      (wire && jack.direction === 'out'
-                        ? 'Choose an input. Output-to-output is blocked.'
-                        : `${jack.label} · ${signal === 'any' ? 'unresolved signal' : signal} ${jack.direction}`)
+                      ((signal === 'function' ? functionLabel(incoming?.from ?? ref) : '') ||
+                        (wire && jack.direction === 'out'
+                          ? 'Choose an input. Output-to-output is blocked.'
+                          : `${jack.label} · ${signal === 'any' ? 'unresolved signal' : signal} ${jack.direction}`))
                     }
                     onPointerDown={(event) => {
                       if (jack.direction === 'in' && event.button === 0) wireGesture.current = null
@@ -536,15 +550,20 @@ export function Rack({
                   />
                   <span>
                     {jack.label}
-                    {state
-                      ? state.kind === 'blocked'
-                        ? ' ×'
-                        : state.kind === 'valid'
-                          ? ' ✓'
-                          : ' △'
-                      : wire && jack.direction === 'out'
-                        ? ' ×'
-                        : ''}
+                    <span className="jack-state-mark" aria-hidden="true">
+                      {state
+                        ? state.kind === 'blocked'
+                          ? '×'
+                          : state.kind === 'valid'
+                            ? '✓'
+                            : '△'
+                        : wire && jack.direction === 'out'
+                          ? '×'
+                          : ' '}
+                    </span>
+                    {jack.id === 'send' && (
+                      <small className="function-role">{loopRole(spec, m)}</small>
+                    )}
                   </span>
                   {jack.direction === 'out' &&
                     (patch.cables.filter((c) => keyOf(c.from) === keyOf(ref)).length > 1 ||
@@ -865,7 +884,7 @@ export function Rack({
               return a && b ? (
                 <g
                   key={c.id}
-                  className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
+                  className={`cable signal-${cableSignal(patch, c.from, loopInfo.members)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
                 >
                   <path d={curve(a, b)} className="cable-shadow" />
                   <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
@@ -878,6 +897,7 @@ export function Rack({
                   >
                     <title>
                       {keyOf(c.from)} → {keyOf(c.to)}
+                      {functionLabel(c.from) ? ` · ${functionLabel(c.from)}` : ''}
                       {warning ? ` · △ ${warning}` : ''}
                     </title>
                   </path>
@@ -886,7 +906,7 @@ export function Rack({
             })}
             {wire && points[keyOf(wire.from)] && (pointer || target) && (
               <path
-                className={`provisional signal-${cableSignal(patch, wire.from)}`}
+                className={`provisional signal-${cableSignal(patch, wire.from, loopInfo.members)}`}
                 d={curve(
                   points[keyOf(wire.from)] ?? { x: 0, y: 0 },
                   (target && points[keyOf(target)]) || pointer || { x: 0, y: 0 },
@@ -1096,9 +1116,11 @@ export function Rack({
               type="button"
               key={c.id}
               aria-pressed={selectedCable === c.id}
+              title={functionLabel(c.from) || undefined}
               onClick={() => setSelectedCable(c.id)}
             >
               {keyOf(c.from)} → {keyOf(c.to)}
+              {functionLabel(c.from) ? ' · function λ' : ''}
             </button>
           ))}
         </details>

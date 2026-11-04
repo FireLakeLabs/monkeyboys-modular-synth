@@ -138,7 +138,7 @@ describe('source and rack round trips are separate contracts', () => {
 
 describe('handwritten catalog projection', () => {
   it('maps scalar controls and preserves unknown suffixes, callbacks, comments and statement order', () => {
-    const source = `// 🐒\r\nconst helper = x => x.hurry(2);\r\nsetcpm(144/4);\r\n$: note('c3 [e3 g3]*2').fast(2).s('square').transpose(-12)\r\n  .lpf(/* cutoff */ 800).lpq(2).gain(.5)\r\n  /* exact */ .chunk(4, x => x.hurry(2)).delay(.4).delaytime(.375).delayfeedback(.5)\r\n  .room(.5).roomsize(4).iter(3).jux(x => x.fast(2));\r\n`
+    const source = `// 🐒\r\nconst helper = x => x.hurry(2);\r\nsetcpm(144/4);\r\n$: note('c3 [e3 g3]*2').fast(2).s('square').transpose(-12)\r\n  .lpf(/* cutoff */ 800).lpq(2).gain(.5)\r\n  /* exact */ .chunkBack(4, x => x.hurry(2)).delay(.4).delaytime(.375).delayfeedback(.5)\r\n  .room(.5).roomsize(4).iter(3).jux(x => x.fast(2));\r\n`
     const doc = read(source)
     expect(generate(doc)).toBe(source)
     expect(doc.patch.modules.map((module) => module.type)).toEqual([
@@ -163,7 +163,7 @@ describe('handwritten catalog projection', () => {
       tune: -12,
     })
     expect(doc.patch.modules.find((module) => module.type === 'code')?.values['text']).toBe(
-      '\r\n  /* exact */ .chunk(4, x => x.hurry(2))',
+      '\r\n  /* exact */ .chunkBack(4, x => x.hurry(2))',
     )
     const filter = doc.patch.modules.find((module) => module.type === 'vcf')
     const span = doc.bindings.find((binding) => binding.module === filter?.id)?.controls['cutoff']
