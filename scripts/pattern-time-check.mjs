@@ -13,6 +13,11 @@ const start =
 const forms = [
   ...PATTERN_FORMS.map((form) => ({ ...form, expression: start + form.call })),
   { type: 'chord', call: '.voicing()', expression: CHORD_SOURCE + '.arp("0 1 2 1").s("sine")' },
+  ...['.arp("0 1 2 1")', '.hurry(8)'].map((tail) => ({
+    type: 'clock',
+    call: '.swingBy(0,4)' + tail,
+    expression: CHORD_SOURCE + '.s("sine").swingBy(0,4)' + tail,
+  })),
 ]
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 function assert(value, message) {

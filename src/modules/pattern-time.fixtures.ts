@@ -5,7 +5,7 @@ export const PATTERN_FORMS = [
   {
     type: 'clock',
     call: '.slow(2).swingBy(1/3, 4).late(1/8)',
-    values: { division: 2, swing: 1 / 3, grid: 4, offset: 1 / 8 },
+    values: { division: 2, swing: 1 / 3, swingMode: 'on', grid: 4, offset: 1 / 8 },
   },
   {
     type: 'euclid',
@@ -63,6 +63,7 @@ export const CHORD_SOURCE = 'chord("<Cm7 Fm7 G7>").voicing()'
 // These controls have their literal/selector coverage in pattern-time.test.ts.
 // The legacy exhaustive control suite imports this list to keep one coverage ledger.
 export const PATTERN_CONTROLS = [
+  'clock.swingMode',
   'clock.division',
   'clock.swing',
   'clock.grid',

@@ -136,6 +136,13 @@ export function graph(patch: Patch): Map<string, Node> {
         number(node, span[0]) >= number(node, span[1])
       )
         throw new Error(`${module.id}: ${span[0]} must be less than ${span[1]}`)
+      const bounded = item.call.argument.atMost
+      if (
+        bounded &&
+        bounded.every((id) => active.includes(id)) &&
+        number(node, bounded[0]) > number(node, bounded[1])
+      )
+        throw new Error(`${module.id}: ${bounded[0]} must be at most ${bounded[1]}`)
     }
     nodes.set(module.id, node)
   }

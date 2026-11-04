@@ -31,6 +31,8 @@ export interface CallBinding {
         byMethod?: Readonly<Record<string, readonly string[]>>
         /** An active time span must have a strictly increasing start and end. */
         ascending?: readonly [string, string]
+        /** An active pair of controls must satisfy first <= second. */
+        atMost?: readonly [string, string]
       }
   /** Continue the adjacent module when this control has not already been read. */
   read?: 'merge'

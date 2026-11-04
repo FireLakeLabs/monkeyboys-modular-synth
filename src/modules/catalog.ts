@@ -649,8 +649,9 @@ export const CLOCK: ModuleSpec = {
   category: 'pattern',
   hp: 12,
   paletteCall: '.slow().swingBy().late()',
-  readDefaults: { division: 1, swing: 0, offset: 0 },
+  readDefaults: { division: 1, swing: 0, swingMode: 'off', offset: 0 },
   controls: [
+    { kind: 'switch', id: 'swingMode', label: 'GROOVE', options: opts('off', 'on'), default: 'on' },
     {
       kind: 'knob',
       id: 'division',
@@ -670,11 +671,11 @@ export const CLOCK: ModuleSpec = {
       max: 1,
       step: 0.01,
       default: 1 / 3,
-      omitAt: 0,
       call: {
         method: 'swingBy',
         argument: { kind: 'tuple', controls: ['swing', 'grid'] },
         read: 'merge',
+        when: { control: 'swingMode', value: 'on' },
       },
     },
     { kind: 'knob', id: 'grid', label: 'GRID', min: 1, max: 16, step: 1, default: 4 },
@@ -717,6 +718,7 @@ export const EUCLID: ModuleSpec = {
           kind: 'tuple',
           controls: ['pulses', 'steps', 'rotation'],
           byMethod: { euclidLegato: ['pulses', 'steps'] },
+          atMost: ['pulses', 'steps'],
         },
       },
     },

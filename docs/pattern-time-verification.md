@@ -60,10 +60,10 @@ functions, and this suite loads the tonal voicing registration.
 Run the committed browser groups with:
 
 ```sh
-npx playwright test -g 'pattern and time|pattern module numeric|verifyPanels|verifyOnRampUI|verifyLibraryUI|verifyLibraryRackEditing'
+npx playwright test -g 'pattern and time|pattern module numeric|imported CHORD|verifyPanels|rack-visuals-check|verifyOnRampUI|verifyLibraryUI|verifyLibraryRackEditing'
 ```
 
-The form matrix loads all 23 supported forms through the real editor and reader,
+The form matrix loads all 25 supported forms through the real editor and reader,
 plays them through `src/strudel/engine.ts`, and checks nonempty onset events,
 exact source, export/reopen rack identity and equal regenerated events. A single
 analyser connected to the actual output measures 122,880 PCM samples per form;
@@ -90,10 +90,27 @@ acceptance criterion is otherwise intentionally deferred.
 
 ## Observed run (4 November 2026 UTC)
 
-On Node 24.22.2, `npm ci` and `npm run check` passed: 1,070 tests,
-42 guardrails, coverage baseline, skill integrity, lint, TypeScript and build.
-The focused pattern/time suite has 131 passing checks. All six browser groups
-in the command above passed together in Chromium, including all 23 forms and
+On Node 24.22.2, `npm ci` and `npm run check` passed: 1,080 tests,
+43 guardrails, coverage baseline, skill integrity, lint, TypeScript and build.
+The focused pattern/time suite has 134 passing checks. All affected browser groups
+in the command above passed in Chromium, including all 25 forms and
 309 panel/look/zoom checks. The broader rack visual suite also passed contrast and native cable interactions. The numeric/text gestures and both new library
 exercises passed the actual workspace editing checks. These results are separate
 from physical listening, which was not performed.
+
+## Sol round 1 corrections
+
+Sol identified three reproducible findings. All four new assertions failed before
+the fixes: explicit zero swing was omitted; both EUCLID modes accepted pulses
+above steps; CHORD structural edits failed stable-channel discovery. CLOCK now
+has a catalog GROOVE switch to distinguish absent swing from an active zero.
+The EUCLID tuple declares its inclusive pulses/steps limit, enforced at mutation
+and generation boundaries. Branch discovery recognizes catalog `source` bindings.
+Regressions separately check exact source, saved identity, onset events (including
+narrow query windows), both Euclidean modes and native CHORD deletion/keyboard reconnection.
+
+After rebasing onto main `1c900d6` (#140), `npm ci` applied its required audio-pool
+patch and the integrated full gate passed. The final pattern/runtime, panel,
+contrast, numeric/text editing and CHORD deletion/keyboard reconnection groups
+passed on that refreshed engine. All three Sol findings were accepted and fixed;
+none were declined. Review usage was not exposed.

@@ -28,12 +28,12 @@ function expression(source: string): string {
   return source.slice(statement.body.expression.start, statement.body.expression.end)
 }
 
-function events(source: string) {
+function events(source: string, begin = 0, end = 4) {
   // Repository-owned examples only; evaluates the actual pinned pattern engine without audio.
   // oxlint-disable-next-line typescript/no-implied-eval
   const run = new Function(
     ...Object.keys(runtime),
-    `return (${source}).queryArc(0, 4).filter(h => h.hasOnset()).map(h => {
+    `return (${source}).queryArc(${begin}, ${end}).filter(h => h.hasOnset()).map(h => {
     const {orbit, ...value} = h.value;
     return {value, begin:h.whole.begin.toString(), end:h.whole.end.toString()}
   })`,
@@ -286,4 +286,37 @@ it('keeps a late call before swing as two ordered CLOCK nodes', () => {
     expression(generated).indexOf('.swingBy('),
   )
   expect(events(expression(generated))).toEqual(events(source.slice(3).trim()))
+})
+
+it('retains explicit zero swing before ARP and in narrow query windows before HURRY', () => {
+  for (const tail of ['.arp("0 1 2 1")', '.hurry(8)']) {
+    const source = `$: ${CHORD_SOURCE}.s("sine").swingBy(0,4)${tail}\n`
+    const document = read(source)
+    const generated = generate(document.patch)
+    expect(expression(generated)).toContain('.swingBy(0, 4)')
+    expect(events(expression(generated))).toEqual(events(source.slice(3).trim()))
+    if (tail === '.hurry(8)')
+      for (const begin of [0, 0.125, 0.25])
+        expect(events(expression(generated), begin, begin + 0.125)).toEqual(
+          events(source.slice(3).trim(), begin, begin + 0.125),
+        )
+    if (tail.startsWith('.arp')) expect(events(source.slice(3).trim())).toHaveLength(4)
+    const saved = saveLayout(document)
+    expect(read(saved.source).patch).toEqual(saved.patch)
+  }
+})
+
+it.each(['gate', 'legato'])('rejects PULSES above STEPS for EUCLID %s', (mode) => {
+  const method = mode === 'gate' ? 'euclidRot' : 'euclidLegatoRot'
+  const patch = read(`$: ${noteSource}.${method}(3, 8, 2)\n`).patch
+  const euclid = patch.modules.find((m) => m.type === 'euclid')
+  if (!euclid) throw new Error('Missing EUCLID')
+  expect(() => setValue(patch, euclid.id, 'pulses', 9)).toThrow('must be at most')
+  const forged = structuredClone(patch)
+  const invalid = forged.modules.find((m) => m.id === euclid.id)
+  if (!invalid) throw new Error('Missing invalid EUCLID')
+  invalid.values.pulses = 9
+  expect(() => generate(forged)).toThrow('must be at most')
+  const full = setValue(patch, euclid.id, 'pulses', 8)
+  expect(events(expression(generate(full))).length).toBeGreaterThan(0)
 })
