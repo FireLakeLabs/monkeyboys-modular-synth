@@ -52,6 +52,15 @@ an explicit neutral DJ override also retain their original engine events. The
 browser REPL independently compares original and regenerated companion, output
 override and mixed-delay settings.
 
+Sol round 3 confirmed S3–S5 and reproduced loss of explicit neutral sampler
+settings over opaque patterns, including when a bank call established a reused
+sampler. Ten regressions (N, BEGIN, END, LOOP, CUT, each direct and after BANK)
+failed with changed events, then passed after retaining those neutral setters as
+CODE regardless of owner reuse. They independently check exact source and saved
+rack identity, and the browser REPL compares original/regenerated events too.
+The workflow's state-loss extension permits a focused fourth review of this
+remaining control-state preservation finding.
+
 ## Browser and runtime proof
 
 Run `node scripts/panels-browser.mjs <vite-url> <evidence-directory>`. It is also

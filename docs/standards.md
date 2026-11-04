@@ -346,3 +346,8 @@ The #129 unit suite reproduces standalone/separated companions, repeated output
 pair defaults and mixed delay-time precedence, with independent real-engine event,
 source and saved-identity checks. The same tests cover retaining prior CODE
 ownership, which a new adapter must not silently replace.
+
+Explicit neutral SMPL setters over opaque upstream patterns stay CODE even when
+reusing an established sampler. Ten #129 event/source/saved-identity regressions
+failed before this guard (all five new sampler settings, with and without BANK)
+and pass afterward; the browser REPL independently compares the same forms.

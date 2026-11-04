@@ -377,3 +377,26 @@ it('reads an implicit neutral sampler boundary without inventing a bank', () => 
   })
   expect(events(generate(doc.patch))).toEqual(events(source))
 })
+
+for (const bank of ['', '.bank("RolandTR909")']) {
+  it.each([
+    ['n', '3 4', 0],
+    ['begin', '.1 .2', 0],
+    ['end', '.6 .8', 1],
+    ['loop', '1 1', 0],
+    ['cut', '1 2', 0],
+  ] as const)(
+    `retains explicit neutral %s over patterned settings ${bank}`,
+    (method, pattern, neutral) => {
+      const source = `$: s("bd").${method}("${pattern}")${bank}.${method}(${neutral}).orbit(3)\n`
+      const doc = read(source)
+      const regenerated = generate(doc.patch)
+      expect(events(regenerated)).toEqual(events(source))
+      expect(sourceBody(regenerated)).toContain(`.${method}(${neutral})`)
+      expect(generate(doc)).toBe(source)
+      const saved = saveLayout(doc)
+      expect(sourceBody(saved.source)).toBe(source)
+      expect(read(saved.source).patch).toEqual(doc.patch)
+    },
+  )
+}

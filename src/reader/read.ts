@@ -1022,13 +1022,17 @@ function project(
             matched &&
             controlEnabled(spec, { ...group.values, ...matched.binding.selects }, matched.control)
           const erasesOverride =
-            matched?.binding.selects &&
+            matched &&
             'omitAt' in matched.control &&
             candidate === matched.control.omitAt &&
-            !reuse &&
-            (hasOpaqueInput(upstream) ||
-              (group?.type === type &&
-                bindings.some((binding) => binding.module === group?.id && id in binding.controls)))
+            ((type === 'smpl' && hasOpaqueInput(upstream)) ||
+              (matched.binding.selects &&
+                !reuse &&
+                (hasOpaqueInput(upstream) ||
+                  (group?.type === type &&
+                    bindings.some(
+                      (binding) => binding.module === group?.id && id in binding.controls,
+                    )))))
           if ((needsOwner && !compatibleOwner) || erasesOverride) {
             upstream = code(scope, [index], source.slice(call.start, call.end), upstream)
             group = undefined

@@ -69,15 +69,25 @@ export async function pinnedLabels() {
     if (JSON.stringify(actual) !== JSON.stringify(expected))
       throw new Error(`Stack label ${label} changed events`)
   }
-  for (const settings of [
+  const importSources = [
     '.gain(.4).lpf(800).lpq(1).velocity(.6)',
     '.roomfade(2)',
     '.ftype("ladder")',
     '.channels("3:4").channels("1:2")',
     '.delay(.4).delayfeedback(.5).delaytime(.3).delaysync(.25)',
     '.delay(.4).delayfeedback(.5).delaysync(.25).delaytime(.3)',
-  ]) {
-    const source = `$: note("c3").s("sine")${settings}.orbit(3)`
+  ].map((settings) => `$: note("c3").s("sine")${settings}.orbit(3)`)
+  for (const bank of ['', '.bank("RolandTR909")']) {
+    for (const [method, pattern, neutral] of [
+      ['n', '3 4', 0],
+      ['begin', '.1 .2', 0],
+      ['end', '.6 .8', 1],
+      ['loop', '1 1', 0],
+      ['cut', '1 2', 0],
+    ])
+      importSources.push(`$: s("bd").${method}("${pattern}")${bank}.${method}(${neutral}).orbit(3)`)
+  }
+  for (const source of importSources) {
     const original = await repl.evaluate(source, false)
     const expected = original.queryArc(0, 1).map((h) => h.value)
     const regenerated = await repl.evaluate(generate(read(source).patch), false)
@@ -89,7 +99,7 @@ export async function pinnedLabels() {
           : item,
       )
     if (stable(actual) !== stable(expected))
-      throw new Error(`Imported settings changed events: ${settings}`)
+      throw new Error(`Imported settings changed events: ${source}`)
   }
   repl.stop()
   return result
