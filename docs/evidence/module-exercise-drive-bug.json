@@ -1,0 +1,15 @@
+{
+  "status": "Audio error",
+  "error": [
+    "Audio failure. Current draft retained. Correct code or check audio access, then apply with Ctrl/Cmd+Enter or press Play. Stop can be retried if audio state is unknown.Audio error detailsScheduling stopped. Audio resource/output failure. [getTrigger] error: Failed to set the 'value' property on 'AudioParam': The provided float value is non-finite."
+  ],
+  "code": "setcpm(120/4)\n\n$: note(\"c3 e3 g3 b3\")\n  .s(\"sawtooth\")\n  .shape()\n  .gain(0.15)\n  .postgain(0.8)\n  .orbit(1)\n\n",
+  "recovery": {
+    "status": "Playing",
+    "pcm": {
+      "rms": 0.011204053451127996,
+      "samples": 600064
+    }
+  },
+  "errors": []
+}

@@ -28,6 +28,342 @@ exports[`built-in patch library > enveloped-synth: preserves exact source and in
 }
 `;
 
+exports[`built-in patch library > exercise-arp: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "914f6c655b151940290af914b17ac802a41bbc956bc09f53084546135ad8f05e",
+  "projection": "a2ce6c0c1d898b19c0eb2d01fcb9198dce7beb340d5fa0cbba200e52c9b1072b",
+}
+`;
+
+exports[`built-in patch library > exercise-attenuverter: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "0192d8a618011f5185d65778d606d634d6174313d9b4dac3819b9d7a36003768",
+  "projection": "7ecd2aefbbb593aa24c8883e97a23c4da11d4a2130ae30a27f2cb558037f0f6d",
+}
+`;
+
+exports[`built-in patch library > exercise-chance: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "18c58b52d2bb6a9d257af3099228cab37f343b8b6a62c754659ce630f8256602",
+  "projection": "363f472beb0a4806d2b0ead5bb957a2199641152065b81577864a17077763f50",
+}
+`;
+
+exports[`built-in patch library > exercise-chord: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "c85c6886f3b59532a51192b0b2b80fbcbd419601da70a1017809bd54f8116d13",
+  "projection": "33d470524a991e44700e6ae88e48e3535cfb34132c91103ae2e987c0811c8913",
+}
+`;
+
+exports[`built-in patch library > exercise-chunk: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "08598b1e6ea405f48deec4c16a724a1b1a7bc8d290e3868bedb66af8d322209a",
+  "projection": "2dfd2bf93321a164278335ec042c1eed3426742626a5aa5da5c8e35608ea0023",
+}
+`;
+
+exports[`built-in patch library > exercise-clock: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "c0538d3f1143698c7f016d7e18bc9fe4273c7065d73e459309f32f57c451f567",
+  "projection": "cb4453ecaeb882e32ce55c749c9a43c8eb03c0790afcb068a87a3c8861dc79f1",
+}
+`;
+
+exports[`built-in patch library > exercise-code: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "3c619f7eda3271e1caf8a9d8529630a28f70191ae2ffaf08f53b83e7b109bb97",
+  "projection": "01c4d776f500eefb825ecd34cfe23d710a937a1ad76b6c69dd1e8acb00ad7ed3",
+}
+`;
+
+exports[`built-in patch library > exercise-comp: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "e59e9ace945a22c5c7281d198afa8bb2825265e28d621b8ce3ba70ba2fca2227",
+  "projection": "b5a93391db97d24ad8c7bc37b5a67122b3e21bbe72f050c18e0cd8a9bfce2b2e",
+}
+`;
+
+exports[`built-in patch library > exercise-cvseq: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "6572a3d7f716a45a49a035b8d6f1041cfea67d46fd38dd74bf5da83f88b23d1d",
+  "projection": "f391f312e63b9b555f9e71a84c7ba06788f1b61de3de7c856cf524ba9d940425",
+}
+`;
+
+exports[`built-in patch library > exercise-delay: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "729a518df5c0d77c4073c2103b3d9449adfd9ec387768edc78ef98347ad71250",
+  "projection": "8201fafad2c21900788aac886dacf05fb4d0363855923d91dadda2e4f8eff39f",
+}
+`;
+
+exports[`built-in patch library > exercise-drive: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "ffe689eb2b7e4573d2a0ec5330de2e506cff4edaa09d8e2ec1ddb51216056c9e",
+  "projection": "0782cd7d36d35aca0b4099029910b12a20a754855271acb485f29cc234d6bfd6",
+}
+`;
+
+exports[`built-in patch library > exercise-drums: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "550f213540ec82a2e7139e455618b818ac01faaf9676ce61e764af1621c76ba4",
+  "projection": "9485b265d7d3e38d68dade071a5a1c620f30f8bf58ff1eb0572c5be8d2d2f817",
+}
+`;
+
+exports[`built-in patch library > exercise-echo: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "18410a25f1ddd6ad18d6e014aee86c607fb870bad189065a6ca50146df8aae6e",
+  "projection": "65e4682d96a93709015c3494ff2c6ce9291d53df7564b918ec7a901453b98633",
+}
+`;
+
+exports[`built-in patch library > exercise-env: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "36aa1e72deb3a98125fb707e26f16a3a3001007631c1ace3b9c95c2c42d1200c",
+  "projection": "ed724d74dba5f4f2c0f3bf533d5555184421a990f1e3e01982b95292b850fc9e",
+}
+`;
+
+exports[`built-in patch library > exercise-euclid: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "31bb41a3265d4ed263125b240bd064cc86b0b07283d1f82b91729f072beab7e7",
+  "projection": "720e8b0f4dca8da668304d0036cfb57582058ac94afc84b00fa9ae20b3f8e514",
+}
+`;
+
+exports[`built-in patch library > exercise-every: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "1891f7d74cdd1cf75505a1a8c051aa2314bf964e0a18824eb8ee3d9b4a1474f2",
+  "projection": "33e6b7c1426112eae85f5cd8105220fa9c6e06217327f143ca7ad64155f1e324",
+}
+`;
+
+exports[`built-in patch library > exercise-fmop: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "aac8a772963228946b7307967ddde2bcebed7a07d291f4405828b0d8d33d6ebe",
+  "projection": "63e3c63b82ce135d56d524c1e72efab840bbec64a380dcb7b49e278bc1011793",
+}
+`;
+
+exports[`built-in patch library > exercise-folder: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "5af1fcaaf25d4eeb5b4c6825db559c5d3fa9c581d261a63befaa018256a8973f",
+  "projection": "e8351a18953b206e688742dede05fcbc387159dfab172c94509e70eca2c2a535",
+}
+`;
+
+exports[`built-in patch library > exercise-formant: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "a62aef675f4fac3132ba7f844879f91c28cb35bb3d3e2f6db86fc84c5fd1dc4f",
+  "projection": "51c04da4c36ecebc631d4a621f3735389c97584a8502b24f1cfab4a7b73dfc30",
+}
+`;
+
+exports[`built-in patch library > exercise-harmonic: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "d1acb429a17961d67a14bf5e6152528d73a35aeb20243b71d4bbc2b836fefbf2",
+  "projection": "25724f6a039d3c2035d0bc4e444d6c8f801c2246caacaed2b1ccd93ad3e0ab58",
+}
+`;
+
+exports[`built-in patch library > exercise-iter: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "0719e4d1dd352ae17e7af399219b850da70547a2777af3caab8721301620c9dd",
+  "projection": "d6ac78c629cff082cfda49c2ac9a2e7044800f35b065ca7b7c3d2d20ee3185e4",
+}
+`;
+
+exports[`built-in patch library > exercise-jux: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "af743dca763b36d6a738add5cb35d3f0740911edc4f62bfc3a7845d20296e73f",
+  "projection": "a65534e17779cf5bae65f1f5952000593f442038d51ab766c7f5bb1aae83451e",
+}
+`;
+
+exports[`built-in patch library > exercise-layer: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "e64c6b71d91645cc04a74ee5cf2a4883772163c5cdcfddc34e36fd1204d5995a",
+  "projection": "1c68c582fc6964b68644166853181dd516a519f9d0f327beefde5c4f01fe7886",
+}
+`;
+
+exports[`built-in patch library > exercise-lfo: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "bd92e2d0cb6ad19b5f8388263d06f90900d50d7bcb477d4de2e9bdce93bb3405",
+  "projection": "e37fd25310b60966016252666904485dc7d7ae0180d84430aa135091b87f05d7",
+}
+`;
+
+exports[`built-in patch library > exercise-lofi: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "a57790ad6435aae7790848937f5b6ae6462a34636f6144acdda89a77283ddd2f",
+  "projection": "d955bb59290f250488a7d8728994a9b750922c30e104ffdad241f411c111f6aa",
+}
+`;
+
+exports[`built-in patch library > exercise-mix: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "272ea26fc34d23e26ed2dd44e0d6e74326db71bc796406b016a4cbc215954b0a",
+  "projection": "6c0c7cafcd92315d56159be077124bf07a53159863504df0d12ab8c4ce46b8b8",
+}
+`;
+
+exports[`built-in patch library > exercise-modmix: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "aca4c668ed3ca08f1850ab1aa75de00a66896d5a5af30de9df2802b809a16861",
+  "projection": "15b2117778b053a8947633349a670902b1dd4c5c27e4f6d16713642f6985e3c2",
+}
+`;
+
+exports[`built-in patch library > exercise-noise: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "1a914b7549f6a4e8315ac18a3af49615b419c14041160fb34bb6b658b9d200e6",
+  "projection": "a6fd150223ef21760577dda5e8a93e5890a39d0395832f8e48916a1f8232a4fa",
+}
+`;
+
+exports[`built-in patch library > exercise-off: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "28bd2684debcec823939357ca055c43acf83512b564e516b87c41625a0b341f9",
+  "projection": "64490049c5828a94654101f543970b1e20bae1d63592bd85c7ec642ce5b9540f",
+}
+`;
+
+exports[`built-in patch library > exercise-osc: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "8648f28eff2ce6b0e0f515ac4a3556dc476ce49e313165fa75e7e51624008ffe",
+  "projection": "ed7666a9da6ece0b450d8b3dd59616a2ce6a9b232ea8fa4bdb1e9fad321e89bf",
+}
+`;
+
+exports[`built-in patch library > exercise-out: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",
+  "projection": "9d1b1ef642b2e59fd31603ac223f7d024a13b3d5ae1cbfb129e361cdf65df288",
+}
+`;
+
+exports[`built-in patch library > exercise-pan: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "9adda02dfbdd569756c906534831cdf9e0158016aed17f44d94bc7aca2dd77ab",
+  "projection": "e2f6fc79f8f770e9338f615df71002cde2093b7cab20d2fec9ec11e497044943",
+}
+`;
+
+exports[`built-in patch library > exercise-phaser: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "91ef7c3ae004370194ff912c8635b847504657ce7d69f8de9d8a16373fb3d084",
+  "projection": "d9dea7ea102b1bc8db27c87040d5a0c1fb711089961c0c683f717e6c9e266af7",
+}
+`;
+
+exports[`built-in patch library > exercise-quant: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "e82bdd7afc8835609760ea81ecb7cab602ce8896f946af86621ae39f06815882",
+  "projection": "285f069e277f7a390bc8f9acb06b456bb24da8c4a3b88f9265e944e06010ab1b",
+}
+`;
+
+exports[`built-in patch library > exercise-ratchet: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "47dc8132ed86c07583ce94f8ba3edf40bf9bdac9c84560a9b531d4596c0db82c",
+  "projection": "7e34a9e2e71fa7ebc8897178e7f2e992eb22704b830e47951fd12924b6e12a6a",
+}
+`;
+
+exports[`built-in patch library > exercise-rev: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "b45b06f25251aa6190937ca7f8c5deab4c9a85a1acf9917c81e0498bbe2927fa",
+  "projection": "9ee03c7ca39ef0ba0dddcf49e4c8948e2ffca88594c0b53988e9351b457c176d",
+}
+`;
+
+exports[`built-in patch library > exercise-reverb: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "2ab23c84301305045359a525e8a1860ae6673ef862562cc4eb8f8e2eef734373",
+  "projection": "1b86ee7dfd0ce71a1f68d4863178cfd88fc8f8e1b36dabd8ef00af7864967816",
+}
+`;
+
+exports[`built-in patch library > exercise-ribbon: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "57b33bd480853c1f802357922304118f6ff8fcf010ee0e3967954ed6f319c252",
+  "projection": "275b862b153852eab565930b88c4cb3f4887c93eec8ac079d466333223952dc7",
+}
+`;
+
+exports[`built-in patch library > exercise-samplehold: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "035a05f7082fc7c8433945d18e8ef639be8674a270e2788ac5a2f3a5159fd284",
+  "projection": "90a2da869910a9b125b34390bd980c54393e0caece1f76ed1e8774809bd04fc2",
+}
+`;
+
+exports[`built-in patch library > exercise-seq: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",
+  "projection": "9d1b1ef642b2e59fd31603ac223f7d024a13b3d5ae1cbfb129e361cdf65df288",
+}
+`;
+
+exports[`built-in patch library > exercise-shift: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "19f82cd2e22636738804bec83eca945cbb9a352c7fa224a58ec4ad36ec98e3a2",
+  "projection": "e21378d55944112cbd77f96778b92fba6d271dba8d24fcb2c5a4008c748afe24",
+}
+`;
+
+exports[`built-in patch library > exercise-shuffle: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "2a3bcbea5378c1e117d5a08892242df6e67319de6bd02ca78c5b8e1c6214ff8b",
+  "projection": "344fa4163a021243e814bf0e11588236c0154cfa0ba945249171023f0abac413",
+}
+`;
+
+exports[`built-in patch library > exercise-smpl: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "7b1d798f17c2a6a2ae0e10abd7fb306951a5ae645fe932591e388cd0fdf0f023",
+  "projection": "70bcd660d49f88c2bcfa7dfa857b92105e659997d213135bc80d9a92eeb77710",
+}
+`;
+
+exports[`built-in patch library > exercise-sometimes: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "b1306fc4e2da6b02bb9e1aa9eec3ad645405aa262ec9bb2ff3891a399ae6ceed",
+  "projection": "f2282fd5d0b64972a688f62be867ad485867f73c58f9a68b7517f90c1d12e7c9",
+}
+`;
+
+exports[`built-in patch library > exercise-time-lens: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "7c9dc2f66534a8d0537226fd1fa259b79613817686d18be413e5ec72b9c445aa",
+  "projection": "77d1e9b3ce0fb526eb8b9b8d41bbac7965fc29f3962d1f6e03b9809ae3da8096",
+}
+`;
+
+exports[`built-in patch library > exercise-vca: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",
+  "projection": "9d1b1ef642b2e59fd31603ac223f7d024a13b3d5ae1cbfb129e361cdf65df288",
+}
+`;
+
+exports[`built-in patch library > exercise-vcf: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "61f2553173dc17b3ceef1fd6348c71d71da023c161e8409d398b5ce8b9854e3f",
+  "projection": "a14c37401cc2f7dfa2d2e6b9d99c9d9e1a3424fd0f4e4993fbd33cbe0b72dddc",
+}
+`;
+
+exports[`built-in patch library > exercise-warp: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "a2c9a7b601ce014c787c4194545895d774d5b0acbcb687b7cf931a3dc952af0a",
+  "projection": "0c26aec0f898d49815319e81f370b04c54ac38cea92717a408fc04d8c3ba242e",
+}
+`;
+
 exports[`built-in patch library > filter-envelope: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "acaa27f612432956ab6d6fb030621b0369039012abccedb13eed358b410b0bd5",

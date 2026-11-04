@@ -186,7 +186,11 @@ save/reopen checks; passing the suite does not claim the remaining bugs are fixe
 
 The #45 library behavior tests require unique collection/patch IDs, active
 source-bound coverage of every shipped module, exact original source on load,
-and independently reopened saved rack state. Shared deterministic tests also
+and independently reopened saved rack state. The focused Module exercises
+collection must additionally advertise one target per entry, cover the complete
+catalog, supply a manual action and restore generator-owned source/rack state.
+See the [module exercise audit](module-exercise-audit.md) for browser evidence.
+Shared deterministic tests also
 cover preparation failure, confirmed Stop and cancellation. The separate
 [library browser check](patch-library.md#original-45-browser-verification) verifies actual
 dialog interactions, exports, loading and real-engine PCM; it needs browser/audio
