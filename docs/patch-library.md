@@ -45,6 +45,26 @@ a custom helper/CODE fragment, and a three-voice mixer. The attributed
 [Switch Angel trance demo](trance-demo.md) from #46 is an additional complete
 patch under Complete patches → Trance, bundled in its exact supplied variant.
 
+## Module exercises
+
+**Module exercises** follows Start here and provides one focused patch for each
+shipped catalog module. Select an entry, load it, press Play, then follow its
+**Try this** action. Supporting sources, amplifiers and routing remain present
+where needed; effects and time transforms are separated so another effect does
+not mask the control being exercised. MOD MIX uses two CV sequences, LAYER uses
+a REV in its function loop, and CODE retains an unsupported rhythm transform.
+
+[`module-exercises.ts`](../src/library/module-exercises.ts) owns the descriptions
+and actions; display names come from the module catalog. The plain saved sources
+live under [`patches/modules`](../src/library/patches/modules/). Add a focused
+entry when shipping a module: the library gate requires exactly one advertised
+target per exercise and complete catalog coverage, in addition to active source
+ownership, generator-style saved state and independent export/reopen checks.
+Existing Start here, combined exercises and attributed showcases remain available.
+
+See the [coverage audit and module bug reproductions](module-exercise-audit.md)
+for observed controls, real-engine output and verification limits.
+
 ## Start here (#80)
 
 The first collection follows the [Strudel workshop](https://strudel.cc/workshop/getting-started/):

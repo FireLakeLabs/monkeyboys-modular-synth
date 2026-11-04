@@ -19,6 +19,7 @@ for (const script of [
   'output-panel-browser',
   'panels-browser',
   'sound-effects-browser',
+  'module-exercises-browser',
   'nested-steps-browser',
 
   'function-loops-browser',
@@ -112,6 +113,7 @@ for (const width of [1024, 900]) {
 }
 
 test('library audio, replacement Cancel and Stop recovery', async ({ page }, info) => {
+  test.setTimeout(600_000)
   await page.evaluate(async () => {
     const suite = await import('/scripts/library-check.mjs')
     await suite.verifyReplacementConfirmation()

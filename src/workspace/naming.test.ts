@@ -67,16 +67,17 @@ describe('patch names', () => {
     })
   })
 
-  it('names every library workspace from its title while retaining executable bytes and rack identity', () => {
-    for (const entry of libraryPatches()) {
+  it.each(libraryPatches())(
+    '$id: names the workspace from its title while retaining executable bytes and rack identity',
+    (entry) => {
       const original = readLibraryPatch(entry)
       const loaded = renameDocument(original, entry.title)
       expect(loaded.patch).toEqual({ ...original.patch, name: entry.title })
       expect(sourceBody(loaded.source), entry.id).toBe(sourceBody(entry.source))
       expect(read(loaded.source).patch).toEqual(loaded.patch)
       expect(readLibraryPatch(entry).source).toBe(entry.source)
-    }
-  })
+    },
+  )
 
   it('opens older unnamed files unchanged and defaults blank names', () => {
     const old = generate(demoPatch())

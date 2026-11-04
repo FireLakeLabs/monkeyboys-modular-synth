@@ -22,6 +22,22 @@ function snapshot(status: PlaybackState['status']): PlaybackState {
 }
 
 describe('built-in patch library', () => {
+  it('provides a focused, rack-owned exercise and a manual action for every shipped module', () => {
+    const collection = PATCH_LIBRARY.find((node) => node.id === 'module-exercises')
+    if (!collection || collection.kind !== 'collection') throw new Error('Missing module exercises')
+    const exercises = libraryPatches(collection.children)
+    expect(exercises.flatMap((entry) => entry.exercises).sort()).toEqual(
+      CATALOG.map((module) => module.id).sort(),
+    )
+    for (const entry of exercises) {
+      expect(entry.exercises, entry.id).toHaveLength(1)
+      expect(entry.tryThis?.trim(), entry.id).toBeTruthy()
+      const document = readLibraryPatch(entry)
+      expect(document.layout, entry.id).toBe('restored')
+      expect(document.source, entry.id).toBe(generate(document.patch))
+    }
+  })
+
   it('starts with four rack-owned exercises in workshop order, each with a try-this and credit', () => {
     const first = PATCH_LIBRARY[0]
     if (!first || first.kind !== 'collection') throw new Error('Missing first collection')

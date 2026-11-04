@@ -1,4 +1,5 @@
 import soundEffects from './patches/sound-effects.strudel?raw'
+import { MODULE_EXERCISES } from './module-exercises'
 
 import functionLoops from './patches/function-loops.strudel?raw'
 import patternHardware from './patches/pattern-hardware.strudel?raw'
@@ -108,6 +109,12 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
         exercises: ['seq', 'osc', 'jux', 'vca', 'mix', 'out'],
       },
     ],
+  },
+  {
+    kind: 'collection',
+    id: 'module-exercises',
+    title: 'Module exercises',
+    children: MODULE_EXERCISES,
   },
   {
     kind: 'collection',

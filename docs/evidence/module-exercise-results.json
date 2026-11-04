@@ -1,0 +1,632 @@
+{
+  "browser": "156.0.8078.4",
+  "physicalListening": false,
+  "entries": [
+    {
+      "id": "exercise-seq",
+      "type": "seq",
+      "action": ["mini", "STEPS", "d3 e3 g3 b3", "steps"],
+      "pcm": {
+        "rms": 0.006227916762521231,
+        "samples": 489472
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-drums",
+      "type": "drums",
+      "action": ["mini", "GRID", "bd bd sd hh", "grid"],
+      "pcm": {
+        "rms": 0.004040948904887974,
+        "samples": 1224704
+      },
+      "savedIdentity": true,
+      "eventsBefore": 24,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-quant",
+      "type": "quant",
+      "action": ["switch", "SCALE", "major", "scale"],
+      "pcm": {
+        "rms": 0.002599044002840911,
+        "samples": 1859584
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-clock",
+      "type": "clock",
+      "action": ["knob", "DIV", 1, "division"],
+      "pcm": {
+        "rms": 0.0025131932498983554,
+        "samples": 2473984
+      },
+      "savedIdentity": true,
+      "eventsBefore": 16,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-euclid",
+      "type": "euclid",
+      "action": ["knob", "PULSES", 5, "pulses"],
+      "pcm": {
+        "rms": 0.0013804292467371824,
+        "samples": 3067904
+      },
+      "savedIdentity": true,
+      "eventsBefore": 24,
+      "eventsAfter": 40,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-ratchet",
+      "type": "ratchet",
+      "action": ["text", "REPEATS", "4", "repeats"],
+      "pcm": {
+        "rms": 0.002304665634340202,
+        "samples": 3907584
+      },
+      "savedIdentity": true,
+      "eventsBefore": 64,
+      "eventsAfter": 128,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-chance",
+      "type": "chance",
+      "action": ["knob", "DROP", 0, "drop"],
+      "pcm": {
+        "rms": 0.0013023878091609105,
+        "samples": 4995072
+      },
+      "savedIdentity": true,
+      "eventsBefore": 18,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-chord",
+      "type": "chord",
+      "action": ["mini", "CHORDS", "<C Fm7 G7>", "chords"],
+      "pcm": {
+        "rms": 0.003320155457187783,
+        "samples": 5283840
+      },
+      "savedIdentity": true,
+      "eventsBefore": 40,
+      "eventsAfter": 40,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-arp",
+      "type": "arp",
+      "action": ["text", "INDICES", "3 2 1 0", "indices"],
+      "pcm": {
+        "rms": 0.001410597496913366,
+        "samples": 6305792
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-osc",
+      "type": "osc",
+      "action": ["switch", "WAVE", "triangle", "wave"],
+      "pcm": {
+        "rms": 0.0010998872797982084,
+        "samples": 7516160
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-noise",
+      "type": "noise",
+      "action": ["switch", "TYPE", "pink", "wave"],
+      "pcm": {
+        "rms": 0.0002937053143082141,
+        "samples": 8095744
+      },
+      "savedIdentity": true,
+      "eventsBefore": 8,
+      "eventsAfter": 8,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-harmonic",
+      "type": "harmonic",
+      "action": ["drawbar", "Partial 3", 1, "partials"],
+      "pcm": {
+        "rms": 0.001385771569616928,
+        "samples": 8538112
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-fmop",
+      "type": "fmop",
+      "action": ["knob", "INDEX", 0, "index"],
+      "pcm": {
+        "rms": 0.0014154448584971367,
+        "samples": 9365504
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-smpl",
+      "type": "smpl",
+      "action": ["knob", "SPEED", 0.5, "speed"],
+      "pcm": {
+        "rms": 0.0005381865958499681,
+        "samples": 10067968
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-vcf",
+      "type": "vcf",
+      "action": ["knob", "CUTOFF", 5000, "cutoff"],
+      "pcm": {
+        "rms": 0.000929830437043449,
+        "samples": 10719232
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-vca",
+      "type": "vca",
+      "action": ["knob", "LEVEL", 0, "level"],
+      "pcm": {
+        "rms": 0.0012851693087314066,
+        "samples": 11452416
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-env",
+      "type": "env",
+      "action": ["knob", "ATK", 0.3, "atk"],
+      "pcm": {
+        "rms": 0.0006123957663460424,
+        "samples": 12156928
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-lfo",
+      "type": "lfo",
+      "action": ["knob", "RATE", 0.5, "rate"],
+      "pcm": {
+        "rms": 0.0009050137281218823,
+        "samples": 13561856
+      },
+      "savedIdentity": true,
+      "eventsBefore": 128,
+      "eventsAfter": 128,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-samplehold",
+      "type": "samplehold",
+      "action": ["knob", "STEPS", 16, "rate"],
+      "pcm": {
+        "rms": 0.0008330340259295472,
+        "samples": 16168960
+      },
+      "savedIdentity": true,
+      "eventsBefore": 128,
+      "eventsAfter": 128,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-attenuverter",
+      "type": "attenuverter",
+      "action": ["knob", "MAX", 600, "max"],
+      "pcm": {
+        "rms": 0.0007704534366195788,
+        "samples": 18804736
+      },
+      "savedIdentity": true,
+      "eventsBefore": 128,
+      "eventsAfter": 128,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-modmix",
+      "type": "modmix",
+      "action": ["mini", "STEPS", "<0 0>", "steps", "cvseq", 1],
+      "pcm": {
+        "rms": 0.0006630796007512397,
+        "samples": 21026816
+      },
+      "savedIdentity": true,
+      "eventsBefore": 8,
+      "eventsAfter": 8,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-cvseq",
+      "type": "cvseq",
+      "action": ["mini", "STEPS", "<200 800 1600 3200>", "steps"],
+      "pcm": {
+        "rms": 0.0006415018618981844,
+        "samples": 21344256
+      },
+      "savedIdentity": true,
+      "eventsBefore": 8,
+      "eventsAfter": 8,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-delay",
+      "type": "delay",
+      "action": ["knob", "MIX", 0, "mix"],
+      "pcm": {
+        "rms": 0.0010372286712161806,
+        "samples": 21817344
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-reverb",
+      "type": "reverb",
+      "action": ["knob", "ROOM", 0, "room"],
+      "pcm": {
+        "rms": 0.0009251429046024496,
+        "samples": 22775808
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-drive",
+      "type": "drive",
+      "action": ["switch", "TYPE", "hard", "type"],
+      "pcm": {
+        "rms": 0.0010218846548954977,
+        "samples": 23506944
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-folder",
+      "type": "folder",
+      "action": ["knob", "FOLD", 2, "amount"],
+      "pcm": {
+        "rms": 0.0008610237074601727,
+        "samples": 24236032
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-lofi",
+      "type": "lofi",
+      "action": ["knob", "BITS", 16, "bits"],
+      "pcm": {
+        "rms": 0.000785907976621714,
+        "samples": 24979456
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-formant",
+      "type": "formant",
+      "action": ["text", "VOWEL", "a", "vowel"],
+      "pcm": {
+        "rms": 0.0005018025186325221,
+        "samples": 25716736
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-comp",
+      "type": "comp",
+      "action": ["text", "THR:RATIO:KNEE:ATK:REL", "0:8:10:.005:.1", "compressor"],
+      "pcm": {
+        "rms": 0.002790882323072188,
+        "samples": 26456064
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-phaser",
+      "type": "phaser",
+      "action": ["knob", "RATE", 0.25, "rate"],
+      "pcm": {
+        "rms": 0.000539272870772159,
+        "samples": 27029504
+      },
+      "savedIdentity": true,
+      "eventsBefore": 8,
+      "eventsAfter": 8,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-pan",
+      "type": "pan",
+      "action": ["knob", "PAN", 1, "pan"],
+      "pcm": {
+        "rms": 0.000542662261063712,
+        "samples": 27469824
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-shift",
+      "type": "shift",
+      "action": ["knob", "SHIFT", 0, "shift"],
+      "pcm": {
+        "rms": 0.0007912860050112661,
+        "samples": 28307456
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-mix",
+      "type": "mix",
+      "action": ["knob", "CH 1", 0, "ch1"],
+      "pcm": {
+        "rms": 0.0008562905589398757,
+        "samples": 29208576
+      },
+      "savedIdentity": true,
+      "eventsBefore": 64,
+      "eventsAfter": 64,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-out",
+      "type": "out",
+      "action": ["knob", "BPM", 90, "bpm"],
+      "pcm": {
+        "rms": 0.0007866821493102471,
+        "samples": 30593024
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-iter",
+      "type": "iter",
+      "action": ["knob", "STEPS", 1, "steps"],
+      "pcm": {
+        "rms": 0.0007783729224910005,
+        "samples": 31375360
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-jux",
+      "type": "jux",
+      "action": ["switch", "RIGHT", "fast2", "right"],
+      "pcm": {
+        "rms": 0.0005366344061643168,
+        "samples": 32280576
+      },
+      "savedIdentity": true,
+      "eventsBefore": 64,
+      "eventsAfter": 96,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-chunk",
+      "type": "chunk",
+      "action": ["knob", "CHUNKS", 2, "chunks"],
+      "pcm": {
+        "rms": 0.0007530745914704774,
+        "samples": 33581056
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-every",
+      "type": "every",
+      "action": ["knob", "CYCLES", 2, "cycles"],
+      "pcm": {
+        "rms": 0.0007366830595697919,
+        "samples": 34330624
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-sometimes",
+      "type": "sometimes",
+      "action": ["knob", "CHANCE", 1, "probability"],
+      "pcm": {
+        "rms": 0.0007281761446624256,
+        "samples": 35162112
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-off",
+      "type": "off",
+      "action": ["knob", "TIME", 0.25, "time"],
+      "pcm": {
+        "rms": 0.0008052464426164398,
+        "samples": 36278272
+      },
+      "savedIdentity": true,
+      "eventsBefore": 64,
+      "eventsAfter": 64,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-layer",
+      "type": "layer",
+      "action": ["switch", "MODE", "palindrome", "mode", "rev"],
+      "pcm": {
+        "rms": 0.0009957187080933355,
+        "samples": 37892096
+      },
+      "savedIdentity": true,
+      "eventsBefore": 64,
+      "eventsAfter": 64,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-rev",
+      "type": "rev",
+      "action": ["switch", "MODE", "palindrome", "mode"],
+      "pcm": {
+        "rms": 0.0006870024122032063,
+        "samples": 39124992
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-shuffle",
+      "type": "shuffle",
+      "action": ["knob", "SLICES", 8, "slices"],
+      "pcm": {
+        "rms": 0.0006930768752380683,
+        "samples": 39862272
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-ribbon",
+      "type": "ribbon",
+      "action": ["knob", "OFFSET", 2, "offset"],
+      "pcm": {
+        "rms": 0.0006898367039932495,
+        "samples": 40697856
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-time-lens",
+      "type": "time-lens",
+      "action": ["knob", "START", 0, "start"],
+      "pcm": {
+        "rms": 0.0006661857464793376,
+        "samples": 41445376
+      },
+      "savedIdentity": true,
+      "eventsBefore": 16,
+      "eventsAfter": 24,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-warp",
+      "type": "warp",
+      "action": ["switch", "MODE", "press", "mode"],
+      "pcm": {
+        "rms": 0.0006729859901946744,
+        "samples": 42143744
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-echo",
+      "type": "echo",
+      "action": ["knob", "TIMES", 1, "times"],
+      "pcm": {
+        "rms": 0.0012022858727772023,
+        "samples": 43130880
+      },
+      "savedIdentity": true,
+      "eventsBefore": 96,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-code",
+      "type": "code",
+      "action": ["source", "CODE source", ".struct(\"x*8\")", "text"],
+      "pcm": {
+        "rms": 0.000578644539398115,
+        "samples": 44826624
+      },
+      "savedIdentity": true,
+      "eventsBefore": 24,
+      "eventsAfter": 64,
+      "status": "passed"
+    }
+  ],
+  "bugs": [],
+  "errors": []
+}
