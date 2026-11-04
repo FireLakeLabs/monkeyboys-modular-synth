@@ -1,3 +1,5 @@
+import { controlValue } from '../modules/values'
+import { numericNotation } from '../patch/notation'
 import { isRailHp } from '../patch/layout'
 import { getModuleSpec } from '../modules/catalog'
 import { callMethod, tupleControls } from '../modules/bindings'
@@ -19,7 +21,7 @@ export function control(node: Node, id: string): Control {
 }
 
 export function value(node: Node, id: string): ControlValue {
-  return node.module.values[id] ?? control(node, id).default
+  return controlValue(node.module, control(node, id))
 }
 
 export function number(node: Node, id: string): number {
@@ -66,7 +68,7 @@ function validValue(item: Control, candidate: ControlValue, node: Node): boolean
         typeof candidate === 'number' &&
         Number.isFinite(candidate) &&
         (item.step !== 1 || Number.isInteger(candidate)) &&
-        ((node.spec.id === 'lfo' && item.id === 'depth') ||
+        ((['lfo', 'env'].includes(node.spec.id) && item.id === 'depth') ||
           (candidate >= item.min && candidate <= item.max))
       )
     case 'switch':
@@ -76,6 +78,8 @@ function validValue(item: Control, candidate: ControlValue, node: Node): boolean
     case 'steps':
       return (
         isSteps(candidate) &&
+        (node.spec.modSource !== 'sequence' ||
+          numericNotation(typeof candidate === 'string' ? candidate : candidate.join(' '))) &&
         (typeof candidate === 'string' ||
           (candidate.length > 0 && candidate.length <= item.maxSteps))
       )
@@ -157,8 +161,15 @@ export function graph(patch: Patch): Map<string, Node> {
     if (!from || !to || output?.direction !== 'out' || input?.direction !== 'in')
       throw new Error(`Invalid cable endpoints: ${cable.id}`)
     if (to.inputs.has(input.id)) throw new Error(`Occupied input: ${to.module.id}:${input.id}`)
-    if (from.spec.id === 'env' && (!input.cvTarget || !['vcf', 'vca'].includes(to.spec.id)))
-      throw new Error('ENV only connects directly to VCF/VCA CV')
+    if (
+      from.spec.id === 'lfo' &&
+      value(from, 'mode') === 'SMOOTH' &&
+      !input.cvTarget &&
+      to.spec.modSource !== 'sampleHold'
+    )
+      throw new Error('SMOOTH LFO connects to CV or S&H; use STEP for pattern utilities')
+    if (from.spec.id === 'env' && !input.cvTarget)
+      throw new Error('ENV connects directly to a CV target; utilities transform pattern signals')
     to.inputs.set(input.id, cable)
     from.outputs.set(output.id, [...(from.outputs.get(output.id) ?? []), cable])
   }

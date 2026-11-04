@@ -322,6 +322,17 @@ it('accounts for every catalog module/control without silently skipping new cont
       ),
       ...nonLiteral,
       ...PATTERN_CONTROLS,
+      // Coupled modulation expressions have their own independent source/rack/event matrix.
+      // See modulation.test.ts; these are not independent scalar call arguments.
+      'lfo.mode',
+      'lfo.skew',
+      'env.depth',
+      'samplehold.rate',
+      'attenuverter.amount',
+      'attenuverter.min',
+      'attenuverter.max',
+      'attenuverter.scale',
+      'cvseq.steps',
     ].sort(),
   ).toEqual(
     CATALOG.flatMap((spec) => spec.controls.map((control) => `${spec.id}.${control.id}`)).sort(),

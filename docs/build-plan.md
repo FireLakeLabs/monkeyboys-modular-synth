@@ -232,3 +232,10 @@ independent saved-identity validation before an offer appears. See the
 Issue #62 adds an editable header name, library titles and named Export/Open
 through optional v1 rack metadata. See the [contract](patch-format.md#patch-names-62)
 and [unit/browser evidence](patch-names-verification.md).
+
+## Generalized modulation (#130)
+
+Catalog CV targets accept SMOOTH/STEP LFO, ENV and CV SEQ. OSC adds pitch CV;
+S&H, ATTENUVERTER and MOD MIX expose pattern modulation utilities. Existing
+signals and native envelopes retain source and saved identity. See the
+[contract and independent source/rack/event/browser PCM proof](modulation-verification.md).

@@ -115,7 +115,11 @@ export function placeModule(
     row: type === 'out' ? 0 : row,
     hp,
     look: DEFAULT_LOOK[spec.family],
-    values: {},
+    values: Object.fromEntries(
+      spec.controls
+        .filter((c) => Object.hasOwn(spec.legacyDefaults ?? {}, c.id))
+        .map((c) => [c.id, c.default]),
+    ),
   }
   return validateRack({
     ...patch,
@@ -206,6 +210,7 @@ export function setValue(
 }
 
 export function sequenceText(module: PlacedModule, steps: readonly string[]): string {
+  if (getModuleSpec(module.type).modSource === 'sequence') return `<${steps.join(' ')}>`
   const length =
     module.values.len ?? getModuleSpec('seq').controls.find((c) => c.id === 'len')?.default
   if (typeof length !== 'number') throw new Error('Missing SEQ length')
@@ -247,7 +252,7 @@ export function connect(
   // passthroughs here also handles a late connection from an Alien output to CV.
   const upstream = (id: string): string | undefined => {
     const m = next.modules.find((item) => item.id === id)
-    if (m?.type === 'lfo') return id
+    if (m && ['lfo', 'env'].includes(m.type)) return id
     if (!m || !['iter', 'jux', 'code'].includes(m.type)) return undefined
     const c = next.cables.find((item) => item.to.module === id && item.to.jack === 'in')
     return c ? upstream(c.from.module) : undefined
@@ -356,7 +361,7 @@ export function depthControl(
   module: PlacedModule,
   control: KnobControl,
 ): KnobControl & { perTarget?: boolean } {
-  if (module.type !== 'lfo' || control.id !== 'depth') return control
+  if (!['lfo', 'env'].includes(module.type) || control.id !== 'depth') return control
   const nodes = graph(patch)
   const targets: KnobControl[] = []
   function visit(id: string) {

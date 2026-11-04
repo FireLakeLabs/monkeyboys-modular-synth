@@ -313,3 +313,8 @@ The #132 palette/Fit correction is guarded by the existing
 with compact catalog representatives; no assertion was weakened. This is a
 browser layout check, not a static string-length limit; see the
 [hosted regression](pattern-time-verification.md#hosted-palettefit-regression).
+The #130 [modulation matrix](../src/reader/modulation.test.ts) separately checks
+exact source, saved graph identity and real pinned-engine events for generalized
+CV and utilities. Catalog compatibility defaults preserve legacy STEP LFOs.
+The [browser/PCM acceptance](modulation-verification.md) verifies actual controls
+and within-note motion; it runs in the existing separate browser workflow.

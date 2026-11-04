@@ -1,9 +1,10 @@
+import { controlValue } from '../modules/values'
 import { parseExpressionAt, tokenizer, type Expression, type Node } from 'acorn'
 import { graph } from '../codegen/graph'
 import { generate } from '../codegen/generate'
 import { descriptor, type RackLayout } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
-import { matchControlCall, tupleControls } from '../modules/bindings'
+import { callMethod, matchControlCall, tupleControls } from '../modules/bindings'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { nextPosition, railWidth } from '../patch/layout'
@@ -12,6 +13,9 @@ import { codeEnd } from './metadata'
 import { unclosedBracket } from './diagnostics'
 import { chain, parseSource, scalar, type Call, type ParsedScope } from './syntax'
 import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } from './types'
+
+import { numericNotation } from '../patch/notation'
+import { modConfig, modPattern, type ModPattern } from './modulation'
 
 type Output = { module: PlacedModule; jack: string }
 
@@ -295,6 +299,57 @@ function project(
     bind(target, scope, [index])
     return true
   }
+  function patternCV(
+    arg: Expression,
+    target: PlacedModule,
+    control: string,
+    scope: ParsedScope,
+    index: number,
+  ): boolean {
+    const parsed = modPattern(arg, (name) => declarations.has(name))
+    if (!parsed || parsed.type === 'lfo') return false
+    if (parsed.type === 'reference') {
+      const reference = typeof parsed.values.name === 'string' && resolve(parsed.values.name)
+      if (!reference || !getModuleSpec(reference.module.type).modSource) return false
+    }
+    const jack = getModuleSpec(target.type).jacks.find((j) => j.cvTarget === control)
+    if (!jack) return false
+    const semantic = { role: 'cv' as const, target: { module: target.id, jack: jack.id, control } }
+    function insert(pattern: ModPattern): Output {
+      if (pattern.type === 'reference') {
+        const reference = typeof pattern.values.name === 'string' && resolve(pattern.values.name)
+        if (!reference) throw new Error('Unknown mod reference')
+        return reference
+      }
+      const module = add(pattern.type, pattern.values)
+      pattern.inputs.forEach((child, index) =>
+        wire(insert(child), module, index === 0 ? 'in' : 'in2'),
+      )
+      return output(module)
+    }
+    const signal = insert(parsed)
+    wire(signal, target, jack.id)
+    const paths = new Map<PlacedModule, string>()
+    function trace(module: PlacedModule, path = '') {
+      paths.set(module, path)
+      for (const cable of patch.cables.filter((c) => c.to.module === module.id)) {
+        const upstream = patch.modules.find((m) => m.id === cable.from.module)
+        if (upstream) trace(upstream, `${path}${path ? '/' : ''}${cable.to.jack}`)
+      }
+    }
+    trace(signal.module)
+    for (const [module, path] of paths)
+      bind(
+        module,
+        scope,
+        [index],
+        {},
+        { ...semantic, target: { ...semantic.target, ...(path ? { path } : {}) } },
+      )
+    bind(target, scope, [index])
+    return true
+  }
+
   function expression(scope: ParsedScope): Output {
     const { root, calls } = scope
     const savedScope = saved?.scopes.find(
@@ -323,13 +378,48 @@ function project(
                   indices.every((value, offset) => value === index + offset) &&
                   begin !== undefined &&
                   end !== undefined &&
-                  source.slice(begin, end) === module.values['text']
+                  typeof module.values['text'] === 'string' &&
+                  source.slice(begin, end).trimStart() === module.values['text'].trimStart()
                   ? [{ indices, text: source.slice(begin, end) }]
                   : []
               })
             : [],
         )[0]
       )
+    }
+    if (scope.kind === 'declaration' && !retainedCode(0, true)) {
+      const pattern = modPattern(scope.expression, (name) => declarations.has(name))
+      if (pattern) {
+        function insert(item: ModPattern): Output {
+          if (item.type === 'reference') {
+            const result = typeof item.values.name === 'string' && resolve(item.values.name)
+            if (!result) throw new Error('Unknown mod reference')
+            return result
+          }
+          const module = add(item.type, item.values)
+          item.inputs.forEach((child, i) => wire(insert(child), module, i === 0 ? 'in' : 'in2'))
+          let indices = calls.flatMap((c, i) =>
+            c.end > item.start && c.end <= item.end ? [i] : [],
+          )
+          if (!indices.length && item.start !== scope.root.start) {
+            const containing = calls.findIndex((c) => c.start <= item.start && c.end >= item.end)
+            if (containing >= 0) indices = [containing]
+          }
+          bind(module, scope, indices)
+          if (item.type === 'lfo' && item.start === scope.root.start && indices.length)
+            bindings.push({
+              module: module.id,
+              scope: scope.descriptor.id,
+              calls: [],
+              role: 'module',
+              controls: {},
+              start: item.start,
+              end: scope.root.end,
+            })
+          return output(module)
+        }
+        return insert(pattern)
+      }
     }
     // Acorn omits receiver parentheses from object.end. A suffix starting there
     // would contain an unmatched ')'; preserve the complete expression instead.
@@ -433,6 +523,190 @@ function project(
         const value = scalar(call.args[0])
         if (call.args.length === 1 && typeof value === 'number' && fits('mix', 'ch1', value)) {
           gains.set(scope.descriptor.id, { value, index })
+          continue
+        }
+      }
+      if (
+        ['lfo', 'env'].includes(call.name) &&
+        group &&
+        call.args.length === 1 &&
+        call.args[0]?.type !== 'SpreadElement'
+      ) {
+        const config = modConfig(call.args[0])
+        const spec = getModuleSpec(group.type)
+        const targetControl = spec.controls.find(
+          (item) =>
+            item.kind === 'knob' &&
+            item.call &&
+            spec.jacks.some((j) => j.cvTarget === item.id) &&
+            ((config?.c === undefined &&
+              canonicalCall(calls[index - 1]?.name ?? '') ===
+                callMethod(item.call, (id) => {
+                  const v = group?.values[id] ?? spec.controls.find((c) => c.id === id)?.default
+                  return typeof v === 'string' ? v : ''
+                })) ||
+              config?.c ===
+                callMethod(item.call, (id) => {
+                  const value = group?.values[id] ?? spec.controls.find((c) => c.id === id)?.default
+                  return typeof value === 'string' ? value : ''
+                })),
+        )
+        const jack = targetControl && spec.jacks.find((j) => j.cvTarget === targetControl.id)
+        const data = targetControl?.kind === 'knob' ? targetControl.modulation : undefined
+        if (
+          config &&
+          targetControl &&
+          jack &&
+          data &&
+          typeof config.depthabs === 'number' &&
+          config.depthabs >= data.min &&
+          config.depthabs <= data.max &&
+          !patch.cables.some((c) => c.to.module === group?.id && c.to.jack === jack.id)
+        ) {
+          const allowed =
+            call.name === 'lfo'
+              ? ['c', 'sync', 'depthabs', 'dc', 'shape', 'skew']
+              : ['c', 'a', 'd', 's', 'r', 'depthabs']
+          const shape = Object.entries(getModuleSpec('lfo').smoothShapes ?? {}).find(
+            ([, value]) => value === config.shape,
+          )?.[0]
+          const rate = typeof config.sync === 'number' ? 1 / config.sync : undefined
+          const targetMethod =
+            targetControl.kind === 'knob' && targetControl.call
+              ? callMethod(targetControl.call, (id) => {
+                  const v = group?.values[id] ?? spec.controls.find((c) => c.id === id)?.default
+                  return typeof v === 'string' ? v : ''
+                })
+              : ''
+          const base = group.values[targetControl.id] ?? targetControl.default
+          const frequencyTarget =
+            typeof base === 'number' &&
+            base >= 30 &&
+            ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(targetMethod)
+          const compatibleBias =
+            call.name !== 'lfo' ||
+            (config.dc === -1
+              ? !frequencyTarget && config.depthabs >= 0
+              : frequencyTarget || config.depthabs >= 0)
+          const valid =
+            compatibleBias &&
+            !data.pitch &&
+            Object.keys(config).every((key) => allowed.includes(key)) &&
+            (call.name === 'lfo'
+              ? rate !== undefined &&
+                fits('lfo', 'rate', rate) &&
+                (config.dc === 0 || config.dc === -1) &&
+                typeof shape === 'string' &&
+                fits('lfo', 'shape', shape) &&
+                typeof config.skew === 'number' &&
+                fits('lfo', 'skew', config.skew)
+              : ['a', 'd', 's', 'r'].every((key, i) =>
+                  fits('env', ['atk', 'dec', 'sus', 'rel'][i] ?? '', config[key] ?? ''),
+                ))
+          if (valid) {
+            const module =
+              call.name === 'lfo'
+                ? add('lfo', {
+                    mode: 'SMOOTH',
+                    rate: rate ?? 1,
+                    shape: shape ?? 'sine',
+                    skew: config.skew ?? 0.5,
+                    depth: config.dc === -1 ? -config.depthabs : config.depthabs,
+                  })
+                : add('env', {
+                    atk: config.a ?? 0,
+                    dec: config.d ?? 0,
+                    sus: config.s ?? 0,
+                    rel: config.r ?? 0,
+                    depth: config.depthabs,
+                  })
+            wire(output(module), group, jack.id)
+            bind(
+              module,
+              scope,
+              [index],
+              {},
+              {
+                role: 'cv',
+                target: { module: group.id, jack: jack.id, control: targetControl.id },
+              },
+            )
+            continue
+          }
+        }
+      }
+      if (group?.type === 'osc' && ['vib', 'penv'].includes(call.name)) {
+        const pitch = getModuleSpec(group.type).controls.find(
+          (c) => c.kind === 'knob' && c.modulation?.pitch,
+        )
+        const jack = pitch && getModuleSpec(group.type).jacks.find((j) => j.cvTarget === pitch.id)
+        const depth = scalar(call.name === 'vib' ? calls[index + 1]?.args[0] : call.args[0])
+        const data = pitch?.kind === 'knob' ? pitch.modulation : undefined
+        const bpm = scopes.find((s) => s.kind === 'tempo')?.calls[0]
+        const tempoArg = bpm?.args[0]
+        const bpmValue =
+          tempoArg?.type === 'BinaryExpression' &&
+          tempoArg.operator === '/' &&
+          scalar(tempoArg.right) === 4
+            ? tempoArg.left.type === 'PrivateIdentifier'
+              ? undefined
+              : scalar(tempoArg.left)
+            : undefined
+        const directTempo = scalar(tempoArg)
+        const cps =
+          typeof bpmValue === 'number'
+            ? bpmValue / 240
+            : typeof directTempo === 'number'
+              ? bpm?.name === 'setcps'
+                ? directTempo
+                : directTempo / 60
+              : 0.5
+        const frequency = scalar(call.args[0])
+        const rate = typeof frequency === 'number' && frequency > 0 ? cps / frequency : 0
+        const envelopeCalls = calls.slice(index + 1, index + 5)
+        const valid =
+          call.args.length === 1 &&
+          (call.name === 'vib'
+            ? calls[index + 1]?.name === 'vibmod' &&
+              calls[index + 1]?.args.length === 1 &&
+              fits('lfo', 'rate', rate)
+            : envelopeCalls.length === 4 &&
+              envelopeCalls.every(
+                (c, i) =>
+                  c.name === ['pattack', 'pdecay', 'psustain', 'prelease'][i] &&
+                  c.args.length === 1 &&
+                  fits('env', ['atk', 'dec', 'sus', 'rel'][i] ?? '', scalar(c.args[0]) ?? ''),
+              ))
+        if (
+          valid &&
+          pitch &&
+          jack &&
+          data &&
+          typeof depth === 'number' &&
+          depth >= data.min &&
+          depth <= data.max &&
+          !patch.cables.some((c) => c.to.module === group?.id && c.to.jack === jack.id)
+        ) {
+          const module =
+            call.name === 'vib'
+              ? add('lfo', { mode: 'SMOOTH', shape: 'sine', rate, depth })
+              : add('env', { depth })
+          const count = call.name === 'vib' ? 2 : 5
+          if (call.name === 'penv')
+            envelopeCalls.forEach((c, i) => {
+              const id = ['atk', 'dec', 'sus', 'rel'][i]
+              const v = scalar(c.args[0])
+              if (id && v !== undefined) module.values[id] = v
+            })
+          wire(output(module), group, jack.id)
+          bind(
+            module,
+            scope,
+            Array.from({ length: count }, (_, i) => index + i),
+            {},
+            { role: 'cv', target: { module: group.id, jack: jack.id, control: pitch.id } },
+          )
+          index += count - 1
           continue
         }
       }
@@ -644,7 +918,10 @@ function project(
         const numericCV = spec?.jacks.some((jack) => jack.cvTarget === id)
         if (
           (candidate !== undefined && call.args.length === 1 && fits(scalarType, id, candidate)) ||
-          (numericCV && arg && arg.type !== 'SpreadElement' && candidate === undefined)
+          (numericCV &&
+            arg &&
+            arg.type !== 'SpreadElement' &&
+            (candidate === undefined || numericNotation(candidate)))
         ) {
           const reuse =
             merge &&
@@ -652,8 +929,11 @@ function project(
             !bindings.some((binding) => binding.module === group?.id && id in binding.controls)
           const module = reuse && group ? group : add(scalarType, values)
           const accepted =
-            candidate === undefined && arg && arg.type !== 'SpreadElement'
-              ? lfo(arg, module, id, scope, index)
+            numericCV &&
+            arg &&
+            arg.type !== 'SpreadElement' &&
+            (candidate === undefined || numericNotation(candidate))
+              ? lfo(arg, module, id, scope, index) || patternCV(arg, module, id, scope, index)
               : literal(module, id, call, scope, index)
           if (accepted) {
             Object.assign(module.values, activation)
@@ -931,15 +1211,15 @@ function restore(
   const claimed = new Set<string>()
   // CV identity is constrained by the already matched target, including shared ENV.
   const ordered = [
-    ...patch.modules.filter((module) => module.type !== 'env'),
-    ...patch.modules.filter((module) => module.type === 'env'),
+    ...patch.modules.filter((module) => !['env', 'lfo'].includes(module.type)),
+    ...patch.modules.filter((module) => ['env', 'lfo'].includes(module.type)),
   ]
   for (const module of ordered) {
     const own = bindings.filter((binding) => binding.module === module.id)
     const candidates = saved.modules.filter(
       (old) =>
         old.type === module.type &&
-        (!claimed.has(old.id) || module.type === 'env') &&
+        (!claimed.has(old.id) || ['env', 'lfo'].includes(module.type)) &&
         own.some((binding) => {
           const match = matches.get(binding.scope)
           if (!match) return false
@@ -948,10 +1228,11 @@ function restore(
             (oldBinding) =>
               oldBinding.scope === match.saved.id &&
               oldBinding.role === binding.role &&
-              (module.type !== 'env' ||
+              (!['env', 'lfo'].includes(module.type) ||
                 oldBinding.target?.module === rename.get(binding.target?.module ?? '')) &&
               oldBinding.target?.jack === binding.target?.jack &&
-              oldBinding.target?.control === binding.target?.control,
+              oldBinding.target?.control === binding.target?.control &&
+              oldBinding.target?.path === binding.target?.path,
           )
           const oldCalls = oldBindings.flatMap((binding) => binding.calls)
           // The writer records one binding per call; the reader groups settings.
@@ -968,10 +1249,23 @@ function restore(
     if (candidates.length !== 1) continue
     const old = candidates[0]
     if (!old) continue
+    // An absent shared depth means target-owned defaults, even when they differ in units.
+    if (['env', 'lfo'].includes(module.type) && old.values['depth'] === undefined) {
+      const defaults = own.flatMap((b) => {
+        const target = patch.modules.find((m) => m.id === b.target?.module)
+        const c =
+          target && getModuleSpec(target.type).controls.find((c) => c.id === b.target?.control)
+        return c?.kind === 'knob' && c.modulation ? [c.modulation.default] : []
+      })
+      if (defaults.length && defaults.every((depth) => module.values['depth'] === depth))
+        delete module.values['depth']
+    }
     if (claimed.has(old.id)) {
       const shared = patch.modules.find((item) => rename.get(item.id) === old.id)
       // Repeated context-specific calls represent one ENV only while all values agree.
-      if (!shared || descriptor(shared.values) !== descriptor(module.values)) continue
+      const effective = (m: PlacedModule) =>
+        getModuleSpec(m.type).controls.map((c) => controlValue(m, c))
+      if (!shared || descriptor(effective(shared)) !== descriptor(effective(module))) continue
     }
     claimed.add(old.id)
     rename.set(module.id, old.id)

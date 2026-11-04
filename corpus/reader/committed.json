@@ -66,6 +66,12 @@
     "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
   },
   {
+    "id": "modulation-utilities",
+    "path": "src/library/patches/modulation-utilities.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
     "id": "pattern-alien",
     "path": "src/library/patches/pattern-alien.strudel",
     "license": "MIT",

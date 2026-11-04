@@ -8,7 +8,7 @@ export interface Binding {
   scope: string
   calls: number[]
   role: 'module' | 'cv' | 'mixer' | 'tempo'
-  target?: { module: string; jack: string; control: string }
+  target?: { module: string; jack: string; control: string; path?: string }
 }
 
 export interface Scope {

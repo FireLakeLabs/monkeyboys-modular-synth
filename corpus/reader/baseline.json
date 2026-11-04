@@ -154,5 +154,13 @@
     "unmapped:dec": 1,
     "unmapped:fm": 1,
     "unmapped:fmh": 1
+  },
+  "modulation-utilities": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
   }
 }

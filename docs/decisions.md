@@ -128,6 +128,32 @@ production acceptance for #9–#11.
   [The implementation and observed proof](output-panel-verification.md) record
   the width-reduction refusal and browser coverage.
 
+## Generalized modulation (#130, decided 3 November 2026)
+
+- Every catalog CV jack accepts LFO in SMOOTH or STEP mode, ENV and CV SEQ.
+  New LFOs use SMOOTH; absent MODE in older saved racks means STEP. Existing
+  signal expressions and native envelopes retain exact source and saved identity.
+- SMOOTH uses the pinned core's per-voice `.lfo()`; STEP uses the existing
+  event-sampled signals. RATE remains a period in cycles, with `sync = 1 / RATE`.
+  SKEW is saved independently and applies to the engine's skewable waveforms.
+  `rand`/`perlin` require STEP; they are not supported audio-rate shapes.
+- ENV keeps native VCA/filter calls. Other CV controls use `.env()` with absolute
+  target-unit depth; OSC TUNE uses semitone pitch-envelope/vibrato calls.
+  Native pitch vibrato is sinusoidal; SHAPE/SKEW do not alter that engine form.
+- S&H, ATTENUVERTER and MOD MIX operate on pattern signals. A SMOOTH source
+  enters this path through S&H; direct pattern transforms require STEP. ENV is
+  a per-voice control modulator and connects directly to CV, not utility IN.
+  CV SEQ and utility outputs carry absolute target values. ATTENUVERTER provides
+  linear/exponential ranges; exponential endpoints must be positive.
+- The pinned engine clamps negative generic LFO depths incorrectly on gain
+  parameters. Downward non-frequency modulation therefore writes a positive
+  magnitude with `dc: -1`; frequency targets retain signed depth and `dc: 0`.
+  This is executable Strudel, with no app-only playback shim.
+
+See [the module contract](module-spec.md#generalized-cv-130),
+[translation rule 3](translation-rules.md#3-a-cable-into-cv-modulates-a-control),
+and [separate event/browser proof](modulation-verification.md).
+
 ## Source editor (#53, decided 3 November 2026)
 
 Adopt plain CodeMirror 6 in #59. The [editor spike](editor-spike.md) demonstrated

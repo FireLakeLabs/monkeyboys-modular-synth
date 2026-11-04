@@ -1,5 +1,6 @@
 import patternHardware from './patches/pattern-hardware.strudel?raw'
 import patternAlien from './patches/pattern-alien.strudel?raw'
+import utilities from './patches/modulation-utilities.strudel?raw'
 import firstSounds from './patches/first-sounds.strudel?raw'
 import firstNotes from './patches/first-notes.strudel?raw'
 import firstEffects from './patches/first-effects.strudel?raw'
@@ -171,6 +172,16 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
     id: 'modulation',
     title: 'Modulation',
     children: [
+      {
+        kind: 'patch',
+        id: 'modulation-utilities',
+        title: 'Sample, scale and mix CV',
+        description:
+          'Sample an LFO, scale it to filter frequencies and add a CV sequence. Try S&H steps, ATTENUVERTER amount/range and CV SEQ values.',
+        source: utilities,
+        attribution,
+        exercises: ['samplehold', 'attenuverter', 'modmix', 'cvseq'],
+      },
       {
         kind: 'patch',
         id: 'lfo-sweep',

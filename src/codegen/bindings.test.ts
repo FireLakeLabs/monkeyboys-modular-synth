@@ -60,7 +60,7 @@ describe('catalog-only call extension', () => {
 
   it('uses the catalog CV jack and target for generation, projection and saved ownership', () => {
     const patch = connect(
-      fixture(),
+      setValue(fixture(), 'lfo1', 'mode', 'STEP'),
       { module: 'lfo1', jack: 'out' },
       { module: 'bound1', jack: 'amount-mod' },
     )
@@ -80,3 +80,24 @@ describe('catalog-only call extension', () => {
     expect(plain.patch.modules.some((module) => module.type === 'code')).toBe(false)
   })
 })
+
+it.each(['SMOOTH', 'STEP', 'ENV', 'CV SEQ'])(
+  'uses catalog-only CV bindings for %s, including omitted base values',
+  (mode) => {
+    let patch = setValue(fixture(), 'bound1', 'amount', 0)
+    const source = mode === 'ENV' ? 'env' : mode === 'CV SEQ' ? 'cvseq' : 'lfo'
+    if (source !== 'lfo') patch = placeModule(patch, source, 2)
+    if (source === 'lfo') patch = setValue(patch, 'lfo1', 'mode', mode)
+    if (source === 'cvseq') patch = setValue(patch, 'cvseq1', 'steps', '<0 .5 1>')
+    patch = connect(
+      patch,
+      { module: `${source}1`, jack: 'out' },
+      { module: 'bound1', jack: 'amount-mod' },
+    )
+    const code = generate(patch)
+    expect(read(code).patch).toEqual(patch)
+    if (mode === 'SMOOTH') expect(code).toContain('.pan(0)\n  .lfo({ c: "pan"')
+    if (mode === 'ENV') expect(code).toContain('.pan(0)\n  .env({ c: "pan"')
+    if (mode === 'CV SEQ') expect(code).toContain('.pan("<0 .5 1>")')
+  },
+)

@@ -245,3 +245,62 @@ test('imported CHORD branch accepts native deletion and keyboard reconnection', 
   expect(result.types).not.toContain('rev')
   await record(info, result)
 })
+
+test('generalized modulation controls and within-note PCM', async ({ page }, info) => {
+  test.setTimeout(90_000)
+  await page.evaluate(async () => {
+    const editor = await import('/scripts/editor-browser.mjs')
+    const suite = await import('/scripts/modulation-browser.mjs')
+    const { generate } = await import('/src/codegen/generate.ts')
+    editor.enableAutoApply()
+    await editor.replaceSource(generate(suite.sustainedPatch()))
+  })
+  const lfo = page.locator('[data-module="lfo1"]')
+  await expect(lfo.getByLabel('MODE', { exact: true })).toHaveValue('SMOOTH')
+  await lfo.getByLabel('MODE', { exact: true }).selectOption('STEP')
+  expect(
+    await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource()),
+  ).toContain('.gain(sine.fast(2).range(0.2, 0.6))')
+  await lfo.getByLabel('MODE', { exact: true }).selectOption('SMOOTH')
+  await lfo.getByRole('button', { name: 'Set SKEW', exact: true }).click()
+  await lfo.getByRole('textbox', { name: 'SKEW', exact: true }).fill('0.25')
+  await lfo.getByRole('textbox', { name: 'SKEW', exact: true }).press('Enter')
+  expect(
+    await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource()),
+  ).toContain('skew: 0.25')
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await expect(page.locator('.transport-status')).toHaveText('Playing', { timeout: 30_000 })
+  const proof = await page.evaluate(async () => {
+    const suite = await import('/scripts/modulation-browser.mjs')
+    return [
+      await suite.measureSustained('SMOOTH', 0.4),
+      await suite.measureSustained('SMOOTH', -0.15),
+      await suite.measureSustained('STEP', 0.4),
+    ]
+  })
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
+  await page.evaluate(async () => {
+    const editor = await import('/scripts/editor-browser.mjs')
+    const { default: source } =
+      await import('/src/library/patches/modulation-utilities.strudel?raw')
+    await editor.replaceSource(source)
+  })
+  const sequence = page.locator('[data-module="cvseq1"]')
+  await sequence.getByRole('textbox', { name: 'Step 1', exact: true }).fill('<0 400>')
+  await sequence.getByRole('textbox', { name: 'Step 1', exact: true }).press('Enter')
+  const saved = await page.evaluate(async () => {
+    const { editorSource } = await import('/scripts/editor-browser.mjs')
+    const { read } = await import('/src/reader/read.ts')
+    const { saveLayout } = await import('/src/workspace/document.ts')
+    const doc = read(editorSource())
+    return {
+      layout: read(saveLayout(doc).source).layout,
+      steps: doc.patch.modules.find((m) => m.type === 'cvseq')?.values.steps,
+      source: editorSource().split('// ──')[0],
+    }
+  })
+  expect(saved.layout).toBe('restored')
+  expect(saved.steps).toBe('<0 400>')
+  expect(saved.source).toContain('.add(mini("<0 400>"))')
+  await record(info, { proof, saved, controls: ['MODE', 'SKEW', 'CV SEQ Step 1'] })
+})

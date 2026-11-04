@@ -35,16 +35,43 @@ $: drums
 // same as stack(bass, drums)
 ```
 
-### 3. A cable into CV turns a number into a pattern
+### 3. A cable into CV modulates a control
 
-An unpatched knob writes a plain number. Patch an LFO into it and the number is replaced by a signal sweeping from the knob’s value up by the LFO’s depth.
+An unpatched knob writes a number. The catalog's jack target and control binding
+select the same control for every CV source, including future mixer channel jacks.
 
 ```js
-// knob alone
-.lpf(800)
-// LFO patched into CUTOFF
-.lpf(sine.slow(4).range(800, 2400))
+.lpf(800) // knob alone
+.lpf(800).lfo({ c: "lpf", sync: .25, depthabs: 1600, dc: 0, shape: "sine", skew: .5 }) // SMOOTH
+.lpf(sine.slow(4).range(800, 2400)) // STEP, sampled once per event
+.lpf("<400 800 1200>") // CV SEQ, absolute values
+.postgain(.2).env({ c: "postgain", a: .01, d: .2, s: .5, r: .1, depthabs: .4 })
+.lpf(sine.segment(8).mul(1).range(400, 2400).add(mini("<0 200>"))) // utilities
 ```
+
+New LFOs default to SMOOTH. Missing MODE in old v1 racks means STEP through
+catalog `legacyDefaults`; creation stores the new default explicitly. Importing
+old signal/native-envelope code never rewrites it. RATE is the period in cycles;
+SMOOTH uses reciprocal `sync`, while STEP retains `.slow()`/`.fast()`. DEPTH is
+bipolar in the target knob's catalog units. Downward non-frequency SMOOTH uses
+positive `depthabs` and `dc: -1` to avoid the pinned engine's inverted clamp;
+frequency targets use signed depth and `dc: 0`. Shapes and engine limits are in
+[the module spec](module-spec.md#generalized-cv-130).
+
+ENV keeps VCA's native ADSR and VCF's native prefixed ADSR/amount calls. Other
+controls get `.env({ c, a, d, s, r, depthabs })`. OSC TUNE uses native semitone
+`.penv()`/pitch ADSR or SMOOTH `.vib(hz).vibmod(semitones)`; STEP and CV SEQ
+replace `.transpose()`'s argument. Zero/omitted base controls are still emitted
+when patched, so the modulator always has a target node/control.
+
+S&H is the explicit boundary from SMOOTH to pattern utilities. Other utility
+inputs require STEP/numeric patterns; ENV is attached directly to CV. Utilities
+and CV SEQ return absolute values in destination units. They do not receive an
+additional destination `.range()`. Source imports recognize these forms without
+evaluation; unsupported configs retain CODE. Coupled imported edits that cannot
+preserve source are refused through the existing explicit conversion flow.
+Exact source, complete saved identity and real engine events are checked
+independently; [browser PCM](modulation-verification.md) proves within-note motion.
 
 ### 4. Sound settings ignore order; pattern changes don’t
 
@@ -281,8 +308,7 @@ rack-owned document. It does not accept imported source or replace the
 source-preserving editing contract above. The generator validates IDs, controls,
 layout, jack references, cardinality, signal compatibility (including through
 Alien/CODE passthroughs) and rejects cycles. Incomplete/disconnected chains are
-silent. No OUT means no voices; an empty rack uses the catalog tempo. ENV may
-only connect directly to VCF/VCA CV, as specified in the module catalog/spec.
+silent. No OUT means no voices; an empty rack uses the catalog tempo. ENV connects directly to any catalog CV target; mod utilities accept pattern signals as specified above.
 
 MIX is a virtual bus: recursively visit connected channels in catalog channel
 order. Nested mixer levels multiply into one final `.postgain(product)`; repeated
@@ -296,8 +322,8 @@ Shared declarations follow rack-array order except that dependencies are emitted
 first. Missing output names become deterministic collision-free `mb_<moduleId>`
 names; chosen names are recorded in the rack block. Explicit names must be valid
 JavaScript identifiers, unique, and must not shadow generator-used Strudel
-functions/signals. ENV has no independent expression: fan-out repeats its
-context-specific envelope calls at the destinations. Shared LFO outputs name the
+functions/signals. ENV and SMOOTH LFO have no independent pattern expression: fan-out repeats their
+context-specific per-voice calls at the destinations. Shared LFO outputs name the
 unscaled signal; each destination supplies its own `.range(base, base + depth)`.
 Absent LFO depth uses the target knob's catalog modulation default. An explicit
 depth is in target units and must fit every connected target's range. Rate and
