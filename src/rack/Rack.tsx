@@ -260,10 +260,16 @@ export function Rack({
       for (const jack of element.querySelectorAll<HTMLButtonElement>('[data-jack]')) {
         const rect = jack.getBoundingClientRect()
         const id = jack.dataset.jack
+        const x = rect.left + rect.width / 2
+        const y = rect.top + rect.height / 2
+        const box = jack.closest('.patch-box')?.getBoundingClientRect()
+        // Scrolled-out jacks have geometry beyond their panel. Drawing to those
+        // hidden targets makes fitted MIX cables appear to end on other rails.
+        if (box && (x < box.left || x > box.right || y < box.top || y > box.bottom)) continue
         if (id)
           next[id] = {
-            x: rect.left + rect.width / 2 - bounds.left,
-            y: rect.top + rect.height / 2 - bounds.top,
+            x: x - bounds.left,
+            y: y - bounds.top,
           }
       }
       setPoints(next)

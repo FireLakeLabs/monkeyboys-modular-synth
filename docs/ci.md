@@ -55,6 +55,14 @@ remain authoritative. The historical two-build editor-load benchmark
 and manual engine-spike page are experiments, not acceptance suites, and are not
 run by this command.
 
+The full module-exercise group has ten minutes to retain coverage as the catalog
+grows. Library rack editing partitions the complete catalog into three independent
+batches, each with ten minutes and one recorded result per selected patch. Other
+groups retain their existing bounds. The complete run has 35 minutes, within the workflow's 40-minute job
+budget. The former limits stopped the module matrix after 41 of 55 cases and
+cancelled nine remaining groups at the 20-minute global deadline on 4 November
+2026; those cancellations were not successful acceptance checks.
+
 The real-engine groups require network sample manifests and audio resources.
 Nonzero WebAudio PCM and scheduler events establish output for the tested patches;
 they do not establish physical listening, sound quality or other-browser coverage.

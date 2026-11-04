@@ -26,12 +26,16 @@ for (const script of [
   'pattern-visibility-browser',
 ]) {
   test(script, async ({ baseURL }, info) => {
+    // The growing module matrix includes live-audio exercises. Keep every
+    // case; its child process needs a larger budget than the smaller scripts.
+    const timeout = script === 'module-exercises-browser' ? 600_000 : 280_000
+    test.setTimeout(timeout + 20_000)
     const output = info.outputPath('evidence')
     try {
       const args = [`scripts/${script}.mjs`, baseURL, output]
       if (script === 'code-application-check' || script === 'history-check') args.push('--real')
       const result = await execute(process.execPath, args, {
-        timeout: 280_000,
+        timeout,
         maxBuffer: 16 * 1024 * 1024,
       })
       await info.attach('suite-log', {
@@ -80,7 +84,6 @@ for (const [script, verify] of [
   ['grid-check', 'verifyGrids'],
   ['library-check', 'verifyReplacementConfirmation'],
   ['library-check', 'verifyLibraryUI'],
-  ['library-check', 'verifyLibraryRackEditing'],
   ['library-check', 'verifyOnRampUI'],
   ['literal-identity-check', 'verifyLiteralIdentity'],
   ['error-positions-browser', 'checkErrorPositions'],
@@ -142,6 +145,29 @@ for (const [script, verify] of [
         ),
       ).toBe(before)
     }
+    await record(info, result)
+  })
+}
+
+const libraryRackBatches = 3
+for (let batch = 0; batch < libraryRackBatches; batch++) {
+  test(`library rack editing batch ${batch + 1}/${libraryRackBatches}`, async ({ page }, info) => {
+    test.setTimeout(600_000)
+    const result = await page.evaluate(
+      async ({ batch, batches }) => {
+        const { libraryPatches } = await import('/src/library/catalog.ts')
+        const ids = libraryPatches()
+          .filter((_, index) => index % batches === batch)
+          .map((entry) => entry.id)
+        const results = await (
+          await import('/scripts/library-check.mjs')
+        ).verifyLibraryRackEditing(ids)
+        return { ids, results }
+      },
+      { batch, batches: libraryRackBatches },
+    )
+    expect(result.ids.length).toBeGreaterThan(0)
+    expect(result.results).toHaveLength(result.ids.length)
     await record(info, result)
   })
 }

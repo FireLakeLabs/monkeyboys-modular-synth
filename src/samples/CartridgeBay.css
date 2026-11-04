@@ -21,6 +21,19 @@
   letter-spacing: 0.12em;
   margin: 0;
 }
+.cartridge-heading {
+  cursor: pointer;
+}
+.cartridge-heading::before {
+  content: '▸';
+}
+.cartridge-bay[open] > .cartridge-heading::before {
+  content: '▾';
+}
+.cartridge-bay[data-warning='true'] .cartridge-heading > span {
+  display: inline;
+  color: #f5a4af;
+}
 .cartridge-heading > span,
 .cartridge-caption,
 .cartridge-title > span:last-child {
@@ -115,7 +128,7 @@
   margin-left: 8px;
 }
 
-/* Keep Fit's 10% minimum usable on short panes; the rack pane itself can scroll. */
+/* Pack details can scroll the pane rather than squeezing the rack into a thumbnail. */
 .rack:has(.cartridge-bay) .rack-frame {
   min-height: 200px;
   flex-basis: 200px;
@@ -132,6 +145,8 @@
     flex-shrink: 0;
   }
   .rack:has(.cartridge-bay) .rack-frame {
+    min-height: 430px;
+    flex-basis: 430px;
     height: auto;
     flex-grow: 1;
   }
