@@ -2,7 +2,8 @@ import { defineConfig } from 'playwright/test'
 
 export default defineConfig({
   testDir: './tests/browser',
-  workers: 1,
+  fullyParallel: true,
+  workers: 2,
   timeout: 300_000,
   globalTimeout: 20 * 60_000,
   forbidOnly: true,

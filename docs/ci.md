@@ -39,8 +39,10 @@ npm run test:browser
 ```
 
 Playwright starts and stops its own Vite dev server on `127.0.0.1:5173`; that port
-must be free. One worker runs the suites sequentially, with fresh browser contexts
-and no automatic retries. The [runner](../tests/browser/suites.spec.mjs) executes
+must be free. Two workers run independent groups in parallel, with fresh browser
+contexts, separate evidence directories and no automatic retries. Multi-step
+scripts retain their internal order. To diagnose a concurrency-sensitive failure,
+run `npm run test:browser -- --workers=1`. The [runner](../tests/browser/suites.spec.mjs) executes
 the existing workspace-error/recovery, editor-feedback, autosave, metadata,
 code-application, history, sounding-token, module-behavior, rack-visual and
 output-panel scripts. It also runs cable targets, grids, library UI/on-ramp/rack
@@ -87,6 +89,33 @@ corpus gate, formatting/skill integrity, lint, TypeScript and production build.
 Application code is unchanged. Real-engine events and nonzero PCM were observed;
 physical listening was not performed. Hosted checks for this rebased revision
 remain separate evidence from these local results.
+
+### Bounded parallel execution
+
+On 4 November 2026 (UTC), five alternating full runs per configuration compared
+the original serial worker with `fullyParallel: true` and two workers. Median
+wall time for the complete test command fell from **380.3 s** (range
+379.8–381.1 s) to **195.2 s** (range 194.9–195.7 s), a **48.7% reduction**.
+All 270 group executions passed on their first attempt, with no skips. The
+[timings and environment](evidence/browser-parallel-timings.json) retain each run,
+the shared 27-group manifest, actual worker overlap and an excluded profiling run.
+No assertions, sample waits or timing thresholds changed.
+
+The comparison used Node 24.22.2, Chromium 156.0.8078.4, locked dependencies,
+`CI=1` and the same Vite application on a Linux AMD Ryzen 7 PRO 6850U machine
+with 16 logical CPUs. Dependency/Vite caches were warm after the excluded
+profiling run; browser contexts were fresh and real sample resources still used
+the network. Timing includes Vite/browser startup, all assertions and reporting,
+but excludes dependency and Chromium installation.
+
+The separate profile sampled machine CPU every two seconds: median busy time
+was 14.1%, peak 23.1%, and maximum I/O wait 0.1%. Independent groups can overlap
+the existing scheduling, sample/PCM and accepted-edit waits without saturating
+this machine. Two worker slots and the longer ordered library groups still
+limit scaling. Two workers bound runner load; a higher worker count was not
+evaluated. These local measurements do not establish a hosted CI speedup or
+guarantee absence of future flakes. Real-engine event and PCM checks passed;
+physical listening remains unverified.
 
 ## Observed GitHub status
 
