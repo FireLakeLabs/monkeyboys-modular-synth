@@ -1,0 +1,833 @@
+{
+  "issue": 146,
+  "pinned": {
+    "@strudel/mini": "1.2.6",
+    "browser": "Chromium 156.0.8078.4"
+  },
+  "panels": {
+    "seq": {
+      "hp": 10,
+      "panel": [120, 390],
+      "editor": [104, 73],
+      "cell": [23.8, 16]
+    },
+    "drums": {
+      "hp": 14,
+      "panel": [168, 390],
+      "row": [109, 18],
+      "cellAt8": [11.9, 18]
+    }
+  },
+  "tree": {
+    "strings": 136,
+    "lossless": 136,
+    "unclaimed": [",", "|", ".", "^"]
+  },
+  "gestures": {
+    "passed": 27,
+    "total": 27,
+    "cases": [
+      {
+        "name": "replace a note",
+        "before": "c2   [e2  g2]  a2",
+        "after": "c2   [e2  b2]  a2"
+      },
+      {
+        "name": "split a step",
+        "before": "c2   e2  a2",
+        "after": "c2   [e2 e2]  a2"
+      },
+      {
+        "name": "split a nested step",
+        "before": "c2 [e2  g2]",
+        "after": "c2 [e2  [g2 g2]]"
+      },
+      {
+        "name": "split keeps modifiers",
+        "before": "c2@3  e2",
+        "after": "[c2 c2]@3  e2"
+      },
+      {
+        "name": "merge a group",
+        "before": "c2  [e2   g2]@2  a2",
+        "after": "c2  e2@2  a2"
+      },
+      {
+        "name": "add *n",
+        "before": "c2   e2",
+        "after": "c2   e2*2"
+      },
+      {
+        "name": "add /n",
+        "before": "c2   e2",
+        "after": "c2/2   e2"
+      },
+      {
+        "name": "add !n",
+        "before": "c2   e2",
+        "after": "c2   e2!3"
+      },
+      {
+        "name": "add @n",
+        "before": "c2   e2",
+        "after": "c2@3   e2"
+      },
+      {
+        "name": "add ?",
+        "before": "c2   e2",
+        "after": "c2   e2?"
+      },
+      {
+        "name": "add euclid",
+        "before": "bd   sd",
+        "after": "bd(3,8)   sd"
+      },
+      {
+        "name": "add sample index",
+        "before": "bd   sd",
+        "after": "bd   sd:2"
+      },
+      {
+        "name": "change @n",
+        "before": "c2@2  e2",
+        "after": "c2@4  e2"
+      },
+      {
+        "name": "change a bare ? to a probability",
+        "before": "c2?  e2",
+        "after": "c2?0.2  e2"
+      },
+      {
+        "name": "change !n",
+        "before": "c2!3  e2",
+        "after": "c2!2  e2"
+      },
+      {
+        "name": "remove a modifier",
+        "before": "c2*2?  e2",
+        "after": "c2?  e2"
+      },
+      {
+        "name": "remove one elongation",
+        "before": "c2 _ _  e2",
+        "after": "c2 _  e2"
+      },
+      {
+        "name": "add an alternative",
+        "before": "c2   e2",
+        "after": "c2   <e2 g2>"
+      },
+      {
+        "name": "extend alternatives",
+        "before": "c2   <e2   g2>",
+        "after": "c2   <e2   g2 a2>"
+      },
+      {
+        "name": "add a chord note",
+        "before": "c2   e2",
+        "after": "[c2, g2]   e2"
+      },
+      {
+        "name": "extend a chord in its own style",
+        "before": "[c2,e2]   a2",
+        "after": "[c2,e2,g2]   a2"
+      },
+      {
+        "name": "add a random choice",
+        "before": "c2   e2",
+        "after": "[c2 | g2]   e2"
+      },
+      {
+        "name": "extend random choices",
+        "before": "[c2|e2]   a2",
+        "after": "[c2|e2|g2]   a2"
+      },
+      {
+        "name": "insert a step",
+        "before": "c2   e2",
+        "after": "c2 ~   e2"
+      },
+      {
+        "name": "delete a step",
+        "before": "c2   e2  g2",
+        "after": "c2   g2"
+      },
+      {
+        "name": "delete the last step",
+        "before": "c2   e2",
+        "after": "c2"
+      },
+      {
+        "name": "edit a text cell",
+        "before": "c2  bd*<2 3>  e2",
+        "after": "c2  bd*<2 4>  e2"
+      }
+    ],
+    "messy": [
+      {
+        "name": "note",
+        "after": "\"  c2   [f2  g2]@2\\n\\t<a2   b2>!2  [c3,e3]  bd:3*2  c2 _ _  ~ \"",
+        "ok": true
+      },
+      {
+        "name": "modifier",
+        "after": "\"  c2   [e2  g2]@3\\n\\t<a2   b2>!2  [c3,e3]  bd:3*2  c2 _ _  ~ \"",
+        "ok": true
+      },
+      {
+        "name": "alternative",
+        "after": "\"  c2   [e2  g2]@2\\n\\t<a2   b2 d2>!2  [c3,e3]  bd:3*2  c2 _ _  ~ \"",
+        "ok": true
+      },
+      {
+        "name": "chord",
+        "after": "\"  c2   [e2  g2]@2\\n\\t<a2   b2>!2  [c3,e3,g3]  bd:3*2  c2 _ _  ~ \"",
+        "ok": true
+      },
+      {
+        "name": "sample index",
+        "after": "\"  c2   [e2  g2]@2\\n\\t<a2   b2>!2  [c3,e3]  bd:4*2  c2 _ _  ~ \"",
+        "ok": true
+      }
+    ],
+    "refusals": [
+      {
+        "raw": "[a",
+        "why": "unbalanced",
+        "refused": true
+      },
+      {
+        "raw": "a b",
+        "why": "two cells",
+        "refused": true
+      },
+      {
+        "raw": "a, b",
+        "why": "layers",
+        "refused": true
+      },
+      {
+        "raw": "",
+        "why": "empty",
+        "refused": true
+      }
+    ],
+    "seedsShift": true
+  },
+  "events": {
+    "strings": 136,
+    "events": 4681,
+    "oneLeaf": 4681,
+    "unmapped": 0,
+    "withArgumentLocations": 1583,
+    "whitespace": [
+      {
+        "text": "c2\n  e2",
+        "events": 16,
+        "exact": 16,
+        "rawTrimmed": 8
+      },
+      {
+        "text": "c2\te2",
+        "events": 16,
+        "exact": 16,
+        "rawTrimmed": 8
+      },
+      {
+        "text": "c2  e2",
+        "events": 16,
+        "exact": 16,
+        "rawTrimmed": 0
+      },
+      {
+        "text": "  c2\n\n\te2 ",
+        "events": 16,
+        "exact": 16,
+        "rawTrimmed": 8
+      },
+      {
+        "text": "c2\n[e2\n g2]",
+        "events": 24,
+        "exact": 24,
+        "rawTrimmed": 16
+      },
+      {
+        "text": "ça ñ2",
+        "events": 16,
+        "exact": 16,
+        "rawTrimmed": 0
+      }
+    ],
+    "reversed": [
+      {
+        "at": "2/3",
+        "value": "a",
+        "leaf": "a"
+      },
+      {
+        "at": "1/2",
+        "value": "b",
+        "leaf": "b"
+      },
+      {
+        "at": "1/3",
+        "value": "c",
+        "leaf": "c"
+      },
+      {
+        "at": "0",
+        "value": "d",
+        "leaf": "d"
+      }
+    ],
+    "copies": [
+      {
+        "now": "3/4",
+        "source": "0",
+        "value": "a"
+      },
+      {
+        "now": "1/2",
+        "source": "1/4",
+        "value": "a"
+      },
+      {
+        "now": "1/4",
+        "source": "1/2",
+        "value": "a"
+      },
+      {
+        "now": "0",
+        "source": "3/4",
+        "value": "b"
+      }
+    ],
+    "structLocations": [
+      {
+        "value": "c2",
+        "locations": [
+          {
+            "start": 201,
+            "end": 202
+          },
+          {
+            "start": 101,
+            "end": 103
+          }
+        ]
+      },
+      {
+        "value": "eb2",
+        "locations": [
+          {
+            "start": 205,
+            "end": 206
+          },
+          {
+            "start": 104,
+            "end": 107
+          }
+        ]
+      },
+      {
+        "value": "g2",
+        "locations": [
+          {
+            "start": 207,
+            "end": 208
+          },
+          {
+            "start": 108,
+            "end": 110
+          }
+        ]
+      }
+    ],
+    "cvLocations": [
+      {
+        "value": {
+          "note": "c2",
+          "cutoff": 400
+        },
+        "starts": [202, 101]
+      },
+      {
+        "value": {
+          "note": "c2",
+          "cutoff": 800
+        },
+        "starts": [206, 101]
+      },
+      {
+        "value": {
+          "note": "e2",
+          "cutoff": 400
+        },
+        "starts": [202, 104]
+      },
+      {
+        "value": {
+          "note": "e2",
+          "cutoff": 800
+        },
+        "starts": [206, 104]
+      }
+    ],
+    "voicedChordLocations": [
+      {
+        "value": {
+          "note": "Bb3"
+        },
+        "starts": [102, 1]
+      },
+      {
+        "value": {
+          "note": "Eb4"
+        },
+        "starts": [102, 1]
+      },
+      {
+        "value": {
+          "note": "G4"
+        },
+        "starts": [102, 1]
+      },
+      {
+        "value": {
+          "note": "Bb4"
+        },
+        "starts": [102, 1]
+      },
+      {
+        "value": {
+          "note": "C5"
+        },
+        "starts": [102, 1]
+      },
+      {
+        "value": {
+          "note": "F3"
+        },
+        "starts": [106, 1]
+      },
+      {
+        "value": {
+          "note": "C4"
+        },
+        "starts": [106, 1]
+      },
+      {
+        "value": {
+          "note": "Eb4"
+        },
+        "starts": [106, 1]
+      },
+      {
+        "value": {
+          "note": "Ab4"
+        },
+        "starts": [106, 1]
+      },
+      {
+        "value": {
+          "note": "C5"
+        },
+        "starts": [106, 1]
+      }
+    ],
+    "degreeLocations": [
+      {
+        "value": {
+          "note": "C3"
+        },
+        "starts": [3, 1, 101]
+      },
+      {
+        "value": {
+          "note": "Eb3"
+        },
+        "starts": [3, 1, 104]
+      },
+      {
+        "value": {
+          "note": "G3"
+        },
+        "starts": [3, 1, 106]
+      }
+    ]
+  },
+  "document": [
+    {
+      "name": "imported SEQ",
+      "bound": "\"c2   [e2  g2]@2  <a2 b2>!2\"",
+      "after": "// intro comment\nsetcpm(120/4)\n$: note(\"c2   [f2  g2]@2  <a2 b2>!2\")  // keep me\n  .s('sawtooth')\n  .lpf(800) /* tail */\n",
+      "sameId": true,
+      "sameType": true,
+      "value": "c2   [f2  g2]@2  <a2 b2>!2",
+      "bytesOutside": true,
+      "generated": true
+    },
+    {
+      "name": "multi-line backtick SEQ",
+      "bound": null,
+      "modules": ["code", "osc", "mix", "out"]
+    },
+    {
+      "name": "imported DRUMS",
+      "bound": "\"bd*2  [~ sd]@3, hh*8\"",
+      "after": "$: s(\"bd*2  [~ f2]@3, hh*8\")  // drums\n  .gain(0.9)\n",
+      "sameId": true,
+      "sameType": true,
+      "value": "bd*2  [~ f2]@3, hh*8",
+      "bytesOutside": true,
+      "generated": true
+    }
+  ],
+  "layout": {
+    "stressAtSeq": {
+      "c2 c2 eb2 g2 c3 bb2 g2 eb2": {
+        "strings": 1,
+        "leaves": 8,
+        "depthHistogram": {
+          "0": 8,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "proportionalStrip": {
+          "median": 13,
+          "p10": 13,
+          "min": 13,
+          "labelFits": 0,
+          "atLeast8": 100
+        },
+        "proportionalWrapped": {
+          "median": 52,
+          "p10": 52,
+          "min": 52,
+          "labelFits": 100,
+          "atLeast8": 100
+        },
+        "focusPerLevel": {
+          "median": 52,
+          "p10": 52,
+          "min": 52,
+          "labelFits": 100,
+          "atLeast8": 100
+        }
+      },
+      "c2 [c2 eb2] g2 c3 bb2 [g2 eb2] c2 g2": {
+        "strings": 1,
+        "leaves": 10,
+        "depthHistogram": {
+          "0": 6,
+          "1": 4,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "proportionalStrip": {
+          "median": 13,
+          "p10": 6.5,
+          "min": 6.5,
+          "labelFits": 0,
+          "atLeast8": 60
+        },
+        "proportionalWrapped": {
+          "median": 52,
+          "p10": 26,
+          "min": 26,
+          "labelFits": 100,
+          "atLeast8": 100
+        },
+        "focusPerLevel": {
+          "median": 52,
+          "p10": 52,
+          "min": 52,
+          "labelFits": 100,
+          "atLeast8": 100
+        }
+      },
+      "c2 c2 eb2 g2 c3 bb2 g2 eb2 c2 c2 eb2 g2 c3 bb2 g2 eb2": {
+        "strings": 1,
+        "leaves": 16,
+        "depthHistogram": {
+          "0": 16,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0
+        },
+        "proportionalStrip": {
+          "median": 6.5,
+          "p10": 6.5,
+          "min": 6.5,
+          "labelFits": 0,
+          "atLeast8": 0
+        },
+        "proportionalWrapped": {
+          "median": 26,
+          "p10": 26,
+          "min": 26,
+          "labelFits": 100,
+          "atLeast8": 100
+        },
+        "focusPerLevel": {
+          "median": 26,
+          "p10": 26,
+          "min": 26,
+          "labelFits": 100,
+          "atLeast8": 100
+        }
+      },
+      "c2 [c2 eb2] eb2 g2 c3 [bb2 [g2 eb2]] g2 eb2 c2 c2 eb2 g2 c3 bb2 g2 eb2": {
+        "strings": 1,
+        "leaves": 19,
+        "depthHistogram": {
+          "0": 14,
+          "1": 3,
+          "2": 2,
+          "3": 0,
+          "4": 0
+        },
+        "proportionalStrip": {
+          "median": 6.5,
+          "p10": 1.6,
+          "min": 1.6,
+          "labelFits": 0,
+          "atLeast8": 0
+        },
+        "proportionalWrapped": {
+          "median": 26,
+          "p10": 6.5,
+          "min": 6.5,
+          "labelFits": 73.7,
+          "atLeast8": 89.5
+        },
+        "focusPerLevel": {
+          "median": 26,
+          "p10": 26,
+          "min": 26,
+          "labelFits": 100,
+          "atLeast8": 100
+        }
+      }
+    },
+    "repoAtSeq": {
+      "strings": 22,
+      "leaves": 84,
+      "depthHistogram": {
+        "0": 65,
+        "1": 17,
+        "2": 2,
+        "3": 0,
+        "4": 0
+      },
+      "proportionalStrip": {
+        "median": 26,
+        "p10": 13,
+        "min": 13,
+        "labelFits": 69,
+        "atLeast8": 100
+      },
+      "proportionalWrapped": {
+        "median": 104,
+        "p10": 52,
+        "min": 13,
+        "labelFits": 95.2,
+        "atLeast8": 100
+      },
+      "focusPerLevel": {
+        "median": 104,
+        "p10": 52,
+        "min": 13,
+        "labelFits": 95.2,
+        "atLeast8": 100
+      }
+    },
+    "idiomsAtSeq": {
+      "strings": 39,
+      "leaves": 121,
+      "depthHistogram": {
+        "0": 78,
+        "1": 33,
+        "2": 10,
+        "3": 0,
+        "4": 0
+      },
+      "proportionalStrip": {
+        "median": 34.7,
+        "p10": 13,
+        "min": 6.5,
+        "labelFits": 90.1,
+        "atLeast8": 95.9
+      },
+      "proportionalWrapped": {
+        "median": 104,
+        "p10": 52,
+        "min": 17.3,
+        "labelFits": 100,
+        "atLeast8": 100
+      },
+      "focusPerLevel": {
+        "median": 104,
+        "p10": 52,
+        "min": 34.7,
+        "labelFits": 100,
+        "atLeast8": 100
+      }
+    },
+    "upstreamAtSeq": {
+      "strings": 67,
+      "leaves": 278,
+      "depthHistogram": {
+        "0": 59,
+        "1": 186,
+        "2": 33,
+        "3": 0,
+        "4": 0
+      },
+      "proportionalStrip": {
+        "median": 26,
+        "p10": 13,
+        "min": 5.8,
+        "labelFits": 96,
+        "atLeast8": 98.9
+      },
+      "proportionalWrapped": {
+        "median": 83.2,
+        "p10": 26,
+        "min": 17.3,
+        "labelFits": 100,
+        "atLeast8": 100
+      },
+      "focusPerLevel": {
+        "median": 52,
+        "p10": 17.3,
+        "min": 13,
+        "labelFits": 100,
+        "atLeast8": 100
+      }
+    },
+    "repoAtDrum": {
+      "strings": 22,
+      "leaves": 84,
+      "depthHistogram": {
+        "0": 65,
+        "1": 17,
+        "2": 2,
+        "3": 0,
+        "4": 0
+      },
+      "proportionalStrip": {
+        "median": 27.3,
+        "p10": 13.6,
+        "min": 13.6,
+        "labelFits": 69,
+        "atLeast8": 100
+      },
+      "proportionalWrapped": {
+        "median": 27.3,
+        "p10": 13.6,
+        "min": 13.6,
+        "labelFits": 69,
+        "atLeast8": 100
+      },
+      "focusPerLevel": {
+        "median": 27.3,
+        "p10": 13.6,
+        "min": 13.6,
+        "labelFits": 69,
+        "atLeast8": 100
+      }
+    },
+    "idiomsAtDrum": {
+      "strings": 39,
+      "leaves": 121,
+      "depthHistogram": {
+        "0": 78,
+        "1": 33,
+        "2": 10,
+        "3": 0,
+        "4": 0
+      },
+      "proportionalStrip": {
+        "median": 36.3,
+        "p10": 13.6,
+        "min": 6.8,
+        "labelFits": 90.1,
+        "atLeast8": 95.9
+      },
+      "proportionalWrapped": {
+        "median": 36.3,
+        "p10": 13.6,
+        "min": 6.8,
+        "labelFits": 90.1,
+        "atLeast8": 95.9
+      },
+      "focusPerLevel": {
+        "median": 54.5,
+        "p10": 27.3,
+        "min": 13.6,
+        "labelFits": 96.7,
+        "atLeast8": 100
+      }
+    }
+  },
+  "coverage": {
+    "repo": {
+      "strings": 22,
+      "today": 14,
+      "full": 22,
+      "partial": 0,
+      "whole": 0,
+      "reasons": {}
+    },
+    "idioms": {
+      "strings": 39,
+      "today": 10,
+      "full": 31,
+      "partial": 3,
+      "whole": 5,
+      "reasons": {
+        "patterned arg": 4,
+        "{ }": 2,
+        "..": 1,
+        "^ marker": 1
+      }
+    },
+    "upstream": {
+      "strings": 67,
+      "today": 7,
+      "full": 53,
+      "partial": 4,
+      "whole": 10,
+      "reasons": {
+        "patterned arg": 6,
+        "{ }": 6,
+        "..": 2,
+        "^ marker": 1
+      }
+    }
+  },
+  "storyboard": {
+    "parserParity": {
+      "strings": 136,
+      "mismatches": 0,
+      "examples": []
+    },
+    "matrix": {
+      "combos": 396,
+      "badWidth": 0,
+      "overflow": [],
+      "empty": 0
+    },
+    "interactions": {
+      "passed": 38,
+      "total": 38,
+      "failed": []
+    }
+  },
+  "storyboardErrors": []
+}

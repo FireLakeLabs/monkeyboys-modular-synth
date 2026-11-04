@@ -149,6 +149,23 @@ undo is exhausted, Undo discards the remaining draft before traversing accepted
 history. Acceptance checkpoints local history. Recovery starts a fresh session
 history, and undo never starts stopped audio. See the [contract and proof](undo-redo.md).
 
+## Nested step editor (#146, decided 3 November 2026)
+
+SEQ, DRUMS rows, CV SEQ, GATES and CHORD share one editor for nested mini-notation.
+Cells are as wide as their share of the cycle, on up to four equal-time lines; a DRUMS
+row is one line. A group too narrow for its children collapses, and Enter opens it
+across the whole editor. Zoom never changes the layout.
+
+Draw `[ ]`, `.`, `*n`, `/n`, `!n`, `@n`, `_`, `?`, `|`, `,`, nested `<…>`, `(k,n,r)`,
+`:n` and rests. Show `{…}%n`, `..` and patterned modifier arguments as text cells: one
+element of exact source that keeps its time share, so an exotic token no longer sends
+the whole sequence to text mode. Text mode stays as the escape hatch.
+
+Each action is in a floating cell tray and on a key that is its notation symbol. Each
+gesture is one splice inside the literal and one undo step, using `@strudel/mini`'s
+parser and source locations. #147 also teaches the reader backtick literals. See the
+[study and evidence](nested-step-editor.md).
+
 ## Rack metadata in the editor (#54/#68, decided 3 November 2026)
 
 Keep the v1 file format and fold its trailing rack comment block to one line by
