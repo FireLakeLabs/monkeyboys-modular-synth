@@ -65,7 +65,7 @@ async function wav(blob) {
   const frames = view.getUint32(40, true) / (channels * 2)
   assert(new TextDecoder().decode(buffer.slice(0, 4)) === 'RIFF', 'Not a WAV')
   const hits = []
-  for (let onset = 0; onset < 4; onset += 0.5) {
+  for (let onset = 0; onset + 0.12 <= frames / rate; onset += 0.5) {
     let sum = 0,
       count = 0
     for (let frame = Math.floor(onset * rate); frame < Math.floor((onset + 0.12) * rate); frame++) {
@@ -192,6 +192,34 @@ export async function verifyBounce() {
     assert(strudel.getAudioContext() === live, 'Cold transition replaced live clock')
     results.checks.push(
       'immediate Bounce while a cold live sample is still decoding drains output before swapping contexts',
+    )
+
+    const filtered = saveLayout(
+      read('setcpm(120)\n$: note("c3*4").s("sawtooth").lpf(1000).release(0.01)'),
+    ).source
+    await open(filtered)
+    button('Play').click()
+    await until(() => status() === 'Playing')
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+    button('Stop').click()
+    await until(() => status() === 'Ready')
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    blob = undefined
+    button('Bounce WAV').click()
+    await until(() => blob && status() === 'Ready')
+    results.filteredWAV = await wav(blob)
+    assert(
+      results.filteredWAV.seconds === 1 && results.filteredWAV.firstHitRMS > 0.001,
+      'Filtered bounce is silent or wrong duration',
+    )
+    button('Play').click()
+    await until(() => status() === 'Playing')
+    results.filteredReplayPCM = await livePCM()
+    assert(results.filteredReplayPCM > 0.001, 'Filtered replay is silent')
+    button('Stop').click()
+    await until(() => status() === 'Ready')
+    results.checks.push(
+      'pooled live filters cannot cross into offline output or back into replay; filtered WAV and replay both have nonzero PCM',
     )
 
     // A real pinned decoder failure is logged and swallowed by the upstream renderer.

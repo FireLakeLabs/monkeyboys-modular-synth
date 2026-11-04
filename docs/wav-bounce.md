@@ -40,6 +40,12 @@ definitions or call mappings are added.
   renderer's own cleanup. Existing tails are cleared; scheduling stays stopped.
   Dispatched live output promises drain before the swap: a cold live sample can
   still be decoding after Stop, and otherwise connects nodes across contexts.
+  Superdough 1.3.0 also reuses pooled filters/worklets without a context check.
+  The hash-verified `postinstall` fix in `scripts/patch-strudel-audio-pools.mjs`
+  rejects nodes belonging to another context in both bundled entry points and
+  the upstream source. `npm ci` applies it without changing pinned versions;
+  unexpected dependency bytes fail installation and require deliberate review.
+  Remove this fix when the pinned upstream enforces context ownership.
 - The pinned renderer catches per-event output/decode errors, logs them and can
   still download a partial/silent WAV. The adapter captures observable errors,
   rejects completion and warns **Downloaded WAV may be incomplete** through
@@ -60,13 +66,16 @@ a reload to retry the same bad resource.
 
 On 4 November 2026, pinned Node 24.22.2 and `npm ci`:
 
-- `npm run check` passed: 935 unit cases, 42 guardrails, unchanged reader coverage,
+- `npm run check` passed: 935 unit cases, 43 guardrails, unchanged reader coverage,
   formatting/skill integrity, lint, TypeScript and build. Focused tests cover
   raw source/range/volume, concurrent Play refusal, restoration on render
   rejection, pending-evaluation Stop recovery, failure ownership, explicit replay
   and both filename extensions.
   The immediate cold-Play/Bounce regression first failed because rendering
   started with a dispatched output still pending; it passes after draining.
+  A real-browser filtered-patch regression first failed with cross-context
+  connections after live nodes returned to the pool. It checks filtered WAV
+  PCM and explicit replay after the install-time ownership fix.
 - The shared T3 browser ran `scripts/bounce-check.mjs` against Vite. The focused
   Playwright **WAV bounce and live audio recovery** case passed too, in a fresh
   context with `--autoplay-policy=user-gesture-required`. It belongs to the
@@ -82,6 +91,8 @@ On 4 November 2026, pinned Node 24.22.2 and `npm ci`:
   surfaced the incomplete-WAV warning; evaluation failure downloaded nothing.
   Source remained editable and explicit correction/Play produced RMS **0.12761**.
   Physical speakers/headphones and other browsers/devices remain unverified.
+  The filtered regression measured WAV first-hit RMS **0.09559** and subsequent
+  live replay RMS **0.09042** after released nodes had populated the live pool.
 
 Repeat with Vite and `verifyBounce()` from `/scripts/bounce-check.mjs` after a
 user gesture, or provision Playwright Chromium and run:
