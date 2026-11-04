@@ -129,3 +129,22 @@ now constructs that receiver with the pinned `mini` parser explicitly, retaining
 normal file bytes. Independent tests and browser queries check 20 GATES onsets
 and four selected SWITCH pitches before sound selection. The complete routing
 browser driver was also run to verify the inherited actual-audio behavior.
+
+## Mid-width header correction
+
+The next hosted run passed the complete #139 suite and the repaired fixture and
+geometry checks. It reported three inherited failures also present on unchanged
+`b51fcf9` ([baseline run](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/41884896388)):
+missing native actions for #136's four new module exercises, the broad library
+rack-editing timeout, and the old palette filter expectation that omits GATES.
+These remain separate follow-ups.
+
+It also caught a #139 regression at 900×768: the extra clock wrapped the header,
+leaving too little height for the rack. The unchanged mid-width suite reproduced
+`.rack-scroll is outside the viewport` locally. A compact header gap, patch-name
+field and clock width below 1150 px keep the caption and all controls available.
+The same suite then passed at 900×768 and 1024×768 with both normal and reduced
+motion, including complete rack/code
+view transitions, retained selection, Show in code, draft undo and cable geometry.
+The caption still spells out the tempo relation. This narrow CI follow-up changes
+only responsive presentation; source, saved state and engine APIs are unchanged.
