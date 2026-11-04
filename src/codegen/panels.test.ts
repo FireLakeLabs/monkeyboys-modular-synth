@@ -367,3 +367,13 @@ it('preserves saved delaytime ownership beside an existing CODE delaysync call',
   expect(read(saved.source).patch).toEqual(patch)
   expect(events(saved.source)).toEqual(events(generate(patch)))
 })
+
+it('reads an implicit neutral sampler boundary without inventing a bank', () => {
+  const source = '$: s("bd").n(3).orbit(3)\n'
+  const doc = read(source)
+  expect(doc.patch.modules.find((module) => module.type === 'smpl')?.values).toMatchObject({
+    n: 3,
+    bank: '',
+  })
+  expect(events(generate(doc.patch))).toEqual(events(source))
+})

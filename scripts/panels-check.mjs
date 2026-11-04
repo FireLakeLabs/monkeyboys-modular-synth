@@ -69,6 +69,28 @@ export async function pinnedLabels() {
     if (JSON.stringify(actual) !== JSON.stringify(expected))
       throw new Error(`Stack label ${label} changed events`)
   }
+  for (const settings of [
+    '.gain(.4).lpf(800).lpq(1).velocity(.6)',
+    '.roomfade(2)',
+    '.ftype("ladder")',
+    '.channels("3:4").channels("1:2")',
+    '.delay(.4).delayfeedback(.5).delaytime(.3).delaysync(.25)',
+    '.delay(.4).delayfeedback(.5).delaysync(.25).delaytime(.3)',
+  ]) {
+    const source = `$: note("c3").s("sine")${settings}.orbit(3)`
+    const original = await repl.evaluate(source, false)
+    const expected = original.queryArc(0, 1).map((h) => h.value)
+    const regenerated = await repl.evaluate(generate(read(source).patch), false)
+    const actual = regenerated.queryArc(0, 1).map((h) => h.value)
+    const stable = (value) =>
+      JSON.stringify(value, (_key, item) =>
+        item && typeof item === 'object' && !Array.isArray(item)
+          ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b)))
+          : item,
+      )
+    if (stable(actual) !== stable(expected))
+      throw new Error(`Imported settings changed events: ${settings}`)
+  }
   repl.stop()
   return result
 }

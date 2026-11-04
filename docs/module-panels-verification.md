@@ -48,7 +48,9 @@ each event mismatch. Catalog `read: 'companion'` now requires an established,
 mode-compatible owner; explicit default pair overrides and mixed delay setters
 stay CODE. An additional failing-before regression retains old saved delaytime
 ownership beside a CODE delaysync call. An implicit bare frequency source and
-an explicit neutral DJ override also retain their original engine events.
+an explicit neutral DJ override also retain their original engine events. The
+browser REPL independently compares original and regenerated companion, output
+override and mixed-delay settings.
 
 ## Browser and runtime proof
 
