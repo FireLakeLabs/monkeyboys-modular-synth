@@ -33,7 +33,7 @@ vi.mock('../modules/catalog', async (importOriginal) => {
   }
   return {
     ...catalog,
-    CATALOG: [...catalog.CATALOG, spec],
+    CATALOG: [...catalog.CATALOG.filter((item) => item.id !== 'pan'), spec],
     getModuleSpec: (id: string) => (id === spec.id ? spec : catalog.getModuleSpec(id)),
   }
 })

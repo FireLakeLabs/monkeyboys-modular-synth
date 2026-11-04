@@ -297,6 +297,7 @@ export function generateDocument(
       !node.spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack?.id)
     if (smooth || genericEnv) {
       const depth = source.module.values['depth'] ?? item.modulation.default
+      depthScale = product([depthScale, String(item.modulation.audioScale ?? 1)])
       if (typeof depth !== 'number' || depth < item.modulation.min || depth > item.modulation.max)
         throw new Error(`Modulation depth outside target range: ${node.module.id}.${item.id}`)
       if (item.modulation.pitch) {
@@ -410,6 +411,9 @@ export function generateDocument(
       let argument: string
       let mod: ReturnType<typeof modulation> | undefined
       switch (binding.argument.kind) {
+        case 'array':
+          argument = JSON.stringify(value(node, item.id))
+          break
         case 'tuple':
           argument = tupleControls(binding, callMethod(binding, s))
             .map((id) => {
@@ -421,6 +425,10 @@ export function generateDocument(
             .join(', ')
           break
         case 'number':
+          if (binding.argument.optional && s(binding.argument.optional) === 'none') {
+            argument = ''
+            break
+          }
           mod = modulation(node, item.id)
           argument =
             binding.argument.precision === undefined || mod.modules
@@ -464,10 +472,18 @@ export function generateDocument(
           typeof binding.method === 'string' ? '' : s(binding.method.control),
         )
     }
+    const operator = node.inputs.get('fm')
+    if (operator) expression = transform(requireNode(nodes, operator.from.module), expression)
     return expression
   }
 
   function raw(node: Node): CodeExpression[] {
+    if (node.spec.soundSource && !input(node)) {
+      const selector = node.spec.soundSource
+      return [
+        transform(node, append(blank(), `s(${quote(string(node, selector))})`, node), selector),
+      ]
+    }
     if (node.spec.source) {
       const { method, control, suffix } = node.spec.source
       let expression = append(blank(), `${method}(${quote(string(node, control))})`, node)

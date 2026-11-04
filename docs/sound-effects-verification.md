@@ -1,0 +1,143 @@
+# Sound-source and effect acceptance (#131)
+
+Observed 4 November 2026 on Node 24.22.2, locked core 1.2.6 / superdough 1.3.0.
+The [catalog contract](module-spec.md#sound-sources-and-voice-effects-131) records
+all eleven panels, jacks, defaults, supported ranges and engine limitations.
+Issue #134 merged during implementation. Final checks use its ordered-chain contract
+on main at `7699774`, including the complete active stage sets of compound panels.
+
+## Independent claims
+
+- `src/modules/sound-effects.test.ts` imports all 32 source/call forms, checks the
+  expected module controls and absence of CODE, and separately asserts untouched
+  exact bytes, save/reopen of the complete rack, and actual pinned-engine onset
+  events after generation. Each panel also builds from palette defaults. Literal
+  edits cover numeric, string and array values without rewriting surrounding
+  comments. Prior whole-voice and suffix CODE retain saved ownership.
+- Specific regressions cover explicit noise silence, 16-bit crush, missing FM
+  envelopes (including numeric envelope defaults), coarse-only and depth-only
+  phaser calls. Speculative failed PAN projection restores the reader cursor;
+  the pre-change trance source/projection/generation digests remain unchanged.
+- Ordered-chain checks retain native imported events, generate FX for reversed or
+  repeated rack stages, and recognize the bare arguments as modules. PAN uses existing CV bindings; its rack reopens
+  with OSC's dedicated FM OP route intact. Unsupported arguments stay exact CODE.
+- `scripts/sound-effects-browser.mjs` runs in the browser acceptance workflow.
+  The shared geometry probe checked all **34 Hardware panels in each of four
+  looks**, including the eleven additions, at catalog widths with scrollable,
+  reachable controls and live jack/cable geometry. The drawbar edit used native
+  keyboard input, changed partial 2 from .5 to 1, retained saved rack identity,
+  and changed the count to eight with eight reachable sliders. A native eight-move pointer drag is restored by one Undo.
+- In Chromium 156.0.8078.4, **31 base forms produced nonzero real WebAudio PCM** and
+  scheduled events with exact source and saved identity retained. Each probe
+  sampled 122,880 values. Nullary `.shape()` was preserved and recorded as an
+  engine limitation; its lack of a numeric amount caused the initial actual
+  playback run to fail, while `.shape(.5)` produced nonzero PCM. Nullary named
+  distortion helpers are inert in the pinned engine and are never silently
+  assigned an amount. The final matrix has no page errors. [Raw results](evidence/sound-effects-browser.json).
+
+PAN CV also ran in stereo: SMOOTH/ENV changed within-note balance, STEP stayed
+stable within a sustained note, and CV SEQ reached the left channel. All four source modes restored the
+complete saved rack. SMOOTH/ENV depth .25 wrote native `depthabs: .5`; import
+divides the AudioParam scale back into panel units. The final integrated browser run passed all assertions in one session. It also
+played five ordered/native paths: repeated DRIVE, FOLDER→LO-FI, LO-FI→FOLDER,
+COMP→VCF and PAN→SHIFT, with two FX calls on each inverted/repeated path and
+native calls on the matching LO-FI→FOLDER path. Every path retained exact source,
+saved identity and pinned-engine events and produced nonzero PCM. Three reset
+forms and a nullary DRIVE after samples also produced PCM; shared FM OP retained
+one rendered panel, the edited oscillator look and exact source through save.
+
+Shared-preview geometry passed. Its Play action timed out twice (15 s and 3 s);
+Playwright provided the real playback/PCM and native-input proof. The private
+canvas access was unavailable; the repository's exported
+Hardware look reference was available. Physical listening, Firefox, Safari,
+mobile devices, stereo SHIFT cost and maximum safe polyphony are unverified.
+These are stated verification limits, not missing supported module mappings.
+
+## SHIFT cost
+
+Claim measured: CPU time to process one second of mono audio through each
+SHIFT voice's **exact bundled** phase-vocoder processor at stretch 1.5.
+`scripts/shift-cost.mjs` extracts the worklet from installed superdough's shipped
+bundle, registers its actual processor in a VM, and calls its real `process`
+method on every 128-frame block. It consumes and checks every output sample;
+all runs have zero errors, finite nonzero PCM and the expected sample count.
+It does not evaluate an unconsumed lazy pattern or measure only call generation.
+
+Host: AMD Ryzen 7 PRO 6850U, 16 logical CPUs; Node 24.22.2; 48 kHz mono;
+2048-frame FFT/window with 128-frame hop; eight seconds of 220-Hz sine input.
+JIT, tables and buffers warm before timing. Five interleaved copy/SHIFT pairs
+at one and four concurrent voices. CPU usage is process user+system time,
+normalized by actual voices and audio seconds. Each four-voice run consumes
+1,536,000 samples. This is a processor-only cost, excluding node construction,
+scheduler, live browser rendering, sample fetches and audio-device overhead.
+
+| Voices | Copy/validation median (range)   | SHIFT median (range)                   |
+| ------ | -------------------------------- | -------------------------------------- |
+| 1      | .289 (.245–.444) ms/voice-second | 27.078 (25.695–37.378) ms/voice-second |
+| 4      | .297 (.245–.392) ms/voice-second | 28.541 (26.772–43.272) ms/voice-second |
+
+[Raw runs, CPU model and worklet SHA-256](evidence/shift-cost.json).
+`node scripts/shift-cost.mjs /tmp/shift-cost.json` reproduces the measurement.
+A separate, unreported `node --cpu-prof` run found `shiftPeaks` (1658 samples),
+`_transform4` (1421), `processOLA` (931) and `_realTransform4` (844) dominant;
+copy/output validation (`run`, 137) and GC (61) were small. FFT/peak shifting on
+one CPU is the limiter. One voice's 27 ms per audio second is about 2.7% of one
+core, arithmetically plausible and consistent with four voices. It is not a
+browser capacity threshold or a speedup claim.
+
+The initial load average was 1.31/1.16/.53 on 16 logical CPUs. Other wave-three
+Vite/browser work was running; a later profile-time load was 2.71/2.35/1.27.
+Interleaving limits drift bias but cannot remove host contention. The ranges
+capture visible variance. No CI timing threshold is introduced. Real-browser
+positive/negative SHIFT PCM is the end-to-end proof that the app schedules and
+outputs this effect, separately from the CPU micro-measurement.
+
+## Verification commands
+
+- `npm ci` with pinned Node; `npm run check` is the deterministic/CI gate.
+- `node scripts/sound-effects-browser.mjs http://127.0.0.1:5131 /tmp/monkeyboy-sound-effects`
+  with Vite running; also included in `npm run test:browser`.
+- The reader coverage manifest includes the new exercise with MIT provenance;
+  its new baseline is fully mapped. Existing patch baselines do not regress.
+
+The existing ordered-effects browser suite also passed after integration: native,
+reordered and repeated VCF/send paths, source edits, save identity and actual
+PCM. [Raw ordered baseline](evidence/sound-effects-ordered-baseline.json).
+
+The existing trance acceptance also passed after integration: 29 modules, four voices and four-cycle
+onset snapshots survived repeated Play and export/reopen. Master and all four
+orbit probes produced nonzero PCM, with exact source and saved/rendered rack
+identity retained. [Raw trance result](evidence/sound-effects-trance.json). The
+standard Playwright runner's port 5173 was occupied by another wave-three thread;
+the same committed trance functions ran in an independent Playwright context
+against this worktree's server on 5131.
+
+Before integration the deterministic gate passed 1,508 tests and 43 guardrails.
+The integrated gate passed 1,556 tests and 43 guardrails, plus lint, formatting,
+skill integrity, reader coverage, TypeScript and build.
+
+## Sol review corrections
+
+Round 1 (GPT-6.1 Sol, high) found three should-fix bugs. Twelve focused cases
+failed before the fixes and passed afterwards: explicit coarse/transient/phaser
+reset values, all eight nullary DRIVE methods after sample sources, and shared
+FM OP identity after an added comment and look edit. Unsafe reset omissions stay
+CODE; scalar and nullary audio imports share one sampler boundary; repeated
+operator owners reconcile only when their effective saved values agree. These
+regressions run in the normal gate. Usage was not exposed.
+
+The following integration with #134 replaces the earlier fixed-order warning
+implementation with its catalog stage membership, native import provenance and
+informational chain notes. The final source, rack and events checks cover both
+representations.
+
+Review/CI/merge results are recorded in the pull request; the raw browser and CPU
+records above are dated observations rather than promises about every device.
+
+Round 2 (GPT-6.1 Sol, high) **APPROVED** the fixes and ordered-FX integration,
+resolved S1–S3 and found no new issues. Sol independently passed the full gate
+(1,556 tests, 43 guardrails), and additionally checked shared operator activation
+combinations, inactive saved values and divergent source edits. Browser evidence
+was reviewed rather than rerun by Sol. No findings were declined. The diff grew
+from 3,332 insertions/18 deletions before review to 3,982/56 after the #134
+integration and added proof artifacts; usage was not exposed.

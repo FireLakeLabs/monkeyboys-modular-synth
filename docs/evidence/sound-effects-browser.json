@@ -1,0 +1,537 @@
+{
+  "browser": "156.0.8078.4",
+  "looks": [
+    {
+      "look": "powder",
+      "count": 34
+    },
+    {
+      "look": "instrument",
+      "count": 34
+    },
+    {
+      "look": "vintage",
+      "count": 34
+    },
+    {
+      "look": "learner",
+      "count": 34
+    }
+  ],
+  "forms": [
+    {
+      "type": "noise",
+      "call": "s(\"white\")",
+      "events": 4,
+      "rms": 0.005987286159166433,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "noise",
+      "call": "s(\"pink\")",
+      "events": 4,
+      "rms": 0.0028041855228402753,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "noise",
+      "call": "s(\"brown\")",
+      "events": 4,
+      "rms": 0.0008224770535470138,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "noise",
+      "call": "s(\"crackle\").density(0.1)",
+      "events": 4,
+      "rms": 0.00018333175237080282,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "noise",
+      "call": "note(\"c3*4\").s(\"pink\")",
+      "events": 16,
+      "rms": 0.0029211987450183945,
+      "samples": 122880,
+      "cables": 4,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "harmonic",
+      "call": "note(\"c3 e3 g3\").s(\"user\").partials([1, 0.5, 0, 0.3])",
+      "events": 12,
+      "rms": 0.009913603680808866,
+      "samples": 122880,
+      "cables": 4,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "harmonic",
+      "call": "s(\"user\").partials([1, 0.5, 0, 0.3])",
+      "events": 4,
+      "rms": 0.009562731301416865,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "fmop",
+      "call": "note(\"c3 e3 g3\").s(\"sine\").fm(2).fmh(1.5).fmattack(0.01).fmdecay(0.3)",
+      "events": 12,
+      "rms": 0.010502465893389436,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").soft(0.5)",
+      "events": 8,
+      "rms": 0.01706579217949644,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").soft()",
+      "events": 8,
+      "rms": 0.010340505320416023,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").hard(0.5)",
+      "events": 8,
+      "rms": 0.01712638037499681,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").hard()",
+      "events": 8,
+      "rms": 0.010384291318251823,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").cubic(0.5)",
+      "events": 8,
+      "rms": 0.019232813253142713,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").cubic()",
+      "events": 8,
+      "rms": 0.010442277093721742,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").diode(0.5)",
+      "events": 8,
+      "rms": 0.01732096324505098,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").diode()",
+      "events": 8,
+      "rms": 0.010373121907081674,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").asym(0.5)",
+      "events": 8,
+      "rms": 0.017064396444830526,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").asym()",
+      "events": 8,
+      "rms": 0.010350004699597713,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").sinefold(0.5)",
+      "events": 8,
+      "rms": 0.021639675050792048,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").sinefold()",
+      "events": 8,
+      "rms": 0.010382689697099764,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").chebyshev(0.5)",
+      "events": 8,
+      "rms": 0.04450344456715135,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").chebyshev()",
+      "events": 8,
+      "rms": 0.010376713249269016,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").shape(0.5)",
+      "events": 8,
+      "rms": 0.03007473410726687,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "expression": "note(\"c3 e3\").s(\"sine\").shape()",
+      "engineLimit": "Nullary shape has no numeric amount; pinned-engine runtime fails. Preserved without normalizing.",
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "folder",
+      "call": "note(\"c3 e3\").s(\"sine\").fold(0.6)",
+      "events": 8,
+      "rms": 0.01462973419582776,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "lofi",
+      "call": "note(\"c3 e3\").s(\"sine\").crush(6).coarse(4)",
+      "events": 8,
+      "rms": 0.014467546511803975,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "formant",
+      "call": "note(\"c3 e3\").s(\"sawtooth\").vowel(\"<a e i o>\")",
+      "events": 8,
+      "rms": 0.0071067054903834435,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "comp",
+      "call": "note(\"c3 e3\").s(\"sine\").compressor(\"-20:4:10:.005:.1\").transient(0.5)",
+      "events": 8,
+      "rms": 0.021941113771690283,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "phaser",
+      "call": "note(\"c3 e3\").s(\"sawtooth\").phaser(2).phaserdepth(0.5)",
+      "events": 8,
+      "rms": 0.006667872262856015,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "pan",
+      "call": "note(\"c3 e3\").s(\"sine\").pan(0.3)",
+      "events": 8,
+      "rms": 0.00697175647453276,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "shift",
+      "call": "note(\"c3 e3\").s(\"sawtooth\").stretch(1.5)",
+      "events": 8,
+      "rms": 0.006894832149646501,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "shift",
+      "call": "note(\"c3 e3\").s(\"sawtooth\").stretch(-1.5)",
+      "events": 8,
+      "rms": 0.007147585544368103,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    }
+  ],
+  "physicalListening": false,
+  "ordered": [
+    {
+      "type": "drive",
+      "call": "note(\"c3*2\")\n  .s(\"sawtooth\")\n  .FX(soft(0.5))\n  .FX(soft(0.5))\n  .postgain(0.8)\n  .orbit(1)",
+      "events": 8,
+      "rms": 0.009735418673508548,
+      "samples": 122880,
+      "cables": 8,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true,
+      "types": ["drive", "drive"],
+      "fxCalls": 2,
+      "note": "You hear: DRIVE (drive1) → DRIVE (drive2). FX stages run in cable order; inline DELAY/REVERB keep their tails per note."
+    },
+    {
+      "type": "folder",
+      "call": "note(\"c3*2\")\n  .s(\"sawtooth\")\n  .FX(fold(0.6))\n  .FX(crush(6).coarse(4))\n  .postgain(0.8)\n  .orbit(1)",
+      "events": 8,
+      "rms": 0.005179524804947567,
+      "samples": 122880,
+      "cables": 8,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true,
+      "types": ["folder", "lofi"],
+      "fxCalls": 2,
+      "note": "You hear: FOLDER (folder1) → LO-FI (lofi1). FX stages run in cable order; inline DELAY/REVERB keep their tails per note."
+    },
+    {
+      "type": "lofi",
+      "call": "note(\"c3*2\")\n  .s(\"sawtooth\")\n  .crush(6)\n  .coarse(4)\n  .fold(0.6)\n  .postgain(0.8)\n  .orbit(1)",
+      "events": 8,
+      "rms": 0.003553277849141119,
+      "samples": 122880,
+      "cables": 8,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true,
+      "types": ["lofi", "folder"],
+      "fxCalls": 0,
+      "note": "You hear: LO-FI (lofi1) [coarse] → LO-FI (lofi1) [crush] → FOLDER (folder1). Native effects use the fixed voice chain; DELAY/REVERB are orbit sends."
+    },
+    {
+      "type": "comp",
+      "call": "note(\"c3*2\")\n  .s(\"sawtooth\")\n  .FX(compressor(\"-20:4:10:.005:.1\").transient(0.5))\n  .FX(lpf(800).lpq(1))\n  .postgain(0.8)\n  .orbit(1)",
+      "events": 8,
+      "rms": 0.00726419721500913,
+      "samples": 122880,
+      "cables": 8,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true,
+      "types": ["comp", "vcf"],
+      "fxCalls": 2,
+      "note": "You hear: COMP (comp1) → VCF (vcf1). FX stages run in cable order; inline DELAY/REVERB keep their tails per note."
+    },
+    {
+      "type": "pan",
+      "call": "note(\"c3*2\")\n  .s(\"sawtooth\")\n  .FX(pan(0.3))\n  .FX(stretch(1.5))\n  .postgain(0.8)\n  .orbit(1)",
+      "events": 8,
+      "rms": 0.00239411471898477,
+      "samples": 122880,
+      "cables": 8,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true,
+      "types": ["pan", "shift"],
+      "fxCalls": 2,
+      "note": "You hear: PAN (pan1) → SHIFT (shift1). FX stages run in cable order; inline DELAY/REVERB keep their tails per note."
+    }
+  ],
+  "reviewForms": [
+    {
+      "type": "lofi",
+      "call": "note(\"c3*2\").s(\"sine\").coarse(4).coarse(1)",
+      "events": 8,
+      "rms": 0.01034378345392594,
+      "samples": 122880,
+      "cables": 6,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "comp",
+      "call": "note(\"c3*2\").s(\"sine\").transient(.5).transient(0)",
+      "events": 8,
+      "rms": 0.008907281824474596,
+      "samples": 122880,
+      "cables": 6,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "phaser",
+      "call": "note(\"c3*2\").s(\"sine\").phaserdepth(.3).phaserdepth(.75)",
+      "events": 8,
+      "rms": 0.010369771503090808,
+      "samples": 122880,
+      "cables": 6,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "s(\"bd*2\").soft()",
+      "events": 8,
+      "rms": 0.010599799884412378,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    }
+  ],
+  "sharedFM": {
+    "operators": 1,
+    "look": "vintage",
+    "savedIdentity": true,
+    "sourceExact": true
+  },
+  "panCV": [
+    {
+      "mode": "SMOOTH",
+      "stereoFrames": 62,
+      "balanceRange": [0.0026324391235384333, 0.41020827604372684],
+      "spread": 0.4075758369201884,
+      "energy": 5.574512451150907,
+      "savedIdentity": true
+    },
+    {
+      "mode": "STEP",
+      "stereoFrames": 61,
+      "balanceRange": [0.19763452435438045, 0.1989123508905331],
+      "spread": 0.0012778265361526597,
+      "energy": 5.564150071314519,
+      "savedIdentity": true
+    },
+    {
+      "mode": "ENV",
+      "stereoFrames": 62,
+      "balanceRange": [0.003542500249308544, 0.35656454328164094],
+      "spread": 0.3530220430323324,
+      "energy": 5.5957551760172,
+      "savedIdentity": true
+    },
+    {
+      "mode": "CV SEQ",
+      "stereoFrames": 62,
+      "balanceRange": [-1, -1],
+      "spread": 0,
+      "energy": 4.0533658107421955,
+      "savedIdentity": true
+    }
+  ],
+  "drawbarEdit": {
+    "values": [1, 1, 0, 0.3],
+    "savedIdentity": true
+  },
+  "drawbarGestureUndo": true,
+  "errors": []
+}

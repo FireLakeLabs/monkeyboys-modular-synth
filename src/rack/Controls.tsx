@@ -182,9 +182,68 @@ export function ControlEditor({
 }) {
   const [error, setError] = useState('')
   const [textMode, setTextMode] = useState(false)
+  const drawbarGesture = useRef<object | undefined>(undefined)
   const value = controlValue(module, control)
   if (!controlEnabled(getModuleSpec(module.type), module.values, control)) return null
   switch (control.kind) {
+    case 'drawbars': {
+      const bars =
+        Array.isArray(value) && value.every((v: unknown) => typeof v === 'number')
+          ? value
+          : control.default
+      return (
+        <fieldset className="drawbar-control">
+          <legend>{control.label}</legend>
+          <select
+            aria-label="Harmonic count"
+            value={bars.length}
+            onChange={(event) =>
+              commit(Array.from({ length: Number(event.target.value) }, (_, i) => bars[i] ?? 0))
+            }
+          >
+            {Array.from({ length: control.maxBars }, (_, i) => (
+              <option key={i} value={i + 1}>
+                {i + 1} partials
+              </option>
+            ))}
+          </select>
+          <div className="drawbars">
+            {bars.map((bar, i) => (
+              <label key={i}>
+                {i + 1}
+                <input
+                  type="range"
+                  aria-label={`Partial ${i + 1}`}
+                  min={control.min}
+                  max={control.max}
+                  step={control.step}
+                  value={bar}
+                  onPointerDown={() => {
+                    drawbarGesture.current = {}
+                  }}
+                  onPointerUp={() => {
+                    drawbarGesture.current = undefined
+                  }}
+                  onPointerCancel={() => {
+                    drawbarGesture.current = undefined
+                  }}
+                  onLostPointerCapture={() => {
+                    drawbarGesture.current = undefined
+                  }}
+                  onChange={(event) =>
+                    commit(
+                      bars.map((v, j) => (i === j ? Number(event.target.value) : v)),
+                      drawbarGesture.current,
+                    )
+                  }
+                />
+                <output>{bar}</output>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )
+    }
     case 'knob': {
       const knob = depthControl(patch, module, control)
       if ('perTarget' in knob && knob.perTarget && module.values[control.id] === undefined) {

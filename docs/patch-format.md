@@ -331,3 +331,10 @@ checks source ownership and generated graph agreement independently. Altered
 source reprojects conservatively; forged CODE text invalidates metadata instead
 of overriding executable source. Plain files without saved CODE use the new
 adapters. See the [legacy-file regression](../src/reader/aliases.test.ts).
+
+## Harmonic drawbars (#131)
+
+`ControlValue` also accepts a readonly numeric array for HARMONIC's `partials`.
+The existing v1 JSON field retains every bar, module ID, look, position and cable;
+no format-version change is needed. The graph validates finite 0–1 values and
+1–16 entries before generation or mutation. Unsupported source arrays stay CODE.

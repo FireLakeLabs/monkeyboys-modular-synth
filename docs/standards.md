@@ -392,3 +392,18 @@ control events. Native imported setters retain fixed-order execution; unsupporte
 FX stays atomic CODE. The [browser suite](ordered-effects-verification.md) checks
 actual notes, scheduled event stages, orbit routing and nonzero PCM. These checks
 do not establish physical listening or other-browser coverage.
+The #131 [sound/effect matrix](../src/modules/sound-effects.test.ts) checks exact
+source, complete saved rack identity and pinned-engine onset events independently,
+including explicit noise silence, 16-bit quantization, missing FM envelopes and
+depth-only phaser imports. The retained trance digests still match: a rejected
+speculative PAN projection restores its placement cursor before CODE fallback.
+The separate browser suite covers four Hardware looks, real PCM and native
+harmonic drawbar editing. The [SHIFT measurement](sound-effects-verification.md#shift-cost)
+is a CPU-only processor cost, not a browser polyphony or continuity guarantee.
+
+The #131 Sol regressions failed in twelve cases before fixing explicit default
+resets, nullary sample-effect boundaries and shared FM OP saves. Reset setters
+that cannot be omitted safely retain exact CODE; scalar/nullary sound calls use
+one sampler boundary; operator source matching requires equal effective values
+before sharing a saved owner. Compound effect planning compares every active
+catalog rank after #134 integration, preventing hidden LO-FI/COMP repeats.

@@ -35,10 +35,36 @@ function owner(name: string, source: boolean): string | undefined {
   return CATALOG.find((spec) => spec.strudel.includes(name))?.id
 }
 
+function soundOwner(call: Call, next?: Call): string | undefined {
+  const wave = scalar(call.args[0])
+  if (call.args.length !== 1 || typeof wave !== 'string') return undefined
+  return CATALOG.find((spec) => {
+    const control = spec.controls.find((c) => c.id === spec.soundSource)
+    if (control?.kind !== 'switch' || !control.options.some((o) => o.value === wave)) return false
+    if (spec.id !== 'harmonic') return true
+    const arg = next?.args[0]
+    const bars = spec.controls.find((control) => control.kind === 'drawbars')
+    return (
+      next?.name === 'partials' &&
+      next.args.length === 1 &&
+      arg?.type === 'ArrayExpression' &&
+      arg.elements.length > 0 &&
+      bars?.kind === 'drawbars' &&
+      arg.elements.length <= bars.maxBars &&
+      arg.elements.every((e) => {
+        const n = e && scalar(e)
+        return typeof n === 'number' && n >= bars.min && n <= bars.max
+      })
+    )
+  })?.id
+}
+
 function fits(type: string, id: string, value: number | string): boolean {
   const control = getModuleSpec(type).controls.find((control) => control.id === id)
   if (!control) return false
   switch (control.kind) {
+    case 'drawbars':
+      return false
     case 'knob':
       return (
         typeof value === 'number' &&
@@ -116,6 +142,7 @@ function project(
     if (type !== 'out') hp += spec.hp
     patch.modules.push(module)
     if (type === 'env' || type === 'lfo') represented.set(id, new Set(Object.keys(values)))
+    if (spec.operatorTarget) represented.set(id, new Set())
     return module
   }
   function output(module: PlacedModule): Output {
@@ -143,6 +170,16 @@ function project(
     )
     const receiver = input && patch.modules.find((module) => module.id === input.from.module)
     return receiver && input ? needsSampler({ module: receiver, jack: input.from.jack }) : false
+  }
+  function soundInput(from: Output, type: string): Output {
+    if (
+      !needsSampler(from) ||
+      !getModuleSpec(type).jacks.some((jack) => jack.direction === 'in' && jack.signal === 'audio')
+    )
+      return from
+    const sampler = add('smpl', { bank: '', speed: 1 })
+    wire(from, sampler)
+    return output(sampler)
   }
   function hasOpaqueInput(from: Output): boolean {
     if (from.module.type === 'code') return true
@@ -427,14 +464,17 @@ function project(
     )
     const jack = targetControl && spec.jacks.find((j) => j.cvTarget === targetControl.id)
     const data = targetControl?.kind === 'knob' ? targetControl.modulation : undefined
+    const normalizedDepth =
+      typeof config?.depthabs === 'number' ? config.depthabs / (data?.audioScale ?? 1) : undefined
     if (
       config &&
       targetControl &&
       jack &&
       data &&
       typeof config.depthabs === 'number' &&
-      config.depthabs >= data.min &&
-      config.depthabs <= data.max &&
+      normalizedDepth !== undefined &&
+      normalizedDepth >= data.min &&
+      normalizedDepth <= data.max &&
       !patch.cables.some((c) => c.to.module === targetModule.id && c.to.jack === jack.id)
     ) {
       const allowed =
@@ -489,14 +529,14 @@ function project(
                 rate: rate ?? 1,
                 shape: shape ?? 'sine',
                 skew: config.skew ?? 0.5,
-                depth: config.dc === -1 ? -config.depthabs : config.depthabs,
+                depth: config.dc === -1 ? -normalizedDepth : normalizedDepth,
               })
             : add('env', {
                 atk: config.a ?? 0,
                 dec: config.d ?? 0,
                 sus: config.s ?? 0,
                 rel: config.r ?? 0,
-                depth: config.depthabs,
+                depth: normalizedDepth,
               })
         wire(output(module), targetModule, jack.id)
         bind(
@@ -634,7 +674,8 @@ function project(
       }
     }
     if (!upstream && initial && initial.start === root.start) {
-      const type = owner(initial.name, true)
+      const sound = initial.name === 's' && soundOwner(initial, calls[1])
+      const type = sound || owner(initial.name, true)
       const form = type && getModuleSpec(type).source
       if (
         type &&
@@ -659,6 +700,14 @@ function project(
           upstream = output(group)
           start = form.suffix.length + 1
         }
+      }
+      if (sound) {
+        const spec = getModuleSpec(sound)
+        const id = spec.soundSource ?? ''
+        group = add(sound, { ...spec.readDefaults })
+        literal(group, id, initial, scope, 0)
+        upstream = output(group)
+        start = 1
       }
       if (type === 'seq' || type === 'drums') {
         const id = type === 'seq' ? 'steps' : 'grid'
@@ -785,7 +834,7 @@ function project(
               (group?.type === 'seq' || group?.type === 'drums') &&
               typeof scalar(call.args[0]) === 'string'
             ? group.type
-            : owner(name, false)
+            : (name === 's' && soundOwner(call, calls[index + 1])) || owner(name, false)
       const mixerModulation = (call: Call) =>
         ['lfo', 'env'].includes(call.name) &&
         call.args.length === 1 &&
@@ -1073,7 +1122,72 @@ function project(
           )
         }
         const form = matched.binding.argument
-        if (form.kind === 'tuple' && type) {
+        if (spec?.operatorTarget && type) {
+          const target = upstream.module
+          if (target.type === spec.operatorTarget.type) {
+            const existing = patch.cables.find(
+              (c) => c.to.module === target.id && c.to.jack === spec.operatorTarget?.jack,
+            )
+            const operator = existing
+              ? patch.modules.find((m) => m.id === existing.from.module)
+              : undefined
+            if (
+              (!existing || group?.id === operator?.id) &&
+              (!operator ||
+                !bindings.some((b) => b.module === operator.id && id && id in b.controls))
+            ) {
+              const module = operator ?? add(type, values)
+              if (literal(module, id, call, scope, index)) {
+                Object.assign(module.values, activation)
+                for (const id of Object.keys(activation)) represented.get(module.id)?.add(id)
+                if (!existing) wire(output(module), target, spec.operatorTarget.jack)
+                group = module
+                continue
+              }
+              if (!operator) patch.modules.splice(patch.modules.indexOf(module), 1)
+            }
+          }
+          id = undefined
+        } else if (form.kind === 'array' && type) {
+          const arg = call.args[0]
+          const bars =
+            arg?.type === 'ArrayExpression'
+              ? arg.elements.map((e) => (e ? scalar(e) : undefined))
+              : []
+          const control = matched.control
+          if (
+            call.args.length === 1 &&
+            control.kind === 'drawbars' &&
+            bars.length > 0 &&
+            bars.length <= control.maxBars &&
+            bars.every(
+              (n) =>
+                typeof n === 'number' && Number.isFinite(n) && n >= control.min && n <= control.max,
+            ) &&
+            group?.type === type &&
+            !bindings.some((b) => b.module === group?.id && id && id in b.controls)
+          ) {
+            group.values[id] = bars.filter((n): n is number => typeof n === 'number')
+            if (arg)
+              bind(
+                group,
+                scope,
+                [index],
+                /\/[/*]/.test(source.slice(arg.start, arg.end))
+                  ? {}
+                  : { [id]: { start: arg.start, end: arg.end } },
+              )
+            continue
+          }
+          id = undefined
+        } else if (form.kind === 'number' && form.optional && call.args.length === 0 && type) {
+          group = add(type, { ...values, [form.optional]: 'none' })
+          upstream = soundInput(upstream, type)
+          wire(upstream, group)
+          bind(group, scope, [index])
+          upstream = output(group)
+          continue
+        } else if (form.kind === 'tuple' && type) {
           const ids = tupleControls(matched.binding, call.name)
           const args = call.args.map((arg) => scalar(arg))
           if (
@@ -1175,7 +1289,9 @@ function project(
             matched &&
             'omitAt' in matched.control &&
             candidate === matched.control.omitAt &&
-            ((type === 'smpl' && hasOpaqueInput(upstream)) ||
+            ((!spec?.orderSensitive &&
+              (hasOpaqueInput(upstream) ||
+                calls.slice(0, index).some((previous) => canonicalCall(previous.name) === name))) ||
               (matched.binding.selects &&
                 !reuse &&
                 (hasOpaqueInput(upstream) ||
@@ -1188,6 +1304,7 @@ function project(
             group = undefined
             continue
           }
+          const positionBefore = { row, hp }
           const module = reuse && group ? group : add(scalarType, values)
           if (reuse) {
             for (const [id, value] of Object.entries(matched?.binding.selects ?? {})) {
@@ -1207,23 +1324,18 @@ function project(
               : literal(module, id, call, scope, index)
           if (accepted) {
             Object.assign(module.values, activation)
-            if (
-              !reuse &&
-              needsSampler(upstream) &&
-              getModuleSpec(scalarType).jacks.some(
-                (jack) => jack.direction === 'in' && jack.signal === 'audio',
-              )
-            ) {
-              const sampler = add('smpl', { bank: '', speed: 1 })
-              wire(upstream, sampler)
-              upstream = output(sampler)
-            }
+            if (!reuse) upstream = soundInput(upstream, scalarType)
             if (!reuse) wire(upstream, module)
             group = module
             upstream = output(module)
             continue
           }
-          if (!reuse) patch.modules.splice(patch.modules.indexOf(module), 1)
+          if (!reuse) {
+            patch.modules.splice(patch.modules.indexOf(module), 1)
+            reserved.delete(module.id)
+            row = positionBefore.row
+            hp = positionBefore.hp
+          }
         }
       }
       upstream = code(scope, [index], source.slice(call.start, call.end), upstream)
@@ -1607,7 +1719,9 @@ function restore(
     const candidates = saved.modules.filter(
       (old) =>
         old.type === module.type &&
-        (!claimed.has(old.id) || ['env', 'lfo'].includes(module.type)) &&
+        (!claimed.has(old.id) ||
+          ['env', 'lfo'].includes(module.type) ||
+          getModuleSpec(module.type).operatorTarget !== undefined) &&
         own.some((binding) => {
           const match = matches.get(binding.scope)
           if (!match) return false
@@ -1684,7 +1798,7 @@ function restore(
     }
     if (claimed.has(old.id)) {
       const shared = patch.modules.find((item) => rename.get(item.id) === old.id)
-      // Repeated context-specific calls represent one ENV only while all values agree.
+      // Repeated context-specific calls share saved identity only while all values agree.
       const effective = (m: PlacedModule) =>
         getModuleSpec(m.type).controls.map((c) => controlValue(m, c))
       if (!shared || descriptor(effective(shared)) !== descriptor(effective(module))) continue

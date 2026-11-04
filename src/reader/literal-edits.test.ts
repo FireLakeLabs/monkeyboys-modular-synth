@@ -5,6 +5,7 @@ import { generate } from '../codegen/generate'
 import { RACK_MARKER } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
+import { SOUND_CONTROLS } from '../modules/sound-effects.fixtures'
 import { PATTERN_CONTROLS } from '../modules/pattern-time.fixtures'
 import { drumView, stepView } from '../patch/notation'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
@@ -323,6 +324,7 @@ it('accounts for every catalog module/control without silently skipping new cont
       ),
       ...nonLiteral,
       ...PATTERN_CONTROLS,
+      ...SOUND_CONTROLS,
       // Coupled modulation expressions have their own independent source/rack/event matrix.
       // See modulation.test.ts; these are not independent scalar call arguments.
       'lfo.mode',

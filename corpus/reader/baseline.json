@@ -1,8 +1,8 @@
 {
   "$total": {
-    "mappedCallShare": 0.9,
-    "readableVoiceShare": 0.8260869565217391,
-    "codeFreePatchShare": 0.8823529411764706,
+    "mappedCallShare": 0.9142857142857143,
+    "readableVoiceShare": 0.8461538461538461,
+    "codeFreePatchShare": 0.8888888888888888,
     "parseFailures": 0,
     "codeBlocks": 15,
     "unmappedCalls": 15,
@@ -139,6 +139,14 @@
     "unmappedCalls": 0
   },
   "quantized-sequence": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "sound-effects-exercise": {
     "mappedCallShare": 1,
     "readableVoiceShare": 1,
     "codeFreePatchShare": 1,

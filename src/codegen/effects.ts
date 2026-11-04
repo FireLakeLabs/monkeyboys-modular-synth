@@ -1,14 +1,18 @@
-import { effectRank } from '../modules/effects'
+import { effectRanks } from '../modules/effects'
 import { requireNode, type Node } from './graph'
 
-export function activeEffectRank(node: Node) {
-  return effectRank(node.module, {
+export function activeEffectRanks(node: Node) {
+  return effectRanks(node.module, {
     patched: new Set(
       node.spec.jacks
         .filter((j) => j.cvTarget && node.inputs.has(j.id))
         .flatMap((j) => j.cvTarget ?? []),
     ),
   })
+}
+
+export function activeEffectRank(node: Node) {
+  return activeEffectRanks(node)[0]
 }
 
 /** Final paths include shared declarations and nested mixer leaves. */
@@ -31,10 +35,10 @@ export function planEffects(nodes: Map<string, Node>) {
     changed = false
     for (const original of paths) {
       const path = original.filter((n) => n.module.fx !== 'native')
-      const ranks = path.map((n) => activeEffectRank(n) ?? -1)
+      const ranks = path.map(activeEffectRanks)
       const ordered =
         path.some((n) => n.module.fx === true || inline.has(n.module.id)) ||
-        ranks.some((rank, i) => i > 0 && rank <= (ranks[i - 1] ?? -1))
+        ranks.some((rank, i) => i > 0 && Math.min(...rank) <= Math.max(...(ranks[i - 1] ?? [])))
       if (ordered)
         for (const node of path)
           if (!inline.has(node.module.id)) {

@@ -4,11 +4,12 @@ import { controlValue } from './values'
 import type { PlacedModule } from '../patch/types'
 
 /** Rank active stage bindings, rather than maintaining a second list of module IDs. */
-export function effectRank(
+export function effectRanks(
   module: PlacedModule,
   active?: { patched: ReadonlySet<string> },
-): number | undefined {
+): number[] {
   const spec = getModuleSpec(module.type)
+  const ranks = new Set<number>()
   for (const control of spec.controls) {
     if (!('call' in control) || !control.call || !controlEnabled(spec, module.values, control))
       continue
@@ -31,8 +32,21 @@ export function effectRank(
       const value = selector && controlValue(module, selector)
       return typeof value === 'string' ? value : ''
     })
+    if (
+      control.call.argument.kind === 'number' &&
+      control.call.argument.optional &&
+      selectorValue(control.call.argument.optional) === 'none'
+    )
+      continue
     const rank = VOICE_EFFECT_ORDER[method]
-    if (rank !== undefined) return rank
+    if (rank !== undefined) ranks.add(rank)
   }
-  return undefined
+  return [...ranks].sort((a, b) => a - b)
+}
+
+export function effectRank(
+  module: PlacedModule,
+  active?: { patched: ReadonlySet<string> },
+): number | undefined {
+  return effectRanks(module, active)[0]
 }

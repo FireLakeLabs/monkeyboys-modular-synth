@@ -77,9 +77,9 @@ independently; [browser PCM](modulation-verification.md) proves within-note moti
 ### 4. Effect stages follow cable order (#134)
 
 The catalog-owned `VOICE_EFFECT_ORDER` records the pinned superdough chain:
-LP → HP → BP → vowel → coarse → crush → shape → distort → tremolo →
+SHIFT → transient → LP → HP → BP → vowel → coarse → crush → shape → distort → tremolo →
 compressor → pan → phaser → delay → reverb. Active catalog call bindings select
-stage membership; source settings, amp gain/envelope, DJ filter/orbit settings,
+stage membership, including every stage of compound LO-FI/COMP panels; source settings, amp gain/envelope, DJ filter/orbit settings,
 and pattern transforms remain outer voice controls.
 
 A rack-owned path whose stages follow this order uses native calls. An inversion
