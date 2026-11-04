@@ -648,7 +648,7 @@ export const CLOCK: ModuleSpec = {
   family: 'hardware',
   category: 'pattern',
   hp: 12,
-  paletteCall: '.slow().swingBy().late()',
+  paletteCall: '.slow()',
   readDefaults: { division: 1, swing: 0, swingMode: 'off', offset: 0 },
   controls: [
     { kind: 'switch', id: 'swingMode', label: 'GROOVE', options: opts('off', 'on'), default: 'on' },
@@ -761,7 +761,7 @@ export const CHANCE: ModuleSpec = {
   family: 'hardware',
   category: 'pattern',
   hp: 10,
-  paletteCall: '.degradeBy().seed()',
+  paletteCall: '.degradeBy()',
   readDefaults: { drop: 0, mode: 'unseeded' },
   controls: [
     {
@@ -843,12 +843,12 @@ export const ARP: ModuleSpec = {
 export const REV: ModuleSpec = {
   id: 'rev',
   name: 'REV / PALINDROME',
-  title: 'Reverse and alternate cycles',
+  title: 'Reverse and palindrome',
   family: 'alien',
   category: 'alien',
   paletteCategory: 'pattern',
   hp: 14,
-  paletteCall: '.rev() / .palindrome()',
+  paletteCall: '.rev()',
   controls: [
     {
       kind: 'switch',
@@ -875,7 +875,7 @@ export const SHUFFLE: ModuleSpec = {
   category: 'alien',
   paletteCategory: 'pattern',
   hp: 10,
-  paletteCall: '.shuffle() / .scramble()',
+  paletteCall: '.shuffle()',
   controls: [
     {
       kind: 'switch',
@@ -931,7 +931,7 @@ export const TIME_LENS: ModuleSpec = {
   category: 'alien',
   paletteCategory: 'pattern',
   hp: 12,
-  paletteCall: '.zoom() / .linger() / .compress()',
+  paletteCall: '.zoom()',
   controls: [
     {
       kind: 'switch',
@@ -969,7 +969,7 @@ export const WARP: ModuleSpec = {
   category: 'alien',
   paletteCategory: 'pattern',
   hp: 10,
-  paletteCall: '.brak() / .press() / .hurry()',
+  paletteCall: '.brak()',
   controls: [
     {
       kind: 'switch',

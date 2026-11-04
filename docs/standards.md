@@ -306,3 +306,10 @@ reject empty/reversed zoom/compress spans at mutation/generation boundaries.
 The separate browser suite checks real scheduling and output PCM, all family
 looks at fixed catalog widths, and live cable endpoints. These checks do not
 establish physical listening or other-browser/device coverage.
+
+The #132 palette/Fit correction is guarded by the existing
+`scripts/output-panel-browser.mjs` group in the full browser workflow. Its actual
+1024-px rail-clipping assertion failed with the expanded call lists and passed
+with compact catalog representatives; no assertion was weakened. This is a
+browser layout check, not a static string-length limit; see the
+[hosted regression](pattern-time-verification.md#hosted-palettefit-regression).

@@ -114,3 +114,15 @@ patch and the integrated full gate passed. The final pattern/runtime, panel,
 contrast, numeric/text editing and CHORD deletion/keyboard reconnection groups
 passed on that refreshed engine. All three Sol findings were accepted and fixed;
 none were declined. Review usage was not exposed.
+
+## Hosted palette/Fit regression
+
+The first hosted browser run passed 30 of 31 groups; `output-panel-browser`
+reproduced “Fit rack clips rails” at 1024 px locally. Listing every mode/call
+on the new palette chips increased the horizontal palette's height, leaving a
+smaller rack viewport where minimum-sized jacks overflowed the tiny Fit scale.
+The catalog now uses representative calls, as its palette contract specifies,
+and a compact REV subtitle. All other methods remain searchable through
+`strudel` ownership. Seven presentation strings changed; module widths,
+executable text and the browser assertions did not. The same output-panel check
+then passed all desktop/mid-width, Fit, cable and real-PCM cases locally.
