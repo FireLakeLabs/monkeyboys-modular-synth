@@ -337,17 +337,12 @@
   margin-top: 12px;
   font-size: 10px;
 }
-@media (max-width: 1150px) {
-  .workspace {
-    flex-wrap: wrap;
-  }
-  .code {
-    flex: 1 1 100%;
-    border-top: 1px solid var(--border);
-  }
-  .library {
-    flex-basis: 150px;
-  }
+.palette-heading {
+  display: grid;
+  gap: 8px;
+}
+.workspace-views {
+  display: none;
 }
 .code-actions {
   display: flex;
@@ -575,4 +570,120 @@
   background: var(--audio);
   border-color: var(--audio);
   color: #1a1408;
+}
+
+@media (max-width: 1150px) {
+  .app {
+    height: 100dvh;
+    min-height: 0;
+  }
+  .workspace-views {
+    display: flex;
+    flex-shrink: 0;
+    gap: 6px;
+    padding: 6px 14px;
+    margin: 0;
+    border: 0;
+    min-width: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .workspace-views button {
+    padding: 5px 14px;
+    border: 1px solid #414650;
+    border-radius: 4px;
+    background: #202328;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .workspace-views button[aria-pressed='true'] {
+    background: var(--audio);
+    border-color: var(--audio);
+    color: #1a1408;
+  }
+  .workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.85fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+  }
+  .library {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 10px 14px;
+    max-height: none;
+    min-height: 0;
+    overflow: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .library > * {
+    flex: 0 0 auto;
+  }
+  .palette-heading {
+    width: 150px;
+  }
+  .library h2,
+  .library h3 {
+    margin: 0 0 6px;
+  }
+  .library ul {
+    display: flex;
+  }
+  .library li {
+    width: 150px;
+    flex-shrink: 0;
+  }
+  .workspace .rack,
+  .workspace .code {
+    min-height: 0;
+    overflow: auto;
+    padding: 12px;
+  }
+  .workspace .rack {
+    display: flex;
+    flex-direction: column;
+  }
+  .rack > * {
+    flex-shrink: 0;
+  }
+  .rack .rack-scroll {
+    flex: 1 0 120px;
+    height: auto;
+    min-height: 120px;
+  }
+  .code {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .code > * {
+    flex-shrink: 0;
+  }
+  .code .source-surface {
+    flex: 1 0 120px;
+    height: auto;
+    min-height: 120px;
+    resize: none;
+  }
+  .workspace[data-view='rack'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace[data-view='rack'] .code,
+  .workspace[data-view='code'] .rack,
+  .workspace[data-view='code'] .library {
+    display: none;
+  }
+  .workspace[data-view='code'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .workspace[data-view='both'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr);
+  }
 }

@@ -219,3 +219,22 @@ selects them for removal or repatching. Modes and hover/selection emphasis are
 local view state and do not write source or rack metadata. See
 [browser and contrast evidence](rack-visuals-verification.md) and the
 [control-clarity follow-up](cable-visibility-verification.md).
+
+## Mid-width workspace (#91)
+
+At widths up to 1150 px, a Rack / Code / Both button group switches local view
+state. Both is the default: rack and code share the space below the palette
+side by side. Rack gives the rack the full width; Code gives the editor the full
+workspace and hides the palette. At 700 px and below, Both divides that space
+vertically. The workspace uses the viewport height; each pane scrolls internally
+when its content needs more room, leaving the view controls and transport reachable.
+
+The palette becomes a horizontally scrollable strip with category groups, full
+chip labels/calls and its existing filter. Module widths and saved positions
+remain catalog-owned. View changes keep the editor mounted, retaining drafts,
+selection and undo. Show in code opens Code from Rack, preserves Both when both
+panes are visible, and focuses/selects the module's source after revealing it.
+Selection highlights survive returning to either view. View choices never write
+source or saved rack state. Wider screens keep the existing three-column layout.
+
+See [browser observations and limits](mid-width-verification.md).

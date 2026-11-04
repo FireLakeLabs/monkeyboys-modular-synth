@@ -101,11 +101,22 @@ export default function App() {
   const [autoApply, setAutoApply] = useState(false)
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
+  const [workspaceView, setWorkspaceView] = useState<'rack' | 'code' | 'both'>('both')
+  const [codeSelection, setCodeSelection] = useState<{ start: number; end: number } | null>(null)
   const current = useRef({ document, draft, phase })
   // Exact source includes saved rack layout; files and recovered work stay protected.
   const cleanSource = useRef<string | null>(document.source)
   const draftSaved = useRef(true)
   const editor = useRef<EditorView>(null)
+  useEffect(() => {
+    if (!codeSelection) return
+    // Reveal the pane before focusing or asking CodeMirror to measure its selection.
+    editor.current?.focus()
+    editor.current?.dispatch({
+      selection: { anchor: codeSelection.start, head: codeSelection.end },
+      scrollIntoView: true,
+    })
+  }, [codeSelection])
   const fileInput = useRef<HTMLInputElement>(null)
   const locked = phase !== 'readable' || composing
   const conversions = useMemo(() => codeConversions(document), [document])
@@ -412,11 +423,8 @@ export default function App() {
     setSelected(id)
     const binding = current.current.document.bindings.find((b) => b.module === id)
     if (!binding || current.current.phase !== 'readable') return
-    editor.current?.focus()
-    editor.current?.dispatch({
-      selection: { anchor: binding.start, head: binding.end },
-      scrollIntoView: true,
-    })
+    setWorkspaceView((view) => (view === 'rack' ? 'code' : view))
+    setCodeSelection({ start: binding.start, end: binding.end })
   }
 
   function exportDraft() {
@@ -561,7 +569,19 @@ export default function App() {
         </button>
       </header>
 
-      <main className="workspace">
+      <fieldset className="workspace-views" aria-label="Workspace view">
+        {(['rack', 'code', 'both'] as const).map((view) => (
+          <button
+            key={view}
+            type="button"
+            aria-pressed={workspaceView === view}
+            onClick={() => setWorkspaceView(view)}
+          >
+            {view === 'rack' ? 'Rack' : view === 'code' ? 'Code' : 'Both'}
+          </button>
+        ))}
+      </fieldset>
+      <main className="workspace" data-view={workspaceView}>
         <Rack
           key={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
           patch={patch}

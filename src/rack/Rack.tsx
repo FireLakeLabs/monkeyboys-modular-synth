@@ -345,16 +345,18 @@ export function Rack({
         inert={locked}
         aria-label="Module library"
       >
-        <h2>MODULES</h2>
-        <label className="module-filter">
-          Filter modules
-          <input
-            type="search"
-            value={moduleFilter}
-            onChange={(event) => setModuleFilter(event.target.value)}
-            placeholder="Name or Strudel call"
-          />
-        </label>
+        <div className="palette-heading">
+          <h2>MODULES</h2>
+          <label className="module-filter">
+            Filter modules
+            <input
+              type="search"
+              value={moduleFilter}
+              onChange={(event) => setModuleFilter(event.target.value)}
+              placeholder="Name or Strudel call"
+            />
+          </label>
+        </div>
         {palette.length === 0 && <output>No matching modules.</output>}
         {palette.map((category) => (
           <section key={category.id}>
