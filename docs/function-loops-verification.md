@@ -7,7 +7,7 @@ separate generated code, exact source, saved identity and sound/event behavior.
 
 ## Static and unit evidence
 
-`npm ci` and `npm run check` passed: 1,627 unit cases, 43 guardrails,
+`npm ci` and `npm run check` passed: 1,807 unit cases, 43 guardrails,
 formatting, skill integrity, lint, reader coverage, TypeScript and production build.
 The new [focused suite](../src/modules/function-loops.test.ts) independently checks:
 
@@ -196,5 +196,9 @@ loop edit and splice a multiline CV SEQ literal inside a function without
 changing its raw line endings. They separately prove exact source, saved rack
 identity and generated events. RATCHET remains a text control; the test does not
 apply #147's notation-tray editing guarantees to it. The final deterministic
-gate passed 1,807 unit tests and 43 guardrails. A fresh-server complete browser
-run includes the added nested-step suite as well as function loops and effects.
+gate passed 1,807 unit tests and 43 guardrails. The fresh-server complete browser
+run passed all 40 tests in 7.6 minutes, including nested-step interaction, focus
+after deletion and simultaneous sounding flashes alongside function loops and
+effects. All nineteen loop forms retained exact source, saved rack identity and
+events with nonzero PCM; no page errors occurred. Physical listening and other
+browsers/devices remain unverified.
