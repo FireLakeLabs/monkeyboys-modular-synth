@@ -109,6 +109,7 @@ export const QUANT: ModuleSpec = {
     {
       kind: 'switch',
       id: 'scale',
+      call: { method: 'scale', argument: { kind: 'scale', root: 'root' } },
       label: 'SCALE',
       options: opts('major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'locrian'),
       default: 'minor',
@@ -134,6 +135,7 @@ export const OSC: ModuleSpec = {
     {
       kind: 'switch',
       id: 'wave',
+      call: { method: 's', argument: { kind: 'string' } },
       label: 'WAVE',
       options: opts('sawtooth', 'square', 'triangle', 'sine', 'supersaw'),
       default: 'sawtooth',
@@ -141,6 +143,7 @@ export const OSC: ModuleSpec = {
     {
       kind: 'knob',
       id: 'tune',
+      call: { method: 'transpose', argument: { kind: 'number' }, read: 'merge' },
       label: 'TUNE',
       min: -24,
       max: 24,
@@ -168,10 +171,13 @@ export const SMPL: ModuleSpec = {
   category: 'sound',
   hp: 8,
   paletteCall: '.bank()',
+  readDefaults: { bank: '', speed: 1 },
   controls: [
     {
       kind: 'switch',
       id: 'bank',
+      omitAt: '',
+      call: { method: 'bank', argument: { kind: 'string' }, read: 'merge' },
       label: 'BANK',
       options: [{ value: '', label: 'default' }, ...opts('RolandTR909', 'RolandTR808')],
       default: 'RolandTR909',
@@ -179,6 +185,7 @@ export const SMPL: ModuleSpec = {
     {
       kind: 'knob',
       id: 'speed',
+      call: { method: 'speed', argument: { kind: 'number' }, read: 'merge' },
       label: 'SPEED',
       min: 0.25,
       max: 2,
@@ -219,6 +226,10 @@ export const VCF: ModuleSpec = {
     {
       kind: 'knob',
       id: 'cutoff',
+      call: {
+        method: { control: 'mode', names: { lp: 'lpf', hp: 'hpf', bp: 'bpf' } },
+        argument: { kind: 'number' },
+      },
       label: 'CUTOFF',
       min: 20,
       max: 20000,
@@ -228,8 +239,36 @@ export const VCF: ModuleSpec = {
       taper: 'log',
       modulation: { min: -10000, max: 10000, default: 1600 },
     },
-    { kind: 'knob', id: 'res', label: 'RES', min: 0, max: 20, step: 0.5, default: 1 },
-    { kind: 'knob', id: 'envAmt', label: 'ENV AMT', min: 0, max: 8, step: 0.5, default: 4 },
+    {
+      kind: 'knob',
+      id: 'res',
+      call: {
+        method: { control: 'mode', names: { lp: 'lpq', hp: 'hpq', bp: 'bpq' } },
+        argument: { kind: 'number' },
+        read: 'merge',
+      },
+      label: 'RES',
+      min: 0,
+      max: 20,
+      step: 0.5,
+      default: 1,
+    },
+    {
+      kind: 'knob',
+      id: 'envAmt',
+      call: {
+        method: { control: 'mode', names: { lp: 'lpenv', hp: 'hpenv', bp: 'bpenv' } },
+        argument: { kind: 'number' },
+        read: 'merge',
+        withEnvelope: 'cv',
+        envelope: 'after',
+      },
+      label: 'ENV AMT',
+      min: 0,
+      max: 8,
+      step: 0.5,
+      default: 4,
+    },
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
@@ -252,6 +291,7 @@ export const VCA: ModuleSpec = {
     {
       kind: 'knob',
       id: 'level',
+      call: { method: 'gain', argument: { kind: 'number' }, envelope: 'before' },
       label: 'LEVEL',
       min: 0,
       max: 2,
@@ -369,10 +409,21 @@ export const DELAY: ModuleSpec = {
   hp: 10,
   paletteCall: '.delay()',
   controls: [
-    { kind: 'knob', id: 'mix', label: 'MIX', min: 0, max: 1, step: 0.05, default: 0.4, omitAt: 0 },
+    {
+      kind: 'knob',
+      id: 'mix',
+      call: { method: 'delay', argument: { kind: 'number' } },
+      label: 'MIX',
+      min: 0,
+      max: 1,
+      step: 0.05,
+      default: 0.4,
+      omitAt: 0,
+    },
     {
       kind: 'knob',
       id: 'time',
+      call: { method: 'delaytime', argument: { kind: 'number' }, read: 'merge', enabledBy: 'mix' },
       label: 'TIME',
       min: 0.01,
       max: 2,
@@ -380,7 +431,21 @@ export const DELAY: ModuleSpec = {
       default: 0.375,
       unit: 's',
     },
-    { kind: 'knob', id: 'fdbk', label: 'FDBK', min: 0, max: 0.95, step: 0.05, default: 0.5 },
+    {
+      kind: 'knob',
+      id: 'fdbk',
+      call: {
+        method: 'delayfeedback',
+        argument: { kind: 'number' },
+        read: 'merge',
+        enabledBy: 'mix',
+      },
+      label: 'FDBK',
+      min: 0,
+      max: 0.95,
+      step: 0.05,
+      default: 0.5,
+    },
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
@@ -402,6 +467,7 @@ export const REVERB: ModuleSpec = {
     {
       kind: 'knob',
       id: 'room',
+      call: { method: 'room', argument: { kind: 'number' } },
       label: 'ROOM',
       min: 0,
       max: 1,
@@ -409,7 +475,16 @@ export const REVERB: ModuleSpec = {
       default: 0.5,
       omitAt: 0,
     },
-    { kind: 'knob', id: 'size', label: 'SIZE', min: 0, max: 10, step: 0.5, default: 4 },
+    {
+      kind: 'knob',
+      id: 'size',
+      call: { method: 'roomsize', argument: { kind: 'number' }, read: 'merge', enabledBy: 'room' },
+      label: 'SIZE',
+      min: 0,
+      max: 10,
+      step: 0.5,
+      default: 4,
+    },
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
@@ -478,7 +553,18 @@ export const ITER: ModuleSpec = {
   hp: 10,
   paletteCall: '.iter()',
   paletteCategory: 'pattern',
-  controls: [{ kind: 'knob', id: 'steps', label: 'STEPS', min: 1, max: 16, step: 1, default: 4 }],
+  controls: [
+    {
+      kind: 'knob',
+      id: 'steps',
+      call: { method: 'iter', argument: { kind: 'number' } },
+      label: 'STEPS',
+      min: 1,
+      max: 16,
+      step: 1,
+      default: 4,
+    },
+  ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'any' },
@@ -500,6 +586,18 @@ export const JUX: ModuleSpec = {
     {
       kind: 'switch',
       id: 'right',
+      call: {
+        method: 'jux',
+        argument: {
+          kind: 'transform',
+          expressions: {
+            rev: 'rev',
+            fast2: 'x => x.fast(2)',
+            press: 'press',
+            iter4: 'x => x.iter(4)',
+          },
+        },
+      },
       label: 'RIGHT',
       options: [
         { value: 'rev', label: 'REV' },

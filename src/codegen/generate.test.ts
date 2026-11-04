@@ -1,5 +1,5 @@
 import { parse } from 'acorn'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
@@ -38,8 +38,20 @@ function chain(...modules: PlacedModule[]): Patch {
   }
 }
 
+const generatedFiles: string[] = []
+afterEach(async () => {
+  // Frozen before #128: includes every executable and saved rack metadata byte.
+  for (const file of generatedFiles.splice(0)) {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(file))
+    expect(
+      Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join(''),
+    ).toMatchSnapshot()
+  }
+})
+
 function sound(patch: Patch): string {
   const result = generate(patch)
+  generatedFiles.push(result)
   // Every fixture also has to be executable JavaScript, including its trailing layout.
   expect(() => parse(result, { ecmaVersion: 'latest' })).not.toThrow()
   return result.split(RACK_MARKER)[0]?.trim() ?? ''

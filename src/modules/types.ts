@@ -16,7 +16,29 @@ export type Signal = 'pattern' | 'audio' | 'mod'
 /** Passthrough transforms retain their incoming signal. */
 export type JackSignal = Signal | 'any'
 
-export interface KnobControl {
+/** A single chained call, interpreted by both generator and reader. */
+export interface CallBinding {
+  method: string | { control: string; names: Readonly<Record<string, string>> }
+  argument:
+    | { kind: 'number' }
+    | { kind: 'string' }
+    | { kind: 'scale'; root: string }
+    | { kind: 'transform'; expressions: Readonly<Record<string, string>> }
+  /** Continue the adjacent module when this control has not already been read. */
+  read?: 'merge'
+  /** Suppress companion effect settings when the effect is bypassed. */
+  enabledBy?: string
+  /** Only write this call with a directly connected ENV. */
+  withEnvelope?: string
+  /** Emit the connected ENV's ADSR calls around this control's call. */
+  envelope?: 'before' | 'after'
+}
+
+interface CallControl {
+  call?: CallBinding
+}
+
+export interface KnobControl extends CallControl {
   kind: 'knob'
   id: string
   label: string
@@ -40,12 +62,13 @@ export interface SwitchOption {
   label: string
 }
 
-export interface SwitchControl {
+export interface SwitchControl extends CallControl {
   kind: 'switch'
   id: string
   label: string
   options: readonly SwitchOption[]
   default: string
+  omitAt?: string
 }
 
 /** SEQ's step editor. Each step is a token: a note, a degree, '~' for a rest, or '<a b>'. */
@@ -105,6 +128,8 @@ export interface ModuleSpec {
   paletteCall: string
   /** Override the visual category for grouping Alien/Cyber modules. */
   paletteCategory?: PaletteCategory
+  /** Source-only defaults for omitted calls, distinct from new rack defaults. */
+  readDefaults?: Readonly<Record<string, number | string>>
   controls: readonly Control[]
   jacks: readonly Jack[]
   /**

@@ -1,5 +1,6 @@
 import { parse, tokenizer } from 'acorn'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
+import { callMethod } from '../modules/bindings'
 import { drumText } from '../patch/notation'
 import type { Patch } from '../patch/types'
 import type { SourceDocument } from '../reader/types'
@@ -74,7 +75,7 @@ function append(
 
 function omitted(node: Node, id: string): boolean {
   const item = control(node, id)
-  return item.kind === 'knob' && value(node, id) === item.omitAt
+  return 'omitAt' in item && value(node, id) === item.omitAt
 }
 
 /** Generate new rack-owned code. Imported documents must use source-preserving edits (#6). */
@@ -160,7 +161,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
   function envelope(
     expression: CodeExpression,
     env: Node,
-    target: Node,
+    target: Owner['target'],
     prefix = '',
   ): CodeExpression {
     for (const [id, method] of [
@@ -175,11 +176,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
           `.${prefix}${method}(${numeric(number(env, id))})`,
           env,
           'cv',
-          {
-            module: target.module.id,
-            jack: 'cv',
-            control: target.spec.id === 'vcf' ? 'cutoff' : 'level',
-          },
+          target,
         )
     }
     return expression
@@ -221,91 +218,67 @@ export function generateDocument(patch: Patch): GeneratedDocument {
   }
 
   function transform(node: Node, expression: CodeExpression): CodeExpression {
-    const n = (id: string) => numeric(number(node, id))
-    const s = (id: string) => string(node, id)
-    const call = (method: string, arg: string) => {
-      expression = append(expression, `.${method}(${arg})`, node)
+    if (node.spec.id === 'code') {
+      const text = string(node, 'text')
+      if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
+      // Opaque CODE may end in a line comment; keep separators around it.
+      expression = append({ ...expression, inline: false }, text, node)
+      expression.sourceRouting ||= syntax(expression.text).hasOrbit
+      return expression
     }
-    switch (node.spec.id) {
-      case 'quant':
-        call('scale', quote(`${s('root')}:${s('scale')}`))
-        break
-      case 'osc':
-        call('s', quote(s('wave')))
-        if (!omitted(node, 'tune')) call('transpose', n('tune'))
-        break
-      case 'smpl':
-        if (s('bank')) call('bank', quote(s('bank')))
-        if (!omitted(node, 'speed')) call('speed', n('speed'))
-        break
-      case 'vcf':
-      case 'vca': {
-        const isFilter = node.spec.id === 'vcf'
-        const prefix = isFilter ? s('mode') : ''
-        const id = isFilter ? 'cutoff' : 'level'
-        const cv = node.inputs.get('cv')
-        const env = cv ? requireNode(nodes, cv.from.module) : undefined
-        if (!isFilter && env?.spec.id === 'env') expression = envelope(expression, env, node)
-        const mod = modulation(node, id)
-        call(isFilter ? `${prefix}f` : 'gain', mod.text)
-        expression.sourceRouting ||= mod.sourceRouting ?? false
-        const targetOwner = expression.owners.at(-1)
-        if (targetOwner) {
-          for (const module of mod.modules ?? [])
-            expression.owners.push({
-              ...targetOwner,
-              module,
-              role: 'cv',
-              target: { module: node.module.id, jack: 'cv', control: id },
-            })
+    const s = (id: string) => string(node, id)
+    const controls = node.spec.controls.filter((item) => 'call' in item && item.call)
+    if (!controls.length) throw new Error(`Not a chain module: ${node.spec.id}`)
+    for (const item of controls) {
+      if (!('call' in item) || !item.call) continue
+      const binding = item.call
+      if (omitted(node, item.id) || (binding.enabledBy && omitted(node, binding.enabledBy)))
+        continue
+      const jack = node.spec.jacks.find((jack) =>
+        binding.withEnvelope ? jack.id === binding.withEnvelope : jack.cvTarget === item.id,
+      )
+      const cv = jack ? node.inputs.get(jack.id) : undefined
+      const source = cv ? requireNode(nodes, cv.from.module) : undefined
+      const env = source?.spec.id === 'env' ? source : undefined
+      if (binding.withEnvelope && !env) continue
+      const target = jack?.cvTarget
+        ? { module: node.module.id, jack: jack.id, control: jack.cvTarget }
+        : undefined
+      if (binding.envelope === 'before' && env) expression = envelope(expression, env, target)
+      let argument: string
+      let mod: ReturnType<typeof modulation> | undefined
+      switch (binding.argument.kind) {
+        case 'number':
+          mod = modulation(node, item.id)
+          argument = mod.text
+          break
+        case 'string':
+          argument = quote(s(item.id))
+          break
+        case 'scale':
+          argument = quote(`${s(binding.argument.root)}:${s(item.id)}`)
+          break
+        case 'transform': {
+          const transform = binding.argument.expressions[s(item.id)]
+          if (!transform) throw new Error('Unknown transform')
+          argument = transform
+          break
         }
-        if (isFilter) {
-          call(`${prefix}q`, n('res'))
-          if (env?.spec.id === 'env') {
-            call(`${prefix}env`, n('envAmt'))
-            expression = envelope(expression, env, node, prefix)
-          }
-        }
-        break
       }
-      case 'delay':
-        if (!omitted(node, 'mix')) {
-          call('delay', n('mix'))
-          call('delaytime', n('time'))
-          call('delayfeedback', n('fdbk'))
-        }
-        break
-      case 'reverb':
-        if (!omitted(node, 'room')) {
-          call('room', n('room'))
-          call('roomsize', n('size'))
-        }
-        break
-      case 'iter':
-        call('iter', n('steps'))
-        break
-      case 'jux': {
-        const transforms: Record<string, string> = {
-          rev: 'rev',
-          fast2: 'x => x.fast(2)',
-          press: 'press',
-          iter4: 'x => x.iter(4)',
-        }
-        const right = transforms[s('right')]
-        if (!right) throw new Error('Unknown JUX transform')
-        call('jux', right)
-        break
+      expression = append(expression, `.${callMethod(binding, s)}(${argument})`, node)
+      expression.sourceRouting ||= mod?.sourceRouting ?? false
+      const targetOwner = expression.owners.at(-1)
+      if (targetOwner && target) {
+        for (const module of mod?.modules ?? [])
+          expression.owners.push({ ...targetOwner, module, role: 'cv', target })
       }
-      case 'code': {
-        const text = s('text')
-        if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
-        // Opaque CODE may end in a line comment; keep separators around it.
-        expression = append({ ...expression, inline: false }, text, node)
-        expression.sourceRouting ||= syntax(expression.text).hasOrbit
-        break
-      }
-      default:
-        throw new Error(`Not a chain module: ${node.spec.id}`)
+      if (binding.envelope === 'after' && env)
+        expression = envelope(
+          expression,
+          env,
+          target,
+          typeof binding.method === 'string' ? '' : s(binding.method.control),
+        )
     }
     return expression
   }

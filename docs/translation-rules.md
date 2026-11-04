@@ -199,6 +199,61 @@ See [reader evidence](reader-verification.md) and the implemented
 - Parsing is not execution or sandboxing. Source equality, sound equivalence and
   saved rack identity are separate checks for the production reader/generator.
 
+## Catalog call bindings (#128)
+
+The [binding format](module-spec.md#call-bindings-128) lives on controls in
+`src/modules/catalog.ts`. Simple chain calls use it in both directions, including
+OSC, SMPL, VCF, VCA, DELAY, REVERB, ITER, QUANT and JUX. Control order determines
+write order. Omission values and effect bypass dependencies are catalog data;
+reader grouping preserves repeated settings as distinct modules. VCF method
+variants set MODE and only merge settings of the same mode. QUANT's lowercase
+root normalization and JUX's supported identifier/single-call callback forms
+retain exact imported spelling, without executing callback text.
+
+A numeric binding uses its jack's `cvTarget` to discover modulation. LFO ranges
+retain the knob's base and target-unit depth; saved ownership records the actual
+jack and control IDs. ENV assembly remains context-dependent: VCA writes ADSR
+before gain; VCF writes its amount and prefixed ADSR after cutoff/resonance.
+SEQ, DRUMS, LFO, ENV, MIX, OUT and CODE retain dedicated adapters where their
+source, multiple calls or context cannot be represented by a single binding.
+Aliases remain catalog-owned; unsupported arguments still become CODE.
+
+This is an internal refactor: generated executable text, call ownership, routing,
+layout metadata and imported source preservation must remain byte-identical.
+Generator fixture hashes cover full files, and library hashes cover each
+regenerated file plus the independent reader projection, frozen before the
+refactor. Source retention, saved rack identity and Strudel event behavior remain
+separate verification claims.
+
+### Observed proof (3 November 2026)
+
+On Node 24.22.2, `npm run check` passed 864 tests and 40 guardrails, plus
+formatting, skill integrity, lint, TypeScript and production build. The 63
+pre-refactor digest snapshots still match: generator fixtures cover all sixteen
+modules, and every library entry (including the trance demo) retains its full
+reader projection and regenerated file. Existing tests separately check exact
+source, saved rack identity and real Strudel events. A catalog-only test module
+also writes/reads a new numeric call and routes LFO CV through a differently
+named jack/target without adding a module adapter. An intentional VCF binding to
+VCA's `gain` failed the catalog integrity check before the valid catalog was
+restored. Sol approved in one round with no findings; its additional comparisons
+reported identical results for 3,000 reader inputs and 1,500 generated patches
+against `461783d`.
+
+Browser observations are separate: Chromium 156.0.8078.4 passed the existing
+`verifyLibraryUI`, `verifyPatchSignals`, `verifyLibraryRackEditing` and
+`verifyTrance` harness groups. All fourteen entries loaded exact executable
+source and matching racks without autoplay, produced real Strudel events and
+nonzero WebAudio PCM, and accepted their supported CV/effect/mixer edits with
+export identity intact. The trance demo retained 29 modules, four voices and
+identical four-cycle event snapshots through repeated Play and export/reopen;
+master and all four orbit probes produced nonzero PCM. The UI suite also retained
+helper/CODE source and restored changed rack looks on reopen. No page errors
+were observed. Shared preview loaded the library UI; after two Play-click
+automation timeouts, Playwright supplied the playback checks. Physical listening
+and other browsers/devices remain unverified; no #128 acceptance criterion is
+otherwise outstanding.
+
 ## Common imported calls (#77)
 
 Recognition retains exact executable bytes; aliases are catalog-owned reader

@@ -65,12 +65,56 @@ describe('module catalog', () => {
     }
   })
 
+  it('keeps call bindings and their dependencies within the owning module', () => {
+    for (const spec of CATALOG) {
+      const control = (id: string) => spec.controls.find((item) => item.id === id)
+      for (const item of spec.controls) {
+        if (!('call' in item) || !item.call) continue
+        const binding = item.call
+        const where = `${spec.id}.${item.id}`
+        if (typeof binding.method === 'string') {
+          // s() has separate source/chained ownership for DRUMS and OSC.
+          expect([...spec.strudel, ...(spec.id === 'osc' ? ['s'] : [])], where).toContain(
+            binding.method,
+          )
+        } else {
+          const selector = control(binding.method.control)
+          expect(selector?.kind, where).toBe('switch')
+          if (selector?.kind === 'switch')
+            expect(Object.keys(binding.method.names).sort(), where).toEqual(
+              selector.options.map((option) => option.value).sort(),
+            )
+          for (const name of Object.values(binding.method.names))
+            expect(spec.strudel, where).toContain(name)
+        }
+        expect(binding.argument.kind === 'number', where).toBe(item.kind === 'knob')
+        if (binding.argument.kind === 'scale')
+          expect(control(binding.argument.root)?.kind, where).toBe('switch')
+        if (binding.argument.kind === 'transform' && item.kind === 'switch')
+          expect(Object.keys(binding.argument.expressions).sort(), where).toEqual(
+            item.options.map((option) => option.value).sort(),
+          )
+        if (binding.enabledBy) expect(control(binding.enabledBy), where).toHaveProperty('omitAt')
+        if (binding.withEnvelope)
+          expect(
+            spec.jacks.find((jack) => jack.id === binding.withEnvelope),
+            where,
+          ).toHaveProperty('cvTarget')
+      }
+      for (const [id, value] of Object.entries(spec.readDefaults ?? {})) {
+        const item = control(id)
+        expect(item, `${spec.id}.${id}`).toHaveProperty('omitAt', value)
+      }
+    }
+  })
+
   it('points every CV jack at an existing knob', () => {
     for (const m of CATALOG) {
       for (const j of m.jacks.filter((jack) => jack.cvTarget)) {
         const target = m.controls.find((c) => c.id === j.cvTarget)
         expect(target?.kind, `${m.id}:${j.id}`).toBe('knob')
         if (target?.kind === 'knob') {
+          expect(target.call?.argument.kind, `${m.id}:${j.id}`).toBe('number')
           expect(target.modulation?.default).toBeGreaterThanOrEqual(
             target.modulation?.min ?? Infinity,
           )
