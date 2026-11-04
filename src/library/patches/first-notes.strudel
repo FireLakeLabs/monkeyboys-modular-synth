@@ -136,8 +136,6 @@ $: note("c3 e3 g3 b3")
 //     {
 //       "id": "out2",
 //       "type": "out",
-//       "row": 1,
-//       "hp": 12,
 //       "look": "instrument",
 //       "values": {
 //         "bpm": 120

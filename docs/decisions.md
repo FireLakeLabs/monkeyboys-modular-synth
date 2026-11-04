@@ -115,6 +115,19 @@ production acceptance for #9–#11.
   evaluations remain engine limits. The [#36 recovery contract](audio-recovery.md)
   defines observable late errors and Stop independent of pending evaluation.
 
+## Rack case (#133, decided 3 November 2026)
+
+- OUT is pinned at the right edge of the rack frame, outside the rails, retaining
+  its IN, BPM, VOL and Hardware looks. It stays visible as rails scroll.
+- Rail width is saved per patch as `railHp`: 64, 84 or 104 HP. New patches use the
+  widest complete case that fits the window; absent metadata/fields mean 64 HP.
+  Resize never reflows or changes saved width. Users can zoom or scroll.
+- New metadata omits OUT coordinates; legacy files still read with exact source
+  retention. See [format compatibility](patch-format.md#in-memory).
+- Rack focus collapses palette and code, and restores the previous view.
+  [The implementation and observed proof](output-panel-verification.md) record
+  the width-reduction refusal and browser coverage.
+
 ## Source editor (#53, decided 3 November 2026)
 
 Adopt plain CodeMirror 6 in #59. The [editor spike](editor-spike.md) demonstrated

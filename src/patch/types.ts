@@ -1,3 +1,4 @@
+import type { RailHp } from './layout'
 import type { LookId } from '../modules/looks'
 
 /**
@@ -13,9 +14,9 @@ export interface PlacedModule {
   id: string
   /** Catalog id, e.g. 'vcf'. */
   type: string
-  /** Rack row, from 0. */
+  /** Rack row, from 0. OUT uses a canonical 0 outside the rails. */
   row: number
-  /** Offset from the left of the row, in HP. */
+  /** Offset from the left of the row, in HP. OUT uses a canonical 0. */
   hp: number
   look: LookId
   /** One entry per control id; a missing entry means the catalog default. */
@@ -47,6 +48,8 @@ export interface Patch {
   prelude?: string
   /** Optional saved rail count, including empty rows; old files derive it from modules. */
   rows?: number
+  /** Rail width in HP; older files default to 64. */
+  railHp?: RailHp
 }
 
 export function emptyPatch(): Patch {

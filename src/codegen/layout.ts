@@ -1,4 +1,5 @@
 import { parse, type Expression } from 'acorn'
+import type { RailHp } from '../patch/layout'
 import type { Cable, PlacedModule } from '../patch/types'
 
 export const RACK_MARKER = '// ── @monkeyboy rack v1 ──'
@@ -30,6 +31,7 @@ export interface RackLayout {
   cables: Cable[]
   names: Record<string, string>
   rows?: number
+  railHp?: RailHp
 }
 
 export interface Owner {
@@ -183,8 +185,20 @@ export function bindScope(
   }
 }
 
+/** OUT has stable identity and bindings, but belongs to the case rather than a rail. */
+export function diskLayout(layout: RackLayout): unknown {
+  return {
+    ...layout,
+    modules: layout.modules.map((module) => {
+      if (module.type !== 'out') return module
+      const { row: _row, hp: _hp, ...output } = module
+      return output
+    }),
+  }
+}
+
 export function writeLayout(layout: RackLayout): string {
-  return `${RACK_MARKER}\n${JSON.stringify(layout, null, 2)
+  return `${RACK_MARKER}\n${JSON.stringify(diskLayout(layout), null, 2)
     .split('\n')
     .map((line) => `// ${line}`)
     .join('\n')}\n`

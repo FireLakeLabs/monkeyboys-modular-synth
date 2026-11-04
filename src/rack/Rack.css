@@ -43,9 +43,29 @@
   border-radius: 5px;
   cursor: pointer;
 }
+.rack-frame {
+  display: flex;
+  position: relative;
+  height: max(430px, calc(100vh - 290px));
+  overflow: hidden;
+  border: 1px solid #25282d;
+  border-radius: 10px;
+  background: #090a0c;
+}
+.output-panel {
+  position: relative;
+  flex: 0 0 auto;
+  border-left: 2px solid #414650;
+  background: #15171b;
+}
+.output-panel .module-header {
+  cursor: pointer;
+}
 .rack-scroll {
+  flex: 1;
+  min-width: 0;
   overflow: auto;
-  height: max(300px, calc(100vh - 260px));
+  height: 100%;
   border: 1px solid #25282d;
   border-radius: 10px;
   background: #090a0c;
@@ -83,7 +103,8 @@
   gap: 6px;
   font-size: 12px;
 }
-.rack-zoom select {
+.rack-zoom select,
+.rail-width select {
   background: #202328;
   color: var(--text);
   padding: 5px;
@@ -577,4 +598,15 @@ select:focus-visible {
 
 .playing-grid {
   box-shadow: inset 0 0 0 1px #e6d35f;
+}
+
+.rail-width {
+  font-size: 12px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.output-surface {
+  position: relative;
 }

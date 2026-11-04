@@ -186,8 +186,6 @@ $: n("0 2 4 <6 7> 4 2 1 ~")
 //     {
 //       "id": "out2",
 //       "type": "out",
-//       "row": 1,
-//       "hp": 12,
 //       "look": "instrument",
 //       "values": {
 //         "bpm": 108

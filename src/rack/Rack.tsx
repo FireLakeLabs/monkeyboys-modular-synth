@@ -13,12 +13,13 @@ import { PALETTE_CATEGORIES, paletteModules, getModuleSpec } from '../modules/ca
 import type { JackRef, Patch } from '../patch/types'
 import type { CodeConversion } from '../workspace/codeConversion'
 import type { SourceConnectionAssessment } from '../workspace/connections'
+import { RAIL_WIDTHS, railWidth, OUTPUT_PANEL_WIDTH } from '../patch/layout'
 import { observeActivity } from './activity'
 import { ControlEditor } from './Controls'
 import {
   HP,
   ROW_HEIGHT,
-  ROW_HP,
+  setRailWidth,
   cableSignal,
   cableWarnings,
   removeRow,
@@ -120,6 +121,7 @@ export function Rack({
   const menuModule = patch.modules.find((m) => m.id === menu?.id)
   const surface = useRef<HTMLDivElement>(null)
   const viewport = useRef<HTMLDivElement>(null)
+  const rails = useRef<HTMLDivElement>(null)
   const [zoom, setZoom] = useState<number | 'fit'>(1)
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
   useLayoutEffect(() => {
@@ -196,13 +198,15 @@ export function Rack({
   const wireGesture = useRef<{ x: number; y: number; dragged: boolean } | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const routed = routedModules(patch)
+  const railHp = railWidth(patch)
   const rows = rackRows(patch)
   const height = rows * ROW_HEIGHT
   const fitScale = Math.max(
     0.1,
-    Math.min(1, (viewportSize.width - 36) / (ROW_HP * HP), (viewportSize.height - 36) / height),
+    Math.min(1, (viewportSize.width - 36) / (railHp * HP), (viewportSize.height - 36) / height),
   )
   const scale = zoom === 'fit' ? fitScale : zoom
+  const outputScale = Math.max(0.1, Math.min(1, viewportSize.height / 430))
   const candidates = useMemo(() => {
     const results = new Map<string, SourceConnectionAssessment>()
     if (wire)
@@ -218,15 +222,16 @@ export function Rack({
     const element = surface.current
     if (!element) return
     const measure = () => {
-      const bounds = element.getBoundingClientRect()
+      const bounds =
+        element.querySelector('.cables')?.getBoundingClientRect() ?? element.getBoundingClientRect()
       const next: Record<string, Point> = {}
       for (const jack of element.querySelectorAll<HTMLButtonElement>('[data-jack]')) {
         const rect = jack.getBoundingClientRect()
         const id = jack.dataset.jack
         if (id)
           next[id] = {
-            x: (rect.left + rect.width / 2 - bounds.left) / scale,
-            y: (rect.top + rect.height / 2 - bounds.top) / scale,
+            x: rect.left + rect.width / 2 - bounds.left,
+            y: rect.top + rect.height / 2 - bounds.top,
           }
       }
       setPoints(next)
@@ -251,12 +256,15 @@ export function Rack({
     for (const part of element.querySelectorAll('.module-panel, .patch-box, [data-jack]'))
       observer.observe(part)
     window.addEventListener('resize', measure)
+    const scroll = viewport.current
+    scroll?.addEventListener('scroll', measure)
     return () => {
       element.removeEventListener('contextmenu', contextMenu)
       observer.disconnect()
       window.removeEventListener('resize', measure)
+      scroll?.removeEventListener('scroll', measure)
     }
-  }, [patch, rows, locked, select, scale])
+  }, [patch, rows, locked, select, scale, outputScale])
 
   function clearWire() {
     setWire(null)
@@ -336,6 +344,226 @@ export function Rack({
   const currentCable = patch.cables.find((c) => c.id === selectedCable)
   const module = patch.modules.find((m) => m.id === selected)
   const warnings = patch.cables.flatMap((c) => cableWarnings(patch, c))
+  const renderModules = (modules: Patch['modules']) =>
+    modules.map((m) => {
+      const spec = getModuleSpec(m.type)
+      return (
+        <section
+          key={m.id}
+          aria-label={`${spec.name} ${m.id}${!routed.has(m.id) ? ' · not connected to OUT' : ''}`}
+          data-jacks={LOOK_LAYOUT[m.look].jacks}
+          data-module={m.id}
+          data-editing={editingModule === m.id}
+          className={`module-panel cat-${spec.category} family-${spec.family} look-${m.look} ${selected === m.id ? 'selected' : ''} ${!routed.has(m.id) ? 'inactive' : ''}`}
+          style={
+            m.type === 'out'
+              ? { right: 8, top: 20, width: spec.hp * HP }
+              : { left: m.hp * HP, top: m.row * ROW_HEIGHT + 20, width: spec.hp * HP }
+          }
+        >
+          {spec.family === 'alien' && <span className="activity-glow" aria-hidden="true" />}
+          <button
+            type="button"
+            className="module-header"
+            aria-label={`Select ${m.id}`}
+            aria-pressed={selected === m.id}
+            draggable={m.type !== 'out'}
+            onClick={() => select(m.id)}
+            onKeyDown={(event) => {
+              if (event.key === 'Delete' && !spec.unique) {
+                event.preventDefault()
+                select(m.id)
+                setDeleteId(m.id)
+              }
+            }}
+            onDragStart={(event) => {
+              if (m.type === 'out') {
+                event.preventDefault()
+                return
+              }
+              event.dataTransfer.setData('text/plain', m.id)
+              setPlacement({ type: m.type, moving: m.id })
+            }}
+            onDragEnd={() => {
+              setPlacement(null)
+              setGhost(null)
+            }}
+          >
+            <span className="module-dot" />
+            {spec.family === 'cyber' && (
+              <span className="cyber-cursor" aria-hidden="true">
+                ▌
+              </span>
+            )}
+            <strong>{spec.name}</strong>
+            <small>{spec.title}</small>
+          </button>
+          <div
+            className="module-controls"
+            onFocus={() => select(m.id)}
+            onPointerDown={() => select(m.id)}
+          >
+            {[...spec.controls]
+              .sort((a, b) => Number(a.kind === 'knob') - Number(b.kind === 'knob'))
+              .map((control) => (
+                <ControlEditor
+                  key={control.id}
+                  patch={patch}
+                  module={m}
+                  control={control}
+                  {...(m.type === 'code' && sourceModules.includes(m.id)
+                    ? { editSource: () => showCode(m.id) }
+                    : {})}
+                  commit={(value, historyGroup) =>
+                    edit((p) => setValue(p, m.id, control.id, value), undefined, historyGroup)
+                  }
+                />
+              ))}
+            {conversions
+              .filter((offer) => offer.module === m.id)
+              .map((offer) => (
+                <button
+                  key={offer.module}
+                  type="button"
+                  className="code-conversion"
+                  disabled={locked || !conversionStopped}
+                  title={conversionStopped ? undefined : 'Stop playback to convert'}
+                  onClick={() => convertCode(m.id)}
+                >
+                  Looks like {getModuleSpec(offer.type).name}: convert?
+                </button>
+              ))}
+          </div>
+          <div className="patch-box">
+            {spec.jacks.map((jack) => {
+              const ref = { module: m.id, jack: jack.id }
+              const state = wire && jack.direction === 'in' ? candidate(ref) : null
+              const connected = patch.cables.some(
+                (c) => keyOf(c.from) === keyOf(ref) || keyOf(c.to) === keyOf(ref),
+              )
+              const incoming = patch.cables.find((c) => keyOf(c.to) === keyOf(ref))
+              const signal =
+                state && state.kind !== 'blocked'
+                  ? state.signal
+                  : jack.signal !== 'any'
+                    ? jack.signal
+                    : cableSignal(patch, incoming?.from ?? ref)
+              return (
+                <div key={jack.id} className={`jack-label jack-${jack.direction}`}>
+                  <button
+                    type="button"
+                    data-jack={keyOf(ref)}
+                    className={`jack signal-${signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
+                    aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}`}
+                    aria-describedby={
+                      wire && target && keyOf(target) === keyOf(ref)
+                        ? 'cable-target-hint'
+                        : undefined
+                    }
+                    title={
+                      state?.message ??
+                      (wire && jack.direction === 'out'
+                        ? 'Choose an input. Output-to-output is blocked.'
+                        : `${jack.label} · ${signal === 'any' ? 'unresolved signal' : signal} ${jack.direction}`)
+                    }
+                    onPointerDown={(event) => {
+                      if (jack.direction === 'in' && event.button === 0) wireGesture.current = null
+                      if (jack.direction === 'out' && event.button === 0) {
+                        if (wire) return
+                        wireGesture.current = {
+                          x: event.clientX,
+                          y: event.clientY,
+                          dragged: false,
+                        }
+                        setSelectedOutput(keyOf(ref))
+                        setWire({ from: ref })
+                        setMessage('Choose an input. Escape cancels.')
+                        setPointer(points[keyOf(ref)] ?? null)
+                        setReplacement(null)
+                      }
+                    }}
+                    onFocus={(event) => {
+                      if (jack.direction === 'in') inspectJack(ref, event.currentTarget)
+                    }}
+                    onBlur={(event) => {
+                      if (!event.currentTarget.matches(':hover')) setTarget(null)
+                    }}
+                    onPointerEnter={(event) => {
+                      if (jack.direction === 'in') inspectJack(ref, event.currentTarget)
+                    }}
+                    onPointerLeave={(event) => {
+                      if (event.currentTarget !== document.activeElement) {
+                        setTarget(null)
+                        if (wire) setMessage('Choose an input. Escape cancels.')
+                      }
+                    }}
+                    onPointerUp={() => {
+                      // Layout can move an input under a source click's release.
+                      // Only a drag or a fresh input press completes that connection.
+                      if (
+                        wire &&
+                        jack.direction === 'in' &&
+                        (!wireGesture.current || wireGesture.current.dragged)
+                      )
+                        finish(ref)
+                      else if (
+                        wire &&
+                        jack.direction === 'out' &&
+                        (keyOf(ref) !== keyOf(wire.from) || wireGesture.current?.dragged)
+                      ) {
+                        cancel()
+                        setMessage('Choose an input. Output-to-output is blocked.')
+                      }
+                    }}
+                    onClick={(event) => {
+                      if (event.detail === 0) {
+                        if (jack.direction === 'out') setWire({ from: ref })
+                        else finish(ref)
+                      }
+                    }}
+                  />
+                  <span>
+                    {jack.label}
+                    {state
+                      ? state.kind === 'blocked'
+                        ? ' ×'
+                        : state.kind === 'valid'
+                          ? ' ✓'
+                          : ' △'
+                      : wire && jack.direction === 'out'
+                        ? ' ×'
+                        : ''}
+                  </span>
+                  {jack.direction === 'out' &&
+                    (patch.cables.filter((c) => keyOf(c.from) === keyOf(ref)).length > 1 ||
+                      patch.names[keyOf(ref)]) && (
+                      <input
+                        key={`${m.id}:${jack.id}:${patch.names[keyOf(ref)]}`}
+                        className="output-name"
+                        aria-label={`Name ${m.id} ${jack.label}`}
+                        defaultValue={patch.names[keyOf(ref)] ?? ''}
+                        onPointerDown={(event) => event.stopPropagation()}
+                        onBlur={(event) => {
+                          if (event.target.value !== patch.names[keyOf(ref)])
+                            edit((p) => renameOutput(p, keyOf(ref), event.target.value))
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') event.currentTarget.blur()
+                          if (event.key === 'Escape') {
+                            event.currentTarget.value = patch.names[keyOf(ref)] ?? ''
+                            event.currentTarget.blur()
+                          }
+                        }}
+                      />
+                    )}
+                </div>
+              )
+            })}
+          </div>
+          <span className="module-id">{m.id}</span>
+        </section>
+      )
+    })
   return (
     <>
       <aside
@@ -442,6 +670,24 @@ export function Rack({
               {cableVisibilityText}
             </span>
           </fieldset>
+          <label className="rail-width">
+            Rail width
+            <select
+              aria-label="Rail width"
+              value={railHp}
+              disabled={locked}
+              onChange={(event) => {
+                const width = RAIL_WIDTHS.find((width) => width === Number(event.target.value))
+                if (width) edit((patch) => setRailWidth(patch, width))
+              }}
+            >
+              {RAIL_WIDTHS.map((width) => (
+                <option key={width} value={width}>
+                  {width} HP
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="rack-zoom">
             <button type="button" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>
               Fit rack
@@ -474,352 +720,168 @@ export function Rack({
             New patch
           </button>
         </div>
-        <div ref={viewport} className="rack-scroll">
-          <div
-            ref={surface}
-            inert={locked}
-            className="rack-surface"
-            style={
-              {
-                width: ROW_HP * HP,
-                height,
-                zoom: scale,
-                '--rack-zoom': scale,
-              } as CSSProperties
+        <div
+          ref={surface}
+          inert={locked}
+          className="rack-frame"
+          onDragOver={(event) => {
+            if (!placement) return
+            event.preventDefault()
+            const bounds = rails.current?.getBoundingClientRect()
+            if (!bounds) return
+            const row = Math.max(
+              0,
+              Math.min(rows - 1, Math.floor((event.clientY - bounds.top) / scale / ROW_HEIGHT)),
+            )
+            const position = placementPosition(
+              patch,
+              placement.type,
+              row,
+              Math.round((event.clientX - bounds.left) / scale / HP),
+              placement.moving,
+            )
+            setGhost(position)
+            setMessage(
+              `${getModuleSpec(placement.type).name} · row ${position.row + 1}, HP ${position.hp}`,
+            )
+          }}
+          onDragLeave={(event) => {
+            if (
+              !(event.relatedTarget instanceof Node) ||
+              !event.currentTarget.contains(event.relatedTarget)
+            )
+              setGhost(null)
+          }}
+          onDrop={(event) => {
+            event.preventDefault()
+            if (ghost) place(ghost.row, ghost.hp)
+          }}
+          onPointerMove={(event) => {
+            const panel = document
+              .elementsFromPoint(event.clientX, event.clientY)
+              .find((element) => element.matches('[data-module]'))
+            setHoveredModule(panel?.getAttribute('data-module') ?? null)
+            if (wire && surface.current) {
+              const gesture = wireGesture.current
+              if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 4)
+                gesture.dragged = true
+              const b =
+                surface.current.querySelector('.cables')?.getBoundingClientRect() ??
+                surface.current.getBoundingClientRect()
+              setPointer({
+                x: event.clientX - b.left,
+                y: event.clientY - b.top,
+              })
             }
-            onDragOver={(event) => {
-              if (!placement) return
-              event.preventDefault()
-              const bounds = event.currentTarget.getBoundingClientRect()
-              const row = Math.max(
-                0,
-                Math.min(rows - 1, Math.floor((event.clientY - bounds.top) / scale / ROW_HEIGHT)),
-              )
-              const position = placementPosition(
-                patch,
-                placement.type,
-                row,
-                Math.round((event.clientX - bounds.left) / scale / HP),
-                placement.moving,
-              )
-              setGhost(position)
-              setMessage(
-                `${getModuleSpec(placement.type).name} · row ${position.row + 1}, HP ${position.hp}`,
-              )
-            }}
-            onDragLeave={(event) => {
-              if (
-                !(event.relatedTarget instanceof Node) ||
-                !event.currentTarget.contains(event.relatedTarget)
-              )
-                setGhost(null)
-            }}
-            onDrop={(event) => {
-              event.preventDefault()
-              if (ghost) place(ghost.row, ghost.hp)
-            }}
-            onPointerMove={(event) => {
-              const panel = document
-                .elementsFromPoint(event.clientX, event.clientY)
-                .find((element) => element.matches('[data-module]'))
-              setHoveredModule(panel?.getAttribute('data-module') ?? null)
-              if (wire && surface.current) {
-                const gesture = wireGesture.current
-                if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 4)
-                  gesture.dragged = true
-                const b = surface.current.getBoundingClientRect()
-                setPointer({
-                  x: (event.clientX - b.left) / scale,
-                  y: (event.clientY - b.top) / scale,
-                })
+          }}
+          onPointerLeave={() => setHoveredModule(null)}
+          onPointerUp={(event) => {
+            if (wire && event.target instanceof Element && !event.target.closest('[data-jack]'))
+              cancel()
+          }}
+        >
+          <div ref={viewport} className="rack-scroll">
+            <div
+              ref={rails}
+              className="rack-surface"
+              style={
+                { width: railHp * HP, height, zoom: scale, '--rack-zoom': scale } as CSSProperties
               }
-            }}
-            onPointerLeave={() => setHoveredModule(null)}
-            onPointerUp={(event) => {
-              if (wire && event.target instanceof Element && !event.target.closest('[data-jack]'))
-                cancel()
-            }}
-          >
-            {Array.from({ length: rows }, (_, row) => (
-              <div key={row} className="rack-row" style={{ top: row * ROW_HEIGHT }}>
-                <span className="row-label">
-                  {row + 1} / {ROW_HP} HP
-                </span>
-                {!patch.modules.some((m) => m.row === row) && rows > 1 && (
-                  <button
-                    type="button"
-                    className="remove-row"
-                    aria-label={`Remove row ${row + 1}`}
-                    onClick={() => {
-                      edit((p) => removeRow(p, row))
-                    }}
-                  >
-                    Remove row
-                  </button>
-                )}
-              </div>
-            ))}
-            {patch.modules.map((m) => {
-              const spec = getModuleSpec(m.type)
-              return (
-                <section
-                  key={m.id}
-                  aria-label={`${spec.name} ${m.id}${!routed.has(m.id) ? ' · not connected to OUT' : ''}`}
-                  data-jacks={LOOK_LAYOUT[m.look].jacks}
-                  data-module={m.id}
-                  data-editing={editingModule === m.id}
-                  className={`module-panel cat-${spec.category} family-${spec.family} look-${m.look} ${selected === m.id ? 'selected' : ''} ${!routed.has(m.id) ? 'inactive' : ''}`}
-                  style={{ left: m.hp * HP, top: m.row * ROW_HEIGHT + 20, width: spec.hp * HP }}
-                >
-                  {spec.family === 'alien' && <span className="activity-glow" aria-hidden="true" />}
-                  <button
-                    type="button"
-                    className="module-header"
-                    aria-label={`Select ${m.id}`}
-                    aria-pressed={selected === m.id}
-                    draggable
-                    onClick={() => select(m.id)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Delete' && !spec.unique) {
-                        event.preventDefault()
-                        select(m.id)
-                        setDeleteId(m.id)
-                      }
-                    }}
-                    onDragStart={(event) => {
-                      event.dataTransfer.setData('text/plain', m.id)
-                      setPlacement({ type: m.type, moving: m.id })
-                    }}
-                    onDragEnd={() => {
-                      setPlacement(null)
-                      setGhost(null)
-                    }}
-                  >
-                    <span className="module-dot" />
-                    {spec.family === 'cyber' && (
-                      <span className="cyber-cursor" aria-hidden="true">
-                        ▌
-                      </span>
-                    )}
-                    <strong>{spec.name}</strong>
-                    <small>{spec.title}</small>
-                  </button>
-                  <div
-                    className="module-controls"
-                    onFocus={() => select(m.id)}
-                    onPointerDown={() => select(m.id)}
-                  >
-                    {[...spec.controls]
-                      .sort((a, b) => Number(a.kind === 'knob') - Number(b.kind === 'knob'))
-                      .map((control) => (
-                        <ControlEditor
-                          key={control.id}
-                          patch={patch}
-                          module={m}
-                          control={control}
-                          {...(m.type === 'code' && sourceModules.includes(m.id)
-                            ? { editSource: () => showCode(m.id) }
-                            : {})}
-                          commit={(value, historyGroup) =>
-                            edit(
-                              (p) => setValue(p, m.id, control.id, value),
-                              undefined,
-                              historyGroup,
-                            )
-                          }
-                        />
-                      ))}
-                    {conversions
-                      .filter((offer) => offer.module === m.id)
-                      .map((offer) => (
-                        <button
-                          key={offer.module}
-                          type="button"
-                          className="code-conversion"
-                          disabled={locked || !conversionStopped}
-                          title={conversionStopped ? undefined : 'Stop playback to convert'}
-                          onClick={() => convertCode(m.id)}
-                        >
-                          Looks like {getModuleSpec(offer.type).name}: convert?
-                        </button>
-                      ))}
-                  </div>
-                  <div className="patch-box">
-                    {spec.jacks.map((jack) => {
-                      const ref = { module: m.id, jack: jack.id }
-                      const state = wire && jack.direction === 'in' ? candidate(ref) : null
-                      const connected = patch.cables.some(
-                        (c) => keyOf(c.from) === keyOf(ref) || keyOf(c.to) === keyOf(ref),
-                      )
-                      const incoming = patch.cables.find((c) => keyOf(c.to) === keyOf(ref))
-                      const signal =
-                        state && state.kind !== 'blocked'
-                          ? state.signal
-                          : jack.signal !== 'any'
-                            ? jack.signal
-                            : cableSignal(patch, incoming?.from ?? ref)
-                      return (
-                        <div key={jack.id} className={`jack-label jack-${jack.direction}`}>
-                          <button
-                            type="button"
-                            data-jack={keyOf(ref)}
-                            className={`jack signal-${signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
-                            aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}`}
-                            aria-describedby={
-                              wire && target && keyOf(target) === keyOf(ref)
-                                ? 'cable-target-hint'
-                                : undefined
-                            }
-                            title={
-                              state?.message ??
-                              (wire && jack.direction === 'out'
-                                ? 'Choose an input. Output-to-output is blocked.'
-                                : `${jack.label} · ${signal === 'any' ? 'unresolved signal' : signal} ${jack.direction}`)
-                            }
-                            onPointerDown={(event) => {
-                              if (jack.direction === 'out' && event.button === 0) {
-                                if (wire) return
-                                wireGesture.current = {
-                                  x: event.clientX,
-                                  y: event.clientY,
-                                  dragged: false,
-                                }
-                                setSelectedOutput(keyOf(ref))
-                                setWire({ from: ref })
-                                setMessage('Choose an input. Escape cancels.')
-                                setPointer(points[keyOf(ref)] ?? null)
-                                setReplacement(null)
-                              }
-                            }}
-                            onFocus={(event) => {
-                              if (jack.direction === 'in') inspectJack(ref, event.currentTarget)
-                            }}
-                            onBlur={(event) => {
-                              if (!event.currentTarget.matches(':hover')) setTarget(null)
-                            }}
-                            onPointerEnter={(event) => {
-                              if (jack.direction === 'in') inspectJack(ref, event.currentTarget)
-                            }}
-                            onPointerLeave={(event) => {
-                              if (event.currentTarget !== document.activeElement) {
-                                setTarget(null)
-                                if (wire) setMessage('Choose an input. Escape cancels.')
-                              }
-                            }}
-                            onPointerUp={() => {
-                              if (wire && jack.direction === 'in') finish(ref)
-                              else if (
-                                wire &&
-                                jack.direction === 'out' &&
-                                (keyOf(ref) !== keyOf(wire.from) || wireGesture.current?.dragged)
-                              ) {
-                                cancel()
-                                setMessage('Choose an input. Output-to-output is blocked.')
-                              }
-                            }}
-                            onClick={(event) => {
-                              if (event.detail === 0) {
-                                if (jack.direction === 'out') setWire({ from: ref })
-                                else finish(ref)
-                              }
-                            }}
-                          />
-                          <span>
-                            {jack.label}
-                            {state
-                              ? state.kind === 'blocked'
-                                ? ' ×'
-                                : state.kind === 'valid'
-                                  ? ' ✓'
-                                  : ' △'
-                              : wire && jack.direction === 'out'
-                                ? ' ×'
-                                : ''}
-                          </span>
-                          {jack.direction === 'out' &&
-                            (patch.cables.filter((c) => keyOf(c.from) === keyOf(ref)).length > 1 ||
-                              patch.names[keyOf(ref)]) && (
-                              <input
-                                key={`${m.id}:${jack.id}:${patch.names[keyOf(ref)]}`}
-                                className="output-name"
-                                aria-label={`Name ${m.id} ${jack.label}`}
-                                defaultValue={patch.names[keyOf(ref)] ?? ''}
-                                onPointerDown={(event) => event.stopPropagation()}
-                                onBlur={(event) => {
-                                  if (event.target.value !== patch.names[keyOf(ref)])
-                                    edit((p) => renameOutput(p, keyOf(ref), event.target.value))
-                                }}
-                                onKeyDown={(event) => {
-                                  if (event.key === 'Enter') event.currentTarget.blur()
-                                  if (event.key === 'Escape') {
-                                    event.currentTarget.value = patch.names[keyOf(ref)] ?? ''
-                                    event.currentTarget.blur()
-                                  }
-                                }}
-                              />
-                            )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                  <span className="module-id">{m.id}</span>
-                </section>
-              )
-            })}
-            {placement && ghost && ghost.row < rows && (
-              <div
-                className="placement-ghost"
-                style={{
-                  left: ghost.hp * HP,
-                  top: ghost.row * ROW_HEIGHT + 20,
-                  width: getModuleSpec(placement.type).hp * HP,
-                }}
-              >
-                {getModuleSpec(placement.type).name}
-              </div>
-            )}
-            <svg className="cables" width={ROW_HP * HP} height={height} aria-label="Patch cables">
-              {patch.cables.map((c) => {
-                const start = points[keyOf(c.from)],
-                  b = points[keyOf(c.to)]
-                const siblings = patch.cables.filter((other) => keyOf(other.from) === keyOf(c.from))
-                const offset =
-                  (siblings.findIndex((other) => other.id === c.id) - (siblings.length - 1) / 2) * 5
-                const a = start && { x: start.x + offset, y: start.y }
-                const warning = cableWarnings(patch, c).join(' ')
-                return a && b ? (
-                  <g
-                    key={c.id}
-                    className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
-                  >
-                    <path d={curve(a, b)} className="cable-shadow" />
-                    <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
-                    <path
-                      d={curve(a, b)}
+            >
+              {Array.from({ length: rows }, (_, row) => (
+                <div key={row} className="rack-row" style={{ top: row * ROW_HEIGHT }}>
+                  <span className="row-label">
+                    {row + 1} / {railHp} HP
+                  </span>
+                  {!patch.modules.some((m) => m.type !== 'out' && m.row === row) && rows > 1 && (
+                    <button
+                      type="button"
+                      className="remove-row"
+                      aria-label={`Remove row ${row + 1}`}
                       onClick={() => {
-                        setSelectedCable(c.id)
-                        cancel()
+                        edit((p) => removeRow(p, row))
                       }}
                     >
-                      <title>
-                        {keyOf(c.from)} → {keyOf(c.to)}
-                        {warning ? ` · △ ${warning}` : ''}
-                      </title>
-                    </path>
-                  </g>
-                ) : null
-              })}
-              {wire && points[keyOf(wire.from)] && (pointer || target) && (
-                <path
-                  className={`provisional signal-${cableSignal(patch, wire.from)}`}
-                  d={curve(
-                    points[keyOf(wire.from)] ?? { x: 0, y: 0 },
-                    (target && points[keyOf(target)]) || pointer || { x: 0, y: 0 },
+                      Remove row
+                    </button>
                   )}
-                />
+                </div>
+              ))}
+              {renderModules(patch.modules.filter((m) => m.type !== 'out'))}
+              {placement && ghost && ghost.row < rows && (
+                <div
+                  className="placement-ghost"
+                  style={{
+                    left: ghost.hp * HP,
+                    top: ghost.row * ROW_HEIGHT + 20,
+                    width: getModuleSpec(placement.type).hp * HP,
+                  }}
+                >
+                  {getModuleSpec(placement.type).name}
+                </div>
               )}
-            </svg>
+            </div>
           </div>
+          <div
+            className="output-panel"
+            style={{ flexBasis: OUTPUT_PANEL_WIDTH * outputScale }}
+            aria-label="Pinned output panel"
+          >
+            <div
+              className="output-surface"
+              style={
+                {
+                  width: OUTPUT_PANEL_WIDTH,
+                  height: 430,
+                  zoom: outputScale,
+                  '--rack-zoom': outputScale,
+                } as CSSProperties
+              }
+            >
+              {renderModules(patch.modules.filter((m) => m.type === 'out'))}
+            </div>
+          </div>
+          <svg className="cables" width="100%" height="100%" aria-label="Patch cables">
+            {patch.cables.map((c) => {
+              const start = points[keyOf(c.from)],
+                b = points[keyOf(c.to)]
+              const siblings = patch.cables.filter((other) => keyOf(other.from) === keyOf(c.from))
+              const offset =
+                (siblings.findIndex((other) => other.id === c.id) - (siblings.length - 1) / 2) * 5
+              const a = start && { x: start.x + offset, y: start.y }
+              const warning = cableWarnings(patch, c).join(' ')
+              return a && b ? (
+                <g
+                  key={c.id}
+                  className={`cable signal-${cableSignal(patch, c.from)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
+                >
+                  <path d={curve(a, b)} className="cable-shadow" />
+                  <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
+                  <path
+                    d={curve(a, b)}
+                    onClick={() => {
+                      setSelectedCable(c.id)
+                      cancel()
+                    }}
+                  >
+                    <title>
+                      {keyOf(c.from)} → {keyOf(c.to)}
+                      {warning ? ` · △ ${warning}` : ''}
+                    </title>
+                  </path>
+                </g>
+              ) : null
+            })}
+            {wire && points[keyOf(wire.from)] && (pointer || target) && (
+              <path
+                className={`provisional signal-${cableSignal(patch, wire.from)}`}
+                d={curve(
+                  points[keyOf(wire.from)] ?? { x: 0, y: 0 },
+                  (target && points[keyOf(target)]) || pointer || { x: 0, y: 0 },
+                )}
+              />
+            )}
+          </svg>
         </div>
         <button
           type="button"

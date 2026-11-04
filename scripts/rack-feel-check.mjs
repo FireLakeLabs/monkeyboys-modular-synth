@@ -167,17 +167,18 @@ export async function loadEnveloped() {
   await load(await (await fetch('/src/library/patches/enveloped-synth.strudel')).text())
 }
 export function inspectCables() {
-  const surface = document.querySelector('.rack-surface')
-  const scale = surface.getBoundingClientRect().width / surface.offsetWidth
-  const bounds = surface.getBoundingClientRect()
+  const surface = document.querySelector('.rack-frame')
+  const rails = document.querySelector('.rack-surface')
+  const scale = rails.getBoundingClientRect().width / rails.offsetWidth
+  const bounds = surface.querySelector('.cables').getBoundingClientRect()
   const jacks = new Map(
     [...surface.querySelectorAll('[data-jack]')].map((jack) => {
       const rect = jack.getBoundingClientRect()
       return [
         jack.dataset.jack,
         {
-          x: (rect.left + rect.width / 2 - bounds.left) / scale,
-          y: (rect.top + rect.height / 2 - bounds.top) / scale,
+          x: rect.left + rect.width / 2 - bounds.left,
+          y: rect.top + rect.height / 2 - bounds.top,
         },
       ]
     }),

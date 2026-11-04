@@ -38,13 +38,12 @@ describe('rack editing', () => {
     let patch = starterPatch()
     const original = structuredClone(patch.modules)
     for (const type of ['seq', 'osc', 'vcf']) patch = placeModule(patch, type, 0)
-    expect([...patch.modules].sort((a, b) => a.hp - b.hp).map((m) => m.type)).toEqual([
-      'seq',
-      'osc',
-      'vcf',
-      'mix',
-      'out',
-    ])
+    expect(
+      [...patch.modules]
+        .filter((m) => m.type !== 'out')
+        .sort((a, b) => a.hp - b.hp)
+        .map((m) => m.type),
+    ).toEqual(['seq', 'osc', 'vcf', 'mix'])
     expect(patch.modules.filter((m) => ['mix', 'out'].includes(m.type))).toEqual(original)
   })
   it('marks modules routed to OUT active even when unity controls emit no source call', () => {
@@ -167,10 +166,10 @@ describe('rack editing', () => {
   it('chooses nearest free HP, rejects full rows, and moves without pushing neighbors', () => {
     let patch = add(emptyPatch(), 'mix', 0)
     patch = placeModule(patch, 'out', 0, 24)
-    expect(freePosition(patch, 'vcf', 0, 20)).toBe(14)
+    expect(freePosition(patch, 'vcf', 0, 20)).toBe(20)
     patch = placeModule(patch, 'vcf', 0, 20)
-    expect(patch.modules.find((m) => m.id === 'vcf1')?.hp).toBe(14)
-    expect(patch.modules.find((m) => m.id === 'out1')?.hp).toBe(24)
+    expect(patch.modules.find((m) => m.id === 'vcf1')?.hp).toBe(20)
+    expect(patch.modules.find((m) => m.id === 'out1')?.hp).toBe(0)
     patch = placeModule(patch, 'vcf', 1, 5, 'vcf1')
     expect(patch.modules.find((m) => m.id === 'vcf1')).toMatchObject({ row: 1, hp: 5 })
     for (let i = 0; i < 5; i++) patch = placeModule(patch, 'vcf', 2)

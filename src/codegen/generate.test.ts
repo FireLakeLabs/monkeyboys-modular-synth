@@ -40,7 +40,7 @@ function chain(...modules: PlacedModule[]): Patch {
 
 const generatedFiles: string[] = []
 afterEach(async () => {
-  // Frozen before #128: includes every executable and saved rack metadata byte.
+  // Includes executable and saved rack bytes after the #133 OUT metadata migration.
   for (const file of generatedFiles.splice(0)) {
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(file))
     expect(
@@ -283,7 +283,7 @@ describe('CV routing', () => {
       iter = module('iter')
     const patch = chain(seq(), osc(), filter, out())
     patch.modules.forEach((item, index) => {
-      item.hp = index * 12
+      item.hp = item.type === 'out' ? 0 : index * 12
     })
     lfo.row = 1
     iter.row = 1
@@ -537,7 +537,11 @@ describe('rack metadata and boundary checks', () => {
     const original = structuredClone(patch)
     expect(metadata(patch)).toMatchObject({
       version: 1,
-      modules: patch.modules.map((item) => ({ ...item, bindings: expect.any(Array) })),
+      modules: patch.modules.map(({ row, hp, ...item }) => ({
+        ...item,
+        ...(item.type === 'out' ? {} : { row, hp }),
+        bindings: expect.any(Array),
+      })),
       cables: patch.cables,
       names: {},
     })

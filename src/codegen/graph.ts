@@ -1,3 +1,4 @@
+import { isRailHp } from '../patch/layout'
 import { getModuleSpec } from '../modules/catalog'
 import { looksFor } from '../modules/looks'
 import type { Control, GridRow, JackSignal, ModuleSpec } from '../modules/types'
@@ -91,10 +92,13 @@ export function graph(patch: Patch): Map<string, Node> {
   if (patch.version !== 1) throw new Error('Unsupported patch version')
   if (patch.name !== undefined && typeof patch.name !== 'string')
     throw new Error('Invalid patch name')
+  if (patch.railHp !== undefined && !isRailHp(patch.railHp)) throw new Error('Invalid rail width')
   const rows = patch.rows
   if (
     rows !== undefined &&
-    (!Number.isSafeInteger(rows) || rows < 1 || patch.modules.some((m) => m.row >= rows))
+    (!Number.isSafeInteger(rows) ||
+      rows < 1 ||
+      patch.modules.some((m) => m.type !== 'out' && m.row >= rows))
   )
     throw new Error('Invalid rack row count')
   const nodes = new Map<string, Node>()

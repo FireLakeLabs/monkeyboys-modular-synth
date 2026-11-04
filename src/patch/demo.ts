@@ -13,7 +13,14 @@ export function demoPatch(): Patch {
     { type: 'out', values: {} },
   ].map(({ type, values }) => {
     const spec = getModuleSpec(type)
-    const module = { id: `${type}1`, type, values, row: 0, hp, look: DEFAULT_LOOK[spec.family] }
+    const module = {
+      id: `${type}1`,
+      type,
+      values,
+      row: 0,
+      hp: type === 'out' ? 0 : hp,
+      look: DEFAULT_LOOK[spec.family],
+    }
     hp += spec.hp
     return module
   })

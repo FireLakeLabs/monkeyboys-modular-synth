@@ -23,7 +23,11 @@ describe('local workspace recovery', () => {
     const patch = demoPatch()
     patch.rows = 3
     patch.names = { 'osc1:out': 'lead' }
-    patch.modules = patch.modules.map((module) => ({ ...module, row: 1, look: 'instrument' }))
+    patch.modules = patch.modules.map((module) => ({
+      ...module,
+      row: module.type === 'out' ? 0 : 1,
+      look: 'instrument',
+    }))
     const document = fromPatch(patch)
     expect(createAutosave(() => storage).load()).toBeNull()
     expect(createAutosave(() => storage).save(document)).toBe(true)
