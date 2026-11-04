@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cosimo-trance",
+    "url": "https://gist.githubusercontent.com/cosimo/b0843897efb5f23b4594cb5082be1a85/raw/42e2bddb1923b9049f2a44c37fc0de11441978d1/switch-angel-trance-demo.strudel.js",
+    "license": "No license asserted; report-only, never vendor",
+    "provenance": "Switch Angel; cosimo transcription on public gist"
+  },
+  {
+    "id": "brucelane-piano",
+    "url": "https://raw.githubusercontent.com/brucelane/strudelpatches/2cb52f0263d362d92068fa8810fee5d80469a0a7/piano.js",
+    "license": "No license asserted; report-only, never vendor",
+    "provenance": "https://github.com/brucelane/strudelpatches; public community patches"
+  },
+  {
+    "id": "brucelane-dnb2",
+    "url": "https://raw.githubusercontent.com/brucelane/strudelpatches/2cb52f0263d362d92068fa8810fee5d80469a0a7/dnb2.strudel",
+    "license": "No license asserted; report-only, never vendor",
+    "provenance": "https://github.com/brucelane/strudelpatches; public community patches"
+  },
+  {
+    "id": "brucelane-cold",
+    "url": "https://raw.githubusercontent.com/brucelane/strudelpatches/2cb52f0263d362d92068fa8810fee5d80469a0a7/cold.js",
+    "license": "No license asserted; report-only, never vendor",
+    "provenance": "https://github.com/brucelane/strudelpatches; public community patches"
+  },
+  {
+    "id": "brucelane-tunnel",
+    "url": "https://raw.githubusercontent.com/brucelane/strudelpatches/2cb52f0263d362d92068fa8810fee5d80469a0a7/tunnel.js",
+    "license": "No license asserted; report-only, never vendor",
+    "provenance": "https://github.com/brucelane/strudelpatches; public community patches"
+  }
+]

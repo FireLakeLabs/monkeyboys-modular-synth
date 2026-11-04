@@ -25,3 +25,6 @@ dist-ssr
 
 # CDK generated assemblies
 cdk.out
+
+# Local reader coverage reports (wild sources are only fetched in memory)
+/reports/reader/

@@ -13,10 +13,12 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run check:runtime && npm run format:check && npm run check:skills && npm run lint && npm test && npm run test:guardrails && npm run build",
+    "check": "npm run check:runtime && npm run format:check && npm run check:skills && npm run lint && npm test && npm run coverage:reader && npm run test:guardrails && npm run build",
     "check:runtime": "node scripts/check-runtime.mts",
     "check:skills": "node scripts/check-skills.mts",
-    "test:guardrails": "node --test scripts/*.test.mts"
+    "test:guardrails": "node --test scripts/*.test.mts",
+    "coverage:reader": "node scripts/reader-coverage.mjs",
+    "coverage:reader:wild": "node scripts/reader-coverage.mjs --wild"
   },
   "dependencies": {
     "@codemirror/commands": "^6.11.1",
