@@ -1,0 +1,86 @@
+[
+  {
+    "id": "custom-helper",
+    "path": "src/library/patches/custom-helper.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "drum-machine",
+    "path": "src/library/patches/drum-machine.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "echo-room",
+    "path": "src/library/patches/echo-room.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "enveloped-synth",
+    "path": "src/library/patches/enveloped-synth.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "filter-envelope",
+    "path": "src/library/patches/filter-envelope.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "first-effects",
+    "path": "src/library/patches/first-effects.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "first-notes",
+    "path": "src/library/patches/first-notes.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "first-sounds",
+    "path": "src/library/patches/first-sounds.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "iter-jux",
+    "path": "src/library/patches/iter-jux.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "layered-sketch",
+    "path": "src/library/patches/layered-sketch.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "lfo-sweep",
+    "path": "src/library/patches/lfo-sweep.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "pattern-effects",
+    "path": "src/library/patches/pattern-effects.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "quantized-sequence",
+    "path": "src/library/patches/quantized-sequence.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "switch-angel-trance-demo",
+    "path": "src/library/patches/switch-angel-trance-demo.strudel",
+    "license": "User-supplied inclusion permission (issue #46); no upstream license asserted",
+    "provenance": "https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/46 (explicit request to bundle this exact variant; Switch Angel, cosimo transcription)"
+  }
+]

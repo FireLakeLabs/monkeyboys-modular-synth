@@ -1,0 +1,142 @@
+{
+  "$total": {
+    "mappedCallShare": 0.875,
+    "readableVoiceShare": 0.7894736842105263,
+    "codeFreePatchShare": 0.8571428571428571,
+    "parseFailures": 0,
+    "codeBlocks": 15,
+    "unmappedCalls": 15,
+    "unmapped:o": 3,
+    "unmapped:n": 2,
+    "unmapped:rlpf": 2,
+    "unmapped:trancegate": 2,
+    "unmapped:chunk": 1,
+    "unmapped:dec": 1,
+    "unmapped:fm": 1,
+    "unmapped:fmh": 1,
+    "unmapped:pan": 1,
+    "unmapped:seg": 1
+  },
+  "custom-helper": {
+    "mappedCallShare": 0.8,
+    "readableVoiceShare": 0,
+    "codeFreePatchShare": 0,
+    "parseFailures": 0,
+    "codeBlocks": 1,
+    "unmappedCalls": 1,
+    "unmapped:chunk": 1
+  },
+  "drum-machine": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "echo-room": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "enveloped-synth": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "filter-envelope": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "first-effects": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "first-notes": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "first-sounds": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "iter-jux": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "layered-sketch": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "lfo-sweep": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "pattern-effects": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "quantized-sequence": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "switch-angel-trance-demo": {
+    "mappedCallShare": 0.4166666666666667,
+    "readableVoiceShare": 0.25,
+    "codeFreePatchShare": 0,
+    "parseFailures": 0,
+    "codeBlocks": 14,
+    "unmappedCalls": 14,
+    "unmapped:n": 2,
+    "unmapped:trancegate": 2,
+    "unmapped:seg": 1,
+    "unmapped:o": 3,
+    "unmapped:rlpf": 2,
+    "unmapped:pan": 1,
+    "unmapped:dec": 1,
+    "unmapped:fm": 1,
+    "unmapped:fmh": 1
+  }
+}
