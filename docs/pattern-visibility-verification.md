@@ -101,10 +101,22 @@ APIs. The history script reproduced a blank-page/editor timeout locally before
 those fixture exports were added. History, code-application and workspace-error
 scripts then all passed locally, including their real-engine/PCM phases.
 
-The hosted pinned-OUT geometry assertion also failed once; its complete local
-1600/1024/900-pixel matrix passed, as did an additional 1024-pixel run under
-artificial CPU throttling. No speculative product or assertion change was made.
+The pinned-OUT geometry failure was reproduced with delayed web fonts: the
+header/case changed height between the reference and comparison. The geometry
+harness now awaits fonts and three stable animation frames before recording
+reference bounds, including after entering rack focus. The same unchanged
+assertions pass with 800 ms delayed fonts and across the full 1600/1024/900-pixel
+matrix; no product geometry change was needed.
 The broad library rack-editing timeout was already present on unchanged main at
 `b29342c`: [baseline browser run](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/41871111308).
 It is an unrelated inherited follow-up, distinct from #139's source/rack/event
 and browser criteria. Final PR CI results supersede this first-run status.
+
+After #137 landed, the branch was rebased onto `c486417`, retaining its bay,
+tracked sample APIs and export behavior. Integration regressions first failed
+when managed setup shifted CODE-credit offsets and when proven cartridges
+blocked all probes. Conversion now keeps original source offsets while omitting
+only proven owned setup statements. Probes ignore that same owned setup without
+executing registration; source-owned/computed samples still refuse. Tests
+separately retain cartridge identity, exact credits and prefix events. Final
+local and hosted results are recorded in the PR.

@@ -1,3 +1,4 @@
+import { ownedSampleCalls } from '../samples/packs'
 import { generateDocument } from '../codegen/generate'
 import { graph, number } from '../codegen/graph'
 import { getModuleSpec } from '../modules/catalog'
@@ -19,12 +20,17 @@ export function probePlan(document: SourceDocument, cableId: string): ProbePlan 
   const nodes = graph(document.patch)
   if (cableSignal(document.patch, cable.from) !== 'pattern') return refuse('pattern cables only')
   const { program, scopes } = parseSource(document.source)
+  const ownedSetup = ownedSampleCalls(document.source, document.patch.cartridges ?? [])
   // Helpers and arbitrary statements may redefine the meaning of otherwise
   // readable calls. Do not execute them, or claim their projection is equivalent.
   if (
     parseSource(document.patch.prelude ?? '').program.body.length > 0 ||
     program.body.some((statement) => {
-      if (statement.type === 'EmptyStatement') return false
+      if (
+        statement.type === 'EmptyStatement' ||
+        ownedSetup.some((call) => call.start === statement.start)
+      )
+        return false
       const contained = scopes.filter((s) => s.start >= statement.start && s.end <= statement.end)
       return (
         !contained.length ||

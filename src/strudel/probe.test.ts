@@ -18,6 +18,7 @@ vi.mock('@strudel/web', async () => {
     initStrudel: vi.fn(),
     evaluate: vi.fn(),
     hush: vi.fn(),
+    samples: vi.fn(),
   })
 })
 let runtime: Record<string, unknown>
@@ -58,6 +59,8 @@ it.each([
   '$: note("c3 e3").custom(() => {globalThis.probeExecuted = true}).rev().s("sine")',
   '$: note("c3 e3").off(.25, x => x.custom(() => {globalThis.probeExecuted = true})).rev().s("sine")',
   'globalThis.probeExecuted = true;\n$: note("c3 e3").rev().s("sine")',
+  'samples(() => {globalThis.probeExecuted = true});\n$: note("c3 e3").rev().s("sine")',
+  'samples("https://example.com/strudel.json");\n$: note("c3 e3").rev().s("sine")',
   'const helper = (() => {globalThis.probeExecuted = true; return 1})();\n$: note("c3 e3").rev().s("sine")',
 ])('never evaluates CODE or opaque setup: %s', async (source) => {
   const { document, cable } = cableAfter(source, 'rev')
@@ -146,4 +149,16 @@ it('matches a fractional imported SEQ rate at a distant cycle without precision 
     'return note("c3 e3").fast(2/3).rev().queryArc(1000,1004).filter(h=>h.hasOnset()).map(h=>({begin:Number(h.whole.begin),end:Number(h.whole.end),value:h.value}))',
   )(...Object.values(runtime))
   expect(result).toEqual({ kind: 'events', begin: 1000, end: 1004, events: expected })
+})
+
+it('queries readable prefixes with proven cartridge setup without executing sample registration', async () => {
+  const { seatPack } = await import('../workspace/cartridges')
+  const { document, cable } = cableAfter('$: note("c3 e3").rev().s("sine")', 'rev')
+  const seated = seatPack(document, { source: 'github:someone/drums/dev' })
+  const result = await probe(seated, cable)
+  expect(result.kind).toBe('events')
+  if (result.kind === 'events') expect(result.events).toHaveLength(8)
+  expect(runtime['samples']).not.toHaveBeenCalled()
+  expect(runtime['evaluate']).not.toHaveBeenCalled()
+  expect(runtime['initAudio']).not.toHaveBeenCalled()
 })

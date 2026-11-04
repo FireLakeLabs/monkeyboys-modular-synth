@@ -70,3 +70,13 @@ it('refuses conversion atomically when CODE credit order would change the fallba
   expect(generate(document)).toBe(source)
   expect(patchName(document.patch, document.source)).toBe('First')
 })
+
+it('retains CODE credits once when converting a patch with owned cartridge setup', async () => {
+  const { seatPack } = await import('./cartridges')
+  const original = read('$: note("c3").s("sine").custom(x => {\n// @by Inner CODE\nreturn x;\n})')
+  const seated = seatPack(original, { source: 'github:someone/drums/dev' })
+  const converted = makeRackEditable(seated)
+  expect(patchCredits(converted.source)).toEqual(patchCredits(original.source))
+  expect(converted.patch.cartridges).toEqual(seated.patch.cartridges)
+  expect(read(converted.source).patch).toEqual(converted.patch)
+})

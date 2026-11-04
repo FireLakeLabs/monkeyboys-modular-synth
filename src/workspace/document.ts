@@ -1,4 +1,4 @@
-import { withoutPackSetup } from '../samples/packs'
+import { ownedSampleCalls } from '../samples/packs'
 import { notationLiteral } from '../reader/notationLiteral'
 import { creditComments, patchCredits } from './credits'
 import { parse, tokenizer } from 'acorn'
@@ -62,11 +62,16 @@ export function makeRackEditable(document: SourceDocument, next = document.patch
     throw new Error('Stale source spans')
   if (document.layout === 'invalid')
     throw new Error('Replace unknown rack metadata explicitly before editing the rack')
-  const body = withoutPackSetup(sourceBody(document.source), document.patch.cartridges ?? [])
+  const body = sourceBody(document.source)
+  const packs = document.patch.cartridges ?? []
+  const ownedSetup = new Set(ownedSampleCalls(body, packs).map((call) => call.start))
+  if (ownedSetup.size !== packs.length) throw new Error('Cannot prove cartridge setup ownership')
   const parsed = parseSource(body)
   const bound = new Set(document.bindings.map((binding) => binding.scope))
   const setup: (Span & { text: string })[] = []
   for (const statement of parsed.program.body) {
+    // Keep original offsets for CODE/comment ownership while omitting bay-owned setup.
+    if (ownedSetup.has(statement.start)) continue
     const scopes = parsed.scopes.filter(
       (scope) => scope.start >= statement.start && scope.end <= statement.end,
     )

@@ -30,6 +30,20 @@ function choose(selector, value) {
   input.value = value
   input.dispatchEvent(new Event('change', { bubbles: true }))
 }
+async function settledBounds(element) {
+  await document.fonts.ready
+  let previous = '',
+    stable = 0
+  for (let frame = 0; frame < 60; frame++) {
+    await new Promise(requestAnimationFrame)
+    const rect = element.getBoundingClientRect()
+    const current = JSON.stringify(rect.toJSON())
+    stable = current === previous ? stable + 1 : 0
+    if (stable === 3) return rect
+    previous = current
+  }
+  throw new Error('Output geometry did not settle')
+}
 async function load(patch) {
   enableAutoApply()
   const source = generate(patch)
@@ -41,6 +55,9 @@ async function load(patch) {
   await until(() =>
     document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
   )
+  // The header's cycle font and each look can finish loading after the rack.
+  // Compare pinned geometry only after those fonts have settled the case height.
+  await document.fonts.ready
   await pause()
 }
 export function fixture(look = 'instrument', sourceRow = 2) {
@@ -69,7 +86,7 @@ export async function verifyOutputPanel() {
     assert(output.querySelectorAll('.numeric-control').length === 2, 'Missing BPM or VOL')
     assert(output.querySelector('[data-jack="out1:in"]'), 'Missing OUT IN')
     assert(!output.querySelector('.module-header').draggable, 'OUT can be dragged')
-    const before = output.getBoundingClientRect().toJSON()
+    const before = (await settledBounds(output)).toJSON()
     const source = editorSource()
     scroller.scrollTo({ left: 300, top: 350 })
     await pause()
@@ -105,7 +122,7 @@ export async function verifyOutputPanel() {
       document.querySelector('.code').getBoundingClientRect().width === 0,
       'Focus retains code',
     )
-    const focusBounds = output.getBoundingClientRect().toJSON()
+    const focusBounds = (await settledBounds(output)).toJSON()
     const frameBounds = document.querySelector('.rack-frame').getBoundingClientRect()
     assert(frameBounds.height < innerHeight, 'Focused frame grew beyond the window')
     choose('[aria-label="Rack zoom"]', '1.5')

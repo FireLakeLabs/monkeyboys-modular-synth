@@ -449,3 +449,10 @@ cover noninitializing clock/analyser reads and stopped taps. The separate
 zero-context silent probing, real per-voice PCM, credits and reduced-motion
 interval cancellation. This runtime proof is outside the deterministic CI gate;
 see [its acceptance record](pattern-visibility-verification.md).
+
+The #139 integration browser checks also exercise the clock/probe/analyser
+exports on recording engine doubles. A missing clock export reproduced a blank
+workspace; the corrected doubles pass the existing application/history/error
+suites. Pinned-OUT comparisons await fonts and stable reference geometry before
+scrolling. Delayed-font reproduction failed before that prerequisite and passed
+afterwards, without weakening the pinning or cable-position assertions.

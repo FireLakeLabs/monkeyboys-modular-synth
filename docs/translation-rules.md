@@ -715,7 +715,9 @@ prefix before downstream CODE can still be queried. Shared readable declarations
 expand from their graph rather than being looked up in imported JS globals.
 
 Opaque setup/declarations/tempo and unclassified statements conservatively
-produce **Not probed**. A comment-only conversion prelude is safe. Parsing is not
+produce **Not probed**. A comment-only conversion prelude is safe. Proven bay-owned cartridge setup is
+ignored as setup data, never executed by the probe; source-owned or computed
+`samples()` calls still refuse probing. Parsing is not
 sandboxing, and the normal explicit Play action still has the existing arbitrary
 JavaScript boundary. No probe calls REPL `evaluate`, initializes AudioContext,
 starts scheduling, loads sample manifests or writes source/rack state. The engine
