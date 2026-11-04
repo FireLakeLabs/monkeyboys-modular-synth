@@ -148,6 +148,24 @@ export function graph(patch: Patch): Map<string, Node> {
       )
         throw new Error(`${module.id}: ${bounded[0]} must be at most ${bounded[1]}`)
     }
+    if (spec.id === 'mix') {
+      for (const channel of [1, 2, 3, 4]) {
+        const name = string(node, `name${channel}`)
+        if (
+          name &&
+          (!/^[A-Za-z][A-Za-z0-9_]*$/.test(name) || name.startsWith('S') || name.endsWith('_'))
+        )
+          throw new Error(
+            'Channel names must be identifiers without leading S or trailing underscore',
+          )
+        const pair = string(node, `channels${channel}`)
+        if (
+          !/^[1-9]\d*:[1-9]\d*$/.test(pair) ||
+          pair.split(':').some((part) => !Number.isSafeInteger(Number(part)))
+        )
+          throw new Error('Output requires a positive channel pair, such as 1:2')
+      }
+    }
     nodes.set(module.id, node)
   }
   const ids = new Set<string>()

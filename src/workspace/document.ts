@@ -110,6 +110,10 @@ function stampLayout(
   bindings: SourceAddress[],
   scopes: Scope[],
 ): SourceDocument {
+  // Canonical generated source already proves its complete graph, including folded
+  // mixer paths. Retain that representation instead of inventing imported ownership.
+  const generated = generate(patch)
+  if (sourceBody(generated) === body) return read(generated)
   const layout: RackLayout = {
     version: 1,
     ...(patch.name === undefined ? {} : { name: patch.name }),

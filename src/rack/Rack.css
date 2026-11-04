@@ -226,6 +226,8 @@
   color: #bfe4be;
 }
 .module-controls {
+  overflow-y: auto;
+  scrollbar-width: thin;
   flex: 1;
   min-height: 0;
   padding: 4px 5px;
@@ -258,6 +260,8 @@
   )
   .numeric-control {
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   width: 100%;
 }
 .module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
@@ -299,7 +303,8 @@
   )
   .numeric-control
   label {
-  min-width: 0;
+  flex: 1;
+  min-width: 60px;
 }
 .knob {
   position: relative;
@@ -363,6 +368,7 @@
     sans-serif;
 }
 .switch-control select,
+.switch-control input,
 .module-panel textarea {
   width: 100%;
   box-sizing: border-box;
@@ -380,7 +386,11 @@
     monospace;
 }
 .patch-box {
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-height: calc(32px / var(--rack-zoom, 1));
+  max-height: 50%;
+  overflow: auto;
+  scrollbar-width: thin;
   margin: 2px;
   padding: 6px 1px 3px;
   display: flex;

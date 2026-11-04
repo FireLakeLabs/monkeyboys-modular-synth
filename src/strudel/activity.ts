@@ -43,7 +43,7 @@ export function activityPlan(document: SourceDocument) {
           )
         )
       if (statement.type === 'LabeledStatement')
-        return statement.label.name === '$' && statement.body.type === 'ExpressionStatement'
+        return statement.body.type === 'ExpressionStatement'
       return (
         statement.type === 'ExpressionStatement' &&
         scopes.some((scope) => scope.start >= statement.start && scope.end <= statement.end)

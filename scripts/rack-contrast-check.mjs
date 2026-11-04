@@ -32,6 +32,13 @@ export async function dimmedLabelContrast(page) {
           const rect = range.getBoundingClientRect()
           if (!rect.width || !rect.height) continue
           const element = node.parentElement
+          // Scrolled-out text still has a DOM rect; sample only its actual painted center.
+          if (
+            !element.contains(
+              document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2),
+            )
+          )
+            continue
           let opacity = 1
           for (let item = element; item && item !== panel.parentElement; item = item.parentElement)
             opacity *= getComputedStyle(item).opacity

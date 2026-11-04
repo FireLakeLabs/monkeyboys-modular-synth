@@ -39,3 +39,17 @@ export function patternNumber(value: number): string {
   }
   return String(value)
 }
+
+/** Shared by the panel and writer; hidden settings remain saved rack state. */
+export function controlEnabled(
+  spec: ModuleSpec,
+  values: Readonly<Record<string, unknown>>,
+  control: ModuleSpec['controls'][number],
+): boolean {
+  if (!('when' in control) || !control.when) return true
+  return control.when.every((condition) => {
+    const selector = spec.controls.find((item) => item.id === condition.control)
+    const value = values[condition.control] ?? selector?.default
+    return typeof value === 'string' && condition.values.includes(value)
+  })
+}

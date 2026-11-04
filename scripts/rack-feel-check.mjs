@@ -79,22 +79,26 @@ export function inspectPanels(look) {
     assert(spec && panel.offsetWidth === spec.hp * HP, `${id}: width differs from catalog`)
     assert(contrast(panel.querySelector('.module-id')) >= 4.5, `${id}: low ID contrast`)
     const controls = panel.querySelector('.module-controls')
+    assert(controls.clientHeight > 0, `${id}: controls have no usable height`)
     assert(
-      controls.scrollHeight <= controls.clientHeight + 1,
-      `${id}: vertical control overflow ${controls.scrollHeight}/${controls.clientHeight}`,
+      getComputedStyle(controls).overflowY === 'auto',
+      `${id}: overflowing controls cannot scroll`,
     )
     assert(controls.scrollWidth <= controls.clientWidth + 1, `${id}: horizontal control overflow`)
-    const box = controls.getBoundingClientRect()
+    const scrollTop = controls.scrollTop
     for (const control of controls.querySelectorAll('button,input,select,textarea')) {
+      control.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' })
+      const box = controls.getBoundingClientRect()
       const rect = control.getBoundingClientRect()
       assert(
         rect.top >= box.top - 1 &&
           rect.bottom <= box.bottom + 1 &&
           rect.left >= box.left - 1 &&
           rect.right <= box.right + 1,
-        `${id}: clipped ${control.getAttribute('aria-label') ?? control.textContent}`,
+        `${id}: unreachable ${control.getAttribute('aria-label') ?? control.textContent}`,
       )
     }
+    controls.scrollTop = scrollTop
     for (const node of panel.querySelectorAll('*')) {
       if (
         [...node.childNodes].some(

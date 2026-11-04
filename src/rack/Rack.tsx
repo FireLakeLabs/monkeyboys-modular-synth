@@ -261,13 +261,12 @@ export function Rack({
     for (const part of element.querySelectorAll('.module-panel, .patch-box, [data-jack]'))
       observer.observe(part)
     window.addEventListener('resize', measure)
-    const scroll = viewport.current
-    scroll?.addEventListener('scroll', measure)
+    element.addEventListener('scroll', measure, true)
     return () => {
       element.removeEventListener('contextmenu', contextMenu)
       observer.disconnect()
       window.removeEventListener('resize', measure)
-      scroll?.removeEventListener('scroll', measure)
+      element.removeEventListener('scroll', measure, true)
     }
   }, [patch, rows, locked, select, scale, outputScale])
 
@@ -409,7 +408,11 @@ export function Rack({
             onPointerDown={() => select(m.id)}
           >
             {[...spec.controls]
-              .sort((a, b) => Number(a.kind === 'knob') - Number(b.kind === 'knob'))
+              .sort((a, b) =>
+                'group' in a || 'group' in b
+                  ? 0
+                  : Number(a.kind === 'knob') - Number(b.kind === 'knob'),
+              )
               .map((control) => (
                 <ControlEditor
                   key={control.id}

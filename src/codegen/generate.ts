@@ -1,6 +1,6 @@
 import { parse, tokenizer } from 'acorn'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
-import { callMethod, tupleControls, patternNumber } from '../modules/bindings'
+import { callMethod, tupleControls, patternNumber, controlEnabled } from '../modules/bindings'
 import { drumText } from '../patch/notation'
 import type { Patch } from '../patch/types'
 import type { SourceDocument } from '../reader/types'
@@ -27,8 +27,20 @@ import {
 
 const chainedCode = (text: string): boolean =>
   tokenizer(text, { ecmaVersion: 'latest' }).getToken().type.label === '.'
-const numeric = (value: number): string => String(Number(value.toFixed(3)))
+const numeric = (value: number, precision = 3): string => String(Number(value.toFixed(precision)))
 const quote = (value: string): string => JSON.stringify(value)
+function product(factors: readonly string[]): string {
+  const constant = factors
+    .filter((factor) => Number.isFinite(Number(factor)))
+    .reduce((result, factor) => result * Number(factor), 1)
+  const signals = factors.filter((factor) => !Number.isFinite(Number(factor)))
+  return signals.length
+    ? [...signals, ...(constant === 1 ? [] : [numeric(constant)])].reduce(
+        (left, right) => (left ? `${left}.mul(${right})` : right),
+        '',
+      )
+    : numeric(constant)
+}
 interface CodeExpression extends LayoutExpression {
   inline: boolean
 }
@@ -224,7 +236,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
       trace(source)
       return {
         text:
-          source.spec.modSource === 'sequence' && !namedOutput(source)
+          source.spec.modSource === 'sequence' && !namedOutput(source) && node.spec.id !== 'mix'
             ? quote(cvSequence(source))
             : signal.text,
         paths,
@@ -257,7 +269,74 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     }
   }
 
-  function transform(node: Node, expression: CodeExpression): CodeExpression {
+  function audioModulation(
+    expression: CodeExpression,
+    node: Node,
+    id: string,
+    depthScale = '1',
+  ): CodeExpression {
+    const item = control(node, id)
+    if (item.kind !== 'knob' || !item.call || !item.modulation) return expression
+    const binding = item.call
+    const jack = node.spec.jacks.find((jack) => jack.cvTarget === id)
+    const cable = jack && node.inputs.get(jack.id)
+    const source = cable && requireNode(nodes, cable.from.module)
+    if (!source || !jack) return expression
+    const target = { module: node.module.id, jack: jack.id, control: id }
+    const env = source.spec.id === 'env' ? source : undefined
+    const smooth = source.spec.id === 'lfo' && string(source, 'mode') === 'SMOOTH'
+    const genericEnv =
+      env &&
+      !binding.envelope &&
+      !binding.withEnvelope &&
+      !node.spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack?.id)
+    if (smooth || genericEnv) {
+      const depth = source.module.values['depth'] ?? item.modulation.default
+      if (typeof depth !== 'number' || depth < item.modulation.min || depth > item.modulation.max)
+        throw new Error(`Modulation depth outside target range: ${node.module.id}.${item.id}`)
+      if (item.modulation.pitch) {
+        if (smooth) {
+          const cps = typeof tempo === 'number' ? tempo / 240 : 0.5
+          expression = append(
+            expression,
+            `.vib(${String(cps / number(source, 'rate'))}).vibmod(${numeric(depth)})`,
+            source,
+            'cv',
+            target,
+          )
+        } else {
+          expression = append(expression, `.penv(${numeric(depth)})`, source, 'cv', target)
+          expression = envelope(expression, source, target, 'p')
+        }
+      } else {
+        const method = callMethod(binding, (id) => string(node, id))
+        const shape = smooth ? source.spec.smoothShapes?.[string(source, 'shape')] : undefined
+        if (smooth && !shape) throw new Error('This waveform requires STEP mode')
+        // superdough 1.3.0 derives an inverted clamp for negative depth on gain.
+        // A positive magnitude with a downward DC bias keeps the output moving.
+        const downward =
+          smooth &&
+          depth < 0 &&
+          !(
+            number(node, item.id) >= 30 &&
+            ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(method)
+          )
+        const config = smooth
+          ? `c: ${quote(method)}, sync: ${String(1 / number(source, 'rate'))}, depthabs: ${product([numeric(downward ? -depth : depth), depthScale])}, dc: ${downward ? -1 : 0}, shape: ${quote(shape ?? 'sine')}, skew: ${numeric(number(source, 'skew'))}`
+          : `c: ${quote(method)}, a: ${numeric(number(source, 'atk'))}, d: ${numeric(number(source, 'dec'))}, s: ${numeric(number(source, 'sus'))}, r: ${numeric(number(source, 'rel'))}, depthabs: ${product([numeric(depth), depthScale])}`
+        expression = append(
+          expression,
+          `.${smooth ? 'lfo' : 'env'}({ ${config} })`,
+          source,
+          'cv',
+          target,
+        )
+      }
+    }
+    return expression
+  }
+
+  function transform(node: Node, expression: CodeExpression, skipControl?: string): CodeExpression {
     if (node.spec.id === 'code') {
       const text = string(node, 'text')
       if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
@@ -271,12 +350,14 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     if (!controls.length) throw new Error(`Not a chain module: ${node.spec.id}`)
     for (const item of controls) {
       if (!('call' in item) || !item.call) continue
+      if (item.id === skipControl) continue
       const binding = item.call
       if (binding.when && s(binding.when.control) !== binding.when.value) continue
       const patched = node.spec.jacks.some(
         (jack) => jack.cvTarget === item.id && node.inputs.has(jack.id),
       )
       if (
+        !controlEnabled(node.spec, node.module.values, item) ||
         (!patched && omitted(node, item.id)) ||
         (binding.enabledBy && omitted(node, binding.enabledBy))
       )
@@ -307,13 +388,16 @@ export function generateDocument(patch: Patch): GeneratedDocument {
           break
         case 'number':
           mod = modulation(node, item.id)
-          argument = mod.text
+          argument =
+            binding.argument.precision === undefined || mod.modules
+              ? mod.text
+              : numeric(number(node, item.id), binding.argument.precision)
           break
         case 'string':
           argument = quote(s(item.id))
           break
         case 'scale':
-          argument = quote(`${s(binding.argument.root)}:${s(item.id)}`)
+          argument = quote(`${s(binding.argument.root)}:${s(item.id).replaceAll(' ', ':')}`)
           break
         case 'transform': {
           const transform = binding.argument.expressions[s(item.id)]
@@ -337,61 +421,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
             },
           })
       }
-      if (source && target && item.kind === 'knob' && item.modulation) {
-        const smooth = source.spec.id === 'lfo' && string(source, 'mode') === 'SMOOTH'
-        const genericEnv =
-          env &&
-          !binding.envelope &&
-          !binding.withEnvelope &&
-          !node.spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack?.id)
-        if (smooth || genericEnv) {
-          const depth = source.module.values['depth'] ?? item.modulation.default
-          if (
-            typeof depth !== 'number' ||
-            depth < item.modulation.min ||
-            depth > item.modulation.max
-          )
-            throw new Error(`Modulation depth outside target range: ${node.module.id}.${item.id}`)
-          if (item.modulation.pitch) {
-            if (smooth) {
-              const cps = typeof tempo === 'number' ? tempo / 240 : 0.5
-              expression = append(
-                expression,
-                `.vib(${String(cps / number(source, 'rate'))}).vibmod(${numeric(depth)})`,
-                source,
-                'cv',
-                target,
-              )
-            } else {
-              expression = append(expression, `.penv(${numeric(depth)})`, source, 'cv', target)
-              expression = envelope(expression, source, target, 'p')
-            }
-          } else {
-            const method = callMethod(binding, s)
-            const shape = smooth ? source.spec.smoothShapes?.[string(source, 'shape')] : undefined
-            if (smooth && !shape) throw new Error('This waveform requires STEP mode')
-            // superdough 1.3.0 derives an inverted clamp for negative depth on gain.
-            // A positive magnitude with a downward DC bias keeps the output moving.
-            const downward =
-              smooth &&
-              depth < 0 &&
-              !(
-                number(node, item.id) >= 30 &&
-                ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(method)
-              )
-            const config = smooth
-              ? `c: ${quote(method)}, sync: ${String(1 / number(source, 'rate'))}, depthabs: ${numeric(downward ? -depth : depth)}, dc: ${downward ? -1 : 0}, shape: ${quote(shape ?? 'sine')}, skew: ${numeric(number(source, 'skew'))}`
-              : `c: ${quote(method)}, a: ${numeric(number(source, 'atk'))}, d: ${numeric(number(source, 'dec'))}, s: ${numeric(number(source, 'sus'))}, r: ${numeric(number(source, 'rel'))}, depthabs: ${numeric(depth)}`
-            expression = append(
-              expression,
-              `.${smooth ? 'lfo' : 'env'}({ ${config} })`,
-              source,
-              'cv',
-              target,
-            )
-          }
-        }
-      }
+      expression = audioModulation(expression, node, item.id)
       if (binding.envelope === 'after' && env)
         expression = envelope(
           expression,
@@ -476,7 +506,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
         )
         if (!omitted(node, 'rate'))
           expression = append(expression, `.fast(${numeric(number(node, 'rate'))})`, node)
-        return [expression]
+        return [transform(node, expression)]
       }
       case 'drums': {
         const rows = value(node, 'grid')
@@ -485,22 +515,39 @@ export function generateDocument(patch: Patch): GeneratedDocument {
         let expression = append(blank(), `s(${quote(text)})`, node)
         if (!omitted(node, 'drop'))
           expression = append(expression, `.degradeBy(${numeric(number(node, 'drop'))})`, node)
-        return [expression]
+        return [transform(node, expression)]
       }
       case 'mix':
         return node.spec.jacks.flatMap((jack) => {
-          if (jack.direction !== 'in') return []
+          if (jack.direction !== 'in' || jack.cvTarget) return []
           const cable = node.inputs.get(jack.id)
           if (!cable) return []
+          const channel = jack.label
+          const mod = modulation(node, `ch${channel}`)
           return emit(requireNode(nodes, cable.from.module)).map((expression) => ({
             ...expression,
+            sourceRouting: expression.sourceRouting || (mod.sourceRouting ?? false),
             mixers: [
               ...expression.mixers,
-              { module: node.module.id, gain: number(node, `ch${jack.label}`) },
+              {
+                module: node.module.id,
+                control: `ch${channel}`,
+                gain: mod.text,
+                cvModules: mod.modules ?? [],
+                cvPaths: mod.paths ?? new Map(),
+                mute: string(node, `mute${channel}`) === 'on',
+                solo: string(node, `solo${channel}`) === 'on',
+                name: string(node, `name${channel}`),
+                channels: string(node, `channels${channel}`),
+              },
             ],
           }))
         })
       default: {
+        if (node.spec.id === 'osc' && string(node, 'mode') === 'freq' && !input(node)) {
+          const expression = append(blank(), `freq(${numeric(number(node, 'freq'))})`, node)
+          return [transform(node, expression, 'freq')]
+        }
         const upstream = input(node)
         if (upstream) return emit(upstream).map((expression) => transform(node, expression))
         if (node.spec.id === 'code') {
@@ -588,14 +635,66 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     ].flatMap((expression) => syntax(expression.text).orbitNumbers),
   )
   let nextOrbit = 1
+  const labels = new Set<string>()
+  function allocateLabel(wanted: string): string {
+    let label = wanted
+    let index = 2
+    while (labels.has(label)) label = `${wanted}${index++}`
+    labels.add(label)
+    return label
+  }
   voices.forEach((original) => {
-    const gain = original.mixers.reduce((total, mixer) => total * mixer.gain, 1)
+    const factors = original.mixers.map((mixer) => mixer.gain)
+    const gain = product(factors)
     let voice = original
-    if (gain !== 1) {
-      voice = append(voice, `.postgain(${numeric(gain)})`)
+    if (
+      gain !== '1' ||
+      original.mixers.some((mixer) => {
+        const node = requireNode(nodes, mixer.module)
+        const jack = node.spec.jacks.find((j) => j.cvTarget === mixer.control)
+        return jack && node.inputs.has(jack.id)
+      })
+    ) {
+      voice = append(voice, `.postgain(${gain})`)
       const start = voice.text.lastIndexOf('.postgain(')
-      for (const mixer of original.mixers)
+      for (const mixer of original.mixers) {
         voice.owners.push({ module: mixer.module, role: 'mixer', start, end: voice.text.length })
+        const jack = getModuleSpec('mix').jacks.find((jack) => jack.cvTarget === mixer.control)
+        for (const module of mixer.cvModules) {
+          if (!jack) throw new Error('Missing mixer CV jack')
+          voice.owners.push({
+            module,
+            role: 'cv',
+            target: {
+              module: mixer.module,
+              jack: jack.id,
+              control: mixer.control,
+              ...(mixer.cvPaths.get(module) ? { path: mixer.cvPaths.get(module) ?? '' } : {}),
+            },
+            start,
+            end: voice.text.length,
+          })
+        }
+      }
+    }
+    for (const [index, mixer] of original.mixers.entries())
+      voice = audioModulation(
+        voice,
+        requireNode(nodes, mixer.module),
+        mixer.control,
+        product(factors.filter((_factor, i) => i !== index)),
+      )
+    const channels = original.mixers.findLast((mixer) => mixer.channels !== '1:2')?.channels
+    if (channels) {
+      voice = append(voice, `.channels(${quote(channels)})`)
+      const mixer = original.mixers.findLast((mixer) => mixer.channels !== '1:2')
+      if (mixer)
+        voice.owners.push({
+          module: mixer.module,
+          role: 'mixer',
+          start: voice.text.lastIndexOf('.channels('),
+          end: voice.text.length,
+        })
     }
     // Opaque routing is source-owned even when its argument happens to be an integer.
     const importedRouting = voice.sourceRouting || syntax(voice.text).hasOrbit
@@ -603,7 +702,11 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     const orbit = importedRouting ? undefined : nextOrbit++
     const expression = orbit === undefined ? voice : append(voice, `.orbit(${orbit})`)
     bindScope(layout, expression, undefined, orbit)
-    write(expression, '$: ')
+    const mute = original.mixers.some((mixer) => mixer.mute)
+    const solo = original.mixers.some((mixer) => mixer.solo)
+    const name = original.mixers.findLast((mixer) => mixer.name)?.name
+    const label = `${mute ? '_' : ''}${solo ? 'S' : ''}${name ? allocateLabel(name) : '$'}`
+    write(expression, `${label}: `)
   })
   const body = `${lines.join('\n')}\n`
   parse(body, { ecmaVersion: 'latest' })

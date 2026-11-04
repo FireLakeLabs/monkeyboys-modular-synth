@@ -46,7 +46,17 @@ export interface CodeExpression {
   text: string
   owners: Owner[]
   sourceRouting: boolean
-  mixers: { module: string; gain: number }[]
+  mixers: {
+    module: string
+    control: string
+    gain: string
+    cvModules: string[]
+    cvPaths: Map<string, string>
+    mute: boolean
+    solo: boolean
+    name: string
+    channels: string
+  }[]
 }
 
 /** Full AST descriptors, without source trivia, offsets, or literal quote spelling. */

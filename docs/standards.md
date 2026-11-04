@@ -328,3 +328,60 @@ from the catalog and verifies every added module without relaxing overflow,
 jack-target or font-size assertions. The live library signal suite also covers
 the new utility exercise. These guardrails replace assumptions that the initial
 sixteen-module catalog and direct core queries cover later module additions.
+
+The #129 [panel regressions](../src/codegen/panels.test.ts) reject competing MIX
+reader paths that turn repeated `postgain` setters into multiplied buses, and
+stack expansion that drops enclosing mute/solo/name labels. Five cases failed
+before the fixes. Only the dedicated terminal adapter projects MIX gains;
+earlier setters stay CODE, including explicit unity overrides when necessary.
+The shared gate checks event/source/saved-identity behavior, and the separate
+[panel browser suite](module-panels-verification.md) compares original and
+regenerated stack labels through the pinned REPL. Physical listening and
+multichannel hardware remain unverified.
+
+Catalog companion bindings additionally require compatible established owners,
+preventing newly mapped calls from creating sound-changing module defaults.
+The #129 unit suite reproduces standalone/separated companions, repeated output
+pair defaults and mixed delay-time precedence, with independent real-engine event,
+source and saved-identity checks. The same tests cover retaining prior CODE
+ownership, which a new adapter must not silently replace.
+
+Explicit neutral SMPL setters over opaque upstream patterns stay CODE even when
+reusing an established sampler. Ten #129 event/source/saved-identity regressions
+failed before this guard (all five new sampler settings, with and without BANK)
+and pass afterward; the browser REPL independently compares the same forms.
+
+The #129 browser guard scrolls dense controls into view while retaining fixed
+catalog widths, readable text and jack targets. The output-panel suite rejects
+Fit-rack rail clipping at desktop and mid-width sizes. A MIX jack-scroll fixture
+checks actual cable endpoints and unchanged source: the old viewport-only
+listener fails with a detached endpoint, while capturing descendant scrolls
+passes. Contrast and pointer checks inspect painted, reachable controls rather
+than clipped DOM rectangles. These checks run in full browser acceptance;
+static/unit checks do not prove the geometry or native hit targets.
+
+The #132 imported pattern-control browser check also guards #129 integration:
+RATCHET retains its Apply action and external source refresh rather than using
+the MIX-only compact text editor. It failed on a missing Apply before narrowing
+the editor dispatch; the peer's assertion remains unchanged.
+
+The combined #129/#130 CV matrix includes all four MIX jacks and all four source
+modes. It failed on missing emission/projection and saved ownership before the
+integration. Nested cases compare actual pinned-engine/REPL events with literal
+expected expressions, while exact source and saved identity remain separate.
+The browser workflow measures within-note SMOOTH/STEP behavior and ENV/CV SEQ
+output through a nested bus. Canonical Save retains generated metadata only on
+an exact executable-byte match; other source still needs independent ownership
+proof. Folded pattern gain CODE keeps its original position before opaque routing.
+
+The small-height panel matrix rejects overflowing numeric values at Fit, including
+REVERB's five-digit LP. Narrow numeric rows wrap the readout instead of shrinking
+text or knob geometry. The same unchanged browser assertion guards that fix.
+A mixer import regression separately rejects moving an unsupported LFO gain past
+opaque routing when saved, checking events, bytes and reopened state.
+
+S7/S8's #129 regressions independently check event preservation and Save/reopen
+for three nested SMOOTH mixer modulators and opaque gain followed by modulation.
+They failed on a dropped contribution/unity override and invalid saved ownership.
+Ordered reverse insertion preserves all deferred CODE; opaque gains keep their
+associated modifiers opaque. The real REPL probe checks the same forms.

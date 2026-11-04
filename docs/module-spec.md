@@ -18,10 +18,13 @@ resolving source/chained context and catalog aliases.
   Scale shares its call with ROOT; MODE selects methods rather than writing a call.
 - Control `omitAt`: the exact number or string at which its call is omitted.
   Missing `omitAt` means always write. It is independent of the rack default.
+- `read: 'companion'`: require a compatible adjacent owner with that control unread; otherwise retain exact CODE. New oscillator, filter, amplifier and effect companion settings must not create an owner with active defaults. SMPL can start a neutral boundary using its `readDefaults`.
 - `read: 'merge'`: attach to the adjacent module of the same type when that
   control has not been read already; selected method variants must also agree.
   Otherwise a call starts a new module. Module `readDefaults` records source-only
   omission defaults (SMPL's empty bank and speed 1).
+- `when`: a conjunction of switch conditions shared by the panel and writer. Inactive settings remain saved but are hidden and emit nothing. `group` keeps mixer channel controls together.
+- `selects`: reading a call selects a panel mode (FREQ, DJ or delay TIME/SYNC); it does not invent a separate call.
 - `enabledBy`: omit this companion setting when the named control is at its
   omission value (DELAY and REVERB bypass).
 - `withEnvelope`: write only with an ENV at the named CV jack. `envelope` places
@@ -55,7 +58,7 @@ sensitivity; chip text wraps instead of truncating. Module widths are unchanged.
 - **Jacks:** `in` / `out`, with signal type `pattern`, `audio`, `mod`, or `any` (Alien and Cyber jacks pass through whatever enters).
 - **CV inputs** modulate one named control (`cvTarget`). See [rule 3](translation-rules.md#3-a-cable-into-cv-modulates-a-control).
 - **Defaults** are what a freshly added module shows. “Omitted at X” means the generator writes nothing for that control when it holds X.
-- Control values are written with up to three decimals, no trailing zeros. Derived modulation frequencies and reciprocal sync rates retain full numeric precision so valid boundary periods still read back.
+- Control values use up to three decimals, without trailing zeros. DELAY SYNC fractions, derived modulation frequencies and reciprocal sync rates retain full precision.
 - Function names below were checked against `@strudel/web` 1.3.0.
 
 ---
@@ -541,3 +544,70 @@ No module definitions are duplicated in panel components.
 
 See the [acceptance record](pattern-time-verification.md) for distinct source,
 saved rack, event, browser and PCM evidence.
+
+## Panel extensions (#129)
+
+The existing widths and saved values remain compatible. These additions were
+checked against the installed `@strudel/core` 1.2.6, `@strudel/tonal` 1.2.6 and
+`superdough` 1.3.0. Bounds below are the panel's supported ranges; they are not
+claims that the engine rejects every value outside them. New optional settings
+use the engine defaults and omit their calls at those values. Existing controls
+retain their previous omission rules and saved-file semantics.
+
+| Module / control   | Kind and range                  | Default / omit    | Call and condition                                                                                                                |
+| ------------------ | ------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| OSC PITCH          | NOTE / FREQ                     | NOTE; switch only | FREQ overrides event pitch; an unpatched OSC becomes `freq(110).s(...)`, one event per cycle                                      |
+| OSC PW             | knob 0–1, .01                   | .5 / .5           | `.pw(x)`, pulse only                                                                                                              |
+| OSC VOICES         | knob 1–100, integer             | 5 / 5             | `.unison(x)`, supersaw only                                                                                                       |
+| OSC DETUNE         | knob 0–24 st, .01               | .18 / .18         | `.detune(x)`, supersaw only                                                                                                       |
+| OSC SPREAD         | knob 0–1, .01                   | .6 / .6           | `.spread(x)`, supersaw only                                                                                                       |
+| OSC NOISE          | knob 0–1, .01                   | 0 / 0             | `.noise(x)`, sine/triangle/square/sawtooth only; pulse and supersaw do not mix noise in this engine                               |
+| OSC OCT            | knob −2…2, integer              | 0 / 0             | `.octave(x)`; relative multiplier `2 ** x`, including Hz mode                                                                     |
+| OSC FREQ           | log knob 20–20000 Hz, integer   | 110 / always      | `.freq(x)`, FREQ mode only                                                                                                        |
+| VCF TYPE           | 12db / ladder / 24db            | 12db / 12db       | `.ftype(x)`, LP/HP/BP only                                                                                                        |
+| VCF DRIVE          | knob 0–4, .01                   | .69 / .69         | `.drive(x)`, ladder and LP/HP/BP only; the engine exponentiates drive                                                             |
+| VCF ANCHOR         | knob 0–1, .01                   | 0 / 0             | `.fanchor(x)`, LP/HP/BP only; affects an active filter envelope                                                                   |
+| VCF DJ             | knob 0–1, .01                   | .5 / .5           | `.djf(x)`, DJ mode only; .5 is neutral; hides CUTOFF/RES/ENV AMT/TYPE/DRIVE/ANCHOR                                                |
+| VCA VEL            | knob 0–1, .01                   | 1 / 1             | `.velocity(x)`; multiplies gain in the engine                                                                                     |
+| SEQ / DRUMS ACCENT | text row, numeric mini-notation | `1` / `1`         | `.velocity("1 .6 .6 .6")` at the source, before downstream transforms                                                             |
+| QUANT SCALE        | switch                          | minor / always    | Adds minor/major pentatonic, harmonic/melodic minor and major/minor blues; spaces become colons in `.scale("C:minor:pentatonic")` |
+| QUANT SHIFT        | knob −14…14, integer            | 0 / 0             | `.scaleTranspose(x)`, after scale; diatonic degrees                                                                               |
+| SMPL N             | knob 0–127, integer             | 0 / 0             | chained `.n(x)`; bare `n("...")` remains SEQ                                                                                      |
+| SMPL BEGIN / END   | knobs 0–1, .01                  | 0 / 0; 1 / 1      | `.begin(x).end(x)`; fractions of the sample                                                                                       |
+| SMPL LOOP          | knob 0/1                        | 0 / 0             | `.loop(1)`                                                                                                                        |
+| SMPL CUT           | knob 0–32, integer              | 0 / 0             | `.cut(x)`; 0 means no cut group                                                                                                   |
+| DELAY TIME/SYNC    | TIME / SYNC                     | TIME; switch only | TIME retains `.delaytime(seconds)`; SYNC writes `.delaysync(cycles)`                                                              |
+| DELAY SYNC         | knob 1/64–4 cyc, 1/64           | 3/16 / 3/16       | No `.delaytime()` in SYNC; preserve exact fractions such as .015625; omit all companion settings at MIX 0                         |
+| REVERB FADE        | knob 0–4 s, .01                 | .1 / .1           | `.roomfade(x)`; omitted when ROOM 0                                                                                               |
+| REVERB LP          | log knob 20–20000 Hz, integer   | 15000 / 15000     | `.roomlp(x)`; omitted when ROOM 0                                                                                                 |
+| REVERB DIM         | log knob 20–20000 Hz, integer   | 1000 / 1000       | `.roomdim(x)`; omitted when ROOM 0                                                                                                |
+| MIX MUTE 1–4       | off / on                        | off / no prefix   | `_` label prefix; keeps the voice and its orbit slot                                                                              |
+| MIX SOLO 1–4       | off / on                        | off / no prefix   | `S` label prefix; keeps all orbit slots                                                                                           |
+| MIX NAME 1–4       | text                            | empty / `$`       | channel label; separate from named fan-out outputs                                                                                |
+| MIX OUTPUT 1–4     | text positive integer pair      | `1:2` / `1:2`     | `.channels("3:4")`, before orbit; actual hardware outputs depend on the device                                                    |
+
+OSC adds `pulse` to WAVE. All new controls retain their inactive values in rack
+metadata. Newly imported calls with omitted delay time read as SYNC, matching
+the engine's 3/16-cycle default; legacy explicit delaytime calls keep TIME.
+Unrepresentable arguments remain exact CODE. Imported simultaneous ordinary
+filter and DJ calls use separate VCFs so neither setting is lost.
+
+MIX adds **CV 1–4**, mod inputs targeting `ch1`–`ch4`. Each level has bipolar
+DEPTH −1…1, default −.5, in gain units. STEP LFO replaces that channel's
+scalar gain with `signal.range(level, level + depth)`; CV SEQ supplies its numeric
+pattern directly. Opposite LFO depths produce complementary levels. With #130
+merged, SMOOTH LFO and ENV use its shared per-voice adapters targeting postgain
+after folding the mixer levels. An outer constant level scales both the base
+and absolute modulation depth. These use the pinned engine's additive AudioParam
+semantics. Nested scalar/pattern levels multiply into one final `postgain`;
+repeating `postgain` calls would overwrite earlier levels. See the
+[label and nested-routing decisions](translation-rules.md#mixer-channel-labels-and-routing-129)
+and [dated verification](module-panels-verification.md).
+
+Pinned-engine evidence: `superdough/synth.mjs` supplies supersaw 5/.18/.6,
+pulse .5 and standard-oscillator noise 0; `helpers.mjs` supplies octave 0,
+filter drive .69 and current anchor 0; `superdough.mjs` supplies velocity 1,
+channels [1,2] and delaysync 3/16; `sampler.mjs` supplies begin/end 0/1;
+`reverb.mjs` supplies fade/LP/DIM .1/15000/1000. Core controls and tonal provide
+the corresponding calls. Labels are implemented by core `repl.mjs` and the
+transpiler, independently of event control values.

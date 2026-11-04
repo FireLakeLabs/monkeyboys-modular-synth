@@ -14,6 +14,7 @@ export interface ParsedScope extends Span {
   root: Expression
   calls: Call[]
   kind: 'voice' | 'declaration' | 'tempo'
+  label?: string
 }
 
 export function chain(expression: Expression): { root: Expression; calls: Call[] } {
@@ -64,7 +65,12 @@ export function parseSource(
 } {
   const program = parse(source, { ecmaVersion: 'latest', sourceType: 'script', locations: true })
   const scopes: ParsedScope[] = []
-  function add(expression: Expression, kind: ParsedScope['kind'], anchor?: string): void {
+  function add(
+    expression: Expression,
+    kind: ParsedScope['kind'],
+    anchor?: string,
+    label?: string,
+  ): void {
     if (
       kind === 'voice' &&
       expression.type === 'CallExpression' &&
@@ -72,7 +78,7 @@ export function parseSource(
       expression.callee.name === 'stack' &&
       expression.arguments.every((arg) => arg.type !== 'SpreadElement')
     ) {
-      for (const arg of expression.arguments) add(arg, kind)
+      for (const arg of expression.arguments) add(arg, kind, anchor, label)
       return
     }
     const parsed = chain(expression)
@@ -80,6 +86,7 @@ export function parseSource(
       expression,
       ...parsed,
       kind,
+      ...(label === undefined ? {} : { label }),
       start: expression.start,
       end: expression.end,
       descriptor: {
@@ -91,12 +98,8 @@ export function parseSource(
     })
   }
   for (const statement of program.body) {
-    if (
-      statement.type === 'LabeledStatement' &&
-      statement.label.name === '$' &&
-      statement.body.type === 'ExpressionStatement'
-    )
-      add(statement.body.expression, 'voice')
+    if (statement.type === 'LabeledStatement' && statement.body.type === 'ExpressionStatement')
+      add(statement.body.expression, 'voice', undefined, statement.label.name)
     if (statement.type === 'VariableDeclaration' && statement.kind === 'const') {
       for (const declaration of statement.declarations) {
         if (declaration.id.type === 'Identifier' && declaration.init)

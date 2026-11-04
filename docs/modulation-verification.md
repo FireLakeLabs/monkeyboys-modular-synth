@@ -124,3 +124,11 @@ After rebasing onto main `23c6f98` (#132), all 32 full browser suites passed
 locally in Chromium, including library signal/PCM, generalized modulation and
 pattern/time forms. The unchanged live-edit failure reproduction also passed
 against a fresh Vite server. The run used the temporary 5177 config above.
+
+## MIX integration follow-through (#129)
+
+#130 landed first. The #129 continuation applies these same shared adapters to
+all four catalog-owned MIX CV inputs, folds nested levels once and scales the
+per-voice absolute modulation amount by outer bus factors. Its independent
+source/rack/event and Chromium PCM results are recorded in the
+[panel integration proof](module-panels-verification.md#integration-after-130-merged).

@@ -1,3 +1,4 @@
+import { panelCases } from '../testing/panelCases'
 import { parse } from 'acorn'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { generate } from '../codegen/generate'
@@ -333,6 +334,7 @@ it('accounts for every catalog module/control without silently skipping new cont
       'attenuverter.max',
       'attenuverter.scale',
       'cvseq.steps',
+      ...panelCases.map((example) => `${example.type}.${example.control}`),
     ].sort(),
   ).toEqual(
     CATALOG.flatMap((spec) => spec.controls.map((control) => `${spec.id}.${control.id}`)).sort(),

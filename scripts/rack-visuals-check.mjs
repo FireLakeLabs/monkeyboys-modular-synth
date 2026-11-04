@@ -313,12 +313,13 @@ try {
     panels.every((panel) =>
       [...panel.querySelectorAll('select, textarea, pre, .text-control button')].every(
         (element) => {
+          element.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'instant' })
           const rect = element.getBoundingClientRect()
           const hit = document.elementFromPoint(
             rect.left + rect.width / 2,
             rect.top + Math.min(5, rect.height / 2),
           )
-          return hit && (element.contains(hit) || hit.contains(element))
+          return hit && element.contains(hit)
         },
       ),
     ),
