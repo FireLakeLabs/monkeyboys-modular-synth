@@ -119,3 +119,21 @@ no new blocker or should-fix findings. The reviewer independently reran all
 73 focused cases. Both rounds used gpt-6.1-sol on high; usage was unavailable.
 During review the diff grew from 37 files (+2,386/−14) to 37 (+2,698/−14), mostly
 focused regressions, browser proof and documentation for those three fixes.
+
+## Final wave-four integration
+
+Rebased onto merged #139 (`d7be12f`) before updating the PR. The overlapping rack
+and spec edits were combined additively: source-document probes, SCOPE, credits,
+sample slots and tape views remain present together. The implementation and review
+fixes retain their reviewed behavior. On this combined tree, `npm run check`
+passes 2,297 tests and 43 guardrails, including coverage, lint, TypeScript and build.
+Chromium again passes crate/audition/drop/tape checks, the bank/cancellation review
+regressions, the module/look/zoom matrix and both mid-width layouts. The separate
+pattern-visibility suite passes safe prefix probes, pointer hover/pinning, live
+SCOPE PCM and spectrum, scheduler clock, reduced motion, credits and exact saved
+presentation/source checks, with no page errors.
+All 55 module exercises pass manual edits, exact saved identity, event and PCM
+checks with no bugs or page errors. Routing compatibility again passes all five
+forms, bus retention/replacement, modulation sidebands, REPL solo and leading-rest
+DUCK startup/reset/replay. These browser observations remain separate from the
+repository gate and do not establish physical listening.
