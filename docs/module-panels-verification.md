@@ -41,6 +41,15 @@ unity after opaque settings. Expanded stack leaves inherit mute/solo/name.
 The checks separately compare source bytes, saved identity and actual events;
 the browser REPL also compares original versus regenerated labelled stacks.
 
+Sol round 2 confirmed S1/S2 and found three further import cases: companion
+calls creating sound-changing defaults, a repeated output pair losing its final
+1:2 override, and mixed TIME/SYNC losing explicit seconds. Regressions reproduced
+each event mismatch. Catalog `read: 'companion'` now requires an established,
+mode-compatible owner; explicit default pair overrides and mixed delay setters
+stay CODE. An additional failing-before regression retains old saved delaytime
+ownership beside a CODE delaysync call. An implicit bare frequency source and
+an explicit neutral DJ override also retain their original engine events.
+
 ## Browser and runtime proof
 
 Run `node scripts/panels-browser.mjs <vite-url> <evidence-directory>`. It is also

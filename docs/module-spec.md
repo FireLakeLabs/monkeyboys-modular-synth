@@ -18,6 +18,7 @@ resolving source/chained context and catalog aliases.
   Scale shares its call with ROOT; MODE selects methods rather than writing a call.
 - Control `omitAt`: the exact number or string at which its call is omitted.
   Missing `omitAt` means always write. It is independent of the rack default.
+- `read: 'companion'`: require a compatible adjacent owner with that control unread; otherwise retain exact CODE. New oscillator/filter/envelope-independent effect settings must not create an owner with active defaults. SMPL can start a neutral boundary using its `readDefaults`.
 - `read: 'merge'`: attach to the adjacent module of the same type when that
   control has not been read already; selected method variants must also agree.
   Otherwise a call starts a new module. Module `readDefaults` records source-only

@@ -339,3 +339,10 @@ The shared gate checks event/source/saved-identity behavior, and the separate
 [panel browser suite](module-panels-verification.md) compares original and
 regenerated stack labels through the pinned REPL. Physical listening and
 multichannel hardware remain unverified.
+
+Catalog companion bindings additionally require compatible established owners,
+preventing newly mapped calls from creating sound-changing module defaults.
+The #129 unit suite reproduces standalone/separated companions, repeated output
+pair defaults and mixed delay-time precedence, with independent real-engine event,
+source and saved-identity checks. The same tests cover retaining prior CODE
+ownership, which a new adapter must not silently replace.

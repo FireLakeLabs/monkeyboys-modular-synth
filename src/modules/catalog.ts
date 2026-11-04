@@ -26,7 +26,7 @@ const numericCall = (
   step,
   default: defaultValue,
   omitAt: defaultValue,
-  call: { method, argument: { kind: 'number' }, read: 'merge' },
+  call: { method, argument: { kind: 'number' }, read: 'companion' },
   ...extra,
 })
 const accent: Control = {
@@ -232,7 +232,7 @@ export const OSC: ModuleSpec = {
       call: {
         method: 'freq',
         argument: { kind: 'number' },
-        read: 'merge',
+        read: 'companion',
         selects: { mode: 'freq' },
       },
     },
@@ -279,11 +279,19 @@ export const SMPL: ModuleSpec = {
       unit: '×',
       omitAt: 1,
     },
-    numericCall('n', 'N', 'n', 0, 127, 1, 0),
-    numericCall('begin', 'BEGIN', 'begin', 0, 1, 0.01, 0),
-    numericCall('end', 'END', 'end', 0, 1, 0.01, 1),
-    numericCall('loop', 'LOOP', 'loop', 0, 1, 1, 0),
-    numericCall('cut', 'CUT', 'cut', 0, 32, 1, 0),
+    // A new SMPL uses neutral readDefaults, so these calls may establish its boundary.
+    ...[
+      numericCall('n', 'N', 'n', 0, 127, 1, 0),
+      numericCall('begin', 'BEGIN', 'begin', 0, 1, 0.01, 0),
+      numericCall('end', 'END', 'end', 0, 1, 0.01, 1),
+      numericCall('loop', 'LOOP', 'loop', 0, 1, 1, 0),
+      numericCall('cut', 'CUT', 'cut', 0, 32, 1, 0),
+    ].map((control) => ({
+      ...control,
+      ...('call' in control && control.call
+        ? { call: { ...control.call, read: 'merge' as const } }
+        : {}),
+    })),
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'pattern' },
@@ -370,7 +378,7 @@ export const VCF: ModuleSpec = {
       options: opts('12db', 'ladder', '24db'),
       default: '12db',
       omitAt: '12db',
-      call: { method: 'ftype', argument: { kind: 'string' }, read: 'merge' },
+      call: { method: 'ftype', argument: { kind: 'string' }, read: 'companion' },
       when: [{ control: 'mode', values: ['lp', 'hp', 'bp'] }],
     },
     numericCall('drive', 'DRIVE', 'drive', 0, 4, 0.01, 0.69, {
@@ -709,7 +717,7 @@ export const DELAY: ModuleSpec = {
         method: 'delaysync',
         selects: { mode: 'sync' },
         argument: { kind: 'number', precision: 6 },
-        read: 'merge',
+        read: 'companion',
         enabledBy: 'mix',
       },
     }),

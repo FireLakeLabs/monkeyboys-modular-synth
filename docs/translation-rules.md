@@ -506,3 +506,10 @@ conditional modes. Multi-word scale spaces write colon-separated engine names.
 DELAY SYNC fractions retain their exact numeric value rather than the general
 three-decimal display convention. The [module spec](module-spec.md#panel-extensions-129)
 records their supported ranges, engine defaults and omission rules.
+
+New companion bindings require a compatible adjacent owner; when ownership or
+mode cannot be proved, their calls remain CODE rather than creating a module
+with active defaults. An explicit final default output pair after opaque earlier
+settings remains CODE so omission cannot expose an earlier routing pair. Mixed
+`delaytime`/`delaysync` calls also remain CODE: explicit seconds win in the pinned
+engine regardless of call order. Previously saved CODE ownership remains exact.

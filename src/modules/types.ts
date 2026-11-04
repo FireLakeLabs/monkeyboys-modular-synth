@@ -34,8 +34,8 @@ export interface CallBinding {
         /** An active pair of controls must satisfy first <= second. */
         atMost?: readonly [string, string]
       }
-  /** Continue the adjacent module when this control has not already been read. */
-  read?: 'merge'
+  /** Merge continues an adjacent owner; companion requires one or remains exact CODE. */
+  read?: 'merge' | 'companion'
   /** Emit only in this mode; reading the call activates that mode. */
   when?: { control: string; value: string }
   /** A recognized call selects a panel mode independently of method variants. */

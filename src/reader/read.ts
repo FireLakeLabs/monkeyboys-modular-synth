@@ -4,7 +4,7 @@ import { graph } from '../codegen/graph'
 import { generate } from '../codegen/generate'
 import { descriptor, type RackLayout } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
-import { callMethod, matchControlCall, tupleControls } from '../modules/bindings'
+import { callMethod, matchControlCall, tupleControls, controlEnabled } from '../modules/bindings'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { nextPosition, railWidth } from '../patch/layout'
@@ -467,7 +467,14 @@ function project(
       }
     }
     const initial = calls[0]
-    if (!upstream && initial?.name === 'freq' && initial.args.length === 1) {
+    if (
+      !upstream &&
+      initial?.name === 'freq' &&
+      initial.args.length === 1 &&
+      calls[1]?.name === 's' &&
+      calls[1].args.length === 1 &&
+      fits('osc', 'wave', scalar(calls[1].args[0]) ?? '')
+    ) {
       const frequency = scalar(initial.args[0])
       if (typeof frequency === 'number' && fits('osc', 'freq', frequency)) {
         group = add('osc', { mode: 'freq', freq: frequency })
@@ -576,7 +583,8 @@ function project(
         if (
           call.args.length === 1 &&
           typeof value === 'string' &&
-          /^[1-9]\d*:[1-9]\d*$/.test(value)
+          /^[1-9]\d*:[1-9]\d*$/.test(value) &&
+          !(value === '1:2' && hasOpaqueInput(upstream))
         ) {
           outputChannels.set(scope.descriptor.id, { value, index })
           continue
@@ -873,8 +881,18 @@ function project(
       // Preserve DRUMS' existing unseeded drop control; a seeded gate is CHANCE.
       const drumDrop =
         name === 'degradeBy' && group?.type === 'drums' && calls[index + 1]?.name !== 'seed'
-      // MIX setters belong only to the dedicated terminal-gain adapter.
-      const matched = !drumDrop && spec && type !== 'mix' ? matchControlCall(spec, name) : undefined
+      // MIX is a virtual bus. Its setters are handled only by the terminal-gain adapter.
+      // Explicit delaytime wins over delaysync in the pinned engine, in either order.
+      const mixedDelayTime =
+        type === 'delay' &&
+        ['delaytime', 'delaysync'].includes(name) &&
+        ['delaytime', 'delaysync'].every((method) =>
+          calls.some((call, callIndex) => call.name === method && !retainedCode(callIndex)),
+        )
+      const matched =
+        !drumDrop && spec && type !== 'mix' && !mixedDelayTime
+          ? matchControlCall(spec, name)
+          : undefined
       const activation =
         matched && matched.binding.when
           ? { [matched.binding.when.control]: matched.binding.when.value }
@@ -887,7 +905,7 @@ function project(
             values[id] = value
         }
         merge =
-          matched.binding.read === 'merge' &&
+          matched.binding.read !== undefined &&
           Object.entries(matched.values).every(([id, value]) => group?.values[id] === value)
         if (merge && spec?.orderSensitive && group?.type === type) {
           const rank = spec.controls.indexOf(matched.control)
@@ -996,6 +1014,26 @@ function project(
             merge &&
             group?.type === scalarType &&
             !bindings.some((binding) => binding.module === group?.id && id in binding.controls)
+          const needsOwner = matched?.binding.read === 'companion'
+          const compatibleOwner =
+            reuse &&
+            group &&
+            spec &&
+            matched &&
+            controlEnabled(spec, { ...group.values, ...matched.binding.selects }, matched.control)
+          const erasesOverride =
+            matched?.binding.selects &&
+            'omitAt' in matched.control &&
+            candidate === matched.control.omitAt &&
+            !reuse &&
+            (hasOpaqueInput(upstream) ||
+              (group?.type === type &&
+                bindings.some((binding) => binding.module === group?.id && id in binding.controls)))
+          if ((needsOwner && !compatibleOwner) || erasesOverride) {
+            upstream = code(scope, [index], source.slice(call.start, call.end), upstream)
+            group = undefined
+            continue
+          }
           const module = reuse && group ? group : add(scalarType, values)
           if (reuse) {
             for (const [id, value] of Object.entries(matched?.binding.selects ?? {})) {

@@ -302,3 +302,68 @@ it('retains final setters over a shared declaration with an earlier postgain', (
   const saved = saveLayout(doc)
   expect(read(saved.source).patch).toEqual(doc.patch)
 })
+
+it.each([
+  '.gain(.4).lpf(800).lpq(1).velocity(.6)',
+  '.roomfade(2)',
+  '.roomlp(4000)',
+  '.roomdim(8000)',
+  '.ftype("ladder")',
+  '.drive(.8)',
+  '.fanchor(.5)',
+  '.pw(.3)',
+  '.unison(7)',
+  '.detune(.3)',
+  '.spread(.8)',
+  '.delaysync(.25)',
+])('preserves companion settings without inventing an active owner: %s', (suffix) => {
+  const sound = suffix.startsWith('.gain') ? '.s("sine")' : '.s("sine").iter(2)'
+  const source = `$: note("c3")${sound}${suffix}.orbit(3)\n`
+  const doc = read(source)
+  expect(events(generate(doc.patch))).toEqual(events(source))
+  expect(generate(doc)).toBe(source)
+  const saved = saveLayout(doc)
+  expect(read(saved.source).patch).toEqual(doc.patch)
+})
+
+it('preserves an implicit oscillator sound for a bare frequency source', () => {
+  const source = '$: freq(110).orbit(3)\n'
+  expect(events(generate(read(source).patch))).toEqual(events(source))
+})
+
+it('preserves an explicit default channel override after an earlier output pair', () => {
+  const source = '$: note("c3").s("sine").channels("3:4").channels("1:2").orbit(3)\n'
+  const doc = read(source)
+  expect(events(generate(doc.patch))).toEqual(events(source))
+  expect(generate(doc)).toBe(source)
+  expect(read(saveLayout(doc).source).patch).toEqual(doc.patch)
+})
+
+it.each(['.delaytime(.3).delaysync(.25)', '.delaysync(.25).delaytime(.3)'])(
+  'keeps explicit delay time authoritative for mixed TIME/SYNC settings: %s',
+  (settings) => {
+    const source = `$: note("c3").s("sine").delay(.4).delayfeedback(.5)${settings}.orbit(3)\n`
+    const doc = read(source)
+    expect(events(generate(doc.patch))).toEqual(events(source))
+    expect(generate(doc)).toBe(source)
+    expect(read(saveLayout(doc).source).patch).toEqual(doc.patch)
+  },
+)
+
+it('retains an explicit neutral DJ override after an active setting', () => {
+  const source = '$: note("c3").s("sine").djf(.3).djf(.5).orbit(3)\n'
+  expect(events(generate(read(source).patch))).toEqual(events(source))
+})
+
+it('preserves saved delaytime ownership beside an existing CODE delaysync call', () => {
+  let patch = placeModule(fixture('delay', { time: 0.3 }), 'code', 5)
+  patch = setValue(patch, 'code1', 'text', '.delaysync(.25)')
+  patch = connect(patch, { module: 'delay1', jack: 'out' }, { module: 'code1', jack: 'in' })
+  patch = connect(patch, { module: 'code1', jack: 'out' }, { module: 'mix1', jack: 'in1' }, true)
+  const doc = read(generate(patch))
+  const saved = saveLayout(doc)
+  expect(saved.patch).toEqual(patch)
+  expect(read(saved.source).layout).toBe('restored')
+  expect(read(saved.source).patch).toEqual(patch)
+  expect(events(saved.source)).toEqual(events(generate(patch)))
+})
