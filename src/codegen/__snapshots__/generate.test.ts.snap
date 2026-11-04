@@ -54,7 +54,7 @@ exports[`mixing and fan-out > reserves CODE-owned orbit 2 before routing ordinar
 
 exports[`patch → Strudel > compresses repeating drum rows, omits empty rows and writes a sample bank 1`] = `"b762c770e25deb5e29317478eeb29ab5d489c6516a04357674c68b8e8db11b62"`;
 
-exports[`patch → Strudel > does not reorder pattern transforms or repeated settings 1`] = `"1ce88f2d8960d0e3c67c12ffa29ebea07a0f52f151cace1b7ef5af390a1cc7f1"`;
+exports[`patch → Strudel > does not reorder pattern transforms or repeated settings 1`] = `"7452cf4587c35f5cc45f97bd301350e81a2cab6cac212546e9c5394e52839a81"`;
 
 exports[`patch → Strudel > does not reorder pattern transforms or repeated settings 2`] = `"c092aabb7e9bbf11f7bd984a1193d0c57212f49c6d9315c80ba78da4e44cf755"`;
 

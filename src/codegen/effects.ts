@@ -1,0 +1,47 @@
+import { effectRank } from '../modules/effects'
+import { requireNode, type Node } from './graph'
+
+export function activeEffectRank(node: Node) {
+  return effectRank(node.module, {
+    patched: new Set(
+      node.spec.jacks
+        .filter((j) => j.cvTarget && node.inputs.has(j.id))
+        .flatMap((j) => j.cvTarget ?? []),
+    ),
+  })
+}
+
+/** Final paths include shared declarations and nested mixer leaves. */
+export function planEffects(nodes: Map<string, Node>) {
+  // A shared stage must use the same representation in every branch. Propagate
+  // inline membership across overlapping paths before writing named declarations.
+  const paths: Node[][] = []
+  function stagePaths(node: Node, tail: Node[] = []) {
+    const path = activeEffectRank(node) === undefined ? tail : [node, ...tail]
+    const inputs = [...node.inputs].filter(
+      ([id]) => !node.spec.jacks.find((j) => j.id === id)?.cvTarget,
+    )
+    if (!inputs.length) paths.push(path)
+    for (const [, cable] of inputs) stagePaths(requireNode(nodes, cable.from.module), path)
+  }
+  for (const node of nodes.values()) if (node.spec.id === 'out') stagePaths(node)
+  const inline = new Set<string>()
+  let changed = true
+  while (changed) {
+    changed = false
+    for (const original of paths) {
+      const path = original.filter((n) => n.module.fx !== 'native')
+      const ranks = path.map((n) => activeEffectRank(n) ?? -1)
+      const ordered =
+        path.some((n) => n.module.fx === true || inline.has(n.module.id)) ||
+        ranks.some((rank, i) => i > 0 && rank <= (ranks[i - 1] ?? -1))
+      if (ordered)
+        for (const node of path)
+          if (!inline.has(node.module.id)) {
+            inline.add(node.module.id)
+            changed = true
+          }
+    }
+  }
+  return { inline, paths }
+}

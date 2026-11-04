@@ -49,6 +49,13 @@ interface Patch {
 - Saved rack identity compares object contents independently of key insertion
   order, while retaining module and cable array order. Adding `rows` after
   widening a rail must not reject a layout-only move.
+- Optional module `fx: true` retains an explicitly imported inline FX stage;
+  `fx: "native"` retains fixed-order native execution when cable order differs or
+  overlaps explicit FX. Absence uses automatic rack-owned order selection. These
+  execution choices are saved independently of controls, positions and looks.
+  Proven pre-134 generated envelopes are checked with the former native writer
+  before migrating affected modules to `"native"`; executable source and all
+  existing identity fields remain unchanged.
 - `values` holds one entry per control id from the catalog; missing entries mean the catalog default, except declared `legacyDefaults` (LFO MODE remains STEP in older v1 racks). New modules explicitly store controls whose defaults changed.
 - A cable always runs from an `out` jack to an `in` jack. An `out` jack may have many cables; an `in` jack has at most one.
 
@@ -95,6 +102,12 @@ Normalization omits `start`, `end`, `loc` and `raw`; BigInt values use
 call zero. Member calls follow in receiver order; nested callback/CV calls stay
 inside their outer argument descriptor. An identifier receiver has no initial
 call. Scopes include the tempo expression, declarations, and final voices.
+
+An optional binding `fx` is a nonnegative argument index inside its outer FX
+call. Repeated same-type arguments therefore retain distinct identities without
+guessing from their values. Nested control literals retain their actual source
+spans. The scope/call AST descriptor still contains the complete FX argument AST;
+no nested calls are flattened or promoted to final voices.
 
 A module binding contains `scope`, `calls` (zero-based indices into that scope),
 and `role` (`module`, `cv`, `mixer`, or `tempo`). CV bindings also have

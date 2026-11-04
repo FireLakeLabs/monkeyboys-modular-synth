@@ -2,7 +2,7 @@
 
 ## First modules
 
-Sixteen modules, chosen so that between them every feature of the app gets exercised: all three families, all ten looks, all three cable types, CV modulation, envelope routing, multiple voices, fan-out, effect-order warnings and import of unreadable code.
+Sixteen modules, chosen so that between them every feature of the app gets exercised: all three families, all ten looks, all three cable types, CV modulation, envelope routing, multiple voices, fan-out, effect-order notes and import of unreadable code.
 
 | Module | Family   | Why it is in v1                                                 |
 | ------ | -------- | --------------------------------------------------------------- |
@@ -15,7 +15,7 @@ Sixteen modules, chosen so that between them every feature of the app gets exerc
 | VCA    | Hardware | Amplifier; CV input takes ENV or LFO                            |
 | ENV    | Hardware | Writes different code depending on where it is patched          |
 | LFO    | Hardware | Continuous modulation into any CV jack                          |
-| DELAY  | Hardware | First effect; effect-order warnings need two                    |
+| DELAY  | Hardware | First effect; ordered-chain notes need two                      |
 | REVERB | Hardware | Second effect; almost all real Strudel code uses `.room()`      |
 | MIX    | Hardware | Several voices, one `$:` line each                              |
 | OUT    | Hardware | Tempo and output                                                |

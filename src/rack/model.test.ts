@@ -85,7 +85,7 @@ describe('rack editing', () => {
     expect(() => generate({ ...patch, rows: 0 })).toThrow('row')
     expect(() => generate({ ...patch, rows: 1.5 })).toThrow('row')
   })
-  it('explains fixed FX order even with a module between the effects', () => {
+  it('allows FX order even with a module between the effects', () => {
     let patch = placeModule(
       placeModule(placeModule(demoPatch(), 'reverb', 1), 'iter', 1),
       'delay',
@@ -94,13 +94,12 @@ describe('rack editing', () => {
     patch = connect(patch, ref('vca1', 'out'), ref('reverb1', 'in'))
     patch = connect(patch, ref('reverb1', 'out'), ref('iter1', 'in'))
     expect(assessConnection(patch, ref('iter1', 'out'), ref('delay1', 'in'))).toMatchObject({
-      kind: 'warning',
-      message: expect.stringContaining('delay before reverb'),
+      kind: 'valid',
     })
     patch = removeCable(patch, patch.cables.find((c) => c.to.module === 'iter1')?.id ?? '')
     patch = connect(patch, ref('iter1', 'out'), ref('delay1', 'in'))
     expect(assessConnection(patch, ref('reverb1', 'out'), ref('iter1', 'in'))).toMatchObject({
-      kind: 'warning',
+      kind: 'valid',
     })
   })
   it('previews warnings and unresolved signals without mutating the committed patch', () => {

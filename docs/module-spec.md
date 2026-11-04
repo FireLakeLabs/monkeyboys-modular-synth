@@ -611,3 +611,19 @@ channels [1,2] and delaysync 3/16; `sampler.mjs` supplies begin/end 0/1;
 `reverb.mjs` supplies fade/LP/DIM .1/15000/1000. Core controls and tonal provide
 the corresponding calls. Labels are implemented by core `repl.mjs` and the
 transpiler, independently of event control values.
+
+## Ordered effect stage bindings (#134)
+
+`VOICE_EFFECT_ORDER` in the catalog is the pinned native stage order, keyed by
+primary call spelling. The writer/reader derive module membership from active
+catalog control bindings, without a second UI module list. New #131 effect
+modules participate through those bindings. VCF LP/HP/BP stages and DELAY/REVERB
+support native or inline FX execution; amp envelopes/gain and DJ orbit filtering
+retain outer-voice semantics. A reordered/repeated chain uses one FX argument
+per module, with its modulation and companion settings. Stage-local 24 dB
+filters are unavailable in the pinned engine; ordered generation refuses that
+mode. Native 24 dB and local FX ladder settings remain supported.
+
+See [rule 4](translation-rules.md#4-effect-stages-follow-cable-order-134),
+[send/orbit semantics](translation-rules.md#effect-orbits) and
+[acceptance evidence](ordered-effects-verification.md).

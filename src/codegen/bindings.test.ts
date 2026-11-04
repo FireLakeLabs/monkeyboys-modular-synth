@@ -101,3 +101,17 @@ it.each(['SMOOTH', 'STEP', 'ENV', 'CV SEQ'])(
     if (mode === 'CV SEQ') expect(code).toContain('.pan("<0 .5 1>")')
   },
 )
+
+it('orders repeated stages from catalog-owned bindings without a module adapter', () => {
+  let patch = placeModule(fixture(), 'bound', 2)
+  patch = connect(patch, { module: 'bound1', jack: 'out' }, { module: 'bound2', jack: 'in' })
+  patch = connect(patch, { module: 'bound2', jack: 'out' }, { module: 'mix1', jack: 'in1' }, true)
+  const code = generate(patch)
+  expect(code).toContain('.FX(pan(0.2))\n  .FX(pan(0.2))')
+  expect(read(code).patch).toEqual(patch)
+  const imported = read('$: note("c3").s("sine").FX(pan(.2),pan(.7))')
+  expect(
+    imported.patch.modules.filter((m) => m.type === 'bound').map((m) => m.values.amount),
+  ).toEqual([0.2, 0.7])
+  expect(imported.patch.modules.some((m) => m.type === 'code')).toBe(false)
+})

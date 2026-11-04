@@ -74,18 +74,41 @@ Generic ENV objects on native VCA/filter targets retain CODE, preserving their a
 Exact source, complete saved identity and real engine events are checked
 independently; [browser PCM](modulation-verification.md) proves within-note motion.
 
-### 4. Sound settings ignore order; pattern changes don’t
+### 4. Effect stages follow cable order (#134)
 
-Strudel runs filters and effects in its own fixed chain, so their order in the code does not change the sound. If the cables say otherwise, the rack flags that cable and shows the order you will actually hear. Modules that rewrite the pattern — QUANT, the [pattern/time modules](module-spec.md#pattern-and-time-132), every Alien module, every Cyber block, SEQ’s rate — act in cable order, and the generator must preserve it.
+The catalog-owned `VOICE_EFFECT_ORDER` records the pinned superdough chain:
+LP → HP → BP → vowel → coarse → crush → shape → distort → tremolo →
+compressor → pan → phaser → delay → reverb. Active catalog call bindings select
+stage membership; source settings, amp gain/envelope, DJ filter/orbit settings,
+and pattern transforms remain outer voice controls.
 
-```js
-// these two sound the same
-.lpf(800).delay(.4)
-.delay(.4).lpf(800)
-// these two don't
-.ply(2).degradeBy(.5)  // drops single hits
-.degradeBy(.5).ply(2)  // drops whole pairs
-```
+A rack-owned path whose stages follow this order uses native calls. An inversion
+or repeated stage uses chained `.FX(...)` calls, one bare control chain per module:
+` .FX(lpf(800).lpq(1)).FX(lpf(1200).lpq(1))`. Each stage retains its CV/ENV
+settings. Pattern transforms stay at their cable positions. Named outputs retain
+shared stages; if one branch needs FX, overlapping paths also use FX so outer
+native processing cannot jump ahead of a shared stage. A rack note states the
+chain actually heard, replacing the old reversed-send warning.
+
+Native imported setters retain their fixed-order behavior even when written in
+a different order. An explicit FX argument retains its inline behavior even when
+its order could otherwise use native calls. The reader accepts bare catalog
+control chains representing one stage, including supported CV/complete filter
+ENV groups. Helpers, spreads, pattern transforms, multi-module arguments,
+unrecognized settings and nested FX keep the entire enclosing FX call as exact
+CODE. Existing saved CODE owners remain CODE. Literal edits address the chosen
+argument and preserve every surrounding source byte; structural edits still need
+independent source/graph proof and may be refused.
+
+The pinned engine reads 24 dB duplication from the **outer voice**, so it cannot
+isolate that mode per FX stage. Ordered 24 dB VCF generation is refused with a
+reason; such imported arguments stay CODE. Use two 12 dB VCFs for a steeper
+ordered filter. Local ladder settings work inside FX. Native 24 dB filters keep
+their established behavior. FX does not move amp ADSR or DJ orbit filtering into
+per-note stages.
+
+Pattern changes — QUANT, the [pattern/time modules](module-spec.md#pattern-and-time-132),
+Alien modules, Cyber blocks and SEQ rate — continue in cable order.
 
 ### 5. No module? It stays code
 
@@ -141,6 +164,18 @@ ownership from a literal integer alone. Imported shared, patterned, computed or
 otherwise unrepresentable orbit routing stays exact source/CODE; do not silently
 renumber, relocate or append an overriding orbit to it. Import normalization would require explicit user intent; the shipped reader
 preserves such routing as source/CODE.
+
+**Ordered FX and sends (#134).** Outside FX, DELAY and REVERB remain the shared
+send buses described above. Inside FX, superdough creates **inline per-note**
+wet/dry stages (including inline feedback delay), then processes the outer voice
+settings. Inline delay needs positive send, time and feedback. Reordered/repeated
+send modules therefore change from orbit sends to inline effects. Their tails
+are bounded by the note's release; imported `FXrelease` remains CODE and can
+extend that lifetime. FX stages do not allocate or share an orbit: final voices
+still receive dedicated routing, and imported/custom routing stays untouched.
+Outer mixer postgain/channels/routing remain outside FX. Event checks independently
+assert nested FX values, send settings and final orbits; the [browser proof](ordered-effects-verification.md)
+checks actual scheduled events and nonzero WebAudio output.
 
 Adding, deleting or reordering final voices can renumber the allocation. Engine
 integration (#4) must distinguish this structural replacement from a parameter

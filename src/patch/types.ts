@@ -18,6 +18,8 @@ export interface PlacedModule {
   row: number
   /** Offset from the left of the row, in HP. OUT uses a canonical 0. */
   hp: number
+  /** Explicit imported FX stage; retained even when its order could use native calls. */
+  fx?: true | 'native'
   look: LookId
   /** One entry per control id; a missing entry means the catalog default. */
   values: Record<string, ControlValue>

@@ -1,3 +1,4 @@
+import { effectRank } from '../modules/effects'
 import { controlValue } from '../modules/values'
 import { numericNotation } from '../patch/notation'
 import { isRailHp } from '../patch/layout'
@@ -112,6 +113,11 @@ export function graph(patch: Patch): Map<string, Node> {
     if (!module.id || nodes.has(module.id))
       throw new Error(`Duplicate/empty module ID: ${module.id}`)
     const spec = getModuleSpec(module.type)
+    if (
+      module.fx !== undefined &&
+      ((module.fx !== true && module.fx !== 'native') || effectRank(module) === undefined)
+    )
+      throw new Error('Invalid FX stage')
     if (spec.unique && unique.has(spec.id)) throw new Error(`Duplicate unique module: ${spec.id}`)
     unique.add(spec.id)
     if (

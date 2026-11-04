@@ -1,7 +1,9 @@
+import { planEffects } from '../codegen/effects'
+import { effectRank } from '../modules/effects'
 import { controlValue } from '../modules/values'
 import { parseExpressionAt, tokenizer, type Expression, type Node } from 'acorn'
 import { graph } from '../codegen/graph'
-import { generate } from '../codegen/generate'
+import { generate, generateDocument } from '../codegen/generate'
 import { descriptor, type RackLayout } from '../codegen/layout'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { callMethod, matchControlCall, tupleControls, controlEnabled } from '../modules/bindings'
@@ -513,7 +515,7 @@ function project(
     return false
   }
 
-  function expression(scope: ParsedScope): Output {
+  function expression(scope: ParsedScope, initialOutput?: Output): Output {
     const { root, calls } = scope
     const savedScope = saved?.scopes.find(
       (item) =>
@@ -598,7 +600,7 @@ function project(
         calls.map((_, index) => index),
         source.slice(scope.start, scope.end),
       )
-    let upstream: Output | undefined
+    let upstream: Output | undefined = initialOutput
     let start = 0
     let group: PlacedModule | undefined
     const receiver = retainedCode(0, true)
@@ -690,6 +692,90 @@ function project(
         group = undefined
         index = opaque.indices.at(-1) ?? index
         continue
+      }
+      if (call.name === 'FX' && call.args.length > 0) {
+        const checkpoint = structuredClone(patch)
+        const bindingStart = bindings.length
+        const previousDepths = new Map(depths)
+        const previousResolved = new Map(resolved)
+        const oldRow = row,
+          oldHp = hp
+        let current: Output = upstream
+        let accepted = true
+        for (const [argumentIndex, argument] of call.args.entries()) {
+          if (argument.type === 'SpreadElement') {
+            accepted = false
+            break
+          }
+          const nested = chain(argument)
+          if (
+            nested.root.type !== 'CallExpression' ||
+            nested.root.callee.type !== 'Identifier' ||
+            !nested.calls.length ||
+            nested.calls.some((c) => c.name === 'FX')
+          ) {
+            accepted = false
+            break
+          }
+          const moduleStart = patch.modules.length
+          const firstBinding = bindings.length
+          const nestedScope: ParsedScope = {
+            ...scope,
+            expression: argument,
+            root: parseExpressionAt('_', 0, { ecmaVersion: 'latest' }),
+            calls: nested.calls,
+            start: argument.start,
+            end: argument.end,
+            descriptor: {
+              ...scope.descriptor,
+              id: `${scope.descriptor.id}/FX/${index}/${argumentIndex}`,
+            },
+          }
+          current = expression(nestedScope, current)
+          const added = patch.modules.slice(moduleStart)
+          const stages = added.filter((m) => effectRank(m) !== undefined)
+          // One argument is one fixed-order stage. Unsupported companions, helpers,
+          // pattern transforms, or repeated owners remain exact outer CODE.
+          if (
+            stages.length !== 1 ||
+            stages.some(
+              (m) => getModuleSpec(m.type).strudel.includes('ftype') && m.values.type === '24db',
+            ) ||
+            added.some(
+              (m) =>
+                effectRank(m) === undefined &&
+                !['lfo', 'env', 'cvseq', 'samplehold', 'attenuverter', 'modmix'].includes(m.type),
+            )
+          ) {
+            accepted = false
+            break
+          }
+          for (const stage of stages) stage.fx = true
+          for (const binding of bindings
+            .slice(firstBinding)
+            .filter((b) => b.scope === nestedScope.descriptor.id)) {
+            binding.scope = scope.descriptor.id
+            binding.calls = [index]
+            binding.fx = argumentIndex
+            binding.start = argument.start
+            binding.end = argument.end
+          }
+        }
+        if (accepted) {
+          upstream = current
+          group = undefined
+          continue
+        }
+        patch.modules = checkpoint.modules
+        patch.cables = checkpoint.cables
+        patch.names = checkpoint.names
+        bindings.splice(bindingStart)
+        depths.clear()
+        previousDepths.forEach((value, key) => depths.set(key, value))
+        resolved.clear()
+        previousResolved.forEach((value, key) => resolved.set(key, value))
+        row = oldRow
+        hp = oldHp
       }
       const name = canonicalCall(call.name)
       const type =
@@ -1341,7 +1427,11 @@ function project(
     )
       patch.names[`${signal.module.id}:${signal.jack}`] = name
   }
-  graph(patch)
+  // Native setters retain the fixed engine order on import. Only a rack-owned
+  // repatch may opt into inline processing; preserving text alone cannot prove sound.
+  const { inline } = planEffects(graph(patch))
+  for (const module of patch.modules)
+    if (inline.has(module.id) && module.fx !== true) module.fx = 'native'
   return { patch, bindings, represented }
 }
 
@@ -1359,6 +1449,7 @@ export function read(source: string): SourceDocument {
         saved.layout,
         matchScopes(saved.layout.scopes, snapshot.scopes, true),
         projected.represented,
+        snapshot.scopes,
       )
       // The generator can omit inactive controls that are nevertheless explicit
       // in imported source (for example lpenv without an ENV cable).
@@ -1374,6 +1465,20 @@ export function read(source: string): SourceDocument {
             throw new Error('Saved control does not agree with source')
         }
       }
+      const projectedProgram = descriptor(parseSource(generate(projected.patch)).program)
+      if (
+        saved.patch.modules.every((m) => m.fx === undefined) &&
+        projectedProgram ===
+          descriptor(
+            parseSource(generateDocument(saved.patch, { nativeEffects: true }).code).program,
+          )
+      ) {
+        // Source-owned pre-134 snapshots also wrote all stages as native setters.
+        // Full independent projection and binding equality still follow this migration.
+        const { inline } = planEffects(graph(saved.patch))
+        for (const module of saved.patch.modules) if (inline.has(module.id)) module.fx = 'native'
+        for (const module of saved.layout.modules) if (inline.has(module.id)) module.fx = 'native'
+      }
       if (
         descriptor(parseSource(generate(projected.patch)).program) !==
         descriptor(parseSource(generate(saved.patch)).program)
@@ -1382,7 +1487,7 @@ export function read(source: string): SourceDocument {
       // Every sounding binding must also be justified by the reader, not just valid indices.
       const actual = (bindings: SourceBinding[]) =>
         bindings
-          .map((b) => [b.module, b.scope, b.role, b.calls, b.target])
+          .map((b) => [b.module, b.scope, b.role, b.calls, b.target, b.fx])
           .sort((a, b) => descriptor(a).localeCompare(descriptor(b)))
       const expected = saved.layout.modules.flatMap((m) =>
         m.bindings.map((b) => ({ ...b, module: m.id, start: 0, end: 0, controls: {} })),
@@ -1413,7 +1518,14 @@ export function read(source: string): SourceDocument {
       // All executable statements agree, including declarations and statement order.
       // It is now safe to restore omitted/bypassed/disconnected state and cables.
       const matches = matchScopes(saved.layout.scopes, parsed.scopes, true)
-      restore(projection.patch, projection.bindings, saved.layout, matches, projection.represented)
+      restore(
+        projection.patch,
+        projection.bindings,
+        saved.layout,
+        matches,
+        projection.represented,
+        parsed.scopes,
+      )
       projection.patch = saved.patch
       const controls = projection.bindings
       projection.bindings = saved.layout.modules.flatMap((module) =>
@@ -1438,6 +1550,7 @@ export function read(source: string): SourceDocument {
               scope: scope.descriptor.id,
               calls: binding.calls,
               role: binding.role,
+              ...(binding.fx === undefined ? {} : { fx: binding.fx }),
               ...(binding.target === undefined ? {} : { target: binding.target }),
               start: calls[0]?.start ?? scope.start,
               end: calls.at(-1)?.end ?? scope.end,
@@ -1454,6 +1567,7 @@ export function read(source: string): SourceDocument {
         saved.layout,
         matchScopes(saved.layout.scopes, parsed.scopes),
         projection.represented,
+        parsed.scopes,
       )
       layout = 'reconciled'
       diagnostics.push(
@@ -1478,6 +1592,7 @@ function restore(
   saved: RackLayout,
   matches: ReturnType<typeof matchScopes>,
   represented: Map<string, Set<string>>,
+  currentScopes: ParsedScope[],
 ): void {
   if (saved.railHp !== undefined) patch.railHp = saved.railHp
   const rename = new Map<string, string>()
@@ -1501,6 +1616,30 @@ function restore(
             (oldBinding) =>
               oldBinding.scope === match.saved.id &&
               oldBinding.role === binding.role &&
+              (binding.fx === undefined
+                ? oldBinding.fx === undefined
+                : oldBinding.fx !== undefined &&
+                  binding.calls.some((index) => {
+                    const oldIndex = match.calls.get(index)
+                    const previous =
+                      oldIndex === undefined ? undefined : match.saved.calls[oldIndex]
+                    const current = currentScopes.find((s) => s.descriptor.id === binding.scope)
+                      ?.calls[index]
+                    if (!previous || !current || previous.name !== 'FX' || current.name !== 'FX')
+                      return false
+                    const oldArgs: unknown = JSON.parse(previous.arguments)
+                    if (!Array.isArray(oldArgs)) return false
+                    if (descriptor(oldArgs) === descriptor(current.args))
+                      return oldBinding.fx === binding.fx
+                    if (oldArgs.length === 1 && current.args.length === 1)
+                      return oldBinding.fx === 0 && binding.fx === 0
+                    const key = descriptor(current.args[binding.fx ?? -1])
+                    return (
+                      descriptor(oldArgs[oldBinding.fx ?? -1]) === key &&
+                      oldArgs.filter((a) => descriptor(a) === key).length === 1 &&
+                      current.args.filter((a) => descriptor(a) === key).length === 1
+                    )
+                  })) &&
               (!['env', 'lfo'].includes(module.type) ||
                 oldBinding.target?.module === rename.get(binding.target?.module ?? '')) &&
               oldBinding.target?.jack === binding.target?.jack &&
