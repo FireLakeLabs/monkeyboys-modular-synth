@@ -1,0 +1,48 @@
+{
+  "browser": "156.0.8078.4",
+  "checks": [
+    "Native nested backtick edit preserves tabs, CRLF, comments, exact source and saved identity; one Undo/Redo restores it",
+    "Every notation-key gesture is a literal splice and exactly one undo step",
+    "A text cell refuses multiple elements, accepts one group, and leaves its neighbors editable",
+    "Collapsed groups open full width and back out with Enter/Escape; arrows use one roving cell Tab stop",
+    "Dragging the weight edge changes @n and groups the complete drag into one undo",
+    "DRUMS draws mixed sample rows, ghost periods, computed Euclidean steps and second-click rest toggles",
+    "Closed-tray Enter reopens value editing; tray buttons retain native Enter; Up/Down navigate time lines and lanes; escaped literals retain text fallback",
+    "SEQ, DRUMS, CV SEQ and CHORD share the editor in all four Hardware looks; fixed widths, contained cells, zoom identity and clamped tray verified",
+    "Real Strudel/WebAudio produces PCM before and after a live nested edit; source-span flashes include copies, alternatives, text cells and CV, Stop clears, reduced motion outlines"
+  ],
+  "physicalListening": false,
+  "pcm": {
+    "rms": 0.006209122276507271,
+    "samples": 405504
+  },
+  "livePCM": {
+    "rms": 0.0022672314794454315,
+    "samples": 3143680
+  },
+  "stoppedPCM": {
+    "rms": 0,
+    "samples": 3686400
+  },
+  "errors": [],
+  "repositoryGate": {
+    "node": "24.22.2",
+    "tests": 1734,
+    "files": 40,
+    "guardrails": 43
+  },
+  "fullBrowser": {
+    "groups": 39,
+    "status": "passed",
+    "base": "a25627414d98eb6308439b69ba8003a73c5b6b38",
+    "implementation": "955c91e5e9a147833d0cb8b74ef369dfc0cd5a84"
+  },
+  "review": {
+    "model": "gpt-6.1-sol",
+    "effort": "high",
+    "rounds": 2,
+    "verdict": "APPROVE",
+    "resolved": ["S1", "S2", "S3", "S4"],
+    "usage": null
+  }
+}
