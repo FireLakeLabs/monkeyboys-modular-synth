@@ -409,7 +409,11 @@ export function Rack({
             onPointerDown={() => select(m.id)}
           >
             {[...spec.controls]
-              .sort((a, b) => Number(a.kind === 'knob') - Number(b.kind === 'knob'))
+              .sort((a, b) =>
+                'group' in a || 'group' in b
+                  ? 0
+                  : Number(a.kind === 'knob') - Number(b.kind === 'knob'),
+              )
               .map((control) => (
                 <ControlEditor
                   key={control.id}

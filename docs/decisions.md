@@ -207,3 +207,13 @@ planned; revisit only if exported file size becomes a problem. See the
 - Logo: a plain smiley — orange circle `#F4A462` with dark features `#1a1b20`. See `public/favicon.svg`.
 - Wordmark: “MONKEYBOY’S” in Big Shoulders Display 800 over “MODULAR SYNTH” in Barlow Condensed 700, letter-spaced, in orange.
 - UI type: Barlow (UI), Barlow Condensed (panel labels), JetBrains Mono (code). Each look adds its own display face (see [`design.md`](design.md)).
+
+## Mixer channel labels (#129, decided 3 November 2026)
+
+MUTE, SOLO and channel NAME live in executable Strudel labels (`_$:`, `S$:`,
+`bass:`), so pasting into the REPL retains their behavior. They do not remove
+voices or renumber effect orbits. Mute takes precedence over solo; names and
+nested routing follow the [translation rule](translation-rules.md#mixer-channel-labels-and-routing-129).
+Per-channel output pairs and level CV are catalog-owned. #129 supports existing
+STEP LFOs; #130 owns generalized modulation. Saved layout, exact source and
+engine events remain separate acceptance checks.

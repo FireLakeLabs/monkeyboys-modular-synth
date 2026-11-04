@@ -17,6 +17,7 @@ for (const script of [
   'module-behavior-check',
   'rack-visuals-check',
   'output-panel-browser',
+  'panels-browser',
 ]) {
   test(script, async ({ baseURL }, info) => {
     const output = info.outputPath('evidence')

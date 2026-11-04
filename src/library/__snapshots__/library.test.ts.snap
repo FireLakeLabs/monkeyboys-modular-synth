@@ -114,7 +114,7 @@ exports[`built-in patch library > quantized-sequence: preserves exact source and
 
 exports[`built-in patch library > switch-angel-trance-demo: preserves exact source and independently restores saved rack state 1`] = `
 {
-  "generated": "f1e531a3e8538367a1dc4ba7e19b179dfdc8e4b0193dfcbe74c98ca4a0e11039",
-  "projection": "f6b1f29d9b924bdcc4f19dd3fe652a01f245e4f476b6d1c1c79cb9a4bb014ad9",
+  "generated": "e8afb19d4f9354513cadb09d027cdefca712048258544e6b94ead88ee62055fb",
+  "projection": "fe05e1c4402e2b7627550f8d63b094c1e3c1a29617cc78b9f4013d9dc5aee0f1",
 }
 `;

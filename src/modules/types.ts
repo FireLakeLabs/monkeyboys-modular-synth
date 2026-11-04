@@ -20,7 +20,7 @@ export type JackSignal = Signal | 'any'
 export interface CallBinding {
   method: string | { control: string; names: Readonly<Record<string, string>> }
   argument:
-    | { kind: 'number' }
+    | { kind: 'number'; precision?: number }
     | { kind: 'string' }
     | { kind: 'scale'; root: string }
     | { kind: 'transform'; expressions: Readonly<Record<string, string>> }
@@ -38,6 +38,8 @@ export interface CallBinding {
   read?: 'merge'
   /** Emit only in this mode; reading the call activates that mode. */
   when?: { control: string; value: string }
+  /** A recognized call selects a panel mode independently of method variants. */
+  selects?: Readonly<Record<string, string>>
   /** Suppress companion effect settings when the effect is bypassed. */
   enabledBy?: string
   /** Only write this call with a directly connected ENV. */
@@ -48,6 +50,9 @@ export interface CallBinding {
 
 interface CallControl {
   call?: CallBinding
+  /** Mode-specific controls retain saved values but neither display nor emit while inactive. */
+  when?: readonly { control: string; values: readonly string[] }[]
+  group?: string
 }
 
 export interface KnobControl extends CallControl {
@@ -112,6 +117,7 @@ export interface TextControl extends CallControl {
   id: string
   label: string
   default: string
+  omitAt?: string
 }
 
 export type Control = KnobControl | SwitchControl | StepsControl | GridControl | TextControl

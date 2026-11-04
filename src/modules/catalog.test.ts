@@ -99,15 +99,37 @@ describe('module catalog', () => {
         const where = `${spec.id}.${item.id}`
         if (typeof binding.method === 'string') {
           // s() has separate source/chained ownership for DRUMS and OSC.
-          expect([...spec.strudel, ...(spec.id === 'osc' ? ['s'] : [])], where).toContain(
-            binding.method,
-          )
+          expect(
+            [
+              ...spec.strudel,
+              ...(spec.id === 'osc'
+                ? ['s']
+                : spec.id === 'smpl'
+                  ? ['n']
+                  : ['seq', 'drums'].includes(spec.id)
+                    ? ['velocity']
+                    : []),
+            ],
+            where,
+          ).toContain(binding.method)
         } else {
           const selector = control(binding.method.control)
           expect(selector?.kind, where).toBe('switch')
           if (selector?.kind === 'switch')
             expect(Object.keys(binding.method.names).sort(), where).toEqual(
-              selector.options.map((option) => option.value).sort(),
+              selector.options
+                .filter(
+                  (option) =>
+                    !('when' in item) ||
+                    !item.when ||
+                    item.when.every(
+                      (condition) =>
+                        condition.control !== selector.id ||
+                        condition.values.includes(option.value),
+                    ),
+                )
+                .map((option) => option.value)
+                .sort(),
             )
           for (const name of Object.values(binding.method.names))
             expect(spec.strudel, where).toContain(name)
@@ -132,6 +154,15 @@ describe('module catalog', () => {
           expect(selector?.kind, where).toBe('switch')
           if (selector?.kind === 'switch')
             expect(selector.options.map((option) => option.value)).toContain(binding.when.value)
+        }
+        for (const [id, value] of Object.entries(binding.selects ?? {})) {
+          const selected = control(id)
+          expect(selected?.kind, where).toBe('switch')
+          if (selected?.kind === 'switch')
+            expect(
+              selected.options.map((option) => option.value),
+              where,
+            ).toContain(value)
         }
         if (binding.enabledBy) expect(control(binding.enabledBy), where).toHaveProperty('omitAt')
         if (binding.withEnvelope)
@@ -274,7 +305,7 @@ describe('module palette', () => {
     expect(find('low-frequency')).toEqual(['lfo'])
     expect(find('.LPF()')).toEqual(['vcf'])
     expect(find('note("')).toEqual(['seq'])
-    expect(find('transpose')).toEqual(['osc'])
+    expect(find('transpose')).toEqual(['quant', 'osc'])
     expect(find('no-such-module')).toEqual([])
   })
 })

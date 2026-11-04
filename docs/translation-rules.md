@@ -470,3 +470,39 @@ own literal/division span. Mode/arity changes on imported files retain the exist
 conservative editing/refusal contract. Saved CODE ownership remains authoritative.
 Source bytes, saved rack identity and actual onset events have independent
 [acceptance checks](pattern-time-verification.md); PCM is measured separately.
+
+## Mixer channel labels and routing (#129)
+
+Each connected MIX channel still emits a final labelled expression. Default is
+`$:`, MUTE is `_$:`, SOLO is `S$:`, and NAME `bass` is `bass:`. Prefixes compose:
+`Sbass:` solos bass and `_Sbass:` retains both saved flags while muted. The pinned
+REPL ignores labels starting or ending in `_`, then solos remaining labels
+starting in `S` with length greater than one. Mute therefore wins. Names use
+JavaScript label identifiers without leading `S` or trailing `_` to avoid changing
+those flags; `$` and leading underscores are reserved for generated prefixes.
+Repeated leaf names get deterministic numeric suffixes because duplicate named
+labels would replace earlier REPL patterns. Fan-out declaration names are separate.
+
+A muted channel remains an emitted voice and retains its allocated orbit. Soloing
+does not remove other expressions or renumber their routes. Plain-code import
+reads all expression labels, including muted and soloed channels, preserves the
+exact source and maps their flags/name to MIX. A subsequent code label change
+must override stale saved mixer values, without changing the orbit allocation.
+
+The channel OUTPUT pair emits `.channels("3:4")` before final `.orbit(n)` and
+omits the default `1:2`. For nested buses, mute/solo flags accumulate, the last
+nonempty name and last nondefault output pair on the path win, and scalar or
+STEP LFO levels multiply into a single final `.postgain()` after transforms.
+Constant factors are folded; patterned factors use `.mul()` with a signal as the
+receiver. CV ownership records the actual mixer jack/level from the catalog.
+Imported unrepresentable products remain exact CODE, while generated files
+recover the full nested saved rack. Imports with custom orbits retain CODE and
+never gain overriding routing. Conditional settings and default omission do not
+rewrite an imported document; literal edits still use proven source spans and
+unsupported structural edits retain the existing conversion/refusal boundary.
+
+New single-call controls use catalog bindings, including text ACCENT rows and
+conditional modes. Multi-word scale spaces write colon-separated engine names.
+DELAY SYNC fractions retain their exact numeric value rather than the general
+three-decimal display convention. The [module spec](module-spec.md#panel-extensions-129)
+records their supported ranges, engine defaults and omission rules.

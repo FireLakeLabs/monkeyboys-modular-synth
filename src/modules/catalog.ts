@@ -1,4 +1,4 @@
-import type { ModuleSpec, PaletteCategory, SwitchOption } from './types'
+import type { Control, ModuleSpec, PaletteCategory, SwitchOption } from './types'
 
 /**
  * The v1 module catalog. Machine-readable form of docs/module-spec.md.
@@ -7,6 +7,36 @@ import type { ModuleSpec, PaletteCategory, SwitchOption } from './types'
 
 const opts = (...values: string[]): SwitchOption[] =>
   values.map((value) => ({ value, label: value }))
+
+const numericCall = (
+  id: string,
+  label: string,
+  method: string,
+  min: number,
+  max: number,
+  step: number,
+  defaultValue: number,
+  extra: Partial<Extract<Control, { kind: 'knob' }>> = {},
+): Control => ({
+  kind: 'knob',
+  id,
+  label,
+  min,
+  max,
+  step,
+  default: defaultValue,
+  omitAt: defaultValue,
+  call: { method, argument: { kind: 'number' }, read: 'merge' },
+  ...extra,
+})
+const accent: Control = {
+  kind: 'text',
+  id: 'accent',
+  label: 'ACCENT',
+  default: '1',
+  omitAt: '1',
+  call: { method: 'velocity', argument: { kind: 'string' }, read: 'merge' },
+}
 
 export const SEQ: ModuleSpec = {
   id: 'seq',
@@ -47,6 +77,7 @@ export const SEQ: ModuleSpec = {
       detents: [0.25, 0.5, 1, 2, 3, 4],
       omitAt: 1,
     },
+    accent,
   ],
   jacks: [{ id: 'note', label: 'NOTE', direction: 'out', signal: 'pattern' }],
   strudel: ['note', 'n', 'fast'],
@@ -84,6 +115,7 @@ export const DRUMS: ModuleSpec = {
       unit: '%',
       omitAt: 0,
     },
+    accent,
   ],
   jacks: [{ id: 'out', label: 'OUT', direction: 'out', signal: 'pattern' }],
   strudel: ['s'],
@@ -111,15 +143,30 @@ export const QUANT: ModuleSpec = {
       id: 'scale',
       call: { method: 'scale', argument: { kind: 'scale', root: 'root' } },
       label: 'SCALE',
-      options: opts('major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'locrian'),
+      options: opts(
+        'major',
+        'minor',
+        'dorian',
+        'phrygian',
+        'lydian',
+        'mixolydian',
+        'locrian',
+        'minor pentatonic',
+        'major pentatonic',
+        'harmonic minor',
+        'melodic minor',
+        'major blues',
+        'minor blues',
+      ),
       default: 'minor',
     },
+    numericCall('shift', 'SHIFT', 'scaleTranspose', -14, 14, 1, 0),
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'any' },
   ],
-  strudel: ['scale'],
+  strudel: ['scale', 'scaleTranspose'],
   orderSensitive: true,
 }
 
@@ -132,12 +179,13 @@ export const OSC: ModuleSpec = {
   hp: 9,
   paletteCall: '.s("…")',
   controls: [
+    { kind: 'switch', id: 'mode', label: 'PITCH', options: opts('note', 'freq'), default: 'note' },
     {
       kind: 'switch',
       id: 'wave',
-      call: { method: 's', argument: { kind: 'string' } },
+      call: { method: 's', argument: { kind: 'string' }, read: 'merge' },
       label: 'WAVE',
-      options: opts('sawtooth', 'square', 'triangle', 'sine', 'supersaw'),
+      options: opts('sawtooth', 'square', 'triangle', 'sine', 'supersaw', 'pulse'),
       default: 'sawtooth',
     },
     {
@@ -153,6 +201,41 @@ export const OSC: ModuleSpec = {
       omitAt: 0,
       modulation: { min: -24, max: 24, default: 2, pitch: true },
     },
+    numericCall('pw', 'PW', 'pw', 0, 1, 0.01, 0.5, {
+      when: [{ control: 'wave', values: ['pulse'] }],
+    }),
+    numericCall('voices', 'VOICES', 'unison', 1, 100, 1, 5, {
+      when: [{ control: 'wave', values: ['supersaw'] }],
+    }),
+    numericCall('detune', 'DETUNE', 'detune', 0, 24, 0.01, 0.18, {
+      unit: 'st',
+      when: [{ control: 'wave', values: ['supersaw'] }],
+    }),
+    numericCall('spread', 'SPREAD', 'spread', 0, 1, 0.01, 0.6, {
+      when: [{ control: 'wave', values: ['supersaw'] }],
+    }),
+    numericCall('noise', 'NOISE', 'noise', 0, 1, 0.01, 0, {
+      when: [{ control: 'wave', values: ['sawtooth', 'square', 'triangle', 'sine'] }],
+    }),
+    numericCall('oct', 'OCT', 'octave', -2, 2, 1, 0),
+    {
+      kind: 'knob',
+      id: 'freq',
+      label: 'FREQ',
+      min: 20,
+      max: 20000,
+      step: 1,
+      default: 110,
+      unit: 'Hz',
+      taper: 'log',
+      when: [{ control: 'mode', values: ['freq'] }],
+      call: {
+        method: 'freq',
+        argument: { kind: 'number' },
+        read: 'merge',
+        selects: { mode: 'freq' },
+      },
+    },
   ],
   jacks: [
     { id: 'note', label: 'NOTE', direction: 'in', signal: 'pattern' },
@@ -161,7 +244,7 @@ export const OSC: ModuleSpec = {
   ],
   // `.s()` is shared with DRUMS' `s("…")` source form; the reader tells them apart by position
   // (a chained `.s(...)` after a note source is OSC; a bare `s(...)` source is DRUMS).
-  strudel: ['transpose'],
+  strudel: ['transpose', 'pw', 'unison', 'detune', 'spread', 'noise', 'octave', 'freq'],
   orderSensitive: false,
 }
 
@@ -196,12 +279,17 @@ export const SMPL: ModuleSpec = {
       unit: '×',
       omitAt: 1,
     },
+    numericCall('n', 'N', 'n', 0, 127, 1, 0),
+    numericCall('begin', 'BEGIN', 'begin', 0, 1, 0.01, 0),
+    numericCall('end', 'END', 'end', 0, 1, 0.01, 1),
+    numericCall('loop', 'LOOP', 'loop', 0, 1, 1, 0),
+    numericCall('cut', 'CUT', 'cut', 0, 32, 1, 0),
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'pattern' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['bank', 'speed'],
+  strudel: ['bank', 'speed', 'begin', 'end', 'loop', 'cut'],
   orderSensitive: false,
 }
 
@@ -222,6 +310,7 @@ export const VCF: ModuleSpec = {
         { value: 'lp', label: 'LP' },
         { value: 'hp', label: 'HP' },
         { value: 'bp', label: 'BP' },
+        { value: 'dj', label: 'DJ' },
       ],
       default: 'lp',
     },
@@ -232,6 +321,7 @@ export const VCF: ModuleSpec = {
         method: { control: 'mode', names: { lp: 'lpf', hp: 'hpf', bp: 'bpf' } },
         argument: { kind: 'number' },
       },
+      when: [{ control: 'mode', values: ['lp', 'hp', 'bp'] }],
       label: 'CUTOFF',
       min: 20,
       max: 20000,
@@ -249,6 +339,7 @@ export const VCF: ModuleSpec = {
         argument: { kind: 'number' },
         read: 'merge',
       },
+      when: [{ control: 'mode', values: ['lp', 'hp', 'bp'] }],
       label: 'RES',
       min: 0,
       max: 20,
@@ -265,19 +356,57 @@ export const VCF: ModuleSpec = {
         withEnvelope: 'cv',
         envelope: 'after',
       },
+      when: [{ control: 'mode', values: ['lp', 'hp', 'bp'] }],
       label: 'ENV AMT',
       min: 0,
       max: 8,
       step: 0.5,
       default: 4,
     },
+    {
+      kind: 'switch',
+      id: 'type',
+      label: 'TYPE',
+      options: opts('12db', 'ladder', '24db'),
+      default: '12db',
+      omitAt: '12db',
+      call: { method: 'ftype', argument: { kind: 'string' }, read: 'merge' },
+      when: [{ control: 'mode', values: ['lp', 'hp', 'bp'] }],
+    },
+    numericCall('drive', 'DRIVE', 'drive', 0, 4, 0.01, 0.69, {
+      when: [
+        { control: 'type', values: ['ladder'] },
+        { control: 'mode', values: ['lp', 'hp', 'bp'] },
+      ],
+    }),
+    numericCall('anchor', 'ANCHOR', 'fanchor', 0, 1, 0.01, 0, {
+      when: [{ control: 'mode', values: ['lp', 'hp', 'bp'] }],
+    }),
+    numericCall('dj', 'DJ', 'djf', 0, 1, 0.01, 0.5, {
+      when: [{ control: 'mode', values: ['dj'] }],
+      call: { method: 'djf', argument: { kind: 'number' }, selects: { mode: 'dj' } },
+    }),
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
     { id: 'cv', label: 'CV', direction: 'in', signal: 'mod', cvTarget: 'cutoff' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['lpf', 'hpf', 'bpf', 'lpq', 'hpq', 'bpq', 'lpenv', 'hpenv', 'bpenv'],
+  strudel: [
+    'lpf',
+    'hpf',
+    'bpf',
+    'lpq',
+    'hpq',
+    'bpq',
+    'lpenv',
+    'hpenv',
+    'bpenv',
+    'ftype',
+    'drive',
+    'fanchor',
+    'djf',
+  ],
   orderSensitive: false,
 }
 
@@ -301,13 +430,14 @@ export const VCA: ModuleSpec = {
       default: 0.8,
       modulation: { min: -1, max: 1, default: -0.5 },
     },
+    numericCall('vel', 'VEL', 'velocity', 0, 1, 0.01, 1),
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
     { id: 'cv', label: 'CV', direction: 'in', signal: 'mod', cvTarget: 'level' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['gain'],
+  strudel: ['gain', 'velocity'],
   orderSensitive: false,
 }
 
@@ -522,6 +652,13 @@ export const DELAY: ModuleSpec = {
   paletteCall: '.delay()',
   controls: [
     {
+      kind: 'switch',
+      id: 'mode',
+      label: 'TIME/SYNC',
+      options: opts('time', 'sync'),
+      default: 'time',
+    },
+    {
       kind: 'knob',
       id: 'mix',
       call: { method: 'delay', argument: { kind: 'number' } },
@@ -535,7 +672,14 @@ export const DELAY: ModuleSpec = {
     {
       kind: 'knob',
       id: 'time',
-      call: { method: 'delaytime', argument: { kind: 'number' }, read: 'merge', enabledBy: 'mix' },
+      call: {
+        method: 'delaytime',
+        argument: { kind: 'number' },
+        read: 'merge',
+        enabledBy: 'mix',
+        selects: { mode: 'time' },
+      },
+      when: [{ control: 'mode', values: ['time'] }],
       label: 'TIME',
       min: 0.01,
       max: 2,
@@ -558,12 +702,23 @@ export const DELAY: ModuleSpec = {
       step: 0.05,
       default: 0.5,
     },
+    numericCall('sync', 'SYNC', 'delaysync', 0.015625, 4, 0.015625, 0.1875, {
+      unit: 'cyc',
+      when: [{ control: 'mode', values: ['sync'] }],
+      call: {
+        method: 'delaysync',
+        selects: { mode: 'sync' },
+        argument: { kind: 'number', precision: 6 },
+        read: 'merge',
+        enabledBy: 'mix',
+      },
+    }),
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['delay', 'delaytime', 'delayfeedback'],
+  strudel: ['delay', 'delaytime', 'delayfeedback', 'delaysync'],
   orderSensitive: false,
 }
 
@@ -597,12 +752,22 @@ export const REVERB: ModuleSpec = {
       step: 0.5,
       default: 4,
     },
+    ...[
+      numericCall('fade', 'FADE', 'roomfade', 0, 4, 0.01, 0.1, { unit: 's' }),
+      numericCall('lp', 'LP', 'roomlp', 20, 20000, 1, 15000, { unit: 'Hz', taper: 'log' }),
+      numericCall('dim', 'DIM', 'roomdim', 20, 20000, 1, 1000, { unit: 'Hz', taper: 'log' }),
+    ].map((control) => ({
+      ...control,
+      ...('call' in control && control.call
+        ? { call: { ...control.call, enabledBy: 'room' } }
+        : {}),
+    })),
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['room', 'roomsize'],
+  strudel: ['room', 'roomsize', 'roomfade', 'roomlp', 'roomdim'],
   orderSensitive: false,
 }
 
@@ -614,16 +779,40 @@ export const MIX: ModuleSpec = {
   category: 'util',
   hp: 12,
   paletteCall: '.postgain()',
-  controls: [1, 2, 3, 4].map((n) => ({
-    kind: 'knob' as const,
-    id: `ch${n}`,
-    label: `CH ${n}`,
-    min: 0,
-    max: 1,
-    step: 0.05,
-    default: 0.8,
-    omitAt: 1,
-  })),
+  controls: [1, 2, 3, 4].flatMap((n): Control[] =>
+    (
+      [
+        {
+          kind: 'knob',
+          id: `ch${n}`,
+          label: `CH ${n}`,
+          min: 0,
+          max: 1,
+          step: 0.05,
+          default: 0.8,
+          omitAt: 1,
+          call: { method: 'postgain', argument: { kind: 'number' } },
+          modulation: { min: -1, max: 1, default: -0.5 },
+        },
+        {
+          kind: 'switch',
+          id: `mute${n}`,
+          label: `MUTE ${n}`,
+          options: opts('off', 'on'),
+          default: 'off',
+        },
+        {
+          kind: 'switch',
+          id: `solo${n}`,
+          label: `SOLO ${n}`,
+          options: opts('off', 'on'),
+          default: 'off',
+        },
+        { kind: 'text', id: `name${n}`, label: `NAME ${n}`, default: '' },
+        { kind: 'text', id: `channels${n}`, label: `OUTPUT ${n}`, default: '1:2' },
+      ] satisfies Control[]
+    ).map((control) => ({ ...control, group: `CH ${n}` })),
+  ),
   jacks: [
     ...[1, 2, 3, 4].map((n) => ({
       id: `in${n}`,
@@ -631,9 +820,16 @@ export const MIX: ModuleSpec = {
       direction: 'in' as const,
       signal: 'audio' as const,
     })),
+    ...[1, 2, 3, 4].map((n) => ({
+      id: `cv${n}`,
+      label: `CV ${n}`,
+      direction: 'in' as const,
+      signal: 'mod' as const,
+      cvTarget: `ch${n}`,
+    })),
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['postgain', 'stack'],
+  strudel: ['postgain', 'stack', 'channels'],
   orderSensitive: false,
 }
 

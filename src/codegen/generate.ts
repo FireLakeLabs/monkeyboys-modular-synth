@@ -1,6 +1,6 @@
 import { parse, tokenizer } from 'acorn'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
-import { callMethod, tupleControls, patternNumber } from '../modules/bindings'
+import { callMethod, tupleControls, patternNumber, controlEnabled } from '../modules/bindings'
 import { drumText } from '../patch/notation'
 import type { Patch } from '../patch/types'
 import type { SourceDocument } from '../reader/types'
@@ -27,7 +27,7 @@ import {
 
 const chainedCode = (text: string): boolean =>
   tokenizer(text, { ecmaVersion: 'latest' }).getToken().type.label === '.'
-const numeric = (value: number): string => String(Number(value.toFixed(3)))
+const numeric = (value: number, precision = 3): string => String(Number(value.toFixed(precision)))
 const quote = (value: string): string => JSON.stringify(value)
 interface CodeExpression extends LayoutExpression {
   inline: boolean
@@ -257,7 +257,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     }
   }
 
-  function transform(node: Node, expression: CodeExpression): CodeExpression {
+  function transform(node: Node, expression: CodeExpression, skipControl?: string): CodeExpression {
     if (node.spec.id === 'code') {
       const text = string(node, 'text')
       if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
@@ -271,12 +271,14 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     if (!controls.length) throw new Error(`Not a chain module: ${node.spec.id}`)
     for (const item of controls) {
       if (!('call' in item) || !item.call) continue
+      if (item.id === skipControl) continue
       const binding = item.call
       if (binding.when && s(binding.when.control) !== binding.when.value) continue
       const patched = node.spec.jacks.some(
         (jack) => jack.cvTarget === item.id && node.inputs.has(jack.id),
       )
       if (
+        !controlEnabled(node.spec, node.module.values, item) ||
         (!patched && omitted(node, item.id)) ||
         (binding.enabledBy && omitted(node, binding.enabledBy))
       )
@@ -307,13 +309,16 @@ export function generateDocument(patch: Patch): GeneratedDocument {
           break
         case 'number':
           mod = modulation(node, item.id)
-          argument = mod.text
+          argument =
+            binding.argument.precision === undefined || mod.modules
+              ? mod.text
+              : numeric(number(node, item.id), binding.argument.precision)
           break
         case 'string':
           argument = quote(s(item.id))
           break
         case 'scale':
-          argument = quote(`${s(binding.argument.root)}:${s(item.id)}`)
+          argument = quote(`${s(binding.argument.root)}:${s(item.id).replaceAll(' ', ':')}`)
           break
         case 'transform': {
           const transform = binding.argument.expressions[s(item.id)]
@@ -476,7 +481,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
         )
         if (!omitted(node, 'rate'))
           expression = append(expression, `.fast(${numeric(number(node, 'rate'))})`, node)
-        return [expression]
+        return [transform(node, expression)]
       }
       case 'drums': {
         const rows = value(node, 'grid')
@@ -485,22 +490,38 @@ export function generateDocument(patch: Patch): GeneratedDocument {
         let expression = append(blank(), `s(${quote(text)})`, node)
         if (!omitted(node, 'drop'))
           expression = append(expression, `.degradeBy(${numeric(number(node, 'drop'))})`, node)
-        return [expression]
+        return [transform(node, expression)]
       }
       case 'mix':
         return node.spec.jacks.flatMap((jack) => {
-          if (jack.direction !== 'in') return []
+          if (jack.direction !== 'in' || jack.cvTarget) return []
           const cable = node.inputs.get(jack.id)
           if (!cable) return []
+          const channel = jack.label
+          const mod = modulation(node, `ch${channel}`)
           return emit(requireNode(nodes, cable.from.module)).map((expression) => ({
             ...expression,
+            sourceRouting: expression.sourceRouting || (mod.sourceRouting ?? false),
             mixers: [
               ...expression.mixers,
-              { module: node.module.id, gain: number(node, `ch${jack.label}`) },
+              {
+                module: node.module.id,
+                control: `ch${channel}`,
+                gain: mod.text,
+                cvModules: mod.modules ?? [],
+                mute: string(node, `mute${channel}`) === 'on',
+                solo: string(node, `solo${channel}`) === 'on',
+                name: string(node, `name${channel}`),
+                channels: string(node, `channels${channel}`),
+              },
             ],
           }))
         })
       default: {
+        if (node.spec.id === 'osc' && string(node, 'mode') === 'freq' && !input(node)) {
+          const expression = append(blank(), `freq(${numeric(number(node, 'freq'))})`, node)
+          return [transform(node, expression, 'freq')]
+        }
         const upstream = input(node)
         if (upstream) return emit(upstream).map((expression) => transform(node, expression))
         if (node.spec.id === 'code') {
@@ -588,14 +609,56 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     ].flatMap((expression) => syntax(expression.text).orbitNumbers),
   )
   let nextOrbit = 1
+  const labels = new Set<string>()
+  function allocateLabel(wanted: string): string {
+    let label = wanted
+    let index = 2
+    while (labels.has(label)) label = `${wanted}${index++}`
+    labels.add(label)
+    return label
+  }
   voices.forEach((original) => {
-    const gain = original.mixers.reduce((total, mixer) => total * mixer.gain, 1)
+    const factors = original.mixers.map((mixer) => mixer.gain)
+    const constant = factors
+      .filter((factor) => Number.isFinite(Number(factor)))
+      .reduce((product, factor) => product * Number(factor), 1)
+    const signals = factors.filter((factor) => !Number.isFinite(Number(factor)))
+    const gain = signals.length
+      ? [...signals, ...(constant === 1 ? [] : [numeric(constant)])].reduce(
+          (left, right) => (left ? `${left}.mul(${right})` : right),
+          '',
+        )
+      : numeric(constant)
     let voice = original
-    if (gain !== 1) {
-      voice = append(voice, `.postgain(${numeric(gain)})`)
+    if (gain !== '1') {
+      voice = append(voice, `.postgain(${gain})`)
       const start = voice.text.lastIndexOf('.postgain(')
-      for (const mixer of original.mixers)
+      for (const mixer of original.mixers) {
         voice.owners.push({ module: mixer.module, role: 'mixer', start, end: voice.text.length })
+        const jack = getModuleSpec('mix').jacks.find((jack) => jack.cvTarget === mixer.control)
+        for (const module of mixer.cvModules) {
+          if (!jack) throw new Error('Missing mixer CV jack')
+          voice.owners.push({
+            module,
+            role: 'cv',
+            target: { module: mixer.module, jack: jack.id, control: mixer.control },
+            start,
+            end: voice.text.length,
+          })
+        }
+      }
+    }
+    const channels = original.mixers.findLast((mixer) => mixer.channels !== '1:2')?.channels
+    if (channels) {
+      voice = append(voice, `.channels(${quote(channels)})`)
+      const mixer = original.mixers.findLast((mixer) => mixer.channels !== '1:2')
+      if (mixer)
+        voice.owners.push({
+          module: mixer.module,
+          role: 'mixer',
+          start: voice.text.lastIndexOf('.channels('),
+          end: voice.text.length,
+        })
     }
     // Opaque routing is source-owned even when its argument happens to be an integer.
     const importedRouting = voice.sourceRouting || syntax(voice.text).hasOrbit
@@ -603,7 +666,11 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     const orbit = importedRouting ? undefined : nextOrbit++
     const expression = orbit === undefined ? voice : append(voice, `.orbit(${orbit})`)
     bindScope(layout, expression, undefined, orbit)
-    write(expression, '$: ')
+    const mute = original.mixers.some((mixer) => mixer.mute)
+    const solo = original.mixers.some((mixer) => mixer.solo)
+    const name = original.mixers.findLast((mixer) => mixer.name)?.name
+    const label = `${mute ? '_' : ''}${solo ? 'S' : ''}${name ? allocateLabel(name) : '$'}`
+    write(expression, `${label}: `)
   })
   const body = `${lines.join('\n')}\n`
   parse(body, { ecmaVersion: 'latest' })

@@ -1,4 +1,6 @@
 import { controlValue } from '../modules/values'
+import { controlEnabled } from '../modules/bindings'
+import { getModuleSpec } from '../modules/catalog'
 import { useRef, useState } from 'react'
 import { patternNumber } from '../modules/bindings'
 import type { Control, KnobControl } from '../modules/types'
@@ -181,6 +183,7 @@ export function ControlEditor({
   const [error, setError] = useState('')
   const [textMode, setTextMode] = useState(false)
   const value = controlValue(module, control)
+  if (!controlEnabled(getModuleSpec(module.type), module.values, control)) return null
   switch (control.kind) {
     case 'knob': {
       const knob = depthControl(patch, module, control)
@@ -224,11 +227,21 @@ export function ControlEditor({
             </button>
           </div>
         )
+      if (module.type !== 'code' && control.id !== 'accent')
+        return (
+          <StringEditor
+            label={control.label}
+            value={typeof value === 'string' ? value : control.default}
+            commit={commit}
+          />
+        )
       return (
         <TextEditor
+          key={typeof value === 'string' ? value : control.default}
           label={module.type === 'code' ? 'CODE source' : control.label}
           value={typeof value === 'string' ? value : control.default}
           commit={commit}
+          notation={module.type !== 'code'}
         />
       )
     case 'steps': {
@@ -451,6 +464,29 @@ function TextEditor({
         </button>
       )}
       {failed && <small role="alert">Cannot apply. Fix the source and try again.</small>}
+    </label>
+  )
+}
+
+function StringEditor({ label, value, commit }: { label: string; value: string; commit: Commit }) {
+  const [draft, setDraft] = useState(value)
+  return (
+    <label className="switch-control">
+      {label}
+      <input
+        aria-label={label}
+        value={draft}
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={() => {
+          if (draft !== value && !commit(draft)) setDraft(value)
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') event.currentTarget.blur()
+          if (event.key === 'Escape') {
+            setDraft(value)
+          }
+        }}
+      />
     </label>
   )
 }

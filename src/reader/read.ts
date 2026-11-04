@@ -91,7 +91,8 @@ function project(
   const represented = new Map<string, Set<string>>()
   const reserved = new Set(saved?.modules.map((module) => module.id))
   const routing = saved && snapshot ? matchRouting(saved.scopes, scopes, snapshot) : undefined
-  const gains = new Map<string, { value: number; index: number }>()
+  const gains = new Map<string, { call: Call; index: number }>()
+  const outputChannels = new Map<string, { value: string; index: number }>()
   const depths = new Map<string, { value: number; isDefault: boolean }[]>()
   let row = 0
   let hp = 0
@@ -457,6 +458,15 @@ function project(
       }
     }
     const initial = calls[0]
+    if (!upstream && initial?.name === 'freq' && initial.args.length === 1) {
+      const frequency = scalar(initial.args[0])
+      if (typeof frequency === 'number' && fits('osc', 'freq', frequency)) {
+        group = add('osc', { mode: 'freq', freq: frequency })
+        literal(group, 'freq', initial, scope, 0)
+        upstream = output(group)
+        start = 1
+      }
+    }
     if (!upstream && initial && initial.start === root.start) {
       const type = owner(initial.name, true)
       const form = type && getModuleSpec(type).source
@@ -518,16 +528,42 @@ function project(
         continue
       }
       const name = canonicalCall(call.name)
-      const type = owner(name, false)
+      const type =
+        name === 'n'
+          ? 'smpl'
+          : name === 'velocity' &&
+              (group?.type === 'seq' || group?.type === 'drums') &&
+              typeof scalar(call.args[0]) === 'string'
+            ? group.type
+            : owner(name, false)
       if (
         type === 'mix' &&
         call.name === 'postgain' &&
         scope.kind === 'voice' &&
-        calls.slice(index + 1).every((call) => call.name === 'orbit')
+        calls.slice(index + 1).every((call) => ['orbit', 'channels'].includes(call.name))
       ) {
         const value = scalar(call.args[0])
         if (call.args.length === 1 && typeof value === 'number' && fits('mix', 'ch1', value)) {
-          gains.set(scope.descriptor.id, { value, index })
+          gains.set(scope.descriptor.id, { call, index })
+          continue
+        }
+        if (call.args.length === 1 && call.args[0]?.type === 'CallExpression') {
+          gains.set(scope.descriptor.id, { call, index })
+          continue
+        }
+      }
+      if (
+        name === 'channels' &&
+        scope.kind === 'voice' &&
+        calls.slice(index + 1).every((call) => call.name === 'orbit')
+      ) {
+        const value = scalar(call.args[0])
+        if (
+          call.args.length === 1 &&
+          typeof value === 'string' &&
+          /^[1-9]\d*:[1-9]\d*$/.test(value)
+        ) {
+          outputChannels.set(scope.descriptor.id, { value, index })
           continue
         }
       }
@@ -830,6 +866,10 @@ function project(
       if (matched) {
         id = matched.control.id
         values = { ...spec?.readDefaults, ...matched.values, ...activation }
+        for (const [id, value] of Object.entries(matched.binding.selects ?? {})) {
+          if (spec?.controls.find((control) => control.id === id)?.default !== value)
+            values[id] = value
+        }
         merge =
           matched.binding.read === 'merge' &&
           Object.entries(matched.values).every(([id, value]) => group?.values[id] === value)
@@ -901,14 +941,14 @@ function project(
           id = undefined
         } else if (form.kind === 'scale') {
           const value = scalar(call.args[0])
-          const [writtenRoot, scale, extra] = typeof value === 'string' ? value.split(':') : []
+          const [writtenRoot, ...scaleWords] = typeof value === 'string' ? value.split(':') : []
+          const scale = scaleWords.join(' ')
           const root = writtenRoot && writtenRoot.charAt(0).toUpperCase() + writtenRoot.slice(1)
           if (
             type &&
             call.args.length === 1 &&
             root &&
             scale &&
-            !extra &&
             fits(type, form.root, root) &&
             fits(type, id, scale)
           ) {
@@ -941,6 +981,15 @@ function project(
             group?.type === scalarType &&
             !bindings.some((binding) => binding.module === group?.id && id in binding.controls)
           const module = reuse && group ? group : add(scalarType, values)
+          if (reuse) {
+            for (const [id, value] of Object.entries(matched?.binding.selects ?? {})) {
+              if (
+                module.values[id] !== undefined ||
+                spec?.controls.find((control) => control.id === id)?.default !== value
+              )
+                module.values[id] = value
+            }
+          }
           const accepted =
             numericCV &&
             arg &&
@@ -971,6 +1020,33 @@ function project(
       }
       upstream = code(scope, [index], source.slice(call.start, call.end), upstream)
       group = undefined
+    }
+    for (const binding of bindings.filter((binding) => binding.scope === scope.descriptor.id)) {
+      // A pre-129 source snapshot owns its historical projection, including absent MODE.
+      // Only exact saved syntax and call ownership justify retaining that saved state.
+      const legacyDelay =
+        savedScope &&
+        saved?.modules.some(
+          (module) =>
+            module.type === 'delay' &&
+            module.values['mode'] === undefined &&
+            binding.calls.every((index) =>
+              module.bindings.some(
+                (owner) =>
+                  owner.scope === binding.scope &&
+                  owner.role === 'module' &&
+                  owner.calls.includes(index),
+              ),
+            ),
+        )
+      const module = patch.modules.find((module) => module.id === binding.module)
+      if (
+        module?.type === 'delay' &&
+        module.values['mode'] === undefined &&
+        !Object.hasOwn(binding.controls, 'time') &&
+        !legacyDelay
+      )
+        module.values['mode'] = 'sync'
     }
     // A bare sample source already produces sound in Strudel; the silent sampler
     // settings make that implicit audio boundary explicit in the rack.
@@ -1042,12 +1118,59 @@ function project(
       wire(voice.output, bus, `in${channel}`)
       const gain = gains.get(voice.scope.descriptor.id)
       if (gain) {
-        bus.values[`ch${channel}`] = gain.value
-        const call = voice.scope.calls[gain.index]
-        const arg = call?.args[0]
-        bind(bus, voice.scope, [gain.index], literalControls(`ch${channel}`, arg), {
-          role: 'mixer',
-        })
+        const arg = gain.call.args[0]
+        const scalarGain = scalar(arg)
+        if (typeof scalarGain === 'number') {
+          bus.values[`ch${channel}`] = scalarGain
+          bind(bus, voice.scope, [gain.index], literalControls(`ch${channel}`, arg), {
+            role: 'mixer',
+          })
+        } else if (
+          arg &&
+          arg.type !== 'SpreadElement' &&
+          lfo(arg, bus, `ch${channel}`, voice.scope, gain.index)
+        ) {
+          const binding = bindings.find(
+            (binding) =>
+              binding.module === bus?.id &&
+              binding.scope === voice.scope.descriptor.id &&
+              binding.role === 'module',
+          )
+          if (binding) binding.role = 'mixer'
+        } else {
+          // Preserve an unrepresentable folded gain as a final CODE setting.
+          const opaque = code(
+            voice.scope,
+            [gain.index],
+            source.slice(gain.call.start, gain.call.end),
+            voice.output,
+          )
+          const cable = patch.cables.find(
+            (cable) => cable.to.module === bus?.id && cable.to.jack === `in${channel}`,
+          )
+          if (cable) cable.from = { module: opaque.module.id, jack: opaque.jack }
+        }
+      }
+      const channels = outputChannels.get(voice.scope.descriptor.id)
+      if (channels) {
+        bus.values[`channels${channel}`] = channels.value
+        bind(
+          bus,
+          voice.scope,
+          [channels.index],
+          literalControls(`channels${channel}`, voice.scope.calls[channels.index]?.args[0]),
+          { role: 'mixer' },
+        )
+      }
+      const label = voice.scope.label ?? '$'
+      const mute = label.startsWith('_') || label.endsWith('_')
+      const unmuted = label.replace(/^_/, '').replace(/_$/, '')
+      const solo = unmuted.length > 1 && unmuted.startsWith('S')
+      const name = (solo ? unmuted.slice(1) : unmuted).replaceAll('$', '')
+      if (label !== '$') {
+        bus.values[`mute${channel}`] = mute ? 'on' : 'off'
+        bus.values[`solo${channel}`] = solo ? 'on' : 'off'
+        bus.values[`name${channel}`] = name
       }
     }
   }
@@ -1374,6 +1497,13 @@ function restore(
       const before = `ch${cable.to.jack.slice(2)}`
       const after = `ch${jack.slice(2)}`
       values[after] = module.values[before] ?? 1
+      for (const prefix of ['mute', 'solo', 'name', 'channels']) {
+        const oldId = `${prefix}${cable.to.jack.slice(2)}`
+        const newId = `${prefix}${jack.slice(2)}`
+        const control = getModuleSpec('mix').controls.find((control) => control.id === oldId)
+        if (control) values[newId] = module.values[oldId] ?? control.default
+        controls.set(oldId, newId)
+      }
       controls.set(before, after)
       cable.to.jack = jack
     })

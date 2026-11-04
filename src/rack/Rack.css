@@ -226,6 +226,8 @@
   color: #bfe4be;
 }
 .module-controls {
+  overflow-y: auto;
+  scrollbar-width: thin;
   flex: 1;
   min-height: 0;
   padding: 4px 5px;
