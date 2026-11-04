@@ -120,3 +120,12 @@ only proven owned setup statements. Probes ignore that same owned setup without
 executing registration; source-owned/computed samples still refuse. Tests
 separately retain cartridge identity, exact credits and prefix events. Final
 local and hosted results are recorded in the PR.
+
+After #136 landed, a further rebase onto `b51fcf9` retained GATES, SWITCH, AUX,
+DUCK, audio-mod cable styling and the routing allocator. GATES prefix events
+already matched; the new SWITCH regression first failed because its normal
+REPL string receiver has no native JavaScript `pick` method. Prefix generation
+now constructs that receiver with the pinned `mini` parser explicitly, retaining
+normal file bytes. Independent tests and browser queries check 20 GATES onsets
+and four selected SWITCH pitches before sound selection. The complete routing
+browser driver was also run to verify the inherited actual-audio behavior.

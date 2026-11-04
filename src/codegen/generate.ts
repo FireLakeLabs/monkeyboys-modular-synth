@@ -591,7 +591,8 @@ export function generateDocument(
         const steps = value(node, 'steps')
         if (!isSteps(steps)) throw new Error('Invalid SWITCH selection')
         const selection = typeof steps === 'string' ? steps : `<${steps.join(' ')}>`
-        let expression = append(blank(), `${quote(selection)}.pick([`, node)
+        const receiver = prefix ? `mini(${quote(selection)})` : quote(selection)
+        let expression = append(blank(), `${receiver}.pick([`, node)
         for (let i = 1; i <= 4; i++) {
           const cable = node.inputs.get(`in${i}`)
           const arms = cable ? emit(requireNode(nodes, cable.from.module)) : []

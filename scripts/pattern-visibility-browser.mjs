@@ -78,9 +78,20 @@ try {
     const fractional = read('$: note("c3 e3").fast(2/3).rev().s("sine")')
     const fractionalRev = fractional.patch.modules.find((m) => m.type === 'rev')
     const fractionalCable = fractional.patch.cables.find((c) => c.from.module === fractionalRev.id)
+    const { routingFixture } = await import('/src/testing/routingCases.ts')
+    const { generate } = await import('/src/codegen/generate.ts')
+    const routes = {}
+    for (const kind of ['gates', 'switch']) {
+      const routed = read(generate(routingFixture(kind)))
+      const type = kind === 'gates' ? 'seq' : 'switch'
+      const module = routed.patch.modules.find((m) => m.type === type)
+      const routedCable = routed.patch.cables.find((c) => c.from.module === module.id)
+      routes[kind] = await engine.probe(routed, routedCable.id)
+    }
     return {
       result,
       fractional: await engine.probe(fractional, fractionalCable.id, 1000),
+      routes,
       cable: cable.id,
       contexts: window.audioContexts,
     }
@@ -103,6 +114,21 @@ try {
     ],
   )
   pass('Fractional fast(2/3) prefix retains exact event values and times at cycle 1000')
+  assert.equal(prefix.routes.gates.kind, 'events')
+  assert.equal(prefix.routes.gates.events.length, 20)
+  assert.deepEqual(
+    prefix.routes.gates.events
+      .filter((e) => e.begin < 1)
+      .map((e) => e.begin)
+      .sort((a, b) => a - b),
+    [0, 0.25, 0.375, 0.625, 0.875],
+  )
+  assert.equal(prefix.routes.switch.kind, 'events')
+  assert.deepEqual(
+    prefix.routes.switch.events.map((e) => e.value),
+    [{ note: 'c3' }, { note: 'c3' }, { note: 'd3' }, { note: 'e3' }],
+  )
+  pass('GATES and SWITCH multi-input probes retain expected prefixes without audio')
   await page.getByRole('button', { name: 'All cables', exact: true }).click()
   const path = page.locator('.cable.signal-pattern path:not(.cable-shadow)').first()
   const point = await path.evaluate((path) => {

@@ -162,3 +162,39 @@ it('queries readable prefixes with proven cartridge setup without executing samp
   expect(runtime['evaluate']).not.toHaveBeenCalled()
   expect(runtime['initAudio']).not.toHaveBeenCalled()
 })
+
+it.each(['gates', 'switch'] as const)(
+  'probes the readable %s multi-input prefix before its sound selector',
+  async (kind) => {
+    const { routingFixture } = await import('../testing/routingCases')
+    const document = read(generate(routingFixture(kind)))
+    const type = kind === 'gates' ? 'seq' : 'switch'
+    const module = document.patch.modules.find((m) => m.type === type)
+    const cable = document.patch.cables.find((c) => c.from.module === module?.id)
+    if (!cable) throw new Error('Missing routing prefix')
+    const result = await probe(document, cable.id)
+    expect(result.kind).toBe('events')
+    if (result.kind !== 'events') throw new Error('No routing events')
+    if (kind === 'gates') {
+      expect(result.events).toHaveLength(20)
+      const first = result.events
+        .filter((event) => event.begin < 1)
+        .sort((a, b) => a.begin - b.begin)
+      expect(first.map((event) => event.begin)).toEqual([0, 0.25, 0.375, 0.625, 0.875])
+      expect(first.map((event) => event.value)).toEqual([
+        { note: 'c2' },
+        { note: 'c2' },
+        { note: 'eb2' },
+        { note: 'eb2' },
+        { note: 'g2' },
+      ])
+    } else {
+      expect(result.events.map((event) => event.value)).toEqual([
+        { note: 'c3' },
+        { note: 'c3' },
+        { note: 'd3' },
+        { note: 'e3' },
+      ])
+    }
+  },
+)
