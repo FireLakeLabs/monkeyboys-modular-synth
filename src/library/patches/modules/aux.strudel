@@ -1,0 +1,384 @@
+setcpm(120/4)
+
+$: s("bus").n(1)
+  .lpf(900)
+  .lpq(1)
+  .postgain(0.15)
+  .orbit(1)
+
+$: note("c3*4")
+  .s("sine")
+  .bus(1)
+  .dry(0).delay(0).room(0)
+  .orbit(2)
+
+$: note("e3*4")
+  .s("sine")
+  .bus(1)
+  .dry(0).delay(0).room(0)
+  .orbit(3)
+
+// ── @monkeyboy rack v1 ──
+// {
+//   "version": 1,
+//   "scopes": [
+//     {
+//       "id": "scope1",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"setcpm\"},\"arguments\":[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":120},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "setcpm",
+//           "arguments": "[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":120},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}]"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "scope2",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"s\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"bus\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"bus\"}]"
+//         },
+//         {
+//           "name": "n",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         },
+//         {
+//           "name": "lpf",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":900}]"
+//         },
+//         {
+//           "name": "lpq",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         },
+//         {
+//           "name": "postgain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.15}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 5,
+//         "orbit": 1
+//       }
+//     },
+//     {
+//       "id": "scope3",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"c3*4\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"c3*4\"}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"sine\"}]"
+//         },
+//         {
+//           "name": "bus",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         },
+//         {
+//           "name": "dry",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "delay",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "room",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":2}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 6,
+//         "orbit": 2
+//       }
+//     },
+//     {
+//       "id": "scope4",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"e3*4\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"e3*4\"}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"sine\"}]"
+//         },
+//         {
+//           "name": "bus",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         },
+//         {
+//           "name": "dry",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "delay",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "room",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":3}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 6,
+//         "orbit": 3
+//       }
+//     }
+//   ],
+//   "modules": [
+//     {
+//       "id": "seq1",
+//       "type": "seq",
+//       "row": 0,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "c3*4"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc1",
+//       "type": "osc",
+//       "row": 0,
+//       "hp": 10,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "sine"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "seq2",
+//       "type": "seq",
+//       "row": 0,
+//       "hp": 19,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "e3*4"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc2",
+//       "type": "osc",
+//       "row": 0,
+//       "hp": 29,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "sine"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "aux1",
+//       "type": "aux",
+//       "row": 0,
+//       "hp": 38,
+//       "look": "instrument",
+//       "values": {},
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             0,
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vcf1",
+//       "type": "vcf",
+//       "row": 0,
+//       "hp": 50,
+//       "look": "instrument",
+//       "values": {
+//         "cutoff": 900
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             2
+//           ],
+//           "role": "module"
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             3
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "mix1",
+//       "type": "mix",
+//       "row": 1,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "ch1": 0.15,
+//         "ch2": 0.1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             4
+//           ],
+//           "role": "mixer"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "out1",
+//       "type": "out",
+//       "look": "instrument",
+//       "values": {},
+//       "bindings": [
+//         {
+//           "scope": "scope1",
+//           "calls": [
+//             0
+//           ],
+//           "role": "tempo"
+//         }
+//       ]
+//     }
+//   ],
+//   "cables": [
+//     {
+//       "id": "c1",
+//       "from": {
+//         "module": "seq1",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "osc1",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "c2",
+//       "from": {
+//         "module": "seq2",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "osc2",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "c3",
+//       "from": {
+//         "module": "osc1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "aux1",
+//         "jack": "send1"
+//       }
+//     },
+//     {
+//       "id": "c4",
+//       "from": {
+//         "module": "osc2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "aux1",
+//         "jack": "send2"
+//       }
+//     },
+//     {
+//       "id": "c5",
+//       "from": {
+//         "module": "aux1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vcf1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "c6",
+//       "from": {
+//         "module": "vcf1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "mix1",
+//         "jack": "in1"
+//       }
+//     },
+//     {
+//       "id": "c7",
+//       "from": {
+//         "module": "mix1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "out1",
+//         "jack": "in"
+//       }
+//     }
+//   ],
+//   "names": {},
+//   "railHp": 64
+// }

@@ -688,6 +688,28 @@ function project(
     const initial = calls[0]
     if (
       !upstream &&
+      initial?.name === 'pick' &&
+      initial.args.length === 1 &&
+      typeof scalar(root) === 'string' &&
+      initial.args[0]?.type === 'ArrayExpression' &&
+      initial.args[0].elements.length === 4
+    ) {
+      const inputs = initial.args[0].elements.map((e) =>
+        e?.type === 'Identifier' ? (e.name === 'silence' ? null : resolve(e.name)) : undefined,
+      )
+      if (inputs.every((e) => e !== undefined)) {
+        const module = add('switch', { steps: String(scalar(root)) })
+        inputs.forEach((e, i) => {
+          if (e) wire(e, module, `in${i + 1}`)
+        })
+        bind(module, scope, [0], literalControls('steps', root))
+        upstream = output(module)
+        group = module
+        start = 1
+      }
+    }
+    if (
+      !upstream &&
       initial?.name === 'freq' &&
       initial.args.length === 1 &&
       calls[1]?.name === 's' &&
@@ -769,6 +791,20 @@ function project(
         upstream = code(scope, opaque.indices, opaque.text, upstream)
         group = undefined
         index = opaque.indices.at(-1) ?? index
+        continue
+      }
+      if (
+        call.name === 'struct' &&
+        call.args.length === 1 &&
+        group?.type === 'seq' &&
+        upstream.module === group &&
+        typeof scalar(call.args[0]) === 'string' &&
+        !patch.cables.some((c) => c.to.module === group?.id && c.to.jack === 'gate')
+      ) {
+        const gates = add('gates', { steps: String(scalar(call.args[0])) })
+        wire(output(gates), group, 'gate')
+        literal(gates, 'steps', call, scope, index)
+        group = undefined // later fast/velocity calls act after the gate rhythm
         continue
       }
       if (call.name === 'FX' && call.args.length > 0) {
@@ -1066,7 +1102,8 @@ function project(
       let id: string | undefined
       let values: Record<string, ControlValue> = {}
       let merge = false
-      if (group?.type === 'seq' && call.name === 'fast') {
+      // RATE is emitted before ACCENT. A later fast() must keep its position.
+      if (group?.type === 'seq' && call.name === 'fast' && !Object.hasOwn(group.values, 'accent')) {
         const value = scalar(call.args[0])
         const rate = typeof value === 'number' ? value : undefined
         if (
@@ -1692,7 +1729,15 @@ function project(
     if (
       patch.cables.filter(
         (cable) => cable.from.module === signal.module.id && cable.from.jack === signal.jack,
-      ).length >= (Object.values(saved?.names ?? {}).includes(name) ? 1 : 2)
+      ).length >=
+      (Object.values(saved?.names ?? {}).includes(name) ||
+      patch.cables.some(
+        (c) =>
+          c.from.module === signal.module.id &&
+          patch.modules.find((m) => m.id === c.to.module)?.type === 'switch',
+      )
+        ? 1
+        : 2)
     )
       patch.names[`${signal.module.id}:${signal.jack}`] = name
   }

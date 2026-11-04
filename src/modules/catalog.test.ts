@@ -30,6 +30,10 @@ describe('module catalog', () => {
     expect(CATALOG.map((m) => m.id).sort()).toEqual(
       [
         ...V1_MODULES,
+        'gates',
+        'switch',
+        'aux',
+        'duck',
         'noise',
         'harmonic',
         'fmop',

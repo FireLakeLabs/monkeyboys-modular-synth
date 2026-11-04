@@ -1,6 +1,7 @@
 import { packSetup } from '../samples/packs'
 import { parse, tokenizer } from 'acorn'
 import { planEffects } from './effects'
+import { routingPlan } from './routing'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { callMethod, tupleControls, patternNumber, controlEnabled } from '../modules/bindings'
 import { loopMethod, loopControls } from '../modules/functions'
@@ -46,6 +47,7 @@ function product(factors: readonly string[]): string {
 }
 interface CodeExpression extends LayoutExpression {
   inline: boolean
+  nodes: string[]
 }
 
 const blank = (inline = false): CodeExpression => ({
@@ -54,6 +56,7 @@ const blank = (inline = false): CodeExpression => ({
   sourceRouting: false,
   mixers: [],
   inline,
+  nodes: [],
 })
 
 function append(
@@ -69,6 +72,7 @@ function append(
   return {
     text: expression.text + prefix + text,
     inline: expression.inline,
+    nodes: node ? [...new Set([...expression.nodes, node.module.id])] : expression.nodes,
     sourceRouting: expression.sourceRouting,
     mixers: expression.mixers,
     owners: [
@@ -117,6 +121,7 @@ export function generateDocument(
 ): GeneratedDocument {
   const nodes = graph(patch)
   const { inline: inlineEffects } = planEffects(nodes)
+  const routing = routingPlan(nodes, patch)
   const functions: GeneratedDocument['functions'] = {}
   const cartridges = packSetup(patch.cartridges ?? [])
   const prelude = patch.prelude ?? ''
@@ -144,7 +149,16 @@ export function generateDocument(
   bindScope(layout, tempoExpression)
 
   // Reserving runtime names prevents a const from shadowing Strudel's functions/signals.
-  const used = new Set([...CATALOG.flatMap((spec) => spec.strudel), 'rev', 'press', 'orbit', 'FX'])
+  const used = new Set([
+    ...CATALOG.filter((spec) => !['aux', 'duck', 'gates', 'switch'].includes(spec.id)).flatMap(
+      (spec) => spec.strudel,
+    ),
+    'rev',
+    'press',
+    'orbit',
+    'FX',
+  ])
+  if (patch.modules.some((m) => m.type === 'switch')) used.add('silence')
   for (const token of tokenizer(prelude, { ecmaVersion: 'latest' }))
     if (token.type.label === 'name') used.add(prelude.slice(token.start, token.end))
   for (const [key, name] of Object.entries(patch.names)) {
@@ -177,7 +191,9 @@ export function generateDocument(
   }
 
   function input(node: Node): Node | undefined {
-    const jack = node.spec.jacks.find((item) => item.direction === 'in' && !item.cvTarget)
+    const jack = node.spec.jacks.find(
+      (item) => item.direction === 'in' && !item.cvTarget && !['gate', 'side'].includes(item.id),
+    )
     const cable = jack ? node.inputs.get(jack.id) : undefined
     return cable ? requireNode(nodes, cable.from.module) : undefined
   }
@@ -217,6 +233,9 @@ export function generateDocument(
     return (
       output !== undefined &&
       ((node.outputs.get(output.id)?.length ?? 0) >= 2 ||
+        (node.outputs.get(output.id) ?? []).some(
+          (c) => requireNode(nodes, c.to.module).spec.id === 'switch',
+        ) ||
         patch.names[`${node.module.id}:${output.id}`] !== undefined)
     )
   }
@@ -231,6 +250,7 @@ export function generateDocument(
     const source = cable ? requireNode(nodes, cable.from.module) : undefined
     if (
       !source ||
+      (jack && routing.audioCV.has(`${node.module.id}:${jack.id}`)) ||
       source.spec.id === 'env' ||
       (source.spec.id === 'lfo' && string(source, 'mode') === 'SMOOTH')
     )
@@ -293,6 +313,11 @@ export function generateDocument(
     const cable = jack && node.inputs.get(jack.id)
     const source = cable && requireNode(nodes, cable.from.module)
     if (!source || !jack) return expression
+    const bus = routing.audioCV.get(`${node.module.id}:${jack.id}`)
+    if (bus !== undefined) {
+      const method = item.modulation.pitch ? 'freq' : callMethod(binding, (id) => string(node, id))
+      return append(expression, `.bmod({ b: ${bus}, c: ${quote(method)} })`, node)
+    }
     const target = { module: node.module.id, jack: jack.id, control: id }
     const env = source.spec.id === 'env' ? source : undefined
     const smooth = source.spec.id === 'lfo' && string(source, 'mode') === 'SMOOTH'
@@ -386,6 +411,8 @@ export function generateDocument(
       expression.sourceRouting ||= syntax(expression.text).hasOrbit
       return expression
     }
+    if (node.spec.id === 'duck')
+      return { ...expression, nodes: [...expression.nodes, node.module.id] }
     const s = (id: string) => string(node, id)
     const method = loopMethod(node.spec, node.module)
     if (method) {
@@ -543,6 +570,39 @@ export function generateDocument(
       return [expression]
     }
     switch (node.spec.id) {
+      case 'gates': {
+        const steps = value(node, 'steps')
+        if (!isSteps(steps)) throw new Error('Invalid GATES steps')
+        const text = typeof steps === 'string' ? steps : steps.join(' ')
+        const literal = quote(text).slice(1, -1).replaceAll("'", "\\'")
+        return [append(blank(true), `mini('${literal}')`, node)]
+      }
+      case 'aux': {
+        const bus = routing.buses.get(`aux:${node.module.id}`)
+        return bus === undefined ? [] : [append(blank(), `s("bus").n(${bus})`, node)]
+      }
+      case 'switch': {
+        const steps = value(node, 'steps')
+        if (!isSteps(steps)) throw new Error('Invalid SWITCH selection')
+        const selection = typeof steps === 'string' ? steps : `<${steps.join(' ')}>`
+        let expression = append(blank(), `${quote(selection)}.pick([`, node)
+        for (let i = 1; i <= 4; i++) {
+          const cable = node.inputs.get(`in${i}`)
+          const arms = cable ? emit(requireNode(nodes, cable.from.module)) : []
+          if (arms.length > 1 || arms.some((a) => a.mixers.length))
+            throw new Error('SWITCH inputs require a single pattern')
+          const arm = arms[0] ?? { ...blank(), text: 'silence' }
+          const offset = expression.text.length + (i > 1 ? 2 : 0)
+          expression.text += `${i > 1 ? ', ' : ''}${arm.text}`
+          expression.nodes.push(...arm.nodes)
+          expression.owners.push(
+            ...arm.owners.map((o) => ({ ...o, start: offset + o.start, end: offset + o.end })),
+          )
+          expression.sourceRouting ||= arm.sourceRouting
+        }
+        expression.text += '])'
+        return [expression]
+      }
       case 'env':
         throw new Error('ENV has no standalone expression')
       case 'cvseq': {
@@ -608,6 +668,18 @@ export function generateDocument(
         )
         if (!omitted(node, 'rate'))
           expression = append(expression, `.fast(${numeric(number(node, 'rate'))})`, node)
+        const gate = node.inputs.get('gate')
+        if (gate) {
+          const gates = requireNode(nodes, gate.from.module)
+          const steps = value(gates, 'steps')
+          if (!isSteps(steps)) throw new Error('Invalid GATES steps')
+          const pattern = namedOutput(gates) ? emit(gates)[0]?.text : undefined
+          expression = append(
+            expression,
+            `.struct(${pattern ?? quote(typeof steps === 'string' ? steps : steps.join(' '))})`,
+            gates,
+          )
+        }
         return [transform(node, expression)]
       }
       case 'drums': {
@@ -690,13 +762,61 @@ export function generateDocument(
       text: name,
       inline: definition.expressions[i]?.inline ?? false,
       owners: [],
+      nodes: definition.expressions[i]?.nodes ?? [],
       sourceRouting: definition.expressions[i]?.sourceRouting ?? false,
       mixers: definition.expressions[i]?.mixers ?? [],
     }))
   }
 
   const source = out ? input(out) : undefined
-  const voices = source ? emit(source) : []
+  const audible = source ? emit(source) : []
+  const sends = routing.sends.flatMap(({ node, bus }) =>
+    emit(node).map((expression) =>
+      append(append(expression, `.bus(${bus})`), '.dry(0).delay(0).room(0)'),
+    ),
+  )
+  const sides = routing.ducks.map((duck) => {
+    const side = duck.inputs.get('side')
+    return { duck, expressions: side ? emit(requireNode(nodes, side.from.module)) : [] }
+  })
+  // Allocate final audible orbits first; DUCK references the actual destination voice,
+  // including nested mixer fan-out. Private send/trigger voices follow those slots.
+  const reserved = new Set(
+    [
+      ...audible,
+      ...sends,
+      ...sides.flatMap((s) => s.expressions),
+      ...[...definitions.values()].flatMap((d) => d.expressions),
+    ].flatMap((e) => syntax(e.text).orbitNumbers),
+  )
+  let nextAllocated = 1
+  const orbits = audible.map((e) => {
+    if (e.sourceRouting || syntax(e.text).hasOrbit) return undefined
+    while (reserved.has(nextAllocated)) nextAllocated++
+    return nextAllocated++
+  })
+  const triggers = sides.flatMap(({ duck, expressions }) => {
+    const targets = audible.flatMap((e, i) => (e.nodes.includes(duck.module.id) ? [orbits[i]] : []))
+    if (targets.some((n) => n === undefined))
+      throw new Error('DUCK cannot target source-owned orbit routing')
+    const targetOrbits = targets.filter((n): n is number => n !== undefined)
+    if (!targetOrbits.length) {
+      if (sends.some((e) => e.nodes.includes(duck.module.id)))
+        throw new Error('DUCK requires an audible channel; AUX/CV sends tap before orbit ducking')
+      return []
+    }
+    return expressions.map((e) =>
+      append(
+        append(
+          e,
+          `.duck(${targetOrbits.length === 1 ? targetOrbits[0] : quote(targetOrbits.join(':'))}).duckattack(${numeric(number(duck, 'attack'))}).duckdepth(${numeric(number(duck, 'depth'))})`,
+          duck,
+        ),
+        '.dry(0).delay(0).room(0)',
+      ),
+    )
+  })
+  const voices = [...audible, ...sends, ...triggers]
   const lines: string[] = cartridges ? [cartridges.trimEnd()] : []
   if (prelude) lines.push(`${prelude}\n`)
   const ranges: GeneratedDocument['ranges'] = {}
@@ -746,7 +866,11 @@ export function generateDocument(
     labels.add(label)
     return label
   }
-  voices.forEach((original) => {
+  const soloing = voices.some(
+    (voice) =>
+      !voice.mixers.some((mixer) => mixer.mute) && voice.mixers.some((mixer) => mixer.solo),
+  )
+  voices.forEach((original, index) => {
     const factors = original.mixers.map((mixer) => mixer.gain)
     const gain = product(factors)
     let voice = original
@@ -806,7 +930,8 @@ export function generateDocument(
     const expression = orbit === undefined ? voice : append(voice, `.orbit(${orbit})`)
     bindScope(layout, expression, undefined, orbit)
     const mute = original.mixers.some((mixer) => mixer.mute)
-    const solo = original.mixers.some((mixer) => mixer.solo)
+    // Private pre-mixer dependencies must survive the REPL's global solo filter.
+    const solo = original.mixers.some((mixer) => mixer.solo) || (index >= audible.length && soloing)
     const name = original.mixers.findLast((mixer) => mixer.name)?.name
     const label = `${mute ? '_' : ''}${solo ? 'S' : ''}${name ? allocateLabel(name) : '$'}`
     write(expression, `${label}: `)

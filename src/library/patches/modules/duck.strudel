@@ -1,0 +1,354 @@
+setcpm(120/4)
+
+const trigger = note("c1*4")
+  .s("sine")
+
+$: trigger
+  .postgain(0.15)
+  .orbit(1)
+
+$: note("c3")
+  .s("sine")
+  .postgain(0.1)
+  .orbit(2)
+
+$: trigger
+  .duck(2).duckattack(0.2).duckdepth(0.8)
+  .dry(0).delay(0).room(0)
+  .orbit(3)
+
+// ── @monkeyboy rack v1 ──
+// {
+//   "version": 1,
+//   "scopes": [
+//     {
+//       "id": "scope1",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"setcpm\"},\"arguments\":[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":120},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "setcpm",
+//           "arguments": "[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":120},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}]"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "scope2",
+//       "anchor": "trigger",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"c1*4\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"c1*4\"}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"sine\"}]"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "scope3",
+//       "root": "{\"type\":\"Identifier\",\"name\":\"trigger\"}",
+//       "calls": [
+//         {
+//           "name": "postgain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.15}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 1,
+//         "orbit": 1
+//       }
+//     },
+//     {
+//       "id": "scope4",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"c3\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"c3\"}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"sine\"}]"
+//         },
+//         {
+//           "name": "postgain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.1}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":2}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 3,
+//         "orbit": 2
+//       }
+//     },
+//     {
+//       "id": "scope5",
+//       "root": "{\"type\":\"Identifier\",\"name\":\"trigger\"}",
+//       "calls": [
+//         {
+//           "name": "duck",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":2}]"
+//         },
+//         {
+//           "name": "duckattack",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.2}]"
+//         },
+//         {
+//           "name": "duckdepth",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.8}]"
+//         },
+//         {
+//           "name": "dry",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "delay",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "room",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":3}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 6,
+//         "orbit": 3
+//       }
+//     }
+//   ],
+//   "modules": [
+//     {
+//       "id": "seq1",
+//       "type": "seq",
+//       "row": 0,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "c1*4"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc1",
+//       "type": "osc",
+//       "row": 0,
+//       "hp": 10,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "sine"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "seq2",
+//       "type": "seq",
+//       "row": 0,
+//       "hp": 19,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "c3"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc2",
+//       "type": "osc",
+//       "row": 0,
+//       "hp": 29,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "sine"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "duck1",
+//       "type": "duck",
+//       "row": 0,
+//       "hp": 38,
+//       "look": "instrument",
+//       "values": {},
+//       "bindings": [
+//         {
+//           "scope": "scope5",
+//           "calls": [
+//             0,
+//             1,
+//             2
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "mix1",
+//       "type": "mix",
+//       "row": 0,
+//       "hp": 50,
+//       "look": "instrument",
+//       "values": {
+//         "ch1": 0.15,
+//         "ch2": 0.1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             0
+//           ],
+//           "role": "mixer"
+//         },
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             2
+//           ],
+//           "role": "mixer"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "out1",
+//       "type": "out",
+//       "look": "instrument",
+//       "values": {},
+//       "bindings": [
+//         {
+//           "scope": "scope1",
+//           "calls": [
+//             0
+//           ],
+//           "role": "tempo"
+//         }
+//       ]
+//     }
+//   ],
+//   "cables": [
+//     {
+//       "id": "c1",
+//       "from": {
+//         "module": "seq1",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "osc1",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "c2",
+//       "from": {
+//         "module": "seq2",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "osc2",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "c3",
+//       "from": {
+//         "module": "osc2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "duck1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "c4",
+//       "from": {
+//         "module": "osc1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "duck1",
+//         "jack": "side"
+//       }
+//     },
+//     {
+//       "id": "c5",
+//       "from": {
+//         "module": "osc1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "mix1",
+//         "jack": "in1"
+//       }
+//     },
+//     {
+//       "id": "c6",
+//       "from": {
+//         "module": "duck1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "mix1",
+//         "jack": "in2"
+//       }
+//     },
+//     {
+//       "id": "c7",
+//       "from": {
+//         "module": "mix1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "out1",
+//         "jack": "in"
+//       }
+//     }
+//   ],
+//   "names": {
+//     "osc1:out": "trigger"
+//   },
+//   "railHp": 64
+// }

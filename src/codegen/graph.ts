@@ -91,7 +91,7 @@ function validValue(item: Control, candidate: ControlValue, node: Node): boolean
     case 'steps':
       return (
         isSteps(candidate) &&
-        (node.spec.modSource !== 'sequence' ||
+        ((node.spec.modSource !== 'sequence' && node.spec.id !== 'switch') ||
           numericNotation(typeof candidate === 'string' ? candidate : candidate.join(' '))) &&
         (typeof candidate === 'string' ||
           (candidate.length > 0 && candidate.length <= item.maxSteps))
@@ -223,6 +223,18 @@ export function graph(patch: Patch): Map<string, Node> {
     to.inputs.set(input.id, cable)
     from.outputs.set(output.id, [...(from.outputs.get(output.id) ?? []), cable])
   }
+  for (const node of nodes.values()) {
+    const gate = node.inputs.get('gate')
+    if (node.spec.id === 'seq' && gate && requireNode(nodes, gate.from.module).spec.id !== 'gates')
+      throw new Error('SEQ GATE requires GATES')
+    if (
+      node.spec.id === 'gates' &&
+      [...node.outputs.values()]
+        .flat()
+        .some((c) => requireNode(nodes, c.to.module).spec.id !== 'seq' || c.to.jack !== 'gate')
+    )
+      throw new Error('GATES connects to SEQ GATE')
+  }
   const loops = functionMembers(nodes)
   for (const key of Object.keys(patch.names)) {
     const [id, jack] = key.split(':')
@@ -242,18 +254,13 @@ export function graph(patch: Patch): Map<string, Node> {
     visited.add(node.module.id)
   }
   for (const node of nodes.values()) visit(node)
-  function signal(node: Node, jack = 'out'): JackSignal {
-    if (jack === 'send' || loops.has(node.module.id)) return 'function'
-    const output = node.spec.jacks.find((jack) => jack.direction === 'out')
-    if (output?.signal !== 'any') return output?.signal ?? 'any'
-    const input = node.inputs.get('in')
-    return input ? signal(requireNode(nodes, input.from.module), input.from.jack) : 'any'
-  }
+  const signal = (node: Node, jack = 'out') => outputSignal(nodes, node, jack, loops)
   for (const node of nodes.values()) {
     for (const [id, cable] of node.inputs) {
       const input = node.spec.jacks.find((jack) => jack.id === id)
       const actual = signal(requireNode(nodes, cable.from.module), cable.from.jack)
       if (actual === 'function' && id === 'in' && loops.has(node.module.id)) continue
+      if (actual === 'audio' && input?.cvTarget) continue
       if (actual !== 'any' && input?.signal !== 'any' && input?.signal !== actual)
         throw new Error(`Incompatible cable signal: ${cable.id}`)
     }
@@ -331,4 +338,22 @@ export function requireNode(nodes: Map<string, Node>, id: string): Node {
   const node = nodes.get(id)
   if (!node) throw new Error(`Unknown module: ${id}`)
   return node
+}
+
+/** Effective output signal, including passthrough chains and function-loop membership. */
+export function outputSignal(
+  nodes: Map<string, Node>,
+  node: Node,
+  jack = 'out',
+  loops = functionMembers(nodes),
+): JackSignal {
+  if (jack === 'send' || loops.has(node.module.id)) return 'function'
+  const output =
+    node.spec.jacks.find((j) => j.id === jack && j.direction === 'out') ??
+    node.spec.jacks.find((j) => j.direction === 'out')
+  if (output?.signal !== 'any') return output?.signal ?? 'any'
+  const input = node.inputs.get('in')
+  return input
+    ? outputSignal(nodes, requireNode(nodes, input.from.module), input.from.jack, loops)
+    : 'any'
 }

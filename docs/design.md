@@ -345,3 +345,13 @@ Seating takes a GitHub shortcut or manifest URL through a labeled form. The bay
 shares the code/rack draft lock and accepted-document history. It never changes
 module widths or cable geometry. Short panes retain a usable minimum case height
 and scroll the rack pane. See the [source and engine contract](cartridges.md).
+
+## Audio-mod cables (#136)
+
+An audio output entering CV uses an orange 7-px stroke with a blue 3-px dashed
+center (`3 7`), retaining both a double stroke and a dash rhythm in greyscale.
+The receiving CV jack has a `≋` center and announces “audio-mod”; cable hover
+and the Connections list name the same kind. The source output remains audio
+when it also feeds MIX. Live jack measurements and every existing look/visibility
+mode continue to own geometry and emphasis. GATES uses filled gate cells in the
+shared nested editor. See [observed routing proof](routing-verification.md).

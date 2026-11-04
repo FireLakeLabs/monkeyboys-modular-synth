@@ -421,3 +421,21 @@ literals. The [browser suite](../scripts/nested-steps-browser.mjs) exercises nat
 gestures, looks/zoom/geometry, nested activity and live WebAudio PCM; see
 [observations and limits](nested-step-editor-verification.md). Escaped literals
 retain whole text mode; touch and screen-reader behavior are not established.
+
+The #136 [routing matrix](../src/codegen/routing.test.ts) checks source, complete
+saved identity and real engine events independently; its playback regression
+also rejects a bus allocation change without structural reset. The separate
+[browser acceptance](routing-verification.md) checks actual bus object retention
+and replacement, audio-rate sidebands, DUCK gain, native gate editing and
+non-colour cable geometry. It reproduced a late AUX return cleanup error after
+reset. The same pinned postinstall patch now tolerates only that missing-edge
+`InvalidAccessError`, in source and both bundles, while preserving all #140
+context fixes and exact dependency hash checks. The unchanged real-browser
+sequence is the behavioral regression for this dependency exception.
+
+The S1/S2 routing review regressions additionally exercise actual REPL solo
+selection and DUCK before the first target onset, including reset/replay and
+output-pair retention. Both failed before their fixes. Private voices retain
+solo participation with silent dry/wet output; the pinned controller starts a
+missing target orbit's envelope and connects its output only when the target
+voice supplies its channel pair. Source and both bundles are hash-verified.

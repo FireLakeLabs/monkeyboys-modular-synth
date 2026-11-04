@@ -742,3 +742,26 @@ select:focus-visible {
   width: 1.1em;
   text-align: center;
 }
+
+/* Two-tone double stroke plus a visible dash rhythm survives greyscale. */
+.signal-audio-mod {
+  --signal: #f4a462;
+}
+.cable.signal-audio-mod path:not(.cable-shadow) {
+  stroke-width: 7;
+}
+.cable.signal-audio-mod .audio-mod-core {
+  stroke: #7db9f6;
+  stroke-width: 3 !important;
+  stroke-dasharray: 3 7;
+  pointer-events: none;
+}
+.jack.signal-audio-mod::after {
+  content: '≋';
+  inset: 0;
+  border: 0;
+  background: #12161a;
+  color: #f4f4f0;
+  font: bold 14px/16px sans-serif;
+  border-radius: 50%;
+}

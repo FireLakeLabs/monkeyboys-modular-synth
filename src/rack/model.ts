@@ -218,6 +218,8 @@ export function setValue(
 }
 
 export function sequenceText(module: PlacedModule, steps: readonly string[]): string {
+  if (module.type === 'gates') return steps.join(' ')
+  if (module.type === 'switch') return `<${steps.join(' ')}>`
   if (getModuleSpec(module.type).modSource === 'sequence') return `<${steps.join(' ')}>`
   const length =
     module.values.len ?? getModuleSpec('seq').controls.find((c) => c.id === 'len')?.default
@@ -298,6 +300,18 @@ export function cableSignal(
   return input ? cableSignal(patch, input.from, members) : 'any'
 }
 
+export function cableKind(
+  patch: Patch,
+  cable: Cable,
+  members?: ReadonlyMap<string, string>,
+): JackSignal | 'audio-mod' {
+  const target = patch.modules.find((m) => m.id === cable.to.module)
+  const cv =
+    target && getModuleSpec(target.type).jacks.find((j) => j.id === cable.to.jack)?.cvTarget
+  const signal = cableSignal(patch, cable.from, members)
+  return signal === 'audio' && cv ? 'audio-mod' : signal
+}
+
 function pathContains(
   patch: Patch,
   id: string,
@@ -320,9 +334,12 @@ function pathContains(
 export function cableWarnings(patch: Patch, cable: Cable): string[] {
   const warnings: string[] = []
   if (
-    cableSignal(patch, cable.from) === 'audio' &&
+    cableKind(patch, cable) === 'audio' &&
     patch.cables.filter(
-      (c) => c.from.module === cable.from.module && c.from.jack === cable.from.jack,
+      (c) =>
+        c.from.module === cable.from.module &&
+        c.from.jack === cable.from.jack &&
+        cableKind(patch, c) === 'audio',
     ).length > 1
   )
     warnings.push('Audio split plays each connected branch; levels add.')
@@ -364,7 +381,7 @@ export function effectNotes(patch: Patch): string[] {
 
 export type ConnectionAssessment =
   | { kind: 'blocked'; message: string }
-  | { kind: 'valid' | 'warning' | 'unresolved'; signal: JackSignal; message: string }
+  | { kind: 'valid' | 'warning' | 'unresolved'; signal: JackSignal | 'audio-mod'; message: string }
 
 /** Preview the whole proposed graph without touching committed state. */
 export function assessConnection(
@@ -377,7 +394,7 @@ export function assessConnection(
     const next = connect(patch, from, to, true, moving)
     const cable = next.cables.at(-1)
     if (!cable) throw new Error('Missing proposed cable')
-    const signal = cableSignal(next, from)
+    const signal = cableKind(next, cable)
     const opaque =
       pathContains(next, from.module, 'code', 'upstream') ||
       pathContains(next, to.module, 'code', 'downstream')

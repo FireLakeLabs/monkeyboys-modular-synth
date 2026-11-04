@@ -42,6 +42,13 @@ exports[`built-in patch library > exercise-attenuverter: preserves exact source 
 }
 `;
 
+exports[`built-in patch library > exercise-aux: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "c742b759ac8e755e3b3cda35a450548279d6f22660dff6270edfc76c0df9e16b",
+  "projection": "61ed6a809f5dfedb75f0cb56e7a2fb03451d853a91af2cac879c4365e2c99f28",
+}
+`;
+
 exports[`built-in patch library > exercise-chance: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "18c58b52d2bb6a9d257af3099228cab37f343b8b6a62c754659ce630f8256602",
@@ -112,6 +119,13 @@ exports[`built-in patch library > exercise-drums: preserves exact source and ind
 }
 `;
 
+exports[`built-in patch library > exercise-duck: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "afe63d6344ef53e7d641bb580057d603f8401cce7c65f35fa5ba98c4fd7d3cb7",
+  "projection": "451f78a59ed9fd2f4c072057c7c512fe2f4c9c53ab3a34ebacb08d05905fff6a",
+}
+`;
+
 exports[`built-in patch library > exercise-echo: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "18410a25f1ddd6ad18d6e014aee86c607fb870bad189065a6ca50146df8aae6e",
@@ -158,6 +172,13 @@ exports[`built-in patch library > exercise-formant: preserves exact source and i
 {
   "generated": "a62aef675f4fac3132ba7f844879f91c28cb35bb3d3e2f6db86fc84c5fd1dc4f",
   "projection": "51c04da4c36ecebc631d4a621f3735389c97584a8502b24f1cfab4a7b73dfc30",
+}
+`;
+
+exports[`built-in patch library > exercise-gates: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "8483cbf8d7623c9bb0040fd604c540d78dbd5c279be99182af5edbb1b14ce954",
+  "projection": "d78280a72aadfe17f65c10f2520282520feee8fe19888784a33470e9ce2f0998",
 }
 `;
 
@@ -333,6 +354,13 @@ exports[`built-in patch library > exercise-sometimes: preserves exact source and
 {
   "generated": "b1306fc4e2da6b02bb9e1aa9eec3ad645405aa262ec9bb2ff3891a399ae6ceed",
   "projection": "f2282fd5d0b64972a688f62be867ad485867f73c58f9a68b7517f90c1d12e7c9",
+}
+`;
+
+exports[`built-in patch library > exercise-switch: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "3bf9839d1612b14461a32b560b0223a98be040247d36c019c66c7dba6904dce5",
+  "projection": "7c7ed1ae2678971fb627fc9be79f0dbddf2df3c3009ec441a7cb4f73dabb1a91",
 }
 `;
 

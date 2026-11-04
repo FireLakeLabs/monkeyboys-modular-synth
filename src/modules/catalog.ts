@@ -79,7 +79,10 @@ export const SEQ: ModuleSpec = {
     },
     accent,
   ],
-  jacks: [{ id: 'note', label: 'NOTE', direction: 'out', signal: 'pattern' }],
+  jacks: [
+    { id: 'note', label: 'NOTE', direction: 'out', signal: 'pattern' },
+    { id: 'gate', label: 'GATE', direction: 'in', signal: 'pattern' },
+  ],
   strudel: ['note', 'n', 'fast'],
   orderSensitive: true,
 }
@@ -1862,9 +1865,117 @@ export const FUNCTION_MODULES: readonly ModuleSpec[] = [
   },
 ]
 
+/** Multi-input routing uses dedicated graph adapters rather than scalar call bindings. */
+export const GATES: ModuleSpec = {
+  id: 'gates',
+  name: 'GATES',
+  title: 'Gate sequencer',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 10,
+  paletteCall: '.struct("x ~ x x ~ x ~ x")',
+  controls: [
+    {
+      kind: 'steps',
+      id: 'steps',
+      label: 'GATES',
+      token: 'gate',
+      maxSteps: 64,
+      default: ['x', '~', 'x', 'x', '~', 'x', '~', 'x'],
+    },
+  ],
+  jacks: [{ id: 'out', label: 'GATE', direction: 'out', signal: 'pattern' }],
+  strudel: ['struct'],
+  orderSensitive: true,
+}
+export const SWITCH: ModuleSpec = {
+  id: 'switch',
+  name: 'SWITCH',
+  title: 'Cycle pattern switch',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 12,
+  paletteCall: '"<0 0 1 2>".pick([a, b, c, d])',
+  controls: [
+    {
+      kind: 'steps',
+      id: 'steps',
+      label: 'SELECT',
+      token: 'number',
+      maxSteps: 64,
+      default: ['0', '0', '1', '2'],
+    },
+  ],
+  jacks: [
+    ...[1, 2, 3, 4].map((n) => ({
+      id: `in${n}`,
+      label: String(n),
+      direction: 'in' as const,
+      signal: 'pattern' as const,
+    })),
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'pattern' },
+  ],
+  strudel: ['pick'],
+  orderSensitive: true,
+}
+export const AUX: ModuleSpec = {
+  id: 'aux',
+  name: 'AUX',
+  title: 'Shared send / return',
+  family: 'hardware',
+  category: 'util',
+  hp: 12,
+  paletteCall: '.bus(n) → s("bus").n(n)',
+  controls: [],
+  jacks: [
+    ...[1, 2, 3, 4].map((n) => ({
+      id: `send${n}`,
+      label: `SEND ${n}`,
+      direction: 'in' as const,
+      signal: 'audio' as const,
+    })),
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
+  ],
+  strudel: ['bus'],
+  orderSensitive: true,
+}
+export const DUCK: ModuleSpec = {
+  id: 'duck',
+  name: 'DUCK',
+  title: 'Sidechain ducking',
+  family: 'hardware',
+  category: 'util',
+  hp: 12,
+  paletteCall: '.duck(n).duckattack(.2).duckdepth(.8)',
+  controls: [
+    {
+      kind: 'knob',
+      id: 'attack',
+      label: 'ATTACK',
+      min: 0,
+      max: 4,
+      step: 0.01,
+      default: 0.2,
+      unit: 's',
+    },
+    { kind: 'knob', id: 'depth', label: 'DEPTH', min: 0, max: 1, step: 0.01, default: 0.8 },
+  ],
+  jacks: [
+    { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
+    { id: 'side', label: 'SIDE', direction: 'in', signal: 'audio' },
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
+  ],
+  strudel: ['duck', 'duckattack', 'duckdepth'],
+  orderSensitive: true,
+}
+
 /** Every shipped module, in library order. */
 export const CATALOG: readonly ModuleSpec[] = [
   SEQ,
+  GATES,
+  SWITCH,
+  AUX,
+  DUCK,
   DRUMS,
   QUANT,
   CLOCK,

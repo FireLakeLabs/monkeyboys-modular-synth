@@ -24,6 +24,7 @@ import {
   ROW_HEIGHT,
   setRailWidth,
   cableSignal,
+  cableKind,
   cableWarnings,
   effectNotes,
   removeRow,
@@ -474,7 +475,9 @@ export function Rack({
               const signal =
                 state && state.kind !== 'blocked'
                   ? state.signal
-                  : cableSignal(patch, incoming?.from ?? ref, loopInfo.members)
+                  : incoming
+                    ? cableKind(patch, incoming, loopInfo.members)
+                    : cableSignal(patch, ref, loopInfo.members)
               return (
                 <div key={jack.id} className={`jack-label jack-${jack.direction}`}>
                   <button
@@ -887,7 +890,7 @@ export function Rack({
               return a && b ? (
                 <g
                   key={c.id}
-                  className={`cable signal-${cableSignal(patch, c.from, loopInfo.members)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
+                  className={`cable signal-${cableKind(patch, c, loopInfo.members)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
                 >
                   <path d={curve(a, b)} className="cable-shadow" />
                   <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
@@ -900,16 +903,22 @@ export function Rack({
                   >
                     <title>
                       {keyOf(c.from)} → {keyOf(c.to)}
+                      {cableKind(patch, c, loopInfo.members) === 'audio-mod'
+                        ? ' · audio-mod ≋'
+                        : ''}
                       {functionLabel(c.from) ? ` · ${functionLabel(c.from)}` : ''}
                       {warning ? ` · △ ${warning}` : ''}
                     </title>
                   </path>
+                  {cableKind(patch, c, loopInfo.members) === 'audio-mod' && (
+                    <path d={curve(a, b)} className="audio-mod-core" />
+                  )}
                 </g>
               ) : null
             })}
             {wire && points[keyOf(wire.from)] && (pointer || target) && (
               <path
-                className={`provisional signal-${cableSignal(patch, wire.from, loopInfo.members)}`}
+                className={`provisional signal-${target ? cableKind(patch, { id: 'pending', from: wire.from, to: target }, loopInfo.members) : cableSignal(patch, wire.from, loopInfo.members)}`}
                 d={curve(
                   points[keyOf(wire.from)] ?? { x: 0, y: 0 },
                   (target && points[keyOf(target)]) || pointer || { x: 0, y: 0 },
@@ -1124,6 +1133,7 @@ export function Rack({
             >
               {keyOf(c.from)} → {keyOf(c.to)}
               {functionLabel(c.from) ? ' · function λ' : ''}
+              {cableKind(patch, c, loopInfo.members) === 'audio-mod' ? ' · audio-mod ≋' : ''}
             </button>
           ))}
         </details>

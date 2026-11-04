@@ -1,5 +1,5 @@
 import { effectRanks } from '../modules/effects'
-import { requireNode, type Node } from './graph'
+import { outputSignal, requireNode, type Node } from './graph'
 
 export function activeEffectRanks(node: Node) {
   return effectRanks(node.module, {
@@ -32,14 +32,27 @@ export function planEffects(nodes: Map<string, Node>) {
       if (upstream?.from.module === node.module.id)
         stagePaths(requireNode(nodes, returned.from.module))
     }
+    // Bus senders and sidechain/CV sources are independent voice paths. Return
+    // processing never moves into a sender's chain across that boundary.
+    for (const [id, cable] of node.inputs) {
+      const source = requireNode(nodes, cable.from.module)
+      if (
+        id === 'side' ||
+        (node.spec.jacks.find((j) => j.id === id)?.cvTarget &&
+          outputSignal(nodes, source, cable.from.jack) === 'audio')
+      )
+        stagePaths(source)
+    }
     const inputs = [...node.inputs].filter(
       ([id, cable]) =>
         id !== 'return' &&
+        id !== 'side' &&
         cable.from.jack !== 'send' &&
         !node.spec.jacks.find((j) => j.id === id)?.cvTarget,
     )
-    if (!inputs.length) paths.push(path)
-    for (const [, cable] of inputs) stagePaths(requireNode(nodes, cable.from.module), path)
+    if (!inputs.length || node.spec.id === 'aux') paths.push(path)
+    for (const [, cable] of inputs)
+      stagePaths(requireNode(nodes, cable.from.module), node.spec.id === 'aux' ? [] : path)
   }
   for (const node of nodes.values()) if (node.spec.id === 'out') stagePaths(node)
   const inline = new Set<string>()
