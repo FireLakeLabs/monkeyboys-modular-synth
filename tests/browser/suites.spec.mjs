@@ -53,6 +53,18 @@ test.beforeEach(async ({ page }) => {
   await page.locator('.cm-content').waitFor()
 })
 
+test('WAV bounce and live audio recovery', async ({ page }, info) => {
+  // Sticky user activation, without initializing the silent starter rack.
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  const downloads = []
+  page.on('download', (download) => downloads.push(download.suggestedFilename()))
+  const result = await page.evaluate(async () =>
+    (await import('/scripts/bounce-check.mjs')).verifyBounce(),
+  )
+  expect(downloads[0]).toBe('Café - drums.wav')
+  await record(info, { ...result, filenames: downloads })
+})
+
 for (const [script, verify] of [
   ['connection-check', 'verifyConnectionTargets'],
   ['grid-check', 'verifyGrids'],

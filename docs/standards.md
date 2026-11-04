@@ -98,6 +98,16 @@ imported `.o(2)` CODE block onto widened 84/104 HP rails, preserving exact sourc
 and complete saved rack identity after reopen. They failed before the save check
 ignored object key insertion order.
 
+The [WAV bounce regression](wav-bounce.md) covers live/offline/live context
+transitions with released filter nodes and nonzero PCM on bounce and replay.
+It failed before the pinned `postinstall` audio-pool ownership fix. The install
+script verifies exact original/patched upstream hashes and rejects dependency
+drift; this is a narrow dependency exception until upstream pools and late cleanup
+preserve node contexts. The browser suite also rejects uncaught cleanup errors
+after live restoration. A deterministic installed-pool smoke test in `npm run test:guardrails`
+checks both context transitions and retained same-context reuse. Runtime PCM
+proof remains in the separate browser acceptance gate.
+
 Hosting IAM trust is checked by the synthesized-template regression in
 `scripts/hosting.test.mts`, using the repository's observed immutable GitHub OIDC
 subject as an independent fixture. It rejects the old name-only trust format.

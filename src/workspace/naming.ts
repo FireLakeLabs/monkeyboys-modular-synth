@@ -12,11 +12,14 @@ export function renameDocument(document: SourceDocument, name: string): SourceDo
   return editDocument(document, { ...document.patch, name: normalized })
 }
 
-export function patchFilename(patch: Pick<Patch, 'name'>): string {
+export function patchFilename(
+  patch: Pick<Patch, 'name'>,
+  extension: 'strudel' | 'wav' = 'strudel',
+): string {
   const stem = patchName(patch)
     .replace(/\.strudel$/i, '')
     .replace(/[<>:"/\\|?*\p{Cc}]/gu, '-')
     .replace(/[.\s]+$/u, '')
     .trim()
-  return `${stem || 'Untitled patch'}.strudel`
+  return `${stem || 'Untitled patch'}.${extension}`
 }

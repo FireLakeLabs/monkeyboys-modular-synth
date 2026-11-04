@@ -31,6 +31,7 @@ describe('patch names', () => {
     expect(reopened.source).toBe(named.source)
     expect(reopened.patch).toEqual(named.patch)
     expect(patchFilename(reopened.patch)).toBe('Café - lead ☀.strudel')
+    expect(patchFilename(reopened.patch, 'wav')).toBe('Café - lead ☀.wav')
   })
 
   it('retains names through rack edits, code reconciliation, conversion, undo and recovery', () => {
@@ -109,5 +110,6 @@ describe('patch names', () => {
     ['Line\nTwo\t', 'Line-Two.strudel'],
   ])('exports %j with a safe filename', (name, filename) => {
     expect(patchFilename({ name })).toBe(filename)
+    expect(patchFilename({ name }, 'wav')).toBe(filename.replace(/\.strudel$/, '.wav'))
   })
 })

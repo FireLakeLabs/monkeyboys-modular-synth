@@ -99,9 +99,14 @@ export default function App() {
   const workRevision = useRef(0)
   const replacementRevision = useRef(0)
   const playing = ['starting', 'playing', 'applying'].includes(audio.status)
-  const needsStop = playing || audio.scheduling === 'unknown' || audio.status === 'stopping'
+  const needsStop =
+    playing ||
+    audio.scheduling === 'unknown' ||
+    audio.status === 'stopping' ||
+    audio.status === 'bouncing'
   const [composing, setComposing] = useState(false)
   const [autoApply, setAutoApply] = useState(false)
+  const [bounceCycles, setBounceCycles] = useState('4')
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [rackFocus, setRackFocus] = useState(false)
@@ -225,7 +230,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    if (!['starting', 'applying', 'stopping'].includes(audio.status)) return
+    if (!['starting', 'applying', 'stopping', 'bouncing'].includes(audio.status)) return
     const timer = setTimeout(() => setSlowAudio(audio), 10_000)
     return () => clearTimeout(timer)
   }, [audio])
@@ -281,7 +286,8 @@ export default function App() {
       recovery ||
       replacing ||
       pendingReplacement ||
-      libraryOpen
+      libraryOpen ||
+      audio.status === 'bouncing'
     )
       return
     const next = readDraft(current.current.draft)
@@ -443,6 +449,7 @@ export default function App() {
 
   const status = {
     stopped: 'Ready',
+    bouncing: 'Bouncing WAV…',
     starting: audio.resources === 'loading' ? 'Loading samples' : 'Starting audio',
     playing: 'Playing',
     applying: 'Applying code',
@@ -635,7 +642,11 @@ export default function App() {
           </h2>
           <span className="apply-shortcuts">Ctrl/Cmd+Enter to apply · Ctrl/Cmd+. to stop</span>
           <div className="code-actions">
-            <button type="button" onClick={applyCode} disabled={composing}>
+            <button
+              type="button"
+              onClick={applyCode}
+              disabled={composing || audio.status === 'bouncing'}
+            >
               Apply code
             </button>
             <label className="auto-apply">
@@ -658,6 +669,37 @@ export default function App() {
             </button>
             <button type="button" onClick={exportDraft}>
               Export
+            </button>
+            <label className="bounce-cycles">
+              Cycles
+              <input
+                aria-label="Bounce cycles"
+                type="number"
+                min="1"
+                max="128"
+                step="1"
+                value={bounceCycles}
+                disabled={audio.status === 'bouncing'}
+                onChange={(event) => setBounceCycles(event.currentTarget.value)}
+              />
+            </label>
+            <button
+              type="button"
+              disabled={
+                locked ||
+                audio.status === 'bouncing' ||
+                !Number.isInteger(Number(bounceCycles)) ||
+                Number(bounceCycles) < 1 ||
+                Number(bounceCycles) > 128
+              }
+              onClick={() =>
+                playback
+                  .bounce(Number(bounceCycles))
+                  .catch((failure: unknown) => setError(String(failure)))
+              }
+              title="Download the applied patch as a WAV; stops playback. 1–128 cycles, up to 10 minutes."
+            >
+              {audio.status === 'bouncing' ? 'Bouncing…' : 'Bounce WAV'}
             </button>
             <button
               type="button"

@@ -19,6 +19,14 @@ const web = vi.hoisted(() => ({
   samples: vi.fn<() => Promise<unknown>>(),
   initAudio: vi.fn<() => Promise<void>>(),
   resume: vi.fn<() => Promise<void>>(),
+  suspend: vi.fn<() => Promise<void>>(),
+  getAudioContext: vi.fn(),
+  setAudioContext: vi.fn(),
+  setSuperdoughAudioController: vi.fn(),
+  getCps: vi.fn(),
+  renderPatternAudio: vi.fn(),
+  setValueAtTime: vi.fn(),
+  webaudioOutput: vi.fn(),
 }))
 vi.mock('@strudel/web', () => ({
   ...web,
@@ -37,13 +45,13 @@ vi.mock('@strudel/web', () => ({
       this._steps = steps
     }
   },
-  getAudioContext: () => ({ resume: web.resume, currentTime: web.time }),
   getSuperdoughAudioController: () => ({
     output: {
       destinationGain: {
         gain: {
           cancelScheduledValues: web.cancelScheduledValues,
           setTargetAtTime: web.setTargetAtTime,
+          setValueAtTime: web.setValueAtTime,
         },
       },
     },
@@ -64,9 +72,134 @@ beforeEach(() => {
   web.samples.mockResolvedValue(undefined)
   web.initAudio.mockResolvedValue(undefined)
   web.resume.mockResolvedValue(undefined)
+  web.suspend.mockResolvedValue(undefined)
+  const context = {
+    resume: web.resume,
+    suspend: web.suspend,
+    get currentTime() {
+      return web.time
+    },
+  }
+  web.getAudioContext.mockReturnValue(context)
+  web.setAudioContext.mockImplementation((next: unknown) =>
+    web.getAudioContext.mockReturnValue(next),
+  )
+  web.getCps.mockReturnValue(0.5)
+  vi.stubGlobal(
+    'AudioContext',
+    class {
+      state = 'running'
+      async close() {
+        this.state = 'closed'
+      }
+    },
+  )
 })
 
 describe('engine boundary', () => {
+  it('finishes dispatched live sample output before swapping contexts for Bounce', async () => {
+    let options: InitStrudelOptions | undefined
+    web.initStrudel.mockImplementation(async (next) => {
+      options = next
+    })
+    let finish = () => {}
+    web.webaudioOutput.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        finish = resolve
+      }),
+    )
+    const { play, bounce } = await import('./engine')
+    await play('live code')
+    const output = options?.defaultOutput?.({}, 0, 1, 0.5, 10)
+    const rendering = bounce('bounce code', { cycles: 1, name: 'Patch', volume: 0.8 })
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(web.renderPatternAudio).not.toHaveBeenCalled()
+    finish()
+    await output
+    await rendering
+    expect(web.renderPatternAudio).toHaveBeenCalledTimes(1)
+  })
+  it('bounces exact source without scheduling and restores the live clock after renderer failure', async () => {
+    const live = web.getAudioContext()
+    web.evaluate.mockResolvedValue({ queryArc: () => ['first hit'] })
+    web.renderPatternAudio.mockImplementationOnce(async () => {
+      expect(web.getAudioContext()).not.toBe(live)
+      throw new Error('offline output failed')
+    })
+    const { bounce, play } = await import('./engine')
+    const source = '// keep this comment\nsetcpm(30)\n$: s("bd*4")'
+    await expect(bounce(source, { cycles: 2, name: 'Named patch', volume: 0.6 })).rejects.toThrow(
+      /offline output/,
+    )
+    expect(web.evaluate).toHaveBeenCalledExactlyOnceWith(source, false)
+    expect(web.getAudioContext()).toBe(live)
+    expect(web.resume).toHaveBeenCalled()
+    await expect(play('s("sine")')).resolves.toBeUndefined()
+    expect(web.evaluate).toHaveBeenCalledTimes(2)
+  })
+
+  it('renders the requested range, raw events and output level, and prevents concurrent Play', async () => {
+    const { bounce, play } = await import('./engine')
+    let finish = () => {}
+    web.evaluate.mockResolvedValue({ queryArc: () => ['first hit', 'last hit'] })
+    web.renderPatternAudio.mockImplementationOnce(
+      async (
+        pattern: { queryArc: (a: number, b: number, c: { _cps: number }) => unknown[] },
+        cps,
+        begin,
+        end,
+        rate,
+        polyphony,
+        multichannel,
+        name,
+      ) => {
+        expect([cps, begin, end, rate, polyphony, multichannel, name]).toEqual([
+          0.5,
+          0,
+          3,
+          44100,
+          128,
+          false,
+          'My patch',
+        ])
+        expect(pattern.queryArc(begin, end, { _cps: cps })).toEqual(['first hit', 'last hit'])
+        expect(web.setValueAtTime).toHaveBeenCalledWith(0.4, 0)
+        await new Promise<void>((resolve) => {
+          finish = resolve
+        })
+      },
+    )
+    const rendering = bounce('exact code', { cycles: 3, name: 'My patch', volume: 0.4 })
+    await vi.waitFor(() => expect(web.renderPatternAudio).toHaveBeenCalled())
+    await expect(play('other code')).rejects.toThrow(/Bounce/)
+    finish()
+    await rendering
+  })
+
+  it('rejects invalid bounds before touching audio and recovers from cancelled pending bounce evaluation', async () => {
+    const { bounce, stop, play } = await import('./engine')
+    for (const cycles of [0, 1.5, 129, NaN])
+      await expect(bounce('code', { cycles, name: 'Patch', volume: 0.8 })).rejects.toBeInstanceOf(
+        RangeError,
+      )
+    expect(web.initStrudel).not.toHaveBeenCalled()
+    let finish: (value: unknown) => void = () => {}
+    web.evaluate.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finish = resolve
+      }),
+    )
+    const rendering = bounce('pending code', { cycles: 1, name: 'Patch', volume: 0.8 })
+    const rejected = expect(rendering).rejects.toThrow(/cancelled/)
+    await vi.waitFor(() => expect(web.evaluate).toHaveBeenCalled())
+    await stop()
+    await rejected
+    await expect(play('new code')).rejects.toThrow(/previous evaluation/)
+    finish({})
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    await expect(play('new code')).resolves.toBeUndefined()
+    expect(web.renderPatternAudio).not.toHaveBeenCalled()
+  })
   it('rejects evaluation errors that Strudel reports through its callback', async () => {
     let reportError: ((error: unknown) => void) | undefined
     web.initStrudel.mockImplementation(async (options) => {

@@ -52,6 +52,10 @@ cancels. New and unnamed files display **Untitled patch**; library loads use the
 entry title. Export uses a sanitized filename while metadata retains the full
 name. See [persistence and compatibility](patch-format.md#patch-names-62).
 
+**Bounce WAV** beside Export takes a cycle count and downloads the applied patch
+under the same sanitized name. It stops playback and leaves explicit Play
+available afterwards. See [bounds, engine contract and observed PCM](wav-bounce.md).
+
 The header owns the single Play/Stop control and a catalog-backed BPM readout.
 BPM edits use the same source-preserving operation as OUT; OUT and code edits
 update the header. Stop remains available while starting, applying, stopping or

@@ -356,6 +356,20 @@
   gap: 4px;
   font-size: 12px;
 }
+.bounce-cycles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+.bounce-cycles input {
+  width: 54px;
+  padding: 5px;
+  border: 1px solid #414650;
+  border-radius: 4px;
+  background: #202328;
+  color: #e4e6ea;
+}
 .code-actions button,
 .restore-prompt button,
 .open-library,

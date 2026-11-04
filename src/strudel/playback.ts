@@ -4,9 +4,10 @@ import type { SourceDocument } from '../reader/types'
 import { getModuleSpec } from '../modules/catalog'
 import type { Patch } from '../patch/types'
 import * as engine from './engine'
+import { patchFilename } from '../workspace/naming'
 
 export interface PlaybackState {
-  status: 'stopped' | 'starting' | 'playing' | 'applying' | 'stopping' | 'error'
+  status: 'stopped' | 'starting' | 'playing' | 'applying' | 'stopping' | 'error' | 'bouncing'
   scheduling: 'stopped' | 'scheduled' | 'unknown'
   resources: engine.ResourceStatus
   error: string | null
@@ -24,6 +25,7 @@ function prepare(input: Patch | SourceDocument) {
   if (typeof volume !== 'number') throw new Error('Missing output volume')
   return {
     code,
+    bounceName: patchFilename(patch, 'wav').slice(0, -4),
     // Only the generator's trailing block is removed; CODE may contain marker text.
     source: sourceBody(code),
     volume,
@@ -50,6 +52,7 @@ export function createPlayback(initial: Patch | SourceDocument) {
     resources: engine.getResourceStatus(),
   }
   let requested = false
+  let bouncing = false
   let revision = 0
   let intent = 0
   let sourceRevision = 0
@@ -190,13 +193,33 @@ export function createPlayback(initial: Patch | SourceDocument) {
       })
     },
     play(): Promise<void> {
+      if (bouncing) return Promise.resolve()
       intent++
       requested = true
       // A stopped scheduler needs evaluation even if its source is unchanged.
       accepted = undefined
       return apply()
     },
+    async bounce(cycles: number): Promise<void> {
+      if (bouncing) return
+      bouncing = true
+      intent++
+      requested = false
+      accepted = undefined
+      const current = ++revision
+      const next = patch
+      publish('bouncing', null, null, state.scheduling)
+      try {
+        await engine.bounce(next.code, { cycles, name: next.bounceName, volume: next.volume })
+        if (current === revision) publish('stopped')
+      } catch (error) {
+        if (current === revision) await fail(`Could not bounce audio. ${message(error)}`, null)
+      } finally {
+        bouncing = false
+      }
+    },
     stop(): Promise<void> {
+      if (bouncing) return engine.stop()
       intent++
       requested = false
       const current = ++revision
