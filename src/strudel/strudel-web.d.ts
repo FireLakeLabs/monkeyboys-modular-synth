@@ -13,9 +13,11 @@ declare module '@strudel/web' {
       dominant: false,
     ): Pattern
     query(state: unknown): unknown[]
+    queryArc(begin: number, end: number, controls: { _cps: number }): unknown[]
     _steps: unknown
   }
   export interface InitStrudelOptions {
+    defaultOutput?: typeof webaudioOutput
     /** Runs before the first evaluation; typically loads samples. */
     prebake?: () => unknown
     /** Version-specific guard immediately before scheduler installation. */
@@ -27,10 +29,33 @@ declare module '@strudel/web' {
 
   export function initStrudel(options?: InitStrudelOptions): Promise<unknown>
   /** Evaluates code the way the Strudel REPL does (double quotes are mini-notation). */
-  export function evaluate(code: string): Promise<unknown>
+  export function evaluate(code: string, autoplay?: boolean): Promise<Pattern>
   /** Initializes audio worklets; call explicitly after lazy import. */
   export function initAudio(): Promise<void>
   export function getAudioContext(): AudioContext
+  export function setAudioContext(context: AudioContext): void
+  export function setSuperdoughAudioController(
+    controller: ReturnType<typeof getSuperdoughAudioController>,
+  ): void
+  export function getCps(): number
+  export function webaudioOutput(
+    hap: unknown,
+    deadline: number,
+    duration: number,
+    cps: number,
+    time: number,
+  ): Promise<void>
+  /** Pinned webaudio 1.3.0: awaits each superdough trigger before startRendering. */
+  export function renderPatternAudio(
+    pattern: Pick<Pattern, 'queryArc'>,
+    cps: number,
+    begin: number,
+    end: number,
+    sampleRate: number,
+    maxPolyphony: number,
+    multiChannelOrbits: boolean,
+    downloadName: string,
+  ): Promise<void>
   /** Version-specific output boundary; resetGlobalEffects replaces this gain node. */
   export function getSuperdoughAudioController(): {
     output: { destinationGain: GainNode }

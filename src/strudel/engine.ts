@@ -51,10 +51,13 @@ let pending: Promise<void> = Promise.resolve()
 let volume = 1
 let epoch = 0
 let allowed = false
+let bouncing = false
+let bounceFailure: string | undefined
 let cancelActive: (() => void) | undefined
 let evaluating:
   | {
       epoch: number
+      offline?: boolean
       activity: (hap: unknown) => string[]
       steps: (hap: unknown) => GridStep[]
       activityRevision: number
@@ -62,6 +65,7 @@ let evaluating:
     }
   | undefined
 let observing = false
+const outputWork = new Set<Promise<void>>()
 
 let activityRevision = 0
 const activityTimers = new Set<ReturnType<typeof setTimeout>>()
@@ -141,6 +145,10 @@ function observeLogs() {
     if (('type' in detail && detail.type === 'error') || /^\[[^\]]+\] error:/.test(message)) {
       clearActivity()
       resourceStatus('failed')
+      if (bouncing) {
+        bounceFailure = message
+        return
+      }
       listeners.forEach((listener) => listener({ type: 'failure', message }))
     }
   })
@@ -153,6 +161,15 @@ function load(): Promise<StrudelWeb> {
     ready = import('@strudel/web')
       .then(async (strudel) => {
         await strudel.initStrudel({
+          defaultOutput: async (...args) => {
+            const work = strudel.webaudioOutput(...args)
+            outputWork.add(work)
+            try {
+              await work
+            } finally {
+              outputWork.delete(work)
+            }
+          },
           prebake: () =>
             Promise.all(SAMPLE_SOURCES.map(({ map, base }) => strudel.samples(map, base))),
           onEvalError: (error) => {
@@ -160,7 +177,9 @@ function load(): Promise<StrudelWeb> {
           },
           // The hook runs immediately before scheduler.setPattern in core 1.2.6.
           editPattern: (pattern) => {
-            if (!evaluating || evaluating.epoch !== epoch || !allowed) throw cancelled()
+            if (!evaluating || evaluating.epoch !== epoch) throw cancelled()
+            if (evaluating.offline) return pattern
+            if (!allowed) throw cancelled()
             const operation = evaluating
             const current = operation.epoch
             // start() can yield after installing the pattern but before its first tick.
@@ -237,6 +256,7 @@ export function play(
     sourceFeedback?: (event: SourceFeedback) => void
   } = {},
 ): Promise<void> {
+  if (bouncing) return Promise.reject(new Error('Wait for Bounce to finish before Play.'))
   const current = epoch
   clearActivity()
   const visualRevision = activityRevision
@@ -313,4 +333,101 @@ export async function stop(): Promise<void> {
   allowed = false
   cancelActive?.()
   initialized?.hush()
+}
+
+/** Render accepted source, never its activity-decorated variant. Leaves live scheduling stopped. */
+export async function bounce(
+  code: string,
+  options: { cycles: number; name: string; volume: number },
+): Promise<void> {
+  if (!Number.isInteger(options.cycles) || options.cycles < 1 || options.cycles > 128)
+    throw new RangeError('Bounce needs a whole cycle count from 1 to 128.')
+  validateVolume(options.volume)
+  if (bouncing) throw new Error('A Bounce is already in progress.')
+  bouncing = true
+  bounceFailure = undefined
+  try {
+    await stop()
+    const current = epoch
+    await enqueue(async () => {
+      checkEpoch(current)
+      if (evaluating)
+        throw new Error(
+          'A previous evaluation is still pending. Export and reload to recover, or wait for it to settle before Bounce.',
+        )
+      const strudel = await load()
+      checkEpoch(current)
+      const operation = {
+        epoch: current,
+        offline: true,
+        activity: () => [],
+        steps: () => [],
+        activityRevision,
+        feedback: undefined,
+      }
+      evaluating = operation
+      let pattern: import('@strudel/web').Pattern
+      let cancel = () => {}
+      const cancellation = new Promise<never>((_resolve, reject) => {
+        cancel = () => reject(cancelled())
+      })
+      cancelActive = cancel
+      // A pending arbitrary evaluation retains the same recovery boundary as Play.
+      const evaluation = strudel.evaluate(code, false).finally(() => {
+        if (evaluating === operation) evaluating = undefined
+      })
+      try {
+        pattern = await Promise.race([evaluation, cancellation])
+        checkEpoch(current)
+      } finally {
+        if (cancelActive === cancel) cancelActive = undefined
+      }
+      const cps = strudel.getCps()
+      if (!Number.isFinite(cps) || cps <= 0 || options.cycles / cps > 600)
+        throw new RangeError('Bounce needs a positive tempo and a duration of at most 10 minutes.')
+      // Stop ends scheduling, but a dispatched sample trigger can still be decoding.
+      // Let it finish against the live graph before superdough's global context changes.
+      await Promise.allSettled(outputWork)
+      checkEpoch(current)
+      const liveContext = strudel.getAudioContext()
+      const liveController = strudel.getSuperdoughAudioController()
+      // webaudio 1.3.0 closes its current context; the REPL still owns this live clock.
+      const disposable = new AudioContext()
+      try {
+        strudel.resetGlobalEffects()
+        await liveContext.suspend()
+        checkEpoch(current)
+        strudel.setAudioContext(disposable)
+        await strudel.renderPatternAudio(
+          {
+            queryArc: (begin, end, controls) => {
+              // Called after the renderer installs its offline context/controller.
+              strudel
+                .getSuperdoughAudioController()
+                .output.destinationGain.gain.setValueAtTime(options.volume, 0)
+              return pattern.queryArc(begin, end, controls)
+            },
+          },
+          cps,
+          0,
+          options.cycles,
+          44100,
+          128,
+          false,
+          options.name,
+        )
+        // The pinned renderer catches per-hap failures and may still download a partial WAV.
+        if (bounceFailure) throw new Error(`Downloaded WAV may be incomplete. ${bounceFailure}`)
+      } finally {
+        strudel.setAudioContext(liveContext)
+        strudel.setSuperdoughAudioController(liveController)
+        if (disposable.state !== 'closed') await disposable.close()
+        await liveContext.resume()
+        applyVolume(strudel)
+      }
+    })
+  } finally {
+    bouncing = false
+    bounceFailure = undefined
+  }
 }

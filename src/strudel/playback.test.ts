@@ -7,6 +7,7 @@ import * as engine from './engine'
 
 vi.mock('./engine', () => ({
   play: vi.fn(),
+  bounce: vi.fn(),
   stop: vi.fn(),
   setVolume: vi.fn(),
   subscribe: vi.fn(),
@@ -16,6 +17,7 @@ vi.mock('./engine', () => ({
 beforeEach(() => {
   vi.resetAllMocks()
   vi.mocked(engine.play).mockResolvedValue(undefined)
+  vi.mocked(engine.bounce).mockResolvedValue(undefined)
   vi.mocked(engine.stop).mockResolvedValue(undefined)
   vi.mocked(engine.setVolume).mockResolvedValue(undefined)
 })
@@ -38,6 +40,44 @@ function deferred() {
 }
 
 describe('patch playback', () => {
+  it('bounces an immutable accepted file with its safe name and returns stopped without autoplay', async () => {
+    const patch = { ...demoPatch(), name: 'Café / take.strudel' }
+    const playback = createPlayback(patch)
+    const held = deferred()
+    vi.mocked(engine.bounce).mockReturnValueOnce(held.promise)
+    await playback.play()
+    const rendering = playback.bounce(3)
+    expect(playback.getSnapshot().status).toBe('bouncing')
+    await playback.play()
+    expect(engine.play).toHaveBeenCalledTimes(1)
+    expect(engine.bounce).toHaveBeenCalledExactlyOnceWith(generate(patch), {
+      cycles: 3,
+      name: 'Café - take',
+      volume: 0.8,
+    })
+    held.resolve()
+    await rendering
+    expect(playback.getSnapshot()).toMatchObject({ status: 'stopped', scheduling: 'stopped' })
+    await playback.play()
+    expect(engine.play).toHaveBeenCalledTimes(2)
+  })
+
+  it('retains bounce failures without source attribution and requires explicit Play to recover', async () => {
+    const playback = createPlayback(demoPatch())
+    vi.mocked(engine.bounce).mockRejectedValueOnce(new Error('decode failed'))
+    await playback.bounce(2)
+    expect(playback.getSnapshot()).toMatchObject({
+      status: 'error',
+      scheduling: 'stopped',
+      errorSource: null,
+    })
+    expect(playback.getSnapshot().error).toContain('decode failed')
+    expect(engine.play).not.toHaveBeenCalled()
+    await playback.update(demoPatch())
+    expect(playback.getSnapshot().status).toBe('error')
+    await playback.play()
+    expect(playback.getSnapshot().status).toBe('playing')
+  })
   it('forwards source feedback without publishing React snapshots and cancels obsolete playback', async () => {
     const patch = demoPatch()
     const playback = createPlayback(patch)

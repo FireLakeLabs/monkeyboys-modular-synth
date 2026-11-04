@@ -218,6 +218,8 @@ name as the filename stem, replaces filesystem separators, reserved punctuation
 and control characters with `-`, strips trailing dots/space and avoids a duplicate
 `.strudel` suffix. An empty sanitized stem falls back to **Untitled patch**.
 The full display title remains in metadata regardless of filename sanitation.
+WAV bounce uses the same stem with a `.wav` extension; see the
+[bounce contract and verification](wav-bounce.md).
 Open restores it from metadata rather than the external filename; older unnamed
 files still open byte-for-byte under the default title.
 
