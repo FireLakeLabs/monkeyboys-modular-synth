@@ -2,7 +2,7 @@ import { beforeAll, expect, it } from 'vitest'
 import { generate } from './generate'
 import { read } from '../reader'
 import { connect, effectNotes, placeModule, setValue, starterPatch } from '../rack/model'
-import { editDocument, saveLayout, sourceBody } from '../workspace/document'
+import { editDocument, makeRackEditable, saveLayout, sourceBody } from '../workspace/document'
 import { parseSource } from '../reader/syntax'
 
 function fixture(types: string[]) {
@@ -235,4 +235,32 @@ it('follows unambiguous FX arguments across external reordering without stealing
   const changed = read(body.replace('lpf(1200)', 'lpf(900)') + document.source.slice(body.length))
   expect(changed.patch.modules.find((m) => m.values.cutoff === 500)?.id).toBe(before[0]?.id)
   expect(changed.patch.modules.find((m) => m.values.cutoff === 900)?.id).not.toBe(before[1]?.id)
+})
+
+it.each(['$: note("c3").s("sine").FX(lpf(500))\n', '$: note("c3").s("sine").room(.5).lpf(500)\n'])(
+  'switches imported effect execution to outer DJ mode after rack conversion: %s',
+  (source) => {
+    const document = makeRackEditable(saveLayout(read(source)))
+    const filter = document.patch.modules.find((m) => m.type === 'vcf')
+    if (!filter) throw new Error('Missing filter')
+    expect(filter.fx).toBeDefined()
+    const next = setValue(setValue(document.patch, filter.id, 'mode', 'dj'), filter.id, 'dj', 0.75)
+    const changed = editDocument(document, next)
+    expect(changed.patch.modules.find((m) => m.id === filter.id)?.fx).toBeUndefined()
+    expect(sourceBody(changed.source)).toContain('.djf(0.75)')
+    expect(sourceBody(changed.source)).not.toContain('FX(djf(')
+    expect(read(changed.source).patch).toEqual(changed.patch)
+  },
+)
+it('shows repeated native setters as one effective stage with overrides, retaining separate FX stages', () => {
+  const native = read('$: note("c3").s("sine").lpf(500).lpf(1200)\n')
+  expect(events(native.source)[0]).toMatchObject({ cutoff: 1200 })
+  const filters = native.patch.modules.filter((m) => m.type === 'vcf')
+  const note = effectNotes(native.patch)[0]
+  expect(note).toContain(`VCF (${filters.map((m) => m.id).join(', ')})`)
+  expect(note).toContain('later native setters override matching controls')
+  expect(note).not.toContain(' → ')
+  const inline = read('$: note("c3").s("sine").FX(lpf(500),lpf(1200))\n')
+  const stages = inline.patch.modules.filter((m) => m.type === 'vcf')
+  expect(effectNotes(inline.patch)[0]).toContain(stages.map((m) => `VCF (${m.id})`).join(' → '))
 })

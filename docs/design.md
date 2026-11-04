@@ -316,4 +316,6 @@ measurements and the [parser requirements](nested-step-editor.md#what-147-must-h
 The Connections area shows a neutral “You hear” note listing stage module names
 and IDs in audible order. It distinguishes inline FX with per-note send tails
 from native orbit sends. Reordering supported effects does not mark cables or
-connection targets as warnings. Audio fan-out retains its existing level warning.
+connection targets as warnings. Audio fan-out retains its existing level warning. Repeated native setters share
+one listed stage with an explanation that later setters override matching
+controls; explicit FX stages remain separate.

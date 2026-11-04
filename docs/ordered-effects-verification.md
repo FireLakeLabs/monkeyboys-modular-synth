@@ -62,3 +62,13 @@ worktree's port 5134 because another wave-three worktree occupied the default 51
   voice controls. Native and explicit inline execution are distinct saved state.
 - #131 owns sound/effect module additions; stage membership follows catalog call
   bindings. Integration with landed modules is checked before merge.
+
+## Sol review regressions
+
+The first Sol round found two in-scope issues. Three focused cases failed before
+the fixes: imported inline/native VCFs threw `Invalid FX stage` when switching to
+DJ after rack conversion, and repeated native cutoff setters were described as
+separate serial stages. Mode changes now clear an execution flag when the selected
+mode is outer-only; the note groups equal native stages and describes later setter
+overrides. Explicit FX arguments still appear as separate stages. The browser probe
+also changes both actual MODE selectors and checks the native override note.

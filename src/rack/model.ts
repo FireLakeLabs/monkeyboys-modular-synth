@@ -192,9 +192,15 @@ export function setValue(
   if (!patch.modules.some((m) => m.id === module)) throw new Error('Unknown module')
   const next = validateRack({
     ...patch,
-    modules: patch.modules.map((m) =>
-      m.id === module ? { ...m, values: { ...m.values, [control]: value } } : m,
-    ),
+    modules: patch.modules.map((m) => {
+      if (m.id !== module) return m
+      const next = { ...m, values: { ...m.values, [control]: value } }
+      if (next.fx !== undefined && effectRank(next) === undefined) {
+        const { fx: _fx, ...outer } = next
+        return outer
+      }
+      return next
+    }),
   })
   const changed = next.modules.find((m) => m.id === module)
   if (changed?.type === 'seq' && control === 'len' && typeof value === 'number') {
@@ -323,7 +329,18 @@ export function effectNotes(patch: Patch): string[] {
             .filter((n) => !stages.includes(n))
             .sort((a, b) => (effectRank(a.module) ?? 0) - (effectRank(b.module) ?? 0))
           const label = (node: (typeof path)[number]) => `${node.spec.name} (${node.module.id})`
-          return `You hear: ${[...stages, ...native].map(label).join(' → ')}. ${stages.length ? 'FX stages run in cable order; inline DELAY/REVERB keep their tails per note.' : 'Native effects use the fixed voice chain; DELAY/REVERB are orbit sends.'}`
+          const groups = new Map<number, typeof native>()
+          for (const node of native) {
+            const rank = effectRank(node.module) ?? 0
+            groups.set(rank, [...(groups.get(rank) ?? []), node])
+          }
+          const nativeLabels = [...groups.values()].map((group) => {
+            const first = group[0]
+            if (!first) return ''
+            if (group.length === 1) return label(first)
+            return `${[...new Set(group.map((n) => n.spec.name))].join('/')} (${group.map((n) => n.module.id).join(', ')}) — later native setters override matching controls`
+          })
+          return `You hear: ${[...stages.map(label), ...nativeLabels].join(' → ')}. ${stages.length ? 'FX stages run in cable order; inline DELAY/REVERB keep their tails per note.' : 'Native effects use the fixed voice chain; DELAY/REVERB are orbit sends.'}`
         }),
     ),
   ]

@@ -3,7 +3,12 @@ import * as web from '@strudel/web'
 import { generate } from '../src/codegen/generate.ts'
 import { read } from '../src/reader/index.ts'
 import { connect, placeModule, setValue, starterPatch } from '../src/rack/model.ts'
-import { editDocument, saveLayout, sourceBody } from '../src/workspace/document.ts'
+import {
+  editDocument,
+  makeRackEditable,
+  saveLayout,
+  sourceBody,
+} from '../src/workspace/document.ts'
 import { enableAutoApply, editorSource } from './editor-browser.mjs'
 import { load } from './rack-feel-check.mjs'
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -135,7 +140,45 @@ export async function verifyEffectsProof() {
       JSON.stringify(read(editorSource()).patch) === JSON.stringify(edited.patch),
       'Imported FX reopen identity',
     )
-    return { results, importedLiteral: true, physicalListening: false }
+    await load('$: note("c3").s("sine").lpf(500).lpf(1200)\n')
+    const nativeOverrideNote = document.querySelector('.rack-note').textContent
+    assert(
+      nativeOverrideNote.includes('later native setters override matching controls'),
+      'Native repeat note implies separate stages',
+    )
+    assert(!nativeOverrideNote.includes(' → '), 'Native repeats show a serial chain')
+    let djModeSwitches = 0
+    for (const source of [
+      '$: note("c3").s("sine").FX(lpf(500))\n',
+      '$: note("c3").s("sine").room(.5).lpf(500)\n',
+    ]) {
+      const converted = makeRackEditable(saveLayout(read(source)))
+      const filter = converted.patch.modules.find((m) => m.type === 'vcf')
+      await load(converted.source)
+      const mode = document.querySelector(`[data-module="${filter.id}"] select[aria-label="MODE"]`)
+      assert(mode, 'Missing VCF mode control')
+      mode.value = 'dj'
+      mode.dispatchEvent(new Event('change', { bubbles: true }))
+      await until(
+        () =>
+          read(editorSource()).patch.modules.find((m) => m.id === filter.id)?.values.mode === 'dj',
+      )
+      const after = read(editorSource())
+      assert(
+        after.patch.modules.find((m) => m.id === filter.id)?.fx === undefined,
+        'Outer DJ retained FX execution',
+      )
+      assert(!sourceBody(after.source).includes('FX(djf('), 'DJ emitted inside FX')
+      djModeSwitches++
+    }
+    await load(edited.source)
+    return {
+      results,
+      importedLiteral: true,
+      nativeOverrideNote,
+      djModeSwitches,
+      physicalListening: false,
+    }
   } finally {
     document.querySelector('.topbar .play[aria-label=Stop]')?.click()
     if (original) web.Pattern.prototype.onTrigger = original
