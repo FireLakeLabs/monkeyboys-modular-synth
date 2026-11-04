@@ -46,6 +46,11 @@ definitions or call mappings are added.
   the upstream source. `npm ci` applies it without changing pinned versions;
   unexpected dependency bytes fail installation and require deliberate review.
   Remove this fix when the pinned upstream enforces context ownership.
+  The same pinned patch gives `webAudioTimeout`'s cleanup gain its explicit
+  context, rather than the current global context. Offline `onended` callbacks
+  can run after live restoration; using the global context threw an uncaught
+  cross-context connection error even when the WAV and replay had PCM. The
+  browser regression captures uncaught errors and failed before this fix.
 - The pinned renderer catches per-event output/decode errors, logs them and can
   still download a partial/silent WAV. The adapter captures observable errors,
   rejects completion and warns **Downloaded WAV may be incomplete** through

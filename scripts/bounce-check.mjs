@@ -87,6 +87,9 @@ async function wav(blob) {
 
 export async function verifyBounce() {
   const results = { checks: [], physicalListening: false }
+  const uncaught = []
+  const onError = (event) => uncaught.push(event.message)
+  window.addEventListener('error', onError)
   const downloads = []
   let blob,
     lastDecoded = 0,
@@ -265,8 +268,11 @@ export async function verifyBounce() {
     assert(button('Bounce WAV').disabled, 'Unapplied draft can bounce')
     results.checks.push('invalid cycle count and unapplied draft disable Bounce')
     results.downloadCount = downloads.length
+    assert(uncaught.length === 0, `Uncaught audio failure: ${uncaught.join('; ')}`)
+    results.uncaughtErrors = uncaught.length
     return results
   } finally {
+    window.removeEventListener('error', onError)
     BaseAudioContext.prototype.decodeAudioData = decode
     OfflineAudioContext.prototype.startRendering = render
     URL.createObjectURL = create
