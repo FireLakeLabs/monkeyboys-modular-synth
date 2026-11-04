@@ -22,16 +22,30 @@ interface Patch {
   cables: Cable[]           // output jack → input jack
   names: Record<string, string>  // "moduleId:jackId" → name, retained after a split
   rows?: number                 // explicit rail count, including empty rows
+  railHp?: 64 | 84 | 104         // rail width; omitted means 64 HP
 }
 ```
 
 - Module ids are the module type plus a counter: `seq1`, `vcf1`, `vcf2`.
-- Positions are a row index and an offset in HP from the left of that row.
+- Rail positions are a row index and an offset in HP from the left of that row.
+  OUT belongs to the case: its in-memory coordinates are canonical zeroes, and
+  new layout blocks omit its `row` and `hp`. Legacy OUT coordinates are accepted
+  and normalized without changing executable source, IDs, look, values or cables.
+  An unchanged imported file retains its exact original bytes, including those
+  legacy coordinates, until a rack edit restamps the block.
 - Optional `rows` preserves empty rails. It is a positive safe integer greater than
-  every module row index. Older v1 files omit it and derive the rail count from
+  every rail module row index (excluding OUT). Older v1 files omit it and derive the rail count from
   module positions (at least one row). Placement grows this count; removing the
   last module in a row does not shrink it. Explicit removal of an empty row
   shifts later rows up one, retaining module HP, looks, values and cables.
+- Optional `railHp` is exactly 64, 84 or 104 HP. Missing fields and plain files
+  default to 64 HP. New patches select the widest complete case that fits the
+  window (rail plus pinned output and frame padding); the width is then saved,
+  never recomputed on resize. The toolbar changes it without moving modules.
+  Reductions that strand a module outside the rail are refused. Placement and
+  reader reconciliation use the saved width; smaller windows zoom or scroll.
+  Invalid widths or off-rail saved positions invalidate metadata while retaining
+  the executable source unchanged. Unknown metadata is never silently replaced.
 - `values` holds one entry per control id from the catalog; missing entries mean “catalog default”.
 - A cable always runs from an `out` jack to an `in` jack. An `out` jack may have many cables; an `in` jack has at most one.
 
@@ -61,6 +75,8 @@ The v1 envelope uses these fields:
   bindings to scope/call descriptors and semantic roles. One module can bind
   several calls; CV bindings include their target module ID and jack/control role.
 - Optional `rows`: the saved rail count from `Patch`, including empty rows.
+- Optional `railHp`: the per-patch width described above. OUT has no `row` or `hp`
+  in newly written `modules` entries; its bindings and other fields are retained.
 - `names`: output names keyed by stable `moduleId:jackId`, as in `Patch`.
 - Optional `source`: the exact executable body of a source-owned workspace file,
   without a rack block. This accepted snapshot binds saved state to imported
@@ -133,7 +149,8 @@ reader of the old proposed `lead.2` line format to migrate.
 - Known generator-owned final-voice orbit routing does not consume module IDs.
   Imported routing stays source-owned unless its ownership is established.
 - Without a valid matching block, auto-layout each voice in chain order using
-  default looks. Rails are 64 HP; a voice continues on additional rows before
+  default looks. Rails use a valid saved `railHp`, or 64 HP without one; a voice
+  continues on additional rows before
   the next voice begins. Mixer buses also spill onto additional rows as needed.
   Unmatched modules are auto-placed after matched modules in their projected
   row, continuing onto free space on later rows without overlapping any retained

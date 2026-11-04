@@ -136,8 +136,6 @@ $: s("bd ~ ~ ~ ~ ~ ~ ~, ~ ~ hh ~ ~ ~ hh ~, ~ ~ ~ ~ sd ~ ~ ~")
 //     {
 //       "id": "out2",
 //       "type": "out",
-//       "row": 1,
-//       "hp": 12,
 //       "look": "instrument",
 //       "values": {
 //         "bpm": 120

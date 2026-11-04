@@ -4,27 +4,26 @@ import { getModuleSpec } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { JackSignal, KnobControl } from '../modules/types'
 import type { Cable, ControlValue, JackRef, Patch, PlacedModule } from '../patch/types'
-import { ROW_HP } from '../patch/layout'
+import { ROW_HP, railWidth, validatePositions, type RailHp } from '../patch/layout'
 
-export { ROW_HP } from '../patch/layout'
+export { ROW_HP, HP } from '../patch/layout'
 
-export const HP = 12
 export const ROW_HEIGHT = 440
 
-export function starterPatch(): Patch {
-  const outHp = ROW_HP - getModuleSpec('out').hp
+export function starterPatch(railHp: RailHp = ROW_HP): Patch {
   return {
     version: 1,
+    railHp,
     modules: [
       {
         id: 'mix1',
         type: 'mix',
         row: 0,
-        hp: outHp - getModuleSpec('mix').hp,
+        hp: railHp - getModuleSpec('mix').hp,
         look: 'instrument',
         values: {},
       },
-      { id: 'out1', type: 'out', row: 0, hp: outHp, look: 'instrument', values: {} },
+      { id: 'out1', type: 'out', row: 0, hp: 0, look: 'instrument', values: {} },
     ],
     cables: [
       { id: 'c1', from: { module: 'mix1', jack: 'out' }, to: { module: 'out1', jack: 'in' } },
@@ -34,20 +33,7 @@ export function starterPatch(): Patch {
 }
 
 export function validateRack(patch: Patch): Patch {
-  for (const module of patch.modules) {
-    const end = module.hp + getModuleSpec(module.type).hp
-    if (end > ROW_HP) throw new Error('Module extends past the rail')
-    if (
-      patch.modules.some(
-        (other) =>
-          other.id !== module.id &&
-          other.row === module.row &&
-          module.hp < other.hp + getModuleSpec(other.type).hp &&
-          other.hp < end,
-      )
-    )
-      throw new Error('Modules cannot overlap')
-  }
+  validatePositions(patch)
   generate(patch)
   return patch
 }
@@ -60,12 +46,14 @@ export function freePosition(
   wanted: number,
   moving?: string,
 ): number | null {
+  if (type === 'out') return 0
   const width = getModuleSpec(type).hp
-  const positions = Array.from({ length: ROW_HP - width + 1 }, (_, i) => i)
+  const positions = Array.from({ length: railWidth(patch) - width + 1 }, (_, i) => i)
     .filter(
       (hp) =>
         !patch.modules.some(
           (m) =>
+            m.type !== 'out' &&
             m.id !== moving &&
             m.row === row &&
             hp < m.hp + getModuleSpec(m.type).hp &&
@@ -106,6 +94,7 @@ export function placeModule(
   moving?: string,
 ): Patch {
   const spec = getModuleSpec(type)
+  if (moving && type === 'out') throw new Error('OUT is pinned to the case')
   const hp = freePosition(patch, type, row, wanted, moving)
   if (hp === null) throw new Error('No room here — use Add row')
   if (moving) {
@@ -123,7 +112,7 @@ export function placeModule(
       patch.modules.map((m) => m.id),
     ),
     type,
-    row,
+    row: type === 'out' ? 0 : row,
     hp,
     look: DEFAULT_LOOK[spec.family],
     values: {},
@@ -131,7 +120,7 @@ export function placeModule(
   return validateRack({
     ...patch,
     modules: [...patch.modules, module],
-    rows: Math.max(rackRows(patch), row + 1),
+    rows: type === 'out' ? rackRows(patch) : Math.max(rackRows(patch), row + 1),
   })
 }
 
@@ -162,7 +151,10 @@ export function routedModules(patch: Patch): Set<string> {
 }
 
 export function rackRows(patch: Patch): number {
-  return Math.max(patch.rows ?? 1, ...patch.modules.map((m) => m.row + 1))
+  return Math.max(
+    patch.rows ?? 1,
+    ...patch.modules.filter((m) => m.type !== 'out').map((m) => m.row + 1),
+  )
 }
 
 export function addRow(patch: Patch): Patch {
@@ -174,10 +166,13 @@ export function removeRow(patch: Patch, row: number): Patch {
   const rows = rackRows(patch)
   if (!Number.isInteger(row) || row < 0 || row >= rows || rows === 1)
     throw new Error('Cannot remove this row')
-  if (patch.modules.some((m) => m.row === row)) throw new Error('Only empty rows can be removed')
+  if (patch.modules.some((m) => m.type !== 'out' && m.row === row))
+    throw new Error('Only empty rows can be removed')
   return validateRack({
     ...patch,
-    modules: patch.modules.map((m) => (m.row > row ? { ...m, row: m.row - 1 } : m)),
+    modules: patch.modules.map((m) =>
+      m.type !== 'out' && m.row > row ? { ...m, row: m.row - 1 } : m,
+    ),
     rows: rows - 1,
   })
 }
@@ -486,4 +481,8 @@ export function duplicateModule(patch: Patch, id: string): Patch {
 
 export function renameOutput(patch: Patch, key: string, name: string): Patch {
   return validateRack({ ...patch, names: { ...patch.names, [key]: name } })
+}
+
+export function setRailWidth(patch: Patch, railHp: RailHp): Patch {
+  return validateRack({ ...patch, railHp })
 }

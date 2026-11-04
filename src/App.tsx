@@ -1,3 +1,4 @@
+import { defaultRailWidth } from './patch/layout'
 import {
   useCallback,
   useMemo,
@@ -69,7 +70,9 @@ function Logo() {
 export default function App() {
   const [autosave] = useState(() => createAutosave())
   const [recovery, setRecovery] = useState(() => autosave.load())
-  const [document, setDocument] = useState(() => fromPatch(starterPatch()))
+  const [document, setDocument] = useState(() =>
+    fromPatch(starterPatch(defaultRailWidth(window.innerWidth))),
+  )
   const [history] = useState(() => createDocumentHistory(document))
   const draggingKnob = useRef(false)
   const [draft, setDraft] = useState(document.source)
@@ -101,6 +104,7 @@ export default function App() {
   const [autoApply, setAutoApply] = useState(false)
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
+  const [rackFocus, setRackFocus] = useState(false)
   const [workspaceView, setWorkspaceView] = useState<'rack' | 'code' | 'both'>('both')
   const [codeSelection, setCodeSelection] = useState<{ start: number; end: number } | null>(null)
   const current = useRef({ document, draft, phase })
@@ -379,7 +383,7 @@ export default function App() {
             case 'file':
               return replacement.file.text()
             case 'new':
-              return fromPatch(starterPatch())
+              return fromPatch(starterPatch(defaultRailWidth(window.innerWidth)))
             case 'library':
               return renameDocument(readLibraryPatch(replacement.entry), replacement.entry.title)
           }
@@ -423,6 +427,7 @@ export default function App() {
     setSelected(id)
     const binding = current.current.document.bindings.find((b) => b.module === id)
     if (!binding || current.current.phase !== 'readable') return
+    setRackFocus(false)
     setWorkspaceView((view) => (view === 'rack' ? 'code' : view))
     setCodeSelection({ start: binding.start, end: binding.end })
   }
@@ -569,6 +574,14 @@ export default function App() {
         </button>
       </header>
 
+      <button
+        className="rack-focus-toggle"
+        type="button"
+        aria-pressed={rackFocus}
+        onClick={() => setRackFocus((focus) => !focus)}
+      >
+        {rackFocus ? 'Restore workspace' : 'Focus rack'}
+      </button>
       <fieldset className="workspace-views" aria-label="Workspace view">
         {(['rack', 'code', 'both'] as const).map((view) => (
           <button
@@ -581,7 +594,7 @@ export default function App() {
           </button>
         ))}
       </fieldset>
-      <main className="workspace" data-view={workspaceView}>
+      <main className="workspace" data-view={workspaceView} data-rack-focus={rackFocus}>
         <Rack
           key={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
           patch={patch}

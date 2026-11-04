@@ -178,8 +178,11 @@ and external sample resources and is not part of the shared CI gate.
 
 The #44 reader placement regressions use the exact reported CODE/CV source to
 check fixed-rail validity, exact executable source and saved rack identity
-separately, plus reconciliation and overflowing mixer buses. Rail width lives in
-`src/patch/layout.ts` and is shared by reader placement and rack mutations.
+separately, plus reconciliation and overflowing mixer buses. Per-patch rail width lives in
+`src/patch/layout.ts` and is shared by reader placement and rack mutations. The
+#133 regressions cover all three widths, legacy OUT migration, off-rail metadata,
+wide-rail reconciliation and exact library executable bytes; see
+[output-panel proof](output-panel-verification.md).
 The workspace validates the candidate rack before accepting a draft; the browser
 error suite covers an out-of-rail saved layout retaining the draft and accepted
 rack through Stop, Export, Revert and correction. See

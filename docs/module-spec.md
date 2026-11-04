@@ -361,6 +361,11 @@ Writes one `$:` line per connected input, in channel order ([rule 2](translation
 
 ### OUT — Output
 
+OUT is the pinned case output panel outside the rails (#133). Its catalog width
+sizes the panel in every Hardware look; it consumes no rail interval. Its IN,
+BPM and VOL retain their existing source/audio ownership. See
+[the output-panel contract](design.md#output-panel-and-per-patch-rails-133).
+
 Hardware · Utility · 8 HP · exactly one per rack
 
 | Control | Kind | Range          | Default | Writes                                 |

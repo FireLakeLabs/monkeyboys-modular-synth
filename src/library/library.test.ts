@@ -2,7 +2,15 @@ import { describe, expect, it, vi } from 'vitest'
 import { CATALOG } from '../modules/catalog'
 import { generate } from '../codegen/generate'
 import { read } from '../reader'
-import { connect, placeModule, routedModules, setLook, setValue, validateRack } from '../rack/model'
+import {
+  connect,
+  placeModule,
+  routedModules,
+  setLook,
+  setValue,
+  validateRack,
+  setRailWidth,
+} from '../rack/model'
 import { editDocument, saveLayout, sourceBody } from '../workspace/document'
 import { prepareReplacement } from '../workspace/open'
 import { libraryPatches, PATCH_LIBRARY, type LibraryNode } from './catalog'
@@ -126,9 +134,23 @@ describe('built-in patch library', () => {
   }
 
   for (const entry of libraryPatches()) {
+    it.each([64, 84, 104] as const)(
+      `${entry.id}: retains executable bytes and saved %i HP`,
+      (width) => {
+        const original = readLibraryPatch(entry)
+        const saved = editDocument(saveLayout(original), setRailWidth(original.patch, width))
+        expect(sourceBody(saved.source)).toBe(sourceBody(entry.source))
+        expect(saved.patch.railHp).toBe(width)
+        expect(read(saved.source).patch).toEqual(saved.patch)
+        expect(() => validateRack(saved.patch)).not.toThrow()
+      },
+    )
+  }
+
+  for (const entry of libraryPatches()) {
     it(`${entry.id}: preserves exact source and independently restores saved rack state`, async () => {
       const original = readLibraryPatch(entry)
-      // Frozen before #128, including source ownership and full saved rack state.
+      // Includes source ownership and saved state after the #133 OUT metadata migration.
       const digest = async (text: string) => {
         const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
         return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join(

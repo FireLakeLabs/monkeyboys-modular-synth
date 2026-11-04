@@ -13,7 +13,7 @@ it('restores a whole voice saved as CODE by the base reader, including its look 
   expect(doc.patch.modules.map((m) => [m.id, m.type, m.row, m.hp, m.look])).toEqual([
     ['code1', 'code', 0, 0, 'bare'],
     ['mix1', 'mix', 1, 0, 'instrument'],
-    ['out2', 'out', 1, 12, 'instrument'],
+    ['out2', 'out', 0, 0, 'instrument'],
   ])
   expect(doc.patch.modules[0]?.values.text).toBe('n("0 2").s("sine").scale("G:minor")')
   expect(doc.bindings.find((b) => b.module === 'code1')?.calls).toEqual([0, 1, 2])

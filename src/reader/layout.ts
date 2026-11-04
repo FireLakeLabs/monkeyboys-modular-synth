@@ -1,3 +1,4 @@
+import { isRailHp, validateRailBounds } from '../patch/layout'
 import { parse } from 'acorn'
 import { generateDocument } from '../codegen/generate'
 import {
@@ -66,11 +67,19 @@ function patchFrom(value: unknown): Patch {
     if (
       !look ||
       typeof item.id !== 'string' ||
-      typeof item.row !== 'number' ||
-      typeof item.hp !== 'number' ||
+      (item.type !== 'out' && (typeof item.row !== 'number' || typeof item.hp !== 'number')) ||
       !record(item.values)
     )
       throw new Error('Invalid saved module')
+    if (
+      item.type === 'out' &&
+      [item.row, item.hp].some(
+        (position) =>
+          position !== undefined &&
+          (typeof position !== 'number' || !Number.isSafeInteger(position) || position < 0),
+      )
+    )
+      throw new Error('Invalid saved output position')
     const values: Record<string, ControlValue> = {}
     for (const [key, candidate] of Object.entries(item.values)) {
       if (!controlValue(candidate)) throw new Error('Invalid saved value')
@@ -81,7 +90,14 @@ function patchFrom(value: unknown): Patch {
         configurable: true,
       })
     }
-    return { id: item.id, type: item.type, row: item.row, hp: item.hp, look, values }
+    return {
+      id: item.id,
+      type: item.type,
+      row: item.type === 'out' ? 0 : typeof item.row === 'number' ? item.row : 0,
+      hp: item.type === 'out' ? 0 : typeof item.hp === 'number' ? item.hp : 0,
+      look,
+      values,
+    }
   })
   const cables: Cable[] = value.cables.map((item: unknown) => {
     if (
@@ -117,6 +133,7 @@ function patchFrom(value: unknown): Patch {
     throw new Error('Invalid saved prelude')
   if (value.rows !== undefined && typeof value.rows !== 'number')
     throw new Error('Invalid saved row count')
+  if (value.railHp !== undefined && !isRailHp(value.railHp)) throw new Error('Invalid rail width')
   return {
     version: 1,
     ...(value.name === undefined ? {} : { name: value.name }),
@@ -125,6 +142,7 @@ function patchFrom(value: unknown): Patch {
     names,
     ...(value.prelude === undefined ? {} : { prelude: value.prelude }),
     ...(value.rows === undefined ? {} : { rows: value.rows }),
+    ...(value.railHp === undefined ? {} : { railHp: value.railHp }),
   }
 }
 
@@ -143,13 +161,18 @@ export function readLayout(source: string): SavedLayout {
       throw new Error('Rack block must be trailing line comments')
     const raw: unknown = JSON.parse(lines.map((line) => line.slice(3)).join('\n'))
     const patch = patchFrom(raw)
+    validateRailBounds(patch)
     const generated = generateDocument(patch)
     // This proves bindings, scopes and routing against the writer, rather than trusting
     // arbitrary JSON call indices. Unknown fields/versions are retained in source.
     const ordered = (value: unknown): string =>
       JSON.stringify(value, (_key, item: unknown) =>
         record(item)
-          ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b)))
+          ? Object.fromEntries(
+              Object.entries(item)
+                .filter(([key]) => item.type !== 'out' || (key !== 'row' && key !== 'hp'))
+                .sort(([a], [b]) => a.localeCompare(b)),
+            )
           : item,
       )
     if (record(raw) && typeof raw.source === 'string') {

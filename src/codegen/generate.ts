@@ -110,6 +110,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     cables: patch.cables,
     names: { ...patch.names },
     ...(patch.rows === undefined ? {} : { rows: patch.rows }),
+    ...(patch.railHp === undefined ? {} : { railHp: patch.railHp }),
   }
   const out = [...nodes.values()].find((node) => node.spec.id === 'out')
   const tempo = out

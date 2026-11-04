@@ -648,7 +648,7 @@
   .rack > * {
     flex-shrink: 0;
   }
-  .rack .rack-scroll {
+  .rack .rack-frame {
     flex: 1 0 120px;
     height: auto;
     min-height: 120px;
@@ -686,4 +686,31 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr);
   }
+}
+
+.rack-focus-toggle {
+  align-self: flex-start;
+  margin: 6px 18px;
+  padding: 5px 12px;
+  background: #202328;
+  border: 1px solid #414650;
+  border-radius: 4px;
+  color: var(--text);
+  cursor: pointer;
+}
+.rack-focus-toggle[aria-pressed='true'] {
+  background: var(--audio);
+  color: #1a1408;
+}
+.workspace[data-rack-focus='true'] {
+  display: flex;
+}
+.workspace[data-rack-focus='true'] .library,
+.workspace[data-rack-focus='true'] .code {
+  display: none;
+}
+.workspace[data-rack-focus='true'] .rack {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }

@@ -130,6 +130,7 @@ function stampLayout(
     cables: patch.cables,
     names: patch.names,
     ...(patch.rows === undefined ? {} : { rows: patch.rows }),
+    ...(patch.railHp === undefined ? {} : { railHp: patch.railHp }),
   }
   const source = `${body}${body.endsWith('\n') ? '' : '\n'}${writeLayout(layout)}`
   const result = read(source)

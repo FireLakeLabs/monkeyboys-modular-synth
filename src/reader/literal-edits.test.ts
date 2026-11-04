@@ -249,7 +249,11 @@ function fixture(type: string, edit: EditCase, target: 'vcf' | 'vca' = 'vca'): P
       )
   }
   // Non-default positions/looks and a retained declaration make identity loss observable.
-  const modules = [...path, ...mods].map((item, row) => ({ ...item, row: row + 1, hp: 3 }))
+  const modules = [...path, ...mods].map((item, row) => ({
+    ...item,
+    row: item.type === 'out' ? 0 : row + 1,
+    hp: item.type === 'out' ? 0 : 3,
+  }))
   return {
     version: 1,
     modules,

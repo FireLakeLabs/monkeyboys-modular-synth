@@ -60,7 +60,8 @@ with only proven tempo setup reports “Nothing reaches OUT yet” and brings OU
 highlighted input into view; it does not initialize audio. Unclassified imported
 statements still reach the engine because reader coverage does not prove silence.
 
-New racks place MIX and OUT at the right end of the first rail. Palette clicks
+New racks place MIX at the right end of the first rail, with OUT pinned beside it
+at the right edge of the rack frame, outside the scrolling rails. Palette clicks
 fill free space from the left. Clicks and drag previews share the same placement
 search: nearest whole HP on the requested rail, then the next free rail or a new
 one, without shifting neighbors. Saved and imported positions are retained.
@@ -238,3 +239,27 @@ Selection highlights survive returning to either view. View choices never write
 source or saved rack state. Wider screens keep the existing three-column layout.
 
 See [browser observations and limits](mid-width-verification.md).
+
+## Output panel and per-patch rails (#133)
+
+OUT keeps its catalog IN, BPM and VOL controls and all four Hardware looks, but
+occupies a fixed case panel to the right of the rail viewport. Rail
+scrolling never moves OUT. In a short pane, OUT scales to keep its controls and
+IN visible; rack focus restores the available height. Cables use measured jack centers in the frame's SVG
+coordinates, refreshed on scrolling, zoom, resize, look and workspace changes.
+The panel cannot be moved, duplicated or deleted. Selecting OUT in the palette
+selects the existing panel.
+
+The rail-width control offers 64, 84 and 104 HP and saves that choice per patch.
+New patches choose the widest full-window case that fits; files without a saved
+width stay at 64. The normal palette/code columns can still require zoom or
+scroll. Changing the window or a look never moves rail modules. A width reduction
+that would strand a module is refused. MIX starts at the saved rail's right end;
+palette insertion and drag previews retain the nearest-free-interval rule.
+Fit rack uses the rail viewport after reserving space for OUT.
+
+**Focus rack** hides the palette and code at every window size. **Restore
+workspace** restores the previous view; the editor remains mounted, retaining
+its document, draft and selection. Show in code leaves rack focus. Focus and zoom
+are local view state and never change saved width or executable source.
+See [verification and compatibility evidence](output-panel-verification.md).

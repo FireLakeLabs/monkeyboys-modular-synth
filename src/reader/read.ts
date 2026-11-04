@@ -6,7 +6,7 @@ import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { matchControlCall } from '../modules/bindings'
 import { DEFAULT_LOOK } from '../modules/looks'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
-import { nextPosition } from '../patch/layout'
+import { nextPosition, railWidth } from '../patch/layout'
 import { matchRouting, matchScopes, readLayout } from './layout'
 import { codeEnd } from './metadata'
 import { unclosedBracket } from './diagnostics'
@@ -82,6 +82,7 @@ function project(
   if (saved?.name !== undefined) patch.name = saved.name
   if (saved?.prelude !== undefined && source.startsWith(saved.prelude))
     patch.prelude = saved.prelude
+  if (saved?.railHp !== undefined) patch.railHp = saved.railHp
   const bindings: SourceBinding[] = []
   const reserved = new Set(saved?.modules.map((module) => module.id))
   const routing = saved && snapshot ? matchRouting(saved.scopes, scopes, snapshot) : undefined
@@ -93,15 +94,17 @@ function project(
   const nextRow = () => patch.modules.reduce((end, module) => Math.max(end, module.row + 1), 0)
   function add(type: string, values: Record<string, ControlValue> = {}): PlacedModule {
     const spec = getModuleSpec(type)
-    const position = nextPosition(patch.modules, type, row, hp)
-    row = position.row
-    hp = position.hp
+    const position = nextPosition(patch.modules, type, row, hp, railWidth(patch))
+    if (type !== 'out') {
+      row = position.row
+      hp = position.hp
+    }
     let counter = 1
     while (reserved.has(`${type}${counter}`)) counter++
     const id = `${type}${counter}`
     reserved.add(id)
-    const module = { id, type, row, hp, look: DEFAULT_LOOK[spec.family], values }
-    hp += spec.hp
+    const module = { id, type, ...position, look: DEFAULT_LOOK[spec.family], values }
+    if (type !== 'out') hp += spec.hp
     patch.modules.push(module)
     return module
   }
@@ -843,6 +846,7 @@ function restore(
   saved: RackLayout,
   matches: ReturnType<typeof matchScopes>,
 ): void {
+  if (saved.railHp !== undefined) patch.railHp = saved.railHp
   const rename = new Map<string, string>()
   const claimed = new Set<string>()
   // CV identity is constrained by the already matched target, including shared ENV.
@@ -902,7 +906,7 @@ function restore(
       ) === index,
   )
   // Restored positions are occupied even when they are on a later overflow row.
-  const occupied = patch.modules.filter((module) => rename.has(module.id))
+  const occupied = patch.modules.filter((module) => module.type !== 'out' && rename.has(module.id))
   const ends = new Map<number, number>()
   for (const module of occupied)
     ends.set(
@@ -913,7 +917,13 @@ function restore(
     if (!rename.has(module.id)) {
       Object.assign(
         module,
-        nextPosition(occupied, module.type, module.row, ends.get(module.row) ?? 0),
+        nextPosition(
+          occupied,
+          module.type,
+          module.row,
+          ends.get(module.row) ?? 0,
+          railWidth(patch),
+        ),
       )
       occupied.push(module)
       ends.set(module.row, module.hp + getModuleSpec(module.type).hp)
