@@ -46,11 +46,37 @@ function owner(name: string, source: boolean): string | undefined {
   return CATALOG.find((spec) => spec.strudel.includes(name))?.id
 }
 
-function soundOwner(call: Call, next?: Call): string | undefined {
+function soundOwner(call: Call, next?: Call, source = false): string | undefined {
   const wave = scalar(call.args[0])
   if (call.args.length !== 1 || typeof wave !== 'string') return undefined
+  const knownWave = CATALOG.some((spec) => {
+    const control = spec.controls.find(
+      (control) => control.id === (spec.id === 'osc' ? 'wave' : spec.soundSource),
+    )
+    return control?.kind === 'switch' && control.options.some((option) => option.value === wave)
+  })
+  if (/^wt_[\w-]+(?::\d+)?$/.test(wave)) return 'wavetable'
+  if (
+    /^[\w-]+(?::\d+)?$/.test(wave) &&
+    next &&
+    ['slice', 'splice', 'chop', 'striate'].includes(next.name) &&
+    (() => {
+      const match = matchControlCall(getModuleSpec('splice'), next.name)
+      if (!match || match.binding.argument.kind !== 'tuple') return false
+      const ids = tupleControls(match.binding, next.name)
+      return (
+        next.args.length === ids.length &&
+        ids.every((id, i) => {
+          const value = scalar(next.args[i])
+          return value !== undefined && fits('splice', id, value)
+        })
+      )
+    })()
+  )
+    return 'splice'
   return CATALOG.find((spec) => {
     const control = spec.controls.find((c) => c.id === spec.soundSource)
+    if (spec.id === 'smpl' && !source && !knownWave && /^[\w-]+(?::\d+)?$/.test(wave)) return true
     if (control?.kind !== 'switch' || !control.options.some((o) => o.value === wave)) return false
     if (spec.id !== 'harmonic') return true
     const arg = next?.args[0]
@@ -725,7 +751,7 @@ function project(
       }
     }
     if (!upstream && initial && initial.start === root.start) {
-      const sound = initial.name === 's' && soundOwner(initial, calls[1])
+      const sound = initial.name === 's' && soundOwner(initial, calls[1], true)
       const type = sound || owner(initial.name, true)
       const form = type && getModuleSpec(type).source
       if (
@@ -755,7 +781,10 @@ function project(
       if (sound) {
         const spec = getModuleSpec(sound)
         const id = spec.soundSource ?? ''
-        group = add(sound, { ...spec.readDefaults })
+        group = add(sound, {
+          ...spec.readDefaults,
+          ...(sound === 'splice' ? { mode: calls[1]?.name ?? 'slice' } : {}),
+        })
         literal(group, id, initial, scope, 0)
         upstream = output(group)
         start = 1
@@ -1274,7 +1303,12 @@ function project(
           : {}
       if (matched) {
         id = matched.control.id
-        values = { ...spec?.readDefaults, ...matched.values, ...activation }
+        values = {
+          ...spec?.readDefaults,
+          ...matched.values,
+          ...activation,
+          ...(type === 'splice' && name === 's' ? { mode: calls[index + 1]?.name ?? 'slice' } : {}),
+        }
         for (const [id, value] of Object.entries(matched.binding.selects ?? {})) {
           if (spec?.controls.find((control) => control.id === id)?.default !== value)
             values[id] = value

@@ -1,3 +1,5 @@
+import spliceSource from './patches/modules/splice.strudel?raw'
+import wavetableSource from './patches/modules/wavetable.strudel?raw'
 import { getModuleSpec } from '../modules/catalog'
 import type { LibraryPatch } from './catalog'
 import seqSource from './patches/modules/seq.strudel?raw'
@@ -56,6 +58,18 @@ import codeSource from './patches/modules/code.strudel?raw'
 
 /** One small, rack-owned starting point per shipped module. */
 export const MODULE_EXERCISES: readonly LibraryPatch[] = [
+  {
+    type: 'splice',
+    source: spliceSource,
+    description: 'Four razor slices of a factory sample.',
+    tryThis: 'Switch SPLICE MODE from slice to chop, then change SLICES from 4 to 8.',
+  },
+  {
+    type: 'wavetable',
+    source: wavetableSource,
+    description: 'A wavetable voice from a seated pinned URL pack.',
+    tryThis: 'Move WAVETABLE POSITION from 0.4 to 0.8 and compare WARP modes.',
+  },
   {
     type: 'gates',
     source: gatesSource,

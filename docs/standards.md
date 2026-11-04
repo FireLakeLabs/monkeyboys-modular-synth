@@ -456,3 +456,11 @@ workspace; the corrected doubles pass the existing application/history/error
 suites. Pinned-OUT comparisons await fonts and stable reference geometry before
 scrolling. Delayed-font reproduction failed before that prerequisite and passed
 afterwards, without weakening the pinning or cable-position assertions.
+
+The #138 [crate/tape acceptance](sound-crate.md) separates exact source, complete
+saved-rack identity, real engine events and browser PCM. Its banked-row regression
+failed before drops qualified untouched sounds and cleared sampler overrides;
+unsupported lookahead and saved CODE owners cannot invent slicing defaults. The
+crate uses #137's seated inventory and status API. The separate browser suite
+checks cold audition without transport, five drop destinations and tape/code
+updates; physical listening and other-browser coverage remain unverified.

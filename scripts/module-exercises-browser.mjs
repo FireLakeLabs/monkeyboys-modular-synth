@@ -22,6 +22,10 @@ const results = {
 }
 page.on('pageerror', (e) => results.errors.push(e.message))
 const actions = {
+  gates: ['mini', 'GATES', 'x*8', 'steps'],
+  switch: ['mini', 'SELECT', '<0 1 2 3>', 'steps'],
+  aux: ['knob', 'CUTOFF', 3000, 'cutoff', 'vcf'],
+  duck: ['knob', 'DEPTH', 0, 'depth'],
   seq: ['mini', 'STEPS', 'd3 e3 g3 b3', 'steps'],
   drums: ['mini', 'GRID', 'bd bd sd hh', 'grid'],
   quant: ['switch', 'SCALE', 'major', 'scale'],
@@ -35,6 +39,8 @@ const actions = {
   noise: ['switch', 'TYPE', 'pink', 'wave'],
   harmonic: ['drawbar', 'Partial 3', 1, 'partials'],
   fmop: ['knob', 'INDEX', 0, 'index'],
+  splice: ['knob', 'SLICES', 8, 'count'],
+  wavetable: ['knob', 'POSITION', 0.8, 'wt'],
   smpl: ['knob', 'SPEED', 0.5, 'speed'],
   vcf: ['knob', 'CUTOFF', 5000, 'cutoff'],
   vca: ['knob', 'LEVEL', 0, 'level'],

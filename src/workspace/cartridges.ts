@@ -106,7 +106,7 @@ export function packUsers(document: SourceDocument, names: readonly string[]): s
   const sounds = new Set(names)
   return document.patch.modules.flatMap((module) => {
     if (module.type === 'code') return [module.id]
-    if (!['drums', 'smpl'].includes(module.type)) return []
+    if (!['drums', 'smpl', 'splice', 'wavetable', 'reverb'].includes(module.type)) return []
     const text = JSON.stringify(
       Object.fromEntries(
         getModuleSpec(module.type).controls.map((control) => [

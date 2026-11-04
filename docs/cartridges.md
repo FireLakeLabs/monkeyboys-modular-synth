@@ -1,15 +1,17 @@
 # Sample cartridges (#137)
 
 The cartridge bay is a setup rail above the rack. It adds sample packs without
-adding modules or changing module widths. #138 owns the crate, auditioning,
-tape, SPLICE and WAVETABLE panels; none are implemented here.
+adding modules or changing module widths. The dependent #138
+[crate and tape contract](sound-crate.md) owns auditioning, sample drop slots,
+SPLICE and WAVETABLE.
 
 ## Source and saved ownership
 
 `SamplePack` in `src/samples/packs.ts` is `{ source: string; base?: string }`.
 `packKey` includes both source and base. `FACTORY_PACKS` owns the two pinned
 manifest/audio-base pairs previously private to the engine. The bay always shows
-them; they cannot be ejected. Registration remains lazy until Play/Bounce.
+them; they cannot be ejected. Registration remains lazy until Play/Bounce or
+opening/refreshing SOUNDS.
 
 `Patch.cartridges` and the optional v1 envelope `cartridges` array own only calls
 written by the bay. `packSetup` writes them before opaque `prelude`, tempo and
@@ -92,6 +94,11 @@ a particular displayed call safely; its cartridge keeps unknown status/count
 rather than claiming another call's result. Arbitrary user code is not sandboxed.
 
 `getSampleWarnings()` shares the pack subscription and exposes unattributed missing-sound diagnostics after a manifest failure. Missing sample voices are skipped in that case so loaded voices can continue; an unrelated missing sound without an active pack failure still uses #36's Stop path.
+
+#138 adds `loadSamplePacks(packs)` for the crate's inventory-only load and
+`auditionSample(name, index)` for a one-shot voice. Both remain behind this adapter;
+neither evaluates editor code or starts the transport. See
+[cold-decode behavior and proof](sound-crate.md).
 
 Late decode/output/query failures still use #36's existing surfaced Stop path.
 They have no reliable pack/revision attribution; a failed manifest is the

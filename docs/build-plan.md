@@ -258,3 +258,11 @@ The [acceptance record](pattern-visibility-verification.md) documents the safe
 prefix boundary, metadata/name precedence, native analyser limits and motion
 behavior. Routing (#136), cartridges (#137) and sound-crate work (#138) remain
 separate wave-four work items.
+
+## Sound crate and sample-fed panels (#138)
+
+After merged #137, the SOUNDS drawer browses seated factory/user inventories and
+variants and auditions through the engine without starting transport. DRUMS,
+SMPL, REVERB IR, SPLICE and WAVETABLE share source-aware drop edits; SMPL tape
+marks edit begin/end/loop points. The catalog owns new controls and fixed-width
+Hardware panels. See the [decisions, independent round trips and browser proof](sound-crate.md).

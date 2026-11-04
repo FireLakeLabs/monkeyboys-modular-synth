@@ -208,6 +208,46 @@ s("bd*4, hh*8").bank("RolandTR909")
 
 The engine must load the sample banks at start-up (`@strudel/web` loads none by default). Which sample sources to load is an engine task — see [`build-plan.md`](build-plan.md).
 
+### Sample-fed panels (#138)
+
+SMPL keeps its 8 HP width and existing controls. SAMPLE is an optional sound
+selector (empty by default, inheriting incoming DRUMS); a choice writes
+`.s("sound:n")`. Dropping a card clears BANK and the overriding N setter so
+the selected full registry name and variant reach the engine. The manual N knob
+retains its 0–127 range; cards can select larger inventories through `:n`.
+LOOP BEGIN and LOOP END add 0–1 controls, step .01, defaults/omissions 0 and 1,
+writing `.loopBegin(x)` and `.loopEnd(x)`; aliases `loopb`/`loope` read unchanged.
+The tape's B/E/LB/LE marks edit BEGIN, END, LOOP BEGIN and LOOP END. LOOP remains
+the existing 0/1 control. Marks never reorder or clamp other points, enable LOOP
+implicitly, or rescale the pinned sampler's absolute sample fractions.
+
+REVERB keeps its 8 HP width and gains an empty-by-default IR slot. It writes
+`.ir("sample:n")` after the room settings, omitted when empty or ROOM is bypassed.
+`iresponse` is the pinned alias. An IR call needs a compatible room owner;
+unsupported or standalone settings retain CODE instead of inventing a wet send.
+
+| Module    | Family / category / width | Controls and generated forms                                                                                                                                                                                                                                                                                                                                                                        |
+| --------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SPLICE    | Hardware / Sound / 12 HP  | SAMPLE empty; MODE slice (default), splice, chop, striate; SLICES 1–64 integer, default 4; SLICE ORDER text, default `0 1 2 3`. Writes `.s("sample:n")` when selected, then `.slice(4, "0 1 2 3")`, `.splice(4, "0 1 2 3")`, `.chop(4)` or `.striate(4)`. Order text is saved but inactive in chop/striate. Razor marks show the equal divisions. IN accepts incoming event patterns; OUT is audio. |
+| WAVETABLE | Hardware / Sound / 12 HP  | TABLE empty; POSITION 0–1/.01, default .4, omitted at 0; WARP 0–1/.01, default .2, omitted at 0; WARP MODE spin, omitted at none. Writes `s("wt_table:n").wt(0.4).warp(0.2).warpmode("spin")`. NOTE accepts incoming event patterns; OUT is audio.                                                                                                                                                  |
+
+WARP MODE offers the pinned engine's none, asym, mirror, bendp, bendm, bendmp,
+sync, quant, fold, pwm, orbit, spin, chaos, primes, binary, brownian, reciprocal,
+wormhole, logistic, sigmoid, fractal and flip. Imported absent wavetable controls
+use 0/0/none, preserving engine defaults instead of applying the new-panel preset.
+`wavetablePosition`, `wavetableWarp` and `wavetableWarpMode` read as aliases.
+
+SMPL, SPLICE and WAVETABLE can start a voice after a sample is selected; an empty
+standalone selector is silent. Sound slots use the catalog's `sampleTarget`;
+WAVETABLE's `wt_` prefix limits choices to seated inventories. Unavailable imported
+values remain visible and saved. These panels use the existing four Hardware
+looks at fixed catalog widths. See [crate and tape acceptance](sound-crate.md).
+
+A SPLICE/WAVETABLE card below a known nonempty SMPL BANK is refused atomically,
+with the sampler ID and an instruction to clear BANK or drop on SMPL. A shared
+DRUMS row checks unbanked sample-fed consumers as well as sampler banks/indices
+before qualifying names; incompatible siblings require per-sampler edits.
+
 ---
 
 ## Shaping

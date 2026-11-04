@@ -1,3 +1,5 @@
+import { allowSound, receiveSound } from '../samples/drag'
+import type { SoundChoice } from '../samples/crate'
 import { euclidean } from '../patch/euclidean'
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
@@ -31,7 +33,9 @@ export function MiniEditor({
   width = 104,
   commit,
   escaped = false,
+  dropSample,
 }: {
+  dropSample?: ((choice: SoundChoice, row: number) => void) | undefined
   escaped?: boolean
   text: string
   label: string
@@ -370,7 +374,20 @@ export function MiniEditor({
       >
         {drum &&
           layout?.rows.map((name, lane) => (
-            <span className="mini-row-name" key={lane} style={{ top: lane * 18 }} title={name}>
+            <span
+              className="mini-row-name sample-row-drop"
+              key={lane}
+              style={{ top: lane * 18 }}
+              title={`Drop sound on row ${lane + 1}: ${name}`}
+              onDragOver={allowSound}
+              onDrop={(event) => {
+                try {
+                  receiveSound(event, (choice) => dropSample?.(choice, lane))
+                } catch (error) {
+                  setError(String(error))
+                }
+              }}
+            >
               {name}
             </span>
           ))}

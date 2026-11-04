@@ -31,6 +31,7 @@ const web = vi.hoisted(() => ({
   renderPatternAudio: vi.fn(),
   setValueAtTime: vi.fn(),
   webaudioOutput: vi.fn(),
+  superdough: vi.fn(),
 }))
 vi.mock('@strudel/web', () => ({
   ...web,
@@ -73,6 +74,7 @@ beforeEach(() => {
   vi.resetAllMocks()
   web.initStrudel.mockResolvedValue(undefined)
   web.evaluate.mockResolvedValue({})
+  web.superdough.mockResolvedValue(undefined)
   web.samples.mockResolvedValue(undefined)
   web.fetchSampleMap.mockResolvedValue([{ bd: ['kick.wav'] }, 'https://test.invalid/'])
   vi.stubGlobal('fetch', async () => {
@@ -642,4 +644,95 @@ it('delivers revision-bound source spans at audio time and cancels them on Stop'
   web.time = 11
   await vi.advanceTimersByTimeAsync(1000)
   expect(feedback).toHaveBeenCalledTimes(1)
+})
+
+it('loads the crate and auditions a variant without starting or replacing transport', async () => {
+  const { loadSamplePacks, auditionSample, getSamplePacks } = await import('./engine')
+  await loadSamplePacks([{ source: 'https://crate.test/strudel.json' }])
+  expect(
+    getSamplePacks().find((pack) => pack.pack.source === 'https://crate.test/strudel.json')?.names,
+  ).toEqual(['bd'])
+  await auditionSample('bd', 1)
+  expect(web.superdough).toHaveBeenCalledWith(
+    { s: 'bd', n: 1, note: 36, gain: 0.7, orbit: -1 },
+    10.05,
+    0.8,
+    0.5,
+    0,
+  )
+  expect(web.resume).toHaveBeenCalled()
+  expect(web.evaluate).not.toHaveBeenCalled()
+  expect(web.hush).not.toHaveBeenCalled()
+  expect(web.resetGlobalEffects).not.toHaveBeenCalled()
+})
+
+it('Stop during a cold audition prevents its eventual audible onset', async () => {
+  let release = () => {}
+  web.superdough.mockReturnValueOnce(
+    new Promise((resolve) => {
+      release = () => resolve(undefined)
+    }),
+  )
+  const { auditionSample, stop } = await import('./engine')
+  const audition = auditionSample('bd', 0)
+  const rejected = expect(audition).rejects.toThrow('cancelled')
+  await vi.waitFor(() => expect(web.superdough).toHaveBeenCalledTimes(1))
+  await stop()
+  release()
+  await rejected
+  expect(web.superdough.mock.calls.some(([value]) => value.gain > 0)).toBe(false)
+})
+
+it('Stop releases a stalled audition so Play recovers before the cold trigger finishes', async () => {
+  let release = () => {}
+  web.superdough.mockReturnValueOnce(
+    new Promise((resolve) => {
+      release = () => resolve(undefined)
+    }),
+  )
+  const { auditionSample, stop, play } = await import('./engine')
+  const audition = auditionSample('bd', 0).catch((error: unknown) => error)
+  await vi.waitFor(() => expect(web.superdough).toHaveBeenCalledTimes(1))
+  await stop()
+  const playing = play('recovered')
+  try {
+    await vi.waitFor(() => expect(web.evaluate).toHaveBeenCalledWith('recovered'), {
+      timeout: 200,
+      interval: 10,
+    })
+  } finally {
+    release()
+    await Promise.allSettled([audition, playing])
+  }
+  expect(await audition).toBeInstanceOf(Error)
+  expect(web.superdough.mock.calls.some(([value]) => value.gain > 0)).toBe(false)
+})
+
+it('keeps cancelled audition output on the live context until Bounce can swap safely', async () => {
+  let release = () => {}
+  const live = web.getAudioContext()
+  web.superdough.mockReturnValueOnce(
+    new Promise((resolve) => {
+      release = () => resolve(undefined)
+    }),
+  )
+  web.evaluate.mockResolvedValue({ queryArc: () => [] })
+  const { auditionSample, stop, bounce } = await import('./engine')
+  const audition = auditionSample('bd', 0).catch((error: unknown) => error)
+  await vi.waitFor(() => expect(web.superdough).toHaveBeenCalledTimes(1))
+  await stop()
+  const rendering = bounce('bounce after cancelled audition', {
+    cycles: 1,
+    name: 'Patch',
+    volume: 0.5,
+  })
+  await vi.waitFor(() =>
+    expect(web.evaluate).toHaveBeenCalledWith('bounce after cancelled audition', false),
+  )
+  expect(web.getAudioContext()).toBe(live)
+  expect(web.renderPatternAudio).not.toHaveBeenCalled()
+  release()
+  await Promise.all([audition, rendering])
+  expect(web.renderPatternAudio).toHaveBeenCalledTimes(1)
+  expect(web.getAudioContext()).toBe(live)
 })

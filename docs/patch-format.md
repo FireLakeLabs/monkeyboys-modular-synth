@@ -361,6 +361,16 @@ and `fx`. Resolve the lambda path first, its local `calls` next, and the FX
 argument last. Source and graph validation preserve both addresses; no format
 version or old JUX/CODE ownership is replaced by this combination.
 
+## Crate and tape (#138)
+
+Sample choices, loop points and SPLICE/WAVETABLE settings use existing module
+`values`; new module types are catalog IDs. Missing SMPL SAMPLE/loop points mean
+empty/0/1, retaining old saved racks. Pack ownership remains #137's `cartridges`
+contract. Crate drawer/filter/variant selection and auditioning are local view
+state, excluded from the v1 envelope. No decoded buffers or local files are saved.
+Exact imported source and explicit CODE owners retain their existing ownership
+rules. See [separate round-trip and browser proof](sound-crate.md).
+
 ## Cartridge setup ownership (#137)
 
 The optional v1 `cartridges: { source: string; base?: string }[]` field records

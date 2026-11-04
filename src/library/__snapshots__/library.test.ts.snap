@@ -364,6 +364,13 @@ exports[`built-in patch library > exercise-sometimes: preserves exact source and
 }
 `;
 
+exports[`built-in patch library > exercise-splice: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "b47fd35e24267ab1088a94b0159d5d944d91471050578663d7d20535d0beb552",
+  "projection": "042a0df649706c32919d5162f0ecedaf74d4ad3e06ad5ed56322ed6be49bbc1c",
+}
+`;
+
 exports[`built-in patch library > exercise-switch: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "3bf9839d1612b14461a32b560b0223a98be040247d36c019c66c7dba6904dce5",
@@ -396,6 +403,13 @@ exports[`built-in patch library > exercise-warp: preserves exact source and inde
 {
   "generated": "a2c9a7b601ce014c787c4194545895d774d5b0acbcb687b7cf931a3dc952af0a",
   "projection": "0c26aec0f898d49815319e81f370b04c54ac38cea92717a408fc04d8c3ba242e",
+}
+`;
+
+exports[`built-in patch library > exercise-wavetable: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "e6e0b0b672177cc060d88a570d758f82c558e725696de48ff6e24282651537b7",
+  "projection": "18ba70728dbe8218d5477143c2e6158859958b39235bf2dd8ad3dddb943ce54b",
 }
 `;
 

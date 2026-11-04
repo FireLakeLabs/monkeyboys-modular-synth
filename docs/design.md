@@ -334,6 +334,28 @@ Widths stay catalog-owned and cable endpoints follow measured live jacks.
 Connections list entries include “function λ”, keeping their selection/removal
 path available when cables are faded. See [acceptance evidence](function-loops-verification.md).
 
+## Sound crate and tape (#138)
+
+SOUNDS opens a bounded drawer in the module palette. Seated packs, including both
+factories, have sections; bank-prefixed names have labelled drawers. Each sound is
+a draggable card with previous/next variant controls and an audition action. The
+filter retains pack sections. Opening/refreshing loads inventories through the
+engine without applying source or starting transport. Historical unseated registry
+entries are excluded. Manifest status and errors retain #137's distinctions.
+
+DRUMS row names accept cards. SMPL, REVERB IR, SPLICE and WAVETABLE have catalog-owned
+drop slots with native selectors as a keyboard alternative; clearing restores an
+empty slot. WAVETABLE offers only seated `wt_` sounds. Imported unavailable values
+are shown without adding them to the available inventory.
+
+SMPL's tape has B/E/LB/LE markers on separate lanes, all measured over the same
+sample strip. Pointer dragging and left/right arrows edit the associated fractions;
+Home/End reach 0/1. A pointer gesture is one accepted undo group. LOOP is explicit.
+The existing numerical controls and applied code update those same marks. SPLICE
+shows one razor mark per division; its count/mode/order controls own the code.
+All controls remain inside the existing panel scroller; widths and jack positions
+follow the existing look/zoom rules. See [acceptance and limits](sound-crate.md).
+
 ## Cartridge rail (#137)
 
 The bay sits above the rack toolbar and scrolls its cartridge row horizontally.

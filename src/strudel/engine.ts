@@ -340,6 +340,81 @@ export function setVolume(value: number): Promise<void> {
   })
 }
 
+/** Populate the seated inventory without evaluating the patch or starting transport. */
+export function loadSamplePacks(packs: readonly SamplePack[]): Promise<void> {
+  return enqueue(async () => {
+    const strudel = await load()
+    for (const pack of packs) {
+      if (
+        samplePacks.some(
+          (resource) => resource.key === packKey(pack) && resource.status === 'registered',
+        )
+      )
+        continue
+      if (manifestUrl(pack.source)) await registerPack(strudel, pack.source, pack.base)
+      else if (pack.source.startsWith('inline:')) {
+        const data: unknown = JSON.parse(pack.source.slice(7))
+        sampleInventory(data)
+        if (data && typeof data === 'object' && !Array.isArray(data))
+          await registerPack(strudel, Object.fromEntries(Object.entries(data)), pack.base)
+      }
+    }
+  })
+}
+
+/** Audition one registered variant. Never evaluate code, hush, or install a pattern. */
+export function auditionSample(name: string, index: number): Promise<void> {
+  const current = epoch
+  return enqueue(async () => {
+    let cancel = () => {}
+    const cancellation = new Promise<never>((_resolve, reject) => {
+      cancel = () => reject(cancelled())
+    })
+    cancelActive = cancel
+    const work = (async () => {
+      if (!Number.isInteger(index) || index < 0 || !/^[\w-]+$/.test(name))
+        throw new Error('Invalid sound variant')
+      const strudel = await load()
+      checkEpoch(current)
+      if (bouncing) throw new Error('Wait for Bounce before auditioning')
+      await strudel.getAudioContext().resume()
+      applyVolume(strudel)
+      checkEpoch(current)
+      const tracked = (async () => {
+        const value = { s: name, n: index, note: name.startsWith('wt_') ? 60 : 36, orbit: -1 }
+        // The pinned sampler discards a cold trigger when decoding misses its onset.
+        // A silent trigger warms its own sample/table cache before the audible onset.
+        await strudel.superdough(
+          { ...value, gain: 0 },
+          strudel.getAudioContext().currentTime + 0.05,
+          0.01,
+          0.5,
+          0,
+        )
+        checkEpoch(current)
+        await strudel.superdough(
+          { ...value, gain: 0.7 },
+          strudel.getAudioContext().currentTime + 0.05,
+          0.8,
+          0.5,
+          0,
+        )
+      })()
+      outputWork.add(tracked)
+      try {
+        await tracked
+      } finally {
+        outputWork.delete(tracked)
+      }
+    })()
+    try {
+      await Promise.race([work, cancellation])
+    } finally {
+      if (cancelActive === cancel) cancelActive = undefined
+    }
+  })
+}
+
 /** Replaces the scheduled pattern. First use must follow a user gesture. */
 export function play(
   code: string,
