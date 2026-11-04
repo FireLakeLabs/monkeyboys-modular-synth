@@ -187,13 +187,13 @@ an opaque gain is inserted last, before its associated modulation and routing.
 A gain that cannot project also keeps its modulation as CODE, preventing a new
 MIX CV path from emitting unity. All 331 focused panel/modulation tests pass.
 The real REPL import probe includes both forms and separately checks events,
-exact source and saved/reopened rack state. Round 5 returned CHANGES; a further
-Sol approval is pending, and the skill's five-round budget requires the user's
-explicit extension before another recheck. No review usage was exposed.
+exact source and saved/reopened rack state. The user extended the review budget
+by up to two focused rechecks. Round 6 approved S7/S8 on `eab2694`, independently
+reran all 331 focused tests, and found no new issues. No review usage was exposed.
 
 Current deterministic gate after S7/S8: 1,420 unit cases, 43 guardrails, formatting,
 lint, reader coverage, TypeScript and build pass. S7 (blocker) and S8 (should) are
-fixed locally, with approval pending; neither finding is disputed or declined.
+fixed and approved in round 6; neither finding is disputed or declined.
 The full browser workflow passed all 34 groups in 5.1 minutes after these fixes,
 including the new real REPL event/source/saved-state assertions. Nested MIX PCM
 remained nonzero for all sources, with SMOOTH upward/downward ratios 2.810/3.652
