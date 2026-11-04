@@ -4,7 +4,7 @@
     {
       "kind": "gates",
       "events": 20,
-      "rms": 0.010015948093297753,
+      "rms": 0.01017410245785404,
       "sampleRate": 48000,
       "sourceExact": true,
       "savedIdentity": true,
@@ -14,7 +14,7 @@
     {
       "kind": "switch",
       "events": 4,
-      "rms": 0.012104680408701324,
+      "rms": 0.012128805077585332,
       "sampleRate": 48000,
       "sourceExact": true,
       "savedIdentity": true,
@@ -24,7 +24,7 @@
     {
       "kind": "aux",
       "events": 36,
-      "rms": 0.01429596740077483,
+      "rms": 0.014311155911012206,
       "sampleRate": 48000,
       "sourceExact": true,
       "savedIdentity": true,
@@ -34,9 +34,9 @@
     {
       "kind": "duck",
       "events": 36,
-      "rms": 0.014278718500924163,
+      "rms": 0.014286129937958088,
       "targetGain": {
-        "min": 0.1112748235464096,
+        "min": 0.10961935669183731,
         "max": 1
       },
       "sampleRate": 48000,
@@ -48,7 +48,7 @@
     {
       "kind": "audio-mod",
       "events": 8,
-      "rms": 0.012231148243645126,
+      "rms": 0.012251097818247077,
       "sampleRate": 48000,
       "sourceExact": true,
       "savedIdentity": true,
@@ -197,9 +197,9 @@
   },
   "audioRate": {
     "baseline": {
-      "carrier": -61.37986755371094,
-      "lower": -143.466796875,
-      "upper": -142.7589111328125
+      "carrier": -61.3798713684082,
+      "lower": -143.4659881591797,
+      "upper": -142.75900268554688
     },
     "modulated": {
       "carrier": -61.37997055053711,

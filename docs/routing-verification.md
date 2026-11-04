@@ -8,7 +8,7 @@ visibility remain in #137–#139.
 ## Deterministic proof
 
 `npm ci` and `npm run check` pass: formatting, skill integrity, lint, unit tests,
-reader coverage, **2,185 unit tests**, 43 executable guardrails, TypeScript and
+reader coverage, **2,204 unit tests**, 43 executable guardrails, TypeScript and
 production build.
 The pre-existing large-bundle build advisory remains.
 
@@ -124,3 +124,14 @@ structural replacement and replay, and its target retains logical output pair
 label and saved-identity regressions; the ordinary unit event helper deliberately
 does not emulate REPL label selection. Physical multichannel devices are not
 verified. No extra musical events or app-only playback shims were added.
+
+Sol recheck approved the current routing behavior in round 2 with no new
+in-scope findings. Both S1/S2 are resolved; provider-reported usage was unavailable.
+
+## Wave-four integration
+
+Rebased on the completed #137 cartridge bay without discarding its setup or
+resource behavior. The generator retains bay-owned `samples()` setup before
+routing declarations/voices. Five additional regressions separately prove exact
+export bytes and full saved routing identity with both explicit factory packs.
+The full repository and routing browser gates were rerun on that combined base.

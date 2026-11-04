@@ -1,3 +1,5 @@
+import { withFactoryPacks } from '../workspace/cartridges'
+import { FACTORY_PACKS, packSetup } from '../samples/packs'
 import { parse } from 'acorn'
 import { parseSource } from '../reader/syntax'
 import { beforeAll, describe, expect, it } from 'vitest'
@@ -333,5 +335,20 @@ it.each(['aux', 'audio-mod', 'duck'] as const)(
     expect(privateScopes.length).toBeGreaterThan(0)
     expect(privateScopes.every((s) => s.label === 'S$')).toBe(true)
     expect(read(source).patch).toEqual(patch)
+  },
+)
+
+it.each(ROUTING_KINDS)(
+  '%s preserves routing and exact saved identity through cartridge export',
+  (kind) => {
+    const patch = routingFixture(kind),
+      source = generate(patch)
+    const exported = withFactoryPacks(read(source))
+    expect(exported.patch.cartridges).toEqual(FACTORY_PACKS)
+    expect(sourceBody(exported.source)).toBe(packSetup(FACTORY_PACKS) + sourceBody(source))
+    const reopened = read(exported.source)
+    expect(reopened.layout, reopened.diagnostics.join('; ')).toBe('restored')
+    expect(reopened.patch).toEqual({ ...patch, cartridges: FACTORY_PACKS })
+    expect(generate(reopened)).toBe(exported.source)
   },
 )
