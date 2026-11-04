@@ -92,3 +92,19 @@ subjective audible equivalence remain unverified. The live private canvas was
 unavailable; the supplied local reference-board exports were available and used.
 No issue acceptance criterion remains unverified within the tested Chromium
 harness; physical listening is explicitly separate from measured audio data.
+
+## Hosted integration follow-up
+
+The first PR browser run passed the new nine-check suite and 36 other cases,
+but failed three older scripts whose engine doubles omitted the new observation
+APIs. The history script reproduced a blank-page/editor timeout locally before
+those fixture exports were added. History, code-application and workspace-error
+scripts then all passed locally, including their real-engine/PCM phases.
+
+The hosted pinned-OUT geometry assertion also failed once; its complete local
+1600/1024/900-pixel matrix passed, as did an additional 1024-pixel run under
+artificial CPU throttling. No speculative product or assertion change was made.
+The broad library rack-editing timeout was already present on unchanged main at
+`b29342c`: [baseline browser run](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/41871111308).
+It is an unrelated inherited follow-up, distinct from #139's source/rack/event
+and browser criteria. Final PR CI results supersede this first-run status.

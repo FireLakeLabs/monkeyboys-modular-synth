@@ -22,6 +22,9 @@ export const getSamplePacks = () => samplePacks;
 export const getSampleWarnings = () => samplePacks;
 export const subscribeSamplePacks = () => () => {};
 export const getResourceStatus = () => 'unknown';
+export const getClock = () => ({ cycle: 0, cps: 0.5, running: false });
+export const scopeData = () => undefined;
+export const probe = async () => ({ kind: 'unavailable', reason: 'audio fixture' });
 export const subscribe = () => () => {};
 `
 const editor = (page) => page.getByRole('textbox', { name: 'Strudel source', exact: true })
