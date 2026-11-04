@@ -23,6 +23,7 @@ for (const script of [
   'nested-steps-browser',
 
   'function-loops-browser',
+  'pattern-visibility-browser',
 ]) {
   test(script, async ({ baseURL }, info) => {
     const output = info.outputPath('evidence')

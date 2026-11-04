@@ -1,5 +1,7 @@
 import { CartridgeBay } from './samples/CartridgeBay'
 import { withFactoryPacks } from './workspace/cartridges'
+
+import { CycleClock } from './rack/PatternVisuals'
 import { defaultRailWidth } from './patch/layout'
 import {
   useCallback,
@@ -451,7 +453,11 @@ export default function App() {
     const url = URL.createObjectURL(new Blob([exportSource()], { type: 'text/plain' }))
     const link = window.document.createElement('a')
     link.href = url
-    link.download = patchFilename(current.current.document.patch)
+    link.download = patchFilename(
+      current.current.document.patch,
+      'strudel',
+      current.current.document.source,
+    )
     link.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
@@ -505,15 +511,15 @@ export default function App() {
           </h1>
         </div>
         <input
-          key={patchName(patch)}
+          key={patchName(patch, document.source)}
           className="patch-name"
           aria-label="Patch name"
-          defaultValue={patchName(patch)}
+          defaultValue={patchName(patch, document.source)}
           disabled={locked || replacing || document.layout === 'invalid'}
           onBlur={(event) => {
             try {
               const next = renameDocument(current.current.document, event.currentTarget.value)
-              event.currentTarget.value = patchName(next.patch)
+              event.currentTarget.value = patchName(next.patch, next.source)
               if (next !== current.current.document) install(next)
             } catch (failure) {
               setError(failure instanceof Error ? failure.message : String(failure))
@@ -521,7 +527,8 @@ export default function App() {
           }}
           onKeyDown={(event) => {
             if (event.nativeEvent.isComposing) return
-            if (event.key === 'Escape') event.currentTarget.value = patchName(patch)
+            if (event.key === 'Escape')
+              event.currentTarget.value = patchName(patch, document.source)
             if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur()
           }}
         />
@@ -569,6 +576,7 @@ export default function App() {
             />
           )}
         </fieldset>
+        <CycleClock />
         <button
           type="button"
           className="play"
@@ -621,6 +629,8 @@ export default function App() {
               install={install}
             />
           }
+
+          document={document}
           locked={locked || document.layout === 'invalid'}
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}

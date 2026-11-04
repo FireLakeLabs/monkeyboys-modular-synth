@@ -1,3 +1,5 @@
+import type { SourceDocument } from '../reader/types'
+import { CableProbe, PatchCredits, ScopeDisplay } from './PatternVisuals'
 import {
   useEffect,
   useLayoutEffect,
@@ -71,6 +73,8 @@ const curve = (a: Point, b: Point) =>
 export function Rack({
   patch,
   cartridgeBay,
+
+  document: sourceDocument,
   edit: requestEdit,
   selected,
   select,
@@ -90,6 +94,8 @@ export function Rack({
 }: {
   patch: Patch
   cartridgeBay?: ReactNode
+
+  document: SourceDocument
   locked: boolean
   showCode: (id: string) => void
   editingModule: string | null
@@ -108,6 +114,8 @@ export function Rack({
   cancelReplacement: () => void
 }) {
   const [moduleFilter, setModuleFilter] = useState('')
+  const [probeCable, setProbeCable] = useState<string | null>(null)
+  const [pinnedProbe, setPinnedProbe] = useState(false)
   const palette = PALETTE_CATEGORIES.map((category) => ({
     ...category,
     modules: paletteModules(category.id, moduleFilter),
@@ -428,6 +436,7 @@ export function Rack({
             onFocus={() => select(m.id)}
             onPointerDown={() => select(m.id)}
           >
+            {m.type === 'scope' && <ScopeDisplay module={m} />}
             {[...spec.controls]
               .sort((a, b) =>
                 'group' in a || 'group' in b
@@ -679,6 +688,8 @@ export function Rack({
         onFocusCapture={rememberOrigin}
       >
         {cartridgeBay}
+
+        <PatchCredits source={sourceDocument.source} />
         <div className="rack-toolbar">
           <h2>
             RACK <small>{patch.modules.length} modules</small>
@@ -896,7 +907,22 @@ export function Rack({
                   <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
                   <path
                     d={curve(a, b)}
-                    onClick={() => {
+                    onPointerEnter={() => {
+                      if (
+                        !pinnedProbe &&
+                        cableSignal(patch, c.from, loopInfo.members) === 'pattern'
+                      )
+                        setProbeCable(c.id)
+                    }}
+                    onPointerLeave={() => {
+                      if (!pinnedProbe) setProbeCable(null)
+                    }}
+                    onClick={(event) => {
+                      if (event.altKey) {
+                        setProbeCable(c.id)
+                        setPinnedProbe(true)
+                        return
+                      }
                       setSelectedCable(c.id)
                       cancel()
                     }}
@@ -1159,6 +1185,17 @@ export function Rack({
               ))}
           </div>
         )}
+        {probeCable && (
+          <CableProbe
+            key={`${sourceDocument.source}:${probeCable}`}
+            document={sourceDocument}
+            cable={probeCable}
+            close={() => {
+              setProbeCable(null)
+              setPinnedProbe(false)
+            }}
+          />
+        )}
         {currentCable && !locked && (
           <div className="selection-tools">
             <span>
@@ -1173,6 +1210,15 @@ export function Rack({
               }}
             >
               Remove cable
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setProbeCable(currentCable.id)
+                setPinnedProbe(true)
+              }}
+            >
+              Probe cable
             </button>
             <button
               type="button"

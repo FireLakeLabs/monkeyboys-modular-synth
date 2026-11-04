@@ -1,5 +1,6 @@
 import { withoutPackSetup } from '../samples/packs'
 import { notationLiteral } from '../reader/notationLiteral'
+import { creditComments } from './credits'
 import { parse, tokenizer } from 'acorn'
 import { isGrid, isSteps } from '../codegen/graph'
 import { drumText } from '../patch/notation'
@@ -64,7 +65,7 @@ export function makeRackEditable(document: SourceDocument, next = document.patch
   const body = withoutPackSetup(sourceBody(document.source), document.patch.cartridges ?? [])
   const parsed = parseSource(body)
   const bound = new Set(document.bindings.map((binding) => binding.scope))
-  const setup: string[] = []
+  const setup: (Span & { text: string })[] = []
   for (const statement of parsed.program.body) {
     const scopes = parsed.scopes.filter(
       (scope) => scope.start >= statement.start && scope.end <= statement.end,
@@ -75,9 +76,33 @@ export function makeRackEditable(document: SourceDocument, next = document.patch
     if (owned.length) {
       if (owned.length !== scopes.length)
         throw new Error('Separate helper and pattern declarations before converting this patch')
-    } else setup.push(body.slice(statement.start, statement.end))
+    } else {
+      setup.push({
+        start: statement.start,
+        end: statement.end,
+        text: body.slice(statement.start, statement.end),
+      })
+    }
   }
-  const prelude = setup.join('\n')
+  const credits = creditComments(body).filter(
+    (comment) =>
+      !setup.some((span) => comment.start >= span.start && comment.end <= span.end) &&
+      !document.bindings.some((binding) => {
+        const code = next.modules.find(
+          (module) => module.id === binding.module && module.type === 'code',
+        )
+        return (
+          code &&
+          comment.start >= binding.start &&
+          comment.end <= binding.end &&
+          typeof code.values['text'] === 'string' &&
+          code.values['text'].includes(body.slice(comment.start, comment.end))
+        )
+      }),
+  )
+  const prelude = [...setup, ...credits]
+    .sort((a, b) => a.start - b.start)
+    .reduce((text, item) => text + (text && !/[\r\n]$/.test(text) ? '\n' : '') + item.text, '')
   const { prelude: _previous, ...patch } = next
   const result = fromPatch({ ...patch, ...(prelude ? { prelude } : {}) })
   if (result.layout !== 'restored') throw new Error('Cannot restore the converted rack')
@@ -232,6 +257,7 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
       const value = module.values[control.id] ?? control.default
       const old = previous.values[control.id] ?? control.default
       if (JSON.stringify(value) === JSON.stringify(old)) continue
+      if ('presentationOnly' in control && control.presentationOnly) continue
       const bindings = document.bindings.filter((b) => b.module === module.id)
       if (!bindings.length || (module.type === 'out' && control.id === 'vol')) continue
       let spans = bindings.flatMap((b) => b.controls[control.id] ?? [])

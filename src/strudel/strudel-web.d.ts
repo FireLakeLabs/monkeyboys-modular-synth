@@ -70,3 +70,9 @@ declare module '@strudel/web' {
     baseUrl?: string,
   ): Promise<unknown>
 }
+
+declare module '@strudel/web' {
+  export function miniAllStrings(): void
+  export function getTime(): number
+  export function getAnalyzerData(type: 'time' | 'frequency', id: number): Float32Array | undefined
+}

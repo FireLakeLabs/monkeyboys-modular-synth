@@ -26,6 +26,8 @@ const web = vi.hoisted(() => ({
   setAudioContext: vi.fn(),
   setSuperdoughAudioController: vi.fn(),
   getCps: vi.fn(),
+  getTime: vi.fn(),
+  getAnalyzerData: vi.fn(),
   renderPatternAudio: vi.fn(),
   setValueAtTime: vi.fn(),
   webaudioOutput: vi.fn(),
@@ -104,6 +106,24 @@ beforeEach(() => {
 })
 
 describe('engine boundary', () => {
+  it('observes the scheduler clock and voice tap without initializing audio, and clears taps on Stop', async () => {
+    const { getClock, scopeData, play, stop } = await import('./engine')
+    expect(getClock()).toEqual({ cycle: 0, cps: 0.5, running: false })
+    expect(scopeData(3, 'waveform')).toBeUndefined()
+    expect(web.initAudio).not.toHaveBeenCalled()
+    await play('$: s("sine").analyze(3)')
+    web.getTime.mockReturnValue(7.25)
+    expect(getClock()).toEqual({ cycle: 7.25, cps: 0.5, running: true })
+    const signal = new Float32Array([0, 0.25, -0.25])
+    web.getAnalyzerData.mockReturnValue(signal)
+    expect(scopeData(3, 'waveform')).toBe(signal)
+    expect(web.getAnalyzerData).toHaveBeenLastCalledWith('time', 3)
+    scopeData(3, 'spectrum')
+    expect(web.getAnalyzerData).toHaveBeenLastCalledWith('frequency', 3)
+    await stop()
+    expect(scopeData(3, 'spectrum')).toBeUndefined()
+    expect(getClock()).toEqual({ cycle: 0, cps: 0.5, running: false })
+  })
   it('finishes dispatched live sample output before swapping contexts for Bounce', async () => {
     let options: InitStrudelOptions | undefined
     web.initStrudel.mockImplementation(async (next) => {

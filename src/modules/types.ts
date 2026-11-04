@@ -50,6 +50,8 @@ export interface CallBinding {
 }
 
 interface CallControl {
+  /** Saved panel state that never changes executable source. */
+  presentationOnly?: true
   call?: CallBinding
   /** Mode-specific controls retain saved values but neither display nor emit while inactive. */
   when?: readonly { control: string; values: readonly string[] }[]

@@ -37,6 +37,7 @@ import phaserSource from './patches/modules/phaser.strudel?raw'
 import panSource from './patches/modules/pan.strudel?raw'
 import shiftSource from './patches/modules/shift.strudel?raw'
 import mixSource from './patches/modules/mix.strudel?raw'
+import scopeSource from './patches/modules/scope.strudel?raw'
 import outSource from './patches/modules/out.strudel?raw'
 import iterSource from './patches/modules/iter.strudel?raw'
 import juxSource from './patches/modules/jux.strudel?raw'
@@ -279,6 +280,12 @@ export const MODULE_EXERCISES: readonly LibraryPatch[] = [
     source: mixSource,
     description: 'Two distinguishable voices on separate mixer channels.',
     tryThis: 'Set MIX channel 1 to 0, restore it, then set channel 2 to 0.',
+  },
+  {
+    type: 'scope',
+    source: scopeSource,
+    description: 'A sine voice with a per-voice analyser tap.',
+    tryThis: 'Press Play and switch SCOPE VIEW between waveform and spectrum.',
   },
   {
     type: 'out',

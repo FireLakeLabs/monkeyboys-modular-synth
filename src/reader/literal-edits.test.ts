@@ -336,6 +336,9 @@ it('accounts for every catalog module/control without silently skipping new cont
       'duck.depth',
       // Coupled modulation expressions have their own independent source/rack/event matrix.
       // See modulation.test.ts; these are not independent scalar call arguments.
+      // SCOPE's analyser ID and presentation-only view have exact-source/rack/event checks in probe.test.ts.
+      'scope.id',
+      'scope.mode',
       'lfo.mode',
       'lfo.skew',
       'env.depth',

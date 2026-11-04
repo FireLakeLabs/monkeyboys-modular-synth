@@ -117,7 +117,7 @@ export function generate(patch: Patch | SourceDocument): string {
 /** Source ownership for selection, captured while writing this exact revision. */
 export function generateDocument(
   patch: Patch,
-  { nativeEffects = false }: { nativeEffects?: boolean } = {},
+  { nativeEffects = false, prefix }: { nativeEffects?: boolean; prefix?: string } = {},
 ): GeneratedDocument {
   const nodes = graph(patch)
   const { inline: inlineEffects } = planEffects(nodes)
@@ -229,6 +229,7 @@ export function generateDocument(
   }
 
   function namedOutput(node: Node): boolean {
+    if (prefix) return false
     const output = node.spec.jacks.find((j) => j.direction === 'out')
     return (
       output !== undefined &&
@@ -768,6 +769,13 @@ export function generateDocument(
     }))
   }
 
+  // Probe callers validate and prune the graph first. No setup, tempo, final
+  // routing or downstream transforms belong to an intermediate cable.
+  if (prefix) {
+    const expressions = emit(requireNode(nodes, prefix))
+    if (expressions.length !== 1) throw new Error('Probe needs one readable chain')
+    return { code: expressions[0]?.text ?? '', ranges: {}, layout, functions }
+  }
   const source = out ? input(out) : undefined
   const audible = source ? emit(source) : []
   const sends = routing.sends.flatMap(({ node, bus }) =>

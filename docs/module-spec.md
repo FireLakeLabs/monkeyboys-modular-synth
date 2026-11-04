@@ -791,3 +791,29 @@ state. Cyclic voice/modulation routing is rejected at the graph boundary.
 
 See [translation, allocation, ownership and reset rules](translation-rules.md#multi-input-and-cross-voice-routing-136)
 and [separate deterministic/browser evidence](routing-verification.md).
+
+## SCOPE — Voice analyser (#139)
+
+Hardware · Utility · 14 HP, fixed across all four Hardware looks.
+
+| Control | Kind   | Range               | Default  | Writes                              |
+| ------- | ------ | ------------------- | -------- | ----------------------------------- |
+| TAP     | knob   | integer 1–32        | 1        | `.analyze(1)`                       |
+| VIEW    | switch | waveform / spectrum | waveform | presentation only; saved rack value |
+
+IN and OUT are audio jacks. Insert SCOPE in a voice's route to OUT. The native
+Strudel analyser send taps the final per-note post-effect signal for that voice;
+it does not create a second audible branch. It excludes shared orbit delay/reverb
+tails and the app master-volume stage. This is a voice analyser, not an analyser
+at an intermediate audio-processing stage. Two voices with the same TAP feed the
+same analyser; give independent voices different TAP IDs to inspect separately.
+As with native Strudel control setters, the last `.analyze()` in one chain wins.
+
+The reader accepts a literal integer TAP in range through the catalog binding.
+Other forms remain CODE; explicit previously saved CODE owners remain CODE.
+VIEW changes neither the executable text nor scheduling. The engine adapter owns
+all analyser access; the panel polls at 20 Hz only while motion is allowed and
+shows a flat baseline when stopped or awaiting a tap. Reduced motion shows a
+static baseline with **Motion paused**, with no sampling/drawing interval. Stop,
+errors, replacement and bounce retain the engine's existing transport boundaries.
+A generator-owned SCOPE exercise is included in the module library.
