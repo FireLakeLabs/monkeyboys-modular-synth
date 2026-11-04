@@ -2,7 +2,7 @@ import { getModuleSpec } from '../src/modules/catalog.ts'
 import { connect, placeModule, setValue } from '../src/rack/model.ts'
 import { generate } from '../src/codegen/generate.ts'
 import { read } from '../src/reader/index.ts'
-import { sourceBody } from '../src/workspace/document.ts'
+import { saveLayout, sourceBody } from '../src/workspace/document.ts'
 import { panelCases, panelFixture as fixture } from '../src/testing/panelCases.ts'
 import { editorSource, replaceSource } from './editor-browser.mjs'
 
@@ -83,7 +83,8 @@ export async function pinnedLabels() {
       .queryArc(0, 1)
       .map((h) => h.value.note)
       .sort()
-    const regenerated = await repl.evaluate(generate(read(source).patch), false)
+    const document = read(source)
+    const regenerated = await repl.evaluate(generate(document.patch), false)
     const actual = regenerated
       .queryArc(0, 1)
       .map((h) => h.value.note)
@@ -98,6 +99,8 @@ export async function pinnedLabels() {
     '.channels("3:4").channels("1:2")',
     '.delay(.4).delayfeedback(.5).delaytime(.3).delaysync(.25)',
     '.delay(.4).delayfeedback(.5).delaysync(.25).delaytime(.3)',
+    '.postgain(.512).lfo({c:"postgain",sync:.25,depthabs:.128,dc:0,shape:"sine",skew:.5}).lfo({c:"postgain",sync:.25,depthabs:.128,dc:0,shape:"sine",skew:.5}).lfo({c:"postgain",sync:.25,depthabs:.192,dc:0,shape:"sine",skew:.5})',
+    '.postgain(sine.slow(100).range(.2,.8)).lfo({c:"postgain",sync:.25,depthabs:.3,dc:0,shape:"sine",skew:.5})',
   ].map((settings) => `$: note("c3").s("sine")${settings}.orbit(3)`)
   for (const bank of ['', '.bank("RolandTR909")']) {
     for (const [method, pattern, neutral] of [
@@ -112,7 +115,8 @@ export async function pinnedLabels() {
   for (const source of importSources) {
     const original = await repl.evaluate(source, false)
     const expected = original.queryArc(0, 1).map((h) => h.value)
-    const regenerated = await repl.evaluate(generate(read(source).patch), false)
+    const document = read(source)
+    const regenerated = await repl.evaluate(generate(document.patch), false)
     const actual = regenerated.queryArc(0, 1).map((h) => h.value)
     const stable = (value) =>
       JSON.stringify(value, (_key, item) =>
@@ -122,6 +126,11 @@ export async function pinnedLabels() {
       )
     if (stable(actual) !== stable(expected))
       throw new Error(`Imported settings changed events: ${source}`)
+    if (
+      generate(document) !== source ||
+      stable(read(saveLayout(document).source).patch) !== stable(document.patch)
+    )
+      throw new Error(`Imported settings changed source or saved rack: ${source}`)
   }
   repl.stop()
   return result

@@ -436,3 +436,37 @@ for (const channel of [1, 2, 3, 4]) {
     })
   }
 }
+
+function threeMixerModulators() {
+  let patch = fixture('mix', 'ch1', 'lfo', { mode: 'SMOOTH', depth: 0.2 })
+  for (const n of [2, 3]) {
+    patch = placeModule(patch, 'mix', patch.modules.length)
+    patch = placeModule(patch, 'lfo', patch.modules.length)
+    patch = setValue(patch, `lfo${n}`, 'mode', 'SMOOTH')
+    patch = setValue(patch, `lfo${n}`, 'depth', n / 10)
+    patch = connect(
+      patch,
+      { module: `mix${n - 1}`, jack: 'out' },
+      { module: `mix${n}`, jack: 'in1' },
+    )
+    patch = connect(patch, { module: `lfo${n}`, jack: 'out' }, { module: `mix${n}`, jack: 'cv1' })
+    patch = connect(patch, { module: `mix${n}`, jack: 'out' }, { module: 'out1', jack: 'in' }, true)
+  }
+  return sourceBody(generate(patch))
+}
+it('retains all three nested mixer modulators in plain-import events', () => {
+  const source = threeMixerModulators()
+  const doc = read(source)
+  expect(generate(doc)).toBe(source)
+  expect(source.match(/\.lfo\(/g)).toHaveLength(3)
+  expect(sourceBody(generate(doc.patch)).match(/\.lfo\(/g)).toHaveLength(3)
+  expect(events(generate(doc.patch), true)).toEqual(events(source, true))
+})
+it('saves and reopens all three plain-imported nested mixer modulators', () => {
+  const source = threeMixerModulators()
+  const doc = read(source)
+  const saved = saveLayout(doc)
+  expect(sourceBody(saved.source)).toBe(source)
+  expect(read(saved.source).layout).toBe('restored')
+  expect(read(saved.source).patch).toEqual(doc.patch)
+})

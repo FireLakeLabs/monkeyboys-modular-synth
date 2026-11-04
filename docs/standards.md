@@ -379,3 +379,9 @@ REVERB's five-digit LP. Narrow numeric rows wrap the readout instead of shrinkin
 text or knob geometry. The same unchanged browser assertion guards that fix.
 A mixer import regression separately rejects moving an unsupported LFO gain past
 opaque routing when saved, checking events, bytes and reopened state.
+
+S7/S8's #129 regressions independently check event preservation and Save/reopen
+for three nested SMOOTH mixer modulators and opaque gain followed by modulation.
+They failed on a dropped contribution/unity override and invalid saved ownership.
+Ordered reverse insertion preserves all deferred CODE; opaque gains keep their
+associated modifiers opaque. The real REPL probe checks the same forms.

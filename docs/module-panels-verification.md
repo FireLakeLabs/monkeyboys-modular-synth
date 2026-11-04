@@ -172,3 +172,27 @@ checks verify that correction. A separate failing-before regression also keeps
 an out-of-panel-range LFO gain and an unsupported postgain modulation object
 before opaque routing when saved; both pass with preserved events, exact bytes
 and reopened identity.
+
+## Sol round 5 import-state corrections
+
+The final integrated review accepted the earlier fixes but found S7: three nested
+MIX SMOOTH modulators lost a contribution through consecutive deferred fallbacks,
+and S8: a gain outside the LFO panel's period range followed by a representable
+SMOOTH object acquired a unity postgain override. Four added regressions failed
+before the fixes, separately exposing changed event data and broken Save/reopen.
+
+Multiple modulation objects cannot share one channel CV jack, so plain imports
+retain them all as ordered CODE. Fallbacks insert from the end of the source;
+an opaque gain is inserted last, before its associated modulation and routing.
+A gain that cannot project also keeps its modulation as CODE, preventing a new
+MIX CV path from emitting unity. All 331 focused panel/modulation tests pass.
+The real REPL import probe includes both forms and separately checks events,
+exact source and saved/reopened rack state. Round 5 returned CHANGES; a further
+Sol approval is pending, and the skill's five-round budget requires the user's
+explicit extension before another recheck. No review usage was exposed.
+
+Current deterministic gate after S7/S8: 1,420 unit cases, 43 guardrails, formatting,
+lint, reader coverage, TypeScript and build pass. S7 (blocker) and S8 (should) are
+fixed locally, with approval pending; neither finding is disputed or declined.
+The previous integrated head passed all 34 browser groups in 5.1 minutes; the
+same full workflow is being rerun with these fixes and the new REPL assertions.

@@ -1240,6 +1240,7 @@ function project(
       const channel = (index % 3) + 1
       wire(voice.output, bus, `in${channel}`)
       const gain = gains.get(voice.scope.descriptor.id)
+      let opaqueGain = false
       if (gain) {
         const arg = gain.call.args[0]
         const scalarGain = scalar(arg)
@@ -1262,18 +1263,27 @@ function project(
           )
           if (binding) binding.role = 'mixer'
         } else {
-          // Keep opaque gain at its original receiver, before later routing CODE.
-          retainDeferredCode(voice.scope, gain.index, gain.upstream, {
-            module: bus.id,
-            jack: `in${channel}`,
-          })
+          opaqueGain = true
         }
       }
-      for (const { index, upstream } of mixerModulations.get(voice.scope.descriptor.id) ?? []) {
+      const modulations = mixerModulations.get(voice.scope.descriptor.id) ?? []
+      // A channel has one CV jack. Multiple per-voice modulators stay ordered CODE.
+      // Insert from the end so every fallback can still find its later receiver.
+      for (const { index, upstream } of [...modulations].reverse()) {
         const call = voice.scope.calls[index]
-        if (call && !audioCV(call, bus, voice.scope, index, `ch${channel}`))
+        if (
+          call &&
+          (opaqueGain ||
+            modulations.length > 1 ||
+            !audioCV(call, bus, voice.scope, index, `ch${channel}`))
+        )
           retainDeferredCode(voice.scope, index, upstream, { module: bus.id, jack: `in${channel}` })
       }
+      if (gain && opaqueGain)
+        retainDeferredCode(voice.scope, gain.index, gain.upstream, {
+          module: bus.id,
+          jack: `in${channel}`,
+        })
       const channels = outputChannels.get(voice.scope.descriptor.id)
       if (channels) {
         bus.values[`channels${channel}`] = channels.value

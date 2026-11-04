@@ -417,3 +417,19 @@ it('retains unsupported postgain modulation objects through import and save', ()
   expect(events(generate(doc.patch))).toEqual(events(source))
   expect(read(saveLayout(doc).source).patch).toEqual(doc.patch)
 })
+
+const opaqueGainWithSmooth =
+  '$: note("c3").s("sine").postgain(sine.slow(100).range(.2,.8)).lfo({c:"postgain",sync:.25,depthabs:.3,dc:0,shape:"sine",skew:.5}).orbit(3)\n'
+it('retains an opaque gain followed by SMOOTH modulation without a unity override', () => {
+  const doc = read(opaqueGainWithSmooth)
+  expect(generate(doc)).toBe(opaqueGainWithSmooth)
+  expect(sourceBody(generate(doc.patch))).not.toContain('.postgain(1)')
+  expect(events(generate(doc.patch))).toEqual(events(opaqueGainWithSmooth))
+})
+it('saves and reopens an opaque gain with its associated modulation', () => {
+  const doc = read(opaqueGainWithSmooth)
+  const saved = saveLayout(doc)
+  expect(sourceBody(saved.source)).toBe(opaqueGainWithSmooth)
+  expect(read(saved.source).layout).toBe('restored')
+  expect(read(saved.source).patch).toEqual(doc.patch)
+})
