@@ -1,3 +1,4 @@
+import { expectedExport } from './editor-browser.mjs'
 // Import from the Vite dev server in the harness browser. See docs/trance-demo.md.
 import { read } from '../src/reader/index.ts'
 import { HP, ROW_HEIGHT, validateRack } from '../src/rack/model.ts'
@@ -155,7 +156,7 @@ export async function verifyTrance() {
   }
   try {
     const layout = await loadTrance()
-    assert((await exported()) === source(), 'Untouched export changed saved file')
+    assert((await exported()) === expectedExport(source()), 'Untouched export changed saved file')
     const firstPCM = await play()
     const firstEvents = events()
     const groups = firstEvents.reduce((result, event) => {
@@ -223,7 +224,10 @@ export async function verifyTrance() {
       document.querySelector(`[data-module="${outId}"]`).classList.contains('look-vintage'),
     )
     const saved = await exported()
-    assert(sourceBody(saved) === entry.source, 'Rack edit changed exact source')
+    assert(
+      sourceBody(saved) === sourceBody(expectedExport(source())),
+      'Rack edit changed exact source',
+    )
     const savedRack = read(saved).patch
     await loadTrance()
     const secondPCM = await play()

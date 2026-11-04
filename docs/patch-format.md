@@ -360,3 +360,18 @@ A binding inside an ordered effect stage within a function carries both `loop`
 and `fx`. Resolve the lambda path first, its local `calls` next, and the FX
 argument last. Source and graph validation preserve both addresses; no format
 version or old JUX/CODE ownership is replaced by this combination.
+
+## Cartridge setup ownership (#137)
+
+The optional v1 `cartridges: { source: string; base?: string }[]` field records
+bay-owned sample setup separately from the opaque, read-only `prelude`. The
+writer emits its canonical single-quoted `samples()` calls first. Restoration
+validates the saved field and its source projection; bay removal additionally
+requires matching leading setup statements in a restored/reconciled document. Imported calls do
+not gain ownership merely by matching a URL or living in `prelude`.
+
+Readable exports explicitly add the two pinned factory manifest/audio-base pairs
+before user setup and preserve the complete saved rack. Existing exact calls
+are reused. Source read/generate still retains exact imported bytes; raw draft
+and invalid/unknown-metadata exports remain unchanged for recovery. See the
+[ownership, ordering and API contract](cartridges.md).

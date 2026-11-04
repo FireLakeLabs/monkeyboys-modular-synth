@@ -96,8 +96,12 @@ try {
   pass('Enveloped synth folds automatically on library load; category-coloured code stays visible')
 
   await page.getByRole('button', { name: 'Copy', exact: true }).click()
-  assert.equal(await page.evaluate(() => navigator.clipboard.readText()), synth)
-  assert.equal(await exportSource(), synth)
+  const expected = await page.evaluate(
+    async (text) => (await import('/scripts/editor-browser.mjs')).expectedExport(text),
+    synth,
+  )
+  assert.equal(await page.evaluate(() => navigator.clipboard.readText()), expected)
+  assert.equal(await exportSource(), expected)
   const expectedRack = await page.evaluate(async (text) => {
     return (await import('/src/reader/index.ts')).read(text).patch
   }, synth)
@@ -180,7 +184,13 @@ try {
       to: deceptive.source.length,
     },
   ])
-  assert.equal(await exportSource(), deceptive.source)
+  assert.equal(
+    await exportSource(),
+    await page.evaluate(
+      async (text) => (await import('/scripts/editor-browser.mjs')).expectedExport(text),
+      deceptive.source,
+    ),
+  )
   pass(
     'Only the reader-recognized trailing block folds; strings, block comments and earlier marker comments stay visible; unknown metadata exports unchanged',
   )

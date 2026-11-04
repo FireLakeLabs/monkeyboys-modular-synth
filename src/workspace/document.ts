@@ -1,10 +1,17 @@
+import { withoutPackSetup } from '../samples/packs'
 import { notationLiteral } from '../reader/notationLiteral'
 import { parse, tokenizer } from 'acorn'
 import { isGrid, isSteps } from '../codegen/graph'
 import { drumText } from '../patch/notation'
 import { sequenceText } from '../rack/model'
 import { generate, generateDocument } from '../codegen/generate'
-import { RACK_MARKER, writeLayout, type RackLayout, type Scope } from '../codegen/layout'
+import {
+  descriptor,
+  RACK_MARKER,
+  writeLayout,
+  type RackLayout,
+  type Scope,
+} from '../codegen/layout'
 import { getModuleSpec } from '../modules/catalog'
 import type { Patch } from '../patch/types'
 import { read } from '../reader'
@@ -54,7 +61,7 @@ export function makeRackEditable(document: SourceDocument, next = document.patch
     throw new Error('Stale source spans')
   if (document.layout === 'invalid')
     throw new Error('Replace unknown rack metadata explicitly before editing the rack')
-  const body = sourceBody(document.source)
+  const body = withoutPackSetup(sourceBody(document.source), document.patch.cartridges ?? [])
   const parsed = parseSource(body)
   const bound = new Set(document.bindings.map((binding) => binding.scope))
   const setup: string[] = []
@@ -115,9 +122,16 @@ function stampLayout(
   // mixer paths. Retain that representation instead of inventing imported ownership.
   const generated = generate(patch)
   if (sourceBody(generated) === body) return read(generated)
+  // The reader independently proves canonical graph ownership by AST, including
+  // complete disconnected state. Preserve trivia when only setup/formatting moved.
+  if (descriptor(parseSource(generated).program) === descriptor(parseSource(body).program))
+    return read(
+      `${body}${body.endsWith('\n') ? '' : '\n'}${writeLayout(generateDocument(patch).layout)}`,
+    )
   const layout: RackLayout = {
     version: 1,
     ...(patch.name === undefined ? {} : { name: patch.name }),
+    ...(patch.cartridges === undefined ? {} : { cartridges: patch.cartridges }),
     ...(patch.prelude === undefined ? {} : { prelude: patch.prelude }),
     source: body,
     scopes,

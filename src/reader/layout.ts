@@ -1,3 +1,4 @@
+import { parsePacks } from '../samples/packs'
 import { planEffects } from '../codegen/effects'
 import { graph } from '../codegen/graph'
 import { isRailHp, validateRailBounds } from '../patch/layout'
@@ -148,6 +149,7 @@ function patchFrom(value: unknown): Patch {
   return {
     version: 1,
     ...(value.name === undefined ? {} : { name: value.name }),
+    ...(value.cartridges === undefined ? {} : { cartridges: parsePacks(value.cartridges) }),
     modules,
     cables,
     names,

@@ -1,3 +1,16 @@
+import { read } from '/src/reader/index.ts'
+import { withFactoryPacks } from '/src/workspace/cartridges.ts'
+
+// Readable exports explicitly include factory setup; invalid drafts/metadata stay exact.
+export const expectedExport = (source) => {
+  try {
+    const document = read(source)
+    return document.layout === 'invalid' ? source : withFactoryPacks(document).source
+  } catch {
+    return source
+  }
+}
+
 // Shared browser-suite adapter: inspect the public editor state, including virtualized text.
 import { EditorView } from '@codemirror/view'
 import { Text } from '@codemirror/state'

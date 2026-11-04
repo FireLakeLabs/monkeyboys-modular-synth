@@ -69,6 +69,7 @@ const curve = (a: Point, b: Point) =>
 
 export function Rack({
   patch,
+  cartridgeBay,
   edit: requestEdit,
   selected,
   select,
@@ -87,6 +88,7 @@ export function Rack({
   assess,
 }: {
   patch: Patch
+  cartridgeBay?: ReactNode
   locked: boolean
   showCode: (id: string) => void
   editingModule: string | null
@@ -673,6 +675,7 @@ export function Rack({
         onClickCapture={rememberOrigin}
         onFocusCapture={rememberOrigin}
       >
+        {cartridgeBay}
         <div className="rack-toolbar">
           <h2>
             RACK <small>{patch.modules.length} modules</small>

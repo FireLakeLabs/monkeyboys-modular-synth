@@ -17,6 +17,10 @@ const state = window.audioFixture = { calls: [], stops: 0 };
 export async function play(code) { state.calls.push(code); }
 export async function stop() { state.stops++; }
 export async function setVolume() {}
+const samplePacks = [];
+export const getSamplePacks = () => samplePacks;
+export const getSampleWarnings = () => samplePacks;
+export const subscribeSamplePacks = () => () => {};
 export const getResourceStatus = () => 'unknown';
 export const subscribe = () => () => {};
 `

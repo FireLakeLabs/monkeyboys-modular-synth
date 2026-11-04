@@ -17,6 +17,8 @@ const web = vi.hoisted(() => ({
   cancelScheduledValues: vi.fn(),
   setTargetAtTime: vi.fn(),
   samples: vi.fn<() => Promise<unknown>>(),
+  fetchSampleMap: vi.fn(),
+  evalScope: vi.fn(),
   initAudio: vi.fn<() => Promise<void>>(),
   resume: vi.fn<() => Promise<void>>(),
   suspend: vi.fn<() => Promise<void>>(),
@@ -70,6 +72,11 @@ beforeEach(() => {
   web.initStrudel.mockResolvedValue(undefined)
   web.evaluate.mockResolvedValue({})
   web.samples.mockResolvedValue(undefined)
+  web.fetchSampleMap.mockResolvedValue([{ bd: ['kick.wav'] }, 'https://test.invalid/'])
+  vi.stubGlobal('fetch', async () => {
+    const [map] = await web.fetchSampleMap()
+    return { ok: true, status: 200, json: async () => map }
+  })
   web.initAudio.mockResolvedValue(undefined)
   web.resume.mockResolvedValue(undefined)
   web.suspend.mockResolvedValue(undefined)
@@ -226,16 +233,123 @@ describe('engine boundary', () => {
     await play('s("bd").bank("RolandTR909")')
   })
 
-  it('allows another initialization attempt after a sample manifest fails', async () => {
-    const failure = new Error('manifest unavailable')
+  it('reports a failed factory cartridge without preventing other voices or registration', async () => {
     web.initStrudel.mockImplementation(async (options) => {
       await options?.prebake?.()
     })
-    web.samples.mockRejectedValueOnce(failure)
-    const { play } = await import('./engine')
-    await expect(play('s("bd")')).rejects.toBe(failure)
-    expect(web.evaluate).not.toHaveBeenCalled()
-    await expect(play('s("bd")')).resolves.toBeUndefined()
+    web.fetchSampleMap.mockRejectedValueOnce(new Error('manifest unavailable'))
+    const { play, getSamplePacks, getResourceStatus } = await import('./engine')
+    await expect(play('s("sine")')).resolves.toBeUndefined()
+    expect(web.evaluate).toHaveBeenCalledTimes(1)
+    expect(web.evaluate.mock.calls[0]?.[0]).toContain('s("sine")')
+    expect(
+      getSamplePacks()
+        .map((pack) => pack.status)
+        .sort(),
+    ).toEqual(['failed', 'registered'])
+    expect(getSamplePacks().find((pack) => pack.status === 'failed')?.error).toBe(
+      'manifest unavailable',
+    )
+    expect(getSamplePacks().find((pack) => pack.status === 'registered')).toMatchObject({
+      names: ['bd'],
+      sampleCount: 1,
+    })
+    expect(getResourceStatus()).toBe('failed')
+  })
+
+  it('tracks evaluated samples calls and recovers a failed user pack without a fatal transport event', async () => {
+    let samples: typeof import('@strudel/web').samples | undefined
+    web.evalScope.mockImplementation(
+      async (scope: { samples: typeof import('@strudel/web').samples }) => {
+        samples = scope.samples
+      },
+    )
+    const engine = await import('./engine')
+    const events: import('./engine').EngineEvent[] = []
+    engine.subscribe((event) => events.push(event))
+    await engine.play('s("sine")')
+    web.fetchSampleMap.mockRejectedValueOnce(new Error('HTTP 503'))
+    await samples?.('github:person/drums')
+    expect(engine.getSamplePacks()).toMatchObject([
+      { pack: { source: 'github:person/drums' }, status: 'failed', error: 'HTTP 503' },
+    ])
+    await samples?.('github:person/drums')
+    expect(engine.getSamplePacks()).toMatchObject([
+      { status: 'registered', names: ['bd'], sampleCount: 1, error: null },
+    ])
+    expect(events.filter((event) => event.type === 'failure')).toEqual([])
+    expect(events.filter((event) => event.type === 'sample-packs')).toHaveLength(4)
+  })
+
+  it('reports missing sample voices after an active pack failure without stopping other voices', async () => {
+    const target = new EventTarget()
+    vi.stubGlobal('document', target)
+    let options: InitStrudelOptions | undefined
+    web.initStrudel.mockImplementation(async (next) => {
+      options = next
+      await next?.prebake?.()
+    })
+    web.evaluate.mockImplementation(async () => {
+      options?.editPattern?.(new (await import('@strudel/web')).Pattern(() => []))
+    })
+    web.fetchSampleMap.mockRejectedValueOnce(new Error('manifest unavailable'))
+    const engine = await import('./engine')
+    const events: import('./engine').EngineEvent[] = []
+    engine.subscribe((event) => events.push(event))
+    await engine.play('s("sine")')
+    const message = '[superdough] error: sound absent not found! Is it loaded?'
+    target.dispatchEvent(new CustomEvent('strudel.log', { detail: { type: 'error', message } }))
+    expect(engine.getSampleWarnings()).toEqual([message])
+    expect(events.filter((event) => event.type === 'failure')).toEqual([])
+    target.dispatchEvent(
+      new CustomEvent('strudel.log', { detail: { type: 'error', message: 'decode failed' } }),
+    )
+    expect(events).toContainEqual({ type: 'failure', message: 'decode failed' })
+  })
+
+  it('keeps the scheduled failed-pack exemption during a pending retry and replaces it on installation', async () => {
+    const target = new EventTarget()
+    vi.stubGlobal('document', target)
+    let options: InitStrudelOptions | undefined
+    let samples: typeof import('@strudel/web').samples | undefined
+    web.initStrudel.mockImplementation(async (next) => {
+      options = next
+    })
+    web.evalScope.mockImplementation(
+      async (scope: { samples: typeof import('@strudel/web').samples }) => {
+        samples = scope.samples
+      },
+    )
+    web.evaluate.mockImplementation(async () => {
+      await samples?.('github:person/drums')
+      options?.editPattern?.(new (await import('@strudel/web')).Pattern(() => []))
+    })
+    const engine = await import('./engine')
+    const events: import('./engine').EngineEvent[] = []
+    engine.subscribe((event) => events.push(event))
+    web.fetchSampleMap.mockRejectedValueOnce(new Error('HTTP 503'))
+    await engine.play('first pattern with missing sample and working synth')
+    const message = '[superdough] error: sound absent not found! Is it loaded?'
+    const missing = () =>
+      target.dispatchEvent(new CustomEvent('strudel.log', { detail: { type: 'error', message } }))
+    missing()
+    expect(events.filter((event) => event.type === 'failure')).toEqual([])
+    let finish: (value: unknown) => void = () => {}
+    web.fetchSampleMap.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finish = resolve
+      }),
+    )
+    const replacement = engine.play('same voices with a changed parameter')
+    await vi.waitFor(() => expect(engine.getSamplePacks()[0]?.status).toBe('loading'))
+    missing()
+    expect(events.filter((event) => event.type === 'failure')).toEqual([])
+    finish([{ bd: ['kick.wav'] }, 'https://test.invalid/'])
+    await replacement
+    missing()
+    expect(events.filter((event) => event.type === 'failure')).toEqual([
+      { type: 'failure', message },
+    ])
   })
 
   it('does not evaluate when audio resume rejects and permits explicit retry', async () => {

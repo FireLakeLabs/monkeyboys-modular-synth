@@ -72,6 +72,7 @@ test('WAV bounce and live audio recovery', async ({ page }, info) => {
 })
 
 for (const [script, verify] of [
+  ['cartridges-check', 'verifyCartridges'],
   ['connection-check', 'verifyConnectionTargets'],
   ['grid-check', 'verifyGrids'],
   ['library-check', 'verifyReplacementConfirmation'],
@@ -87,6 +88,8 @@ for (const [script, verify] of [
   ['rack-feel-check', 'verifyPanels'],
 ]) {
   test(verify, async ({ page }, info) => {
+    if (verify === 'verifyCartridges')
+      await page.getByRole('button', { name: 'Play', exact: true }).click()
     const result = await page.evaluate(
       async ({ script, verify }) => {
         if (verify === 'verifyPanels')

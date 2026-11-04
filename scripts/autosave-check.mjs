@@ -109,7 +109,13 @@ try {
   await page.getByRole('button', { name: 'Restore last patch', exact: true }).click()
   await page.locator('.cm-content').waitFor()
   assert.equal(await source(page), saved)
-  assert.equal(await exported(page), saved)
+  assert.equal(
+    await exported(page),
+    await page.evaluate(
+      async (text) => (await import('/scripts/editor-browser.mjs')).expectedExport(text),
+      saved,
+    ),
+  )
   const reopenedRack = await page.evaluate(
     async (text) => (await import('/src/reader/index.ts')).read(text).patch,
     saved,

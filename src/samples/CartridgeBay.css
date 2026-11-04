@@ -1,0 +1,182 @@
+.cartridge-bay {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  margin-bottom: 12px;
+}
+.cartridge-heading,
+.cartridge-title,
+.cartridge-caption,
+.cartridge-bay form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cartridge-heading h2 {
+  font:
+    700 13px 'Barlow Condensed',
+    sans-serif;
+  letter-spacing: 0.12em;
+  margin: 0;
+}
+.cartridge-heading > span,
+.cartridge-caption,
+.cartridge-title > span:last-child {
+  font-size: 12px;
+  color: var(--muted);
+}
+.cartridges {
+  display: flex;
+  list-style: none;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px 0;
+  margin: 0;
+}
+.cartridge {
+  flex: 0 0 245px;
+  border: 1px solid var(--border);
+  border-top: 5px solid var(--audio);
+  border-radius: 4px;
+  padding: 10px;
+  background: var(--bg);
+}
+.cartridge > code {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  margin: 8px 0;
+  max-height: 16px;
+  overflow: hidden;
+}
+.cartridge-title strong {
+  flex: 1;
+  font-size: 14px;
+}
+.cartridge-led {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.cartridge-led[data-status='loading'] {
+  background: #e6d35f;
+}
+.cartridge-led[data-status='registered'] {
+  background: #8cf5da;
+  box-shadow: 0 0 5px #8cf5da;
+}
+.cartridge-led[data-status='failed'] {
+  background: #f07b88;
+}
+.cartridge-caption {
+  justify-content: space-between;
+}
+.cartridge > button {
+  margin-top: 8px;
+}
+.cartridge-bay form label {
+  flex: 1;
+  min-width: 150px;
+  font-size: 12px;
+}
+.cartridge-bay input {
+  display: block;
+  width: 100%;
+  padding: 7px;
+  margin-top: 4px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+.cartridge-bay button {
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 9px;
+  cursor: pointer;
+}
+.cartridge-bay button:disabled {
+  cursor: default;
+}
+.cartridge-error {
+  font-size: 12px;
+  color: #f5a4af;
+}
+.cartridge-eject {
+  margin: 10px 0 0;
+  font-size: 13px;
+  border: 1px solid var(--audio);
+}
+.cartridge-eject button + button {
+  margin-left: 8px;
+}
+
+/* Keep Fit's 10% minimum usable on short panes; the rack pane itself can scroll. */
+.rack:has(.cartridge-bay) .rack-frame {
+  min-height: 200px;
+  flex-basis: 200px;
+}
+
+@media (min-width: 1151px) {
+  .workspace .rack:has(.cartridge-bay) {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - 108px);
+    overflow: auto;
+  }
+  .rack:has(.cartridge-bay) > * {
+    flex-shrink: 0;
+  }
+  .rack:has(.cartridge-bay) .rack-frame {
+    height: auto;
+    flex-grow: 1;
+  }
+}
+
+@media (max-width: 1150px) {
+  .cartridge-bay {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  .rack .cartridge-heading h2 {
+    font-size: 13px;
+  }
+  .cartridge-heading > span {
+    display: none;
+  }
+  .cartridges {
+    padding: 6px 0;
+  }
+  .cartridge {
+    padding: 6px 8px;
+    border-top-width: 3px;
+  }
+  .cartridge-title strong {
+    font-size: 12px;
+  }
+  .cartridge > code {
+    margin: 4px 0;
+    line-height: 12px;
+    font-size: 10px;
+  }
+  .cartridge-caption {
+    font-size: 11px;
+  }
+  .cartridge-bay form label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .cartridge-bay input {
+    width: 0;
+    min-width: 0;
+    flex: 1;
+    margin: 0;
+    padding: 5px;
+  }
+}

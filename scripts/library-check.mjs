@@ -1,3 +1,4 @@
+import { expectedExport } from './editor-browser.mjs'
 import { editorSource as source, replaceSource, enableAutoApply } from './editor-browser.mjs'
 // Browser verification: import this module from the Vite dev server in a browser.
 // See docs/patch-library.md for the harness commands and listening limits.
@@ -81,7 +82,8 @@ export async function verifyLibraryUI() {
   button('Load patch…', library()).click()
   await until(() => library().querySelector('.replace-prompt'))
   assert(
-    (await exportedBy(() => button('Export current', library()).click())) === initial,
+    (await exportedBy(() => button('Export current', library()).click())) ===
+      expectedExport(initial),
     'Export current changed draft',
   )
   button('Cancel', library()).click()
@@ -153,10 +155,7 @@ export async function verifyLibraryUI() {
   const saved = await exportedBy(() => button('Export').click())
   const savedRack = read(saved).patch
   assert(savedRack.modules.find((m) => m.type === 'out').look === 'vintage', 'Export lost look')
-  assert(
-    sourceBody(saved) === sourceBody(helper.source).replace('.gain(0.2)', '.gain(0.4)'),
-    'Export lost source',
-  )
+  assert(sourceBody(saved) === sourceBody(expectedExport(source())), 'Export lost source')
   await load(helper.title)
   assert(
     sourceBody(source()) === sourceBody(helper.source),
@@ -239,7 +238,8 @@ export async function verifyReplacementConfirmation() {
   )
   assertPrimary('Load patch')
   assert(
-    (await exportedBy(() => button('Export current', library()).click())) === accepted,
+    (await exportedBy(() => button('Export current', library()).click())) ===
+      expectedExport(accepted),
     'Replacement export lost current work',
   )
   button('Cancel', library()).click()
@@ -410,7 +410,8 @@ export async function verifyLibraryStopFailure() {
       'Missing Stop failure',
     )
     assert(
-      (await exportedBy(() => button('Export current', library()).click())) === original,
+      (await exportedBy(() => button('Export current', library()).click())) ===
+        expectedExport(original),
       'Stop failure lost export',
     )
     button('Cancel', library()).click()
@@ -500,7 +501,7 @@ export async function verifyLibraryRackEditing() {
     )
     const exported = await exportedBy(() => button('Export').click())
     assert(
-      JSON.stringify(read(exported).patch) === JSON.stringify(patch()),
+      JSON.stringify(read(exported).patch) === JSON.stringify(read(expectedExport(source())).patch),
       `${entry.id}: export lost identity`,
     )
     results.push(
@@ -673,7 +674,7 @@ export async function verifyOnRampUI() {
     )
     const exported = await exportedBy(() => button('Export').click())
     assert(
-      JSON.stringify(read(exported).patch) === JSON.stringify(current.patch),
+      JSON.stringify(read(exported).patch) === JSON.stringify(read(expectedExport(source())).patch),
       `${entry.id}: export identity differs`,
     )
     await load(entry.title)

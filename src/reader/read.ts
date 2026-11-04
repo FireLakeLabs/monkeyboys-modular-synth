@@ -1,3 +1,4 @@
+import { packSetup } from '../samples/packs'
 import { planEffects } from '../codegen/effects'
 import { effectRank } from '../modules/effects'
 import { isLoopChain, loopControls } from '../modules/functions'
@@ -122,7 +123,10 @@ function project(
 ): { patch: Patch; bindings: SourceBinding[]; represented: Map<string, Set<string>> } {
   const patch: Patch = { version: 1, modules: [], cables: [], names: {} }
   if (saved?.name !== undefined) patch.name = saved.name
-  if (saved?.prelude !== undefined && source.startsWith(saved.prelude))
+  const cartridges = packSetup(saved?.cartridges ?? [])
+  if (saved?.cartridges !== undefined && source.startsWith(cartridges))
+    patch.cartridges = saved.cartridges
+  if (saved?.prelude !== undefined && source.slice(cartridges.length).startsWith(saved.prelude))
     patch.prelude = saved.prelude
   if (saved?.railHp !== undefined) patch.railHp = saved.railHp
   const bindings: SourceBinding[] = []

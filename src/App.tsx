@@ -1,3 +1,5 @@
+import { CartridgeBay } from './samples/CartridgeBay'
+import { withFactoryPacks } from './workspace/cartridges'
 import { defaultRailWidth } from './patch/layout'
 import {
   useCallback,
@@ -438,8 +440,15 @@ export default function App() {
     setCodeSelection({ start: binding.start, end: binding.end })
   }
 
+  function exportSource() {
+    const work = current.current
+    return work.phase === 'readable' && work.document.layout !== 'invalid'
+      ? withFactoryPacks(work.document).source
+      : work.draft
+  }
+
   function exportDraft() {
-    const url = URL.createObjectURL(new Blob([current.current.draft], { type: 'text/plain' }))
+    const url = URL.createObjectURL(new Blob([exportSource()], { type: 'text/plain' }))
     const link = window.document.createElement('a')
     link.href = url
     link.download = patchFilename(current.current.document.patch)
@@ -605,6 +614,13 @@ export default function App() {
         <Rack
           key={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
           patch={patch}
+          cartridgeBay={
+            <CartridgeBay
+              document={document}
+              locked={locked || document.layout === 'invalid' || audio.status === 'bouncing'}
+              install={install}
+            />
+          }
           locked={locked || document.layout === 'invalid'}
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}
@@ -668,7 +684,7 @@ export default function App() {
               type="button"
               onClick={() =>
                 navigator.clipboard
-                  .writeText(current.current.draft)
+                  .writeText(exportSource())
                   .catch((failure: unknown) => setError(String(failure)))
               }
             >

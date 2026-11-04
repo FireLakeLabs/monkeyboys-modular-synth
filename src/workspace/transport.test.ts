@@ -1,3 +1,4 @@
+import { withFactoryPacks } from './cartridges'
 import { describe, expect, it } from 'vitest'
 import { read } from '../reader'
 import { connect, placeModule, starterPatch } from '../rack/model'
@@ -30,6 +31,10 @@ describe('workspace transport', () => {
     expect(decoded).toBe(`${source}\n// user’s tail\n`)
     expect(decoded).toBe(sourceBody(imported.source))
     expect(decoded).not.toContain('@monkeyboy rack')
+  })
+
+  it('keeps a reopened factory-only patch silent until a voice reaches OUT', () => {
+    expect(mayHaveOutput(withFactoryPacks(fromPatch(starterPatch())))).toBe(false)
   })
 
   it.each(["const lead = sound('bd'); lead", "drums: sound('bd')", 'new Promise(() => {})'])(
