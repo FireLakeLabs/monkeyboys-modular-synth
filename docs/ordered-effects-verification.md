@@ -72,3 +72,12 @@ separate serial stages. Mode changes now clear an execution flag when the select
 mode is outer-only; the note groups equal native stages and describes later setter
 overrides. Explicit FX arguments still appear as separate stages. The browser probe
 also changes both actual MODE selectors and checks the native override note.
+
+Sol-loop completed in two rounds with GPT-6.1 Sol on high reasoning effort.
+Round one returned S1/S2 (both `should`); both were fixed and independently
+rechecked. Round two approved with both IDs resolved and no new findings. No
+findings were declined; reviewer usage was not returned. The diff grew from
+966 insertions/42 deletions to 1,083 insertions/45 deletions for these regression
+checks, fixes and browser proof. The final local gate passed 1,449 tests and
+43 guardrails; the focused catalog-only suite proves repeated stage bindings
+without adding any #131 module definitions.
