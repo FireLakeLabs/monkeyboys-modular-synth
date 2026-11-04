@@ -1,0 +1,190 @@
+{
+ "copies": [
+  {
+   "now": "3/4",
+   "source": "0",
+   "value": "a"
+  },
+  {
+   "now": "1/2",
+   "source": "1/4",
+   "value": "a"
+  },
+  {
+   "now": "1/4",
+   "source": "1/2",
+   "value": "a"
+  },
+  {
+   "now": "0",
+   "source": "3/4",
+   "value": "b"
+  }
+ ],
+ "voiced": [
+  {
+   "value": {
+    "note": "Bb3"
+   },
+   "starts": [
+    102,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "Eb4"
+   },
+   "starts": [
+    102,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "G4"
+   },
+   "starts": [
+    102,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "Bb4"
+   },
+   "starts": [
+    102,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "C5"
+   },
+   "starts": [
+    102,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "F3"
+   },
+   "starts": [
+    106,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "C4"
+   },
+   "starts": [
+    106,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "Eb4"
+   },
+   "starts": [
+    106,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "Ab4"
+   },
+   "starts": [
+    106,
+    1
+   ]
+  },
+  {
+   "value": {
+    "note": "C5"
+   },
+   "starts": [
+    106,
+    1
+   ]
+  }
+ ],
+ "degrees": [
+  {
+   "value": {
+    "note": "C3"
+   },
+   "starts": [
+    3,
+    1,
+    101
+   ]
+  },
+  {
+   "value": {
+    "note": "Eb3"
+   },
+   "starts": [
+    3,
+    1,
+    104
+   ]
+  },
+  {
+   "value": {
+    "note": "G3"
+   },
+   "starts": [
+    3,
+    1,
+    106
+   ]
+  }
+ ],
+ "cv": [
+  {
+   "value": {
+    "note": "c2",
+    "cutoff": 400
+   },
+   "starts": [
+    202,
+    101
+   ]
+  },
+  {
+   "value": {
+    "note": "c2",
+    "cutoff": 800
+   },
+   "starts": [
+    206,
+    101
+   ]
+  },
+  {
+   "value": {
+    "note": "e2",
+    "cutoff": 400
+   },
+   "starts": [
+    202,
+    104
+   ]
+  },
+  {
+   "value": {
+    "note": "e2",
+    "cutoff": 800
+   },
+   "starts": [
+    206,
+    104
+   ]
+  }
+ ]
+}

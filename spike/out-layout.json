@@ -1,0 +1,303 @@
+{
+ "stressAtSeq": {
+  "c2 c2 eb2 g2 c3 bb2 g2 eb2": {
+   "strings": 1,
+   "leaves": 8,
+   "depthHistogram": {
+    "0": 8,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0
+   },
+   "proportionalStrip": {
+    "median": 13,
+    "p10": 13,
+    "min": 13,
+    "labelFits": 0,
+    "atLeast8": 100
+   },
+   "proportionalWrapped": {
+    "median": 52,
+    "p10": 52,
+    "min": 52,
+    "labelFits": 100,
+    "atLeast8": 100
+   },
+   "focusPerLevel": {
+    "median": 52,
+    "p10": 52,
+    "min": 52,
+    "labelFits": 100,
+    "atLeast8": 100
+   }
+  },
+  "c2 [c2 eb2] g2 c3 bb2 [g2 eb2] c2 g2": {
+   "strings": 1,
+   "leaves": 10,
+   "depthHistogram": {
+    "0": 6,
+    "1": 4,
+    "2": 0,
+    "3": 0,
+    "4": 0
+   },
+   "proportionalStrip": {
+    "median": 13,
+    "p10": 6.5,
+    "min": 6.5,
+    "labelFits": 0,
+    "atLeast8": 60
+   },
+   "proportionalWrapped": {
+    "median": 52,
+    "p10": 26,
+    "min": 26,
+    "labelFits": 100,
+    "atLeast8": 100
+   },
+   "focusPerLevel": {
+    "median": 52,
+    "p10": 52,
+    "min": 52,
+    "labelFits": 100,
+    "atLeast8": 100
+   }
+  },
+  "c2 c2 eb2 g2 c3 bb2 g2 eb2 c2 c2 eb2 g2 c3 bb2 g2 eb2": {
+   "strings": 1,
+   "leaves": 16,
+   "depthHistogram": {
+    "0": 16,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0
+   },
+   "proportionalStrip": {
+    "median": 6.5,
+    "p10": 6.5,
+    "min": 6.5,
+    "labelFits": 0,
+    "atLeast8": 0
+   },
+   "proportionalWrapped": {
+    "median": 26,
+    "p10": 26,
+    "min": 26,
+    "labelFits": 100,
+    "atLeast8": 100
+   },
+   "focusPerLevel": {
+    "median": 26,
+    "p10": 26,
+    "min": 26,
+    "labelFits": 100,
+    "atLeast8": 100
+   }
+  },
+  "c2 [c2 eb2] eb2 g2 c3 [bb2 [g2 eb2]] g2 eb2 c2 c2 eb2 g2 c3 bb2 g2 eb2": {
+   "strings": 1,
+   "leaves": 19,
+   "depthHistogram": {
+    "0": 14,
+    "1": 3,
+    "2": 2,
+    "3": 0,
+    "4": 0
+   },
+   "proportionalStrip": {
+    "median": 6.5,
+    "p10": 1.6,
+    "min": 1.6,
+    "labelFits": 0,
+    "atLeast8": 0
+   },
+   "proportionalWrapped": {
+    "median": 26,
+    "p10": 6.5,
+    "min": 6.5,
+    "labelFits": 73.7,
+    "atLeast8": 89.5
+   },
+   "focusPerLevel": {
+    "median": 26,
+    "p10": 26,
+    "min": 26,
+    "labelFits": 100,
+    "atLeast8": 100
+   }
+  }
+ },
+ "panels": {
+  "SEQ": {
+   "width": 104,
+   "lines": 4
+  },
+  "DRUM": {
+   "width": 109,
+   "lines": 1
+  },
+  "CHAR": 7.2
+ },
+ "repoAtSeq": {
+  "strings": 22,
+  "leaves": 84,
+  "depthHistogram": {
+   "0": 65,
+   "1": 17,
+   "2": 2,
+   "3": 0,
+   "4": 0
+  },
+  "proportionalStrip": {
+   "median": 26,
+   "p10": 13,
+   "min": 13,
+   "labelFits": 69,
+   "atLeast8": 100
+  },
+  "proportionalWrapped": {
+   "median": 104,
+   "p10": 52,
+   "min": 13,
+   "labelFits": 95.2,
+   "atLeast8": 100
+  },
+  "focusPerLevel": {
+   "median": 104,
+   "p10": 52,
+   "min": 13,
+   "labelFits": 95.2,
+   "atLeast8": 100
+  }
+ },
+ "idiomsAtSeq": {
+  "strings": 39,
+  "leaves": 121,
+  "depthHistogram": {
+   "0": 78,
+   "1": 33,
+   "2": 10,
+   "3": 0,
+   "4": 0
+  },
+  "proportionalStrip": {
+   "median": 34.7,
+   "p10": 13,
+   "min": 6.5,
+   "labelFits": 90.1,
+   "atLeast8": 95.9
+  },
+  "proportionalWrapped": {
+   "median": 104,
+   "p10": 52,
+   "min": 17.3,
+   "labelFits": 100,
+   "atLeast8": 100
+  },
+  "focusPerLevel": {
+   "median": 104,
+   "p10": 52,
+   "min": 34.7,
+   "labelFits": 100,
+   "atLeast8": 100
+  }
+ },
+ "upstreamAtSeq": {
+  "strings": 67,
+  "leaves": 278,
+  "depthHistogram": {
+   "0": 59,
+   "1": 186,
+   "2": 33,
+   "3": 0,
+   "4": 0
+  },
+  "proportionalStrip": {
+   "median": 26,
+   "p10": 13,
+   "min": 5.8,
+   "labelFits": 96,
+   "atLeast8": 98.9
+  },
+  "proportionalWrapped": {
+   "median": 83.2,
+   "p10": 26,
+   "min": 17.3,
+   "labelFits": 100,
+   "atLeast8": 100
+  },
+  "focusPerLevel": {
+   "median": 52,
+   "p10": 17.3,
+   "min": 13,
+   "labelFits": 100,
+   "atLeast8": 100
+  }
+ },
+ "repoAtDrum": {
+  "strings": 22,
+  "leaves": 84,
+  "depthHistogram": {
+   "0": 65,
+   "1": 17,
+   "2": 2,
+   "3": 0,
+   "4": 0
+  },
+  "proportionalStrip": {
+   "median": 27.3,
+   "p10": 13.6,
+   "min": 13.6,
+   "labelFits": 69,
+   "atLeast8": 100
+  },
+  "proportionalWrapped": {
+   "median": 27.3,
+   "p10": 13.6,
+   "min": 13.6,
+   "labelFits": 69,
+   "atLeast8": 100
+  },
+  "focusPerLevel": {
+   "median": 27.3,
+   "p10": 13.6,
+   "min": 13.6,
+   "labelFits": 69,
+   "atLeast8": 100
+  }
+ },
+ "idiomsAtDrum": {
+  "strings": 39,
+  "leaves": 121,
+  "depthHistogram": {
+   "0": 78,
+   "1": 33,
+   "2": 10,
+   "3": 0,
+   "4": 0
+  },
+  "proportionalStrip": {
+   "median": 36.3,
+   "p10": 13.6,
+   "min": 6.8,
+   "labelFits": 90.1,
+   "atLeast8": 95.9
+  },
+  "proportionalWrapped": {
+   "median": 36.3,
+   "p10": 13.6,
+   "min": 6.8,
+   "labelFits": 90.1,
+   "atLeast8": 95.9
+  },
+  "focusPerLevel": {
+   "median": 54.5,
+   "p10": 27.3,
+   "min": 13.6,
+   "labelFits": 96.7,
+   "atLeast8": 100
+  }
+ }
+}

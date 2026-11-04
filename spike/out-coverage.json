@@ -1,0 +1,36 @@
+{
+ "repo": {
+  "strings": 22,
+  "today": 14,
+  "full": 22,
+  "partial": 0,
+  "whole": 0,
+  "reasons": {}
+ },
+ "idioms": {
+  "strings": 39,
+  "today": 10,
+  "full": 31,
+  "partial": 3,
+  "whole": 5,
+  "reasons": {
+   "patterned arg": 4,
+   "{ }": 2,
+   "..": 1,
+   "^ marker": 1
+  }
+ },
+ "upstream": {
+  "strings": 67,
+  "today": 7,
+  "full": 53,
+  "partial": 4,
+  "whole": 10,
+  "reasons": {
+   "patterned arg": 6,
+   "{ }": 6,
+   "..": 2,
+   "^ marker": 1
+  }
+ }
+}

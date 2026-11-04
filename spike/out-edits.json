@@ -1,0 +1,333 @@
+{
+ "results": [
+  {
+   "name": "replace a note",
+   "before": "c2   [e2  g2]  a2",
+   "after": "c2   [e2  b2]  a2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "split a step",
+   "before": "c2   e2  a2",
+   "after": "c2   [e2 e2]  a2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "split a nested step",
+   "before": "c2 [e2  g2]",
+   "after": "c2 [e2  [g2 g2]]",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "split keeps modifiers",
+   "before": "c2@3  e2",
+   "after": "[c2 c2]@3  e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "merge a group",
+   "before": "c2  [e2   g2]@2  a2",
+   "after": "c2  e2@2  a2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add *n",
+   "before": "c2   e2",
+   "after": "c2   e2*2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add /n",
+   "before": "c2   e2",
+   "after": "c2/2   e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add !n",
+   "before": "c2   e2",
+   "after": "c2   e2!3",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add @n",
+   "before": "c2   e2",
+   "after": "c2@3   e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add ?",
+   "before": "c2   e2",
+   "after": "c2   e2?",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add euclid",
+   "before": "bd   sd",
+   "after": "bd(3,8)   sd",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add sample index",
+   "before": "bd   sd",
+   "after": "bd   sd:2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "change @n",
+   "before": "c2@2  e2",
+   "after": "c2@4  e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "change a bare ? to a probability",
+   "before": "c2?  e2",
+   "after": "c2?0.2  e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "change !n",
+   "before": "c2!3  e2",
+   "after": "c2!2  e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "remove a modifier",
+   "before": "c2*2?  e2",
+   "after": "c2?  e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "remove one elongation",
+   "before": "c2 _ _  e2",
+   "after": "c2 _  e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add an alternative",
+   "before": "c2   e2",
+   "after": "c2   <e2 g2>",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "extend alternatives",
+   "before": "c2   <e2   g2>",
+   "after": "c2   <e2   g2 a2>",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add a chord note",
+   "before": "c2   e2",
+   "after": "[c2, g2]   e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "extend a chord in its own style",
+   "before": "[c2,e2]   a2",
+   "after": "[c2,e2,g2]   a2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "add a random choice",
+   "before": "c2   e2",
+   "after": "[c2 | g2]   e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "extend random choices",
+   "before": "[c2|e2]   a2",
+   "after": "[c2|e2|g2]   a2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "insert a step",
+   "before": "c2   e2",
+   "after": "c2 ~   e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "delete a step",
+   "before": "c2   e2  g2",
+   "after": "c2   g2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "delete the last step",
+   "before": "c2   e2",
+   "after": "c2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  },
+  {
+   "name": "edit a text cell",
+   "before": "c2  bd*<2 3>  e2",
+   "after": "c2  bd*<2 4>  e2",
+   "exact": true,
+   "outside": true,
+   "reparsed": true,
+   "same": true,
+   "changed": true
+  }
+ ],
+ "passed": 27,
+ "total": 27,
+ "messyResults": [
+  {
+   "name": "note",
+   "after": "\"  c2   [f2  g2]@2\\n\\t<a2   b2>!2  [c3,e3]  bd:3*2  c2 _ _  ~ \"",
+   "ok": true
+  },
+  {
+   "name": "modifier",
+   "after": "\"  c2   [e2  g2]@3\\n\\t<a2   b2>!2  [c3,e3]  bd:3*2  c2 _ _  ~ \"",
+   "ok": true
+  },
+  {
+   "name": "alternative",
+   "after": "\"  c2   [e2  g2]@2\\n\\t<a2   b2 d2>!2  [c3,e3]  bd:3*2  c2 _ _  ~ \"",
+   "ok": true
+  },
+  {
+   "name": "chord",
+   "after": "\"  c2   [e2  g2]@2\\n\\t<a2   b2>!2  [c3,e3,g3]  bd:3*2  c2 _ _  ~ \"",
+   "ok": true
+  },
+  {
+   "name": "sample index",
+   "after": "\"  c2   [e2  g2]@2\\n\\t<a2   b2>!2  [c3,e3]  bd:4*2  c2 _ _  ~ \"",
+   "ok": true
+  }
+ ],
+ "refusals": [
+  {
+   "raw": "[a",
+   "why": "unbalanced",
+   "refused": true,
+   "message": "refused: does not parse"
+  },
+  {
+   "raw": "a b",
+   "why": "two cells",
+   "refused": true,
+   "message": "refused: not one cell"
+  },
+  {
+   "raw": "a, b",
+   "why": "layers",
+   "refused": true,
+   "message": "refused: not one cell"
+  },
+  {
+   "raw": "",
+   "why": "empty",
+   "refused": true,
+   "message": "refused: does not parse"
+  }
+ ],
+ "seedShift": {
+  "removedFirstQuestionMark": true
+ },
+ "failures": []
+}

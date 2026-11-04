@@ -1,0 +1,1687 @@
+{
+ "rows": [
+  {
+   "text": "c3 eb3 g3 bb3",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "triangle",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[bd ~]*4, [~ ~ sd ~]*2, [~ hh]*4",
+   "events": 80,
+   "none": 0,
+   "exact": 80,
+   "multi": 80,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "RolandTR909",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c4 ~ eb4 g4 ~ bb4 ~ g4",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2 c2 eb2 g2 c3 bb2 g2 eb2",
+   "events": 64,
+   "none": 0,
+   "exact": 64,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "sawtooth",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2 ~ c3 eb2 g2 ~ bb2 g2",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "square",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c3 e3 g3 b3",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd ~ ~ ~ ~ ~ ~ ~, ~ ~ hh ~ ~ ~ hh ~, ~ ~ ~ ~ sd ~ ~ ~",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c4 eb4 g4 bb4 g4 eb4",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "sine",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2 ~ c2 g2",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c4 eb4 g4 bb4",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd*4, [~ hh]*4",
+   "events": 64,
+   "none": 0,
+   "exact": 64,
+   "multi": 64,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "RolandTR808",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2 g2 bb2 eb3",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "0 2 4 <6 7> 4 2 1 ~",
+   "events": 56,
+   "none": 0,
+   "exact": 56,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "D:dorian",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 8,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd:2!4",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 32,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "<3@3 4 5 @3 6>*2",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 8,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "supersaw",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "g:minor",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 8,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "0@2 <-7 [-5 -2]>@3 <0 -3 1 2>@3",
+   "events": 28,
+   "none": 0,
+   "exact": 28,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "pulse!16",
+   "events": 128,
+   "none": 0,
+   "exact": 128,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "<7 12>/2",
+   "events": 4,
+   "none": 0,
+   "exact": 4,
+   "multi": 4,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "0 2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "G:minor",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 8,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "0 2 4",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "~",
+   "events": 0,
+   "none": 0,
+   "exact": 0,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a b",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a b c",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a*3 b",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 24,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a a a] b",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a*<3 5>]*2",
+   "events": 64,
+   "none": 0,
+   "exact": 64,
+   "multi": 64,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a a a] [a a a a a]",
+   "events": 64,
+   "none": 0,
+   "exact": 64,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a a a]/3 b",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 8,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a a a a a a a a]/[2 4]",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 24,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a a] a",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "<a b>",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a/2",
+   "events": 4,
+   "none": 0,
+   "exact": 4,
+   "multi": 4,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[c3 d3]/2",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 8,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c3*2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 16,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[c3 d3]*2",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 32,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c3 [d3 e3]",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c3 [d3 [e3 f3]]",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "{a b, c d e}*3",
+   "events": 96,
+   "none": 0,
+   "exact": 96,
+   "multi": 96,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a b a b a b, c d e c d e]",
+   "events": 96,
+   "none": 0,
+   "exact": 96,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "{a b, c [d e] f}*3",
+   "events": 112,
+   "none": 0,
+   "exact": 112,
+   "multi": 112,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a b a b a b, c [d e] f c [d e] f]",
+   "events": 112,
+   "none": 0,
+   "exact": 112,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "{a b c, d e}*2",
+   "events": 96,
+   "none": 0,
+   "exact": 96,
+   "multi": 96,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a b c a b c, d e d e d e]",
+   "events": 96,
+   "none": 0,
+   "exact": 96,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "{a b, c d e}%3",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 48,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a b a, c d e]",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "{a b, c d e}%5",
+   "events": 80,
+   "none": 0,
+   "exact": 80,
+   "multi": 80,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a b a b a, c d e c d]",
+   "events": 80,
+   "none": 0,
+   "exact": 80,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "{a b, c d e}%6",
+   "events": 96,
+   "none": 0,
+   "exact": 96,
+   "multi": 96,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c3,e3,g3",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[c3,e3,g3] f3",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a@3 b",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a@2 b@3",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a!3 b",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[<a b c>]!3 d",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "<a b c> <a b c> <a b c> d",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a ! ! b",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[<a b c>]!! d",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a(3, 8)",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 24,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a(<3 5>, <8 16>)]*2",
+   "events": 64,
+   "none": 0,
+   "exact": 64,
+   "multi": 64,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a(3,8) a(5,16)",
+   "events": 64,
+   "none": 0,
+   "exact": 64,
+   "multi": 64,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a - b [- c]",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a ~ b [~ c]",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a?",
+   "events": 3,
+   "none": 0,
+   "exact": 3,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a?0.8",
+   "events": 1,
+   "none": 0,
+   "exact": 1,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a|b] [a|b]",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a | [b | c] | [d | e | f]",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a:b c:d:[e:f] g",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 16,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "0 .. 4",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 40,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[<0 1> .. <2 4>]*2",
+   "events": 56,
+   "none": 0,
+   "exact": 56,
+   "multi": 56,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[0 1 2] [1 2 3 4]",
+   "events": 56,
+   "none": 0,
+   "exact": 56,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a . b c",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a [b c]",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a . b c . [d e f . g h]",
+   "events": 64,
+   "none": 0,
+   "exact": 64,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a [b c] [[d e f] [g h]]",
+   "events": 64,
+   "none": 0,
+   "exact": 64,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a _ b _ _",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a @ b @ @",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a _2 b _3",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "a [^b c]",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[^b c]!3",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a b c] [d [e f]]",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "^[a b c] [d [e f]]",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a b c] [d [^e f]]",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[a b c] [^d [e f]]",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[^a b c] [^d [e f]]",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[^a b c] [d [^e f]]",
+   "events": 48,
+   "none": 0,
+   "exact": 48,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[^a b c d e]",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2 [e2 g2] a2 c3",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2 [e2 [g2 a2]] c3 ~",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd*2 sd",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 16,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2/2 e2",
+   "events": 12,
+   "none": 0,
+   "exact": 12,
+   "multi": 4,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2!3 e2",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2@3 e2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2 _ _ e2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2? e2?0.3",
+   "events": 10,
+   "none": 0,
+   "exact": 10,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2|e2|g2",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[c2 e2 | g2 a2 b2] c3",
+   "events": 27,
+   "none": 0,
+   "exact": 27,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[c2,e2,g2] [d2,f2]",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c2 e2, g3 a3 b3",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "<c2 e2> g2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "<c2 <e2 f2>> g2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "<[c2 e2] g2>!2 a2",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd(3,8)",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 24,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd(3,8,2) sd",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 24,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd(<3 5>,8)",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 32,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd:3 sd:1",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 16,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd:3*2 ~ sd:1?",
+   "events": 19,
+   "none": 0,
+   "exact": 19,
+   "multi": 19,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "~ - ~ c2",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "c#2 eb2 f#3",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "0 2 4 7",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "0.25 0.5 0.75 1",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "400 800 1200",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "Cm7 Fm7 G7",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "C^7 F#m7b5 Bb7",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "<Cm7 Fm7 G7>",
+   "events": 8,
+   "none": 0,
+   "exact": 8,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "x ~ x x ~ x ~ x",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "x*4",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 32,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[x ~]*4",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 32,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd hh . sd hh hh",
+   "events": 40,
+   "none": 0,
+   "exact": 40,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "{a b c}%4",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 32,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "{a b, c d e}",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "0 .. 3",
+   "events": 32,
+   "none": 0,
+   "exact": 32,
+   "multi": 32,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "^a b c",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd*<2 3> sd",
+   "events": 28,
+   "none": 0,
+   "exact": 28,
+   "multi": 20,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "bd [~ sd]@3 hh!2 [cp <rim ht>]?",
+   "events": 37,
+   "none": 0,
+   "exact": 37,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "[bd ~ [sd sd]]*2, hh*8, [~ cp]/2",
+   "events": 116,
+   "none": 0,
+   "exact": 116,
+   "multi": 116,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  }
+ ],
+ "whitespace": [
+  {
+   "text": "c2\n  e2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 8,
+   "offExamples": []
+  },
+  {
+   "text": "c2\te2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 8,
+   "offExamples": []
+  },
+  {
+   "text": "c2  e2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  },
+  {
+   "text": "  c2\n\n\te2 ",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 8,
+   "offExamples": []
+  },
+  {
+   "text": "c2\n[e2\n g2]",
+   "events": 24,
+   "none": 0,
+   "exact": 24,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 16,
+   "offExamples": []
+  },
+  {
+   "text": "ça ñ2",
+   "events": 16,
+   "none": 0,
+   "exact": 16,
+   "multi": 0,
+   "off": 0,
+   "rawTrimmed": 0,
+   "offExamples": []
+  }
+ ],
+ "repeats": [
+  {
+   "text": "a!3 b",
+   "events": [
+    {
+     "at": "0",
+     "leaf": "a"
+    },
+    {
+     "at": "1/4",
+     "leaf": "a"
+    },
+    {
+     "at": "1/2",
+     "leaf": "a"
+    },
+    {
+     "at": "3/4",
+     "leaf": "b"
+    }
+   ]
+  },
+  {
+   "text": "a*3 b",
+   "events": [
+    {
+     "at": "0",
+     "leaf": "a"
+    },
+    {
+     "at": "1/6",
+     "leaf": "a"
+    },
+    {
+     "at": "1/3",
+     "leaf": "a"
+    },
+    {
+     "at": "1/2",
+     "leaf": "b"
+    }
+   ]
+  },
+  {
+   "text": "a(3,8) b",
+   "events": [
+    {
+     "at": "0",
+     "leaf": "a"
+    },
+    {
+     "at": "3/16",
+     "leaf": "a"
+    },
+    {
+     "at": "3/8",
+     "leaf": "a"
+    },
+    {
+     "at": "1/2",
+     "leaf": "b"
+    }
+   ]
+  },
+  {
+   "text": "[a b]*2",
+   "events": [
+    {
+     "at": "0",
+     "leaf": "a"
+    },
+    {
+     "at": "1/2",
+     "leaf": "a"
+    },
+    {
+     "at": "1/4",
+     "leaf": "b"
+    },
+    {
+     "at": "3/4",
+     "leaf": "b"
+    }
+   ]
+  },
+  {
+   "text": "<a b>!2",
+   "events": [
+    {
+     "at": "0",
+     "leaf": "a"
+    },
+    {
+     "at": "1/2",
+     "leaf": "a"
+    }
+   ]
+  }
+ ],
+ "rev": [
+  {
+   "at": "2/3",
+   "value": "a",
+   "leaf": "a"
+  },
+  {
+   "at": "1/2",
+   "value": "b",
+   "leaf": "b"
+  },
+  {
+   "at": "1/3",
+   "value": "c",
+   "leaf": "c"
+  },
+  {
+   "at": "0",
+   "value": "d",
+   "leaf": "d"
+  }
+ ],
+ "struct": [
+  {
+   "value": "c2",
+   "locations": [
+    {
+     "start": 201,
+     "end": 202
+    },
+    {
+     "start": 101,
+     "end": 103
+    }
+   ]
+  },
+  {
+   "value": "eb2",
+   "locations": [
+    {
+     "start": 205,
+     "end": 206
+    },
+    {
+     "start": 104,
+     "end": 107
+    }
+   ]
+  },
+  {
+   "value": "g2",
+   "locations": [
+    {
+     "start": 207,
+     "end": 208
+    },
+    {
+     "start": 108,
+     "end": 110
+    }
+   ]
+  }
+ ],
+ "patternedArg": [
+  {
+   "value": "c2",
+   "locations": [
+    {
+     "start": 202,
+     "end": 203
+    },
+    {
+     "start": 101,
+     "end": 103
+    }
+   ]
+  },
+  {
+   "value": "e2",
+   "locations": [
+    {
+     "start": 202,
+     "end": 203
+    },
+    {
+     "start": 104,
+     "end": 106
+    }
+   ]
+  }
+ ],
+ "tail": [
+  {
+   "value": [
+    "bd",
+    3
+   ],
+   "locations": [
+    {
+     "start": 4,
+     "end": 5
+    },
+    {
+     "start": 1,
+     "end": 3
+    }
+   ]
+  }
+ ],
+ "euclidArg": [
+  {
+   "value": "bd",
+   "locations": [
+    {
+     "start": 10,
+     "end": 11
+    },
+    {
+     "start": 5,
+     "end": 6
+    },
+    {
+     "start": 1,
+     "end": 3
+    }
+   ]
+  },
+  {
+   "value": "bd",
+   "locations": [
+    {
+     "start": 10,
+     "end": 11
+    },
+    {
+     "start": 5,
+     "end": 6
+    },
+    {
+     "start": 1,
+     "end": 3
+    }
+   ]
+  },
+  {
+   "value": "bd",
+   "locations": [
+    {
+     "start": 10,
+     "end": 11
+    },
+    {
+     "start": 5,
+     "end": 6
+    },
+    {
+     "start": 1,
+     "end": 3
+    }
+   ]
+  }
+ ]
+}
