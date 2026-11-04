@@ -220,3 +220,9 @@ unrelated rack state, participates in accepted-document undo/redo, and requires
 independent saved-identity validation before an offer appears. See the
 [contract](translation-rules.md#explicit-code-conversion-78) and
 [unit/event and browser evidence](code-conversion-verification.md).
+
+## Patch names
+
+Issue #62 adds an editable header name, library titles and named Export/Open
+through optional v1 rack metadata. See the [contract](patch-format.md#patch-names-62)
+and [unit/browser evidence](patch-names-verification.md).

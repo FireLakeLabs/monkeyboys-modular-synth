@@ -20,6 +20,7 @@ export interface Scope {
 }
 
 export interface RackLayout {
+  name?: string
   /** Accepted executable source for source-owned files; never another rack block. */
   source?: string
   prelude?: string

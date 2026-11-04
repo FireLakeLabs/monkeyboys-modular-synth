@@ -89,6 +89,8 @@ function validValue(item: Control, candidate: ControlValue, node: Node): boolean
 /** Validate the graph before traversing it; disconnected incomplete chains are legal. */
 export function graph(patch: Patch): Map<string, Node> {
   if (patch.version !== 1) throw new Error('Unsupported patch version')
+  if (patch.name !== undefined && typeof patch.name !== 'string')
+    throw new Error('Invalid patch name')
   const rows = patch.rows
   if (
     rows !== undefined &&

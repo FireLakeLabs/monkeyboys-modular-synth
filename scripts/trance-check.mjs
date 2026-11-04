@@ -39,7 +39,8 @@ export async function loadTrance() {
   if (library()) button('Load patch', library()).click()
   await until(() => !library())
   assert(status() === 'Ready', 'Library load started audio')
-  assert(source() === entry.source, 'Load changed supplied source')
+  assert(sourceBody(source()) === entry.source, 'Load changed supplied executable source')
+  assert(read(source()).patch.name === entry.title, 'Load lost library title')
   const patch = read(source()).patch
   validateRack(patch)
   assert(patch.modules.find((m) => m.type === 'out').values.bpm === 140, 'Rack tempo is not 140')
@@ -154,7 +155,7 @@ export async function verifyTrance() {
   }
   try {
     const layout = await loadTrance()
-    assert((await exported()) === entry.source, 'Untouched export changed source')
+    assert((await exported()) === source(), 'Untouched export changed saved file')
     const firstPCM = await play()
     const firstEvents = events()
     const groups = firstEvents.reduce((result, event) => {

@@ -102,6 +102,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
     throw new Error('Rack prelude must contain setup statements only')
   const layout: RackLayout = {
     version: 1,
+    ...(patch.name === undefined ? {} : { name: patch.name }),
     scopes: setup.scopes.map((scope) => scope.descriptor),
     ...(patch.prelude === undefined ? {} : { prelude }),
     modules: patch.modules.map((module) => ({ ...module, bindings: [] })),

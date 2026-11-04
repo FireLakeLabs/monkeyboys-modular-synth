@@ -121,14 +121,20 @@ export async function verifyLibraryUI() {
 
   for (const entry of entries) {
     await load(entry.title)
-    assert(source() === entry.source, `${entry.id}: source changed during load`)
+    assert(
+      sourceBody(source()) === sourceBody(entry.source),
+      `${entry.id}: source changed during load`,
+    )
+    assert(read(source()).patch.name === entry.title, `${entry.id}: missing patch title`)
     const expected = read(entry.source).patch
     assert(
       document.querySelectorAll('.module-panel').length === expected.modules.length,
       `${entry.id}: rack mismatch`,
     )
   }
-  results.push('All entries load exact source and matching rack without autoplay')
+  results.push(
+    'All entries load exact executable source, entry titles and matching rack without autoplay',
+  )
 
   await load(helper.title)
   await editSource(source().replace('.gain(0.2)', '.gain(0.4)'))
@@ -152,7 +158,10 @@ export async function verifyLibraryUI() {
     'Export lost source',
   )
   await load(helper.title)
-  assert(source() === helper.source, 'Reload did not restore built-in original')
+  assert(
+    sourceBody(source()) === sourceBody(helper.source),
+    'Reload did not restore built-in original',
+  )
   const transfer = new DataTransfer()
   transfer.items.add(new File([saved], 'library-export.strudel', { type: 'text/plain' }))
   const input = document.querySelector('input[type=file]')
@@ -453,7 +462,7 @@ export async function verifyLibraryRackEditing() {
   const results = []
   for (const entry of libraryPatches().filter((entry) => entry.id !== 'switch-angel-trance-demo')) {
     await load(entry.title)
-    assert(source() === entry.source, `${entry.id}: initial source differs`)
+    assert(sourceBody(source()) === sourceBody(entry.source), `${entry.id}: initial source differs`)
     await choose(entry.title)
     assert(
       library().querySelector('.patch-attribution').textContent.includes('contributors'),
@@ -501,7 +510,7 @@ export async function verifyLibraryRackEditing() {
 
   const showcase = libraryPatches().find((entry) => entry.id === 'switch-angel-trance-demo')
   await load(showcase.title)
-  assert(source() === showcase.source, 'Showcase was rewritten on load')
+  assert(sourceBody(source()) === sourceBody(showcase.source), 'Showcase was rewritten on load')
   await add('VCF')
   const filter = id('vcf'),
     mixer = id('mix')
@@ -629,7 +638,7 @@ export async function verifyOnRampUI() {
     button('Close library', library()).click()
     await until(() => !library())
     await load(entry.title)
-    assert(source() === entry.source, `${entry.id}: load rewrote source`)
+    assert(sourceBody(source()) === sourceBody(entry.source), `${entry.id}: load rewrote source`)
     const before = source()
     if (entry.id === 'first-sounds') {
       document.querySelector('[aria-label="bd step 2"]').click()
@@ -659,7 +668,10 @@ export async function verifyOnRampUI() {
       `${entry.id}: export identity differs`,
     )
     await load(entry.title)
-    assert(source() === entry.source, `${entry.id}: reload did not reset original`)
+    assert(
+      sourceBody(source()) === sourceBody(entry.source),
+      `${entry.id}: reload did not reset original`,
+    )
     results.push(
       `${entry.id}: credit, try-this edit, stopped load, exact source, export identity and reset passed`,
     )

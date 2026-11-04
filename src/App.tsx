@@ -32,6 +32,7 @@ import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { createAutosave } from './workspace/autosave'
 import { RestorePrompt } from './workspace/RestorePrompt'
 import { createDocumentHistory } from './workspace/history'
+import { patchFilename, patchName, renameDocument } from './workspace/naming'
 import { PatchLibrary } from './library/PatchLibrary'
 import { readLibraryPatch } from './library/load'
 import { assessDocumentConnection } from './workspace/connections'
@@ -369,7 +370,7 @@ export default function App() {
             case 'new':
               return fromPatch(starterPatch())
             case 'library':
-              return readLibraryPatch(replacement.entry)
+              return renameDocument(readLibraryPatch(replacement.entry), replacement.entry.title)
           }
         },
         playback,
@@ -422,7 +423,7 @@ export default function App() {
     const url = URL.createObjectURL(new Blob([current.current.draft], { type: 'text/plain' }))
     const link = window.document.createElement('a')
     link.href = url
-    link.download = 'monkeyboy.strudel'
+    link.download = patchFilename(current.current.document.patch)
     link.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
@@ -474,6 +475,27 @@ export default function App() {
             <span className="tagline">MODULAR SYNTH</span>
           </h1>
         </div>
+        <input
+          key={patchName(patch)}
+          className="patch-name"
+          aria-label="Patch name"
+          defaultValue={patchName(patch)}
+          disabled={locked || replacing || document.layout === 'invalid'}
+          onBlur={(event) => {
+            try {
+              const next = renameDocument(current.current.document, event.currentTarget.value)
+              event.currentTarget.value = patchName(next.patch)
+              if (next !== current.current.document) install(next)
+            } catch (failure) {
+              setError(failure instanceof Error ? failure.message : String(failure))
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.nativeEvent.isComposing) return
+            if (event.key === 'Escape') event.currentTarget.value = patchName(patch)
+            if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur()
+          }}
+        />
         <button
           type="button"
           className="open-library"

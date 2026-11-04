@@ -20,6 +20,21 @@
   padding: 0;
   border: 0;
 }
+
+.patch-name {
+  width: clamp(130px, 18vw, 280px);
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.patch-name:focus-visible {
+  outline: 2px solid var(--audio);
+  outline-offset: 2px;
+}
 .header-tempo .knob {
   display: none;
 }

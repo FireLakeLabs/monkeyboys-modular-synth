@@ -111,12 +111,15 @@ function patchFrom(value: unknown): Patch {
       configurable: true,
     })
   }
+  if (value.name !== undefined && typeof value.name !== 'string')
+    throw new Error('Invalid saved patch name')
   if (value.prelude !== undefined && typeof value.prelude !== 'string')
     throw new Error('Invalid saved prelude')
   if (value.rows !== undefined && typeof value.rows !== 'number')
     throw new Error('Invalid saved row count')
   return {
     version: 1,
+    ...(value.name === undefined ? {} : { name: value.name }),
     modules,
     cables,
     names,

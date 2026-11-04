@@ -82,6 +82,7 @@ function project(
   snapshot?: ParsedScope[],
 ): { patch: Patch; bindings: SourceBinding[] } {
   const patch: Patch = { version: 1, modules: [], cables: [], names: {} }
+  if (saved?.name !== undefined) patch.name = saved.name
   if (saved?.prelude !== undefined && source.startsWith(saved.prelude))
     patch.prelude = saved.prelude
   const bindings: SourceBinding[] = []

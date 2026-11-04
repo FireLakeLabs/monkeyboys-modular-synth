@@ -149,6 +149,13 @@ make a standards check pass.
 
 ## Maintaining standards
 
+The #62 naming regression submits the displayed fallback on an unnamed patch and
+requires byte-identical source, absent name metadata and unchanged undo history.
+`renameDocument` treats an unchanged display name as a no-op; its unit check runs
+in the shared gate. The separate browser check exercises actual Escape/blur and
+also requires unchanged local recovery. This prevents focus or cancellation from
+materializing default presentation text as a saved edit.
+
 The [#64 literal-edit suite](literal-edit-verification.md) enumerates every catalog
 control, with separate source, wiring/layout/value, exact saved identity and real
 Strudel event assertions. It runs in the shared gate. Named executable expected

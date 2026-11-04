@@ -47,6 +47,11 @@ calls, and filters names/calls (#79). Labels wrap without ellipsis; rack module
 widths stay fixed. See the
 [library interaction contract and observed layouts](patch-library.md).
 
+An editable patch name sits beside the brand. Enter or blur saves it; Escape
+cancels. New and unnamed files display **Untitled patch**; library loads use the
+entry title. Export uses a sanitized filename while metadata retains the full
+name. See [persistence and compatibility](patch-format.md#patch-names-62).
+
 The header owns the single Play/Stop control and a catalog-backed BPM readout.
 BPM edits use the same source-preserving operation as OUT; OUT and code edits
 update the header. Stop remains available while starting, applying, stopping or
