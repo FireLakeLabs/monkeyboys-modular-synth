@@ -20,14 +20,14 @@ control edits, graph refusals and unsupported object/CODE preservation.
 and jack, proving every source uses those bindings without a module adapter,
 including a patched base at its omission value.
 
-`npm run check` passed 1009 unit cases, 43 guardrails, formatting, skill integrity, lint, the reader corpus gate, TypeScript and production build.
+`npm run check` passed 1154 unit cases, 43 guardrails, formatting, skill integrity, lint, the reader corpus gate, TypeScript and production build.
 
 Existing generator/library digest fixtures retain their original hashes. The new
 original **Sample, scale and mix CV** exercise covers every added utility and
 CV SEQ in an active route. Its MIT provenance is recorded in the corpus manifest;
-the baseline membership was explicitly extended to fifteen patches. Existing
-patch coverage did not regress: totals became 111/126 mapped calls, 16/20 fully
-readable voices, 13/15 CODE-free patches, with zero parse failures and the same
+the baseline membership was explicitly extended to seventeen patches after #132. Existing
+patch coverage did not regress: totals became 135/150 mapped calls, 19/23 fully
+readable voices, 15/17 CODE-free patches, with zero parse failures and the same
 fifteen CODE blocks/unmapped calls. This is representation coverage, not audio
 proof. Existing native ENV/alias, source-preservation and saved CODE regressions
 remain in the gate.
@@ -40,7 +40,7 @@ SMOOTH/sampled/pitch sources with inactive fields, and additive generic ENV on
 native-envelope targets. Derived rates now retain full precision; source
 restoration tracks the fields each adapter actually represents; generic ENV on
 native targets remains CODE. Save/reopen, look edits and real event checks pass.
-The slowest pitch rate also passes at the minimum and maximum catalog tempos. After rebasing onto #140, `npm ci` ran its new audio-pool postinstall patch; the complete gate passed again against that installed engine.
+The slowest pitch rate also passes at the minimum and maximum catalog tempos. After rebasing onto #140 and #132, `npm ci` ran the audio-pool postinstall patch; the complete gate passed against that installed engine. The #132 catalog, pattern-time call bindings, examples and browser fixtures remain intact.
 
 ## Observed browser and PCM proof
 
@@ -114,8 +114,13 @@ it passes with the corrected code.
 
 Dense and switch-based panels use compact numeric rows without reducing text
 sizes or changing HP. Fit reserves another jack target below the last rail. The
-same browser matrix that failed on LFO now covers all 77 module/look combinations
-at 100%, 75% and Fit; the 1024/900-pixel Fit reproductions retain the rails and
+same browser matrix that failed on LFO now covers all 119 module/look combinations
+after #132 at 100%, 75% and Fit; the 1024/900-pixel Fit reproductions retain the rails and
 live jack centers. Palette/matrix counts come from the catalog rather than the
 original sixteen-module list. No overflow, contrast, jack-size or font-size
 assertion was removed.
+
+After rebasing onto main `23c6f98` (#132), all 32 full browser suites passed
+locally in Chromium, including library signal/PCM, generalized modulation and
+pattern/time forms. The unchanged live-edit failure reproduction also passed
+against a fresh Vite server. The run used the temporary 5177 config above.
