@@ -731,3 +731,30 @@ behind `src/strudel/engine.ts`. The header spells out `setcpm(BPM / 4)` and four
 beats per cycle. Reduced motion freezes the clock readout/progress and SCOPE;
 changing the preference cancels/resumes their display intervals. Probe cards and
 credits have no animation. See [verification](pattern-visibility-verification.md).
+
+## Sample selection and slicing (#138)
+
+Crate drops use ordinary catalog control values and one accepted-document edit.
+SMPL writes `.s("name:n")`, with neutral BANK/N; REVERB writes `.ir("name:n")`;
+WAVETABLE writes the selected `wt_` sound and its position/warp controls; SPLICE
+writes the selected sample and its mode's scalar/tuple call. No inventory, preview
+audio, or local file handle enters executable source or rack metadata.
+
+A DRUMS drop splices the chosen row's sounding atoms, retaining rests, grouping,
+indices on other rows and timing modifiers. With one effective downstream sampler
+bank/index, the operation makes those settings explicit in the other atoms before
+clearing the sampler overrides. This preserves other rows while allowing a card
+from a different bank. Different sampler banks/indices on a fan-out, or a downstream
+sound selector, require dropping on the sampler instead; the operation refuses
+atomically rather than changing another voice's sound.
+
+The reader recognizes a single literal `wt_` selector with neutral import defaults.
+A literal sample followed by a supported slice/splice/chop/striate can own a SPLICE
+panel. Lookahead validates the complete call before creating that owner; an invalid
+or computed argument cannot introduce the panel's default slice call. Counts are
+1–64 integers; slice/splice also take literal order text. Array cut points, computed
+arguments and other unsupported forms remain exact CODE. Existing saved CODE
+ownership stays authoritative. Imported mode/arity changes retain the existing
+explicit conversion/refusal boundary; literal sample, count, order and tape edits
+preserve surrounding source. Source, complete saved rack and engine events have
+independent [acceptance checks](sound-crate.md).

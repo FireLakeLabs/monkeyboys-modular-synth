@@ -63,6 +63,8 @@ describe('module catalog', () => {
         'sometimes',
         'off',
         'layer',
+        'splice',
+        'wavetable',
       ].sort(),
     )
   })
@@ -124,7 +126,7 @@ describe('module catalog', () => {
             [
               ...spec.strudel,
               ...(spec.id === 'osc' || spec.soundSource
-                ? ['s']
+                ? ['s', ...(spec.id === 'smpl' ? ['n'] : [])]
                 : spec.id === 'smpl'
                   ? ['n']
                   : ['seq', 'drums'].includes(spec.id)

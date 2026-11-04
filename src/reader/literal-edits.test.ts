@@ -1,3 +1,4 @@
+import { SAMPLE_CONTROLS } from '../samples/fixtures'
 import { panelCases } from '../testing/panelCases'
 import { parse } from 'acorn'
 import { beforeAll, describe, expect, it } from 'vitest'
@@ -327,6 +328,7 @@ it('accounts for every catalog module/control without silently skipping new cont
       ...nonLiteral,
       ...PATTERN_CONTROLS,
       ...SOUND_CONTROLS,
+      ...SAMPLE_CONTROLS,
 
       ...FUNCTION_CONTROLS,
       // Multi-input adapters have separate source/rack/event proofs in routing.test.ts.

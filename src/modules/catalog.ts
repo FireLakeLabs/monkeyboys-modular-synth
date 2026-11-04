@@ -260,8 +260,18 @@ export const SMPL: ModuleSpec = {
   category: 'sound',
   hp: 8,
   paletteCall: '.bank()',
+  soundSource: 'sample',
+  sampleTarget: { control: 'sample' },
   readDefaults: { bank: '', speed: 1 },
   controls: [
+    {
+      kind: 'text',
+      id: 'sample',
+      label: 'SAMPLE',
+      default: '',
+      omitAt: '',
+      call: { method: 's', argument: { kind: 'string' }, read: 'merge' },
+    },
     {
       kind: 'switch',
       id: 'bank',
@@ -289,6 +299,8 @@ export const SMPL: ModuleSpec = {
       numericCall('begin', 'BEGIN', 'begin', 0, 1, 0.01, 0),
       numericCall('end', 'END', 'end', 0, 1, 0.01, 1),
       numericCall('loop', 'LOOP', 'loop', 0, 1, 1, 0),
+      numericCall('loopBegin', 'LOOP BEGIN', 'loopBegin', 0, 1, 0.01, 0),
+      numericCall('loopEnd', 'LOOP END', 'loopEnd', 0, 1, 0.01, 1),
       numericCall('cut', 'CUT', 'cut', 0, 32, 1, 0),
     ].map((control) => ({
       ...control,
@@ -301,7 +313,8 @@ export const SMPL: ModuleSpec = {
     { id: 'in', label: 'IN', direction: 'in', signal: 'pattern' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['bank', 'speed', 'begin', 'end', 'loop', 'cut'],
+  strudel: ['bank', 'speed', 'begin', 'end', 'loop', 'loopBegin', 'loopEnd', 'cut'],
+  strudelAliases: { loopb: 'loopBegin', loope: 'loopEnd' },
   orderSensitive: false,
 }
 
@@ -749,6 +762,7 @@ export const REVERB: ModuleSpec = {
   category: 'fx',
   hp: 8,
   paletteCall: '.room()',
+  sampleTarget: { control: 'ir' },
   controls: [
     {
       kind: 'knob',
@@ -781,12 +795,21 @@ export const REVERB: ModuleSpec = {
         ? { call: { ...control.call, enabledBy: 'room' } }
         : {}),
     })),
+    {
+      kind: 'text',
+      id: 'ir',
+      label: 'IR',
+      default: '',
+      omitAt: '',
+      call: { method: 'ir', argument: { kind: 'string' }, read: 'companion', enabledBy: 'room' },
+    },
   ],
   jacks: [
     { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['room', 'roomsize', 'roomfade', 'roomlp', 'roomdim'],
+  strudel: ['room', 'roomsize', 'roomfade', 'roomlp', 'roomdim', 'ir'],
+  strudelAliases: { iresponse: 'ir' },
   orderSensitive: false,
 }
 
@@ -2006,6 +2029,139 @@ export const SCOPE: ModuleSpec = {
 }
 
 /** Every shipped module, in library order. */
+export const SPLICE: ModuleSpec = {
+  id: 'splice',
+  name: 'SPLICE',
+  title: 'Sample slicer',
+  family: 'hardware',
+  category: 'sound',
+  hp: 12,
+  paletteCall: '.slice(4, "0 1 2 3")',
+  soundSource: 'sample',
+  sampleTarget: { control: 'sample' },
+  readDefaults: { sample: '' },
+  controls: [
+    {
+      kind: 'text',
+      id: 'sample',
+      label: 'SAMPLE',
+      default: '',
+      omitAt: '',
+      call: { method: 's', argument: { kind: 'string' } },
+    },
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      default: 'slice',
+      options: opts('slice', 'splice', 'chop', 'striate'),
+    },
+    {
+      kind: 'knob',
+      id: 'count',
+      label: 'SLICES',
+      min: 1,
+      max: 64,
+      step: 1,
+      default: 4,
+      call: {
+        method: {
+          control: 'mode',
+          names: { slice: 'slice', splice: 'splice', chop: 'chop', striate: 'striate' },
+        },
+        argument: {
+          kind: 'tuple',
+          controls: ['count', 'pattern'],
+          byMethod: { chop: ['count'], striate: ['count'] },
+        },
+        read: 'merge',
+      },
+    },
+    {
+      kind: 'text',
+      id: 'pattern',
+      label: 'SLICE ORDER',
+      default: '0 1 2 3',
+      when: [{ control: 'mode', values: ['slice', 'splice'] }],
+    },
+  ],
+  jacks: [
+    { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
+  ],
+  strudel: ['slice', 'splice', 'chop', 'striate'],
+  orderSensitive: true,
+}
+export const WAVETABLE: ModuleSpec = {
+  id: 'wavetable',
+  name: 'WAVETABLE',
+  title: 'Wavetable oscillator',
+  family: 'hardware',
+  category: 'sound',
+  hp: 12,
+  paletteCall: 's("wt_…").wt(0.4)',
+  soundSource: 'sample',
+  sampleTarget: { control: 'sample', prefix: 'wt_' },
+  readDefaults: { wt: 0, warp: 0, warpmode: 'none' },
+  controls: [
+    {
+      kind: 'text',
+      id: 'sample',
+      label: 'TABLE',
+      default: '',
+      omitAt: '',
+      call: { method: 's', argument: { kind: 'string' } },
+    },
+    numericCall('wt', 'POSITION', 'wt', 0, 1, 0.01, 0.4, {
+      omitAt: 0,
+      call: { method: 'wt', argument: { kind: 'number' }, read: 'merge' },
+    }),
+    numericCall('warp', 'WARP', 'warp', 0, 1, 0.01, 0.2, {
+      omitAt: 0,
+      call: { method: 'warp', argument: { kind: 'number' }, read: 'merge' },
+    }),
+    {
+      kind: 'switch',
+      id: 'warpmode',
+      label: 'WARP MODE',
+      default: 'spin',
+      omitAt: 'none',
+      options: opts(
+        'none',
+        'asym',
+        'mirror',
+        'bendp',
+        'bendm',
+        'bendmp',
+        'sync',
+        'quant',
+        'fold',
+        'pwm',
+        'orbit',
+        'spin',
+        'chaos',
+        'primes',
+        'binary',
+        'brownian',
+        'reciprocal',
+        'wormhole',
+        'logistic',
+        'sigmoid',
+        'fractal',
+        'flip',
+      ),
+      call: { method: 'warpmode', argument: { kind: 'string' }, read: 'merge' },
+    },
+  ],
+  jacks: [
+    { id: 'note', label: 'NOTE', direction: 'in', signal: 'any' },
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
+  ],
+  strudel: ['wt', 'warp', 'warpmode'],
+  strudelAliases: { wavetablePosition: 'wt', wavetableWarp: 'warp', wavetableWarpMode: 'warpmode' },
+  orderSensitive: false,
+}
+
 export const CATALOG: readonly ModuleSpec[] = [
   SEQ,
   GATES,
@@ -2025,6 +2181,8 @@ export const CATALOG: readonly ModuleSpec[] = [
   HARMONIC,
   FM_OP,
   SMPL,
+  SPLICE,
+  WAVETABLE,
   VCF,
   VCA,
   ENV,

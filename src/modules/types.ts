@@ -190,6 +190,8 @@ export interface ModuleSpec {
   strudelAliases?: Readonly<Record<string, string>>
   /** Sound selectors that may also start an unpatched voice. */
   soundSource?: string
+  /** Crate drop slot; prefix constrains the offered inventory. */
+  sampleTarget?: { control: string; prefix?: string }
   /** Dedicated modulation panel patched to this destination jack. */
   operatorTarget?: { type: string; jack: string }
   /** Engine waveform names for audio-rate LFOs (pattern names remain unchanged). */

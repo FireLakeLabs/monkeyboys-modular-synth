@@ -565,6 +565,7 @@ export function generateDocument(
   function raw(node: Node): CodeExpression[] {
     if (node.spec.soundSource && !input(node)) {
       const selector = node.spec.soundSource
+      if (!string(node, selector)) return []
       return [
         transform(node, append(blank(), `s(${quote(string(node, selector))})`, node), selector),
       ]

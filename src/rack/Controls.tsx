@@ -1,3 +1,4 @@
+import type { SoundChoice } from '../samples/crate'
 import { controlValue } from '../modules/values'
 import { controlEnabled } from '../modules/bindings'
 import { getModuleSpec } from '../modules/catalog'
@@ -175,11 +176,13 @@ export function ControlEditor({
   commit,
   editSource,
   notationEscaped = false,
+  dropSample,
 }: {
   patch: Patch
   module: PlacedModule
   control: Control
   commit: Commit
+  dropSample?: ((choice: SoundChoice, row: number) => void) | undefined
   notationEscaped?: boolean
   editSource?: () => void
 }) {
@@ -337,6 +340,7 @@ export function ControlEditor({
       const text = typeof value === 'string' ? value : drumText(value)
       return (
         <MiniEditor
+          dropSample={dropSample}
           escaped={notationEscaped}
           text={text}
           label={control.label}

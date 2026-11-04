@@ -63,6 +63,14 @@ declare module '@strudel/web' {
   export function resetGlobalEffects(): void
   /** Stops scheduling; existing notes and effect tails can ring out. */
   export function hush(): void
+  /** One voice, without evaluating code or installing a scheduler pattern. */
+  export function superdough(
+    value: Record<string, unknown>,
+    time: number,
+    duration: number,
+    cps: number,
+    cycle: number,
+  ): Promise<unknown>
   /** Registers a sample source, e.g. 'github:tidalcycles/dirt-samples'. */
   export function evalScope(scope: { samples: typeof samples }): Promise<unknown>
   export function samples(

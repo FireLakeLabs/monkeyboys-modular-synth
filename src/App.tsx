@@ -1,3 +1,6 @@
+import { SoundCrate } from './samples/SoundCrate'
+import { seatedResources } from './samples/crate'
+import { getSamplePacks, subscribeSamplePacks } from './strudel/engine'
 import { CartridgeBay } from './samples/CartridgeBay'
 import { withFactoryPacks } from './workspace/cartridges'
 
@@ -72,6 +75,7 @@ function Logo() {
 }
 
 export default function App() {
+  const sampleResources = useSyncExternalStore(subscribeSamplePacks, getSamplePacks)
   const [autosave] = useState(() => createAutosave())
   const [recovery, setRecovery] = useState(() => autosave.load())
   const [document, setDocument] = useState(() =>
@@ -622,6 +626,10 @@ export default function App() {
         <Rack
           key={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
           patch={patch}
+          sampleResources={seatedResources(document, sampleResources)}
+          soundCrate={
+            <SoundCrate document={document} locked={locked || audio.status === 'bouncing'} />
+          }
           cartridgeBay={
             <CartridgeBay
               document={document}

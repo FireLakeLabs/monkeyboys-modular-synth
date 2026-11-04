@@ -74,6 +74,7 @@ test('WAV bounce and live audio recovery', async ({ page }, info) => {
 
 for (const [script, verify] of [
   ['cartridges-check', 'verifyCartridges'],
+  ['crate-check', 'verifySoundCrate'],
   ['connection-check', 'verifyConnectionTargets'],
   ['grid-check', 'verifyGrids'],
   ['library-check', 'verifyReplacementConfirmation'],
@@ -89,7 +90,7 @@ for (const [script, verify] of [
   ['rack-feel-check', 'verifyPanels'],
 ]) {
   test(verify, async ({ page }, info) => {
-    if (verify === 'verifyCartridges')
+    if (verify === 'verifyCartridges' || verify === 'verifySoundCrate')
       await page.getByRole('button', { name: 'Play', exact: true }).click()
     const result = await page.evaluate(
       async ({ script, verify }) => {
@@ -100,6 +101,42 @@ for (const [script, verify] of [
       },
       { script, verify },
     )
+    if (verify === 'verifySoundCrate') {
+      // Native pointer capture at Fit exercises the scaled tape coordinate boundary.
+      await page.getByRole('button', { name: 'Fit rack', exact: true }).click()
+      const mark = page.locator('.tape-mark[data-mark="begin"]')
+      await mark.scrollIntoViewIfNeeded()
+      const before = await page.evaluate(async () =>
+        (await import('/scripts/editor-browser.mjs')).editorSource(),
+      )
+      const geometry = await mark.evaluate((element) => {
+        const bounds = element.parentElement.getBoundingClientRect()
+        const ratio = bounds.width / element.parentElement.offsetWidth
+        return {
+          left: bounds.left,
+          top: element.getBoundingClientRect().top + 8 * ratio,
+          width: bounds.width,
+          pad: 12 * ratio,
+        }
+      })
+      const bounds = await mark.boundingBox()
+      await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2)
+      await page.mouse.down()
+      await page.mouse.move(
+        geometry.left + geometry.pad + (geometry.width - 2 * geometry.pad) * 0.5,
+        geometry.top,
+        { steps: 5 },
+      )
+      await page.mouse.up()
+      await expect(mark).toHaveAttribute('aria-valuenow', '0.5')
+      await page.getByRole('button', { name: 'Undo', exact: true }).click()
+      await expect(mark).toHaveAttribute('aria-valuenow', '0.2')
+      expect(
+        await page.evaluate(async () =>
+          (await import('/scripts/editor-browser.mjs')).editorSource(),
+        ),
+      ).toBe(before)
+    }
     await record(info, result)
   })
 }

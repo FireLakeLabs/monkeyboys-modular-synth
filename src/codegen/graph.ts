@@ -87,7 +87,14 @@ function validValue(item: Control, candidate: ControlValue, node: Node): boolean
     case 'switch':
       return item.options.some((option) => option.value === candidate)
     case 'text':
-      return typeof candidate === 'string'
+      return (
+        typeof candidate === 'string' &&
+        (!node.spec.sampleTarget?.prefix ||
+          item.id !== node.spec.sampleTarget.control ||
+          candidate === '' ||
+          (candidate.startsWith(node.spec.sampleTarget.prefix) &&
+            /^[\w-]+(?::\d+)?$/.test(candidate)))
+      )
     case 'steps':
       return (
         isSteps(candidate) &&

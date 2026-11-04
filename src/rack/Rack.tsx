@@ -1,5 +1,9 @@
 import type { SourceDocument } from '../reader/types'
 import { CableProbe, PatchCredits, ScopeDisplay } from './PatternVisuals'
+
+import { SampleSlot, Tape, RazorMarks } from '../samples/SamplePanel'
+import { dropSound, variantCount, type SoundChoice } from '../samples/crate'
+import type { SamplePackResource } from '../strudel/engine'
 import {
   useEffect,
   useLayoutEffect,
@@ -75,6 +79,9 @@ export function Rack({
   cartridgeBay,
 
   document: sourceDocument,
+
+  soundCrate,
+  sampleResources,
   edit: requestEdit,
   selected,
   select,
@@ -96,6 +103,9 @@ export function Rack({
   cartridgeBay?: ReactNode
 
   document: SourceDocument
+
+  soundCrate?: ReactNode
+  sampleResources: readonly SamplePackResource[]
   locked: boolean
   showCode: (id: string) => void
   editingModule: string | null
@@ -377,6 +387,17 @@ export function Rack({
     return `function · ${loopRole(spec, owner)} · ${loopInfo.functions[owner.id] ?? 'Close RETURN and connect the module to OUT to write the function'}`
   }
   const warnings = patch.cables.flatMap((c) => cableWarnings(patch, c))
+  function applySound(module: string, choice: SoundChoice, row?: number) {
+    if (
+      !sampleResources.some((resource) =>
+        resource.sounds.some(
+          (sound) => sound.name === choice.name && choice.n < variantCount(sound.bank),
+        ),
+      )
+    )
+      throw new Error('Choose a sound variant from a seated pack')
+    edit((p) => dropSound(p, module, choice, row))
+  }
   const renderModules = (modules: Patch['modules']) =>
     modules.map((m) => {
       const spec = getModuleSpec(m.type)
@@ -437,7 +458,27 @@ export function Rack({
             onPointerDown={() => select(m.id)}
           >
             {m.type === 'scope' && <ScopeDisplay module={m} />}
+
+            <SampleSlot
+              module={m}
+              resources={sampleResources}
+              clear={() => {
+                const target = spec.sampleTarget
+                if (target) edit((p) => setValue(p, m.id, target.control, ''))
+              }}
+              drop={(choice) => applySound(m.id, choice)}
+            />
+            {m.type === 'smpl' && (
+              <Tape
+                module={m}
+                commit={(id, value, group) =>
+                  edit((p) => setValue(p, m.id, id, value), undefined, group)
+                }
+              />
+            )}
+            {m.type === 'splice' && <RazorMarks module={m} />}
             {[...spec.controls]
+              .filter((control) => control.id !== spec.sampleTarget?.control)
               .sort((a, b) =>
                 'group' in a || 'group' in b
                   ? 0
@@ -449,6 +490,13 @@ export function Rack({
                   patch={patch}
                   module={m}
                   control={control}
+                  dropSample={
+                    m.type === 'drums'
+                      ? (choice, row) => {
+                          applySound(m.id, choice, row)
+                        }
+                      : undefined
+                  }
                   notationEscaped={escapedNotation.includes(`${m.id}:${control.id}`)}
                   {...(m.type === 'code' && sourceModules.includes(m.id)
                     ? { editSource: () => showCode(m.id) }
@@ -618,6 +666,7 @@ export function Rack({
         inert={locked}
         aria-label="Module library"
       >
+        {soundCrate}
         <div className="palette-heading">
           <h2>MODULES</h2>
           <label className="module-filter">
