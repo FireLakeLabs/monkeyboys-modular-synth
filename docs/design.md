@@ -310,3 +310,10 @@ timing, reduced-motion outline and clearing rules. Collapsed groups flash as one
 text cells flash when an event falls inside their span, and `<…>` pages with the cycle
 unless the cell is being edited. See the [study](nested-step-editor.md) for options,
 measurements and the [parser requirements](nested-step-editor.md#what-147-must-handle).
+
+## Effect order notes (#134)
+
+The Connections area shows a neutral “You hear” note listing stage module names
+and IDs in audible order. It distinguishes inline FX with per-note send tails
+from native orbit sends. Reordering supported effects does not mark cables or
+connection targets as warnings. Audio fan-out retains its existing level warning.

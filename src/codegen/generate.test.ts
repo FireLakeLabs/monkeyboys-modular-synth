@@ -192,7 +192,7 @@ $: s("[bd ~]*4, [~ ~ sd ~]*2, [~ hh]*4")
       chain(seq(), a, b, osc(), module('vcf'), module('vcf', { cutoff: 1200 }, 'vcf2'), out()),
     )
     expect(first).toContain(
-      '.ply(2)\n  .degradeBy(.5)\n  .s("sawtooth")\n  .lpf(800)\n  .lpq(1)\n  .lpf(1200)',
+      '.ply(2)\n  .degradeBy(.5)\n  .s("sawtooth")\n  .FX(lpf(800).lpq(1))\n  .FX(lpf(1200).lpq(1))',
     )
     expect(sound(chain(seq(), b, a, osc(), out()))).toContain('.degradeBy(.5)\n  .ply(2)')
   })

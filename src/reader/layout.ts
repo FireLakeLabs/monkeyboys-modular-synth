@@ -1,3 +1,5 @@
+import { planEffects } from '../codegen/effects'
+import { graph } from '../codegen/graph'
 import { isRailHp, validateRailBounds } from '../patch/layout'
 import { parse } from 'acorn'
 import { generateDocument } from '../codegen/generate'
@@ -80,6 +82,8 @@ function patchFrom(value: unknown): Patch {
       )
     )
       throw new Error('Invalid saved output position')
+    if (item.fx !== undefined && item.fx !== true && item.fx !== 'native')
+      throw new Error('Invalid FX stage')
     const values: Record<string, ControlValue> = {}
     for (const [key, candidate] of Object.entries(item.values)) {
       if (!controlValue(candidate)) throw new Error('Invalid saved value')
@@ -96,6 +100,7 @@ function patchFrom(value: unknown): Patch {
       row: item.type === 'out' ? 0 : typeof item.row === 'number' ? item.row : 0,
       hp: item.type === 'out' ? 0 : typeof item.hp === 'number' ? item.hp : 0,
       look,
+      ...(item.fx === true || item.fx === 'native' ? { fx: item.fx } : {}),
       values,
     }
   })
@@ -162,7 +167,14 @@ export function readLayout(source: string): SavedLayout {
     const raw: unknown = JSON.parse(lines.map((line) => line.slice(3)).join('\n'))
     const patch = patchFrom(raw)
     validateRailBounds(patch)
-    const generated = generateDocument(patch)
+    let generated: ReturnType<typeof generateDocument>
+    let legacyOnly = false
+    try {
+      generated = generateDocument(patch)
+    } catch {
+      generated = generateDocument(patch, { nativeEffects: true })
+      legacyOnly = true
+    }
     // This proves bindings, scopes and routing against the writer, rather than trusting
     // arbitrary JSON call indices. Unknown fields/versions are retained in source.
     const ordered = (value: unknown): string =>
@@ -255,7 +267,18 @@ export function readLayout(source: string): SavedLayout {
               ...(typeof binding.target.path === 'string' ? { path: binding.target.path } : {}),
             }
           }
-          return { scope: binding.scope, calls, role: binding.role, ...(target ? { target } : {}) }
+          if (
+            binding.fx !== undefined &&
+            (typeof binding.fx !== 'number' || !Number.isSafeInteger(binding.fx) || binding.fx < 0)
+          )
+            throw new Error('Invalid FX argument')
+          return {
+            scope: binding.scope,
+            calls,
+            role: binding.role,
+            ...(typeof binding.fx === 'number' ? { fx: binding.fx } : {}),
+            ...(target ? { target } : {}),
+          }
         })
         return { ...module, bindings }
       })
@@ -268,8 +291,17 @@ export function readLayout(source: string): SavedLayout {
       if (ordered(raw) !== ordered(layout)) throw new Error('Invalid source metadata fields')
       return { kind: 'valid', layout, patch, generated: raw.source }
     }
-    if (ordered(raw) !== ordered(generated.layout))
-      throw new Error('Unverifiable rack bindings or metadata')
+    if (legacyOnly || ordered(raw) !== ordered(generated.layout)) {
+      // Pre-134 generated files used native setters for every cable order.
+      // Prove the complete old envelope before migrating that execution choice.
+      const legacy = generateDocument(patch, { nativeEffects: true })
+      if (ordered(raw) !== ordered(legacy.layout))
+        throw new Error('Unverifiable rack bindings or metadata')
+      const { inline } = planEffects(graph(patch))
+      for (const module of patch.modules) if (inline.has(module.id)) module.fx = 'native'
+      const migrated = generateDocument(patch)
+      return { kind: 'valid', layout: migrated.layout, patch, generated: migrated.code }
+    }
     return { kind: 'valid', layout: generated.layout, patch, generated: generated.code }
   } catch (error) {
     return {

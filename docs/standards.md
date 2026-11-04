@@ -385,3 +385,10 @@ for three nested SMOOTH mixer modulators and opaque gain followed by modulation.
 They failed on a dropped contribution/unity override and invalid saved ownership.
 Ordered reverse insertion preserves all deferred CODE; opaque gains keep their
 associated modifiers opaque. The real REPL probe checks the same forms.
+
+The #134 [ordered-effect regressions](../src/codegen/effects.test.ts) separately
+check exact source, repeated argument identity/save/reopen and pinned-engine
+control events. Native imported setters retain fixed-order execution; unsupported
+FX stays atomic CODE. The [browser suite](ordered-effects-verification.md) checks
+actual notes, scheduled event stages, orbit routing and nonzero PCM. These checks
+do not establish physical listening or other-browser coverage.

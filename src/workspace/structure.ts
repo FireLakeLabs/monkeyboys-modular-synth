@@ -10,7 +10,7 @@ import type { SourceAddress, SourceDocument, Span } from '../reader/types'
 export interface SourceEdit extends Span {
   text: string
 }
-type Owner = Pick<SourceAddress, 'module' | 'role' | 'target'>
+type Owner = Pick<SourceAddress, 'module' | 'role' | 'target' | 'fx'>
 interface Unit extends Span {
   key: string
   owners: Owner[]
@@ -65,7 +65,12 @@ function owned(
   scope.calls.forEach((call, index) => {
     const owners = own
       .filter((binding) => binding.calls.includes(index))
-      .map(({ module, role, target }) => ({ module, role, ...(target ? { target } : {}) }))
+      .map(({ module, role, target, fx }) => ({
+        module,
+        role,
+        ...(target ? { target } : {}),
+        ...(fx === undefined ? {} : { fx }),
+      }))
       .sort((a, b) => descriptor(a).localeCompare(descriptor(b)))
     const key = index === routing?.call ? '@routing' : descriptor(owners)
     const previous = units.at(-1)
@@ -81,7 +86,12 @@ function owned(
     units,
     roots: own
       .filter((binding) => !binding.calls.length)
-      .map(({ module, role, target }) => ({ module, role, ...(target ? { target } : {}) })),
+      .map(({ module, role, target, fx }) => ({
+        module,
+        role,
+        ...(target ? { target } : {}),
+        ...(fx === undefined ? {} : { fx }),
+      })),
     ...(routing ? { routing } : {}),
   }
 }

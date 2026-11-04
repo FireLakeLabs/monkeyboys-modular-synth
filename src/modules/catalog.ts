@@ -1411,3 +1411,23 @@ export function paletteModules(category: PaletteCategory, query: string): Module
       ].some((text) => text.toLowerCase().includes(filter)),
   )
 }
+
+/** superdough 1.3.0 per-voice stage order. Bindings select membership, including future modules. */
+export const VOICE_EFFECT_ORDER: Readonly<Record<string, number>> = {
+  lpf: 1,
+  hpf: 2,
+  bpf: 3,
+  vowel: 4,
+  coarse: 5,
+  crush: 6,
+  shape: 7,
+  distort: 8,
+  tremolo: 9,
+  tremolosync: 9,
+  compressor: 10,
+  pan: 11,
+  phaser: 12,
+  phaserrate: 12,
+  delay: 13,
+  room: 14,
+}

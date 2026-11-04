@@ -1,4 +1,5 @@
 import { parse, tokenizer } from 'acorn'
+import { planEffects } from './effects'
 import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { callMethod, tupleControls, patternNumber, controlEnabled } from '../modules/bindings'
 import { drumText } from '../patch/notation'
@@ -107,8 +108,12 @@ export function generate(patch: Patch | SourceDocument): string {
 }
 
 /** Source ownership for selection, captured while writing this exact revision. */
-export function generateDocument(patch: Patch): GeneratedDocument {
+export function generateDocument(
+  patch: Patch,
+  { nativeEffects = false }: { nativeEffects?: boolean } = {},
+): GeneratedDocument {
   const nodes = graph(patch)
+  const { inline: inlineEffects } = planEffects(nodes)
   const prelude = patch.prelude ?? ''
   const setup = parseSource(prelude, { lastExpressionIsVoice: false })
   if (setup.scopes.some((scope) => scope.kind !== 'declaration'))
@@ -133,7 +138,7 @@ export function generateDocument(patch: Patch): GeneratedDocument {
   bindScope(layout, tempoExpression)
 
   // Reserving runtime names prevents a const from shadowing Strudel's functions/signals.
-  const used = new Set([...CATALOG.flatMap((spec) => spec.strudel), 'rev', 'press', 'orbit'])
+  const used = new Set([...CATALOG.flatMap((spec) => spec.strudel), 'rev', 'press', 'orbit', 'FX'])
   for (const token of tokenizer(prelude, { ecmaVersion: 'latest' }))
     if (token.type.label === 'name') used.add(prelude.slice(token.start, token.end))
   for (const [key, name] of Object.entries(patch.names)) {
@@ -337,6 +342,35 @@ export function generateDocument(patch: Patch): GeneratedDocument {
   }
 
   function transform(node: Node, expression: CodeExpression, skipControl?: string): CodeExpression {
+    if (!nativeEffects && (inlineEffects.has(node.module.id) || node.module.fx === true)) {
+      const stage = transformNative(node, blank(true), skipControl)
+      if (!stage.text) return expression
+      if (node.spec.strudel.includes('ftype') && string(node, 'type') === '24db')
+        throw new Error(
+          'Ordered FX cannot isolate 24db filters in this engine; use two 12db VCF stages instead',
+        )
+      const prefix = expression.text && !expression.inline ? '\n  ' : ''
+      const offset = expression.text.length + prefix.length + 4
+      const wrapped = append(expression, `.FX(${stage.text.slice(1)})`)
+      wrapped.sourceRouting ||= stage.sourceRouting
+      wrapped.owners.push(
+        ...stage.owners.map((owner) => ({
+          ...owner,
+          start: offset + owner.start,
+          end: offset + owner.end,
+          fx: 0,
+        })),
+      )
+      return wrapped
+    }
+    return transformNative(node, expression, skipControl)
+  }
+
+  function transformNative(
+    node: Node,
+    expression: CodeExpression,
+    skipControl?: string,
+  ): CodeExpression {
     if (node.spec.id === 'code') {
       const text = string(node, 'text')
       if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')

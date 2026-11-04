@@ -7,6 +7,8 @@ export const RACK_MARKER = '// ── @monkeyboy rack v1 ──'
 export interface Binding {
   scope: string
   calls: number[]
+  /** Argument in an outer FX call. */
+  fx?: number
   role: 'module' | 'cv' | 'mixer' | 'tempo'
   target?: { module: string; jack: string; control: string; path?: string }
 }
@@ -36,6 +38,7 @@ export interface RackLayout {
 
 export interface Owner {
   module: string
+  fx?: number
   role: Binding['role']
   start: number
   end: number
@@ -184,12 +187,19 @@ export function bindScope(
     if (!module) throw new Error(`Unknown binding owner: ${owner.module}`)
     const calls = parsed.calls.flatMap((call, index) =>
       // A chained call's range starts at its receiver's end, including whitespace.
-      call.end > owner.start && call.end <= owner.end ? [index] : [],
+      (
+        owner.fx === undefined
+          ? call.end > owner.start && call.end <= owner.end
+          : call.start <= owner.start && call.end >= owner.end
+      )
+        ? [index]
+        : [],
     )
     module.bindings.push({
       scope: id,
       calls,
       role: owner.role,
+      ...(owner.fx === undefined ? {} : { fx: owner.fx }),
       ...(owner.target === undefined ? {} : { target: owner.target }),
     })
   }

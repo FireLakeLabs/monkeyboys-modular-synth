@@ -22,6 +22,7 @@ import {
   setRailWidth,
   cableSignal,
   cableWarnings,
+  effectNotes,
   removeRow,
   addRow,
   rackRows,
@@ -1148,6 +1149,11 @@ export function Rack({
             </button>
           </div>
         )}
+        {effectNotes(patch).map((note) => (
+          <p className="rack-note" key={note}>
+            {note}
+          </p>
+        ))}
         {[...new Set(warnings)].map((warning) => (
           <p className="rack-warning" key={warning}>
             △ {warning}

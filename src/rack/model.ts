@@ -1,3 +1,5 @@
+import { planEffects } from '../codegen/effects'
+import { effectRank } from '../modules/effects'
 import { generate } from '../codegen/generate'
 import { graph, isSteps, requireNode } from '../codegen/graph'
 import { getModuleSpec } from '../modules/catalog'
@@ -305,10 +307,26 @@ export function cableWarnings(patch: Patch, cable: Cable): string[] {
     ).length > 1
   )
     warnings.push('Audio split plays each connected branch; levels add.')
-  const to = patch.modules.find((m) => m.id === cable.to.module)
-  if (to?.type === 'delay' && pathContains(patch, cable.from.module, 'reverb', 'upstream'))
-    warnings.push('Strudel applies delay before reverb, regardless of cable order.')
   return warnings
+}
+
+/** Informational audible chains; sends and imported fixed-order setters stay explicit. */
+export function effectNotes(patch: Patch): string[] {
+  const { paths, inline } = planEffects(graph(patch))
+  return [
+    ...new Set(
+      paths
+        .filter((path) => path.length > 0)
+        .map((path) => {
+          const stages = path.filter((n) => inline.has(n.module.id) || n.module.fx === true)
+          const native = path
+            .filter((n) => !stages.includes(n))
+            .sort((a, b) => (effectRank(a.module) ?? 0) - (effectRank(b.module) ?? 0))
+          const label = (node: (typeof path)[number]) => `${node.spec.name} (${node.module.id})`
+          return `You hear: ${[...stages, ...native].map(label).join(' → ')}. ${stages.length ? 'FX stages run in cable order; inline DELAY/REVERB keep their tails per note.' : 'Native effects use the fixed voice chain; DELAY/REVERB are orbit sends.'}`
+        }),
+    ),
+  ]
 }
 
 export type ConnectionAssessment =

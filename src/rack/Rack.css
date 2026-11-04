@@ -677,3 +677,9 @@ select:focus-visible {
 .output-surface {
   position: relative;
 }
+
+.rack-note {
+  color: #b7bdc6;
+  font-size: 12px;
+  margin: 6px 0;
+}

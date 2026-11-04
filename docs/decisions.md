@@ -221,3 +221,22 @@ outer bus factors scale absolute modulation depths. Canonical generated source
 retains generated metadata on Save; other source keeps its independent imported
 ownership proof. Saved layout, exact source and engine events remain separate
 acceptance checks.
+
+## Ordered effect chains (#134, decided 3 November 2026)
+
+Cable reordering is allowed when generated code parses, evaluates and reads back
+to the same rack. Matching effect stage orders retain native calls; inversions
+and repeats use bare control chains inside `FX`. This also permits two VCFs or
+DRIVEs in series. The catalog bindings determine stage membership; #131 owns the
+new modules. Shared stages propagate inline processing to their overlapping
+branches. Order information is a note showing the audible chain.
+
+Preserve native imported execution and explicit inline execution separately in
+saved module state; do not reinterpret reversed native source as inline audio.
+Proven pre-134 generated envelopes migrate to explicit native execution while
+retaining source and all existing rack identity fields. DELAY/REVERB inside FX
+are per-note inline effects, with release-bounded tails, while native calls use
+orbit sends. Final-voice orbit allocation is unchanged. The pinned engine cannot
+isolate 24 dB filter duplication per FX stage; refuse that ordered mode rather
+than misrepresent it. See [rule 4](translation-rules.md#4-effect-stages-follow-cable-order-134)
+for reader limits and [verification](ordered-effects-verification.md) for evidence.

@@ -124,11 +124,12 @@ function stampLayout(
       ...module,
       bindings: bindings
         .filter((b) => b.module === module.id)
-        .map(({ scope, calls, role, target }) => ({
+        .map(({ scope, calls, role, target, fx }) => ({
           scope,
           calls,
           role,
           ...(target ? { target } : {}),
+          ...(fx === undefined ? {} : { fx }),
         })),
     })),
     cables: patch.cables,

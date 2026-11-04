@@ -333,3 +333,17 @@ test('mixer generalized CV preserves nested gain and within-note PCM', async ({ 
   )
   await record(info, results)
 })
+
+test('ordered FX chains preserve rack/source and schedule real audio', async ({ page }, info) => {
+  await page.evaluate(async () =>
+    (await import('/scripts/effects-check.mjs')).prepareEffectsProof(),
+  )
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  const result = await page.evaluate(async () =>
+    (await import('/scripts/effects-check.mjs')).verifyEffectsProof(),
+  )
+  await page.locator('.rack-note').scrollIntoViewIfNeeded()
+  await expect(page.locator('.rack-note')).toBeVisible()
+  await info.attach('ordered-filters', { body: await page.screenshot(), contentType: 'image/png' })
+  await record(info, result)
+})
