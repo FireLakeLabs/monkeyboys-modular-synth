@@ -1,6 +1,6 @@
 import { withoutPackSetup } from '../samples/packs'
 import { notationLiteral } from '../reader/notationLiteral'
-import { creditComments } from './credits'
+import { creditComments, patchCredits } from './credits'
 import { parse, tokenizer } from 'acorn'
 import { isGrid, isSteps } from '../codegen/graph'
 import { drumText } from '../patch/notation'
@@ -106,6 +106,8 @@ export function makeRackEditable(document: SourceDocument, next = document.patch
   const { prelude: _previous, ...patch } = next
   const result = fromPatch({ ...patch, ...(prelude ? { prelude } : {}) })
   if (result.layout !== 'restored') throw new Error('Cannot restore the converted rack')
+  if (JSON.stringify(patchCredits(result.source)) !== JSON.stringify(patchCredits(document.source)))
+    throw new Error('Cannot preserve credit order during rack conversion; edit the code instead')
   return result
 }
 

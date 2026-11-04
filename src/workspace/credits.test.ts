@@ -60,3 +60,13 @@ it.each([
   expect(patchCredits(converted.source)).toEqual(patchCredits(source))
   expect(read(converted.source).patch).toEqual(converted.patch)
 })
+
+it('refuses conversion atomically when CODE credit order would change the fallback title', () => {
+  const source =
+    '$: note("c3").s("sine").custom(x => {\n// @title First\nreturn x;\n})\n// @title Second\n'
+  const document = read(source)
+  expect(patchName(document.patch, document.source)).toBe('First')
+  expect(() => makeRackEditable(document)).toThrow(/credit order/i)
+  expect(generate(document)).toBe(source)
+  expect(patchName(document.patch, document.source)).toBe('First')
+})

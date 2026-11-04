@@ -414,6 +414,8 @@ retains exact credit comment tokens and their line endings, without duplicating
 comments already inside retained setup statements or CODE. Standalone credits
 and setup retain their relative order in the generated prelude. A final comment
 without a newline receives a separator before following generated code.
+If regenerating voices would reorder credits embedded in CODE, conversion
+refuses atomically with an explanation, preserving the original title and file.
 No format-version change is needed. SCOPE's `mode` is saved with its other
 module values; its catalog `presentationOnly` flag permits metadata-only edits
 even on imported source. TAP retains the ordinary executable call binding.

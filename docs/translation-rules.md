@@ -707,7 +707,9 @@ Only a validated readable upstream graph supplies executable probe input. The
 planner traverses every upstream dependency, including function RETURN bodies
 and CV, refuses CODE, invalid/stale ownership and non-pattern cables, removes all
 unrelated modules/output names/setup, then uses the production generator to
-expand that precise chain prefix. It does not slice/evaluate imported JavaScript
+expand that precise chain prefix. Probe numeric formatting retains full imported
+precision, including fractional SEQ rates; it does not apply the three-decimal
+formatting of a new rack-owned file. It does not slice/evaluate imported JavaScript
 or use the complete final voice. Later transforms are excluded, and a readable
 prefix before downstream CODE can still be queried. Shared readable declarations
 expand from their graph rather than being looked up in imported JS globals.

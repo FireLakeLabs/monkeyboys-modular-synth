@@ -31,7 +31,9 @@ The contracts live in [translation rules](translation-rules.md#readable-cable-pr
 Node 24.22.2 (`.node-version`) and `npm ci` were used. Focused real-Pattern tests
 compare the REV prefix before downstream `.fast(2)`/sound selection against the
 independent scheduling input: 16 onsets over cycles 2–6, with reversed pitch and
-quarter-cycle durations. They separately verify shared prefixes, CODE callbacks,
+quarter-cycle durations. A Sol-found fractional `fast(2/3)` regression failed with rounded probe rates at
+cycle 1000, then passed with full-precision prefix formatting. New rack-owned
+file formatting remains unchanged. Tests separately verify shared prefixes, CODE callbacks,
 opaque setup, stale state, non-pattern refusal and accepted BPM. Rejected probes
 leave side-effect sentinels absent; no REPL/audio initialization is called.
 
@@ -40,7 +42,9 @@ precedence, exact CRLF source through read/save/edit/rename/reopen, and complete
 rack identity. The explicit-conversion test failed before credit retention was
 added, then passed. Further regressions failed on reordered setup credits and
 duplicated CODE credits before their fixes. An EOF-credit regression proves
-retained setup still executes.
+retained setup still executes. A further Sol-found case changed the fallback
+title by reordering standalone and CODE-contained titles; its regression failed
+before atomic conversion refusal was added and passed afterwards.
 SCOPE tests distinguish exact source, full saved VIEW/look/ID identity, and real
 pinned-engine analyser control events. Engine tests verify clock/tap reads do
 not initialize audio and stopped taps disappear.
@@ -61,7 +65,8 @@ in the separate full-browser workflow. Observed on Chromium
 - Real source credits appeared on the rack frame; `@title` supplied the name and
   URL text remained inert.
 - The real prefix query returned 16 events, excluded the downstream faster voice,
-  and created zero AudioContexts while stopped.
+  and created zero AudioContexts while stopped. A separate fractional `fast(2/3)`
+  prefix retained all five expected onsets, pitches and exact times at cycle 1000.
 - Actual pointer movement over a cable opened the punchcard; Alt-click pinned
   it after leaving. Close and the Connections-list action both worked.
 - Play produced nonzero per-voice waveform PCM (observed peak about 0.045), and

@@ -135,3 +135,15 @@ it('retains a previously saved explicit CODE analyser owner exactly', () => {
   expect(reopened.patch).toEqual(legacy)
   expect(generate(reopened)).toBe(source)
 })
+
+it('matches a fractional imported SEQ rate at a distant cycle without precision drift', async () => {
+  const { document, cable } = cableAfter('$: note("c3 e3").fast(2/3).rev().s("sine")', 'rev')
+  const result = await probe(document, cable, 1000)
+  // Independent source prefix, evaluated only as this repository-owned fixture.
+  // oxlint-disable-next-line typescript/no-implied-eval
+  const expected: unknown = new Function(
+    ...Object.keys(runtime),
+    'return note("c3 e3").fast(2/3).rev().queryArc(1000,1004).filter(h=>h.hasOnset()).map(h=>({begin:Number(h.whole.begin),end:Number(h.whole.end),value:h.value}))',
+  )(...Object.values(runtime))
+  expect(result).toEqual({ kind: 'events', begin: 1000, end: 1004, events: expected })
+})

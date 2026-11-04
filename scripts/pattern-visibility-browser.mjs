@@ -75,7 +75,15 @@ try {
       rev = document.patch.modules.find((m) => m.type === 'rev')
     const cable = document.patch.cables.find((c) => c.from.module === rev.id)
     const result = await engine.probe(document, cable.id)
-    return { result, cable: cable.id, contexts: window.audioContexts }
+    const fractional = read('$: note("c3 e3").fast(2/3).rev().s("sine")')
+    const fractionalRev = fractional.patch.modules.find((m) => m.type === 'rev')
+    const fractionalCable = fractional.patch.cables.find((c) => c.from.module === fractionalRev.id)
+    return {
+      result,
+      fractional: await engine.probe(fractional, fractionalCable.id, 1000),
+      cable: cable.id,
+      contexts: window.audioContexts,
+    }
   })
   assert.equal(prefix.contexts, 0)
   assert.equal(prefix.result.kind, 'events')
@@ -83,6 +91,18 @@ try {
   pass(
     'Probe returns 16 REV-prefix onsets, excludes downstream fast(2), creates zero AudioContexts',
   )
+  assert.equal(prefix.fractional.kind, 'events')
+  assert.deepEqual(
+    [...prefix.fractional.events].sort((a, b) => a.begin - b.begin),
+    [
+      { begin: 1000.5, end: 1001.25, value: { note: 'e3' } },
+      { begin: 1001, end: 1001.75, value: { note: 'e3' } },
+      { begin: 1001.75, end: 1002.5, value: { note: 'c3' } },
+      { begin: 1002.25, end: 1003, value: { note: 'c3' } },
+      { begin: 1003.5, end: 1004.25, value: { note: 'e3' } },
+    ],
+  )
+  pass('Fractional fast(2/3) prefix retains exact event values and times at cycle 1000')
   await page.getByRole('button', { name: 'All cables', exact: true }).click()
   const path = page.locator('.cable.signal-pattern path:not(.cable-shadow)').first()
   const point = await path.evaluate((path) => {
