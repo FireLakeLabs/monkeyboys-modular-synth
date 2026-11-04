@@ -42,6 +42,7 @@ function controlValue(value: unknown): value is ControlValue {
     (typeof value === 'number' && Number.isFinite(value)) ||
     (Array.isArray(value) &&
       (value.every((item: unknown) => typeof item === 'string') ||
+        value.every((item: unknown) => typeof item === 'number' && Number.isFinite(item)) ||
         value.every(
           (item: unknown) =>
             record(item) &&

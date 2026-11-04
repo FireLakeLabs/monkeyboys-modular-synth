@@ -240,6 +240,7 @@ export const OSC: ModuleSpec = {
   jacks: [
     { id: 'note', label: 'NOTE', direction: 'in', signal: 'pattern' },
     { id: 'tune', label: 'TUNE', direction: 'in', signal: 'mod', cvTarget: 'tune' },
+    { id: 'fm', label: 'FM', direction: 'in', signal: 'mod' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
   // `.s()` is shared with DRUMS' `s("…")` source form; the reader tells them apart by position
@@ -1344,6 +1345,366 @@ export const ECHO: ModuleSpec = {
   orderSensitive: true,
 }
 
+const audioJacks = [
+  { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
+  { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
+] as const
+const soundJacks = [
+  { id: 'note', label: 'NOTE', direction: 'in', signal: 'pattern' },
+  { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
+] as const
+const setting = (
+  id: string,
+  label: string,
+  method: string,
+  min: number,
+  max: number,
+  step: number,
+  initial: number,
+): Extract<Control, { kind: 'knob' }> => ({
+  kind: 'knob',
+  id,
+  label,
+  min,
+  max,
+  step,
+  default: initial,
+  call: { method, argument: { kind: 'number' }, read: 'merge' },
+})
+
+export const NOISE: ModuleSpec = {
+  id: 'noise',
+  name: 'NOISE',
+  title: 'Noise source',
+  family: 'hardware',
+  category: 'sound',
+  hp: 10,
+  paletteCall: 's("white")',
+  soundSource: 'wave',
+  readDefaults: { density: 0.02 },
+  controls: [
+    {
+      kind: 'switch',
+      id: 'wave',
+      label: 'TYPE',
+      options: opts('white', 'pink', 'brown', 'crackle'),
+      default: 'white',
+      call: { method: 's', argument: { kind: 'string' } },
+    },
+    numericCall('density', 'DENSITY', 'density', 0, 1, 0.01, 0.1, {
+      omitAt: 0.02,
+      call: { method: 'density', argument: { kind: 'number' }, read: 'companion' },
+      when: [{ control: 'wave', values: ['crackle'] }],
+    }),
+  ],
+  jacks: soundJacks,
+  strudel: ['density'],
+  orderSensitive: false,
+}
+export const HARMONIC: ModuleSpec = {
+  id: 'harmonic',
+  name: 'HARMONIC',
+  title: 'Additive oscillator',
+  family: 'hardware',
+  category: 'sound',
+  hp: 14,
+  paletteCall: '.partials([…])',
+  soundSource: 'wave',
+  controls: [
+    {
+      kind: 'switch',
+      id: 'wave',
+      label: 'WAVE',
+      options: opts('user'),
+      default: 'user',
+      call: { method: 's', argument: { kind: 'string' } },
+    },
+    {
+      kind: 'drawbars',
+      id: 'partials',
+      label: 'PARTIALS',
+      min: 0,
+      max: 1,
+      step: 0.01,
+      maxBars: 16,
+      default: [1, 0.5, 0, 0.3],
+      call: { method: 'partials', argument: { kind: 'array' }, read: 'companion' },
+    },
+  ],
+  jacks: soundJacks,
+  strudel: ['partials'],
+  orderSensitive: false,
+}
+export const FM_OP: ModuleSpec = {
+  id: 'fmop',
+  name: 'FM OP',
+  title: 'FM operator',
+  family: 'hardware',
+  category: 'mod',
+  hp: 12,
+  paletteCall: '.fm()',
+  operatorTarget: { type: 'osc', jack: 'fm' },
+  readDefaults: {
+    index: 0,
+    ratio: 1,
+    attack: 0.001,
+    decay: 0.05,
+    attackMode: 'off',
+    decayMode: 'off',
+  },
+  controls: [
+    numericCall('index', 'INDEX', 'fm', 0, 32, 0.01, 2, {
+      omitAt: 0,
+      call: { method: 'fm', argument: { kind: 'number' }, read: 'merge' },
+    }),
+    numericCall('ratio', 'RATIO', 'fmh', 0, 16, 0.01, 1.5, {
+      omitAt: 1,
+      call: { method: 'fmh', argument: { kind: 'number' }, read: 'merge' },
+    }),
+    {
+      kind: 'switch',
+      id: 'attackMode',
+      label: 'FM ATTACK',
+      options: opts('off', 'on'),
+      default: 'on',
+    },
+    {
+      ...setting('attack', 'ATTACK', 'fmattack', 0, 4, 0.001, 0.01),
+      call: {
+        method: 'fmattack',
+        argument: { kind: 'number' },
+        read: 'merge',
+        when: { control: 'attackMode', value: 'on' },
+      },
+    },
+    {
+      kind: 'switch',
+      id: 'decayMode',
+      label: 'FM DECAY',
+      options: opts('off', 'on'),
+      default: 'on',
+    },
+    {
+      ...setting('decay', 'DECAY', 'fmdecay', 0, 4, 0.01, 0.3),
+      call: {
+        method: 'fmdecay',
+        argument: { kind: 'number' },
+        read: 'merge',
+        when: { control: 'decayMode', value: 'on' },
+      },
+    },
+  ],
+  jacks: [{ id: 'out', label: 'FM', direction: 'out', signal: 'mod' }],
+  strudel: ['fm', 'fmh', 'fmattack', 'fmdecay'],
+  orderSensitive: false,
+}
+export const DRIVE: ModuleSpec = {
+  id: 'drive',
+  name: 'DRIVE',
+  title: 'Waveshaper',
+  family: 'hardware',
+  category: 'fx',
+  hp: 12,
+  paletteCall: '.soft()',
+  controls: [
+    {
+      kind: 'switch',
+      id: 'type',
+      label: 'TYPE',
+      options: opts('soft', 'hard', 'cubic', 'diode', 'asym', 'sinefold', 'chebyshev', 'shape'),
+      default: 'soft',
+    },
+    {
+      kind: 'switch',
+      id: 'arguments',
+      label: 'AMOUNT',
+      options: opts('value', 'none'),
+      default: 'value',
+    },
+    {
+      kind: 'knob',
+      id: 'amount',
+      label: 'DRIVE',
+      min: 0,
+      max: 10,
+      step: 0.01,
+      default: 0.5,
+      call: {
+        method: {
+          control: 'type',
+          names: {
+            soft: 'soft',
+            hard: 'hard',
+            cubic: 'cubic',
+            diode: 'diode',
+            asym: 'asym',
+            sinefold: 'sinefold',
+            chebyshev: 'chebyshev',
+            shape: 'shape',
+          },
+        },
+        argument: { kind: 'number', optional: 'arguments' },
+      },
+    },
+  ],
+  jacks: audioJacks,
+  strudel: ['soft', 'hard', 'cubic', 'diode', 'asym', 'sinefold', 'chebyshev', 'shape'],
+  orderSensitive: false,
+}
+export const FOLDER: ModuleSpec = {
+  id: 'folder',
+  name: 'FOLDER',
+  title: 'Wavefolder',
+  family: 'hardware',
+  category: 'fx',
+  hp: 10,
+  paletteCall: '.fold()',
+  controls: [setting('amount', 'FOLD', 'fold', 0, 10, 0.01, 0.6)],
+  jacks: audioJacks,
+  strudel: ['fold'],
+  orderSensitive: false,
+}
+export const LO_FI: ModuleSpec = {
+  id: 'lofi',
+  name: 'LO-FI',
+  title: 'Bitcrusher and decimator',
+  family: 'hardware',
+  category: 'fx',
+  hp: 10,
+  paletteCall: '.crush()',
+  readDefaults: { bits: 16, coarse: 1, bitsMode: 'off' },
+  controls: [
+    { kind: 'switch', id: 'bitsMode', label: 'CRUSH', options: opts('off', 'on'), default: 'on' },
+    {
+      ...setting('bits', 'BITS', 'crush', 1, 16, 1, 6),
+      call: {
+        method: 'crush',
+        argument: { kind: 'number' },
+        read: 'merge',
+        when: { control: 'bitsMode', value: 'on' },
+      },
+    },
+    numericCall('coarse', 'COARSE', 'coarse', 1, 32, 1, 4, {
+      omitAt: 1,
+      call: { method: 'coarse', argument: { kind: 'number' }, read: 'merge' },
+    }),
+  ],
+  jacks: audioJacks,
+  strudel: ['crush', 'coarse'],
+  orderSensitive: false,
+}
+export const FORMANT: ModuleSpec = {
+  id: 'formant',
+  name: 'FORMANT',
+  title: 'Vowel filter',
+  family: 'hardware',
+  category: 'fx',
+  hp: 10,
+  paletteCall: '.vowel("…")',
+  controls: [
+    {
+      kind: 'text',
+      id: 'vowel',
+      label: 'VOWEL',
+      default: '<a e i o>',
+      call: { method: 'vowel', argument: { kind: 'string' } },
+    },
+  ],
+  jacks: audioJacks,
+  strudel: ['vowel'],
+  orderSensitive: false,
+}
+export const COMP: ModuleSpec = {
+  id: 'comp',
+  name: 'COMP',
+  title: 'Compressor and transient shaper',
+  family: 'hardware',
+  category: 'fx',
+  hp: 12,
+  paletteCall: '.compressor()',
+  readDefaults: { compressor: '', transient: 0 },
+  controls: [
+    {
+      kind: 'text',
+      id: 'compressor',
+      label: 'THR:RATIO:KNEE:ATK:REL',
+      default: '-20:4:10:.005:.1',
+      omitAt: '',
+      call: { method: 'compressor', argument: { kind: 'string' }, read: 'merge' },
+    },
+    numericCall('transient', 'TRANSIENT', 'transient', -1, 1, 0.01, 0.5, {
+      omitAt: 0,
+      call: { method: 'transient', argument: { kind: 'number' }, read: 'merge' },
+    }),
+  ],
+  jacks: audioJacks,
+  strudel: ['compressor', 'transient'],
+  orderSensitive: false,
+}
+export const PHASER: ModuleSpec = {
+  id: 'phaser',
+  name: 'PHASER',
+  title: 'Phaser',
+  family: 'hardware',
+  category: 'fx',
+  hp: 10,
+  paletteCall: '.phaser()',
+  readDefaults: { rate: 0, depth: 0.75, rateMode: 'off' },
+  controls: [
+    { kind: 'switch', id: 'rateMode', label: 'PHASER', options: opts('off', 'on'), default: 'on' },
+    {
+      ...setting('rate', 'RATE', 'phaser', 0, 20, 0.01, 2),
+      call: {
+        method: 'phaser',
+        argument: { kind: 'number' },
+        read: 'merge',
+        when: { control: 'rateMode', value: 'on' },
+      },
+    },
+    numericCall('depth', 'DEPTH', 'phaserdepth', 0, 1, 0.01, 0.5, {
+      omitAt: 0.75,
+      call: { method: 'phaserdepth', argument: { kind: 'number' }, read: 'merge' },
+    }),
+  ],
+  jacks: audioJacks,
+  strudel: ['phaser', 'phaserdepth'],
+  orderSensitive: false,
+}
+export const PAN: ModuleSpec = {
+  id: 'pan',
+  name: 'PAN',
+  title: 'Panner',
+  family: 'hardware',
+  category: 'fx',
+  hp: 10,
+  paletteCall: '.pan()',
+  controls: [
+    numericCall('pan', 'PAN', 'pan', 0, 1, 0.01, 0.5, {
+      call: { method: 'pan', argument: { kind: 'number' } },
+      modulation: { min: -1, max: 1, default: 0.5, audioScale: 2 },
+    }),
+  ],
+  jacks: [
+    ...audioJacks,
+    { id: 'cv', label: 'CV', direction: 'in', signal: 'mod', cvTarget: 'pan' },
+  ],
+  strudel: ['pan'],
+  orderSensitive: false,
+}
+export const SHIFT: ModuleSpec = {
+  id: 'shift',
+  name: 'SHIFT',
+  title: 'Phase-vocoder pitch shift',
+  family: 'hardware',
+  category: 'fx',
+  hp: 10,
+  paletteCall: '.stretch()',
+  controls: [setting('shift', 'SHIFT', 'stretch', -3.9, 4, 0.01, 1.5)],
+  jacks: audioJacks,
+  strudel: ['stretch'],
+  orderSensitive: false,
+}
+
 /** Every shipped module, in library order. */
 export const CATALOG: readonly ModuleSpec[] = [
   SEQ,
@@ -1356,6 +1717,9 @@ export const CATALOG: readonly ModuleSpec[] = [
   CHORD,
   ARP,
   OSC,
+  NOISE,
+  HARMONIC,
+  FM_OP,
   SMPL,
   VCF,
   VCA,
@@ -1367,6 +1731,14 @@ export const CATALOG: readonly ModuleSpec[] = [
   CV_SEQ,
   DELAY,
   REVERB,
+  DRIVE,
+  FOLDER,
+  LO_FI,
+  FORMANT,
+  COMP,
+  PHASER,
+  PAN,
+  SHIFT,
   MIX,
   OUT,
   ITER,

@@ -1,3 +1,4 @@
+import soundEffects from './patches/sound-effects.strudel?raw'
 import patternHardware from './patches/pattern-hardware.strudel?raw'
 import patternAlien from './patches/pattern-alien.strudel?raw'
 import utilities from './patches/modulation-utilities.strudel?raw'
@@ -103,6 +104,35 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
           url: 'https://strudel.cc/workshop/pattern-effects/',
         },
         exercises: ['seq', 'osc', 'jux', 'vca', 'mix', 'out'],
+      },
+    ],
+  },
+  {
+    kind: 'collection',
+    id: 'sound-effects',
+    title: 'Sound and effects',
+    children: [
+      {
+        kind: 'patch',
+        id: 'sound-effects-exercise',
+        title: 'Noise, harmonics and FM',
+        description:
+          'Draw harmonics, patch an FM operator and explore voice effects. Strudel uses its fixed per-voice effect order.',
+        source: soundEffects,
+        attribution,
+        exercises: [
+          'noise',
+          'harmonic',
+          'fmop',
+          'drive',
+          'folder',
+          'lofi',
+          'formant',
+          'comp',
+          'phaser',
+          'pan',
+          'shift',
+        ],
       },
     ],
   },

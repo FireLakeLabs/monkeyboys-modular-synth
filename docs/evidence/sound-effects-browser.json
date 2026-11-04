@@ -1,0 +1,413 @@
+{
+  "browser": "156.0.8078.4",
+  "looks": [
+    {
+      "look": "powder",
+      "count": 34
+    },
+    {
+      "look": "instrument",
+      "count": 34
+    },
+    {
+      "look": "vintage",
+      "count": 34
+    },
+    {
+      "look": "learner",
+      "count": 34
+    }
+  ],
+  "forms": [
+    {
+      "type": "noise",
+      "call": "s(\"white\")",
+      "events": 4,
+      "rms": 0.005986432934807379,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "noise",
+      "call": "s(\"pink\")",
+      "events": 4,
+      "rms": 0.0026739220227196443,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "noise",
+      "call": "s(\"brown\")",
+      "events": 4,
+      "rms": 0.0008502391760063778,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "noise",
+      "call": "s(\"crackle\").density(0.1)",
+      "events": 4,
+      "rms": 0.0001937699524513898,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "noise",
+      "call": "note(\"c3*4\").s(\"pink\")",
+      "events": 16,
+      "rms": 0.002664936792684058,
+      "samples": 122880,
+      "cables": 4,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "harmonic",
+      "call": "note(\"c3 e3 g3\").s(\"user\").partials([1, 0.5, 0, 0.3])",
+      "events": 12,
+      "rms": 0.009974197156519322,
+      "samples": 122880,
+      "cables": 4,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "harmonic",
+      "call": "s(\"user\").partials([1, 0.5, 0, 0.3])",
+      "events": 4,
+      "rms": 0.009509331078773876,
+      "samples": 122880,
+      "cables": 3,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "fmop",
+      "call": "note(\"c3 e3 g3\").s(\"sine\").fm(2).fmh(1.5).fmattack(0.01).fmdecay(0.3)",
+      "events": 12,
+      "rms": 0.010539749656100883,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").soft(0.5)",
+      "events": 8,
+      "rms": 0.017178827811400545,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").soft()",
+      "events": 8,
+      "rms": 0.010365789340557128,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").hard(0.5)",
+      "events": 8,
+      "rms": 0.017062878653905125,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").hard()",
+      "events": 8,
+      "rms": 0.010380803097243835,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").cubic(0.5)",
+      "events": 8,
+      "rms": 0.01933539609250564,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").cubic()",
+      "events": 8,
+      "rms": 0.010340678972536767,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").diode(0.5)",
+      "events": 8,
+      "rms": 0.017036303215104815,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").diode()",
+      "events": 8,
+      "rms": 0.010361114040267226,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").asym(0.5)",
+      "events": 8,
+      "rms": 0.01707295420864911,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").asym()",
+      "events": 8,
+      "rms": 0.01039296369948609,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").sinefold(0.5)",
+      "events": 8,
+      "rms": 0.02165239499377779,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").sinefold()",
+      "events": 8,
+      "rms": 0.010404669546674409,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").chebyshev(0.5)",
+      "events": 8,
+      "rms": 0.0444845395763935,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").chebyshev()",
+      "events": 8,
+      "rms": 0.010376059772948913,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "call": "note(\"c3 e3\").s(\"sine\").shape(0.5)",
+      "events": 8,
+      "rms": 0.030166391126248065,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "drive",
+      "expression": "note(\"c3 e3\").s(\"sine\").shape()",
+      "engineLimit": "Nullary shape has no numeric amount; pinned-engine runtime fails. Preserved without normalizing.",
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "folder",
+      "call": "note(\"c3 e3\").s(\"sine\").fold(0.6)",
+      "events": 8,
+      "rms": 0.01458942190501952,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "lofi",
+      "call": "note(\"c3 e3\").s(\"sine\").crush(6).coarse(4)",
+      "events": 8,
+      "rms": 0.014468952697987187,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "formant",
+      "call": "note(\"c3 e3\").s(\"sawtooth\").vowel(\"<a e i o>\")",
+      "events": 8,
+      "rms": 0.007064465225108357,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "comp",
+      "call": "note(\"c3 e3\").s(\"sine\").compressor(\"-20:4:10:.005:.1\").transient(0.5)",
+      "events": 8,
+      "rms": 0.02238159550277428,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "phaser",
+      "call": "note(\"c3 e3\").s(\"sawtooth\").phaser(2).phaserdepth(0.5)",
+      "events": 8,
+      "rms": 0.006714450129266855,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "pan",
+      "call": "note(\"c3 e3\").s(\"sine\").pan(0.3)",
+      "events": 8,
+      "rms": 0.006960333490928079,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "shift",
+      "call": "note(\"c3 e3\").s(\"sawtooth\").stretch(1.5)",
+      "events": 8,
+      "rms": 0.006902622026607164,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    },
+    {
+      "type": "shift",
+      "call": "note(\"c3 e3\").s(\"sawtooth\").stretch(-1.5)",
+      "events": 8,
+      "rms": 0.007154952154062633,
+      "samples": 122880,
+      "cables": 5,
+      "sourceExact": true,
+      "savedIdentity": true,
+      "eventRoundTrip": true
+    }
+  ],
+  "physicalListening": false,
+  "panCV": [
+    {
+      "mode": "SMOOTH",
+      "stereoFrames": 62,
+      "balanceRange": [0.0024525649843566205, 0.4101983488696866],
+      "spread": 0.40774578388532995,
+      "energy": 5.573446332751415,
+      "savedIdentity": true
+    },
+    {
+      "mode": "STEP",
+      "stereoFrames": 61,
+      "balanceRange": [0.19891234622363138, 0.19891235035115015],
+      "spread": 4.12751877121309e-9,
+      "energy": 5.568506419811643,
+      "savedIdentity": true
+    },
+    {
+      "mode": "ENV",
+      "stereoFrames": 62,
+      "balanceRange": [0.0035444607597317885, 0.3754419241875092],
+      "spread": 0.3718974634277774,
+      "energy": 5.59590053531192,
+      "savedIdentity": true
+    },
+    {
+      "mode": "CV SEQ",
+      "stereoFrames": 61,
+      "balanceRange": [-1, -1],
+      "spread": 0,
+      "energy": 4.011052481373538,
+      "savedIdentity": true
+    }
+  ],
+  "drawbarEdit": {
+    "values": [1, 1, 0, 0.3],
+    "savedIdentity": true
+  },
+  "drawbarGestureUndo": true,
+  "errors": []
+}

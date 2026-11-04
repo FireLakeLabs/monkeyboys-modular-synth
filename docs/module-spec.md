@@ -627,3 +627,70 @@ mode. Native 24 dB and local FX ladder settings remain supported.
 See [rule 4](translation-rules.md#4-effect-stages-follow-cable-order-134),
 [send/orbit semantics](translation-rules.md#effect-orbits) and
 [acceptance evidence](ordered-effects-verification.md).
+## Sound sources and voice effects (#131)
+
+All eleven panels are Hardware. The table is checked against the installed
+`@strudel/core` **1.2.6** and `superdough` **1.3.0**. Bounds are supported panel
+ranges, not claims about every engine input. `src/modules/catalog.ts` owns the
+runtime definitions. All effects have audio IN/OUT. NOISE and HARMONIC have a
+pattern NOTE input and audio OUT; unpatched, each starts a single-event `s()`
+voice. FM OP has a mod FM output, accepted only by OSC's new FM input. It writes
+settings onto that oscillator's voice, rather than mixing an audible operator.
+PAN additionally has a mod CV input targeting PAN, with SMOOTH/STEP LFO, ENV and
+CV SEQ using the existing catalog adapters; depth is −1…1, default .5.
+
+| Panel    | HP  | Controls: range / step; new-rack default                                                                                       | Writes / reads                                                                                                                                                                                                                                                                                                                                                                       |
+| -------- | --- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| NOISE    | 10  | TYPE white/pink/brown/crackle; white. DENSITY 0–1/.01; .1, crackle only                                                        | `s("white")` or chained `.s("pink")`; `.density(.1)`. Absent density reads .02 (the oscillator fallback); zero is an explicit silent-crackle setting.                                                                                                                                                                                                                                |
+| FM OP    | 12  | INDEX 0–32/.01; 2. RATIO 0–16/.01; 1.5. ATTACK 0–4 s/.001; .01. DECAY 0–4 s/.01; .3. Independent FM ATTACK/FM DECAY off/on; on | `.fm(2).fmh(1.5).fmattack(.01).fmdecay(.3)`. Imported absent envelopes stay off. Explicit envelope defaults must remain active: adding an FM envelope changes sound even at its numeric default. No envelope is invented on import.                                                                                                                                                  |
+| HARMONIC | 14  | WAVE user. PARTIALS drawbars, 1–16 bars, each 0–1/.01; `[1,.5,0,.3]`                                                           | `.s("user").partials([1,.5,0,.3])`; also a standalone source. The count selector adds zeroed partials. Native vertical ranges support arrows/Home/End. Unsupported arrays and partials on other waveforms remain CODE.                                                                                                                                                               |
+| DRIVE    | 12  | TYPE soft/hard/cubic/diode/asym/sinefold/chebyshev/shape; soft. AMOUNT value/none; value. DRIVE 0–10/.01; .5                   | `.soft(.5)` etc.; TYPE selects the method. `none` retains the literal nullary forms from the issue, including `.soft()`; it does not substitute a numeric amount. Legacy `.shape()` has no numeric amount and fails in the pinned browser runtime; `.shape(.5)` works. `shape` saturates at 1 in the engine and can become very loud; the other algorithms use drive values above 1. |
+| FOLDER   | 10  | FOLD 0–10/.01; .6                                                                                                              | `.fold(.6)`                                                                                                                                                                                                                                                                                                                                                                          |
+| LO-FI    | 10  | CRUSH off/on; on. BITS 1–16/1; 6. COARSE 1–32/1; 4                                                                             | `.crush(6).coarse(4)`. Absent crush stays off; 16 bits still runs a quantizer and must not be silently bypassed. COARSE 1 is neutral and omitted.                                                                                                                                                                                                                                    |
+| FORMANT  | 10  | VOWEL text; `<a e i o>`                                                                                                        | `.vowel("<a e i o>")`; vowel mini-notation remains literal text.                                                                                                                                                                                                                                                                                                                     |
+| COMP     | 12  | THR:RATIO:KNEE:ATK:REL text; `-20:4:10:.005:.1`. TRANSIENT −1–1/.01; .5                                                        | `.compressor("-20:4:10:.005:.1").transient(.5)`. Absent compressor stays empty/bypassed; absent transient is zero. WebAudio threshold −100…0 dB, ratio 1…20, knee 0…40 dB, attack/release 0…1 s are the numeric component limits. Engine default components are −3:10:10:.005:.05. Unsupported/computed arguments remain CODE.                                                       |
+| PHASER   | 10  | PHASER off/on; on. RATE 0–20 Hz/.01; 2. DEPTH 0–1/.01; .5                                                                      | `.phaser(2).phaserdepth(.5)`. A depth-only import leaves the phaser off; omitted depth uses .75.                                                                                                                                                                                                                                                                                     |
+| PAN      | 10  | PAN 0–1/.01; .5                                                                                                                | `.pan(.3)`; 0 left, .5 center, 1 right. CV depth uses these panel units; superdough maps the base to StereoPanner's −1…1. SMOOTH/ENV depth therefore writes twice the panel depth and divides by two on import; STEP/CV SEQ retain the 0–1 call argument.                                                                                                                            |
+| SHIFT    | 10  | SHIFT −3.9–4/.01; 1.5                                                                                                          | `.stretch(1.5)`; see the pinned-engine limits and measured cost below.                                                                                                                                                                                                                                                                                                               |
+
+Sound settings follow [translation rule 4](translation-rules.md#4-sound-settings-ignore-order-pattern-changes-dont)
+until #134 supplies ordered chains. The fixed main chain is SHIFT → transient →
+VCF → FORMANT → coarse → crush → legacy shape → distortion → compressor → PAN →
+PHASER, followed by orbit sends DELAY then REVERB. COMP therefore spans two
+positions. DRIVE's non-shape algorithms and FOLDER set the **same** distortion
+stage: a later setter wins. Reversed cables display the effective active-stage
+order; shared stages get an overwrite warning. No serial DSP is invented.
+
+New `drawbars` values are finite numeric arrays in v1 metadata, validated for
+length/range at graph/mutation boundaries. Catalog array bindings retain exact
+source; comment-free array literals can be spliced as one argument. Arrays with
+internal comments retain source but refuse destructive literal edits through the
+existing explicit conversion flow. Existing saved CODE stays CODE until explicit
+conversion. See the independent [source/rack/event/browser acceptance](sound-effects-verification.md).
+
+### Pinned engine and browser limits
+
+- **SHIFT is pitch shifting, not reverse playback.** The issue's negative-reversal
+  description does not match this pinned phase vocoder: nonnegative `x` shifts
+  peaks by `1+x`; negative `x` uses `max(0,1+x/4)`. Thus 1.5 is ×2.5 pitch and
+  −1.5 is ×.625 pitch. Event duration is unchanged; reverse sampling remains
+  `speed(-x)`. The panel stops at −3.9 to avoid the zero-ratio clamp. The engine
+  schedules SHIFT voices 40 ms early for its 2048-frame overlap-add window.
+- **SHIFT cost:** on 4 November 2026, Node 24.22.2, AMD Ryzen 7 PRO 6850U (16 logical CPUs),
+  48 kHz mono/128-frame blocks, the exact shipped worklet consumed a median
+  **27.08 CPU ms per voice-second** (five interleaved runs, 25.70–37.38); four
+  voices consumed **28.54 ms per voice-second** (26.77–43.27). The copy/validation
+  baseline was .29/.30 ms. FFT transforms and peak shifting dominate a separate
+  CPU profile. This CPU-only probe excludes node construction, scheduling, stereo,
+  sample fetch and browser contention; it establishes neither maximum polyphony
+  nor glitch-free audio. [Raw runs and method](sound-effects-verification.md#shift-cost).
+- `coarse` is documented by pinned core as mainly working in Chromium. It produced
+  PCM in the Chromium matrix; Firefox/Safari are not verified. SHIFT, noise,
+  transient shaping and LO-FI require AudioWorklet in a secure context (HTTPS or
+  localhost). COMP/PAN require the corresponding WebAudio nodes. Device/browser
+  performance varies. Physical listening and other browsers remain unverified.
+
+Pinned implementation evidence: core `pattern.mjs` (`_distortWithAlg`),
+`controls.mjs` (compressor, FM, phaser, coarse, stretch); superdough `synth.mjs`
+(noise/user oscillator), `helpers.mjs` (FM/dynamics), `superdough.mjs` (chain and
+40-ms latency), and `worklets.mjs` (phase-vocoder remapping and 2048-frame window).

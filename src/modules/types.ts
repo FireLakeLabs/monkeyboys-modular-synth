@@ -20,7 +20,8 @@ export type JackSignal = Signal | 'any'
 export interface CallBinding {
   method: string | { control: string; names: Readonly<Record<string, string>> }
   argument:
-    | { kind: 'number'; precision?: number }
+    | { kind: 'number'; precision?: number; optional?: string }
+    | { kind: 'array' }
     | { kind: 'string' }
     | { kind: 'scale'; root: string }
     | { kind: 'transform'; expressions: Readonly<Record<string, string>> }
@@ -71,7 +72,7 @@ export interface KnobControl extends CallControl {
   /** The generator writes nothing when the knob holds this value. */
   omitAt?: number
   /** LFO depth in this target control's units. */
-  modulation?: { min: number; max: number; default: number; pitch?: boolean }
+  modulation?: { min: number; max: number; default: number; pitch?: boolean; audioScale?: number }
 }
 
 export interface SwitchOption {
@@ -120,7 +121,19 @@ export interface TextControl extends CallControl {
   omitAt?: string
 }
 
-export type Control = KnobControl | SwitchControl | StepsControl | GridControl | TextControl
+export interface DrawbarControl extends CallControl {
+  kind: 'drawbars'
+  id: string
+  label: string
+  min: number
+  max: number
+  step: number
+  maxBars: number
+  default: readonly number[]
+}
+
+export type Control =
+  DrawbarControl | KnobControl | SwitchControl | StepsControl | GridControl | TextControl
 
 export interface Jack {
   id: string
@@ -161,6 +174,10 @@ export interface ModuleSpec {
   strudel: readonly string[]
   /** Pinned-engine aliases; source spelling is retained by the reader. */
   strudelAliases?: Readonly<Record<string, string>>
+  /** Sound selectors that may also start an unpatched voice. */
+  soundSource?: string
+  /** Dedicated modulation panel patched to this destination jack. */
+  operatorTarget?: { type: string; jack: string }
   /** Engine waveform names for audio-rate LFOs (pattern names remain unchanged). */
   smoothShapes?: Readonly<Record<string, string>>
   /** Pattern-valued modulation source/utility, interpreted inside a CV argument. */

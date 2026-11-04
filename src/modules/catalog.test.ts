@@ -30,6 +30,17 @@ describe('module catalog', () => {
     expect(CATALOG.map((m) => m.id).sort()).toEqual(
       [
         ...V1_MODULES,
+        'noise',
+        'harmonic',
+        'fmop',
+        'drive',
+        'folder',
+        'lofi',
+        'formant',
+        'comp',
+        'phaser',
+        'pan',
+        'shift',
         'clock',
         'euclid',
         'ratchet',
@@ -102,7 +113,7 @@ describe('module catalog', () => {
           expect(
             [
               ...spec.strudel,
-              ...(spec.id === 'osc'
+              ...(spec.id === 'osc' || spec.soundSource
                 ? ['s']
                 : spec.id === 'smpl'
                   ? ['n']

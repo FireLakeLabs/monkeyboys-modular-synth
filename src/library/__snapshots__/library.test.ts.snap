@@ -112,6 +112,13 @@ exports[`built-in patch library > quantized-sequence: preserves exact source and
 }
 `;
 
+exports[`built-in patch library > sound-effects-exercise: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "9113c96f0c122e2eaa0bd7fb864956c120ca8b751a55bc8dd3ac145ab0514ca2",
+  "projection": "f7101fbfb10cd54db790ffcf16f7d272c6ebc0f4d92c3e9928c711217aaefbd2",
+}
+`;
+
 exports[`built-in patch library > switch-angel-trance-demo: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "7c5c067cc34ac8a2f908afe3bab3931455f51fda47c3463d42d5f957fb9349fa",

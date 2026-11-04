@@ -260,7 +260,10 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
       if (notation !== undefined) text = JSON.stringify(notation)
       if (
         !spans.length ||
-        (notation === undefined && typeof value !== 'number' && typeof value !== 'string')
+        (notation === undefined &&
+          control.kind !== 'drawbars' &&
+          typeof value !== 'number' &&
+          typeof value !== 'string')
       )
         throw new RackEditRefused(
           `Cannot safely edit ${module.id} ${control.label}; edit its code instead`,

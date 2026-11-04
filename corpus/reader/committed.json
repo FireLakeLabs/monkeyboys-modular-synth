@@ -100,5 +100,11 @@
     "path": "src/library/patches/switch-angel-trance-demo.strudel",
     "license": "User-supplied inclusion permission (issue #46); no upstream license asserted",
     "provenance": "https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/46 (explicit request to bundle this exact variant; Switch Angel, cosimo transcription)"
+  },
+  {
+    "id": "sound-effects-exercise",
+    "path": "src/library/patches/sound-effects.strudel",
+    "license": "MIT",
+    "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
   }
 ]

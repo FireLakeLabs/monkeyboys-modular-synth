@@ -239,3 +239,12 @@ Catalog CV targets accept SMOOTH/STEP LFO, ENV and CV SEQ. OSC adds pitch CV;
 S&H, ATTENUVERTER and MOD MIX expose pattern modulation utilities. Existing
 signals and native envelopes retain source and saved identity. See the
 [contract and independent source/rack/event/browser PCM proof](modulation-verification.md).
+
+## Sound sources and effects (#131)
+
+Eleven Hardware panels extend the catalog with noise, additive/FM synthesis and
+voice effects, plus HARMONIC drawbars and the OSC FM jack. Exact imported source,
+saved CODE/rack identity and pinned-engine events have separate checks; see the
+[contract, engine limits and SHIFT cost](module-spec.md#sound-sources-and-voice-effects-131)
+and [acceptance record](sound-effects-verification.md). Ordered FX remain owned
+by #134; this change follows the current fixed-chain rule.

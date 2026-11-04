@@ -63,6 +63,16 @@ export function isGrid(candidate: ControlValue): candidate is string | readonly 
 
 function validValue(item: Control, candidate: ControlValue, node: Node): boolean {
   switch (item.kind) {
+    case 'drawbars':
+      return (
+        Array.isArray(candidate) &&
+        candidate.length > 0 &&
+        candidate.length <= item.maxBars &&
+        candidate.every(
+          (n: unknown) =>
+            typeof n === 'number' && Number.isFinite(n) && n >= item.min && n <= item.max,
+        )
+      )
     case 'knob':
       // LFO depth is expressed in the target knob's units, not its fallback range.
       return (
@@ -194,6 +204,13 @@ export function graph(patch: Patch): Map<string, Node> {
       throw new Error('SMOOTH LFO connects to CV or S&H; use STEP for pattern utilities')
     if (from.spec.id === 'env' && !input.cvTarget)
       throw new Error('ENV connects directly to a CV target; utilities transform pattern signals')
+    if (
+      from.spec.operatorTarget &&
+      (to.spec.id !== from.spec.operatorTarget.type || input.id !== from.spec.operatorTarget.jack)
+    )
+      throw new Error('FM OP connects to OSC FM')
+    if (to.spec.id === 'osc' && input.id === 'fm' && from.spec.id !== 'fmop')
+      throw new Error('OSC FM requires FM OP')
     to.inputs.set(input.id, cable)
     from.outputs.set(output.id, [...(from.outputs.get(output.id) ?? []), cable])
   }

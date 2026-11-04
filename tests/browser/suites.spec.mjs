@@ -18,6 +18,7 @@ for (const script of [
   'rack-visuals-check',
   'output-panel-browser',
   'panels-browser',
+  'sound-effects-browser',
 ]) {
   test(script, async ({ baseURL }, info) => {
     const output = info.outputPath('evidence')

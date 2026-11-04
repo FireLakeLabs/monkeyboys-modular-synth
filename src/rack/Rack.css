@@ -682,4 +682,31 @@ select:focus-visible {
   color: #b7bdc6;
   font-size: 12px;
   margin: 6px 0;
+.drawbar-control {
+  min-width: 0;
+  border: 0;
+  padding: 4px;
+}
+.drawbar-control select {
+  max-width: 100%;
+}
+.drawbars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+.drawbars label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+}
+.drawbars input {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 24px;
+  height: 66px;
+}
+.drawbars output {
+  font-size: 12px;
 }

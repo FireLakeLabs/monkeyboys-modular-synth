@@ -1,0 +1,267 @@
+{
+  "node": "v24.22.2",
+  "cpu": "AMD Ryzen 7 PRO 6850U with Radeon Graphics",
+  "cores": 16,
+  "sampleRate": 48000,
+  "channels": 1,
+  "blockFrames": 128,
+  "seconds": 8,
+  "stretch": 1.5,
+  "workletSHA256": "5a705a3a153ffff164ca5e8f5eb245e8a7c753c2e8a2138edf97e67513dcb581",
+  "groups": [
+    {
+      "voices": 1,
+      "shift": false,
+      "median": 0.289375,
+      "min": 0.24525,
+      "max": 0.4435,
+      "unit": "CPU ms / voice / second of audio"
+    },
+    {
+      "voices": 1,
+      "shift": true,
+      "median": 27.078375,
+      "min": 25.695125,
+      "max": 37.3775,
+      "unit": "CPU ms / voice / second of audio"
+    },
+    {
+      "voices": 4,
+      "shift": false,
+      "median": 0.29690625,
+      "min": 0.24471875,
+      "max": 0.3915625,
+      "unit": "CPU ms / voice / second of audio"
+    },
+    {
+      "voices": 4,
+      "shift": true,
+      "median": 28.54134375,
+      "min": 26.7715,
+      "max": 43.2724375,
+      "unit": "CPU ms / voice / second of audio"
+    }
+  ],
+  "runs": [
+    {
+      "voices": 1,
+      "shift": false,
+      "elapsedMs": 2.898270000000025,
+      "cpuMs": 3.022,
+      "msPerVoiceSecond": 0.37775,
+      "samples": 384000,
+      "rms": 0.14142135644513631,
+      "errors": 0,
+      "repeat": 0
+    },
+    {
+      "voices": 1,
+      "shift": true,
+      "elapsedMs": 282.42162099999996,
+      "cpuMs": 299.02,
+      "msPerVoiceSecond": 37.3775,
+      "samples": 384000,
+      "rms": 0.13883058161831774,
+      "errors": 0,
+      "repeat": 0
+    },
+    {
+      "voices": 4,
+      "shift": false,
+      "elapsedMs": 10.883519999999976,
+      "cpuMs": 12.53,
+      "msPerVoiceSecond": 0.3915625,
+      "samples": 1536000,
+      "rms": 0.14142135644517223,
+      "errors": 0,
+      "repeat": 0
+    },
+    {
+      "voices": 4,
+      "shift": true,
+      "elapsedMs": 899.810186,
+      "cpuMs": 913.323,
+      "msPerVoiceSecond": 28.54134375,
+      "samples": 1536000,
+      "rms": 0.1388305816183146,
+      "errors": 0,
+      "repeat": 0
+    },
+    {
+      "voices": 1,
+      "shift": false,
+      "elapsedMs": 2.2151479999999992,
+      "cpuMs": 2.206,
+      "msPerVoiceSecond": 0.27575,
+      "samples": 384000,
+      "rms": 0.14142135644513631,
+      "errors": 0,
+      "repeat": 1
+    },
+    {
+      "voices": 1,
+      "shift": true,
+      "elapsedMs": 217.5569750000002,
+      "cpuMs": 216.627,
+      "msPerVoiceSecond": 27.078375,
+      "samples": 384000,
+      "rms": 0.13883058161831774,
+      "errors": 0,
+      "repeat": 1
+    },
+    {
+      "voices": 4,
+      "shift": false,
+      "elapsedMs": 9.4984800000002,
+      "cpuMs": 9.501,
+      "msPerVoiceSecond": 0.29690625,
+      "samples": 1536000,
+      "rms": 0.14142135644517223,
+      "errors": 0,
+      "repeat": 1
+    },
+    {
+      "voices": 4,
+      "shift": true,
+      "elapsedMs": 860.6057669999998,
+      "cpuMs": 856.688,
+      "msPerVoiceSecond": 26.7715,
+      "samples": 1536000,
+      "rms": 0.1388305816183146,
+      "errors": 0,
+      "repeat": 1
+    },
+    {
+      "voices": 1,
+      "shift": false,
+      "elapsedMs": 2.265672999999879,
+      "cpuMs": 2.315,
+      "msPerVoiceSecond": 0.289375,
+      "samples": 384000,
+      "rms": 0.14142135644513631,
+      "errors": 0,
+      "repeat": 2
+    },
+    {
+      "voices": 1,
+      "shift": true,
+      "elapsedMs": 220.00073199999997,
+      "cpuMs": 218.686,
+      "msPerVoiceSecond": 27.33575,
+      "samples": 384000,
+      "rms": 0.13883058161831774,
+      "errors": 0,
+      "repeat": 2
+    },
+    {
+      "voices": 4,
+      "shift": false,
+      "elapsedMs": 10.775596000000405,
+      "cpuMs": 10.779,
+      "msPerVoiceSecond": 0.33684375,
+      "samples": 1536000,
+      "rms": 0.14142135644517223,
+      "errors": 0,
+      "repeat": 2
+    },
+    {
+      "voices": 4,
+      "shift": true,
+      "elapsedMs": 874.9116600000002,
+      "cpuMs": 879.29,
+      "msPerVoiceSecond": 27.4778125,
+      "samples": 1536000,
+      "rms": 0.1388305816183146,
+      "errors": 0,
+      "repeat": 2
+    },
+    {
+      "voices": 1,
+      "shift": false,
+      "elapsedMs": 2.6234340000000884,
+      "cpuMs": 3.548,
+      "msPerVoiceSecond": 0.4435,
+      "samples": 384000,
+      "rms": 0.14142135644513631,
+      "errors": 0,
+      "repeat": 3
+    },
+    {
+      "voices": 1,
+      "shift": true,
+      "elapsedMs": 214.76413200000025,
+      "cpuMs": 213.935,
+      "msPerVoiceSecond": 26.741875,
+      "samples": 384000,
+      "rms": 0.13883058161831774,
+      "errors": 0,
+      "repeat": 3
+    },
+    {
+      "voices": 4,
+      "shift": false,
+      "elapsedMs": 8.281605000000127,
+      "cpuMs": 8.302,
+      "msPerVoiceSecond": 0.2594375,
+      "samples": 1536000,
+      "rms": 0.14142135644517223,
+      "errors": 0,
+      "repeat": 3
+    },
+    {
+      "voices": 4,
+      "shift": true,
+      "elapsedMs": 931.9197200000003,
+      "cpuMs": 926.868,
+      "msPerVoiceSecond": 28.964625,
+      "samples": 1536000,
+      "rms": 0.1388305816183146,
+      "errors": 0,
+      "repeat": 3
+    },
+    {
+      "voices": 1,
+      "shift": false,
+      "elapsedMs": 1.9640369999997347,
+      "cpuMs": 1.962,
+      "msPerVoiceSecond": 0.24525,
+      "samples": 384000,
+      "rms": 0.14142135644513631,
+      "errors": 0,
+      "repeat": 4
+    },
+    {
+      "voices": 1,
+      "shift": true,
+      "elapsedMs": 206.3424640000003,
+      "cpuMs": 205.561,
+      "msPerVoiceSecond": 25.695125,
+      "samples": 384000,
+      "rms": 0.13883058161831774,
+      "errors": 0,
+      "repeat": 4
+    },
+    {
+      "voices": 4,
+      "shift": false,
+      "elapsedMs": 7.834305999999742,
+      "cpuMs": 7.831,
+      "msPerVoiceSecond": 0.24471875,
+      "samples": 1536000,
+      "rms": 0.14142135644517223,
+      "errors": 0,
+      "repeat": 4
+    },
+    {
+      "voices": 4,
+      "shift": true,
+      "elapsedMs": 1411.1920470000005,
+      "cpuMs": 1384.718,
+      "msPerVoiceSecond": 43.2724375,
+      "samples": 1536000,
+      "rms": 0.1388305816183146,
+      "errors": 0,
+      "repeat": 4
+    }
+  ]
+}
