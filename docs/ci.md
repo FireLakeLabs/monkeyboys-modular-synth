@@ -99,7 +99,9 @@ wall time for the complete test command fell from **380.3 s** (range
 All 270 group executions passed on their first attempt, with no skips. The
 [timings and environment](evidence/browser-parallel-timings.json) retain each run,
 the shared 27-group manifest, actual worker overlap and an excluded profiling run.
-No assertions, sample waits or timing thresholds changed.
+At the benchmarked revision `e20d8ac`, no assertions, sample waits or timing
+thresholds changed. These timings predate the PCM-probe correction below and
+are not a new benchmark of that correction.
 
 The comparison used Node 24.22.2, Chromium 156.0.8078.4, locked dependencies,
 `CI=1` and the same Vite application on a Linux AMD Ryzen 7 PRO 6850U machine
@@ -116,6 +118,29 @@ limit scaling. Two workers bound runner load; a higher worker count was not
 evaluated. These local measurements do not establish a hosted CI speedup or
 guarantee absence of future flakes. Real-engine event and PCM checks passed;
 physical listening remains unverified.
+
+### Hosted PCM-probe correction
+
+The first [two-worker hosted run](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/41778255641)
+passed 26 groups but failed the workspace recovery probe: the invalid-draft PCM
+window measured RMS 0.0009934 against its unchanged 0.001 threshold. The probe
+averaged one analyser per output connection, so silent or expired branches could
+dilute the reported signal. Its decaying fixture also made short windows depend
+on note phase. The local timing runs did not establish hosted reliability.
+
+The recovery probe now sums output branches into one analyser per audio context
+and uses a sustained, short-release fixture. A calibration regression adds 64
+silent branches and requires PCM to remain within 20% of the original signal;
+it failed with the old probe and passed with the corrected probe. Invalid drafts
+must retain at least two future scheduled note onsets as well as nonzero PCM.
+Stop must end those onsets and reach the same existing silence threshold after
+release. Thresholds and the zero-retry policy remain unchanged. Application code
+is unchanged; this correction is browser-test instrumentation and coverage.
+The [calibration evidence](evidence/workspace-pcm-calibration.json) records the
+controlled failure and corrected PCM/onset observations. All 27 groups passed
+with two workers constrained to four logical CPUs
+(`taskset -c 0-3 npm run test:browser`), and the final focused recovery suite
+passed again. This local check is separate from hosted revalidation.
 
 ## Observed GitHub status
 

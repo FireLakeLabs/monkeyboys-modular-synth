@@ -208,6 +208,15 @@ the separate [browser workflow](ci.md#full-browser-acceptance) now provisions
 Chromium and executes it after every main push. Network isolation is not claimed.
 The deterministic transport regressions do run in the shared gate. Do not infer render coverage from those unit tests.
 
+The workspace recovery browser probe calibrates its combined output analyser by
+adding silent branches without changing the expected signal. That regression
+failed with the former per-connection averaging and passed after the probe summed
+branches per audio context. A sustained fixture and two future note onsets prove
+that invalid drafts retain scheduling; Stop must end further onsets and reach
+the existing PCM silence threshold. See the [hosted failure and correction](ci.md#hosted-pcm-probe-correction).
+This is real-browser/engine coverage, not physical listening or a calibration of
+every other legacy audio probe.
+
 Use [correct](../.agents/skills/correct/SKILL.md) for a correction that reveals a
 preventable failure class. Prefer structure, then types, lint, and behavioral
 tests; use review instructions for remaining judgment. Prove each new guardrail

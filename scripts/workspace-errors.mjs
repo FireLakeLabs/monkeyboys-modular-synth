@@ -16,6 +16,7 @@ const results = {
   ui: [],
   engine: [],
   pcm: {},
+  events: {},
   physicalListening: false,
 }
 const pass = (group, name) => {
@@ -357,20 +358,32 @@ try {
   await real.addInitScript(() => {
     // oxlint-disable-next-line typescript/unbound-method -- Invoke with the original AudioNode receiver below.
     const connect = AudioNode.prototype.connect
+    const outputs = new Map()
     window.probes = []
+    window.recoveryTriggers = 0
     AudioNode.prototype.connect = function (...args) {
       const result = connect.apply(this, args)
       if (args[0] instanceof AudioDestinationNode) {
-        const analyser = this.context.createAnalyser()
+        // Sum output branches per context. Averaging separate analysers would
+        // dilute the measured signal as silent or expired branches accumulate.
+        let analyser = outputs.get(this.context)
+        if (!analyser) {
+          analyser = this.context.createAnalyser()
+          outputs.set(this.context, analyser)
+          window.probes.push(analyser)
+        }
         connect.call(this, analyser)
-        window.probes.push(analyser)
       }
       return result
     }
   })
   const audio = await real.newPage()
   await audio.goto(base)
-  await code(audio, '$: note("c3 e3").s("sine").gain(0.15)\n')
+  // Sustain across each gate so short PCM windows do not depend on note decay.
+  await code(
+    audio,
+    '$: note("c3 e3").s("sine").attack(0).decay(0).sustain(1).release(.05).gain(.15).onTrigger(() => { globalThis.recoveryTriggers++; }, false)\n',
+  )
   assert.match(
     await audio.locator('.audio-note').textContent(),
     /unknown; audio has not initialized/,
@@ -405,20 +418,46 @@ try {
       return { rms: Math.sqrt(sum / count), samples: count }
     })
   }
+  await audio.waitForFunction(() => window.recoveryTriggers > 0)
   results.pcm.play = await rms()
   assert(results.pcm.play.rms > 0.001)
+  // Silent output branches do not change the sound and must not dilute the probe.
+  await audio.evaluate(() => {
+    const context = window.probes[0].context
+    window.silentProbeBranches = Array.from({ length: 64 }, () => {
+      const node = context.createGain()
+      node.connect(context.destination)
+      return node
+    })
+  })
+  results.pcm.silentBranches = await rms()
+  assert(results.pcm.silentBranches.rms > results.pcm.play.rms * 0.8)
+  assert(results.pcm.silentBranches.rms < results.pcm.play.rms * 1.2)
+  await audio.evaluate(() => window.silentProbeBranches.forEach((node) => node.disconnect()))
+  const triggersBeforeDraft = await audio.evaluate(() => window.recoveryTriggers)
+  results.events.beforeDraft = triggersBeforeDraft
   await replaceSource(audio, '$: note(')
   await audio.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
+  // Require future onsets, rather than mistaking a note's tail for continued scheduling.
+  await audio.waitForFunction(
+    (before) => window.recoveryTriggers >= before + 2,
+    triggersBeforeDraft,
+  )
+  results.events.afterDraft = await audio.evaluate(() => window.recoveryTriggers)
   results.pcm.invalidDraft = await rms()
   assert(results.pcm.invalidDraft.rms > 0.001)
   await audio.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(audio, 'Ready')
+  const triggersAtStop = await audio.evaluate(() => window.recoveryTriggers)
+  results.events.atStop = triggersAtStop
   // Observe after the test synth's release; Stop itself does not promise immediate silence.
   await audio.waitForTimeout(1500)
   results.pcm.afterStop = await rms()
   assert(results.pcm.afterStop.rms < 0.00001)
+  results.events.afterStop = await audio.evaluate(() => window.recoveryTriggers)
+  assert.equal(results.events.afterStop, triggersAtStop)
   pass(
     'engine',
     'fresh-context real manifest rejection/retry retains source; PCM continues through syntax error and ceases after Stop/tails',
