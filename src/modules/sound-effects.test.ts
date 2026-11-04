@@ -233,3 +233,79 @@ it('distinguishes separate filter stages and skips inert nullary distortion warn
     expect(doc.patch.cables.flatMap((c) => cableWarnings(doc.patch, c))).toEqual([])
   }
 })
+
+it.each([
+  '.coarse(4).coarse(1)',
+  '.transient(.5).transient(0)',
+  '.phaserdepth(.3).phaserdepth(.75)',
+])('retains explicit reset setters: %s', (calls) => {
+  const expression = `note("c3").s("sine")${calls}`
+  const source = `// keep resets\n$: ${expression}\n`
+  const doc = read(source)
+  expect(generate(doc)).toBe(source)
+  expect(events(voice(generate(doc.patch)))).toEqual(events(expression))
+  const saved = saveLayout(doc)
+  expect(read(saved.source).patch).toEqual(saved.patch)
+})
+
+it.each(['soft', 'hard', 'cubic', 'diode', 'asym', 'sinefold', 'chebyshev', 'shape'])(
+  'imports nullary %s after samples through SMPL',
+  (method) => {
+    const expression = `s("bd").${method}()`
+    const source = `$: ${expression}\n`
+    const doc = read(source)
+    expect(doc.patch.modules.map((m) => m.type).sort()).toEqual(
+      ['drums', 'drive', 'smpl', 'mix', 'out'].sort(),
+    )
+    expect(
+      doc.patch.cables.some(
+        (c) =>
+          doc.patch.modules.find((m) => m.id === c.from.module)?.type === 'smpl' &&
+          doc.patch.modules.find((m) => m.id === c.to.module)?.type === 'drive',
+      ),
+    ).toBe(true)
+    expect(generate(doc)).toBe(source)
+    expect(events(voice(generate(doc.patch)))).toEqual(events(expression))
+    const saved = saveLayout(doc)
+    expect(read(saved.source).patch).toEqual(saved.patch)
+  },
+)
+
+it('preserves shared FM OP ownership after source comments and a look edit', async () => {
+  const { setLook } = await import('../rack/model')
+  let patch = starterPatch()
+  for (const [i, type] of ['seq', 'osc', 'seq', 'osc', 'fmop'].entries())
+    patch = placeModule(patch, type, i + 1)
+  for (const channel of [1, 2]) {
+    patch = connect(
+      patch,
+      { module: `seq${channel}`, jack: 'note' },
+      { module: `osc${channel}`, jack: 'note' },
+    )
+    patch = connect(
+      patch,
+      { module: 'fmop1', jack: 'out' },
+      { module: `osc${channel}`, jack: 'fm' },
+    )
+    patch = connect(
+      patch,
+      { module: `osc${channel}`, jack: 'out' },
+      { module: 'mix1', jack: `in${channel}` },
+    )
+  }
+  const original = generate(patch)
+  const doc = read(`// retain shared operator\n${original}`)
+  expect(doc.patch.modules.filter((m) => m.type === 'fmop')).toHaveLength(1)
+  const next = setLook(doc.patch, 'osc1', 'vintage')
+  const edited = editDocument(doc, next)
+  expect(sourceBody(edited.source)).toBe(`// retain shared operator\n${sourceBody(original)}`)
+  expect(read(edited.source).patch).toEqual(next)
+  const expected = parseSource(original)
+    .scopes.filter((s) => s.kind === 'voice')
+    .map((s) => events(original.slice(s.start, s.end)))
+  expect(
+    parseSource(edited.source)
+      .scopes.filter((s) => s.kind === 'voice')
+      .map((s) => events(edited.source.slice(s.start, s.end))),
+  ).toEqual(expected)
+})

@@ -142,6 +142,7 @@ function project(
     if (type !== 'out') hp += spec.hp
     patch.modules.push(module)
     if (type === 'env' || type === 'lfo') represented.set(id, new Set(Object.keys(values)))
+    if (spec.operatorTarget) represented.set(id, new Set())
     return module
   }
   function output(module: PlacedModule): Output {
@@ -169,6 +170,16 @@ function project(
     )
     const receiver = input && patch.modules.find((module) => module.id === input.from.module)
     return receiver && input ? needsSampler({ module: receiver, jack: input.from.jack }) : false
+  }
+  function soundInput(from: Output, type: string): Output {
+    if (
+      !needsSampler(from) ||
+      !getModuleSpec(type).jacks.some((jack) => jack.direction === 'in' && jack.signal === 'audio')
+    )
+      return from
+    const sampler = add('smpl', { bank: '', speed: 1 })
+    wire(from, sampler)
+    return output(sampler)
   }
   function hasOpaqueInput(from: Output): boolean {
     if (from.module.type === 'code') return true
@@ -1128,6 +1139,7 @@ function project(
               const module = operator ?? add(type, values)
               if (literal(module, id, call, scope, index)) {
                 Object.assign(module.values, activation)
+                for (const id of Object.keys(activation)) represented.get(module.id)?.add(id)
                 if (!existing) wire(output(module), target, spec.operatorTarget.jack)
                 group = module
                 continue
@@ -1170,6 +1182,7 @@ function project(
           id = undefined
         } else if (form.kind === 'number' && form.optional && call.args.length === 0 && type) {
           group = add(type, { ...values, [form.optional]: 'none' })
+          upstream = soundInput(upstream, type)
           wire(upstream, group)
           bind(group, scope, [index])
           upstream = output(group)
@@ -1276,7 +1289,9 @@ function project(
             matched &&
             'omitAt' in matched.control &&
             candidate === matched.control.omitAt &&
-            ((type === 'smpl' && hasOpaqueInput(upstream)) ||
+            ((!spec?.orderSensitive &&
+              (hasOpaqueInput(upstream) ||
+                calls.slice(0, index).some((previous) => canonicalCall(previous.name) === name))) ||
               (matched.binding.selects &&
                 !reuse &&
                 (hasOpaqueInput(upstream) ||
@@ -1309,17 +1324,7 @@ function project(
               : literal(module, id, call, scope, index)
           if (accepted) {
             Object.assign(module.values, activation)
-            if (
-              !reuse &&
-              needsSampler(upstream) &&
-              getModuleSpec(scalarType).jacks.some(
-                (jack) => jack.direction === 'in' && jack.signal === 'audio',
-              )
-            ) {
-              const sampler = add('smpl', { bank: '', speed: 1 })
-              wire(upstream, sampler)
-              upstream = output(sampler)
-            }
+            if (!reuse) upstream = soundInput(upstream, scalarType)
             if (!reuse) wire(upstream, module)
             group = module
             upstream = output(module)
@@ -1714,7 +1719,9 @@ function restore(
     const candidates = saved.modules.filter(
       (old) =>
         old.type === module.type &&
-        (!claimed.has(old.id) || ['env', 'lfo'].includes(module.type)) &&
+        (!claimed.has(old.id) ||
+          ['env', 'lfo'].includes(module.type) ||
+          getModuleSpec(module.type).operatorTarget !== undefined) &&
         own.some((binding) => {
           const match = matches.get(binding.scope)
           if (!match) return false
@@ -1791,7 +1798,7 @@ function restore(
     }
     if (claimed.has(old.id)) {
       const shared = patch.modules.find((item) => rename.get(item.id) === old.id)
-      // Repeated context-specific calls represent one ENV only while all values agree.
+      // Repeated context-specific calls share saved identity only while all values agree.
       const effective = (m: PlacedModule) =>
         getModuleSpec(m.type).controls.map((c) => controlValue(m, c))
       if (!shared || descriptor(effective(shared)) !== descriptor(effective(module))) continue
