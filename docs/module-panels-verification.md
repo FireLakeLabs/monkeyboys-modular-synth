@@ -194,5 +194,7 @@ explicit extension before another recheck. No review usage was exposed.
 Current deterministic gate after S7/S8: 1,420 unit cases, 43 guardrails, formatting,
 lint, reader coverage, TypeScript and build pass. S7 (blocker) and S8 (should) are
 fixed locally, with approval pending; neither finding is disputed or declined.
-The previous integrated head passed all 34 browser groups in 5.1 minutes; the
-same full workflow is being rerun with these fixes and the new REPL assertions.
+The full browser workflow passed all 34 groups in 5.1 minutes after these fixes,
+including the new real REPL event/source/saved-state assertions. Nested MIX PCM
+remained nonzero for all sources, with SMOOTH upward/downward ratios 2.810/3.652
+and STEP 1.013. Physical listening and multichannel hardware remain unverified.
