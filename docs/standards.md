@@ -432,3 +432,10 @@ reset. The same pinned postinstall patch now tolerates only that missing-edge
 `InvalidAccessError`, in source and both bundles, while preserving all #140
 context fixes and exact dependency hash checks. The unchanged real-browser
 sequence is the behavioral regression for this dependency exception.
+
+The S1/S2 routing review regressions additionally exercise actual REPL solo
+selection and DUCK before the first target onset, including reset/replay and
+output-pair retention. Both failed before their fixes. Private voices retain
+solo participation with silent dry/wet output; the pinned controller starts a
+missing target orbit's envelope and connects its output only when the target
+voice supplies its channel pair. Source and both bundles are hash-verified.

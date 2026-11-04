@@ -8,7 +8,7 @@ visibility remain in #137–#139.
 ## Deterministic proof
 
 `npm ci` and `npm run check` pass: formatting, skill integrity, lint, unit tests,
-reader coverage, **2,182 unit tests**, 43 executable guardrails, TypeScript and
+reader coverage, **2,185 unit tests**, 43 executable guardrails, TypeScript and
 production build.
 The pre-existing large-bundle build advisory remains.
 
@@ -107,3 +107,20 @@ current rack design supplied the references. Physical listening, other browsers,
 physical devices and mobile/zoom interaction matrices are unverified; the report
 claims measured browser PCM and native desktop behavior. No #136 acceptance
 criterion remains unverified by the stated deterministic/browser checks.
+
+## Sol review regressions
+
+Round 1 (gpt-6.1-sol, high) found S1/S2. The actual browser/REPL repro lost all
+AUX sends under solo (0 instead of 8), and a leading-rest DUCK target stopped
+playback with `duck target orbit 2 does not exist`. Both checks failed before
+the fixes. Private routing now keeps solo participation without dry/wet output.
+The pinned source and bundles lazily create a duck target's envelope and defer
+its output connection until its actual voice supplies the channel pair.
+
+The browser suite retains 8 AUX sends, 1 audio-mod send and 4 DUCK triggers when
+their destinations are soloed. Leading-rest DUCK stays playing through startup,
+structural replacement and replay, and its target retains logical output pair
+3:4 (zero-based 2:3). These real-REPL checks complement the deterministic source
+label and saved-identity regressions; the ordinary unit event helper deliberately
+does not emulate REPL label selection. Physical multichannel devices are not
+verified. No extra musical events or app-only playback shims were added.

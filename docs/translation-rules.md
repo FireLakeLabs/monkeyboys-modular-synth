@@ -666,6 +666,12 @@ Send/trigger patterns run as private voices with `.dry(0).delay(0).room(0)`.
 This prevents both dry sound and global send tails leaking into the audible mix.
 Patching the source into MIX as well adds one audible branch. Sends are pre-mixer:
 MIX level/mute/solo controls the dry channel, independently of AUX/CV/SIDE sends.
+When a channel is soloed, private dependencies also receive `S$:` labels so the
+REPL's global solo filter retains them. Their dry and wet outputs remain zero.
+The pinned controller allows DUCK to precede its target's first note: it starts
+that orbit's gain envelope without an output connection, then attaches the
+actual target channel pair when the first audible event arrives. Structural
+reset/replay clears these nodes together with ordinary orbits.
 As in native superdough, `.bus()` taps postgain **before orbit delay/reverb**;
 inline FX processing before the tap stays in the signal. Audio fan-out evaluates
 patterns separately, so random/noise branches are independent realizations.

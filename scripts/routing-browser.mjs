@@ -92,6 +92,13 @@ try {
     (await import('/scripts/routing-check.mjs')).verifyAudioRate(),
   )
   process.stdout.write('PASS within-note audio modulation sidebands\n')
+  result.solo = await page.evaluate(async () =>
+    (await import('/scripts/routing-check.mjs')).verifySoloRouting(),
+  )
+  result.duckLeadingRest = await page.evaluate(async () =>
+    (await import('/scripts/routing-check.mjs')).verifyDuckLeadingRest(),
+  )
+  process.stdout.write('PASS REPL solo dependencies and leading-rest DUCK startup/reset/replay\n')
   await page.evaluate(async () => (await import('/scripts/routing-check.mjs')).finish())
   assert.deepEqual(errors, [])
   await writeFile(`${output}/results.json`, JSON.stringify(result, null, 2) + '\n')

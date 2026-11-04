@@ -866,7 +866,11 @@ export function generateDocument(
     labels.add(label)
     return label
   }
-  voices.forEach((original) => {
+  const soloing = voices.some(
+    (voice) =>
+      !voice.mixers.some((mixer) => mixer.mute) && voice.mixers.some((mixer) => mixer.solo),
+  )
+  voices.forEach((original, index) => {
     const factors = original.mixers.map((mixer) => mixer.gain)
     const gain = product(factors)
     let voice = original
@@ -926,7 +930,8 @@ export function generateDocument(
     const expression = orbit === undefined ? voice : append(voice, `.orbit(${orbit})`)
     bindScope(layout, expression, undefined, orbit)
     const mute = original.mixers.some((mixer) => mixer.mute)
-    const solo = original.mixers.some((mixer) => mixer.solo)
+    // Private pre-mixer dependencies must survive the REPL's global solo filter.
+    const solo = original.mixers.some((mixer) => mixer.solo) || (index >= audible.length && soloing)
     const name = original.mixers.findLast((mixer) => mixer.name)?.name
     const label = `${mute ? '_' : ''}${solo ? 'S' : ''}${name ? allocateLabel(name) : '$'}`
     write(expression, `${label}: `)

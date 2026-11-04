@@ -1,4 +1,5 @@
 import { parse } from 'acorn'
+import { parseSource } from '../reader/syntax'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { generate } from './generate'
 import { graph } from './graph'
@@ -318,5 +319,19 @@ it.each(['.velocity("1 .2")', '.velocity("<1 .2>").fast(2)'])(
     const doc = read(source)
     expect(events(generate(doc.patch))).toEqual(events(source))
     expect(sourceBody(saveLayout(doc).source)).toBe(source)
+  },
+)
+
+it.each(['aux', 'audio-mod', 'duck'] as const)(
+  '%s retains private routing labels during destination solo',
+  (kind) => {
+    const patch = setValue(routingFixture(kind), 'mix1', kind === 'duck' ? 'solo2' : 'solo1', 'on')
+    const source = generate(patch)
+    const privateScopes = parseSource(source).scopes.filter(
+      (s) => s.kind === 'voice' && s.calls.some((c) => c.name === 'dry'),
+    )
+    expect(privateScopes.length).toBeGreaterThan(0)
+    expect(privateScopes.every((s) => s.label === 'S$')).toBe(true)
+    expect(read(source).patch).toEqual(patch)
   },
 )

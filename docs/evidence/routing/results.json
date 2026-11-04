@@ -4,7 +4,7 @@
     {
       "kind": "gates",
       "events": 20,
-      "rms": 0.009957749507030846,
+      "rms": 0.010015948093297753,
       "sampleRate": 48000,
       "sourceExact": true,
       "savedIdentity": true,
@@ -14,7 +14,7 @@
     {
       "kind": "switch",
       "events": 4,
-      "rms": 0.01208258493212087,
+      "rms": 0.012104680408701324,
       "sampleRate": 48000,
       "sourceExact": true,
       "savedIdentity": true,
@@ -24,7 +24,7 @@
     {
       "kind": "aux",
       "events": 36,
-      "rms": 0.014142658025262165,
+      "rms": 0.01429596740077483,
       "sampleRate": 48000,
       "sourceExact": true,
       "savedIdentity": true,
@@ -34,9 +34,9 @@
     {
       "kind": "duck",
       "events": 36,
-      "rms": 0.01423928379096514,
+      "rms": 0.014278718500924163,
       "targetGain": {
-        "min": 0.10953723639249802,
+        "min": 0.1112748235464096,
         "max": 1
       },
       "sampleRate": 48000,
@@ -48,7 +48,7 @@
     {
       "kind": "audio-mod",
       "events": 8,
-      "rms": 0.012219601029980385,
+      "rms": 0.012231148243645126,
       "sampleRate": 48000,
       "sourceExact": true,
       "savedIdentity": true,
@@ -198,15 +198,49 @@
   "audioRate": {
     "baseline": {
       "carrier": -61.37986755371094,
-      "lower": -143.43362426757812,
-      "upper": -142.77288818359375
+      "lower": -143.466796875,
+      "upper": -142.7589111328125
     },
     "modulated": {
-      "carrier": -61.37977600097656,
-      "lower": -73.24022674560547,
-      "upper": -73.64450073242188
+      "carrier": -61.37997055053711,
+      "lower": -73.24337768554688,
+      "upper": -73.64806365966797
     },
     "withinNoteAudioRate": true,
     "physicalListening": false
-  }
+  },
+  "solo": [
+    {
+      "kind": "aux",
+      "privateEvents": 8,
+      "silentPrivateOutput": true
+    },
+    {
+      "kind": "audio-mod",
+      "privateEvents": 1,
+      "silentPrivateOutput": true
+    },
+    {
+      "kind": "duck",
+      "privateEvents": 4,
+      "silentPrivateOutput": true
+    }
+  ],
+  "duckLeadingRest": [
+    {
+      "action": "startup",
+      "playingThroughLeadingRest": true,
+      "targetChannels": [2, 3]
+    },
+    {
+      "action": "structural replacement",
+      "playingThroughLeadingRest": true,
+      "targetChannels": [2, 3]
+    },
+    {
+      "action": "replay",
+      "playingThroughLeadingRest": true,
+      "targetChannels": [2, 3]
+    }
+  ]
 }

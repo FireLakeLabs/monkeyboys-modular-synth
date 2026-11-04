@@ -234,3 +234,80 @@ export function inspectPanel(kind) {
   }
   return { kind, jacks: jacks.length, width: rect.width }
 }
+
+export async function verifySoloRouting() {
+  const results = []
+  for (const kind of ['aux', 'audio-mod', 'duck']) {
+    await stop()
+    const patch = setValue(routingFixture(kind), 'mix1', kind === 'duck' ? 'solo2' : 'solo1', 'on')
+    await play(generate(patch), { resetEffects: true })
+    const haps = captured
+      .queryArc(0, 1)
+      .filter((h) => h.hasOnset())
+      .map((h) => h.value)
+    const privateVoices = haps.filter((h) =>
+      kind === 'duck' ? h.duckorbit !== undefined : h.bus !== undefined,
+    )
+    require(privateVoices.length ===
+      (kind === 'aux'
+        ? 8
+        : kind === 'duck'
+          ? 4
+          : 1), `${kind} solo lost private routing: ${privateVoices.length}`)
+    require(privateVoices.every(
+      (h) => h.dry === 0 && h.delay === 0 && h.room === 0,
+    ), `${kind} private routing became audible`)
+    require(haps.some((h) => h.dry !== 0), `${kind} solo lost its destination`)
+    results.push({ kind, privateEvents: privateVoices.length, silentPrivateOutput: true })
+  }
+  await stop()
+  return results
+}
+export async function verifyDuckLeadingRest() {
+  await stop()
+  let patch = setValue(routingFixture('duck'), 'seq2', 'steps', '~ c3')
+  patch = setValue(patch, 'mix1', 'channels2', '3:4')
+  const transport = createPlayback(patch),
+    unsubscribe = transport.subscribe(() => {})
+  const observations = []
+  try {
+    for (const action of ['startup', 'structural replacement', 'replay']) {
+      if (action === 'startup') await transport.play()
+      else if (action === 'replay') {
+        await transport.stop()
+        await transport.play()
+      } else {
+        patch = { ...patch, prelude: 'const keep = s("sine").bus(5)' }
+        await transport.update(patch)
+        // Actual cable topology replacement, not just changing a knob.
+        patch = connect(patch, { module: 'osc1', jack: 'out' }, { module: 'mix1', jack: 'in3' })
+        await transport.update(patch)
+      }
+      await pause(150)
+      require(transport.getSnapshot().status ===
+        'playing', `${action}: leading rest stopped playback: ${transport.getSnapshot().error}`)
+      const controller = web.getSuperdoughAudioController(),
+        routed = []
+      const connectOutput = controller.output.connectToDestination
+      controller.output.connectToDestination = (input, channels) => {
+        if (input === controller.nodes[2]?.output) routed.push(channels)
+        return connectOutput(input, channels)
+      }
+      try {
+        await pause(2200)
+        require(transport.getSnapshot().status ===
+          'playing', `${action}: DUCK failed after target onset: ${transport.getSnapshot().error}`)
+        require(routed.some(
+          (channels) => identity(channels) === identity([2, 3]),
+        ), `${action}: target output pair changed`)
+        observations.push({ action, playingThroughLeadingRest: true, targetChannels: [2, 3] })
+      } finally {
+        controller.output.connectToDestination = connectOutput
+      }
+    }
+  } finally {
+    await transport.stop()
+    unsubscribe()
+  }
+  return observations
+}
