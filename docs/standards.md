@@ -407,3 +407,13 @@ that cannot be omitted safely retain exact CODE; scalar/nullary sound calls use
 one sampler boundary; operator source matching requires equal effective values
 before sharing a saved owner. Compound effect planning compares every active
 catalog rank after #134 integration, preventing hidden LO-FI/COMP repeats.
+
+The #147 nested editor imports only the pinned krill parser into its pure model.
+Its boundary validates AST shapes and checks recovered modifiers/weights against
+the parser. [Deterministic checks](../src/reader/nested-steps.test.ts) separately
+cover exact source, saved identity and real mini/REPL events, including backticks,
+text cells, argument-location filtering, repeated copies and simultaneous note/CV
+literals. The [browser suite](../scripts/nested-steps-browser.mjs) exercises native
+gestures, looks/zoom/geometry, nested activity and live WebAudio PCM; see
+[observations and limits](nested-step-editor-verification.md). Escaped literals
+retain whole text mode; touch and screen-reader behavior are not established.

@@ -1,0 +1,251 @@
+.mini-editor.mini-editor {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+}
+.mini-editor legend {
+  font-size: 12px;
+  padding: 0;
+  max-width: 100%;
+}
+.mini-editor legend button {
+  padding: 0;
+  font-size: 12px;
+}
+.mini-surface {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  isolation: isolate;
+}
+.mini-editor .mini-cell {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--panel-ink, currentColor);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--panel-ink) 8%, #15181d);
+  color: var(--panel-ink);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  overflow: hidden;
+}
+.mini-cell[aria-pressed='true'] {
+  outline: 1px solid currentColor;
+  outline-offset: -2px;
+}
+.mini-cell:focus-visible {
+  outline: 2px solid #f5cc61;
+  outline-offset: 0;
+}
+.mini-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mini-label small {
+  font-size: 12px;
+  opacity: 0.7;
+}
+.mini-cell.mini-group {
+  border-left-width: 2px;
+  border-right-width: 2px;
+}
+.mini-cell.mini-rest {
+}
+.mini-cell.mini-text-cell {
+  border-left: 3px double currentColor;
+  font-style: italic;
+}
+.mini-text-cell::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  border: 3px solid transparent;
+  border-top-color: currentColor;
+}
+.mini-cell.mini-degrade {
+  border-style: dashed;
+}
+.mini-cell.mini-slow {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 3px,
+    #8885 3px,
+    #8885 4px
+  );
+}
+.mini-cell.mini-replicate {
+  border-right-style: dotted;
+}
+.mini-cell.mini-cont-left {
+  border-left-style: dotted;
+}
+.mini-cell.mini-cont-right {
+  border-right-style: dotted;
+}
+.mini-ticks {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  display: flex;
+  justify-content: space-around;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mini-choice {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 9px;
+  pointer-events: none;
+}
+.mini-euclid-dots {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 7px;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.mini-level {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--mini-level);
+  background: currentColor;
+  opacity: 0.2;
+  pointer-events: none;
+}
+.mini-grip {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.mini-drums {
+  margin-left: 25px;
+  width: calc(100% - 25px);
+}
+.mini-drums .mini-cell:not(.mini-rest):not(.mini-group) {
+  background-color: currentColor;
+}
+.mini-drums .mini-label {
+  color: var(--panel-bg, #252b32);
+}
+.mini-row-name {
+  position: absolute;
+  right: calc(100% + 2px);
+  width: 23px;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 18px;
+}
+.mini-text-toggle {
+  font-size: 12px;
+}
+.mini-tray {
+  margin: 0;
+  box-sizing: border-box;
+  position: fixed;
+  width: 240px;
+  max-height: min(90vh, 420px);
+  overflow: auto;
+  z-index: 1000;
+  background: #20272e;
+  color: #f6eedc;
+  border: 1px solid #a99c7c;
+  border-radius: 5px;
+  padding: 8px;
+  box-shadow: 0 4px 15px #0008;
+  font-size: 12px;
+}
+.mini-tray strong {
+  display: block;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  margin-bottom: 6px;
+}
+.mini-tray button,
+.mini-tray input {
+  font-size: 12px;
+}
+.mini-tray input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.mini-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  margin: 6px 0;
+}
+.mini-actions button {
+  text-align: left;
+  padding: 3px;
+}
+.mini-tray kbd {
+  display: inline-block;
+  min-width: 16px;
+}
+.mini-editor small[role='alert'],
+.mini-tray small[role='alert'] {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.playing-grid .mini-surface {
+  outline: 1px solid currentColor;
+}
+
+.look-learner .mini-cell {
+  background-color: #f2eee5;
+}
+.look-learner .mini-drums .mini-label {
+  color: #f2eee5;
+}
+.mini-ghost {
+  opacity: 0.55;
+}
+
+.mini-pager {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  pointer-events: none;
+}
+.mini-pager i {
+  width: 3px;
+  height: 3px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.mini-pager i.now {
+  background: currentColor;
+}

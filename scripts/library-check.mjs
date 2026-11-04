@@ -642,11 +642,19 @@ export async function verifyOnRampUI() {
     assert(sourceBody(source()) === sourceBody(entry.source), `${entry.id}: load rewrote source`)
     const before = source()
     if (entry.id === 'first-sounds') {
-      document.querySelector('[aria-label="bd step 2"]').click()
+      const rest = document.querySelector('[data-module="drums1"] .mini-cell[data-mini-start="3"]')
+      rest.click()
+      await pause(0)
+      rest.click()
     } else if (entry.id === 'first-notes') {
-      const input = document.querySelector('.step-editor [aria-label="Step 1"]')
+      const cell = document.querySelector('.step-editor .mini-cell')
+      cell.click()
+      await pause(0)
+      cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+      await until(() => document.querySelector('[aria-label="Cell value"]'))
+      const input = document.querySelector('[aria-label="Cell value"]')
       type(input, 'd3')
-      input.blur()
+      input.form.requestSubmit()
     } else {
       const label = entry.id === 'first-effects' ? 'CUTOFF' : 'RATE'
       document.querySelector(`[aria-label="Set ${label}"]`).click()

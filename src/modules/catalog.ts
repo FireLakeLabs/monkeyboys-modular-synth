@@ -644,7 +644,14 @@ export const CV_SEQ: ModuleSpec = {
   paletteCall: '.lpf("<400 800 1200>")',
   modSource: 'sequence',
   controls: [
-    { kind: 'steps', id: 'steps', label: 'STEPS', maxSteps: 16, default: ['400', '800', '1200'] },
+    {
+      kind: 'steps',
+      id: 'steps',
+      label: 'STEPS',
+      token: 'number',
+      maxSteps: 16,
+      default: ['400', '800', '1200'],
+    },
   ],
   jacks: [{ id: 'out', label: 'OUT', direction: 'out', signal: 'mod' }],
   strudel: ['mini'],
@@ -1129,7 +1136,9 @@ export const CHORD: ModuleSpec = {
   hp: 12,
   paletteCall: 'chord("…").voicing()',
   source: { method: 'chord', control: 'chords', suffix: ['voicing'] },
-  controls: [{ kind: 'text', id: 'chords', label: 'CHORDS', default: '<Cm7 Fm7 G7>' }],
+  controls: [
+    { kind: 'text', notation: 'chord', id: 'chords', label: 'CHORDS', default: '<Cm7 Fm7 G7>' },
+  ],
   jacks: [{ id: 'out', label: 'OUT', direction: 'out', signal: 'pattern' }],
   strudel: ['chord', 'voicing'],
   orderSensitive: true,

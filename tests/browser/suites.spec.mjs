@@ -19,6 +19,7 @@ for (const script of [
   'output-panel-browser',
   'panels-browser',
   'sound-effects-browser',
+  'nested-steps-browser',
 ]) {
   test(script, async ({ baseURL }, info) => {
     const output = info.outputPath('evidence')
@@ -288,8 +289,9 @@ test('generalized modulation controls and within-note PCM', async ({ page }, inf
     await editor.replaceSource(source)
   })
   const sequence = page.locator('[data-module="cvseq1"]')
-  await sequence.getByRole('textbox', { name: 'Step 1', exact: true }).fill('<0 400>')
-  await sequence.getByRole('textbox', { name: 'Step 1', exact: true }).press('Enter')
+  await sequence.getByRole('button', { name: 'Text mode', exact: true }).click()
+  await sequence.getByRole('textbox', { name: 'Step notation', exact: true }).fill('<0 400>')
+  await sequence.getByRole('textbox', { name: 'Step notation', exact: true }).press('Enter')
   const saved = await page.evaluate(async () => {
     const { editorSource } = await import('/scripts/editor-browser.mjs')
     const { read } = await import('/src/reader/read.ts')
@@ -347,4 +349,56 @@ test('ordered FX chains preserve rack/source and schedule real audio', async ({ 
   await expect(page.locator('.rack-note')).toBeVisible()
   await info.attach('ordered-filters', { body: await page.screenshot(), contentType: 'image/png' })
   await record(info, result)
+})
+
+test('nested cell deletion retains keyboard focus on the surviving neighbor', async ({
+  page,
+}, info) => {
+  await page.evaluate(async () => {
+    const e = await import('/scripts/editor-browser.mjs')
+    e.enableAutoApply()
+    e.replaceSource('note("c3 e3").s("sine")\n')
+  })
+  const last = page.locator('[data-module="seq1"] .mini-cell[aria-label="Step e3"]')
+  await last.focus()
+  await last.press('Backspace')
+  await page.waitForFunction(async () =>
+    (await import('/scripts/editor-browser.mjs')).editorSource().includes('note("c3")'),
+  )
+  await expect(page.locator('[data-module="seq1"] .mini-cell').first()).toBeFocused()
+  await record(info, { neighborFocus: true })
+})
+
+test('simultaneous nested drum rows and chord lanes retain every sounding flash', async ({
+  page,
+}, info) => {
+  await page.evaluate(async () => {
+    const e = await import('/scripts/editor-browser.mjs')
+    e.enableAutoApply()
+    e.replaceSource(
+      'setcpm(30)\n$: s("sine,triangle").gain(.1)\n$: note("c3,e3").s("sine").gain(.1)\n',
+    )
+  })
+  await page.waitForFunction(
+    () =>
+      document.querySelectorAll('.mini-editor').length === 2 &&
+      document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
+  )
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await expect(page.locator('.transport-status')).toHaveText('Playing', { timeout: 30000 })
+  await page.waitForFunction(
+    () =>
+      ['drums1', 'seq1'].every(
+        (id) =>
+          new Set(
+            [...document.querySelectorAll(`[data-module="${id}"] .mini-cell`)]
+              .filter((c) => c.getAnimations().length)
+              .map((c) => c.dataset.miniStart),
+          ).size === 2,
+      ),
+    undefined,
+    { timeout: 5000 },
+  )
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
+  await record(info, { simultaneousRows: 2, simultaneousChordLanes: 2 })
 })

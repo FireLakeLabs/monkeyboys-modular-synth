@@ -69,12 +69,12 @@ sensitivity; chip text wraps instead of truncating. Module widths are unchanged.
 
 Hardware · Pattern · 10 HP
 
-| Control | Kind                    | Range                                                                                | Default                      | Writes                   |
-| ------- | ----------------------- | ------------------------------------------------------------------------------------ | ---------------------------- | ------------------------ |
-| STEPS   | step editor, 1–16 steps | note name (`c2`, `eb2`), scale degree (`0`, `3`), rest, or an alternation (`<7 10>`) | `c2 c2 eb2 g2 c3 bb2 g2 eb2` | the mini-notation string |
-| LEN     | knob                    | 1–16, step 1                                                                         | 8                            | number of steps          |
-| MODE    | switch                  | NOTE · DEGREE                                                                        | NOTE                         | `note(…)` or `n(…)`      |
-| RATE    | knob, detented          | 0.25 · 0.5 · 1 · 2 · 3 · 4                                                           | 1                            | `.fast(x)`, omitted at 1 |
+| Control | Kind               | Range                                                              | Default                      | Writes                   |
+| ------- | ------------------ | ------------------------------------------------------------------ | ---------------------------- | ------------------------ |
+| STEPS   | nested step editor | notes, degrees and mini-notation; legacy arrays contain 1–16 steps | `c2 c2 eb2 g2 c3 bb2 g2 eb2` | the mini-notation string |
+| LEN     | knob               | 1–16, step 1                                                       | 8                            | number of steps          |
+| MODE    | switch             | NOTE · DEGREE                                                      | NOTE                         | `note(…)` or `n(…)`      |
+| RATE    | knob, detented     | 0.25 · 0.5 · 1 · 2 · 3 · 4                                         | 1                            | `.fast(x)`, omitted at 1 |
 
 | Jack | Dir | Signal  |
 | ---- | --- | ------- |
@@ -86,16 +86,23 @@ n("0 3 5 <7 10>")        // DEGREE mode, usually into QUANT
 note("c2 eb2").fast(2)   // RATE 2
 ```
 
-**Reads:** `note("…")` or `n("…")` whose mini-notation is a flat list of up to 16 tokens, rests and flat `<…>` alternations. The same grid is available for rack-built, imported and library patches, including after code edits (#66). Anything richer (`[ ]` sub-divisions, `*`, Euclidean rhythms) opens the SEQ in **text mode**: the string is shown and edited as text, and the module is still a SEQ. An adjacent `.fast(x)` sets RATE. Since #132, `.slow(x)` reads as a separate CLOCK module to retain its cable position.
+**Reads:** `note("…")` / `n("…")`, single-quoted strings and uninterpolated
+backticks, including multiline literals. The shared [nested editor](nested-step-editor.md)
+shows `[ ]`, dot groups, `*n`, `/n`, `!n`, `@n`, `_`, `?`, `|`, `,`, nested
+`<…>`, `(k,n,r)`, sample indices and both rest spellings. Imported notation has
+no 16-token display limit: time wraps onto up to four equal-time lines and dense
+groups collapse/open without changing code. LEN remains 1–16 for legacy array
+values; string notation owns its complete sequence. An adjacent `.fast(x)` sets
+RATE; `.slow(x)` reads as a separate CLOCK to retain cable position.
 
 ### DRUMS — Trigger sequencer
 
 Hardware · Pattern · 14 HP
 
-| Control | Kind         | Range                                  | Default                                                                     | Writes                        |
-| ------- | ------------ | -------------------------------------- | --------------------------------------------------------------------------- | ----------------------------- |
-| GRID    | rows × steps | one sample name per row; 8 or 16 steps | rows `bd`, `sd`, `hh`; 8 steps; bd `x.x.x.x.`, sd `..x...x.`, hh `.x.x.x.x` | the mini-notation string      |
-| DROP    | knob         | 0–0.9, step 0.05                       | 0                                                                           | `.degradeBy(x)`, omitted at 0 |
+| Control | Kind        | Range                                                          | Default                                                                     | Writes                        |
+| ------- | ----------- | -------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------- |
+| GRID    | nested rows | mixed samples, any parsed step count; legacy grids use 8 or 16 | rows `bd`, `sd`, `hh`; 8 steps; bd `x.x.x.x.`, sd `..x...x.`, hh `.x.x.x.x` | the mini-notation string      |
+| DROP    | knob        | 0–0.9, step 0.05                                               | 0                                                                           | `.degradeBy(x)`, omitted at 0 |
 
 | Jack | Dir | Signal  |
 | ---- | --- | ------- |
@@ -107,9 +114,33 @@ s("[bd ~]*4, [~ ~ sd ~]*2, [~ hh]*4")
 
 **Row rules:** an empty row is left out. An all-on row is written `hh*8`. A row that repeats with period _p_ is written `[tokens of first p]*(steps/p)`. Otherwise tokens are joined with spaces, rests as `~`. Rows are joined with `, `. If every row is empty the module writes `s("~")`.
 
-**Reads:** `s("…")` with comma-separated layers. The grid shows flat rows of one sample plus rests, `sample*n`, and `[flat tokens]*n` repetitions, with equal row lengths of 8 or 16 (#66). Other notation stays editable in text mode with a one-line explanation. Euclidean row expansion into lit cells remains a v1 gap; `bd(3,8)` is currently retained as text. Viewing a grid never rewrites its notation.
+**Reads:** quoted or uninterpolated backtick `s("…")` literals. Top-level
+comma layers become rows; each row uses the same nested editor on one line.
+Rows may have different lengths or mixed sample names (`mix`), including nested
+groups, repetition ghosts and computed Euclidean steps. A second click toggles
+a selected leaf/rest. The legacy array writer retains the row rules above;
+nested edits store canonical mini-notation strings rather than flattening timing.
 
-For both SEQ and DRUMS, **Text mode** changes only the view. Enter or blur applies notation; Shift+Enter inserts a newline. Representable notation returns to the grid after applying. **Grid mode** returns from an unchanged text view. Source-owned grid edits replace only the owned notation literal and save full rack identity; surrounding source stays exact. See [verification](literal-edit-verification.md#source-independent-grid-views-66).
+SEQ, DRUMS, CV SEQ and CHORD use one parser-backed component. Cells are proportional
+to cycle share; looks and rack zoom never change their layout or code. `{…}%n`,
+`..` and patterned modifier arguments are text cells with their parsed time share;
+editing one must produce exactly one element. Empty, invalid or escaped literals
+stay in whole-sequence **Text mode**. Templates containing `${…}` remain CODE.
+Text mode is presentation only: Enter/blur applies, Shift+Enter inserts a newline,
+and Grid mode returns without an edit. Notation keys and the floating cell tray
+provide split/merge, modifiers, alternatives, chords, choices, Euclid, rest,
+insert/delete and value editing. Arrows use roving cell focus, Enter opens a group
+or edits a value, Escape backs out. Each gesture is one undo step; dragging a
+weight edge groups its pointer updates into one step.
+
+Imported edits splice literal content at parser ranges and retain delimiters,
+untouched whitespace, comments and saved rack identity. Backslash escapes remain
+in text mode because decoded and source offsets differ. Events match leaf source
+locations, ignoring argument locations and trimming parser whitespace; capture at
+the source preserves copy positions through downstream transforms. Collapsed and
+text cells flash for their contained leaves. Alternatives page with source cycles
+unless selected for editing. Stop/replacement clears activity; reduced motion
+uses a steady editor outline. See [implementation verification](nested-step-editor-verification.md).
 
 ### QUANT — Quantizer
 
@@ -339,12 +370,11 @@ remain invalid; per-voice ENV cannot be a standalone pattern input.
 
 ### CV SEQ — Control value sequencer
 
-Hardware · Modulate · 10 HP. STEPS uses the shared 1–16-cell step editor, with
+Hardware · Modulate · 10 HP. STEPS uses the shared nested editor (legacy arrays hold 1–16 values), with
 default values 400, 800, 1200. OUT is mod. Array steps write a cycle alternation
 such as `.lpf("<400 800 1200>")`; imported numeric mini-notation retains its exact
 timing/spelling. Utility arguments wrap it in `mini('…')`. Values are absolute
-in the destination's units, including semitones at OSC TUNE. Explicit parser arguments use single quotes so the REPL does not parse them twice. Rich notation uses
-text mode; non-numeric tokens are refused. A pattern may produce several events
+in the destination's units, including semitones at OSC TUNE. Explicit parser arguments use single quotes so the REPL does not parse them twice. Rich numeric notation uses drawn or text cells; non-numeric tokens are refused. A pattern may produce several events
 inside one note; this is distinct from audio-rate modulation.
 
 ---
@@ -515,7 +545,7 @@ small fractions; existing sound-setting formatting is unchanged.
 | EUCLID          | 12  | MODE gate / legato; gate. PULSES 0–32, 1; 3. STEPS 1–32, 1; 8. ROTATE −32–32, 1; 2.                        | `.euclidRot(3, 8, 2)` / `.euclidLegatoRot(3, 8, 2)`. Reads `euclidrot` and two-argument `.euclidLegato(3, 8)` (rotation 0). Zero pulses are silent; PULSES must not exceed STEPS.                                                                                                                           |
 | RATCHET         | 10  | REPEATS text; `<1 2 4>`.                                                                                   | `.ply("<1 2 4>")`. The literal is mini-notation, including alternating repeat counts.                                                                                                                                                                                                                       |
 | CHANCE          | 10  | RANDOM unseeded / seeded; seeded. DROP 0–1, 0.05; 0.3. SEED 0–65535, 1; 1.                                 | `.degradeBy(0.3).seed(1)`. DROP 0 omits degradation; unseeded omits seed. Source degradation without seed stays unseeded. Seed 0 is an active seed, not an omission value: it can isolate upstream randomness from an outer seed. Adjacent seed attaches to the gate; repeated seeds remain separate nodes. |
-| CHORD           | 12  | CHORDS text; `<Cm7 Fm7 G7>`.                                                                               | `chord("<Cm7 Fm7 G7>").voicing()`, an atomic source with its required voicing call. Chord names use the pinned tonal library. A bare chord control or other voicing arguments stay CODE.                                                                                                                    |
+| CHORD           | 12  | CHORDS nested editor; `<Cm7 Fm7 G7>`.                                                                      | `chord("<Cm7 Fm7 G7>").voicing()`, an atomic source with its required voicing call. Chord names use the pinned tonal library. A bare chord control or other voicing arguments stay CODE.                                                                                                                    |
 | ARP             | 10  | INDICES text; `0 1 2 1`.                                                                                   | `.arp("0 1 2 1")`, selecting indices from simultaneously stacked notes, including CHORD's voicing.                                                                                                                                                                                                          |
 
 | Alien module     | HP  | Controls: range, step; new-rack default                                                                           | Writes / reads                                                                                                                                                                                                               |

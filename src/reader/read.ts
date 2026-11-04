@@ -241,7 +241,7 @@ function project(
   function literalControls(id: string, arg: Node | undefined): Record<string, Span> {
     if (
       !arg ||
-      !['Literal', 'UnaryExpression', 'BinaryExpression'].includes(arg.type) ||
+      !['Literal', 'TemplateLiteral', 'UnaryExpression', 'BinaryExpression'].includes(arg.type) ||
       /\/[/*]/.test(source.slice(arg.start, arg.end))
     )
       return {}
@@ -393,6 +393,7 @@ function project(
     const jack = getModuleSpec(target.type).jacks.find((j) => j.cvTarget === control)
     if (!jack) return false
     const semantic = { role: 'cv' as const, target: { module: target.id, jack: jack.id, control } }
+    const patterns = new Map<PlacedModule, ModPattern>()
     function insert(pattern: ModPattern): Output {
       if (pattern.type === 'reference') {
         const reference = typeof pattern.values.name === 'string' && resolve(pattern.values.name)
@@ -400,6 +401,7 @@ function project(
         return reference
       }
       const module = add(pattern.type, pattern.values)
+      patterns.set(module, pattern)
       pattern.inputs.forEach((child, index) =>
         wire(insert(child), module, index === 0 ? 'in' : 'in2'),
       )
@@ -421,7 +423,7 @@ function project(
         module,
         scope,
         [index],
-        {},
+        patterns.get(module)?.literal ? { steps: patterns.get(module)?.literal ?? arg } : {},
         { ...semantic, target: { ...semantic.target, ...(path ? { path } : {}) } },
       )
     bind(target, scope, [index])
@@ -610,7 +612,7 @@ function project(
             const containing = calls.findIndex((c) => c.start <= item.start && c.end >= item.end)
             if (containing >= 0) indices = [containing]
           }
-          bind(module, scope, indices)
+          bind(module, scope, indices, item.literal ? { steps: item.literal } : {})
           if (item.type === 'lfo' && item.start === scope.root.start && indices.length)
             bindings.push({
               module: module.id,
