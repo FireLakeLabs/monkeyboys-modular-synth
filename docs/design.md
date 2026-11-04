@@ -355,3 +355,24 @@ and the Connections list name the same kind. The source output remains audio
 when it also feeds MIX. Live jack measurements and every existing look/visibility
 mode continue to own geometry and emphasis. GATES uses filled gate cells in the
 shared nested editor. See [observed routing proof](routing-verification.md).
+
+## Pattern visibility and credits (#139)
+
+The header's compact cycle readout and progress bar follow Strudel's actual
+scheduler and state the BPM-to-`setcpm` relation. Reduced motion freezes these
+visuals. The rack frame shows an expandable **Patch credits** disclosure above
+the toolbar, with source metadata rendered as text; explicit patch names keep
+precedence over the original source title. Credits remain usable in rack focus.
+
+Yellow pattern cables open a static four-cycle punchcard on hover. Alt-click pins
+it; the Connections list's **Probe cable** and **Close probe** offer native button
+operation. An unavailable prefix states **Not probed** with its reason. Probe
+state is local view state and never changes wiring or saved layout. The card
+lists event values and gives each duration mark a value/time title.
+
+SCOPE adds a recessed waveform/spectrum canvas above its catalog controls, at its
+fixed 14 HP width in every Hardware look. Reduced motion draws a static baseline
+and labels it **Motion paused**, without continued sampling. No existing module
+width or cable geometry changes. The local exported reference boards were
+available; the live private canvas was unavailable. See the
+[observed acceptance record](pattern-visibility-verification.md).

@@ -31,9 +31,10 @@ import {
 
 const chainedCode = (text: string): boolean =>
   tokenizer(text, { ecmaVersion: 'latest' }).getToken().type.label === '.'
-const numeric = (value: number, precision = 3): string => String(Number(value.toFixed(precision)))
+const roundedNumber = (value: number, precision = 3): string =>
+  String(Number(value.toFixed(precision)))
 const quote = (value: string): string => JSON.stringify(value)
-function product(factors: readonly string[]): string {
+function product(factors: readonly string[], numeric: (value: number) => string): string {
   const constant = factors
     .filter((factor) => Number.isFinite(Number(factor)))
     .reduce((result, factor) => result * Number(factor), 1)
@@ -117,8 +118,12 @@ export function generate(patch: Patch | SourceDocument): string {
 /** Source ownership for selection, captured while writing this exact revision. */
 export function generateDocument(
   patch: Patch,
-  { nativeEffects = false }: { nativeEffects?: boolean } = {},
+  { nativeEffects = false, prefix }: { nativeEffects?: boolean; prefix?: string } = {},
 ): GeneratedDocument {
+  // A probe represents the accepted source at this point, including imported
+  // fractional values. Formatting them for a new rack-owned file would drift.
+  const numeric = (value: number, precision = 3): string =>
+    prefix ? String(value) : roundedNumber(value, precision)
   const nodes = graph(patch)
   const { inline: inlineEffects } = planEffects(nodes)
   const routing = routingPlan(nodes, patch)
@@ -229,6 +234,7 @@ export function generateDocument(
   }
 
   function namedOutput(node: Node): boolean {
+    if (prefix) return false
     const output = node.spec.jacks.find((j) => j.direction === 'out')
     return (
       output !== undefined &&
@@ -328,7 +334,7 @@ export function generateDocument(
       !node.spec.controls.some((c) => 'call' in c && c.call?.withEnvelope === jack?.id)
     if (smooth || genericEnv) {
       const depth = source.module.values['depth'] ?? item.modulation.default
-      depthScale = product([depthScale, String(item.modulation.audioScale ?? 1)])
+      depthScale = product([depthScale, String(item.modulation.audioScale ?? 1)], numeric)
       if (typeof depth !== 'number' || depth < item.modulation.min || depth > item.modulation.max)
         throw new Error(`Modulation depth outside target range: ${node.module.id}.${item.id}`)
       if (item.modulation.pitch) {
@@ -359,8 +365,8 @@ export function generateDocument(
             ['lpf', 'hpf', 'bpf', 'cutoff', 'hcutoff', 'bandf'].includes(method)
           )
         const config = smooth
-          ? `c: ${quote(method)}, sync: ${String(1 / number(source, 'rate'))}, depthabs: ${product([numeric(downward ? -depth : depth), depthScale])}, dc: ${downward ? -1 : 0}, shape: ${quote(shape ?? 'sine')}, skew: ${numeric(number(source, 'skew'))}`
-          : `c: ${quote(method)}, a: ${numeric(number(source, 'atk'))}, d: ${numeric(number(source, 'dec'))}, s: ${numeric(number(source, 'sus'))}, r: ${numeric(number(source, 'rel'))}, depthabs: ${product([numeric(depth), depthScale])}`
+          ? `c: ${quote(method)}, sync: ${String(1 / number(source, 'rate'))}, depthabs: ${product([numeric(downward ? -depth : depth), depthScale], numeric)}, dc: ${downward ? -1 : 0}, shape: ${quote(shape ?? 'sine')}, skew: ${numeric(number(source, 'skew'))}`
+          : `c: ${quote(method)}, a: ${numeric(number(source, 'atk'))}, d: ${numeric(number(source, 'dec'))}, s: ${numeric(number(source, 'sus'))}, r: ${numeric(number(source, 'rel'))}, depthabs: ${product([numeric(depth), depthScale], numeric)}`
         expression = append(
           expression,
           `.${smooth ? 'lfo' : 'env'}({ ${config} })`,
@@ -585,7 +591,8 @@ export function generateDocument(
         const steps = value(node, 'steps')
         if (!isSteps(steps)) throw new Error('Invalid SWITCH selection')
         const selection = typeof steps === 'string' ? steps : `<${steps.join(' ')}>`
-        let expression = append(blank(), `${quote(selection)}.pick([`, node)
+        const receiver = prefix ? `mini(${quote(selection)})` : quote(selection)
+        let expression = append(blank(), `${receiver}.pick([`, node)
         for (let i = 1; i <= 4; i++) {
           const cable = node.inputs.get(`in${i}`)
           const arms = cable ? emit(requireNode(nodes, cable.from.module)) : []
@@ -768,6 +775,13 @@ export function generateDocument(
     }))
   }
 
+  // Probe callers validate and prune the graph first. No setup, tempo, final
+  // routing or downstream transforms belong to an intermediate cable.
+  if (prefix) {
+    const expressions = emit(requireNode(nodes, prefix))
+    if (expressions.length !== 1) throw new Error('Probe needs one readable chain')
+    return { code: expressions[0]?.text ?? '', ranges: {}, layout, functions }
+  }
   const source = out ? input(out) : undefined
   const audible = source ? emit(source) : []
   const sends = routing.sends.flatMap(({ node, bus }) =>
@@ -872,7 +886,7 @@ export function generateDocument(
   )
   voices.forEach((original, index) => {
     const factors = original.mixers.map((mixer) => mixer.gain)
-    const gain = product(factors)
+    const gain = product(factors, numeric)
     let voice = original
     if (
       gain !== '1' ||
@@ -909,7 +923,10 @@ export function generateDocument(
         voice,
         requireNode(nodes, mixer.module),
         mixer.control,
-        product(factors.filter((_factor, i) => i !== index)),
+        product(
+          factors.filter((_factor, i) => i !== index),
+          numeric,
+        ),
       )
     const channels = original.mixers.findLast((mixer) => mixer.channels !== '1:2')?.channels
     if (channels) {

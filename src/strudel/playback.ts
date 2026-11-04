@@ -27,7 +27,7 @@ function prepare(input: Patch | SourceDocument) {
   if (typeof volume !== 'number') throw new Error('Missing output volume')
   return {
     code,
-    bounceName: patchFilename(patch, 'wav').slice(0, -4),
+    bounceName: patchFilename(patch, 'wav', code).slice(0, -4),
     // Only the generator's trailing block is removed; CODE may contain marker text.
     source: sourceBody(code),
     volume,

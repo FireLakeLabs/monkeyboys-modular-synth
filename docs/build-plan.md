@@ -249,3 +249,12 @@ saved CODE/rack identity and pinned-engine events have separate checks; see the
 and [acceptance record](sound-effects-verification.md). These effects integrate
 with merged #134: native matching paths, inline reordered/repeated stages, and
 source-preserved native imports.
+
+## Pattern visibility (#139)
+
+Readable cable probes, the real scheduler cycle clock, Hardware SCOPE and source
+credits are implemented with separate source/rack/event and real-browser proof.
+The [acceptance record](pattern-visibility-verification.md) documents the safe
+prefix boundary, metadata/name precedence, native analyser limits and motion
+behavior. Routing (#136), cartridges (#137) and sound-crate work (#138) remain
+separate wave-four work items.

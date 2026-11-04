@@ -528,3 +528,69 @@ export async function bounce(
     bounceFailure = undefined
   }
 }
+
+export interface ProbeEvent {
+  begin: number
+  end: number
+  value: unknown
+}
+export type ProbeResult =
+  | { kind: 'events'; begin: number; end: number; events: ProbeEvent[] }
+  | { kind: 'unavailable'; reason: string }
+
+/** A probe never initializes audio, evaluates a document, or touches the REPL.
+ * Its sole executable input is rebuilt from the validated readable prefix. */
+export async function probe(
+  document: import('../reader/types').SourceDocument,
+  cable: string,
+  begin = 0,
+): Promise<ProbeResult> {
+  const { probePlan } = await import('./probePlan')
+  const plan = probePlan(document, cable)
+  if (plan.kind === 'unavailable') return plan
+  if (!Number.isSafeInteger(begin) || begin < 0) throw new RangeError('Invalid probe cycle')
+  const strudel = await import('@strudel/web')
+  strudel.miniAllStrings()
+  // CODE and imported source never reach this constructor. The planner supplies
+  // only catalog-generated literals/calls, with named dependencies expanded.
+  // oxlint-disable-next-line typescript/no-implied-eval
+  const pattern: unknown = new Function(...Object.keys(strudel), `return (${plan.expression})`)(
+    ...Object.values(strudel),
+  )
+  if (!(pattern instanceof strudel.Pattern)) throw new Error('No readable pattern')
+  const events = pattern
+    .queryArc(begin, begin + 4, { _cps: plan.cps })
+    .flatMap((hap): ProbeEvent[] => {
+      if (
+        !hap ||
+        typeof hap !== 'object' ||
+        !('whole' in hap) ||
+        !('value' in hap) ||
+        !('hasOnset' in hap) ||
+        typeof hap.hasOnset !== 'function' ||
+        !hap.hasOnset()
+      )
+        return []
+      const whole = hap.whole
+      if (!whole || typeof whole !== 'object' || !('begin' in whole) || !('end' in whole)) return []
+      return [{ begin: Number(whole.begin), end: Number(whole.end), value: hap.value }]
+    })
+  return { kind: 'events', begin, end: begin + 4, events }
+}
+
+/** Reads the scheduler's cycle clock; observing never initializes the engine. */
+export function getClock(): { cycle: number; cps: number; running: boolean } {
+  const cycle = allowed && initialized ? initialized.getTime() : 0
+  const cps = initialized?.getCps() ?? 0.5
+  return {
+    cycle: Number.isFinite(cycle) ? Math.max(0, cycle) : 0,
+    cps,
+    running: allowed && !bouncing,
+  }
+}
+
+/** Per-voice post-effect analyser sends created by Strudel's analyze control. */
+export function scopeData(id: number, mode: 'waveform' | 'spectrum'): Float32Array | undefined {
+  if (!initialized || !allowed || bouncing) return undefined
+  return initialized.getAnalyzerData(mode === 'spectrum' ? 'frequency' : 'time', id)
+}

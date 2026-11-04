@@ -389,3 +389,35 @@ including private send/trigger voices and named SWITCH inputs. Edited or
 unproven cross-voice calls retain source ownership; do not infer their graph
 from integer bus/orbit addresses. Exact source, complete rack identity and engine
 events are checked independently in the [routing matrix](routing-verification.md).
+
+## Strudel credits and the patch name (#139)
+
+Real line comments of the form `// @title …`, `// @by …`, `// @license …`,
+`// @url …`, and other `@tag value` entries supply rack-frame credits. Tags
+are matched without case, repeated entries remain in source order, and unknown
+tags are displayed too. Strings, templates and block comments are not metadata.
+Values are rendered as text, including URLs; they never become HTML or executable
+links. This is a view of the accepted source, not a second saved credit object.
+
+An explicit nonblank #62 `name` wins over the first nonempty `@title`. Without
+that name, `@title` supplies the header and export/WAV filename fallback; without
+either, the existing **Untitled patch** fallback applies. Merely displaying or
+submitting the same fallback adds no saved name. Renaming writes only the #62
+field and leaves the original title and every other credit visible and unchanged.
+Library names retain their existing precedence. Editing a source title updates
+the fallback after Apply; it never overwrites an explicit name.
+
+Untouched files, source-aware edits, save/export/reopen and recovery retain the
+original comment bytes, whitespace, repetitions and line endings. Explicit
+**Make rack-editable** conversion still relinquishes general formatting, but
+retains exact credit comment tokens and their line endings, without duplicating
+comments already inside retained setup statements or CODE. Standalone credits
+and setup retain their relative order in the generated prelude. A final comment
+without a newline receives a separator before following generated code.
+If regenerating voices would reorder credits embedded in CODE, conversion
+refuses atomically with an explanation, preserving the original title and file.
+No format-version change is needed. SCOPE's `mode` is saved with its other
+module values; its catalog `presentationOnly` flag permits metadata-only edits
+even on imported source. TAP retains the ordinary executable call binding.
+
+See [independent source, saved-rack, event and browser proof](pattern-visibility-verification.md).

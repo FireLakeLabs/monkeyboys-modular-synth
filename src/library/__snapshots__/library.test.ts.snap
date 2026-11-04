@@ -322,6 +322,13 @@ exports[`built-in patch library > exercise-samplehold: preserves exact source an
 }
 `;
 
+exports[`built-in patch library > exercise-scope: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "53e6fe5e5c74d780fcdf29b438757ef00c3bd6fdf5307bdfc50d246e9e320d0e",
+  "projection": "8e7d6fd4e2009f10a4cc622aa6e47060530d676106392da47bb769d39b4881be",
+}
+`;
+
 exports[`built-in patch library > exercise-seq: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",

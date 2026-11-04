@@ -45,6 +45,7 @@ describe('module catalog', () => {
         'phaser',
         'pan',
         'shift',
+        'scope',
         'clock',
         'euclid',
         'ratchet',

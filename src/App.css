@@ -729,3 +729,34 @@
   flex-direction: column;
   flex: 1;
 }
+
+.cycle-clock {
+  display: grid;
+  gap: 3px;
+  min-width: 170px;
+  font:
+    12px 'JetBrains Mono',
+    monospace;
+}
+.cycle-clock small {
+  font-size: 10px;
+  color: #9aa0a8;
+}
+.cycle-clock progress {
+  width: 100%;
+  height: 4px;
+  accent-color: #e6d35f;
+}
+
+@media (max-width: 1150px) {
+  .topbar {
+    gap: 8px;
+  }
+  .patch-name {
+    width: 130px;
+  }
+  .cycle-clock {
+    min-width: 150px;
+    width: 150px;
+  }
+}

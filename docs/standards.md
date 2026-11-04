@@ -439,3 +439,20 @@ output-pair retention. Both failed before their fixes. Private voices retain
 solo participation with silent dry/wet output; the pinned controller starts a
 missing target orbit's envelope and connects its output only when the target
 voice supplies its channel pair. Source and both bundles are hash-verified.
+
+The #139 probe boundary is enforced by planner/real-Pattern regressions: upstream
+CODE (including callbacks), opaque setup, stale ownership and non-pattern cables
+never reach evaluation. Separate tests prove prefix onset values/times, exact
+credit source bytes and full reopened SCOPE rack identity. Engine-boundary tests
+cover noninitializing clock/analyser reads and stopped taps. The separate
+`scripts/pattern-visibility-browser.mjs` proves pointer/Alt-click interaction,
+zero-context silent probing, real per-voice PCM, credits and reduced-motion
+interval cancellation. This runtime proof is outside the deterministic CI gate;
+see [its acceptance record](pattern-visibility-verification.md).
+
+The #139 integration browser checks also exercise the clock/probe/analyser
+exports on recording engine doubles. A missing clock export reproduced a blank
+workspace; the corrected doubles pass the existing application/history/error
+suites. Pinned-OUT comparisons await fonts and stable reference geometry before
+scrolling. Delayed-font reproduction failed before that prerequisite and passed
+afterwards, without weakening the pinning or cable-position assertions.

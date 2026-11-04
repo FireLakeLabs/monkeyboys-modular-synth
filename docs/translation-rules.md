@@ -693,3 +693,41 @@ independently projected rack. GATES and four-reference SWITCH forms also have
 source-aware adapters; unsupported or ambiguous forms retain CODE. Safe canonical
 rack edits regenerate the complete graph; unsafe edits to source-owned routing
 use the existing refusal/explicit conversion flow.
+
+## Readable cable probes (#139)
+
+Hover a yellow pattern cable for a static punchcard, or Alt-click to pin it.
+Connections → select a cable → **Probe cable** provides a keyboard-accessible
+route; **Close probe** dismisses it. The query covers four whole cycles starting
+at the current scheduler cycle, or cycle zero while stopped. It shows onset
+positions/durations and event values; the first 32 distinct values get rows.
+It is a snapshot, with no moving playhead or cable animation.
+
+Only a validated readable upstream graph supplies executable probe input. The
+planner traverses every upstream dependency, including function RETURN bodies
+and CV, refuses CODE, invalid/stale ownership and non-pattern cables, removes all
+unrelated modules/output names/setup, then uses the production generator to
+expand that precise chain prefix. Probe numeric formatting retains full imported
+precision, including fractional SEQ rates; it does not apply the three-decimal
+formatting of a new rack-owned file. It does not slice/evaluate imported JavaScript
+or use the complete final voice. Later transforms are excluded, and a readable
+prefix before downstream CODE can still be queried. Shared readable declarations
+expand from their graph rather than being looked up in imported JS globals.
+
+Opaque setup/declarations/tempo and unclassified statements conservatively
+produce **Not probed**. A comment-only conversion prelude is safe. Proven bay-owned cartridge setup is
+ignored as setup data, never executed by the probe; source-owned or computed
+`samples()` calls still refuse probing. Parsing is not
+sandboxing, and the normal explicit Play action still has the existing arbitrary
+JavaScript boundary. No probe calls REPL `evaluate`, initializes AudioContext,
+starts scheduling, loads sample manifests or writes source/rack state. The engine
+constructs only the fresh generator-owned expression and uses the real pinned
+Pattern `queryArc` with the accepted BPM's cycles-per-second. Unsupported or
+incomplete prefixes explain why they were not probed instead of inventing events.
+
+SCOPE uses native `.analyze(id)` events in the voice chain; waveform/spectrum is
+presentation state. Its analyser access and the actual scheduler cycle clock stay
+behind `src/strudel/engine.ts`. The header spells out `setcpm(BPM / 4)` and four
+beats per cycle. Reduced motion freezes the clock readout/progress and SCOPE;
+changing the preference cancels/resumes their display intervals. Probe cards and
+credits have no animation. See [verification](pattern-visibility-verification.md).

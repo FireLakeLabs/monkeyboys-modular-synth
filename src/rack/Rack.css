@@ -765,3 +765,67 @@ select:focus-visible {
   font: bold 14px/16px sans-serif;
   border-radius: 50%;
 }
+
+.cable-probe,
+.patch-credits {
+  padding: 8px 12px;
+  background: #15171b;
+  color: #e4e6ea;
+  border: 1px solid #3b3f46;
+  font-size: 12px;
+}
+.cable-probe {
+  position: fixed;
+  z-index: 30;
+  right: 16px;
+  bottom: 16px;
+  width: min(430px, calc(100vw - 32px));
+  box-sizing: border-box;
+  box-shadow: 0 8px 32px #000a;
+  max-height: 260px;
+  overflow: auto;
+}
+.cable-probe > button {
+  float: right;
+}
+.cable-probe svg {
+  width: 100%;
+  max-height: 160px;
+}
+.cable-probe ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+.patch-credits summary {
+  cursor: pointer;
+}
+.patch-credits dl {
+  margin: 6px 0;
+}
+.patch-credits dl > div {
+  display: flex;
+  gap: 12px;
+}
+.patch-credits dt {
+  min-width: 65px;
+  color: #e6d35f;
+}
+.patch-credits dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.scope-display {
+  padding: 6px;
+  background: #101113;
+  color: #8cf5da;
+}
+.scope-display canvas {
+  width: 100%;
+  height: 90px;
+  display: block;
+}
+.scope-display small {
+  font-size: 11px;
+}

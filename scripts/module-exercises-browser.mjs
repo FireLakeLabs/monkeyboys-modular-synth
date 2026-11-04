@@ -55,6 +55,7 @@ const actions = {
   pan: ['knob', 'PAN', 1, 'pan'],
   shift: ['knob', 'SHIFT', 0, 'shift'],
   mix: ['knob', 'CH 1', 0, 'ch1'],
+  scope: ['knob', 'TAP', 2, 'id'],
   out: ['knob', 'BPM', 90, 'bpm'],
   iter: ['knob', 'STEPS', 1, 'steps'],
   jux: ['switch', 'RIGHT', 'fast2', 'right'],

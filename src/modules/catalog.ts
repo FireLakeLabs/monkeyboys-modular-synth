@@ -1969,6 +1969,42 @@ export const DUCK: ModuleSpec = {
   orderSensitive: true,
 }
 
+export const SCOPE: ModuleSpec = {
+  id: 'scope',
+  name: 'SCOPE',
+  title: 'Voice analyser',
+  family: 'hardware',
+  category: 'util',
+  hp: 14,
+  paletteCall: '.analyze(1)',
+  controls: [
+    {
+      kind: 'knob',
+      id: 'id',
+      label: 'TAP',
+      min: 1,
+      max: 32,
+      step: 1,
+      default: 1,
+      call: { method: 'analyze', argument: { kind: 'number' } },
+    },
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'VIEW',
+      presentationOnly: true,
+      options: opts('waveform', 'spectrum'),
+      default: 'waveform',
+    },
+  ],
+  jacks: [
+    { id: 'in', label: 'IN', direction: 'in', signal: 'audio' },
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
+  ],
+  strudel: ['analyze'],
+  orderSensitive: false,
+}
+
 /** Every shipped module, in library order. */
 export const CATALOG: readonly ModuleSpec[] = [
   SEQ,
@@ -2008,6 +2044,7 @@ export const CATALOG: readonly ModuleSpec[] = [
   PAN,
   SHIFT,
   MIX,
+  SCOPE,
   OUT,
   ITER,
   JUX,
