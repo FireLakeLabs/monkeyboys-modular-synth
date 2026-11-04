@@ -34,6 +34,10 @@ Where a Strudel function has a close hardware cousin (`.ply()` ≈ a ratchet, `.
 - Each look is defined by **layout rules** applied to a module’s control list, not by hand-drawing every module in every look.
 - Switch looks from the module’s **right-click menu** (long-press on touch). The menu also offers “use for all modules in this family”.
 - Category colours and cable colours stay constant across looks.
+- **Instrument category bands (#58/#85, decided 3 November 2026):** new
+  Hardware modules keep Instrument as their default look. Its header band uses
+  the module's category colour with dark, contrasting text; Powder coat stays
+  available. Disconnected modules use a darker band and readable light text.
 
 ## Colours
 

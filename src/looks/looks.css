@@ -1,6 +1,32 @@
 /* Every panel uses the same catalog width and control tree. */
 .module-panel {
   --panel-ink: #ecece9;
+  isolation: isolate;
+}
+.look-instrument .module-header {
+  background: var(--category);
+  color: #181b20;
+}
+.look-instrument .module-header small {
+  color: inherit;
+}
+/* Dim the surface, not the text or controls. The isolated layer stays above
+   the panel paint and below its children, including on the light looks. */
+.module-panel.inactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #090a0c40;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.module-panel.inactive {
+  box-shadow: none;
+}
+.look-instrument.inactive .module-header {
+  background: color-mix(in srgb, var(--category) 30%, #15171b);
+  color: #e4e6ea;
 }
 .cat-pattern {
   --paint: #7a6512;
@@ -96,6 +122,9 @@
   font-family: 'Fredoka', sans-serif;
   text-transform: lowercase;
   letter-spacing: 0;
+}
+.look-learner.inactive .module-header small {
+  opacity: 1;
 }
 .look-learner .knob {
   background: var(--category);
@@ -237,6 +266,26 @@
 }
 .look-bare .patch-box {
   border-color: #b99e3b;
+}
+/* Signal marks stay independent of a look's outer jack geometry. */
+.jack::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid #f4f4f0;
+  background: #12161a;
+  pointer-events: none;
+}
+.jack.signal-audio::after,
+.jack.signal-any::after {
+  border-radius: 50%;
+}
+.jack.signal-mod::after {
+  inset: 3px;
+  transform: rotate(45deg);
+}
+.jack.signal-any::after {
+  border-style: dotted;
 }
 .module-menu {
   margin: 0;

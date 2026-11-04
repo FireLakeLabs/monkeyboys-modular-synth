@@ -71,7 +71,9 @@ export function inspectPanels(look) {
   ]
   for (const panel of panels) {
     const id = panel.dataset.module
-    const spec = CATALOG.find((spec) => panel.getAttribute('aria-label') === `${spec.name} ${id}`)
+    const spec = CATALOG.find((spec) =>
+      panel.getAttribute('aria-label').startsWith(`${spec.name} ${id}`),
+    )
     assert(spec && panel.offsetWidth === spec.hp * HP, `${id}: width differs from catalog`)
     assert(contrast(panel.querySelector('.module-id')) >= 4.5, `${id}: low ID contrast`)
     const controls = panel.querySelector('.module-controls')

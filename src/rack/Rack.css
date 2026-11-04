@@ -355,8 +355,9 @@
   stroke: #30343b;
   stroke-width: 2;
 }
-.warning-cable path:not(.cable-shadow) {
-  stroke-dasharray: 12 3;
+.warning-cable .plug-collar {
+  stroke: #fff;
+  stroke-width: 3;
 }
 .module-id {
   position: absolute;
@@ -385,6 +386,20 @@
   stroke-width: 8;
   pointer-events: none;
 }
+.cable.signal-pattern path:not(.cable-shadow),
+.provisional.signal-pattern {
+  stroke-dasharray: 1 8;
+}
+.cable.signal-mod path:not(.cable-shadow),
+.provisional.signal-mod {
+  stroke-dasharray: 10 6;
+}
+.cable.faded {
+  opacity: 0.08;
+}
+.cable.faded path {
+  pointer-events: none;
+}
 .selected-cable path {
   stroke-width: 7;
   filter: drop-shadow(0 0 3px white);
@@ -393,7 +408,7 @@
   fill: none;
   stroke: var(--signal);
   stroke-width: 4;
-  stroke-dasharray: 7 5;
+  opacity: 0.75;
 }
 .placement-ghost {
   position: absolute;
