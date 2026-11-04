@@ -1,0 +1,2098 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MonkeyBoy’s nested step editor storyboard</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #101113;
+        --panel: #15171b;
+        --border: #3b3f46;
+        --text: #e4e6ea;
+        --muted: #afb5bf;
+        --pattern: #e6d35f;
+        --audio: #f4a462;
+        --mod: #7db9f6;
+        --select: #f293ba;
+        --flash: #fff3a0;
+        --changed: #1f5c3a;
+        font-family: Barlow, system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+      }
+      header.top {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: baseline;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand {
+        color: var(--audio);
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      .sub,
+      .note {
+        color: var(--muted);
+      }
+      .note {
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 14px;
+        align-items: end;
+        padding: 12px 16px;
+        background: #1c1f24;
+        border-bottom: 1px solid var(--border);
+      }
+      .controls label {
+        display: grid;
+        gap: 3px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+      .controls select,
+      .controls button,
+      .tray button,
+      .source-actions button {
+        color: var(--text);
+        background: #24272c;
+        border: 1px solid #626874;
+        border-radius: 5px;
+        padding: 6px 9px;
+      }
+      .controls button[aria-pressed='true'] {
+        background: #4a3f12;
+        border-color: var(--pattern);
+      }
+      :is(button, select, input, [tabindex]):focus-visible {
+        outline: 2px solid var(--mod);
+        outline-offset: 2px;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+      }
+      .stage {
+        min-width: 0;
+        padding: 16px;
+      }
+      .side {
+        min-width: 0;
+        padding: 16px;
+        background: var(--panel);
+        border-left: 1px solid var(--border);
+      }
+      @media (max-width: 960px) {
+        main {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .side {
+          border-left: 0;
+          border-top: 1px solid var(--border);
+        }
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      h3 {
+        margin: 14px 0 6px;
+        font-size: 14px;
+      }
+      .rack {
+        display: flex;
+        gap: 4px;
+        align-items: flex-start;
+        overflow: auto;
+        padding: 14px 10px;
+        background: #0a0b0d;
+        border-top: 7px solid #3b3f46;
+        border-bottom: 7px solid #3b3f46;
+      }
+      .scaled {
+        display: flex;
+        gap: 4px;
+        align-items: flex-start;
+        flex: none;
+      }
+      .tray-slot {
+        flex: none;
+        width: 188px;
+        margin-left: 10px;
+      }
+      .tray {
+        padding: 8px;
+        background: #1c1f24;
+        border: 1px solid #626874;
+        border-radius: 6px;
+        box-shadow: 0 6px 16px #000a;
+      }
+      .tray h3 {
+        margin: 0 0 6px;
+        font: 12px/1.3 'JetBrains Mono', monospace;
+        overflow-wrap: anywhere;
+      }
+      .tray-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+      }
+      .tray button {
+        display: flex;
+        justify-content: space-between;
+        gap: 6px;
+        padding: 3px 6px;
+        font-size: 12px;
+      }
+      .tray button:disabled {
+        opacity: 0.4;
+      }
+      .tray kbd {
+        font: 11px 'JetBrains Mono', monospace;
+        color: var(--pattern);
+      }
+      .tray .inline-edit {
+        width: 100%;
+        margin-bottom: 6px;
+        padding: 3px;
+        color: var(--pattern);
+        background: #11151a;
+        border: 1px solid #737980;
+        font: 12px 'JetBrains Mono', monospace;
+      }
+      .tray .refusal {
+        margin: 0 0 6px;
+        color: #ffb4a8;
+        font-size: 12px;
+      }
+
+      /* Panels use real catalog widths: 10 HP = 120 px, 14 HP = 168 px, 390 px tall. */
+      .module {
+        --ink: #181b20;
+        --band: #e6d35f;
+        --band-ink: #181b20;
+        --field: #11151a;
+        --field-ink: #e6d35f;
+        --line: #737980;
+        flex: none;
+        height: 390px;
+        border: 2px solid #777d84;
+        border-radius: 4px;
+        color: var(--ink);
+        background:
+          repeating-linear-gradient(0deg, #ffffff08 0 1px, #00000008 1px 2px),
+          linear-gradient(100deg, #c0c4c8, #e2e4e7 45%, #aeb4bb);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 3px 2px 5px #000b;
+      }
+      .module.seq {
+        width: 120px;
+      }
+      .module.drums {
+        width: 168px;
+      }
+      .look-powder {
+        --ink: #fff7e8;
+        --band: transparent;
+        --band-ink: #fff7e8;
+        --field: #090c11;
+        --field-ink: #fff7e8;
+        --line: #d7c98a;
+        background:
+          repeating-linear-gradient(90deg, #ffffff08 0 1px, transparent 1px 3px), #7a6512;
+        border-color: #e6d35f;
+      }
+      .look-vintage {
+        --ink: #eae7dc;
+        --band: transparent;
+        --band-ink: #eae7dc;
+        --field: #090c11;
+        --field-ink: #eae7dc;
+        --line: #777;
+        background: repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 3px), #19191c;
+        border-color: #424247;
+      }
+      .look-learner {
+        --ink: #25272c;
+        --band: transparent;
+        --band-ink: #25272c;
+        --field: #fffdf7;
+        --field-ink: #222;
+        --line: #25272c;
+        background: #f2eee5;
+        border: 2px solid #25272c;
+        border-radius: 14px;
+      }
+      .look-crystal {
+        --ink: #8cf5da;
+        --band: transparent;
+        --band-ink: #8cf5da;
+        --field: #090c11;
+        --field-ink: #8cf5da;
+        --line: #5a9f91;
+        background:
+          linear-gradient(35deg, transparent 49.5%, #8cf5da22 50%, transparent 50.5%),
+          linear-gradient(145deg, #285650, #09171a 70%);
+        border-color: #5a9f91;
+      }
+      .look-terminal {
+        --ink: #8cff9c;
+        --band: transparent;
+        --band-ink: #8cff9c;
+        --field: #061109;
+        --field-ink: #8cff9c;
+        --line: #31583a;
+        background: repeating-linear-gradient(0deg, #4cff6708 0 1px, transparent 1px 3px), #061109;
+        border: 2px solid #272b2a;
+        border-radius: 14px;
+      }
+      .module-header {
+        padding: 5px 7px;
+        background: var(--band);
+        color: var(--band-ink);
+        font: 700 15px 'Barlow Condensed', Barlow, sans-serif;
+        letter-spacing: 1px;
+      }
+      .module-body {
+        padding: 6px 6px 0;
+        min-height: 0;
+      }
+      .legend {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-height: 16px;
+        margin-bottom: 3px;
+        font: 11px/14px 'Barlow Condensed', Barlow, sans-serif;
+        letter-spacing: 0.5px;
+      }
+      .legend button {
+        padding: 0 4px;
+        color: inherit;
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        font: 11px/13px 'JetBrains Mono', monospace;
+        white-space: nowrap;
+      }
+      .legend .crumb {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font: 11px/14px 'JetBrains Mono', monospace;
+      }
+      .panel-fill {
+        margin: 10px 0 0;
+        padding-top: 6px;
+        border-top: 1px dashed var(--line);
+        font-size: 11px;
+        opacity: 0.8;
+      }
+
+      /* The shared editor surface. */
+      .surface {
+        position: relative;
+      }
+      .surface.playing-outline {
+        outline: 2px solid var(--flash);
+        outline-offset: 1px;
+      }
+      .cell {
+        position: absolute;
+        display: block;
+        overflow: hidden;
+        color: var(--field-ink);
+        background: var(--field);
+        border: 1px solid var(--line);
+        font: 12px/14px 'JetBrains Mono', monospace;
+        text-align: center;
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+      }
+      .cell.group {
+        background: transparent;
+        border-style: solid;
+        border-width: 1px 2px;
+        overflow: visible;
+      }
+      .cell.rest {
+        background: transparent;
+        border-color: color-mix(in srgb, var(--line) 55%, transparent);
+      }
+      .cell.rest::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 3px;
+        height: 3px;
+        margin: -1.5px;
+        border-radius: 50%;
+        background: var(--line);
+      }
+      .cell.maybe {
+        border-style: dashed;
+        border-width: 2px;
+      }
+      .cell.text-cell {
+        border-left: 3px double var(--field-ink);
+        padding: 0 7px 0 1px;
+        font-style: italic;
+        text-align: left;
+        text-overflow: clip;
+      }
+      .cell.text-cell::after {
+        content: '';
+        position: absolute;
+        right: -1px;
+        top: -1px;
+        border-style: solid;
+        border-width: 0 7px 7px 0;
+        border-color: transparent var(--field-ink) transparent transparent;
+      }
+      .cell.cont-left {
+        border-left-style: dotted;
+      }
+      .cell.cont-right {
+        border-right-style: dotted;
+      }
+      .cell.linked {
+        border-right-style: dotted;
+      }
+      .cell.ghost {
+        opacity: 0.45;
+        pointer-events: none;
+      }
+      .cell.on {
+        color: #181b20;
+        background: #e6d35f;
+      }
+      .cell.selected {
+        z-index: 3;
+        outline: 2px solid var(--select);
+        outline-offset: -1px;
+      }
+      .cell.flash {
+        box-shadow: inset 0 0 0 2px var(--flash);
+        filter: brightness(1.6);
+      }
+      .ticks,
+      .euclid {
+        position: absolute;
+        left: 2px;
+        right: 2px;
+        bottom: 1px;
+        display: flex;
+        justify-content: space-around;
+        pointer-events: none;
+      }
+      .pager {
+        position: absolute;
+        top: 1px;
+        right: 1px;
+        bottom: 1px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1px;
+        pointer-events: none;
+      }
+      .ticks i {
+        width: 1px;
+        height: 3px;
+        background: var(--field-ink);
+      }
+      .copy {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        overflow: hidden;
+        border-left: 1px dotted var(--line);
+      }
+      .copy:first-child {
+        border-left: 0;
+      }
+      .copy.lit {
+        background: #e6d35f;
+      }
+      .cell.on .ticks i {
+        background: #181b20;
+      }
+      .pager i,
+      .euclid i {
+        width: 3px;
+        height: 3px;
+        border: 1px solid var(--field-ink);
+        border-radius: 50%;
+      }
+      .pager i.now,
+      .euclid i.hit {
+        background: var(--field-ink);
+      }
+      .slow-mark {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          135deg,
+          transparent 0 4px,
+          color-mix(in srgb, var(--field-ink) 28%, transparent) 4px 5px
+        );
+      }
+      .choice-mark {
+        position: absolute;
+        left: 1px;
+        top: 1px;
+        width: 5px;
+        height: 5px;
+        pointer-events: none;
+        background: var(--field-ink);
+        clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+      }
+      .level {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        background: color-mix(in srgb, var(--field-ink) 30%, transparent);
+      }
+      .grip {
+        position: absolute;
+        top: 0;
+        right: -2px;
+        bottom: 0;
+        width: 6px;
+        z-index: 4;
+        cursor: ew-resize;
+      }
+      .sub-index {
+        font-size: 11px;
+        opacity: 0.75;
+      }
+      .drum-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 6px 0;
+      }
+      .drum-name {
+        flex: none;
+        width: 35px;
+        height: 20px;
+        overflow: hidden;
+        padding: 0 2px;
+        color: var(--field-ink);
+        background: var(--field);
+        border: 1px solid var(--line);
+        font: 12px/18px 'JetBrains Mono', monospace;
+        white-space: nowrap;
+      }
+
+      .code {
+        margin: 0;
+        padding: 10px;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+        background: #0d0f12;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        font: 13px/1.5 'JetBrains Mono', monospace;
+      }
+      .code mark {
+        color: inherit;
+        background: #5a2a44;
+      }
+      .code mark.changed {
+        background: var(--changed);
+      }
+      .readout {
+        min-height: 40px;
+        margin: 6px 0 0;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .source-actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      dl.keys {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 2px 10px;
+        margin: 0;
+        font-size: 13px;
+      }
+      dl.keys dt {
+        color: var(--pattern);
+        font-family: 'JetBrains Mono', monospace;
+      }
+      dl.keys dd {
+        margin: 0;
+      }
+      section.gallery {
+        padding: 16px;
+        border-top: 1px solid var(--border);
+      }
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+        gap: 12px;
+      }
+      .specimen {
+        min-width: 0;
+        padding: 8px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+      }
+      .specimen h3 {
+        margin: 0 0 3px;
+      }
+      .specimen code {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font: 12px 'JetBrains Mono', monospace;
+        overflow-wrap: anywhere;
+      }
+      .specimen-looks {
+        display: flex;
+        gap: 6px;
+      }
+      .swatch {
+        flex: none;
+        height: auto;
+        padding: 6px 8px 8px;
+      }
+      .swatch .legend {
+        display: none;
+      }
+      .swatch.drum-swatch {
+        padding: 2px 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <span class="brand">MONKEYBOY’S</span>
+      <strong>Nested step editor storyboard</strong>
+      <span class="sub">Design study for issue #146</span>
+    </header>
+    <p class="note" style="margin: 0; padding: 8px 16px">
+      Panels use the measured sizes: SEQ 10 HP (120 px) with a 104 × 73 px editor, DRUMS 14 HP (168
+      px) with 109 × 18 px rows. This page simulates only. Its small parser, playhead and randomness
+      stand in for <code>@strudel/mini</code> and the engine; it does not play sound or write a
+      patch. See <a href="../nested-step-editor.md" style="color: var(--mod)">the study</a>
+      for the real parser evidence.
+    </p>
+    <div class="controls">
+      <label
+        >Scenario
+        <select id="scenario"></select
+      ></label>
+      <label
+        >Time layout
+        <select id="layout">
+          <option value="lines">C · Equal-time lines + focus (chosen)</option>
+          <option value="strip">A · One proportional strip</option>
+          <option value="uniform">B · Uniform cells + markers</option>
+        </select>
+      </label>
+      <label
+        >Look
+        <select id="look">
+          <option value="instrument">Instrument</option>
+          <option value="powder">Powder coat</option>
+          <option value="vintage">Vintage lab</option>
+          <option value="learner">Learner</option>
+          <option value="crystal">Crystal (Alien reading only)</option>
+          <option value="terminal">Terminal (Cyber reading only)</option>
+        </select>
+      </label>
+      <label
+        >Zoom
+        <select id="zoom">
+          <option value="0.75">75%</option>
+          <option value="1" selected>100%</option>
+          <option value="1.25">125%</option>
+          <option value="1.5">150%</option>
+        </select>
+      </label>
+      <button id="play" type="button" aria-pressed="false">Simulate playhead</button>
+      <button id="reduced" type="button" aria-pressed="false">Reduced motion</button>
+    </div>
+    <main>
+      <div class="stage">
+        <div class="rack">
+          <div class="scaled" id="panels"></div>
+          <div class="tray-slot" id="tray-slot"></div>
+        </div>
+        <p class="note" id="scenario-note"></p>
+      </div>
+      <aside class="side">
+        <h2>Source</h2>
+        <pre class="code" id="code"></pre>
+        <p class="readout" id="splice" role="status" aria-live="polite"></p>
+        <div class="source-actions">
+          <button id="undo" type="button">Undo</button>
+          <button id="reset" type="button">Reset scenario</button>
+        </div>
+        <h3>Keyboard</h3>
+        <dl class="keys">
+          <dt>Tab</dt>
+          <dd>Enter or leave the editor: one stop per editor</dd>
+          <dt>← →</dt>
+          <dd>Previous or next cell at this level</dd>
+          <dt>↑ ↓</dt>
+          <dd>Line above or below, or the next lane</dd>
+          <dt>Enter</dt>
+          <dd>Open a group, or edit a note or text cell</dd>
+          <dt>Esc</dt>
+          <dd>Back out one level; cancels an edit</dd>
+          <dt>[ ]</dt>
+          <dd>Split the step, or merge a group</dd>
+          <dt>* / ! @</dt>
+          <dd>Add that modifier; press again to step its value</dd>
+          <dt>?</dt>
+          <dd>Toggle maybe</dd>
+          <dt>&lt; , |</dt>
+          <dd>Add an alternative, chord note or random choice</dd>
+          <dt>~</dt>
+          <dd>Toggle rest</dd>
+          <dt>+</dt>
+          <dd>Add a step after this cell</dd>
+          <dt>⌫</dt>
+          <dd>Remove the last modifier, then the cell</dd>
+        </dl>
+      </aside>
+    </main>
+    <section class="gallery">
+      <h2>Every construct, side by side</h2>
+      <p class="note">
+        Each specimen shows the SEQ editor and a DRUMS row at real width, in Instrument and Vintage
+        lab, using chosen layout C.
+      </p>
+      <div class="gallery-grid" id="gallery"></div>
+    </section>
+
+    <script>
+      'use strict'
+
+      // ---- Display stand-in for @strudel/mini. The real editor must use krill's AST. ----
+      const WS = /[ \n\r\t ]/
+      const WORD = /[\p{L}\p{Nl}0-9~\-#.^_]/u
+      const NUMBER = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][-+]?\d+)?/
+
+      function parseMini(text) {
+        let i = 0
+        const skip = () => {
+          while (i < text.length && WS.test(text[i])) i++
+        }
+        const fail = (message) => {
+          throw new Error(`${message} at ${i}`)
+        }
+        const isDot = () => {
+          if (text[i] !== '.') return false
+          return !text[i + 1] || WS.test(text[i + 1])
+        }
+        function word() {
+          const start = i
+          while (i < text.length && WORD.test(text[i])) {
+            if (text[i] === '.' && text[i + 1] === '.' && i > start) break
+            i++
+          }
+          if (i === start) fail('Expected a step')
+          return text.slice(start, i)
+        }
+        function argument() {
+          skip()
+          const start = i
+          if ('[<{'.includes(text[i] ?? ' ')) slice()
+          else word()
+          return text.slice(start, i)
+        }
+        function mods() {
+          const found = []
+          for (;;) {
+            const before = i
+            skip()
+            const start = i
+            const c = text[i]
+            if (c === '@' || c === '!' || c === '?' || c === '_') {
+              i++
+              const n = NUMBER.exec(text.slice(i))?.[0] ?? ''
+              i += n.length
+              const kind = { '@': 'weight', '!': 'replicate', '?': 'degrade', _: 'elongate' }[c]
+              found.push({ kind, span: { start, end: i }, arg: n || undefined })
+            } else if (c === '*' || c === '/' || c === ':' || c === '%') {
+              i++
+              const arg = argument()
+              const kind = { '*': 'fast', '/': 'slow', ':': 'index', '%': 'steps' }[c]
+              found.push({ kind, span: { start, end: i }, arg })
+            } else if (c === '.' && text[i + 1] === '.') {
+              i += 2
+              const arg = argument()
+              found.push({ kind: 'range', span: { start, end: i }, arg })
+            } else if (c === '(') {
+              const open = i
+              let depth = 0
+              do {
+                if (text[i] === '(') depth++
+                if (text[i] === ')') depth--
+                i++
+                if (i > text.length) fail('Unclosed euclid')
+              } while (depth)
+              const arg = text.slice(open + 1, i - 1)
+              found.push({ kind: 'euclid', span: { start, end: i }, arg })
+            } else {
+              i = before
+              return found
+            }
+          }
+        }
+        function layers(close) {
+          const out = [sequence(close)]
+          let join = 'single'
+          for (;;) {
+            skip()
+            const c = text[i]
+            if (c === ',' || c === '|' || isDot()) {
+              const next = c === ',' ? 'stack' : c === '|' ? 'choose' : 'feet'
+              if (join !== 'single' && join !== next) fail('Mixed separators')
+              join = next
+              i++
+              out.push(sequence(close))
+            } else return { layers: out, join }
+          }
+        }
+        function sequence(close) {
+          const cells = []
+          skip()
+          if (text[i] === '^') i++
+          for (;;) {
+            skip()
+            const c = text[i]
+            if (c === undefined || c === close || c === ',' || c === '|' || isDot()) break
+            cells.push(slice())
+          }
+          if (!cells.length) fail('Empty sequence')
+          return { cells, span: { start: cells[0].span.start, end: cells.at(-1).span.end } }
+        }
+        function slice() {
+          skip()
+          const start = i
+          const c = text[i]
+          let cell
+          if (c === '[' || c === '<' || c === '{') {
+            const close = { '[': ']', '<': '>', '{': '}' }[c]
+            i++
+            const inner = layers(close)
+            skip()
+            if (text[i] !== close) fail(`Expected ${close}`)
+            i++
+            const shape = c === '[' ? 'seq' : c === '<' ? 'alt' : 'poly'
+            cell = { shape, ...inner, body: { start, end: i } }
+          } else {
+            const value = word()
+            const shape = value === '~' || value === '-' ? 'rest' : 'atom'
+            cell = { shape, value, body: { start, end: i } }
+          }
+          cell.mods = mods()
+          const end = cell.mods.at(-1)?.span.end ?? cell.body.end
+          cell.span = { start, end }
+          let weight = 1
+          let reps = 1
+          for (const m of cell.mods) {
+            if (m.kind === 'weight' || m.kind === 'elongate')
+              weight += (m.arg ? Number(m.arg) : 2) - 1
+            if (m.kind === 'replicate') {
+              reps += (m.arg ? Number(m.arg) : 2) - 1
+              weight = reps
+            }
+          }
+          cell.weight = weight
+          cell.reps = reps
+          return cell
+        }
+        const root = layers(undefined)
+        skip()
+        if (i < text.length) fail('Unexpected text')
+        return { text, root: root.layers, join: root.join, marker: /^\s*\^/.test(text) }
+      }
+
+      // ---- What draws and what stays a text cell ----
+      const DRAWN = new Set([
+        'weight',
+        'elongate',
+        'replicate',
+        'fast',
+        'slow',
+        'degrade',
+        'euclid',
+        'index',
+      ])
+      const patterned = (mod) =>
+        mod.kind !== 'index' && mod.kind !== 'euclid' && !!mod.arg && !/^-?[\d.]+$/.test(mod.arg)
+      const euclidPatterned = (mod) => mod.kind === 'euclid' && /[<[{]/.test(mod.arg)
+      const isTextCell = (cell) =>
+        cell.shape === 'poly' ||
+        cell.mods.some((m) => !DRAWN.has(m.kind) || patterned(m) || euclidPatterned(m))
+      const modOf = (cell, kind) => cell.mods.find((m) => m.kind === kind)
+
+      // ---- Gestures: every one is a single splice inside the literal ----
+      const source = (text, span) => text.slice(span.start, span.end)
+      const gestures = {
+        replace: (t, c, token) => ({ ...c.body, text: token }),
+        split: (t, c, n = 2) => {
+          const body = source(t, c.body)
+          return { ...c.body, text: `[${Array(n).fill(body).join(' ')}]` }
+        },
+        merge: (t, c) => {
+          const first = c.layers?.[0]?.cells[0]
+          return first ? { ...c.body, text: source(t, first.span) } : null
+        },
+        addMod: (t, c, raw) => ({ start: c.span.end, end: c.span.end, text: raw }),
+        setMod: (t, m, raw) => ({ ...m.span, text: raw }),
+        removeMod: (t, m) => {
+          let start = m.span.start
+          if (m.kind === 'elongate') while (start > 0 && WS.test(t[start - 1])) start--
+          return { start, end: m.span.end, text: '' }
+        },
+        alternative: (t, c, token) => {
+          if (c.shape === 'alt' && c.join === 'single') {
+            const end = c.layers[0].cells.at(-1).span.end
+            return { start: end, end, text: ` ${token}` }
+          }
+          return { ...c.body, text: `<${source(t, c.body)} ${token}>` }
+        },
+        chord: (t, c, token) => {
+          if (c.shape === 'seq' && (c.join === 'stack' || c.join === 'single')) {
+            const [a, b] = [c.layers.at(-2), c.layers.at(-1)]
+            const join = a ? t.slice(a.span.end, b.span.start) : ', '
+            return { start: b.span.end, end: b.span.end, text: `${join}${token}` }
+          }
+          return { ...c.body, text: `[${source(t, c.body)}, ${token}]` }
+        },
+        choice: (t, c, token) => {
+          if (c.shape === 'seq' && c.join === 'choose') {
+            const [a, b] = [c.layers.at(-2), c.layers.at(-1)]
+            const join = t.slice(a.span.end, b.span.start)
+            return { start: b.span.end, end: b.span.end, text: `${join}${token}` }
+          }
+          return { ...c.body, text: `[${source(t, c.body)} | ${token}]` }
+        },
+        insert: (t, c, token) => ({ start: c.span.end, end: c.span.end, text: ` ${token}` }),
+        remove: (t, c) => {
+          let { start, end } = c.span
+          if (end < t.length && WS.test(t[end])) while (end < t.length && WS.test(t[end])) end++
+          else while (start > 0 && WS.test(t[start - 1])) start--
+          return { start, end, text: '' }
+        },
+        textCell: (t, c, raw) => {
+          let probe
+          try {
+            probe = parseMini(raw)
+          } catch {
+            throw new Error('That text does not parse, so the cell keeps its old value.')
+          }
+          if (probe.join !== 'single' || probe.root[0].cells.length !== 1)
+            throw new Error('A cell holds one element. Wrap several in [ ] to keep the timing.')
+          return { ...c.span, text: raw.trim() }
+        },
+      }
+
+      // ---- Scenarios ----
+      const scenarios = [
+        {
+          id: 'flat',
+          group: 'Constructs',
+          title: 'Flat steps (today’s grid)',
+          seq: 'c2 c2 eb2 g2 c3 bb2 g2 eb2',
+          drums: 'bd ~ bd ~ bd ~ bd ~, ~ ~ sd ~ ~ ~ sd ~, ~ hh ~ hh ~ hh ~ hh',
+          note: 'Each line is an equal share of the cycle. Eight steps fill four lines at 52 px, so there is room to split any of them.',
+        },
+        {
+          id: 'sub',
+          group: 'Constructs',
+          title: 'Subdivision [ ]',
+          seq: 'c2 [e2 g2] a2 [c3 [d3 e3]]',
+          drums: 'bd [~ bd] sd [~ sd], hh*8',
+          note: 'A group draws inside its own time slot with heavy side bars. Children share the slot in proportion.',
+        },
+        {
+          id: 'fast',
+          group: 'Constructs',
+          title: 'Speed up *n',
+          seq: 'c2*2 e2 g2*3 a2',
+          drums: 'bd*2 sd, hh*8',
+          note: 'The cell keeps its slot and gains one tick per repeat. On a whole DRUMS row, repeats draw as ghost copies of the first period.',
+        },
+        {
+          id: 'slow',
+          group: 'Constructs',
+          title: 'Slow down /n',
+          seq: '[c2 e2]/2 g2 a2',
+          drums: 'bd [~ sd]/2, hh*4',
+          note: 'Hatching marks a cell that needs more than one cycle to finish. The label says how many.',
+        },
+        {
+          id: 'rep',
+          group: 'Constructs',
+          title: 'Copies !n',
+          seq: 'c2!3 e2 g2!2 a2 c3',
+          drums: 'bd!3 ~, [~ hh]!2',
+          note: 'Copies take real time, so they draw as linked cells with dotted joins. One source token, one edit, several sounding positions.',
+        },
+        {
+          id: 'weight',
+          group: 'Constructs',
+          title: 'Stretch @n',
+          seq: 'c2@3 e2 g2@2 a2',
+          drums: 'bd@3 sd, hh*8',
+          note: 'Width is the whole message. Drag the right edge of a selected cell to change it. A cell that crosses a line break continues on the next line with dotted edges.',
+        },
+        {
+          id: 'hold',
+          group: 'Constructs',
+          title: 'Hold _',
+          seq: 'c2 _ _ e2 g2 _ a2',
+          drums: 'bd _ _ sd, hh*8',
+          note: 'Reads like @n and keeps its own spelling. The editor never rewrites _ into @.',
+        },
+        {
+          id: 'maybe',
+          group: 'Constructs',
+          title: 'Maybe ?',
+          seq: 'c2? e2 g2?0.3 a2',
+          drums: 'bd sd?, hh*8?0.25',
+          note: 'A dashed border. Toggling ? renumbers later random seeds, so other ? and | cells may change what they drop. That is Strudel’s behavior, not the editor’s.',
+        },
+        {
+          id: 'choice',
+          group: 'Constructs',
+          title: 'Random choice |',
+          seq: '[c2|e2|g2] a2 [g2|bb2] c3',
+          drums: 'bd [sd|cp], hh*8',
+          note: 'Options stack as lanes with a diamond mark. The diamond separates random choice from a chord, which has none.',
+        },
+        {
+          id: 'chord',
+          group: 'Constructs',
+          title: 'Chords and layers ,',
+          seq: '[c2,eb2,g2] [f2,a2] g2 [c2,e2]',
+          drums: 'bd*2, [~ sd]*2, hh*8',
+          note: 'Inside a cell, notes stack as lanes. Too short for labels, it shows the first note and a count. In DRUMS a top-level comma is simply another row.',
+        },
+        {
+          id: 'alt',
+          group: 'Constructs',
+          title: 'Alternation < > (nested)',
+          seq: '<c2 <e2 f2>> g2 <[a2 c3] b2> ~',
+          drums: 'bd <sd cp>, hh <[hh hh] ~>',
+          note: 'One cell, with pager dots for this cycle’s alternative. While playing, it pages with the cycle unless the cell is being edited.',
+        },
+        {
+          id: 'euclid',
+          group: 'Constructs',
+          title: 'Euclid (k,n,r)',
+          seq: 'c2(3,8) e2(5,8,2)',
+          drums: 'bd(3,8), hh(5,8,2), sd(2,8,4)',
+          note: 'A row of n dots with k filled, rotated by r. The dots are computed for display only; the source keeps (k,n,r).',
+        },
+        {
+          id: 'index',
+          group: 'Constructs',
+          title: 'Sample index :',
+          seq: 'c2:1 e2:2 g2 a2',
+          drums: 'bd:3 sd:1 [hh:2 hh:4] cp',
+          note: 'Part of the label, in a lighter weight. It is not a separate cell.',
+        },
+        {
+          id: 'rest',
+          group: 'Constructs',
+          title: 'Rests ~ and -',
+          seq: 'c2 ~ - e2 ~ g2 [~ a2] ~',
+          drums: 'bd - sd ~, ~ hh ~ hh',
+          note: 'A hollow cell with a center dot. Both spellings stay as written.',
+        },
+        {
+          id: 'text',
+          group: 'Fallback',
+          title: 'Text cells',
+          seq: 'c2 {e2 g2 a2}%4 bd*<2 3> 0 .. 3',
+          drums: 'bd {sd hh}%4, hh*<4 8>',
+          note: 'Double border, italic and a corner fold. Only the exotic element is text. The parser still knows its time share, so it is the right width, it flashes when it sounds, and its neighbors stay editable.',
+        },
+        {
+          id: 'deep',
+          group: 'Limits',
+          title: 'Deep nesting',
+          seq: 'c2 [e2 [g2 [a2 [b2 c3]]]] d3 e3',
+          drums: 'bd [sd [hh [cp [rim ht]]]], hh*16',
+          note: 'Below the minimum width a group collapses to a count. Enter opens it across the whole editor, with a crumb in the legend row. Nothing in the source changes.',
+        },
+        {
+          id: 'sixteen',
+          group: 'Limits',
+          title: '16 steps with splits',
+          seq: 'c2 [c2 eb2] eb2 g2 c3 [bb2 [g2 eb2]] g2 eb2 c2 c2 eb2 g2 c3 bb2 g2 eb2',
+          drums: 'bd ~ [~ bd] ~ sd ~ ~ ~ bd ~ ~ [bd bd] sd ~ ~ ~, hh*16',
+          note: 'The densest catalog case: 26 px per step. Splits lose their labels here and must be opened to read.',
+        },
+        {
+          id: 'all',
+          group: 'Limits',
+          title: 'Everything at once',
+          seq: 'bd [~ sd]@3 hh!2 [cp <rim ht>]?',
+          drums: '[bd ~ [sd sd]]*2, hh*8, [~ cp]/2',
+          note: 'A realistic imported line. Today this opens the whole sequence in text mode.',
+        },
+        {
+          id: 'degree',
+          group: 'Token types',
+          title: 'Scale degrees (SEQ DEGREE)',
+          seq: '0 [2 4] <5 7> ~',
+          drums: 'bd sd, hh*4',
+          note: 'Same component, numeric label.',
+        },
+        {
+          id: 'numbers',
+          group: 'Token types',
+          title: 'Numbers (CV SEQ)',
+          seq: '400 [800 1200] <200 600> 1600',
+          token: 'number',
+          drums: 'bd sd, hh*4',
+          note: 'Numbers gain a level bar behind the label, so a CV shape reads at a glance.',
+        },
+        {
+          id: 'chords',
+          group: 'Token types',
+          title: 'Chord symbols (CHORD)',
+          seq: '<Cm7 Fm7 G7> [Bb7 Ebmaj7]',
+          drums: 'bd sd, hh*4',
+          note: 'Long symbols need more width, so they reach the two-letter minimum later. The label clips and the tray shows the whole symbol.',
+        },
+        {
+          id: 'gates',
+          group: 'Token types',
+          title: 'Gates (GATES)',
+          seq: 'x ~ [x x] x ~ x ~ x',
+          token: 'gate',
+          drums: 'bd sd, hh*4',
+          note: 'An x fills the cell, like a DRUMS step, so GATES needs no labels at all.',
+        },
+      ]
+
+      // ---- State ----
+      const state = {
+        scenario: scenarios[0],
+        seq: scenarios[0].seq,
+        drums: scenarios[0].drums,
+        layout: 'lines',
+        look: 'instrument',
+        zoom: 1,
+        playing: false,
+        reduced: false,
+        target: 'seq',
+        path: [],
+        focus: { seq: [], drums: [] },
+        history: [],
+        change: null,
+        editing: null,
+        refusal: '',
+        cycle: 0,
+      }
+      const $ = (id) => document.getElementById(id)
+      const treeOf = (target) => parseMini(state[target])
+      function element(tag, className, parent) {
+        const node = document.createElement(tag)
+        if (className) node.className = className
+        parent?.append(node)
+        return node
+      }
+
+      // A path alternates layer and cell indexes: [layer, cell, layer, cell, ...].
+      function cellAt(tree, path) {
+        let layers = tree.root
+        let cell = null
+        for (let i = 0; i < path.length; i += 2) {
+          cell = layers?.[path[i]]?.cells[path[i + 1]]
+          if (!cell) return null
+          layers = cell.layers
+        }
+        return cell
+      }
+      function siblings(tree, path) {
+        const parent = path.slice(0, -2)
+        const layers = parent.length ? cellAt(tree, parent)?.layers : tree.root
+        return layers?.[path.at(-2)]?.cells ?? []
+      }
+
+      // ---- Layout ----
+      const SEQ = { width: 104, height: 73, maxLines: 4, gap: 3 }
+      const DRUM = { width: 109, height: 18, maxLines: 1, gap: 0 }
+      const CHAR = 7.2
+      const MIN_CHILD = { label: 8, drum: 4 }
+      const totalWeight = (cells) => cells.reduce((sum, c) => sum + c.weight, 0)
+      function lineCount(cells, max) {
+        const total = totalWeight(cells)
+        for (let lines = max; lines > 1; lines--) {
+          let at = 0
+          const edges = new Set(cells.map((c) => (at += c.weight)))
+          const needed = Array.from({ length: lines - 1 }, (_, i) => (total * (i + 1)) / lines)
+          if (needed.every((edge) => edges.has(edge))) return lines
+        }
+        return max
+      }
+      /** Places cells on equal-time lines and splits any that cross a line break. */
+      function placeLines(cells, box, mode) {
+        const uniform = mode === 'uniform'
+        const weights = cells.map((c) => (uniform ? 1 : c.weight))
+        const units = cells.map((c, i) => ({ ...c, weight: weights[i] }))
+        const lines =
+          box.maxLines === 1 || mode === 'strip'
+            ? 1
+            : uniform
+              ? Math.min(box.maxLines, Math.ceil(cells.length / 4))
+              : lineCount(units, box.maxLines)
+        const total = weights.reduce((a, b) => a + b, 0)
+        const perLine = uniform && box.maxLines > 1 ? Math.max(4, total / lines) : total / lines
+        const lineHeight = (box.height - box.gap * (lines - 1)) / lines
+        const pieces = []
+        let t = 0
+        cells.forEach((cell, index) => {
+          let left = weights[index]
+          let first = true
+          while (left > 1e-9) {
+            const line = Math.min(lines - 1, Math.floor((t + 1e-9) / perLine))
+            const offset = t - line * perLine
+            const room = perLine - offset
+            const take = Math.min(left, room)
+            pieces.push({
+              cell,
+              index,
+              x: (offset / perLine) * box.width,
+              y: line * (lineHeight + box.gap),
+              w: (take / perLine) * box.width,
+              h: lineHeight,
+              contLeft: !first,
+              contRight: take < left - 1e-9,
+            })
+            t += take
+            left -= take
+            first = false
+          }
+        })
+        for (const piece of pieces) {
+          const own = pieces.filter((other) => other.index === piece.index)
+          piece.primary = piece === own.reduce((a, b) => (b.w > a.w ? b : a))
+        }
+        return pieces
+      }
+
+      // ---- Rendering ----
+      const label = (cell) => cell.value + (modOf(cell, 'index')?.arg ? `:${modOf(cell, 'index').arg}` : '')
+      function flatten(cell) {
+        return cell.layers ? cell.layers.flatMap((l) => l.cells.flatMap(flatten)) : [cell]
+      }
+      function euclid(k, n, r = 0) {
+        const hits = Array.from({ length: n }, (_, i) => (i * k) % n < k)
+        return hits.map((_, i) => hits[(i + r) % n])
+      }
+      function marks(node, cell, w, opts) {
+        const fast = modOf(cell, 'fast')
+        if (fast && Number(fast.arg) > 1 && w >= 10) {
+          const ticks = element('span', 'ticks', node)
+          const shown = Math.min(Number(fast.arg), Math.floor(w / 3))
+          for (let i = 0; i < shown; i++) element('i', '', ticks)
+        }
+        if (modOf(cell, 'slow')) element('span', 'slow-mark', node)
+        const e = modOf(cell, 'euclid')
+        if (e && w >= 14) {
+          const [k, n, r] = e.arg.split(',').map(Number)
+          const dots = element('span', 'euclid', node)
+          const pattern = euclid(k, n, r)
+          pattern
+            .slice(0, Math.floor(w / 5))
+            .forEach((hit) => (element('i', hit ? 'hit' : '', dots).style.display = 'block'))
+        }
+        if (opts.token === 'number' && cell.shape === 'atom') {
+          const bar = element('span', 'level', node)
+          bar.style.height = `${Math.min(100, (Number(cell.value) / 1600) * 100)}%`
+        }
+      }
+      function describe(cell, text) {
+        const raw = source(text, cell.span)
+        if (isTextCell(cell)) return `Text cell ${raw}`
+        if (cell.shape === 'rest') return 'Rest'
+        if (cell.layers) {
+          const count = flatten(cell).length
+          const kind =
+            cell.shape === 'alt'
+              ? 'Alternation'
+              : cell.join === 'stack'
+                ? 'Chord'
+                : cell.join === 'choose'
+                  ? 'Random choice'
+                  : 'Group'
+          return `${kind} of ${count}: ${raw}`
+        }
+        return `Step ${raw}`
+      }
+      function drawLeaf(node, cell, w, h, ctx) {
+        if (cell.shape === 'rest') {
+          node.classList.add('rest')
+          return
+        }
+        if (ctx.drum || ctx.token === 'gate') {
+          node.classList.add('on')
+          if (ctx.mixed && w >= 9) node.textContent = cell.value[0]
+          return
+        }
+        const text = label(cell)
+        const room = w - 2
+        if (text.length * CHAR <= room) {
+          node.textContent = cell.value
+          const index = modOf(cell, 'index')
+          if (index?.arg) element('span', 'sub-index', node).textContent = `:${index.arg}`
+        } else if (cell.value.length * CHAR <= room) node.textContent = cell.value
+        else if (room >= CHAR) node.textContent = cell.value.slice(0, Math.floor(room / CHAR))
+      }
+      function drawCell(parent, piece, path, ctx) {
+        const { cell, x, y, w, h } = piece
+        const node = element('div', 'cell', parent)
+        node.style.cssText = `left:${x}px;top:${y}px;width:${Math.max(w - 1, 2)}px;height:${h}px;line-height:${Math.max(h - 2, 10)}px`
+        node.dataset.target = ctx.target
+        node.dataset.path = path.join('.')
+        node.setAttribute('aria-label', describe(cell, ctx.text))
+        if (piece.contLeft) node.classList.add('cont-left')
+        if (piece.contRight) node.classList.add('cont-right')
+        if (modOf(cell, 'degrade')) node.classList.add('maybe')
+        // The grip sits on the cell's true right edge, whichever line that falls on.
+        if (ctx.layout !== 'uniform' && modOf(cell, 'weight') && !piece.contRight)
+          element('span', 'grip', node).dataset.grip = 'true'
+        if (piece.primary === false) {
+          // A continuation holds time only; the widest piece carries the content.
+          node.dataset.cont = 'true'
+          if (cell.shape === 'rest') node.classList.add('rest')
+          else if (ctx.drum || ctx.token === 'gate') node.classList.add('on')
+          return node
+        }
+        if (isTextCell(cell) && ctx.layout !== 'uniform') {
+          node.classList.add('text-cell')
+          node.textContent = source(ctx.text, cell.span)
+          return node
+        }
+        if (cell.layers) {
+          if (ctx.layout === 'uniform') {
+            node.textContent = `[${flatten(cell).length}]`
+            node.title = 'Uniform cells hide time inside a marker'
+          } else drawGroup(node, cell, path, w, h, ctx)
+        } else if (ctx.drum && modOf(cell, 'euclid')) {
+          // A Euclidean row reads as steps: n computed cells with k lit.
+          const [k, n, r] = modOf(cell, 'euclid').arg.split(',').map(Number)
+          euclid(k, n, r).forEach((hit, i) => {
+            const step = element('span', `copy${hit ? ' lit' : ''}`, node)
+            step.style.cssText = `left:${(w / n) * i}px;width:${w / n}px`
+          })
+          return node
+        } else if (cell.reps > 1) {
+          // Copies are one source token shown as linked cells.
+          const sub = w / cell.reps
+          drawLeaf(node, cell, w, h, ctx)
+          const text = node.textContent
+          node.textContent = ''
+          for (let i = 0; i < cell.reps; i++) {
+            const copy = element('span', 'copy', node)
+            copy.style.cssText = `left:${sub * i}px;width:${sub}px`
+            if (text.length * CHAR <= sub - 1) copy.textContent = text
+          }
+        } else drawLeaf(node, cell, w, h, ctx)
+        marks(node, cell, w, ctx)
+        return node
+      }
+      function drawGroup(node, cell, path, w, h, ctx) {
+        const pagerRoom = cell.shape === 'alt' && w >= 18 ? 5 : 0
+        const innerW = Math.max(w - 5 - pagerRoom, 2)
+        const innerH = Math.max(h - 2, 2)
+        const min = ctx.drum ? MIN_CHILD.drum : MIN_CHILD.label
+        node.classList.add('group')
+        if (cell.shape === 'alt') {
+          // One alternative at a time.
+          const cells = cell.layers.flatMap((l) => l.cells)
+          const index = state.cycle % cells.length
+          const layer = cell.layers.findIndex((l) => l.cells.includes(cells[index]))
+          const at = cell.layers[layer].cells.indexOf(cells[index])
+          const piece = { cell: cells[index], x: 0, y: 0, w: innerW, h: innerH }
+          drawCell(node, piece, [...path, layer, at], { ...ctx, nested: true })
+          if (pagerRoom) {
+            const pager = element('span', 'pager', node)
+            const shown = Math.min(cells.length, 3)
+            for (let i = 0; i < shown; i++)
+              element('i', i === index % shown ? 'now' : '', pager).style.display = 'block'
+            pager.style.zIndex = 2
+          }
+          return
+        }
+        const lanes = cell.layers
+        const laneH = (innerH - (lanes.length - 1)) / lanes.length
+        const stacked = cell.join === 'stack' || cell.join === 'choose'
+        const tight = stacked && laneH < (ctx.drum ? 5 : 12)
+        const narrow =
+          lanes.some((l) => {
+            const share = Math.min(...l.cells.map((c) => c.weight / totalWeight(l.cells)))
+            return innerW * share < min
+          }) || tight
+        if (narrow) {
+          node.classList.remove('group')
+          const count = flatten(cell).length
+          const first = flatten(cell)[0]
+          if (ctx.drum) {
+            node.classList.add('on')
+            if (w >= 12) node.textContent = String(count)
+          } else if (stacked && w >= 26) node.textContent = `${first.value ?? ''}+${count - 1}`
+          else if (w >= 14) node.textContent = `[${count}]`
+          else node.textContent = ''
+          node.dataset.collapsed = 'true'
+          if (cell.join === 'choose') element('span', 'choice-mark', node)
+          return
+        }
+        if (cell.join === 'choose') element('span', 'choice-mark', node).style.zIndex = 2
+        const feet = cell.join === 'feet'
+        lanes.forEach((layer, li) => {
+          const box = stacked
+            ? { width: innerW, height: laneH, maxLines: 1, gap: 0 }
+            : {
+                width: feet ? innerW / lanes.length : innerW,
+                height: innerH,
+                maxLines: 1,
+                gap: 0,
+              }
+          const yShift = stacked ? li * (laneH + 1) : 0
+          const xShift = feet ? li * (innerW / lanes.length) : 0
+          for (const piece of placeLines(layer.cells, box, 'strip')) {
+            const moved = { ...piece, x: piece.x + xShift, y: piece.y + yShift }
+            drawCell(node, moved, [...path, li, piece.index], { ...ctx, nested: true })
+          }
+        })
+      }
+      function drawLayerCells(surface, layer, layerIndex, basePath, box, ctx) {
+        for (const piece of placeLines(layer.cells, box, ctx.layout))
+          drawCell(surface, piece, [...basePath, layerIndex, piece.index], ctx)
+      }
+      function drawSeq(host, target, text, focusPath, ctx) {
+        const tree = parseMini(text)
+        const focused = focusPath.length ? cellAt(tree, focusPath) : null
+        const surface = element('div', 'surface', host)
+        surface.style.width = `${SEQ.width}px`
+        surface.style.height = `${SEQ.height}px`
+        surface.setAttribute('role', 'group')
+        surface.setAttribute('aria-label', 'Step editor')
+        const layers = focused?.layers ?? tree.root
+        const base = focused ? focusPath : []
+        const local = { ...ctx, target, text }
+        if (layers.length > 1) {
+          // Lanes: each layer takes an equal share of the height.
+          const laneH = (SEQ.height - (layers.length - 1) * 3) / layers.length
+          layers.forEach((layer, li) => {
+            const lane = element('div', 'lane', surface)
+            lane.style.cssText = `position:absolute;left:0;right:0;top:${li * (laneH + 3)}px;height:${laneH}px`
+            const maxLines = Math.max(1, Math.floor(4 / layers.length))
+            const box = { width: SEQ.width, height: laneH, maxLines, gap: 2 }
+            drawLayerCells(lane, layer, li, base, box, local)
+          })
+        } else drawLayerCells(surface, layers[0], 0, base, SEQ, local)
+        return surface
+      }
+      function rowName(layer) {
+        const names = [...new Set(layer.cells.flatMap(flatten).flatMap((c) => c.value && c.shape === 'atom' ? [c.value] : []))]
+        return { name: names.length === 1 ? names[0] : names.length ? 'mix' : '~', mixed: names.length > 1 }
+      }
+      function drawDrums(host, target, text, focusPath, ctx) {
+        const tree = parseMini(text)
+        const focused = focusPath.length ? cellAt(tree, focusPath) : null
+        const layers = focused?.layers ?? tree.root
+        const base = focused ? focusPath : []
+        layers.forEach((layer, li) => {
+          const row = element('div', 'drum-row', host)
+          const { name, mixed } = rowName(layer)
+          element('div', 'drum-name', row).textContent = name
+          const surface = element('div', 'surface', row)
+          surface.style.cssText = `width:${DRUM.width}px;height:${DRUM.height}px`
+          surface.setAttribute('role', 'group')
+          surface.setAttribute('aria-label', `${name} row`)
+          const local = { ...ctx, target, text, drum: true, mixed }
+          const only = layer.cells.length === 1 ? layer.cells[0] : null
+          const fast = only && modOf(only, 'fast')
+          if (only && fast && only.mods.length === 1 && Number(fast.arg) >= 2) {
+            // A whole-row repeat: the first period is editable, the rest are ghosts.
+            const n = Number(fast.arg)
+            const width = DRUM.width / n
+            const piece = { cell: { ...only, mods: [] }, index: 0, x: 0, y: 0, w: width, h: DRUM.height }
+            drawCell(surface, piece, [...base, li, 0], local)
+            for (let i = 1; i < n; i++) {
+              const ghost = drawCell(surface, { ...piece, x: width * i }, [...base, li, 0], local)
+              ghost.classList.add('ghost')
+              ghost.setAttribute('aria-hidden', 'true')
+              for (const copy of [ghost, ...ghost.querySelectorAll('[data-path]')])
+                copy.removeAttribute('data-path')
+            }
+          } else drawLayerCells(surface, layer, li, base, DRUM, local)
+        })
+      }
+      function legend(host, target, name) {
+        const row = element('div', 'legend', host)
+        const path = state.focus[target]
+        if (!path.length) {
+          row.textContent = name
+          return
+        }
+        const back = element('button', '', row)
+        back.type = 'button'
+        back.textContent = '◂'
+        back.setAttribute('aria-label', 'Back out one level')
+        back.dataset.back = target
+        const crumb = element('span', 'crumb', row)
+        crumb.textContent = source(state[target], cellAt(treeOf(target), path).span)
+      }
+      function panel(host, target, title) {
+        const module = element('div', `module ${target} look-${state.look}`, host)
+        element('div', 'module-header', module).textContent = title
+        const body = element('div', 'module-body', module)
+        legend(body, target, target === 'seq' ? 'STEPS' : 'GRID')
+        const ctx = { layout: state.layout, token: state.scenario.token }
+        if (target === 'seq') drawSeq(body, target, state.seq, state.focus.seq, ctx)
+        else drawDrums(body, target, state.drums, state.focus.drums, ctx)
+        element('p', 'panel-fill', body).textContent =
+          target === 'seq' ? 'LEN · MODE · RATE stay below' : 'DROP stays below'
+        return module
+      }
+      function drawSpanCode() {
+        const text = state[state.target]
+        const cell = cellAt(treeOf(state.target), state.path)
+        const code = $('code')
+        code.replaceChildren()
+        const call = state.target === 'seq' ? 'note' : 's'
+        code.append(`$: ${call}("`)
+        const change = state.change?.target === state.target ? state.change : null
+        const mark = cell ? cell.span : null
+        const cuts = new Set([0, text.length])
+        for (const span of [mark, change]) if (span) cuts.add(span.start).add(span.end)
+        const sorted = [...cuts].filter((n) => n >= 0 && n <= text.length).sort((a, b) => a - b)
+        for (let i = 0; i < sorted.length - 1; i++) {
+          const [a, b] = [sorted[i], sorted[i + 1]]
+          const piece = text.slice(a, b)
+          const changed = change && a >= change.start && b <= change.end
+          const selected = mark && a >= mark.start && b <= mark.end
+          if (changed || selected) {
+            const node = element('mark', changed ? 'changed' : '', code)
+            node.textContent = piece
+          } else code.append(piece)
+        }
+        code.append('")')
+      }
+      function drawTray() {
+        const slot = $('tray-slot')
+        slot.replaceChildren()
+        const tree = treeOf(state.target)
+        const cell = cellAt(tree, state.path)
+        if (!cell) return
+        const text = state[state.target]
+        const tray = element('div', 'tray', slot)
+        tray.setAttribute('role', 'toolbar')
+        tray.setAttribute('aria-label', 'Cell actions')
+        element('h3', '', tray).textContent = source(text, cell.span)
+        if (state.refusal) element('p', 'refusal', tray).textContent = state.refusal
+        if (state.editing !== null) {
+          const input = element('input', 'inline-edit', tray)
+          input.value = state.editing
+          input.setAttribute('aria-label', isTextCell(cell) ? 'Text cell source' : 'Step value')
+          input.addEventListener('keydown', (event) => {
+            event.stopPropagation()
+            if (event.key === 'Enter') commitEdit(input.value)
+            if (event.key === 'Escape') {
+              state.editing = null
+              state.refusal = ''
+              render(true)
+            }
+          })
+          queueMicrotask(() => {
+            input.focus()
+            input.select()
+          })
+          return
+        }
+        const grid = element('div', 'tray-grid', tray)
+        const actions = [
+          ['Split', '[', 'split'],
+          ['Merge', ']', 'merge'],
+          ['Repeat', '*', 'fast'],
+          ['Slow', '/', 'slow'],
+          ['Copies', '!', 'replicate'],
+          ['Stretch', '@', 'weight'],
+          ['Maybe', '?', 'degrade'],
+          ['Rest', '~', 'rest'],
+          ['Alternate', '<', 'alternative'],
+          ['Chord', ',', 'chord'],
+          ['Choice', '|', 'choice'],
+          ['Euclid', '(', 'euclid'],
+          ['Add step', '+', 'insert'],
+          ['Edit', '⏎', 'edit'],
+          ['Delete', '⌫', 'delete'],
+          ['Text cell', 'T', 'text'],
+        ]
+        for (const [name, key, action] of actions) {
+          const button = element('button', '', grid)
+          button.type = 'button'
+          button.dataset.action = action
+          button.disabled = !enabled(cell, action)
+          element('span', '', button).textContent = name
+          element('kbd', '', button).textContent = key
+        }
+      }
+      function enabled(cell, action) {
+        if (action === 'merge') return !!cell.layers
+        if (action === 'edit') return !cell.layers || isTextCell(cell)
+        return true
+      }
+      function render(keepFocus = false) {
+        const panels = $('panels')
+        panels.replaceChildren()
+        panels.style.zoom = String(state.zoom)
+        panel(panels, 'seq', 'SEQ')
+        panel(panels, 'drums', 'DRUMS')
+        markSelection(keepFocus)
+        drawTray()
+        drawSpanCode()
+        $('scenario-note').textContent = state.scenario.note
+      }
+      function focusable() {
+        return [...document.querySelectorAll(`#panels [data-path]`)]
+      }
+      function markSelection(keepFocus) {
+        const id = state.path.join('.')
+        let found = false
+        for (const node of focusable()) {
+          const hit = node.dataset.target === state.target && node.dataset.path === id
+          node.classList.toggle('selected', hit)
+          node.tabIndex = hit && !node.dataset.cont ? 0 : -1
+          if (hit && !node.dataset.cont) {
+            found = true
+            if (keepFocus) node.focus({ preventScroll: true })
+          }
+        }
+        if (!found) focusable()[0]?.setAttribute('tabindex', '0')
+      }
+
+      // ---- Editing ----
+      function commit(target, splice, description) {
+        const before = state[target]
+        const after = before.slice(0, splice.start) + splice.text + before.slice(splice.end)
+        try {
+          parseMini(after)
+        } catch {
+          state.refusal = 'That edit would not parse, so it was not applied.'
+          render(true)
+          return false
+        }
+        state.history.push({ target, text: before, path: state.path, focus: { ...state.focus } })
+        state[target] = after
+        const kept = before.length - (splice.end - splice.start)
+        state.change = { target, start: splice.start, end: splice.start + splice.text.length }
+        $('splice').textContent = `${description}: changed ${splice.end - splice.start} → ${splice.text.length} characters at offset ${splice.start}. The other ${kept} characters are unchanged.`
+        state.refusal = ''
+        return true
+      }
+      function settle() {
+        const tree = treeOf(state.target)
+        while (state.path.length && !cellAt(tree, state.path)) state.path = state.path.slice(0, -2)
+        for (const target of ['seq', 'drums']) {
+          const own = treeOf(target)
+          while (state.focus[target].length && !cellAt(own, state.focus[target]))
+            state.focus[target] = state.focus[target].slice(0, -2)
+        }
+        render(true)
+      }
+      function replacement() {
+        return state.target === 'seq' ? 'c3' : 'cp'
+      }
+      /** Pressing a modifier key adds it, then steps its value. */
+      function stepMod(cell, kind, symbol, start) {
+        const text = state[state.target]
+        const mod = modOf(cell, kind)
+        if (!mod) return gestures.addMod(text, cell, `${symbol}${start}`)
+        const value = (mod.arg ? Number(mod.arg) : 2) + 1
+        return gestures.setMod(text, mod, `${symbol}${value > 8 ? 2 : value}`)
+      }
+      function act(action) {
+        const target = state.target
+        const text = state[target]
+        const tree = parseMini(text)
+        const cell = cellAt(tree, state.path)
+        if (!cell) return
+        let splice = null
+        let label = action
+        if (action === 'split') {
+          splice = gestures.split(text, cell)
+          label = 'Split'
+        } else if (action === 'merge') {
+          splice = gestures.merge(text, cell)
+          label = 'Merge'
+        } else if (action === 'fast') {
+          splice = stepMod(cell, 'fast', '*', 2)
+          label = 'Repeat'
+        } else if (action === 'slow') {
+          splice = stepMod(cell, 'slow', '/', 2)
+          label = 'Slow'
+        } else if (action === 'replicate') {
+          splice = stepMod(cell, 'replicate', '!', 2)
+          label = 'Copies'
+        } else if (action === 'weight') {
+          splice = stepMod(cell, 'weight', '@', 2)
+          label = 'Stretch'
+        } else if (action === 'degrade') {
+          const mod = modOf(cell, 'degrade')
+          splice = mod ? gestures.removeMod(text, mod) : gestures.addMod(text, cell, '?')
+          label = 'Maybe'
+        } else if (action === 'rest') {
+          const token = cell.shape === 'rest' ? replacement() : '~'
+          if (!cell.layers) splice = gestures.replace(text, cell, token)
+          label = 'Rest'
+        } else if (action === 'alternative') {
+          splice = gestures.alternative(text, cell, replacement())
+          label = 'Alternate'
+        } else if (action === 'chord') {
+          splice = gestures.chord(text, cell, replacement())
+          label = 'Chord note'
+        } else if (action === 'choice') {
+          splice = gestures.choice(text, cell, replacement())
+          label = 'Choice'
+        } else if (action === 'euclid') {
+          const mod = modOf(cell, 'euclid')
+          splice = mod ? gestures.setMod(text, mod, '(5,8)') : gestures.addMod(text, cell, '(3,8)')
+          label = 'Euclid'
+        } else if (action === 'insert') {
+          splice = gestures.insert(text, cell, '~')
+          label = 'Add step'
+        } else if (action === 'delete') {
+          const mod = cell.mods.at(-1)
+          if (mod) splice = gestures.removeMod(text, mod)
+          else if (siblings(tree, state.path).length > 1) splice = gestures.remove(text, cell)
+          else state.refusal = 'The last step of a sequence stays. Use a rest.'
+          label = 'Delete'
+        } else if (action === 'edit' || action === 'text') {
+          state.editing = action === 'text' || isTextCell(cell) ? source(text, cell.span) : cell.value
+          state.editAs = action === 'text' || isTextCell(cell) ? 'text' : 'value'
+          render()
+          return
+        }
+        if (splice) commit(target, splice, label)
+        settle()
+      }
+      function commitEdit(value) {
+        const target = state.target
+        const text = state[target]
+        const cell = cellAt(parseMini(text), state.path)
+        try {
+          const splice =
+            state.editAs === 'text'
+              ? gestures.textCell(text, cell, value)
+              : gestures.replace(text, cell, value.trim())
+          if (commit(target, splice, 'Edit')) state.editing = null
+          settle()
+        } catch (error) {
+          state.refusal = error.message
+          render()
+        }
+      }
+      function select(target, path) {
+        state.target = target
+        state.path = path
+        state.editing = null
+        state.refusal = ''
+        render(true)
+      }
+      function openGroup(cell) {
+        if (!cell?.layers) return false
+        state.focus[state.target] = state.path
+        state.path = [...state.path, 0, 0]
+        render(true)
+        return true
+      }
+      function backOut() {
+        const focus = state.focus[state.target]
+        if (focus.length && state.path.length === focus.length + 2) {
+          state.path = focus
+          state.focus[state.target] = focus.slice(0, -2)
+        } else if (state.path.length > 2) state.path = state.path.slice(0, -2)
+        render(true)
+      }
+      function move(delta) {
+        const tree = treeOf(state.target)
+        const cells = siblings(tree, state.path)
+        const next = state.path.at(-1) + delta
+        if (next >= 0 && next < cells.length) {
+          select(state.target, [...state.path.slice(0, -1), next])
+          return
+        }
+        const focus = state.focus[state.target]
+        if (state.path.length > focus.length + 2) {
+          state.path = state.path.slice(0, -2)
+          move(delta)
+        }
+      }
+      function lane(delta) {
+        const tree = treeOf(state.target)
+        const parent = state.path.slice(0, -2)
+        const layers = parent.length ? cellAt(tree, parent)?.layers : tree.root
+        const nextLayer = state.path.at(-2) + delta
+        if (layers?.[nextLayer]) {
+          const cell = Math.min(state.path.at(-1), layers[nextLayer].cells.length - 1)
+          select(state.target, [...parent, nextLayer, cell])
+        } else lineMove(delta)
+      }
+      /** Lines hold different numbers of cells, so moving between them uses drawn positions. */
+      function lineMove(delta) {
+        const id = state.path.join('.')
+        const prefix = state.path.slice(0, -1).join('.')
+        const peers = [
+          ...document.querySelectorAll(`#panels [data-target="${state.target}"][data-path]`),
+        ].filter((node) => {
+          const path = node.dataset.path.split('.')
+          return path.length === state.path.length && path.slice(0, -1).join('.') === prefix
+        })
+        const current = peers.find((node) => node.dataset.path === id && !node.dataset.cont)
+        if (!current) return
+        const from = current.getBoundingClientRect()
+        const centre = (rect) => rect.left + rect.width / 2
+        const beyond = peers
+          .filter((node) => node.dataset.path !== id)
+          .map((node) => ({ node, rect: node.getBoundingClientRect() }))
+          .filter(({ rect }) => (delta > 0 ? rect.top >= from.bottom - 1 : rect.bottom <= from.top + 1))
+        if (!beyond.length) return
+        const gap = ({ rect }) => (delta > 0 ? rect.top - from.bottom : from.top - rect.bottom)
+        const nearest = Math.min(...beyond.map(gap))
+        const line = beyond.filter((entry) => gap(entry) <= nearest + 1)
+        const offset = ({ rect }) => Math.abs(centre(rect) - centre(from))
+        const target = line.reduce((best, entry) => (offset(entry) < offset(best) ? entry : best))
+        select(state.target, target.node.dataset.path.split('.').map(Number))
+      }
+      document.addEventListener('keydown', (event) => {
+        const node = event.target.closest?.('[data-path]')
+        if (!node) return
+        const keys = {
+          '[': 'split',
+          ']': 'merge',
+          '*': 'fast',
+          '/': 'slow',
+          '!': 'replicate',
+          '@': 'weight',
+          '?': 'degrade',
+          '~': 'rest',
+          '<': 'alternative',
+          ',': 'chord',
+          '|': 'choice',
+          '(': 'euclid',
+          '+': 'insert',
+          Backspace: 'delete',
+          Delete: 'delete',
+          t: 'text',
+        }
+        if (event.ctrlKey || event.metaKey) return
+        const tree = treeOf(state.target)
+        const cell = cellAt(tree, state.path)
+        let handled = true
+        if (event.key === 'ArrowRight') move(1)
+        else if (event.key === 'ArrowLeft') move(-1)
+        else if (event.key === 'ArrowDown') lane(1)
+        else if (event.key === 'ArrowUp') lane(-1)
+        else if (event.key === 'Enter') {
+          if (isTextCell(cell)) act('text')
+          else if (!openGroup(cell)) act('edit')
+        } else if (event.key === 'Escape') backOut()
+        else if (keys[event.key]) act(keys[event.key])
+        else handled = false
+        if (handled) event.preventDefault()
+      })
+      document.addEventListener('focusin', (event) => {
+        const node = event.target.closest?.('#panels [data-path]')
+        if (!node) return
+        const path = node.dataset.path.split('.').map(Number)
+        if (node.dataset.target === state.target && path.join() === state.path.join()) return
+        state.target = node.dataset.target
+        state.path = path
+        node.classList.add('selected')
+        queueMicrotask(() => render(true))
+      })
+      $('panels').addEventListener('click', (event) => {
+        const back = event.target.closest('[data-back]')
+        if (back) {
+          state.target = back.dataset.back
+          state.focus[state.target] = state.focus[state.target].slice(0, -2)
+          state.path = state.focus[state.target].length ? [...state.focus[state.target], 0, 0] : [0, 0]
+          render(true)
+          return
+        }
+        const node = event.target.closest('[data-path]')
+        if (!node) return
+        const path = node.dataset.path.split('.').map(Number)
+        const target = node.dataset.target
+        const again = state.target === target && state.path.join() === path.join()
+        if (target === 'drums' && again) {
+          const cell = cellAt(treeOf(target), path)
+          if (!cell.layers) {
+            act('rest')
+            return
+          }
+        }
+        select(target, path)
+        if (node.dataset.collapsed && again) openGroup(cellAt(treeOf(target), path))
+      })
+      $('panels').addEventListener('dblclick', (event) => {
+        const node = event.target.closest('[data-path]')
+        if (!node) return
+        const cell = cellAt(treeOf(node.dataset.target), state.path)
+        if (cell?.layers) openGroup(cell)
+      })
+      $('panels').addEventListener('pointerdown', (event) => {
+        if (!event.target.dataset.grip) return
+        event.preventDefault()
+        const node = event.target.closest('[data-path]')
+        const path = node.dataset.path.split('.').map(Number)
+        const target = node.dataset.target
+        const startX = event.clientX
+        const startW = node.getBoundingClientRect().width
+        const up = (done) => {
+          window.removeEventListener('pointerup', up)
+          const tree = treeOf(target)
+          const cell = cellAt(tree, path)
+          const mod = modOf(cell, 'weight')
+          const ratio = (startW + done.clientX - startX) / startW
+          const weight = Math.max(1, Math.round(cell.weight * ratio))
+          state.target = target
+          state.path = path
+          if (weight !== cell.weight) {
+            const splice = gestures.setMod(state[target], mod, `@${weight}`)
+            commit(target, splice, 'Drag stretch')
+          }
+          settle()
+        }
+        window.addEventListener('pointerup', up)
+      })
+      $('tray-slot').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-action]')
+        if (button) act(button.dataset.action)
+      })
+
+      // ---- Simulated playhead ----
+      function hash(n) {
+        const x = Math.sin(n * 127.1) * 43758.5453
+        return x - Math.floor(x)
+      }
+      function schedule(tree, cycle) {
+        const events = []
+        const visit = (cell, path, begin, length) => {
+          const reps = cell.reps
+          for (let r = 0; r < reps; r++) {
+            const start = begin + (length / reps) * r
+            const span = length / reps
+            const fast = Number(modOf(cell, 'fast')?.arg ?? 1) || 1
+            const slow = Number(modOf(cell, 'slow')?.arg ?? 1) || 1
+            const degrade = modOf(cell, 'degrade')
+            const e = modOf(cell, 'euclid')
+            let hits = Array.from({ length: fast }, (_, i) => [start + (span / fast) * i, span / fast])
+            if (e && !isTextCell(cell)) {
+              const [k, n, rot] = e.arg.split(',').map(Number)
+              hits = euclid(k, n, rot).flatMap((hit, i) =>
+                hit ? [[start + (span / n) * i, span / n]] : [],
+              )
+            }
+            if (slow > 1 && !cell.layers && cycle % slow) continue
+            for (const [at, size] of hits) {
+              if (degrade && hash(cycle * 31 + at * 97 + path.length) < Number(degrade.arg ?? 0.5))
+                continue
+              if (isTextCell(cell) || !cell.layers) {
+                if (cell.shape !== 'rest') events.push({ at, path, size })
+              } else if (cell.shape === 'alt') {
+                const cells = cell.layers.flatMap((l) => l.cells)
+                const pick = cells[cycle % cells.length]
+                const layer = cell.layers.findIndex((l) => l.cells.includes(pick))
+                visit(pick, [...path, layer, cell.layers[layer].cells.indexOf(pick)], at, size)
+              } else walk(cell.layers, cell.join, path, at, size)
+            }
+          }
+        }
+        const walk = (layers, join, base, begin, length) => {
+          if (join === 'choose') {
+            const li = Math.floor(hash(cycle + base.length) * layers.length)
+            sequence(layers[li], li, base, begin, length)
+          } else if (join === 'feet') {
+            layers.forEach((l, li) =>
+              sequence(l, li, base, begin + (length / layers.length) * li, length / layers.length),
+            )
+          } else layers.forEach((l, li) => sequence(l, li, base, begin, length))
+        }
+        const sequence = (layer, li, base, begin, length) => {
+          const total = totalWeight(layer.cells)
+          let t = 0
+          layer.cells.forEach((cell, ci) => {
+            visit(cell, [...base, li, ci], begin + (t / total) * length, (cell.weight / total) * length)
+            t += cell.weight
+          })
+        }
+        walk(tree.root, tree.join, [], 0, 1)
+        return events
+      }
+      let started = 0
+      let lastCycle = -1
+      function tick(now) {
+        if (!state.playing) return
+        const position = (now - started) / 2000
+        const cycle = Math.floor(position)
+        if (cycle !== lastCycle) {
+          lastCycle = cycle
+          state.cycle = cycle
+          if (state.editing === null) render(false)
+        }
+        const t = position - cycle
+        for (const target of ['seq', 'drums']) {
+          const active = new Set(
+            schedule(treeOf(target), cycle)
+              .filter((e) => t >= e.at && t < e.at + Math.min(e.size, 0.1))
+              .map((e) => e.path.join('.')),
+          )
+          for (const node of document.querySelectorAll(`#panels [data-target="${target}"]`)) {
+            const path = node.dataset.path
+            const hit = !state.reduced && path !== undefined && active.has(path)
+            node.classList.toggle('flash', hit)
+          }
+        }
+        document.querySelectorAll('#panels .surface').forEach((surface) => {
+          surface.classList.toggle('playing-outline', state.reduced)
+        })
+        requestAnimationFrame(tick)
+      }
+
+      // ---- Controls ----
+      function loadScenario(id) {
+        const next = scenarios.find((s) => s.id === id)
+        Object.assign(state, {
+          scenario: next,
+          seq: next.seq,
+          drums: next.drums,
+          path: [0, 0],
+          target: 'seq',
+          focus: { seq: [], drums: [] },
+          history: [],
+          change: null,
+          editing: null,
+          refusal: '',
+        })
+        $('splice').textContent = 'Select a cell and try a gesture. Changed text turns green.'
+        render()
+      }
+      for (const group of [...new Set(scenarios.map((s) => s.group))]) {
+        const node = element('optgroup', '', $('scenario'))
+        node.label = group
+        for (const s of scenarios.filter((x) => x.group === group)) {
+          const option = element('option', '', node)
+          option.value = s.id
+          option.textContent = s.title
+        }
+      }
+      $('scenario').addEventListener('change', (e) => loadScenario(e.target.value))
+      for (const id of ['layout', 'look']) {
+        $(id).addEventListener('change', (e) => {
+          state[id] = e.target.value
+          render()
+        })
+      }
+      $('zoom').addEventListener('change', (e) => {
+        state.zoom = Number(e.target.value)
+        render()
+      })
+      $('play').addEventListener('click', (e) => {
+        state.playing = !state.playing
+        e.currentTarget.setAttribute('aria-pressed', String(state.playing))
+        if (state.playing) {
+          started = performance.now()
+          lastCycle = -1
+          requestAnimationFrame(tick)
+        } else {
+          state.cycle = 0
+          render()
+        }
+      })
+      $('reduced').addEventListener('click', (e) => {
+        state.reduced = !state.reduced
+        e.currentTarget.setAttribute('aria-pressed', String(state.reduced))
+        render()
+      })
+      $('undo').addEventListener('click', () => {
+        const last = state.history.pop()
+        if (!last) return
+        state[last.target] = last.text
+        Object.assign(state, {
+          target: last.target,
+          path: last.path,
+          focus: last.focus,
+          change: null,
+          editing: null,
+        })
+        $('splice').textContent = 'Undone. One gesture is one undo step.'
+        render()
+      })
+      $('reset').addEventListener('click', () => loadScenario(state.scenario.id))
+
+      // ---- Gallery ----
+      function specimen(s) {
+        const box = element('article', 'specimen', $('gallery'))
+        element('h3', '', box).textContent = s.title
+        element('code', '', box).textContent = s.seq
+        const looks = element('div', 'specimen-looks', box)
+        for (const look of ['instrument', 'vintage']) {
+          const seq = element('div', `module swatch look-${look}`, looks)
+          seq.style.width = '120px'
+          drawSeq(seq, 'gallery', s.seq, [], { layout: 'lines', token: s.token })
+        }
+        element('code', '', box).textContent = s.drums
+        for (const look of ['instrument', 'vintage']) {
+          const drums = element('div', `module swatch drum-swatch look-${look}`, box)
+          drums.style.cssText = 'width:168px;margin-bottom:4px'
+          drawDrums(drums, 'gallery', s.drums, [], { layout: 'lines', token: s.token })
+        }
+      }
+      scenarios.forEach(specimen)
+      document.querySelectorAll('#gallery [data-path]').forEach((n) => {
+        n.removeAttribute('data-path')
+        n.removeAttribute('data-target')
+      })
+      loadScenario('flat')
+      window.storyboard = { parseMini, gestures, isTextCell, state, scenarios, load: loadScenario }
+    </script>
+  </body>
+</html>

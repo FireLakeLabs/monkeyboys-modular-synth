@@ -263,3 +263,35 @@ workspace** restores the previous view; the editor remains mounted, retaining
 its document, draft and selection. Show in code leaves rack focus. Focus and zoom
 are local view state and never change saved width or executable source.
 See [verification and compatibility evidence](output-panel-verification.md).
+
+## Nested step editor (#146)
+
+Planned for #147; the [storyboard](design/nested-step-editor.html) shows every state.
+The editor keeps today's areas: 104 × 73 px in SEQ and 109 × 18 px per DRUMS row. Time
+reads like text, so `width = share of cycle × lines × area width`. The line count is
+the largest of 4, 3 or 2 that starts each line on a cell boundary. Otherwise it uses
+four lines, and a cell crossing a break continues with dotted edges, carrying its
+content in its widest piece.
+
+Marks work without colour, and looks change only their tokens:
+
+- Groups have heavy side bars. Too narrow for their children, they collapse to a count;
+  chords and choices collapse to `c2+2`. Opening one shows a crumb in the legend row.
+- `*n` adds ticks, `/n` hatching, `?` a dashed border, and `!n` linked cells with
+  dotted joins. `@n` and `_` are width alone, and dragging the right edge changes `@n`.
+- `,` and `|` stack as lanes; `|` adds a diamond. `<…>` shows this cycle's alternative
+  with pager dots. `(k,n,r)` is n dots in SEQ and n computed steps in DRUMS.
+- Rests are hollow with a center dot. Text cells are italic with a double left edge and
+  a corner fold.
+- A whole-row `*n` in DRUMS shows ghost copies of its first period.
+
+Numbers add a level bar behind the label, gates fill the cell, and a mixed DRUMS row
+reads `mix` with first letters where they fit. The tray floats beside the panel,
+outside module geometry. Each editor is one Tab stop with roving focus; arrows move
+between cells, Enter opens or edits and Esc backs out.
+
+Activity matches each event's source location to a cell and otherwise keeps #90's
+timing, reduced-motion outline and clearing rules. Collapsed groups flash as one cell,
+text cells flash when an event falls inside their span, and `<…>` pages with the cycle
+unless the cell is being edited. See the [study](nested-step-editor.md) for options,
+measurements and the [parser requirements](nested-step-editor.md#what-147-must-handle).

@@ -392,6 +392,10 @@ inside the edited literal may use canonical spacing/quotes; every surrounding
 byte remains exact. Text mode applies on Enter or blur, without a separate Apply
 button; CODE's existing explicit Apply behavior is unchanged.
 
+The planned nested editor (#147) replaces this whole-literal rule with splices inside
+the literal, so bytes between tokens survive as well. See its
+[parser requirements](nested-step-editor.md#what-147-must-handle).
+
 ## Explicit CODE conversion (#78)
 
 A saved CODE owner that the current reader can represent as one complete module
