@@ -128,7 +128,9 @@ they replace stay in force until it lands.
 - **Code applies by itself while stopped ([#180](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/180)):** readable code
   auto-applies while stopped. Explicit Apply remains while playing, so typing
   cannot disturb live audio. Drafts never disable Play, which uses the last
-  applied code. This replaces the explicit default from #56.
+  applied code. The Auto-apply toggle now means “also apply while playing”. The
+  rack stays locked during an unapplied draft, and that state must be unmistakable
+  rather than a silent dim. This replaces the explicit default from #56.
 - **Make rack-editable no longer asks first ([#181](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/181)):** a rack edit
   that needs conversion completes at once and shows “Code rewritten in rack
   style · Undo”. Undo is the safety net, and it restored Trance's exact source.
