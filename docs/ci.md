@@ -19,9 +19,9 @@ the guardrail tests.
 ## Full browser acceptance
 
 [Browser acceptance](../.github/workflows/browser.yml) runs on **every push to
-main**, including each merge, and supports manual dispatch. Changes to its workflow,
-runner, scripts or dependencies also trigger it on pull requests, so CI changes
-can be verified before merging. Runs have no concurrency cancellation or pending-run
+main**, including each merge, and supports manual dispatch. Changes to `src/`, its
+workflow, runner, scripts or dependencies also trigger it on pull requests, so app
+and CI changes are verified before merging. Runs have no concurrency cancellation or pending-run
 replacement; each main commit gets its own checkout and report.
 
 The workflow installs the locked dependencies and Playwright Chromium with its
@@ -30,13 +30,45 @@ repository access, no deployment credentials, and pinned actions. It is separate
 from `npm run check` and deployment: network/sample failures fail the browser job
 without changing the deterministic gate or production publishing policy.
 
+**Full browser suites** is not a required check, because network and sample
+failures must not block unrelated merges. Still wait for its result whenever it runs
+on a pull request, and treat a failure as a merge blocker until it is explained.
+A passing local run on the same commit does not replace it, because the job also
+proves behavior on GitHub's slower runners.
+
 To reproduce locally with the pinned Node version:
 
 ```sh
 npm ci
 npx playwright install --with-deps chromium
-npm run test:browser
+npm run test:browser:report
 ```
+
+### Reading a local run
+
+`npm run test:browser:report` runs the suite, keeps the real exit status, writes a
+log and ends with `RESULT passed=N failed=N exit=N`. Read that line rather than the
+exit status of a wrapper: a background command or a pipe into `tail` can report
+success after tests failed. Extra arguments pass through to Playwright, as in
+`npm run test:browser:report -- -g 'output-panel'`.
+
+- **One suite per machine.** Each run needs port 5173 with `--strictPort`, so a second
+  run fails at once, and two suites competing for CPU cause false timeouts and skew
+  latency numbers. Concurrent work should prove changes on GitHub instead.
+- **Stop servers by port or process ID.** `pkill -f <text>` also matches the shell
+  running that command, which kills it with exit 144. Find the process with
+  `ss -ltnp | grep :5173` and pass its ID to `kill`. A killed run can leave its
+  server holding the port.
+- **Suites under `scripts/` drive their own browser.** The Playwright failure
+  screenshot for one shows an idle page. To see the failing moment, add a temporary
+  screenshot to the script itself and remove it afterward.
+- **Playwright hides scrollbars by default.** Launch with
+  `ignoreDefaultArgs: ['--hide-scrollbars']` when checking scrolling or layout.
+- **Look at real screenshots for UI work.** They have caught hidden prompts,
+  unreadable text and covered controls that passing tests missed.
+- **Read controls through `scripts/panel-controls.mjs`.** It finds a catalog switch
+  whichever way the panel draws it, and opens the More flyout, so checks do not
+  break when a control changes form.
 
 Playwright starts and stops its own Vite dev server on `127.0.0.1:5173`; that port
 must be free. Two workers run independent groups in parallel, with fresh browser
