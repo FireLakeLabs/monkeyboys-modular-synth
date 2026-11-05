@@ -17,7 +17,7 @@ A browser modular synth whose rack and Strudel code are editable views of the sa
 - Keep patch transformations testable without React or browser audio; keep Strudel initialization and playback behind `src/strudel/engine.ts`.
 - Use the Node version in `.node-version`, npm, and the committed lockfile; bootstrap with `npm ci`.
 - For code, configuration, or tooling changes, run `npm run check`, the same gate used in CI. The build includes TypeScript checking. Add focused behavior tests for generation, import, graph validation, or persistence changes; catalog integrity tests alone do not prove translation correctness.
-- For changes to `src/`, run `npm run test:browser:report` on the final commit and read its `RESULT` line. See [reading a local run](docs/ci.md#reading-a-local-run).
+- For changes to `src/`, run `npm run test:browser:report` on the final commit and read its `RESULT` line. Rerun the full suite after every review fix, however small; a focused run does not count. Two Wave 3 review fixes caused regressions: the full suite caught one and Sol the other. See [reading a local run](docs/ci.md#reading-a-local-run).
 - For playback or live-editing changes, verify the affected behavior in a browser when the task and harness permit it. Report separately what was heard or observed and what only passed static/unit checks. For documentation or skill-only changes, run `npm run format:check` and `npm run check:skills`, verify relevant links, and validate changed examples/scripts. CI still runs the full gate.
 
 ## Skill routing
