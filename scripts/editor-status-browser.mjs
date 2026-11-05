@@ -1,6 +1,6 @@
 // Run in the Vite browser preview:
 // await (await import('/scripts/editor-status-browser.mjs')).checkEditorStatus()
-import { editorSource, editorView, replaceSource } from './editor-browser.mjs'
+import { editorSource, editorView, replaceSource, typeAt } from './editor-browser.mjs'
 
 export async function checkEditorStatus() {
   const checks = []
@@ -23,7 +23,6 @@ export async function checkEditorStatus() {
     document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code')
   const footer = () => document.querySelector('.editor-status')
   await until(() => document.querySelector('.cm-content'))
-  const original = editorSource()
   const bar = footer()
   assert(bar && document.querySelectorAll('.editor-status').length === 1, 'One editor footer')
   assert(document.querySelector('.code').lastElementChild === bar, 'Status is at editor foot')
@@ -45,8 +44,12 @@ export async function checkEditorStatus() {
     'One footer holds sync, cursor and Ready; engine caveats are hidden behind an operable info control',
   )
 
+  // A half-typed word holds the draft while stopped, so Revert has something to do.
   const voice = 'setcpm(30)\n$: note("c3 e3").s("sine")\n'
   replaceSource(voice)
+  await until(() => accepted() && editorSource() !== voice)
+  const applied = editorSource()
+  typeAt(voice.trimEnd().length, '.l')
   await until(() => document.querySelector('.sync-status').textContent === 'Unapplied changes')
   const view = editorView()
   view.dispatch({ selection: { anchor: 24, head: 14 } })
@@ -61,7 +64,7 @@ export async function checkEditorStatus() {
   )
   button('Revert to last readable code').click()
   await until(accepted)
-  assert(editorSource() === original, 'Revert restores exact accepted source')
+  assert(editorSource() === applied, 'Revert restores exact accepted source')
   checks.push(
     'Unapplied sync state, backward selection head and mapped caret coordinates update in the footer; Revert preserves exact source',
   )

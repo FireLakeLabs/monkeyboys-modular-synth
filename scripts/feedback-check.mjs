@@ -101,7 +101,7 @@ async function stopped() {
 }
 try {
   await page.goto(base)
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).check()
   const body = `// exact 🐒\nsetcpm(120/4)\nconst lead = note("c3 e3 g3 c4").s("sine");\n$: lead.iter(4).lpf(800).lpq(2)\n$: lead.jux(rev).gain(0.15)\n$: note("c2").s("sine").chunkBack(4, x => x.hurry(2))\n`
   await code(body)
   assert((await sourceText()).startsWith(body))
@@ -226,12 +226,16 @@ try {
   await cdp.send('Input.imeSetComposition', { text: 'に', selectionStart: 1, selectionEnd: 1 })
   await page.waitForTimeout(400)
   assert.equal(await page.locator('.sync-status').textContent(), 'Reading code…')
-  assert.equal(await page.locator('.source-selected').count(), 0)
+  // Colors map through the edit rather than flashing off on each keystroke.
+  assert.deepEqual(await page.locator('.source-selected').allTextContents(), [
+    '.lpf(800)',
+    '.lpq(2)',
+  ])
   await cdp.send('Input.insertText', { text: '日本' })
   await accepted()
   assert((await sourceText()).startsWith('// exact 日本🐒'))
   pass(
-    'native Chromium IME composition defers parsing, clears stale highlights and commits exact Japanese text',
+    'native Chromium IME composition defers parsing, keeps mapped highlights and commits exact Japanese text',
   )
 
   await page.getByRole('button', { name: 'Select code1', exact: true }).click()

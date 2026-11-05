@@ -86,7 +86,7 @@ async function destructive(button) {
 try {
   await page.goto(base)
   await page.getByRole('textbox', { name: 'Strudel source', exact: true }).waitFor()
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).check()
   await code('$: note("c3 e3 g3 a3").s("sine").lpf(800)\n')
   await panel('vcf1').click({ button: 'right' })
   await menu.waitFor()

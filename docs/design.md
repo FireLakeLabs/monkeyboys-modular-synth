@@ -259,6 +259,27 @@ and Space only select. A file or library load opens at Fit when that is at least
 A reload restores the last work silently, with its draft, and the message offers
 Start new. Start new is itself undoable.
 
+## The locked rack (#180)
+
+The rack stays locked during an unapplied code draft, and that must be plain before
+you try a knob. An orange strip across the top of the rack says “Rack locked”, gives
+the reason and offers the way out: Apply and Revert for a draft, Revert alone with
+“Fix the code or revert to unlock” for unreadable code, and Replace metadata when the
+saved rack cannot be read. Apply and Revert return focus to the editor. Hatching covers the rack, OUT and the module list, and the
+cursor becomes not-allowed. The words, hatching and cursor mean the lock never relies
+on color alone, and the strip sits in a polite live region, so it is announced.
+
+A touch on the rack or module list pulses the strip. They are `inert`, so that touch
+reaches the nearest parent, which reports it. Reduced motion keeps the outline and
+drops the movement.
+
+The strip must not flicker. While stopped, every keystroke is briefly unapplied and
+half-typed code is briefly unreadable, so the rack only looks locked after typing has
+paused for 1.2 seconds with the code still unapplied, or as soon as you leave the
+editor. Header controls and the code footer follow that same state, and source colors
+stay in place while you type. Panels rebuild when accepted code changes the patch, not
+when the lock appears or on each keystroke, so a Revert keeps them as they were.
+
 ## Module menu and grid activity (#89, #90)
 
 Look choices show miniature panels using the existing look/category styles, with

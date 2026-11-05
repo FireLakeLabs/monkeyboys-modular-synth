@@ -39,10 +39,12 @@ test('rack view state survives typing, applying and undoing', async ({ page }) =
 
   await page.locator('.cm-line').first().click()
   await page.keyboard.press('End')
-  await page.keyboard.type(' ')
+  await page.keyboard.type('.l')
   await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
   expect(await viewState(page)).toEqual(expected)
 
+  await page.keyboard.press('Backspace')
+  await page.keyboard.press('Backspace')
   await page.keyboard.press('Control+Enter')
   await expect(page.locator('.sync-status')).toContainText('Rack matches code')
   await page.keyboard.press('Control+.')
@@ -92,7 +94,7 @@ test('Delete and Backspace act on the selected module wherever rack focus is', a
   await page.locator('.cm-line').first().click()
   await page.keyboard.press('End')
   await page.keyboard.press('Backspace')
-  await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
+  await expect(page.locator('.sync-status')).toHaveText('Rack shows previous code')
   await expect(header(page, 'osc1')).toBeVisible()
   await page.getByRole('button', { name: 'Revert to last readable code' }).click()
 
@@ -166,7 +168,7 @@ test('a slow draft does not reset an open sound drawer', async ({ page }) => {
   await expect(page.getByLabel('Filter sounds')).toBeVisible()
   await page.locator('.cm-line').first().click()
   await page.keyboard.press('End')
-  await page.keyboard.type(' ')
+  await page.keyboard.type('.l')
   await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
   await expect(page.getByLabel('Filter sounds')).toBeVisible()
 })

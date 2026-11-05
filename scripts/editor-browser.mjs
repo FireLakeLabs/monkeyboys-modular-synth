@@ -43,6 +43,14 @@ export function replaceSource(source) {
   })
 }
 
+// A paste is finished text, so holding a half-typed draft needs a typed change.
+export function typeAt(position, text) {
+  editorView().dispatch({
+    changes: { from: position, insert: text },
+    userEvent: 'input.type',
+  })
+}
+
 // Legacy live-edit suites explicitly opt in; application/shortcut suites keep the default.
 export function enableAutoApply() {
   const toggle = document.querySelector('.auto-apply input')

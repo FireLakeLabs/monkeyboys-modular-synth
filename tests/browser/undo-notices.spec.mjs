@@ -212,7 +212,7 @@ test.describe('undo instead of a confirmation', () => {
   }) => {
     await page.locator('.cm-line').first().click()
     await page.keyboard.press('End')
-    await page.keyboard.type(' ')
+    await page.keyboard.type('.l')
     await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
     const draft = await source(page)
     await page.getByRole('button', { name: 'New patch', exact: true }).click()
@@ -388,7 +388,7 @@ test.describe('shorter loading and restore', () => {
     await add(page, 'OSC')
     await page.locator('.cm-line').first().click()
     await page.keyboard.press('End')
-    await page.keyboard.type(' ')
+    await page.keyboard.type('.l')
     await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
     const draft = await source(page)
     await page.reload()

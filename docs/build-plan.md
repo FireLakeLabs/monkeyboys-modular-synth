@@ -112,8 +112,8 @@ Global [undo/redo](undo-redo.md) is implemented separately under #63.
 ## Explicit code application
 
 Issue #70 implements the #56 decision: Ctrl/Cmd+Enter accepts code and starts
-stopped playback; Ctrl/Cmd+. stops globally. Editor drafts require explicit apply
-by default, with a session-only auto-apply toggle. Rack edits remain immediate;
+stopped playback; Ctrl/Cmd+. stops globally. Since #180, finished code applies by
+itself while stopped, and a session-only toggle extends that to playback. Rack edits remain immediate;
 file loading and recovery remain silent. See the [contract and browser/signal
 evidence](code-application.md), including preserved #12 error/recovery behavior.
 

@@ -51,14 +51,18 @@ function reportEditing(
 export function SourceEditor(props: {
   source: string
   document: SourceDocument | null
+  /** Typing keeps the last colors, mapped through edits, instead of clearing per keystroke. */
+  keepDecorations: boolean
   selected: string | null
   editor: RefObject<EditorView | null>
   sourceFeedback: SubscribeSourceFeedback
   invalid: boolean
   diagnostic: Extract<ReadResult, { kind: 'invalid' }> | null
   status: ReactNode
-  change: (source: string) => void
+  change: (source: string, pasted?: boolean) => void
   composing: (value: boolean) => void
+  focused: (value: boolean) => void
+  caretMoved: () => void
   editingModule: (id: string | null) => void
   stepHistory: (direction: 'undo' | 'redo') => boolean
 }) {
@@ -153,11 +157,16 @@ export function SourceEditor(props: {
           EditorView.updateListener.of((update) => {
             const { props, treatments } = current.current
             if (update.selectionSet || update.docChanged) reportCursor(update.state)
+            if (update.focusChanged) props.focused(update.view.hasFocus)
+            if (update.selectionSet && !update.docChanged) props.caretMoved()
             if (
               update.docChanged &&
               !update.transactions.every((tr) => tr.annotation(Transaction.userEvent) === 'rack')
             )
-              props.change(update.state.doc.toString())
+              props.change(
+                update.state.doc.toString(),
+                update.transactions.some((tr) => tr.isUserEvent('input.paste')),
+              )
             if (update.selectionSet || update.focusChanged || update.docChanged)
               // Accepted spans describe the old document until React installs the
               // new revision. Preserve editing ownership across that boundary.
@@ -223,14 +232,21 @@ export function SourceEditor(props: {
     if (!view) return
     view.dispatch({
       effects: [
-        setSourceDecorations.of(decorations),
+        ...(props.keepDecorations ? [] : [setSourceDecorations.of(decorations)]),
         styling.current.reconfigure([
           EditorView.contentAttributes.of({ 'aria-invalid': String(props.invalid) }),
         ]),
       ],
     })
     reportEditing(view, treatments, props.editingModule)
-  }, [decorations, props.invalid, props.editor, props.editingModule, treatments])
+  }, [
+    decorations,
+    props.keepDecorations,
+    props.invalid,
+    props.editor,
+    props.editingModule,
+    treatments,
+  ])
 
   useLayoutEffect(() => {
     props.editor.current?.dispatch({ effects: setSourceDiagnostic.of(props.diagnostic) })
