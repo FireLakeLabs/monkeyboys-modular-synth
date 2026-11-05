@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 
 // Sample the actual painted background beneath each visible text label. Hiding
-// glyphs for the capture retains gradients, the dimming layer and badge surfaces.
-export async function dimmedLabelContrast(page) {
+// glyphs for the capture retains gradients and badge surfaces. Unrouted panels
+// are the ones measured, because this fixture connects nothing.
+export async function panelLabelContrast(page) {
   const results = []
   for (const look of [
     'powder',
@@ -33,8 +34,9 @@ export async function dimmedLabelContrast(page) {
           if (!rect.width || !rect.height) continue
           const element = node.parentElement
           // Scrolled-out text still has a DOM rect; sample only its actual painted center.
+          // A segment's radio covers its label to take clicks, so its label counts as the hit.
           if (
-            !element.contains(
+            !(element.closest('.segments label') ?? element).contains(
               document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2),
             )
           )
@@ -106,7 +108,7 @@ export async function dimmedLabelContrast(page) {
       },
       { labels, screenshot },
     )
-    assert(contrasts.length > 0, `No dimmed labels tested for ${look}`)
+    assert(contrasts.length > 0, `No panel labels tested for ${look}`)
     assert(
       contrasts.every((label) => label.ratio >= 4.5),
       `${look}: ${JSON.stringify(contrasts.filter((label) => label.ratio < 4.5))}`,

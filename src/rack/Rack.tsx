@@ -529,13 +529,18 @@ export function Rack({
               setGhost(null)
             }}
           >
-            <span className="module-dot" />
+            <span
+              className="module-dot"
+              title={routed.has(m.id) ? 'Connected to OUT' : 'Not connected to OUT'}
+            />
             {spec.family === 'cyber' && (
               <span className="cyber-cursor" aria-hidden="true">
                 ▌
               </span>
             )}
-            <strong>{spec.name}</strong>
+            <strong data-tight={spec.name.split(' ').some((word) => word.length > spec.hp)}>
+              {spec.name}
+            </strong>
             <small>{spec.title}</small>
           </button>
           <div

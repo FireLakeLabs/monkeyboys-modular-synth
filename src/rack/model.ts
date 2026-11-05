@@ -4,13 +4,33 @@ import { generate } from '../codegen/generate'
 import { graph, functionMembers, isSteps, requireNode } from '../codegen/graph'
 import { getModuleSpec, VOICE_EFFECT_ORDER } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
-import type { JackSignal, KnobControl } from '../modules/types'
+import type { JackSignal, KnobControl, SwitchControl } from '../modules/types'
 import type { Cable, ControlValue, JackRef, Patch, PlacedModule } from '../patch/types'
-import { ROW_HP, railWidth, validatePositions, type RailHp } from '../patch/layout'
+import { HP, ROW_HP, railWidth, validatePositions, type RailHp } from '../patch/layout'
 
 export { ROW_HP, HP } from '../patch/layout'
 
 export const ROW_HEIGHT = 440
+
+export type SwitchStyle = 'toggle' | 'segments' | 'dropdown'
+
+// Measured on the catalog's option labels at the panel's 11 px condensed type.
+const SEGMENT_CHARACTER = 4.8
+const SEGMENT_PADDING = 7
+const PANEL_INSET = 10
+
+/** Presentation only: every style commits the same catalog option values. */
+export function switchStyle(control: SwitchControl, hp: number): SwitchStyle {
+  const { options } = control
+  if (options.length === 2 && options.every(({ value }) => value === 'off' || value === 'on'))
+    return 'toggle'
+  if (options.length < 2 || options.length > 4) return 'dropdown'
+  const width = options.reduce(
+    (sum, { label }) => sum + label.length * SEGMENT_CHARACTER + SEGMENT_PADDING,
+    0,
+  )
+  return width <= hp * HP - PANEL_INSET ? 'segments' : 'dropdown'
+}
 
 export function starterPatch(railHp: RailHp = ROW_HP, visibleHp: number = railHp): Patch {
   const mixHp = getModuleSpec('mix').hp

@@ -4,12 +4,20 @@ import { controlEnabled } from '../modules/bindings'
 import { getModuleSpec } from '../modules/catalog'
 import { useRef, useState } from 'react'
 import { patternNumber } from '../modules/bindings'
-import type { Control, KnobControl } from '../modules/types'
+import type { Control, KnobControl, SwitchControl } from '../modules/types'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
 import { isGrid, isSteps } from '../codegen/graph'
 import { drumText } from '../patch/notation'
 import { MiniEditor } from './MiniEditor'
-import { depthControl, draggedValue, keyboardValue, normalized, sequenceText, snap } from './model'
+import {
+  depthControl,
+  draggedValue,
+  keyboardValue,
+  normalized,
+  sequenceText,
+  snap,
+  switchStyle,
+} from './model'
 
 const focusEditor = (element: HTMLInputElement | null) => element?.focus()
 
@@ -265,20 +273,13 @@ export function ControlEditor({
     }
     case 'switch':
       return (
-        <label className="switch-control">
-          {control.label}
-          <select
-            aria-label={control.label}
-            value={typeof value === 'string' ? value : control.default}
-            onChange={(event) => commit(event.target.value)}
-          >
-            {control.options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SwitchEditor
+          control={control}
+          group={`${module.id}:${control.id}`}
+          hp={getModuleSpec(module.type).hp}
+          value={typeof value === 'string' ? value : control.default}
+          commit={commit}
+        />
       )
     case 'text':
       if (control.notation && typeof value === 'string')
@@ -355,6 +356,70 @@ export function ControlEditor({
   }
 }
 
+function SwitchEditor({
+  control,
+  group,
+  hp,
+  value,
+  commit,
+}: {
+  control: SwitchControl
+  group: string
+  hp: number
+  value: string
+  commit: Commit
+}) {
+  const style = switchStyle(control, hp)
+  if (style === 'toggle')
+    return (
+      <button
+        type="button"
+        className="toggle-control"
+        aria-pressed={value === 'on'}
+        onClick={() => commit(value === 'on' ? 'off' : 'on')}
+      >
+        {control.label}
+      </button>
+    )
+  if (style === 'segments')
+    return (
+      // Native radios supply the arrow-key behavior; the group only needs its name.
+      <div className="switch-control" role="radiogroup" aria-label={control.label}>
+        <span aria-hidden="true">{control.label}</span>
+        <div className="segments">
+          {control.options.map((option) => (
+            <label key={option.value}>
+              <input
+                type="radio"
+                name={group}
+                value={option.value}
+                checked={option.value === value}
+                onChange={() => commit(option.value)}
+              />
+              <span>{option.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    )
+  return (
+    <label className="switch-control">
+      {control.label}
+      <select
+        aria-label={control.label}
+        value={value}
+        onChange={(event) => commit(event.target.value)}
+      >
+        {control.options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
 function TextEditor({
   label,
   value,
@@ -383,7 +448,7 @@ function TextEditor({
     if (applied) submitted.current = draft
   }
   return (
-    <label className="text-control">
+    <label className={notation ? 'text-control notation-control' : 'text-control'}>
       {label}
       <textarea
         aria-label={label}

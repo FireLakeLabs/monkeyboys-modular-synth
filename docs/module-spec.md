@@ -4,6 +4,17 @@ The sixteen v1 modules and subsequent catalog additions. For each: its controls,
 
 The machine-readable version of this spec is [`src/modules/catalog.ts`](../src/modules/catalog.ts). The app already consumes it for the module library. **The catalog is the runtime source of truth** and this document describes it; keep the two in step.
 
+## Switch presentation (#174)
+
+A `switch` control's options decide how it appears, not what it writes. Every form
+commits the same option value through the same edit, so saved racks and generated
+source do not depend on it. `switchStyle` in `src/rack/model.ts` applies these
+rules:
+
+- Exactly `off` and `on`: a lit push button.
+- Two to four options: a segmented control, if the labels fit the panel's HP.
+- Anything else, including short lists with long labels: a compact dropdown.
+
 ## Call bindings (#128)
 
 Knob, switch and text controls may declare `call` in the catalog. The generator visits

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
-import { dimmedLabelContrast } from './rack-contrast-check.mjs'
+import { panelLabelContrast } from './rack-contrast-check.mjs'
 
 // Run against Vite: node scripts/rack-visuals-check.mjs [url] [evidence directory].
 // Exercises presentation and native input only; it never starts audio.
@@ -42,7 +42,7 @@ try {
 
   // The 104-HP family fixture must be visible when sampling painted pixels.
   await button('Focus rack').click()
-  results.dimmedContrast = await dimmedLabelContrast(page)
+  results.panelContrast = await panelLabelContrast(page)
   await button('Restore workspace').click()
   pass(
     'Visible default labels in all ten dimmed looks exceed 4.5:1 against sampled painted backgrounds',
@@ -103,15 +103,13 @@ try {
     return [...document.querySelectorAll('.module-panel.look-instrument')].map((panel) => {
       const band = getComputedStyle(panel.querySelector('.module-header'))
       const category = getComputedStyle(panel).getPropertyValue('--category')
-      if (!panel.classList.contains('inactive'))
-        assertEqual(rgb(band.backgroundColor), rgb(category))
+      assertEqual(rgb(band.backgroundColor), rgb(category))
       const a = luminance(band.color),
         b = luminance(band.backgroundColor)
       return { id: panel.dataset.module, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) }
     })
     function assertEqual(a, b) {
-      if (JSON.stringify(a) !== JSON.stringify(b))
-        throw new Error('Active header changed category colour')
+      if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error('Header changed category colour')
     }
   })
   assert(
@@ -120,19 +118,30 @@ try {
   )
   results.headerContrast = contrast
   pass(
-    'All six active Instrument category bands retain exact colours; active and inactive header text exceeds 4.5:1',
+    'All six Instrument category bands keep exact colours whether routed or not; header text exceeds 4.5:1',
   )
   assert.match(await panel('osc2').getAttribute('aria-label'), /not connected to OUT/)
-  const dimSurface = await panel('osc2').evaluate(
-    (element) => getComputedStyle(element, '::before').backgroundColor,
-  )
-  assert.notEqual(dimSurface, 'rgba(0, 0, 0, 0)')
+  const statusLight = () =>
+    panel('osc2')
+      .locator('.module-dot')
+      .evaluate((element) => {
+        const { backgroundColor } = getComputedStyle(element)
+        return { backgroundColor, title: element.title }
+      })
+  assert.deepEqual(await statusLight(), {
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    title: 'Not connected to OUT',
+  })
   await page.locator('[data-jack="osc2:out"]').click()
   await page.locator('[data-jack="mix1:in2"]').click()
   await page.waitForFunction(
     () => !document.querySelector('[data-module=osc2]').classList.contains('inactive'),
   )
   assert.doesNotMatch(await panel('osc2').getAttribute('aria-label'), /not connected/)
+  assert.deepEqual(await statusLight(), {
+    backgroundColor: 'rgb(47, 210, 122)',
+    title: 'Connected to OUT',
+  })
   await page.locator('.connections summary').click()
   await page.getByRole('button', { name: /osc2:out → mix1:in2/ }).click()
   await button('Remove cable').click()
@@ -140,7 +149,7 @@ try {
     document.querySelector('[data-module=osc2]').classList.contains('inactive'),
   )
   pass(
-    'Native cable connection brightens the spare OSC and changes its accessible name; disconnection restores dimming',
+    'Native cable connection lights the spare OSC status light and changes its accessible name; disconnection empties it',
   )
 
   // These outputs already have cables: their centers must still receive native
@@ -311,17 +320,19 @@ try {
   await page.setViewportSize({ width: 1600, height: Math.max(1800, trance.rows * 440 + 320) })
   const readable = await page.locator('.module-panel').evaluateAll((panels) =>
     panels.every((panel) =>
-      [...panel.querySelectorAll('select, textarea, pre, .text-control button')].every(
-        (element) => {
-          element.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'instant' })
-          const rect = element.getBoundingClientRect()
-          const hit = document.elementFromPoint(
-            rect.left + rect.width / 2,
-            rect.top + Math.min(5, rect.height / 2),
-          )
-          return hit && element.contains(hit)
-        },
-      ),
+      [
+        ...panel.querySelectorAll(
+          'select, .segments, .toggle-control, textarea, pre, .text-control button',
+        ),
+      ].every((element) => {
+        element.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'instant' })
+        const rect = element.getBoundingClientRect()
+        const hit = document.elementFromPoint(
+          rect.left + rect.width / 2,
+          rect.top + Math.min(5, rect.height / 2),
+        )
+        return hit && element.contains(hit)
+      }),
     ),
   )
   assert(readable, 'A cable intercepts a trance selector or CODE control')

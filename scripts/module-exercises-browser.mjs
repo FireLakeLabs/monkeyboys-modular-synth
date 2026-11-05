@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { chooseSwitch } from './panel-controls.mjs'
 const output = process.argv[3] ?? '/tmp/monkeyboy-module-exercises'
 await mkdir(output, { recursive: true })
 const browser = await chromium.launch({
@@ -168,8 +169,7 @@ try {
         await input.fill(String(value))
         await input.press('Enter')
       }
-      if (kind === 'switch')
-        await panel.getByRole('combobox', { name: label, exact: true }).selectOption(value)
+      if (kind === 'switch') await chooseSwitch(panel, label, value)
       if (kind === 'drawbar')
         await panel.getByRole('slider', { name: label, exact: true }).press('End')
       if (kind === 'mini') {

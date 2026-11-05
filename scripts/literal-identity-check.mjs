@@ -123,7 +123,8 @@ export async function verifyLiteralIdentity() {
     'Mode switch duplicated ENV',
   )
   assert(
-    document.querySelector('[data-module="vcf1"] select')?.value === 'hp',
+    document.querySelector('[data-module="vcf1"] [aria-label="MODE"] input:checked')?.value ===
+      'hp',
     'Rendered VCF mode stale',
   )
   results.push('VCF HP switch retains filter identity and shared ENV')

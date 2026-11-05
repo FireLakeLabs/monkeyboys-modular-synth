@@ -50,8 +50,8 @@ export async function checkErrorPositions() {
   const rack = () =>
     [...document.querySelectorAll('[data-module]')].map((panel) => ({
       id: panel.dataset.module,
-      values: [...panel.querySelectorAll('input, select, textarea')].map(
-        (control) => control.value,
+      values: [...panel.querySelectorAll('input, select, textarea')].map((control) =>
+        control.type === 'radio' ? control.checked : control.value,
       ),
     }))
   const originalRack = JSON.stringify(rack())
