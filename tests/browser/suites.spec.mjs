@@ -297,7 +297,6 @@ test('imported CHORD branch accepts native deletion and keyboard reconnection', 
   }, source)
   await page.getByRole('button', { name: 'Select rev1', exact: true }).click()
   await page.getByRole('button', { name: 'Delete rev1 and attached cables', exact: true }).click()
-  await page.getByRole('button', { name: 'Delete module', exact: true }).click()
   await page.locator('[data-jack="arp1:out"]').press('Enter')
   await page.locator('[data-jack="osc1:note"]').press('Enter')
   await page.waitForFunction(async () =>

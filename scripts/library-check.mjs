@@ -20,6 +20,8 @@ function button(text, root = document) {
 }
 const status = () => document.querySelector('.transport-status').textContent
 const library = () => document.querySelector('.patch-library')
+const rewritten = () =>
+  document.querySelector('.workspace-notice')?.textContent.includes('Code rewritten in rack style')
 async function choose(title) {
   button('Patch library').focus()
   button('Patch library').click()
@@ -29,7 +31,7 @@ async function choose(title) {
 }
 async function load(title) {
   await choose(title)
-  button('Load patch…', library()).click()
+  button('Load patch', library()).click()
   await until(() => !library() || library().querySelector('.replace-prompt'))
   if (library()) button('Load patch', library()).click()
   await until(() => !library())
@@ -79,25 +81,14 @@ export async function verifyLibraryUI() {
     library().querySelector('.patch-attribution a').textContent.includes('contributors'),
     'Missing attribution',
   )
-  button('Load patch…', library()).click()
-  await until(() => library().querySelector('.replace-prompt'))
-  assert(
-    (await exportedBy(() => button('Export current', library()).click())) ===
-      expectedExport(initial),
-    'Export current changed draft',
-  )
-  button('Cancel', library()).click()
-  await until(() => !library().querySelector('.replace-prompt'))
   button('Close library', library()).click()
   await until(() => !library())
   assert(document.activeElement === button('Patch library'), 'Close did not restore opener focus')
   assert(
     source() === initial && JSON.stringify(read(source()).patch) === initialRack,
-    'Cancel replaced current work',
+    'Closing replaced current work',
   )
-  results.push(
-    'Nested collections expand/collapse; attribution, exact Export current and Cancel retain current draft/rack',
-  )
+  results.push('Nested collections expand/collapse; attribution; Close retains current work')
 
   // Corrupt the in-memory fixture only; the repository original is restored in finally.
   const helper = entries.find((entry) => entry.id === 'custom-helper')
@@ -105,8 +96,6 @@ export async function verifyLibraryUI() {
   try {
     helper.source = '$: note('
     await choose(helper.title)
-    button('Load patch…', library()).click()
-    await until(() => library().querySelector('.replace-prompt'))
     button('Load patch', library()).click()
     await until(() => library().querySelector('[role=alert]'))
     assert(
@@ -176,11 +165,9 @@ export async function verifyLibraryUI() {
   )
 
   button('New patch').click()
-  await until(() => document.querySelector('.replace-prompt'))
-  button('Replace patch').click()
   await until(() => document.querySelectorAll('.module-panel').length === 2)
   assert(status() === 'Ready', 'New patch started audio')
-  results.push('Shared New confirmation installs silent MIX/OUT starter')
+  results.push('New installs silent MIX/OUT starter')
   return results
 }
 
@@ -190,7 +177,7 @@ export async function verifyReplacementConfirmation() {
   const results = []
   async function loadClean(title) {
     await choose(title)
-    button('Load patch…', library()).click()
+    button('Load patch', library()).click()
     await until(() => !library() || library().querySelector('.replace-prompt'))
     assert(!library(), `${title}: clean workspace still asks for replacement`)
     assert(status() === 'Ready', 'Clean replacement started audio')
@@ -214,6 +201,43 @@ export async function verifyReplacementConfirmation() {
   const changed = `// keep my work\n${original}`
   await editSource(changed)
   const accepted = source()
+  async function undoReplacement(message) {
+    assert(!document.querySelector('.replace-prompt'), `${message}: asked first`)
+    const notice = document.querySelector('.workspace-notice')
+    assert(notice?.textContent.includes(message), `${message}: no message`)
+    button('Undo', notice).click()
+  }
+  button('New patch').click()
+  await until(() => source() !== accepted)
+  await undoReplacement('Started a new patch')
+  await until(() => source() === accepted)
+
+  await choose('Enveloped synth')
+  button('Load patch', library()).click()
+  await until(() => !library())
+  assert(source() === original, 'Load did not restore exact library source')
+  await undoReplacement('Loaded Enveloped synth')
+  await until(() => source() === accepted)
+  assert(status() === 'Ready', 'Undo started audio')
+  results.push('New and library load over edits act at once, and Undo restores exact source')
+
+  // A look changes only saved rack metadata, which is also work worth keeping.
+  const panel = document.querySelector('.module-panel')
+  panel.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: 300, clientY: 200 }))
+  await until(() => document.querySelector('[aria-label="Look Vintage lab"]'))
+  document.querySelector('[aria-label="Look Vintage lab"]').click()
+  await until(() => source() !== accepted)
+  const layoutEdit = source()
+  button('New patch').click()
+  await until(() => source() !== layoutEdit)
+  await undoReplacement('Started a new patch')
+  await until(() => source() === layoutEdit)
+  results.push('Presentation-only rack edits come back through Undo')
+
+  replaceSource('$: note(')
+  await until(
+    () => document.querySelector('.sync-status').textContent === 'Rack shows previous code',
+  )
   button('New patch').click()
   await until(() => document.querySelector('.replace-prompt'))
   assert(
@@ -225,10 +249,10 @@ export async function verifyReplacementConfirmation() {
   assertPrimary('Replace patch')
   button('Cancel', document.querySelector('.replace-prompt')).click()
   await until(() => !document.querySelector('.replace-prompt'))
-  assert(source() === accepted, 'New Cancel discarded edits')
+  assert(source() === '$: note(', 'Cancel discarded invalid draft')
 
   await choose('Enveloped synth')
-  button('Load patch…', library()).click()
+  button('Load patch', library()).click()
   await until(() => library().querySelector('.replace-prompt'))
   assert(
     library()
@@ -238,51 +262,21 @@ export async function verifyReplacementConfirmation() {
   )
   assertPrimary('Load patch')
   assert(
-    (await exportedBy(() => button('Export current', library()).click())) ===
-      expectedExport(accepted),
-    'Replacement export lost current work',
+    (await exportedBy(() => button('Export code', library()).click())) === '$: note(',
+    'Replacement export lost the draft',
   )
   button('Cancel', library()).click()
   await until(() => !library().querySelector('.replace-prompt'))
-  assert(source() === accepted, 'Library Cancel discarded edits')
-  button('Load patch…', library()).click()
-  await until(() => library().querySelector('.replace-prompt'))
-  button('Load patch', library()).click()
+  assert(source() === '$: note(', 'Library Cancel discarded the draft')
+  button('Close library', library()).click()
   await until(() => !library())
-  assert(source() === original, 'Confirmed load did not restore exact library source')
-  results.push(
-    'Edited code prompts; New/library copy and orange actions are correct; Cancel/Export preserve edits',
-  )
 
-  // A look changes only saved rack metadata, which is also work worth keeping.
-  const panel = document.querySelector('.module-panel')
-  panel.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: 300, clientY: 200 }))
-  await until(() => document.querySelector('[aria-label="Look Vintage lab"]'))
-  document.querySelector('[aria-label="Look Vintage lab"]').click()
-  await until(() => source() !== original)
-  const layoutEdit = source()
-  button('New patch').click()
-  await until(() => document.querySelector('.replace-prompt'))
-  button('Cancel', document.querySelector('.replace-prompt')).click()
-  await until(() => !document.querySelector('.replace-prompt'))
-  assert(source() === layoutEdit, 'Cancel discarded saved rack layout')
-  results.push('Presentation-only rack edits still require confirmation')
-
-  replaceSource('$: note(')
-  await until(
-    () => document.querySelector('.sync-status').textContent === 'Rack shows previous code',
-  )
-  button('New patch').click()
-  await until(() => document.querySelector('.replace-prompt'))
-  button('Cancel', document.querySelector('.replace-prompt')).click()
-  await until(() => !document.querySelector('.replace-prompt'))
-  assert(source() === '$: note(', 'Cancel discarded invalid draft')
   button('New patch').click()
   await until(() => document.querySelector('.replace-prompt'))
   button('Replace patch').click()
   await until(() => source() === starter)
   await loadClean('Quantized sequence')
-  results.push('Invalid draft remains protected; confirmed New establishes a clean starter again')
+  results.push('Only an unapplied draft prompts; Cancel and Export keep it; New then replaces it')
   return results
 }
 
@@ -319,27 +313,29 @@ export function installAudioProbe() {
 
 /** Run after a real Play gesture on a loaded library patch, with the probe installed first. */
 export async function verifyReplacementCancelPlayback(measure) {
-  const { read } = await import('../src/reader/index.ts')
   await until(() => status() === 'Playing')
   await editSource(`// Keep this playing\n${source()}`)
   await until(() => status() === 'Playing')
-  const original = source()
-  const rack = JSON.stringify(read(original).patch)
   const before = await measure()
   assert(before.rms > 0.0001, 'Playback fixture has no signal before Cancel')
+  // Only an unapplied draft prompts, so Cancel is reachable.
+  const original = '$: note('
+  replaceSource(original)
+  await until(
+    () => document.querySelector('.sync-status').textContent === 'Rack shows previous code',
+  )
   button('New patch').click()
   await until(() => document.querySelector('.replace-prompt'))
   button('Cancel', document.querySelector('.replace-prompt')).click()
   await until(() => !document.querySelector('.replace-prompt'))
   await choose('Enveloped synth')
-  button('Load patch…', library()).click()
+  button('Load patch', library()).click()
   await until(() => library().querySelector('.replace-prompt'))
   button('Cancel', library()).click()
   await until(() => !library().querySelector('.replace-prompt'))
   button('Close library', library()).click()
   await until(() => !library())
-  assert(source() === original, 'Cancel changed the playing source')
-  assert(JSON.stringify(read(source()).patch) === rack, 'Cancel changed the playing rack')
+  assert(source() === original, 'Cancel changed the draft')
   assert(status() === 'Playing', 'Cancel stopped playback')
   const after = await measure()
   assert(after.rms > 0.0001, 'Cancel silenced playback')
@@ -399,8 +395,6 @@ export async function verifyLibraryStopFailure() {
   })
   try {
     await choose('Quantized sequence')
-    button('Load patch…', library()).click()
-    await until(() => library().querySelector('.replace-prompt'))
     button('Load patch', library()).click()
     await until(() => library().querySelector('[role=alert]'))
     assert(source() === original, 'Stop failure replaced the current draft')
@@ -409,13 +403,6 @@ export async function verifyLibraryStopFailure() {
       library().querySelector('[role=alert]').textContent.includes('not stopped'),
       'Missing Stop failure',
     )
-    assert(
-      (await exportedBy(() => button('Export current', library()).click())) ===
-        expectedExport(original),
-      'Stop failure lost export',
-    )
-    button('Cancel', library()).click()
-    await until(() => !library().querySelector('.replace-prompt'))
     button('Close library', library()).click()
     await until(() => !library())
   } finally {
@@ -423,7 +410,7 @@ export async function verifyLibraryStopFailure() {
   }
   document.querySelector('.topbar .play[aria-label=Stop]').click()
   await until(() => status() === 'Ready')
-  return 'Injected real-adapter Stop failure retains draft/rack and Export current; Cancel and Stop retry recover'
+  return 'Injected real-adapter Stop failure retains draft/rack; Close and Stop retry recover'
 }
 
 /** #75: drive the actual rack controls, separately from pure graph tests. */
@@ -443,7 +430,7 @@ export async function verifyLibraryRackEditing(patchIds) {
     document.querySelector(`[aria-label="Add ${name}"]`).click()
     await until(() => patch().modules.length > before)
   }
-  async function cable(from, to, replacement = false, refused = false) {
+  async function cable(from, to) {
     jack(from).scrollIntoView({ block: 'center' })
     jack(from).click()
     await pause(0)
@@ -451,13 +438,7 @@ export async function verifyLibraryRackEditing(patchIds) {
     const rect = jack(to).getBoundingClientRect()
     const before = source()
     jack(to).click()
-    if (replacement) {
-      await until(() => document.querySelector('.replace-prompt'))
-      button('Replace', document.querySelector('.replace-prompt')).click()
-    }
-    await until(() =>
-      refused ? document.querySelector('.rack-edit-refusal') : source() !== before,
-    )
+    await until(() => source() !== before)
     return rect
   }
   const results = []
@@ -495,7 +476,7 @@ export async function verifyLibraryRackEditing(patchIds) {
       (input) => !patch().cables.some((c) => c.to.module === mix && c.to.jack === input),
     )
     await cable(incoming.from, { module: mix, jack: spare })
-    assert(!document.querySelector('.rack-edit-refusal'), `${entry.id}: refused rack edit`)
+    assert(!rewritten(), `${entry.id}: rack edit rewrote the code`)
     assert(
       sourceBody(source()) === sourceBody(generate(patch())),
       `${entry.id}: lost rack ownership`,
@@ -522,36 +503,18 @@ export async function verifyLibraryRackEditing(patchIds) {
     to = { module: filter, jack: 'in' }
   const before = source(),
     beforePatch = JSON.stringify(patch())
-  const target = await cable(from, to, false, true)
-  const refusal = document.querySelector('.rack-edit-refusal')
-  assert(
-    refusal.textContent.includes('rewrites the code in MonkeyBoy’s style'),
-    'Missing rewrite disclosure',
-  )
-  const bounds = refusal.getBoundingClientRect()
-  assert(
-    Math.abs(bounds.left - target.left) < 350 && Math.abs(bounds.top - target.bottom) < 310,
-    'Refusal is far from jack',
-  )
-  assert(
-    source() === before && JSON.stringify(patch()) === beforePatch,
-    'Refusal changed accepted work',
-  )
-  button('Cancel', refusal).click()
-  await until(() => !document.querySelector('.rack-edit-refusal'))
-  assert(source() === before, 'Cancel changed source')
-  await cable(from, to, false, true)
-  await editSource(`// newer draft\n${source()}`)
-  assert(!document.querySelector('.rack-edit-refusal'), 'New draft retained stale conversion')
-  assert(
-    !patch().cables.some(
-      (c) => c.from.module === from.module && c.to.module === to.module && c.to.jack === to.jack,
-    ),
-    'Stale attempt was committed',
-  )
-  await cable(from, to, false, true)
-  button('Make rack-editable', document.querySelector('.rack-edit-refusal')).click()
-  await until(() => !document.querySelector('.rack-edit-refusal') && source() !== before)
+  await cable(from, to)
+  assert(rewritten(), 'Conversion was not announced')
+  const converted = source()
+  button('Undo', document.querySelector('.workspace-notice')).click()
+  await until(() => source() === before)
+  assert(JSON.stringify(patch()) === beforePatch, 'Undo left a rack change')
+  button('Redo').click()
+  await until(() => source() === converted)
+  button('Undo').click()
+  await until(() => source() === before)
+  await cable(from, to)
+  assert(rewritten(), 'A second conversion was not announced')
   assert(
     patch().cables.some(
       (c) => c.from.module === from.module && c.to.module === to.module && c.to.jack === to.jack,
@@ -565,12 +528,12 @@ export async function verifyLibraryRackEditing(patchIds) {
   )
   assert(read(source()).layout === 'restored', 'Converted rack does not reopen')
   assert(status() === 'Ready', 'Conversion started audio')
-  await cable({ module: filter, jack: 'out' }, voice.to, true)
+  await cable({ module: filter, jack: 'out' }, voice.to)
   await add('LFO')
   await cable({ module: id('lfo'), jack: 'out' }, { module: filter, jack: 'cv' })
-  assert(!document.querySelector('.rack-edit-refusal'), 'Converted showcase refused subsequent CV')
+  assert(!rewritten(), 'Converted showcase rewrote the code again')
   results.push(
-    'Showcase exact load; jack-local refusal; atomic Cancel; explicit conversion retains registrations/CODE, completes pending cable and accepts subsequent CV and reopens rack-owned without autoplay',
+    'Showcase exact load; a converting cable says so every time; Undo and Redo keep exact source; conversion retains registrations/CODE, completes the cable, accepts subsequent CV and reopens rack-owned without autoplay',
   )
   return results
 }
@@ -668,7 +631,7 @@ export async function verifyOnRampUI() {
       input.blur()
     }
     await until(() => source() !== before)
-    assert(!document.querySelector('.rack-edit-refusal'), `${entry.id}: try-this refused`)
+    assert(!rewritten(), `${entry.id}: try-this rewrote the code`)
     const current = read(source())
     assert(
       sourceBody(source()) === sourceBody(generate(current.patch)),

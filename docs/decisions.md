@@ -75,23 +75,21 @@ A module’s category colour is used for its dot on the panel and for the code i
   [#70](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/70) owns
   implementation, shortcut discovery and integration with the existing #12
   error-state behavior; see the [contract and observed verification](code-application.md).
-- **Library rack ownership (#55, decided 3 November 2026; [#181](#usability-review-188-decided-4-november-2026) removes the consent step):** module exercises
+- **Library rack ownership (#55, decided 3 November 2026; [#181](#usability-review-188-decided-4-november-2026) removed the consent step):** module exercises
   and the planned Start here collection (#80) are authored in generator style,
   with saved rack state, so rack edits work immediately. Attribution stays visible
-  in the library. Attributed showcases (#46/#47) retain exact source. A refused
-  rack edit offers **Make rack-editable** beside the edit, discloses the rewrite
-  into MonkeyBoy’s style, and completes the pending edit after consent. Setup
-  statements and CODE remain available. Global undo is owned by #63; it is not
-  implemented by this conversion. See [library ownership](patch-library.md#rack-ownership-55-and-75).
+  in the library. Attributed showcases (#46/#47) retain exact source until a rack
+  edit needs a rewrite, which then completes at once and offers Undo. Setup
+  statements and CODE remain available. See [library ownership](patch-library.md#rack-ownership-55-and-75).
 - **Patch library (#45):** a top-bar modal browser with nested, collapsible
   collections and explicit patch selection/loading. The initial repository-owned
   collection includes module exercises; personal library editing, accounts and
   sharing remain later. Loading uses the guarded workspace replacement path and
   leaves audio stopped. See [entry and loading contract](patch-library.md).
-- **Local recovery (#60, decided 3 November 2026):** save the accepted file and
-  unfinished draft together in browser storage. On load, offer explicit restore
-  or discard before editing; restore never starts audio. Invalid drafts return
-  beside the last readable rack, and a draft that could not be stored requests
+- **Local recovery (#60, decided 3 November 2026; [#183](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/183) removed the prompt):** save the accepted file and
+  unfinished draft together in browser storage. A reload restores them silently,
+  with a dismissible Start new offer; restore never starts audio. Invalid drafts
+  return beside the last readable rack, and a draft that could not be stored requests
   the browser's departure warning. Storage failures otherwise stay quiet. See
   [recovery format and limits](patch-format.md#local-workspace-recovery-60).
 
@@ -106,8 +104,8 @@ production acceptance for #9–#11.
   expose slider semantics, arrow/Shift-arrow stepping and Home/End (#92); see
   [panel input and zoom](design.md#panel-controls-and-rack-zoom-81-82-84-92-94-95). This expands the prior
   v1 scope; touch remains later.
-- **Occupied inputs:** offer Replace / Cancel before replacing a cable; preserve
-  the old connection until confirmation. [#179](#usability-review-188-decided-4-november-2026) replaces this.
+- **Occupied inputs:** a new cable replaces the old one at once and offers Undo
+  ([#179](#usability-review-188-decided-4-november-2026)).
 - **Module deletion:** remove the module and its attached cables without
   reconnecting the remaining neighbors automatically.
 - **New patch:** a silent MIX → OUT starter rack, with no voices and no autoplay.
@@ -119,9 +117,9 @@ production acceptance for #9–#11.
 
 ## Usability review (#188, decided 4 November 2026)
 
-The owner accepted these from the [usability review](usability-review.md). They
-are decided, not yet built. Each issue owns its implementation, and the rules
-they replace stay in force until it lands. The owner also approved the
+The owner accepted these from the [usability review](usability-review.md). Each
+issue owns its implementation, and the rules it replaces stay in force until it
+lands. #179 and #181 have shipped; see [messages and undo](design.md#messages-and-undo-179-181-183). The owner also approved the
 [mockups](design/usability-review.html) as the design direction. They remain
 sketches: their control names and pack counts are illustrative.
 
@@ -297,8 +295,8 @@ unknown function identifiers and unsupported arguments remain whole-call CODE.
 Existing JUX preset forms and explicit saved CODE owners remain unchanged.
 Nested source addresses extend v1 with an optional `loop` path; untouched source,
 saved rack identity and engine events have independent checks. Imported loop
-literal/layout edits preserve source; imported loop rewiring uses the existing
-explicit Make rack-editable flow. See [the contract](translation-rules.md#function-loops-135)
+literal/layout edits preserve source; imported loop rewiring converts the
+code on edit, with Undo. See [the contract](translation-rules.md#function-loops-135)
 and [verification](function-loops-verification.md).
 
 ## Sample cartridge bay (#137, decided 3 November 2026)

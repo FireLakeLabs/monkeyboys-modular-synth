@@ -125,10 +125,10 @@ into one editor footer, with engine caveats behind an info disclosure. See the
 
 Issue #60 adds [local workspace recovery](patch-format.md#local-workspace-recovery-60):
 accepted source and exact draft text share one browser-local recovery copy.
-An explicit restore/discard choice protects that copy on load; restoring keeps
+A reload restores that copy silently and offers Start new; restoring keeps
 audio stopped. Storage failure leaves editing/export available and an unsaved
 draft requests the browser's departure warning. `scripts/autosave-check.mjs`
-checks reload/close, exact source/rack identity, draft recovery, discard and
+checks reload/close, exact source/rack identity, draft recovery, Start new and
 restricted storage separately from the deterministic gate.
 
 ## Activity and source feedback

@@ -30,9 +30,6 @@ async function open(source) {
   transfer.items.add(new File([source], 'external.strudel', { type: 'text/plain' }))
   input.files = transfer.files
   input.dispatchEvent(new Event('change', { bubbles: true }))
-  await until(() => document.querySelector('.replace-prompt') || editorSource() === source)
-  if (document.querySelector('.replace-prompt')) button('Open patch').click()
-  await until(() => !document.querySelector('.replace-prompt'))
   await until(() => editorSource() === source)
 }
 function inputValue(input, value) {

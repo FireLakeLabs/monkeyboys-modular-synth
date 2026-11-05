@@ -226,7 +226,7 @@ try {
   const restoredDraft = (await saved(page)).source.replace('g3', 'a3')
   await edit(page, restoredDraft)
   await page.reload()
-  await page.getByRole('button', { name: 'Restore last patch', exact: true }).click()
+  await page.locator('.cm-content').waitFor()
   await page.waitForTimeout(600)
   assert.equal(await page.getByRole('checkbox', { name: 'Auto-apply' }).isChecked(), false)
   assert.equal((await saved(page)).draft, restoredDraft)

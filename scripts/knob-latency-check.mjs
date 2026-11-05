@@ -31,17 +31,12 @@ const firstKnobModule = (page) =>
         panels.find((panel) => panel.querySelector('.module-controls .knob'))?.dataset.module,
     )
 
-// Trance refuses its first edit, so it is measured after explicit conversion.
+// Trance converts on its first edit, so it is measured after that one rewrite.
 async function acceptEdits(page, id) {
   const knob = page.locator(`[data-module="${id}"] .module-controls .knob`).first()
   await knob.focus()
   await knob.press('ArrowUp')
-  await page.waitForTimeout(200)
-  const convert = page.getByRole('button', { name: 'Make rack-editable' })
-  if (await convert.count()) {
-    await convert.click()
-    await page.waitForTimeout(800)
-  }
+  await page.waitForTimeout(800)
 }
 
 const step = (page, id) =>

@@ -94,20 +94,13 @@ try {
   results.checks.push('Readable typing and a rack look edit save the canonical file immediately')
 
   await page.reload()
-  const prompt = page.getByRole('dialog', { name: 'Restore last patch?' })
-  await prompt.waitFor()
-  assert.equal(
-    await page
-      .getByRole('button', { name: 'Restore last patch', exact: true })
-      .evaluate((button) => button === document.activeElement),
-    true,
-  )
-  await page.keyboard.press('Escape')
-  assert.equal(await prompt.isVisible(), true)
+  const offer = page.locator('.workspace-notice')
+  await offer.getByRole('button', { name: /^Start new/ }).waitFor()
+  assert.equal(await page.getByRole('dialog').count(), 0)
   assert.equal((await stored(page)).source, saved)
   await page.reload()
-  await page.getByRole('button', { name: 'Restore last patch', exact: true }).click()
   await page.locator('.cm-content').waitFor()
+  await offer.waitFor()
   assert.equal(await source(page), saved)
   assert.equal(
     await exported(page),
@@ -125,7 +118,7 @@ try {
   await page.locator('[data-module="osc1"].look-vintage').waitFor()
   await assertStopped(page)
   results.checks.push(
-    'Repeated reloads retain the offer; restore/export preserve exact source, module/cable IDs, positions, looks, names, values and empty rows; no AudioContext is created',
+    'Repeated reloads restore silently with a Start new offer; restore/export preserve exact source, module/cable IDs, positions, looks, names, values and empty rows; no AudioContext is created',
   )
 
   const invalid = `${saved}\n// unfinished café\n$: note(`
@@ -134,7 +127,6 @@ try {
   // Close before waiting for reader acceptance: raw text must already be durable.
   await page.close()
   page = await open(context)
-  await page.getByRole('button', { name: 'Restore last patch', exact: true }).click()
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
@@ -156,7 +148,6 @@ try {
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
   await page.reload()
-  await page.getByRole('button', { name: 'Restore last patch', exact: true }).click()
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
@@ -174,13 +165,15 @@ try {
   const correctedSaved = await source(page)
   assert.equal((await stored(page)).source, correctedSaved)
   await page.reload()
-  await page.getByRole('dialog').screenshot({ path: `${output}/restore-offer.png` })
-  await page.getByRole('button', { name: 'Discard saved patch' }).click()
-  assert.equal(await stored(page), null)
-  assert.equal(await page.locator('.module-panel').count(), 2)
-  await page.reload()
-  await page.locator('.cm-content').waitFor()
-  assert.equal(await page.getByRole('dialog').count(), 0)
+  await page.locator('.workspace-notice').screenshot({ path: `${output}/restore-offer.png` })
+  await page.getByRole('button', { name: /^Start new/ }).click()
+  await page.waitForFunction(() => document.querySelectorAll('.module-panel').length === 2)
+  assert.notEqual((await stored(page)).source, correctedSaved)
+  await page.locator('.workspace-notice').getByRole('button', { name: /^Undo/ }).click()
+  await page.waitForFunction(
+    async (text) => (await import('/scripts/editor-browser.mjs')).editorSource() === text,
+    correctedSaved,
+  )
   await assertStopped(page)
   results.checks.push(
     'A corrected draft replaces the recovery copy; explicit discard returns to the silent starter and removes the next restore offer',

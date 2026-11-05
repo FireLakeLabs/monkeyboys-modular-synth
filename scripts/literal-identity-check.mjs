@@ -14,9 +14,6 @@ async function until(test) {
 }
 
 export async function verifyLiteralIdentity() {
-  ;[...document.querySelectorAll('button')]
-    .find((node) => node.textContent.trim() === 'Discard saved patch')
-    ?.click()
   await until(() => document.querySelector('.cm-content'))
   enableAutoApply()
   const { generate } = await import('../src/codegen/generate.ts')

@@ -19,9 +19,6 @@ export async function verifyCodeConversion() {
   const { sourceBody } = await import('../src/workspace/document.ts')
   const { default: legacy } = await import('../src/reader/fixtures/pre-77-aliases.strudel?raw')
   const results = []
-  ;[...document.querySelectorAll('button')]
-    .find((node) => node.textContent === 'Discard saved patch')
-    ?.click()
   enableAutoApply()
   replaceSource(legacy)
   await until(() => buttons().length === 2)
@@ -89,9 +86,6 @@ export async function verifyConversionPlayback() {
   const { read } = await import('../src/reader/index.ts')
   const { saveLayout } = await import('../src/workspace/document.ts')
   const { default: legacy } = await import('../src/reader/fixtures/pre-77-aliases.strudel?raw')
-  ;[...document.querySelectorAll('button')]
-    .find((node) => node.textContent === 'Discard saved patch')
-    ?.click()
   window.dispatchEvent(new KeyboardEvent('keydown', { key: '.', ctrlKey: true }))
   await until(() => document.querySelector('.transport-status')?.textContent === 'Ready')
   const key = '__monkeyboyConversionEvaluations'

@@ -22,12 +22,15 @@ export function ReplacementPrompt({
   return (
     <fieldset className="replace-prompt">
       <legend>{title}</legend>
-      <p>Export your current work if you want to keep it. {stopWarning}</p>
+      <p>
+        Undo can’t bring back code that hasn’t been applied, so export it first if you want to keep
+        it. {stopWarning}
+      </p>
       <button type="button" ref={cancelButton} onClick={cancel}>
         Cancel
       </button>
       <button type="button" onClick={exportCurrent}>
-        Export current
+        Export code
       </button>
       <button
         type="button"

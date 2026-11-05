@@ -264,15 +264,14 @@ editor text). Rack edits and readable code acceptance save the complete accepted
 file; draft input is saved synchronously before the reader's debounce, including
 invalid or composing text. Unknown rack metadata stays in the source unchanged.
 
-On load, a validated local copy offers **Restore last patch** or **Discard saved
-patch** in a modal before editing can overwrite it. Restore brings back the
-accepted rack and the draft independently, without executing code or starting
-audio. An unfinished draft is diagnosed but remains unapplied until explicit
+On load, a validated local copy comes back silently, with a message offering
+**Start new**. It brings back the accepted rack and the draft independently,
+without executing code or starting audio. An unfinished draft is diagnosed but remains unapplied until explicit
 Apply (or opting into auto-apply), leaving the accepted rack in place. See
 [code application](code-application.md). Export keeps its exact text; Revert explicitly discards that
-draft in favor of the readable file. Discard removes the copy and keeps the
-silent starter. Loading a file/library patch or choosing New replaces the copy
-only after the existing guarded replacement succeeds.
+draft in favor of the readable file. Start new, like loading a file or library
+patch, replaces the copy only after the guarded replacement succeeds, and Undo
+returns to the restored work.
 
 Storage access, quota, malformed envelopes and unsupported envelope versions
 fail quietly: editing, playback and export remain available. Failed writes keep
@@ -322,11 +321,11 @@ state. No dangling source binding is retained for such modules. Source byte
 preservation, Strudel event behavior and complete saved identity are distinct
 verification claims; graph validity alone establishes none of the three.
 
-## Opaque setup on an explicit rack conversion (#75)
+## Opaque setup on a rack conversion (#75)
 
 `Patch` and its v1 envelope may include optional `prelude: string`. It holds
-non-rack setup statements retained when the user explicitly chooses Make
-rack-editable. The generator writes them before the tempo and rack-owned
+non-rack setup statements retained when a rack edit converts the code. The
+generator writes them before the tempo and rack-owned
 expressions, tracks their declaration scopes and reserves their identifiers
 against generated output names. CODE fragments may refer to those helpers.
 The string must parse and must not contain a recognized voice or tempo scope;
@@ -435,7 +434,7 @@ the fallback after Apply; it never overwrites an explicit name.
 
 Untouched files, source-aware edits, save/export/reopen and recovery retain the
 original comment bytes, whitespace, repetitions and line endings. Explicit
-**Make rack-editable** conversion still relinquishes general formatting, but
+Conversion on a rack edit still relinquishes general formatting, but
 retains exact credit comment tokens and their line endings, without duplicating
 comments already inside retained setup statements or CODE. Standalone credits
 and setup retain their relative order in the generated prelude. A final comment

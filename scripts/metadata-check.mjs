@@ -50,14 +50,6 @@ async function openFile(text) {
     mimeType: 'text/plain',
     buffer: Buffer.from(text),
   })
-  const replace = page.locator('.confirm-replacement')
-  await page.waitForFunction(
-    async (expected) =>
-      document.querySelector('.confirm-replacement') ||
-      (await import('/scripts/editor-browser.mjs')).editorSource() === expected,
-    text,
-  )
-  if (await replace.isVisible()) await replace.click()
   await page.waitForFunction(
     async (expected) => (await import('/scripts/editor-browser.mjs')).editorSource() === expected,
     text,
@@ -85,7 +77,7 @@ try {
 
   await page.getByRole('button', { name: 'Patch library', exact: true }).click()
   await page.getByRole('button', { name: 'Enveloped synth', exact: true }).click()
-  await page.getByRole('button', { name: 'Load patch…', exact: true }).click()
+  await page.getByRole('button', { name: 'Load patch', exact: true }).click()
   await page.getByRole('dialog').waitFor({ state: 'hidden' })
   await accepted()
   const synth = await source()

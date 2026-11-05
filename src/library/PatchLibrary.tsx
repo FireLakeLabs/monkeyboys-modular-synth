@@ -8,11 +8,13 @@ function CollectionItems({
   path,
   selected,
   choose,
+  load,
 }: {
   nodes: readonly LibraryNode[]
   path: readonly string[]
   selected: string | undefined
   choose: (entry: LibraryPatch, path: readonly string[]) => void
+  load: (entry: LibraryPatch, path: readonly string[]) => void
 }) {
   return (
     <ul>
@@ -26,6 +28,7 @@ function CollectionItems({
                 path={[...path, node.title]}
                 selected={selected}
                 choose={choose}
+                load={load}
               />
             </details>
           ) : (
@@ -33,6 +36,13 @@ function CollectionItems({
               type="button"
               aria-pressed={node.id === selected}
               onClick={() => choose(node, path)}
+              onDoubleClick={() => load(node, path)}
+              onKeyDown={(event) => {
+                if (event.key !== 'Enter') return
+                // Enter loads; Space keeps a button's usual click, which selects.
+                event.preventDefault()
+                if (!event.repeat) load(node, path)
+              }}
             >
               {node.title}
             </button>
@@ -100,6 +110,10 @@ export function PatchLibrary({
               cancelReplacement()
               setSelection({ entry, path })
             }}
+            load={(entry, path) => {
+              setSelection({ entry, path })
+              requestLoad(entry)
+            }}
           />
         </nav>
         <section className="patch-detail" aria-label="Selected patch" aria-live="polite">
@@ -127,19 +141,25 @@ export function PatchLibrary({
               </details>
               {confirmation || (
                 <div className="patch-load">
-                  <p>Loading replaces the current patch. Press Play afterward to start audio.</p>
+                  <p>
+                    Loading replaces the current patch, and Undo brings it back. Press Play to start
+                    audio.
+                  </p>
                   <button
                     type="button"
                     className="button button-primary load-patch"
                     onClick={() => requestLoad(entry)}
                   >
-                    Load patch…
+                    Load patch
                   </button>
                 </div>
               )}
             </>
           ) : (
-            <p>Select a patch to see its description, source and module exercises.</p>
+            <p>
+              Select a patch to see its description, source and module exercises. Double-click a
+              patch or press Enter on it to load it.
+            </p>
           )}
           {error && (
             <p className="error" role="alert">

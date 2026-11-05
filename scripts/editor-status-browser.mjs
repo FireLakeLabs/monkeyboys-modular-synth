@@ -22,8 +22,6 @@ export async function checkEditorStatus() {
   const accepted = () =>
     document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code')
   const footer = () => document.querySelector('.editor-status')
-  const restore = button('Discard saved patch')
-  restore?.click()
   await until(() => document.querySelector('.cm-content'))
   const original = editorSource()
   const bar = footer()

@@ -90,13 +90,22 @@ metadata. Loading preserves their exact executable source and stamps the entry t
 Start here collection (#80) follows this authoring rule too.
 
 Showcase entries keep the exact attributed source, including comments and
-formatting. If source preservation refuses a rack edit, a prompt beside the
-control/jack offers **Make rack-editable** and explains that it rewrites the code
-in MonkeyBoy’s style before completing the attempted edit. Cancel and Escape
-leave the accepted source/rack untouched. A draft edit, replacement or newer rack
-edit cancels the pending conversion; a revision check prevents stale retries.
-Conversion installs source and rack together through the normal playback update,
-without starting stopped audio. Reloading the library entry restores its original.
+formatting, until an edit cannot preserve it. That rack edit then completes at once
+and shows “Code rewritten in rack style · Undo”, every time. Undo restores the exact
+prior source and redo the exact converted source. Conversion installs source and
+rack together through the normal playback update, without starting stopped audio.
+An edit that cannot be converted explains why and changes nothing. Reloading the
+library entry restores its original.
+
+Trance is the only library patch that converts on a knob edit. All 34 refused knobs
+fail the same way: the source has no literal span for that control, because the
+call is absent or its argument is not a number. `drums1 DROP`, the example from
+#181, needs only `.degradeBy()` added. Adding one call was examined and left out:
+order matters on those voices, and each insertion would need the reader to prove
+the new source reads back as the proposed rack. With Undo one step away, a rewrite
+is a smaller risk, so
+[#200](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/200)
+tracks it.
 
 Conversion applies the generator’s control/default and dedicated-orbit conventions.
 Opaque chain fragments stay CODE, and non-rack setup statements (helpers,
@@ -104,8 +113,8 @@ registrations) remain in a saved `prelude`, in their relative order before the
 rack program. Formatting and surrounding comments may change. Mixed helper/pattern
 multi-declarations must be separated in code before conversion. Arbitrary setup
 side effects and routing hidden behind custom functions have no universal semantic
-or audible equivalence guarantee. Export before converting if the original needs
-to be retained; global undo/redo remains #63.
+or audible equivalence guarantee. Undo restores the original exactly during the
+session; export it first to keep it longer.
 
 The focused library tests require each exercise to accept VCF/VCA CV where present,
 effect insertion, mixer level changes and an additional mixer channel. They check
@@ -116,14 +125,13 @@ See the [#75 observed browser acceptance](library-rack-verification.md).
 
 ## Loading and persistence contract
 
-New, Open file and library loading share one replacement intent. Confirmation
-with **Cancel**, **Export current**, and an explicit commit action protects changed
-work. It is skipped when accepted source and draft exactly match the starter or
-the last successfully loaded library entry. The comparison includes saved rack
-metadata, so looks, positions and nonsounding controls count as changes too.
-Unfinished drafts, opened files and restored local work remain protected.
-A new intent cancels any pending one. Browsing and selecting never stop audio
-or execute code.
+New, Open file and library loading share one replacement intent. It acts at once,
+and Undo returns to the replaced work. Changed work, including saved rack metadata
+such as looks, positions and nonsounding controls, gets a message with Undo; a
+clean load stays quiet. Only an unapplied draft asks first, with **Cancel**,
+**Export code** and the action, because Undo cannot restore it. A new intent
+cancels any pending one. Browsing and selecting never stop audio or execute code.
+Double-clicking a patch, or pressing Enter on it, loads it.
 
 Library loading first reads the original string into a fresh `SourceDocument`
 and validates its rack, then stamps the entry title in rack metadata. Invalid
@@ -240,6 +248,6 @@ sound quality or listening through a physical device.
 
 For #75, `libraryCheck.verifyLibraryRackEditing()` drives all nine exercises through
 CV, effect insertion and mixer channel edits, checks attribution and export
-identity, then verifies a nearby showcase refusal, Cancel, explicit conversion,
+identity, then verifies a nearby showcase conversion, its message, Undo and Redo,
 retained registrations and a later CV edit. The signal group also queries real
 Strudel onset events independently of source/rack checks.

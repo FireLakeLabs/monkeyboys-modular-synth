@@ -29,13 +29,6 @@ export async function checkErrorPositions() {
     await until(() => editorSource() === source && accepted())
     assert(markers().length === 0 && !alert(), 'Revert clears the diagnostic and marker')
   }
-  const restore = [...document.querySelectorAll('button')].find(
-    (item) => item.textContent === 'Restore last patch',
-  )
-  if (restore) {
-    restore.click()
-    await until(() => !document.querySelector('[role=dialog]'))
-  }
   await until(() => document.querySelector('.cm-content'))
   enableAutoApply()
   const body = `setcpm(30)\n\n$: note("c2 c2 eb2 g2 c3 bb2 g2 eb2")\n  .s("sawtooth")\n  .lpf(sine\n  .slow(4)\n  .range(800, 2400))\n  .lpq(8)\n  .postgain(0.8)\n  .orbit(1)\n`

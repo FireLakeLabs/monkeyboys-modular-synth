@@ -19,7 +19,7 @@ including autosave, diagnostics and playback update.
   navigation waits until a pointer gesture or composition ends.
 - New accepted work after undo discards the old redo branch. Failed/refused
   edits and invalid code never enter accepted history.
-- History lasts for the current page session. Recovery establishes its restored
+- History lasts for the current page session. A reload establishes its restored
   accepted document as a fresh baseline; prior session history is not stored.
   The recovery slot still saves the accepted file and unfinished draft together.
 
@@ -37,8 +37,8 @@ The header Undo, or the shortcut outside the editor, discards a pending draft
 first; Redo outside the editor waits until that draft is accepted or discarded.
 Ordinary rack text inputs keep their native text undo until they commit.
 
-Undo/redo does not navigate while a replacement, recovery choice, library modal
-or composition is active. Restoring a revision clears transient rack selection,
+Undo/redo does not navigate while a replacement, library modal or composition is
+active. Restoring a revision clears transient rack selection,
 menus and cable gestures. Playback stays stopped when already stopped. During
 playback, restoration applies like any other accepted edit, including existing
 structural bus resets, error handling and Stop behavior. Undoing a New/Open/load

@@ -127,11 +127,6 @@ try {
     const to = page.locator('[data-jack="out1:in"]')
     await from.click()
     await to.click()
-
-    await page
-      .locator('.replace-prompt')
-      .getByRole('button', { name: 'Replace', exact: true })
-      .click()
     await page.waitForFunction(async (id) => {
       const { read } = await import('/src/reader/index.ts')
       const { editorSource } = await import('/scripts/editor-browser.mjs')
