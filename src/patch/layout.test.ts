@@ -3,7 +3,7 @@ import { generate, generateDocument } from '../codegen/generate'
 import { writeLayout } from '../codegen/layout'
 import { getModuleSpec } from '../modules/catalog'
 import { read } from '../reader'
-import { nextPosition, defaultRailWidth, railWidth, RAIL_WIDTHS } from './layout'
+import { nextPosition, defaultRailWidth, railWidth, RAIL_WIDTHS, visibleRailHp } from './layout'
 import {
   placeModule,
   placementPosition,
@@ -14,11 +14,34 @@ import {
 import { editDocument, fromPatch, saveLayout, sourceBody } from '../workspace/document'
 import legacy from '../reader/fixtures/pre-133-output.strudel?raw'
 import longVoice from '../reader/fixtures/issue-44.strudel?raw'
+import { RACK_MARKER } from '../codegen/layout'
 
 describe('per-patch rails and pinned output (#133)', () => {
-  it('chooses the widest complete case that fits, with 64 HP as the fallback', () => {
-    expect([700, 1100, 1280, 1440, 1920].map(defaultRailWidth)).toEqual([64, 64, 84, 104, 104])
+  it('chooses the widest rail visible beside the side panels, with 64 HP as the fallback', () => {
+    expect([700, 1440, 1600, 1920, 2200].map(defaultRailWidth)).toEqual([64, 64, 64, 84, 104])
     expect(railWidth(read('$: s("bd")').patch)).toBe(64)
+  })
+
+  it.each([
+    ['nested values', '{\n//   "a": { "b": [1, 2] }\n// }'],
+    ['brackets in strings', '{\n//   "a": "}{ ] \\\\\\" ["\n// }'],
+    ['one line', '{"a": 1}'],
+  ])('removes rack metadata with %s and keeps the next comment', (_name, json) => {
+    const body = '$: s("bd")\n'
+    expect(sourceBody(`${body}${RACK_MARKER}\n// ${json}\n// mine\n`)).toBe(`${body}// mine\n`)
+  })
+
+  it('keeps removing comments through malformed metadata', () => {
+    const body = '$: s("bd")\n'
+    expect(sourceBody(`${body}${RACK_MARKER}\n// {\n// oops\n\nnext()\n`)).toBe(`${body}\nnext()\n`)
+  })
+
+  it('starts MIX inside the visible rail, even when the rail is wider', () => {
+    const mix = (patch: ReturnType<typeof starterPatch>) =>
+      patch.modules.find((module) => module.type === 'mix')
+    expect(mix(starterPatch(64))?.hp).toBe(52)
+    expect(mix(starterPatch(64, visibleRailHp(1440)))?.hp).toBe(42)
+    expect(mix(starterPatch(64, 4))?.hp).toBe(0)
   })
 
   it.each(RAIL_WIDTHS)('uses %i HP for placement and spill without moving neighbors', (width) => {

@@ -85,8 +85,11 @@ try {
   })
   const cv = page.locator('[data-jack="vca1:cv"]')
   assert.match(await cv.getAttribute('aria-label'), /mod$/)
+  // The rack keeps Connections open across loads.
   const connections = page.locator('details.connections')
-  await connections.locator('summary').click()
+  await connections.evaluate((details) => {
+    details.open = true
+  })
   await page
     .getByRole('button', { name: 'chunk1:send → vca1:in · function λ', exact: true })
     .click()

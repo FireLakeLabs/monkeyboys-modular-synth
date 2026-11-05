@@ -151,7 +151,7 @@ sketches: their control names and pack counts are illustrative.
 - OUT is pinned at the right edge of the rack frame, outside the rails, retaining
   its IN, BPM, VOL and Hardware looks. It stays visible as rails scroll.
 - Rail width is saved per patch as `railHp`: 64, 84 or 104 HP. New patches use the
-  widest complete case that fits the window; absent metadata/fields mean 64 HP.
+  widest rail visible beside the palette and code; absent metadata/fields mean 64 HP.
   Resize never reflows or changes saved width. Users can zoom or scroll.
 - New metadata omits OUT coordinates; legacy files still read with exact source
   retention. See [format compatibility](patch-format.md#in-memory).

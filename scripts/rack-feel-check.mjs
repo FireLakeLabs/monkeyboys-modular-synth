@@ -193,11 +193,19 @@ export function inspectCables() {
   const jacks = new Map(
     [...surface.querySelectorAll('[data-jack]')].map((jack) => {
       const rect = jack.getBoundingClientRect()
+      const x = rect.left + rect.width / 2
+      const y = rect.top + rect.height / 2
+      // Rail jacks scrolled out of view pin to the viewport edge rather than crossing OUT.
+      const rail = jack.closest('.rack-scroll')
+      const view = rail?.getBoundingClientRect()
       return [
         jack.dataset.jack,
         {
-          x: rect.left + rect.width / 2 - bounds.left,
-          y: rect.top + rect.height / 2 - bounds.top,
+          x:
+            (view ? Math.max(view.left, Math.min(x, view.left + rail.clientWidth)) : x) -
+            bounds.left,
+          y:
+            (view ? Math.max(view.top, Math.min(y, view.top + rail.clientHeight)) : y) - bounds.top,
         },
       ]
     }),

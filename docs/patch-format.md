@@ -39,8 +39,8 @@ interface Patch {
   last module in a row does not shrink it. Explicit removal of an empty row
   shifts later rows up one, retaining module HP, looks, values and cables.
 - Optional `railHp` is exactly 64, 84 or 104 HP. Missing fields and plain files
-  default to 64 HP. New patches select the widest complete case that fits the
-  window (rail plus pinned output and frame padding); the width is then saved,
+  default to 64 HP. New patches select the widest rail visible at 100% beside the
+  palette, code and pinned output; the width is then saved,
   never recomputed on resize. The toolbar changes it without moving modules.
   Reductions that strand a module outside the rail are refused. Placement and
   reader reconciliation use the saved width; smaller windows zoom or scroll.

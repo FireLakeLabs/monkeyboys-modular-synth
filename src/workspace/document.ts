@@ -21,6 +21,20 @@ import { parseSource } from '../reader/syntax'
 import type { SourceAddress, SourceDocument, Span } from '../reader/types'
 import { planStructure, spliceSource } from './structure'
 
+/** JSON can only end at balanced depth outside a string, so other lines skip parsing. */
+function trackJson(line: string, state: { depth: number; quoted: boolean }) {
+  for (let index = 0; index < line.length; index++) {
+    const character = line[index]
+    if (state.quoted) {
+      if (character === '\\') index++
+      else if (character === '"') state.quoted = false
+    } else if (character === '"') state.quoted = true
+    else if (character === '{' || character === '[') state.depth++
+    else if (character === '}' || character === ']') state.depth--
+  }
+  return state.depth === 0 && !state.quoted
+}
+
 /** Remove identifiable metadata comments, retaining any executable source after them. */
 export function sourceBody(source: string): string {
   const markers: { start: number; end: number }[] = []
@@ -35,11 +49,13 @@ export function sourceBody(source: string): string {
     const newline = /^(?:\r\n|\r|\n)/.exec(source.slice(end))?.[0] ?? ''
     end += newline.length
     const json: string[] = []
+    const state = { depth: 0, quoted: false }
     while (source.startsWith('// ', end)) {
       const line = /^\/\/ ([^\r\n]*)(?:\r\n|\r|\n|$)/.exec(source.slice(end))
       if (!line) break
       end += line[0].length
       json.push(line[1] ?? '')
+      if (!trackJson(line[1] ?? '', state)) continue
       try {
         JSON.parse(json.join('\n'))
         break // A later user comment belongs to the source, even without a blank line.

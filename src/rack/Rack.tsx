@@ -75,6 +75,8 @@ const curve = (a: Point, b: Point) =>
   `M ${a.x} ${a.y} Q ${(a.x + b.x) / 2} ${Math.max(a.y, b.y) + Math.min(120, 28 + Math.abs(a.x - b.x) / 5)} ${b.x} ${b.y}`
 
 export function Rack({
+  panelKey,
+  patchLoads,
   patch,
   cartridgeBay,
 
@@ -99,6 +101,9 @@ export function Rack({
   emptyOutput,
   assess,
 }: {
+  /** Panels rebuild their local drafts on this; the rack's own view state does not. */
+  panelKey: string
+  patchLoads: number
   patch: Patch
   cartridgeBay?: ReactNode
 
@@ -266,10 +271,20 @@ export function Rack({
         // Scrolled-out jacks have geometry beyond their panel. Drawing to those
         // hidden targets makes fitted MIX cables appear to end on other rails.
         if (box && (x < box.left || x > box.right || y < box.top || y > box.bottom)) continue
+        // Rail jacks scrolled out of the viewport pin to its edge, so cables never cross OUT.
+        const rail = jack.closest('.rack-scroll')
+        const visible = rail?.getBoundingClientRect()
+        const edge = rail &&
+          visible && {
+            left: visible.left,
+            top: visible.top,
+            right: visible.left + rail.clientWidth,
+            bottom: visible.top + rail.clientHeight,
+          }
         if (id)
           next[id] = {
-            x: x - bounds.left,
-            y: y - bounds.top,
+            x: (edge ? Math.max(edge.left, Math.min(x, edge.right)) : x) - bounds.left,
+            y: (edge ? Math.max(edge.top, Math.min(y, edge.bottom)) : y) - bounds.top,
           }
       }
       setPoints(next)
@@ -301,8 +316,29 @@ export function Rack({
       window.removeEventListener('resize', measure)
       element.removeEventListener('scroll', measure, true)
     }
-  }, [patch, rows, locked, select, scale, outputScale])
+  }, [patch, rows, locked, select, scale, outputScale, panelKey])
 
+  // Gestures and selections belong to the panels they started on.
+  const [seenPanels, setSeenPanels] = useState(panelKey)
+  if (seenPanels !== panelKey) {
+    setSeenPanels(panelKey)
+    setWire(null)
+    setPointer(null)
+    setTarget(null)
+    setHintPoint(null)
+    setReplacement(null)
+    setPlacement(null)
+    setGhost(null)
+    setMenu(null)
+    setDeleteId(null)
+    setSelectedOutput(null)
+    setSelectedCable(null)
+    setProbeCable(null)
+    setPinnedProbe(false)
+  }
+  useLayoutEffect(() => {
+    viewport.current?.scrollTo(0, 0)
+  }, [patchLoads])
   function clearWire() {
     setWire(null)
     setPointer(null)
@@ -339,6 +375,32 @@ export function Rack({
       window.removeEventListener('pointercancel', clearWire)
     }
   }, [cancelReplacement])
+  useEffect(() => {
+    const remove = (event: KeyboardEvent) => {
+      if (!['Delete', 'Backspace'].includes(event.key) || event.defaultPrevented) return
+      const focus = event.target
+      if (locked || event.isComposing || !(focus instanceof Element)) return
+      if (focus !== focus.ownerDocument.body && !focus.closest('.rack')) return
+      if (focus.closest('input, textarea, select, [contenteditable], dialog')) return
+      const focused = focus.closest<HTMLElement>('[data-module]')?.dataset.module
+      if (!focused && selectedCable) {
+        event.preventDefault()
+        if (edit((p) => removeCable(p, selectedCable))) {
+          setSelectedCable(null)
+          setMessage('Cable removed')
+        }
+        return
+      }
+      const id = focused ?? selected
+      const target = patch.modules.find((m) => m.id === id)
+      if (!target || getModuleSpec(target.type).unique) return
+      event.preventDefault()
+      select(target.id)
+      setDeleteId(target.id)
+    }
+    window.addEventListener('keydown', remove)
+    return () => window.removeEventListener('keydown', remove)
+  })
   function candidate(to: JackRef) {
     return candidates.get(keyOf(to)) ?? null
   }
@@ -404,12 +466,16 @@ export function Rack({
       throw new Error('Choose a sound variant from a seated pack')
     edit((p) => dropSound(p, module, choice, row))
   }
+  function selectModule(id: string) {
+    select(id)
+    setSelectedCable(null)
+  }
   const renderModules = (modules: Patch['modules']) =>
     modules.map((m) => {
       const spec = getModuleSpec(m.type)
       return (
         <section
-          key={m.id}
+          key={`${m.id}:${panelKey}`}
           aria-label={`${spec.name} ${m.id}${!routed.has(m.id) ? ' · not connected to OUT' : ''}`}
           data-jacks={LOOK_LAYOUT[m.look].jacks}
           data-module={m.id}
@@ -428,14 +494,7 @@ export function Rack({
             aria-label={`Select ${m.id}`}
             aria-pressed={selected === m.id}
             draggable={m.type !== 'out'}
-            onClick={() => select(m.id)}
-            onKeyDown={(event) => {
-              if (event.key === 'Delete' && !spec.unique) {
-                event.preventDefault()
-                select(m.id)
-                setDeleteId(m.id)
-              }
-            }}
+            onClick={() => selectModule(m.id)}
             onDragStart={(event) => {
               if (m.type === 'out') {
                 event.preventDefault()
@@ -460,8 +519,8 @@ export function Rack({
           </button>
           <div
             className="module-controls"
-            onFocus={() => select(m.id)}
-            onPointerDown={() => select(m.id)}
+            onFocus={() => selectModule(m.id)}
+            onPointerDown={() => selectModule(m.id)}
           >
             {m.type === 'scope' && <ScopeDisplay module={m} />}
 
@@ -1175,12 +1234,13 @@ export function Rack({
               type="button"
               disabled={!!getModuleSpec(menuModule.type).unique}
               className="destructive"
+              aria-keyshortcuts="Delete Backspace"
               onClick={() => {
                 setDeleteId(menuModule.id)
                 setMenu(null)
               }}
             >
-              Delete
+              Delete <kbd aria-hidden="true">⌫</kbd>
             </button>
           </dialog>
         )}

@@ -1,9 +1,11 @@
 import { chromium } from 'playwright'
 
 // Times one knob step against a production build: `npm run build`, `npm run preview`,
-// then pass its URL. Compare medians and ranges across runs; see docs/usability-review.md.
+// then pass its URL. Add `playing` as a third argument to step during playback, which
+// needs network samples. Compare medians and ranges across runs; see docs/usability-review.md.
 const base = process.argv[2] ?? 'http://127.0.0.1:4173'
 const rounds = Number(process.argv[3] ?? 5)
+const playing = process.argv[4] === 'playing'
 const steps = 7
 const patches = ['1 · First sounds', 'Three-voice sketch', 'Function loops', 'Switch Angel']
 
@@ -72,6 +74,10 @@ for (let round = 0; round < rounds; round++) {
     result.loads.push(await loadPatch(page, name))
     const id = await firstKnobModule(page)
     await acceptEdits(page, id)
+    if (playing) {
+      await page.locator('.play').click()
+      await page.locator('.transport-status', { hasText: 'Playing' }).waitFor({ timeout: 30_000 })
+    }
     for (let index = 0; index < steps; index++) {
       const { ms, changed } = await step(page, id)
       if (changed) result.times.push(ms)

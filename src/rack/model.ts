@@ -12,7 +12,8 @@ export { ROW_HP, HP } from '../patch/layout'
 
 export const ROW_HEIGHT = 440
 
-export function starterPatch(railHp: RailHp = ROW_HP): Patch {
+export function starterPatch(railHp: RailHp = ROW_HP, visibleHp: number = railHp): Patch {
+  const mixHp = getModuleSpec('mix').hp
   return {
     version: 1,
     railHp,
@@ -21,7 +22,7 @@ export function starterPatch(railHp: RailHp = ROW_HP): Patch {
         id: 'mix1',
         type: 'mix',
         row: 0,
-        hp: railHp - getModuleSpec('mix').hp,
+        hp: Math.max(0, Math.min(railHp, visibleHp) - mixHp),
         look: 'instrument',
         values: {},
       },

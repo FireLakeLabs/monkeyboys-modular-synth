@@ -34,8 +34,22 @@ The limiter is `sourceBody`: 3,504 ms of 4,368 ms sampled across five steps on
 an unminified Function loops build. `cartridges()` reaches it during render from
 `App`, `SoundCrate` and `CartridgeBay`. Rerun with
 [`knob-latency-check.mjs`](../scripts/knob-latency-check.mjs). A one-round rerun
-gave 84, 296, 712 and 1,175 ms. The fix is not yet tested
-([#168](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/168)).
+gave 84, 296, 712 and 1,175 ms.
+
+[#168](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/168) fixed
+this by reading cartridges once per document and removing a quadratic parse from
+`sourceBody`. Medians after the fix, with playback measured in alternating rounds
+against the same `main` build:
+
+| Patch                    | Stopped, before → after | Playing, before → after |
+| ------------------------ | ----------------------- | ----------------------- |
+| First sounds             | 85 → 19 ms              | 156 → 38 ms             |
+| Three-voice sketch       | 299 → 30 ms             | 508 → 43 ms             |
+| Function loops           | 708 → 44 ms             | 1,194 → 43 ms           |
+| Trance, after conversion | 1,180 → 63 ms           | 1,967 → 97 ms           |
+
+No single limiter remains. The time is spread across code generation, graph reads
+and React rendering, and `sourceBody` is under 1% of the profile.
 
 Other observed results:
 

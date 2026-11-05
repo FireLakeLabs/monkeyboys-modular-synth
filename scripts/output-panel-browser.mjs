@@ -14,8 +14,8 @@ try {
   results.defaults = []
   for (const [width, expected] of [
     [900, 64],
-    [1280, 84],
-    [1440, 104],
+    [1920, 84],
+    [2200, 104],
   ]) {
     const probe = await browser.newPage({ viewport: { width, height: 900 } })
     probe.on('pageerror', (error) => errors.push(error.message))
@@ -32,9 +32,9 @@ try {
     )
     await probe.getByRole('button', { name: 'New patch', exact: true }).click()
     await probe.waitForFunction(
-      () => document.querySelector('[aria-label="Rail width"]').value === '104',
+      () => document.querySelector('[aria-label="Rail width"]').value === '64',
     )
-    results.defaults.push({ width, initial: expected, afterResize: expected, newAt1600: 104 })
+    results.defaults.push({ width, initial: expected, afterResize: expected, newAt1600: 64 })
     await probe.close()
   }
   process.stdout.write(
