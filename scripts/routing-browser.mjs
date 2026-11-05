@@ -20,7 +20,7 @@ const result = {
 try {
   await page.goto(process.argv[2] ?? 'http://127.0.0.1:5174')
   await page.locator('.cm-content').waitFor()
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).check()
   await page.evaluate(async () => (await import('/scripts/routing-check.mjs')).prepare())
   for (const kind of ['gates', 'switch', 'aux', 'duck', 'audio-mod']) {
     await page.evaluate(async (k) => (await import('/scripts/routing-check.mjs')).load(k), kind)

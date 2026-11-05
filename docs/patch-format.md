@@ -266,8 +266,8 @@ invalid or composing text. Unknown rack metadata stays in the source unchanged.
 
 On load, a validated local copy comes back silently, with a message offering
 **Start new**. It brings back the accepted rack and the draft independently,
-without executing code or starting audio. An unfinished draft is diagnosed but remains unapplied until explicit
-Apply (or opting into auto-apply), leaving the accepted rack in place. See
+without executing code or starting audio. A restored draft is diagnosed but remains unapplied until you Apply or
+edit it, leaving the accepted rack in place. See
 [code application](code-application.md). Export keeps its exact text; Revert explicitly discards that
 draft in favor of the readable file. Start new, like loading a file or library
 patch, replaces the copy only after the guarded replacement succeeds, and Undo

@@ -118,7 +118,7 @@ async function inspect() {
 try {
   await page.goto(process.argv[2] ?? 'http://127.0.0.1:5173')
   await page.locator('.cm-content').waitFor()
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).check()
   const entries = await page.evaluate(async () => {
     window.auditMeasure = (await import('/scripts/library-check.mjs')).installAudioProbe()
     return (await import('/src/library/module-exercises.ts')).MODULE_EXERCISES.map((e) => ({

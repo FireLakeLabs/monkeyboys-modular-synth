@@ -25,7 +25,7 @@ const pass = (group, name) => {
 }
 const source = (page) => page.getByRole('textbox', { name: 'Strudel source', exact: true })
 async function replaceSource(page, text) {
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).check()
   await source(page).waitFor()
   await page.evaluate(async (value) => {
     ;(await import('/scripts/editor-browser.mjs')).replaceSource(value)
@@ -206,7 +206,7 @@ try {
       { timeout: 2000 },
     )
     assert.equal(await sourceText(page), '$: note(')
-    assert(await page.getByRole('button', { name: 'Play', exact: true }).isDisabled())
+    assert(await page.getByRole('button', { name: 'Play', exact: true }).isEnabled())
     const failedDraftDownload = page.waitForEvent('download')
     await page.getByRole('button', { name: 'Export', exact: true }).click()
     assert.equal(await readFile(await (await failedDraftDownload).path(), 'utf8'), '$: note(')
@@ -222,7 +222,7 @@ try {
   }
   pass(
     'ui',
-    'adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Play disabled after confirmed Stop and require explicit Play after correction',
+    'adapter manifest/resume/evaluation rejections keep incomplete drafts editable/exportable with Play available after confirmed Stop and require explicit Play after correction',
   )
 
   await page.evaluate(() => {

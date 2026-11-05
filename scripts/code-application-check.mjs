@@ -61,15 +61,15 @@ try {
   const initialRack = await page.locator('.module-panel').count()
   const first = '$: note("c3 e3").s("sine").lpf(800)\n'
   await edit(page, first)
-  await page.waitForTimeout(600)
-  assert.equal(
-    await page.locator('.module-panel').count(),
-    initialRack,
-    'unapplied code must retain the accepted rack',
+  await page.waitForFunction(() =>
+    document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
   )
-  assert.match(await page.locator('.sync-status').textContent(), /Unapplied changes/)
-  assert.equal((await saved(page)).draft, first)
-  assert.notEqual((await saved(page)).source, first)
+  assert(
+    (await page.locator('.module-panel').count()) > initialRack,
+    'finished code applies by itself while stopped',
+  )
+  assert.equal(await page.evaluate(() => window.audioFixture.calls.length), 0)
+  await waitStatus(page, 'Ready')
   await source(page).press('Control+Enter')
   await waitStatus(page, 'Playing')
   assert.equal(await page.evaluate(() => window.audioFixture.calls.length), 1)
@@ -80,7 +80,7 @@ try {
       .then((text) => text.includes('c3 e3')),
     true,
   )
-  pass('explicit apply retains draft/rack until Ctrl+Enter, then starts once')
+  pass('finished code applies silently while stopped; Ctrl+Enter then starts once')
   const accepted = (await saved(page)).source
   assert.equal(
     await page.evaluate(async () => {
@@ -101,14 +101,18 @@ try {
   await page.getByRole('button', { name: 'Patch library', exact: true }).focus()
   await page.keyboard.press('Meta+Period')
   await waitStatus(page, 'Ready')
-  assert.equal((await saved(page)).draft, draft)
+  await page.waitForFunction(() =>
+    document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
+  )
+  assert.match((await saved(page)).source, /lpf\(1200\)/)
+  assert.equal(await calls(), 1)
   await source(page).press('Meta+Enter')
   await waitStatus(page, 'Playing')
   assert.equal(await calls(), 2)
   assert.match(await page.evaluate(() => window.audioFixture.calls.at(-1)), /lpf\(1200\)/)
   assert.equal((await saved(page)).draft, (await saved(page)).source)
   pass(
-    'running edits stay unapplied; Cmd+. stops outside editor; Cmd+Enter applies the latest draft',
+    'running edits stay unapplied; Cmd+. stops outside editor and the draft then applies silently; Cmd+Enter plays it',
   )
 
   // Locate by panel content rather than assuming an imported module ID.
@@ -163,10 +167,9 @@ try {
   await page.waitForTimeout(50)
   await source(page).press('Enter')
   assert.equal(await calls(), beforeInvalid)
-  await page.getByRole('button', { name: 'Revert to last readable code' }).click()
   pass('composition and plain Enter do not apply')
 
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).check()
   await edit(page, '$: note("d3").s("sine").lpf(900)\n')
   await page.waitForFunction(() =>
     document.querySelector('.sync-status')?.textContent.startsWith('Rack matches code'),
@@ -176,13 +179,13 @@ try {
   await waitStatus(page, 'Playing')
   await edit(page, (await saved(page)).source.replace('900', '1100'))
   await page.waitForFunction((count) => window.audioFixture.calls.length > count, beforeInvalid + 1)
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).uncheck()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).uncheck()
   const afterAuto = await calls()
   await edit(page, (await saved(page)).source.replace('1100', '1400'))
   await page.waitForTimeout(600)
   assert.equal(await calls(), afterAuto)
   pass(
-    'auto-apply is opt-in, updates running code, never starts stopped audio, and can be disabled',
+    'auto-apply while playing is opt-in, updates running code, never starts stopped audio, and can be disabled',
   )
 
   await page.evaluate(() => {

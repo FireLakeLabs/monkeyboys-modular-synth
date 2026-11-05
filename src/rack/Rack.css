@@ -1125,3 +1125,73 @@ select:focus-visible {
 .scope-display small {
   font-size: 11px;
 }
+
+/* A locked rack must read as locked before you try a knob. */
+.rack-lock-region {
+  position: absolute;
+  z-index: 25;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+.rack-lock {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 34px;
+  padding: 3px 10px;
+  border-radius: 6px 6px 0 0;
+  background: #f4a462;
+  box-shadow: 0 2px 10px #000a;
+  color: #231203;
+  font-size: 12px;
+}
+.rack-lock span {
+  flex: 1;
+}
+.rack-lock button {
+  padding: 3px 10px;
+  border: 1px solid #23120366;
+  border-radius: 4px;
+  background: #fff3;
+  color: #231203;
+  font: inherit;
+  font-weight: 600;
+}
+.rack-lock[data-pulse='true'] {
+  animation: rack-lock-pulse 0.4s ease-out;
+  outline: 3px solid #fff;
+}
+@keyframes rack-lock-pulse {
+  40% {
+    transform: scale(1.015);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rack-lock[data-pulse='true'] {
+    animation: none;
+  }
+}
+.rack-stage[data-locked='true'],
+.workspace[data-locked='true'] {
+  cursor: not-allowed;
+}
+.rack-stage[data-locked='true'] > .rack-frame::after,
+.library-locked::before {
+  z-index: 24;
+  background: repeating-linear-gradient(135deg, #0000 0 9px, #f4a46224 9px 11px), #0a0b0d66;
+  content: '';
+  pointer-events: none;
+}
+.rack-stage[data-locked='true'] > .rack-frame::after {
+  position: absolute;
+  inset: 0;
+}
+/* Sticky, so the hatching stays over the list however far it has scrolled. */
+.library-locked::before {
+  position: sticky;
+  top: 0;
+  flex: none;
+  height: 100dvh;
+  margin: -18px -14px calc(18px - 100dvh);
+}

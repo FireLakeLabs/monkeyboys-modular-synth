@@ -38,6 +38,8 @@ import { mayHaveOutput, strudelUrl } from './workspace/transport'
 import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { createAutosave } from './workspace/autosave'
 import { WorkspaceNotice, type Notice, type NoticeAction } from './workspace/WorkspaceNotice'
+import { RackLock, type LockReason } from './workspace/RackLock'
+import { changesModules, isFinished } from './workspace/finishedCode'
 import { createDocumentHistory } from './workspace/history'
 import { patchFilename, patchName, renameDocument } from './workspace/naming'
 import { PatchLibrary } from './library/PatchLibrary'
@@ -53,8 +55,21 @@ const SourceEditor = lazy(() =>
   import('./workspace/SourceEditor').then((module) => ({ default: module.SourceEditor })),
 )
 
+/** Typing has paused: a step ends here, and a rack still locked says so. */
+const PAUSE_MS = 1200
+
 type Replacement =
   { kind: 'file'; file: File } | { kind: 'new' } | { kind: 'library'; entry: LibraryPatch }
+
+/** The revision a readable draft would become, with its rack proven. */
+function acceptable(document: SourceDocument) {
+  const next =
+    document.layout === 'invalid' || document.layout === 'restored'
+      ? document
+      : saveLayout(document)
+  validateRack(next.patch)
+  return next
+}
 
 const newPatch = () =>
   fromPatch(starterPatch(defaultRailWidth(window.innerWidth), visibleRailHp(window.innerWidth)))
@@ -85,7 +100,8 @@ export default function App() {
   const [history] = useState(() => createDocumentHistory(document))
   const draggingKnob = useRef(false)
   const [draft, setDraft] = useState(restored?.draft ?? document.source)
-  const [phase, setPhase] = useState<'readable' | 'editing' | 'invalid'>(
+  // `held` is readable code waiting for Apply, or for its half-typed word to finish.
+  const [phase, setPhase] = useState<'readable' | 'editing' | 'held' | 'invalid'>(
     draft === document.source ? 'readable' : 'editing',
   )
   const [diagnostic, setDiagnostic] = useState<Extract<ReadResult, { kind: 'invalid' }> | null>(
@@ -131,6 +147,17 @@ export default function App() {
     audio.status === 'bouncing'
   const [composing, setComposing] = useState(false)
   const [autoApply, setAutoApply] = useState(false)
+  const applying = audio.status !== 'bouncing' && (autoApply || !needsStop)
+  const applyingNow = useRef(applying)
+  applyingNow.current = applying
+  // A restored draft waits for you; only code you are typing applies by itself.
+  const draftTyped = useRef(false)
+  // A paste is finished text, so the half-typed word check is only for typing.
+  const draftPasted = useRef(false)
+  const typingGroup = useRef<object | null>(null)
+  const [editorFocused, setEditorFocused] = useState(false)
+  const [lockSettled, setLockSettled] = useState(false)
+  const [pulsing, setPulsing] = useState(false)
   const [bounceCycles, setBounceCycles] = useState('4')
   const [editingModule, setEditingModule] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
@@ -153,6 +180,9 @@ export default function App() {
   }, [codeSelection])
   const fileInput = useRef<HTMLInputElement>(null)
   const locked = phase !== 'readable' || composing
+  // Every keystroke is briefly unapplied while stopped, so the rack only looks and acts
+  // locked once that has lasted, or once you have left the editor.
+  const rackLocked = locked && (lockSettled || !editorFocused)
   const conversions = useMemo(() => codeConversions(document), [document])
   const patch = document.patch
   const out = patch.modules.find((module) => module.type === 'out')
@@ -174,6 +204,9 @@ export default function App() {
   const install = useCallback(
     (next: SourceDocument, record = true, historyGroup?: object) => {
       if (record) history.accept(next, historyGroup)
+      if (!historyGroup) typingGroup.current = null
+      draftTyped.current = false
+      setLockSettled(false)
       // A notice's Undo must take back that action, so newer work retires it.
       setNotice((shown) => (shown && historyGroup && shown.group === historyGroup ? shown : null))
       workRevision.current++
@@ -210,6 +243,7 @@ export default function App() {
   }, [])
 
   function stepHistory(direction: 'undo' | 'redo') {
+    typingGroup.current = null
     if (
       composing ||
       editor.current?.composing ||
@@ -235,15 +269,53 @@ export default function App() {
     return true
   }
 
-  function changeDraft(source: string) {
+  function changeDraft(source: string, pasted = false) {
     setNotice(null)
+    draftTyped.current = true
+    draftPasted.current = pasted
     workRevision.current++
+    const previous = current.current.draft
     current.current = { ...current.current, draft: source, phase: 'editing' }
     setDraft(source)
     setPhase('editing')
     setDiagnostic(null)
     // Save before the reader debounce, including invalid and composing text.
     draftSaved.current = autosave.save(current.current.document, source)
+    applyFinishedCall(source, previous)
+  }
+
+  /**
+   * Fast typing never reaches the delay, so typing or deleting a finished call that adds
+   * or removes a module is its own stopping spot, as it would be with a pause.
+   */
+  function applyFinishedCall(source: string, previous: string) {
+    const view = editor.current
+    const accepted = current.current.document
+    if (!view?.hasFocus || view.composing || !applyingNow.current) return
+    const caret = view.state.selection.main.head
+    const removed = previous.slice(caret, caret + previous.length - source.length)
+    if (source[caret - 1] !== ')' && !removed.includes(')')) return
+    try {
+      const result = tryRead(source)
+      if (result.kind === 'invalid') return
+      const next = acceptable(result.document)
+      if (
+        !isFinished(source, accepted.source, caret) ||
+        !changesModules(accepted.patch, next.patch)
+      )
+        return
+      installDraft(next, (typingGroup.current ??= {}))
+      typingGroup.current = null
+    } catch {
+      /* The delayed read reports anything wrong with this draft. */
+    }
+  }
+
+  /** A held word can be released by moving off it, which changes no text. */
+  function caretMoved() {
+    if (current.current.phase !== 'held' || !draftTyped.current || !applyingNow.current) return
+    current.current = { ...current.current, phase: 'editing' }
+    setPhase('editing')
   }
 
   useEffect(() => {
@@ -271,12 +343,7 @@ export default function App() {
         setDiagnostic(result)
         return null
       }
-      const next =
-        result.document.layout === 'invalid' || result.document.layout === 'restored'
-          ? result.document
-          : saveLayout(result.document)
-      validateRack(next.patch)
-      return next
+      return acceptable(result.document)
     } catch (failure) {
       current.current = { ...current.current, phase: 'invalid' }
       setPhase('invalid')
@@ -285,15 +352,78 @@ export default function App() {
     }
   }, [])
 
+  /** Panels rebuild their local state when code changes what they show. */
+  const installDraft = useCallback(
+    (next: SourceDocument, group?: object) => {
+      const changed = next.patchRevision !== current.current.document.patchRevision
+      install(next, true, group)
+      if (changed) setRackGeneration((generation) => generation + 1)
+    },
+    [install],
+  )
+
+  /** Read the draft and apply it if allowed, so half-typed code never reaches the rack. */
+  const settleDraft = useCallback(
+    (endStep: boolean, caretMatters = true) => {
+      const work = current.current
+      if (work.phase === 'readable') {
+        if (endStep) typingGroup.current = null
+        return
+      }
+      if (work.phase === 'invalid' || editor.current?.composing) return
+      const next = readDraft(work.draft)
+      if (!next) return
+      const view = editor.current
+      const caret = caretMatters && view?.hasFocus ? view.state.selection.main.head : undefined
+      if (
+        !draftTyped.current ||
+        !applyingNow.current ||
+        !(draftPasted.current || isFinished(work.draft, work.document.source, caret))
+      ) {
+        current.current = { ...current.current, phase: 'held' }
+        setPhase('held')
+        return
+      }
+      typingGroup.current ??= {}
+      const stop = endStep || changesModules(work.document.patch, next.patch)
+      installDraft(next, typingGroup.current)
+      if (stop) typingGroup.current = null
+    },
+    [readDraft, installDraft],
+  )
+
   useEffect(() => {
     if (phase !== 'editing' || composing) return
     const timer = setTimeout(() => {
       if (current.current.draft !== draft || current.current.phase !== 'editing') return
-      const next = readDraft(draft)
-      if (next && autoApply) install(next)
+      settleDraft(false)
     }, 250)
     return () => clearTimeout(timer)
-  }, [draft, phase, composing, autoApply, readDraft, install])
+  }, [draft, phase, composing, settleDraft])
+
+  // Stopping, or turning the toggle on, lets held code apply.
+  useEffect(() => {
+    if (applying && current.current.phase === 'held') settleDraft(false)
+  }, [applying, settleDraft])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!composing) settleDraft(true)
+      setLockSettled(current.current.phase !== 'readable' || composing)
+    }, PAUSE_MS)
+    return () => clearTimeout(timer)
+  }, [draft, composing, settleDraft])
+
+  useEffect(() => {
+    if (!pulsing) return undefined
+    const timer = setTimeout(() => setPulsing(false), 450)
+    return () => clearTimeout(timer)
+  }, [pulsing])
+
+  function focusEditor(focused: boolean) {
+    setEditorFocused(focused)
+    if (!focused) settleDraft(true, false)
+  }
 
   function playAccepted() {
     const accepted = current.current.document
@@ -306,7 +436,7 @@ export default function App() {
     playback.play().catch((failure: unknown) => setError(String(failure)))
   }
 
-  function applyCode() {
+  function applyCode(start = true) {
     if (
       composing ||
       editor.current?.composing ||
@@ -318,8 +448,9 @@ export default function App() {
       return
     const next = readDraft(current.current.draft)
     if (!next) return
-    install(next)
-    if (!['starting', 'playing', 'applying'].includes(playback.getSnapshot().status)) playAccepted()
+    installDraft(next)
+    if (start && !['starting', 'playing', 'applying'].includes(playback.getSnapshot().status))
+      playAccepted()
   }
 
   // Capture before CodeMirror handles Enter, so applying never inserts a newline.
@@ -352,7 +483,11 @@ export default function App() {
 
   async function togglePlay() {
     if (needsStop) await playback.stop()
-    else if (current.current.phase === 'readable') playAccepted()
+    else {
+      // Play is a stopping spot, and always plays the last applied code.
+      settleDraft(true, false)
+      playAccepted()
+    }
   }
 
   const edit: RackEdit = (action, { group, notice: done, undoFocus: focus } = {}) => {
@@ -461,6 +596,14 @@ export default function App() {
     else setPendingReplacement(replacement)
   }
 
+  function replaceMetadata() {
+    try {
+      install(replaceLayout(current.current.document))
+    } catch (failure) {
+      setError(String(failure))
+    }
+  }
+
   function showCode(id: string) {
     setSelected(id)
     const binding = current.current.document.bindings.find((b) => b.module === id)
@@ -499,6 +642,16 @@ export default function App() {
     stopping: 'Stopping audio',
     error: audio.scheduling === 'stopped' ? 'Audio error' : 'Audio state unknown',
   }[audio.status]
+
+  const lockReason: LockReason | null = rackLocked
+    ? composing
+      ? 'composing'
+      : phase === 'invalid'
+        ? 'unreadable'
+        : 'draft'
+    : document.layout === 'invalid'
+      ? 'metadata'
+      : null
 
   const replacementPrompt = pendingReplacement && (
     <ReplacementPrompt
@@ -543,8 +696,9 @@ export default function App() {
           className="patch-name"
           aria-label="Patch name"
           defaultValue={patchName(patch, document.source)}
-          disabled={locked || replacing || document.layout === 'invalid'}
+          disabled={rackLocked || replacing || document.layout === 'invalid'}
           onBlur={(event) => {
+            if (current.current.phase !== 'readable') return
             try {
               const next = renameDocument(current.current.document, event.currentTarget.value)
               event.currentTarget.value = patchName(next.patch, next.source)
@@ -590,7 +744,7 @@ export default function App() {
         </button>
         <fieldset
           className="header-tempo"
-          disabled={locked || document.layout === 'invalid' || !out}
+          disabled={rackLocked || document.layout === 'invalid' || !out}
         >
           <legend className="sr-only">Tempo</legend>
           {tempoControl?.kind === 'knob' && (
@@ -612,7 +766,6 @@ export default function App() {
           onClick={togglePlay}
           aria-label={needsStop ? 'Stop' : 'Play'}
           title="Ctrl/Cmd+Enter: apply code and play · Ctrl/Cmd+.: stop"
-          disabled={locked && !needsStop}
         >
           {needsStop ? (
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -639,9 +792,18 @@ export default function App() {
           </button>
         ))}
       </fieldset>
-      <main className="workspace" data-view={workspaceView} data-rack-focus={rackFocus}>
+      {/* An inert rack or module list passes a touch to its parent, which reports it. */}
+      <main
+        className="workspace"
+        data-view={workspaceView}
+        data-rack-focus={rackFocus}
+        data-locked={lockReason !== null}
+        onPointerDown={(event) => {
+          if (lockReason && event.target === event.currentTarget) setPulsing(true)
+        }}
+      >
         <Rack
-          panelKey={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
+          panelKey={String(rackGeneration)}
           patchLoads={patchLoads}
           patchOpens={patchOpens}
           focusToggle={
@@ -656,18 +818,34 @@ export default function App() {
           patch={patch}
           sampleResources={seatedResources(document, sampleResources)}
           soundCrate={
-            <SoundCrate document={document} locked={locked || audio.status === 'bouncing'} />
+            <SoundCrate document={document} locked={rackLocked || audio.status === 'bouncing'} />
           }
           cartridgeBay={
             <CartridgeBay
               document={document}
-              locked={locked || document.layout === 'invalid' || audio.status === 'bouncing'}
+              locked={rackLocked || document.layout === 'invalid' || audio.status === 'bouncing'}
               install={install}
             />
           }
 
           document={document}
-          locked={locked || document.layout === 'invalid'}
+          locked={lockReason !== null}
+          lockStrip={
+            <RackLock
+              reason={lockReason}
+              pulsing={pulsing}
+              apply={() => {
+                applyCode(false)
+                editor.current?.focus()
+              }}
+              revert={() => {
+                install(current.current.document)
+                editor.current?.focus()
+              }}
+              replaceMetadata={replaceMetadata}
+            />
+          }
+          touchBlocked={() => setPulsing(true)}
           showCode={showCode}
           sourceModules={document.bindings.map((b) => b.module)}
           escapedNotation={document.bindings.flatMap((b) =>
@@ -713,7 +891,7 @@ export default function App() {
           <div className="code-actions">
             <button
               type="button"
-              onClick={applyCode}
+              onClick={() => applyCode()}
               disabled={composing || audio.status === 'bouncing'}
             >
               Apply code
@@ -724,7 +902,7 @@ export default function App() {
                 checked={autoApply}
                 onChange={(event) => setAutoApply(event.target.checked)}
               />
-              Auto-apply
+              Auto-apply while playing
             </label>
             <button
               type="button"
@@ -755,7 +933,7 @@ export default function App() {
             <button
               type="button"
               disabled={
-                locked ||
+                rackLocked ||
                 audio.status === 'bouncing' ||
                 !Number.isInteger(Number(bounceCycles)) ||
                 Number(bounceCycles) < 1 ||
@@ -797,7 +975,7 @@ export default function App() {
               }}
             />
           </div>
-          {locked && (
+          {rackLocked && (
             <p className="share-note">
               Open in Strudel uses the last applied code while this draft has unapplied changes.
             </p>
@@ -809,21 +987,22 @@ export default function App() {
               sourceFeedback={playback.subscribeSourceFeedback}
               source={draft}
               document={locked ? null : document}
+              keepDecorations={locked && !rackLocked}
               selected={selected}
               invalid={phase === 'invalid'}
               diagnostic={diagnostic}
               status={
                 <>
                   <output className="sync-status">
-                    {phase === 'editing'
-                      ? autoApply
-                        ? 'Reading code…'
-                        : 'Unapplied changes'
-                      : phase === 'invalid'
-                        ? 'Rack shows previous code'
-                        : patch.modules.some((m) => m.type === 'code')
-                          ? 'Rack matches code · Some code has no controls'
-                          : 'Rack matches code'}
+                    {phase === 'editing' && applying
+                      ? 'Reading code…'
+                      : phase === 'editing' || phase === 'held'
+                        ? 'Unapplied changes'
+                        : phase === 'invalid'
+                          ? 'Rack shows previous code'
+                          : patch.modules.some((m) => m.type === 'code')
+                            ? 'Rack matches code · Some code has no controls'
+                            : 'Rack matches code'}
                   </output>
                   {phase === 'invalid' && <span>Unapplied changes</span>}
                   <output className="transport-status" aria-live="polite">
@@ -859,7 +1038,7 @@ export default function App() {
                       <mark>{draft.split(/\r?\n/)[diagnostic.line - 1]}</mark>
                     </p>
                   )}
-                  {locked && (
+                  {(rackLocked || phase === 'invalid') && (
                     <button type="button" onClick={() => install(current.current.document)}>
                       Revert to last readable code
                     </button>
@@ -879,16 +1058,7 @@ export default function App() {
                         Unknown or invalid saved rack metadata retained. Rack editing is disabled
                         until you replace it.
                       </p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          try {
-                            install(replaceLayout(current.current.document))
-                          } catch (failure) {
-                            setError(String(failure))
-                          }
-                        }}
-                      >
+                      <button type="button" onClick={replaceMetadata}>
                         Replace rack metadata
                       </button>
                     </div>
@@ -930,6 +1100,8 @@ export default function App() {
                 </>
               }
               change={changeDraft}
+              focused={focusEditor}
+              caretMoved={caretMoved}
               composing={setComposing}
               editingModule={setEditingModule}
               stepHistory={stepHistory}

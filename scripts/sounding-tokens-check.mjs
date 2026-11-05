@@ -111,7 +111,7 @@ async function observe() {
 try {
   await page.goto(base)
   await page.getByRole('textbox', { name: 'Strudel source', exact: true }).waitFor()
-  const autoApply = page.getByRole('checkbox', { name: 'Auto-apply', exact: true })
+  const autoApply = page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true })
   assert.equal(await autoApply.isChecked(), false)
   await autoApply.check()
   // A generated library exercise proves generated source, separately from the imported fixture.

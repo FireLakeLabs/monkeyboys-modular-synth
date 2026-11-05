@@ -103,6 +103,8 @@ export function Rack({
   replacementPrompt,
   cancelReplacement,
   locked,
+  lockStrip,
+  touchBlocked,
   showCode,
   sourceModules,
   escapedNotation,
@@ -127,6 +129,8 @@ export function Rack({
   soundCrate?: ReactNode
   sampleResources: readonly SamplePackResource[]
   locked: boolean
+  lockStrip: ReactNode
+  touchBlocked: () => void
   showCode: (id: string) => void
   editingModule: string | null
   emptyOutput: boolean
@@ -929,7 +933,15 @@ export function Rack({
             New patch
           </button>
         </div>
-        <div className="rack-stage">
+        {/* An inert rack passes a touch to the stage, which reports it. */}
+        <div
+          className="rack-stage"
+          data-locked={locked}
+          onPointerDown={(event) => {
+            if (locked && event.target === event.currentTarget) touchBlocked()
+          }}
+        >
+          {lockStrip}
           <div
             ref={surface}
             inert={locked}

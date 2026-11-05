@@ -23,7 +23,7 @@ async function source(page) {
   return page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource())
 }
 async function edit(page, value) {
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).check()
   await page.evaluate(async (text) => {
     ;(await import('/scripts/editor-browser.mjs')).replaceSource(text)
     await new Promise(requestAnimationFrame)

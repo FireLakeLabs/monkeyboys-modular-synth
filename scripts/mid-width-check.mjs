@@ -1,7 +1,7 @@
 // Run in a Vite page at 1024×768 and 900×768:
 // (await import('/scripts/mid-width-check.mjs')).verifyMidWidth()
 // This checks real layout/editor behavior without starting audio.
-import { editorSource, editorView, enableAutoApply, replaceSource } from './editor-browser.mjs'
+import { editorSource, editorView, enableAutoApply, typeAt } from './editor-browser.mjs'
 import { inspectCables, loadEnveloped } from './rack-feel-check.mjs'
 
 function assert(value, message) {
@@ -105,8 +105,8 @@ export async function verifyMidWidth() {
   const toggle = document.querySelector('.auto-apply input')
   toggle.click()
   await pause()
-  const draft = `// unfinished draft\n${before}`
-  replaceSource(draft)
+  const draft = `unfinished.dra\n${before}`
+  typeAt(0, 'unfinished.dra\n')
   await until(() => document.querySelector('.sync-status').textContent === 'Unapplied changes')
   const selection = editorView().state.selection.main
   await view('Rack')
@@ -116,11 +116,6 @@ export async function verifyMidWidth() {
   const { undo } = await import('@codemirror/commands')
   assert(undo(editorView()), 'Draft undo was lost')
   assert(editorSource() === before, 'Draft undo did not restore original source')
-  await until(() => document.querySelector('.sync-status').textContent === 'Unapplied changes')
-  const revert = [...document.querySelectorAll('.code button')].find((button) =>
-    button.textContent.includes('Revert to last readable code'),
-  )
-  revert.click()
   await until(() =>
     document.querySelector('.sync-status').textContent.startsWith('Rack matches code'),
   )

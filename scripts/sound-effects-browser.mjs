@@ -14,7 +14,7 @@ const results = { browser: browser.version(), looks: [], forms: [], physicalList
 try {
   await page.goto(process.argv[2] ?? 'http://127.0.0.1:5131')
   await page.locator('.cm-content').waitFor()
-  await page.getByRole('checkbox', { name: 'Auto-apply', exact: true }).check()
+  await page.getByRole('checkbox', { name: 'Auto-apply while playing', exact: true }).check()
   for (const look of ['powder', 'instrument', 'vintage', 'learner']) {
     const count = await page.evaluate(async (look) => {
       const s = await import('/scripts/rack-feel-check.mjs')

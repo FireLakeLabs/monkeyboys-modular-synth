@@ -65,12 +65,12 @@ A module’s category colour is used for its dot on the panel and for the code i
 
 ## Interaction policy
 
-- **Code application (#56, decided 3 November 2026; [#180](#usability-review-188-decided-4-november-2026) changes the default):** Ctrl/Cmd+Enter applies
+- **Code application (#56, decided 3 November 2026; [#180](#usability-review-188-decided-4-november-2026) changed the default):** Ctrl/Cmd+Enter applies
   editor code and starts playback if stopped; Ctrl/Cmd+. stops from anywhere in
-  the app. Explicit apply is the default, with auto-apply as an opt-in toggle,
-  so the shortcuts carry over to the Strudel REPL and workshop. Until applied,
-  editor changes never sound or reshape the rack, and the editor status reports
-  unapplied changes. Rack edits and knob drags still apply immediately. Each
+  the app, so the shortcuts carry over to the Strudel REPL and workshop. Finished
+  code applies by itself while stopped, and only on request while playing. Until
+  applied, editor changes never sound or reshape the rack, and the editor status
+  reports unapplied changes. Rack edits and knob drags still apply immediately. Each
   successful apply is an accepted-document boundary for #63 undo/redo.
   [#70](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/70) owns
   implementation, shortcut discovery and integration with the existing #12
@@ -119,7 +119,8 @@ production acceptance for #9–#11.
 
 The owner accepted these from the [usability review](usability-review.md). Each
 issue owns its implementation, and the rules it replaces stay in force until it
-lands. #179 and #181 have shipped; see [messages and undo](design.md#messages-and-undo-179-181-183). The owner also approved the
+lands. #179, #180 and #181 have shipped; see [messages and undo](design.md#messages-and-undo-179-181-183)
+and [code application](code-application.md). The owner also approved the
 [mockups](design/usability-review.html) as the design direction. They remain
 sketches: their control names and pack counts are illustrative.
 

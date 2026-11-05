@@ -9,9 +9,10 @@ including autosave, diagnostics and playback update.
 
 ## Boundaries and grouping
 
-- Each successful explicit code Apply, auto-apply debounce, rack operation,
-  metadata replacement, conversion, New, Open or library load is one accepted
-  step. An unchanged accepted file adds no step and preserves redo.
+- Each successful explicit code Apply, rack operation, metadata replacement,
+  conversion, New, Open or library load is one accepted step. Auto-applied typing
+  groups into steps that end at
+  [good stopping spots](code-application.md#undo-steps). An unchanged accepted file adds no step and preserves redo.
 - All live values from one knob pointer gesture form one step. Only that knob’s pointer value commits carry its grouping token;
   a preceding input blur commit remains separate. They still reach
   playback immediately. Returning to the starting file cancels that step.
