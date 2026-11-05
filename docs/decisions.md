@@ -120,7 +120,9 @@ production acceptance for #9–#11.
 
 The owner accepted these from the [usability review](usability-review.md). They
 are decided, not yet built. Each issue owns its implementation, and the rules
-they replace stay in force until it lands.
+they replace stay in force until it lands. The owner also approved the
+[mockups](design/usability-review.html) as the design direction. They remain
+sketches: their control names and pack counts are illustrative.
 
 - **Undo replaces routine confirmations ([#179](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/179)):** deleting a module,
   replacing a cable and loading over changed work act at once and offer undo. A

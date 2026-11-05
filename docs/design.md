@@ -25,8 +25,8 @@ are owner-approved. See [rack evidence](rack-verification.md) and
 [workspace/looks evidence](workspace-verification.md) for implementation and limits.
 
 The [usability review](usability-review.md) and its [mockups](design/usability-review.html)
-record refinements, tracked in [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188). [Owner decisions](decisions.md#usability-review-188-decided-4-november-2026)
-are settled but not yet built; the rest are proposals.
+record refinements, tracked in [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188). The mockups and [owner decisions](decisions.md#usability-review-188-decided-4-november-2026)
+are approved but not yet built.
 
 ## Boards
 

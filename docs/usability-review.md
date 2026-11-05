@@ -5,7 +5,8 @@ Review of `fa290cd` on 4 November 2026, tracked in
 owner reported that the app had grown messier as features landed. This records
 what was observed and proposed. The owner's choices are in
 [`decisions.md`](decisions.md#usability-review-188-decided-4-november-2026); anything
-not recorded there is still a proposal.
+not recorded there is still a proposal. The owner approved the mockups as the
+design direction.
 
 - [Mockups beside real panels](design/usability-review.html)
 - [Measurements](usability-review-results.json)
