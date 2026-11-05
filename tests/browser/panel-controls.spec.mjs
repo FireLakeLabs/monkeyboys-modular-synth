@@ -6,8 +6,8 @@ const suite = (page, fn, ...args) =>
     async ({ fn, args }) => (await import('/scripts/panel-controls-check.mjs'))[fn](...args),
     { fn, args },
   )
-async function loadCase(page, type) {
-  const loaded = await suite(page, 'loadSwitchCase', type)
+async function loadCase(page, type, values) {
+  const loaded = await suite(page, 'loadSwitchCase', type, values)
   await expect(page.locator(`[data-module="${loaded.id}"]`)).toHaveCount(1)
   await expect(page.locator('.sync-status')).toContainText('Rack matches code')
   return loaded
@@ -121,6 +121,25 @@ test('headers stay compact in every look at full size', async ({ page }) => {
     expect(heights.filter((height) => height <= 42).length / heights.length, look).toBeGreaterThan(
       0.8,
     )
+  }
+})
+
+test('an open ACCENT editor is never clipped out of reach', async ({ page }) => {
+  // A one-voice DRUMS leaves ACCENT close to the top of its scroller.
+  for (const [type, values] of [
+    ['drums', { grid: 'bd' }],
+    ['drums', {}],
+    ['seq', {}],
+  ]) {
+    const { id } = await loadCase(page, type, values)
+    const accent = page
+      .locator(`[data-module="${id}"]`)
+      .getByRole('textbox', { name: 'ACCENT', exact: true })
+    await accent.focus()
+    const clipping = await suite(page, 'accentClipping', id)
+    expect(clipping.above, type).toBeLessThanOrEqual(0)
+    expect(clipping.below, type).toBeLessThanOrEqual(0)
+    await accent.blur()
   }
 })
 

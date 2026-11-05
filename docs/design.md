@@ -187,8 +187,7 @@ Panels stay slim (#175). The header holds the name, its title and the status
 light in about 38 px. A title or a spaced name may take a second line rather than
 clip, and a word with more letters than the panel has HP tightens instead.
 Module IDs appear only on hover, focus or selection; panel names for assistive
-technology still include them. ACCENT rests on one line and opens over the
-controls above it while focused, so nothing moves.
+technology still include them. ACCENT rests on one line and opens over the controls below it while focused, so nothing moves.
 
 A module keeps its full category color whether or not it reaches OUT. Routing
 shows on the status light, lit green when connected and an empty ring when not,

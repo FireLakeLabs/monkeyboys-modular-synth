@@ -476,7 +476,8 @@
     12px 'JetBrains Mono',
     monospace;
 }
-/* ACCENT is usually `1`, so it rests on one line and opens over the controls above it. */
+/* ACCENT is usually `1`, so it rests on one line and opens over the controls below it.
+   Opening downward keeps it reachable: a scroller can reach overflow below, never above. */
 .notation-control {
   position: relative;
   flex-direction: row;
@@ -499,7 +500,7 @@
   z-index: 3;
   left: 0;
   right: 0;
-  bottom: 0;
+  top: 0;
   height: 96px;
   overflow: auto;
   white-space: pre-wrap;

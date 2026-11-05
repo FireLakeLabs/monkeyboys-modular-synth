@@ -29,8 +29,10 @@ export function switchCases() {
     return spec.id === 'out' || !controls.length ? [] : [{ type: spec.id, controls }]
   })
 }
-export function loadSwitchCase(type) {
+export function loadSwitchCase(type, values = {}) {
   patch = routedOrPlaced(type)
+  for (const [control, value] of Object.entries(values))
+    patch = setValue(patch, `${type}1`, control, value)
   const source = generate(patch)
   replaceSource(source)
   return { id: patch.modules.find((m) => m.type === type).id, source }
@@ -43,4 +45,21 @@ export function expectedAfter(id, control, value) {
 export const currentSource = () => editorSource()
 export function accentHeight(id) {
   return document.querySelector(`[data-module="${id}"] .notation-control textarea`).offsetHeight
+}
+/** How far the open editor sits outside its scroller, with the scroller at each end. */
+export function accentClipping(id) {
+  const controls = document.querySelector(`[data-module="${id}"] .module-controls`)
+  const editor = controls.querySelector('.notation-control textarea')
+  const measure = () => {
+    const box = controls.getBoundingClientRect()
+    const rect = editor.getBoundingClientRect()
+    return { above: box.top - rect.top, below: rect.bottom - box.bottom }
+  }
+  const { scrollTop } = controls
+  controls.scrollTop = 0
+  const top = measure()
+  controls.scrollTop = controls.scrollHeight
+  const bottom = measure()
+  controls.scrollTop = scrollTop
+  return { above: Math.max(top.above, bottom.above), below: Math.min(top.below, bottom.below) }
 }
