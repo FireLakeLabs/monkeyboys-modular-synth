@@ -54,7 +54,7 @@ sensitivity; chip text wraps instead of truncating. Module widths are unchanged.
 
 ## Conventions
 
-- **Width** is in HP. 1 HP = 12 px at 100% zoom. A module is the same width in every look.
+- **Width** is in HP. 1 HP = 12 px at 100% zoom. A module is the same width in every look. The catalog may widen a module where that is [worth it](decisions.md#looks).
 - **Jacks:** `in` / `out`, with signal type `pattern`, `audio`, `mod`, or `any` (Alien and Cyber jacks pass through whatever enters).
 - **CV inputs** modulate one named control (`cvTarget`). See [rule 3](translation-rules.md#3-a-cable-into-cv-modulates-a-control).
 - **Defaults** are what a freshly added module shows. “Omitted at X” means the generator writes nothing for that control when it holds X.

@@ -24,6 +24,9 @@ see the [interaction proposal](interaction-proposal.md) and its
 are owner-approved. See [rack evidence](rack-verification.md) and
 [workspace/looks evidence](workspace-verification.md) for implementation and limits.
 
+The [usability review](usability-review.md) and its [mockups](design/usability-review.html)
+record proposed refinements, tracked in [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188). They are not yet the design.
+
 ## Boards
 
 | Board                         | What it shows                                                                                                                                                                                                                                        |
