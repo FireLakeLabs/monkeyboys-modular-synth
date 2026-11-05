@@ -1,6 +1,7 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { test, expect } from 'playwright/test'
+import { chooseSwitch } from '../../scripts/panel-controls.mjs'
 
 const execute = promisify(execFile)
 
@@ -335,12 +336,12 @@ test('generalized modulation controls and within-note PCM', async ({ page }, inf
     await editor.replaceSource(generate(suite.sustainedPatch()))
   })
   const lfo = page.locator('[data-module="lfo1"]')
-  await expect(lfo.getByLabel('MODE', { exact: true })).toHaveValue('SMOOTH')
-  await lfo.getByLabel('MODE', { exact: true }).selectOption('STEP')
+  await expect(lfo.getByRole('radio', { name: 'SMOOTH', exact: true })).toBeChecked()
+  await chooseSwitch(lfo, 'MODE', 'STEP')
   expect(
     await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource()),
   ).toContain('.gain(sine.fast(2).range(0.2, 0.6))')
-  await lfo.getByLabel('MODE', { exact: true }).selectOption('SMOOTH')
+  await chooseSwitch(lfo, 'MODE', 'SMOOTH')
   await lfo.getByRole('button', { name: 'Set SKEW', exact: true }).click()
   await lfo.getByRole('textbox', { name: 'SKEW', exact: true }).fill('0.25')
   await lfo.getByRole('textbox', { name: 'SKEW', exact: true }).press('Enter')

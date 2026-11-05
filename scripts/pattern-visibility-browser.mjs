@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { chooseSwitch } from './panel-controls.mjs'
 const base = process.argv[2] ?? 'http://127.0.0.1:5173'
 const output = process.argv[3] ?? '/tmp/monkeyboy-pattern-visibility'
 await mkdir(output, { recursive: true })
@@ -177,7 +178,7 @@ try {
   )
   pass('SCOPE reads nonzero per-voice PCM; header tracks the real scheduler cycle')
   const scope = page.locator('[data-module]').filter({ has: page.locator('.scope-display') })
-  await scope.getByRole('combobox', { name: 'VIEW', exact: true }).selectOption('spectrum')
+  await chooseSwitch(scope, 'VIEW', 'spectrum')
   await page.waitForFunction(
     async () => {
       const url = performance

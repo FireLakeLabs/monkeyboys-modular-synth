@@ -26,7 +26,7 @@ are owner-approved. See [rack evidence](rack-verification.md) and
 
 The [usability review](usability-review.md) and its [mockups](design/usability-review.html)
 record refinements, tracked in [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188). The mockups and [owner decisions](decisions.md#usability-review-188-decided-4-november-2026)
-are approved but not yet built.
+are approved, and each issue builds its part.
 
 ## Boards
 
@@ -120,12 +120,12 @@ Each look is a set of layout rules plus tokens applied to a module’s control l
 
 ### Hardware
 
-| Look            | Panel                                                                                                                                                | Name type                                                                   | Knobs                                                | Jacks                                             | Layout rule                                                                                   |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| **Powder coat** | Painted in the category’s dark colour (sound `#9A4F22`, shape `#8E3457`, mod `#2B567F`, fx `#5A3E8F`, pattern `#7A6512`, util `#474C55`), fine grain | Barlow Condensed 700, 26 px, off-white                                      | Black with off-white indicator and printed tick ring | Silver nut; outputs labelled on an off-white chip | Jacks along the bottom; printed signal-flow line above them                                   |
-| **Instrument**  | Brushed aluminium                                                                                                                                    | Barlow Condensed 700 on a category-colour band with dark text, status light | Knurled with a dark cap, tick ring                   | Silver nut; outputs on a black chip               | Jacks along the bottom inside an outlined patch box; dark recessed display in category colour |
-| **Vintage lab** | Matte black, grain                                                                                                                                   | Barlow Condensed 600, letter-spaced, centred, off-white with a rule beneath | Chrome skirt, black cap                              | Ring coloured by signal type                      | **Jacks along the top**, under the name; controls below                                       |
-| **Learner**     | Warm white, 14 px corners, 2 px dark outline, offset shadow                                                                                          | Fredoka 600, lower case                                                     | Category-coloured, outlined, white pointer dot       | Ring coloured by signal type                      | Jacks along the bottom; rounded white display                                                 |
+| Look            | Panel                                                                                                                                                | Name type                                                                   | Knobs                                                | Jacks                                             | Layout rule                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Powder coat** | Painted in the category’s dark colour (sound `#9A4F22`, shape `#8E3457`, mod `#2B567F`, fx `#5A3E8F`, pattern `#7A6512`, util `#474C55`), fine grain | Barlow Condensed 700, 19 px, off-white                                      | Black with off-white indicator and printed tick ring | Silver nut; outputs labelled on an off-white chip | Jacks along the bottom; printed signal-flow line above them                    |
+| **Instrument**  | Brushed aluminium                                                                                                                                    | Barlow Condensed 700 on a category-colour band with dark text, status light | Knurled with a dark cap, tick ring                   | Silver nut; outputs on a black chip               | Jacks along the bottom inside an outlined patch box; plain values on the panel |
+| **Vintage lab** | Matte black, grain                                                                                                                                   | Barlow Condensed 600, letter-spaced, centred, off-white with a rule beneath | Chrome skirt, black cap                              | Ring coloured by signal type                      | **Jacks along the top**, under the name; controls below                        |
+| **Learner**     | Warm white, 14 px corners, 2 px dark outline, offset shadow                                                                                          | Fredoka 600, lower case                                                     | Category-coloured, outlined, white pointer dot       | Ring coloured by signal type                      | Jacks along the bottom; rounded white display                                  |
 
 ### Alien
 
@@ -166,16 +166,36 @@ detent; Home/End reach the range limits. Slider semantics announce the label,
 range, current number and unit. All changes use the existing commit boundary,
 including source preservation and live playback updates.
 
-Panels with switches or four or more controls use compact numeric rows, except
-for drum grids and text editors; four plain level controls can share two rows.
-SEQ places its mode label beside the select. This keeps the #130 controls inside
-their fixed width and height across looks. Panels group switches before knobs
-after sequence/grid/text editors, with the
-same visual and keyboard order. Compact drum rows place the sample beside its
-step cells. The v1 controls fit the existing catalog widths, so this change does
-not widen modules or relocate saved patches. Panel labels are at least 11 px;
-value fields/readouts are at least 12 px. Module IDs and rail labels use opaque
-dark backgrounds for consistent contrast across looks.
+Knobs sit in columns, two on an 8 HP panel and three from 12 HP, with the label
+and value under each knob. Values print as plain text on the panel and turn into
+a field when clicked. Panels group switches before knobs after
+sequence/grid/text editors, with the same visual and keyboard order. Compact drum
+rows place the sample beside its step cells. Panel labels are at least 11 px and
+values at least 12 px. Rail labels and module IDs use opaque dark backgrounds for
+consistent contrast across looks.
+
+Short switches are buttons (#174): off/on is a lit push button with
+`aria-pressed`, and two to four options are a segmented control of native radios
+in a named `radiogroup`, so arrow keys work. Neighboring push buttons, such as
+MUTE and SOLO, share a line. Longer lists stay a compact dropdown, as does any
+list whose labels would not fit the panel, using the
+[catalog rule](module-spec.md#switch-presentation-174). A label shares its
+control's line when the panel is wide enough. Each look sets the `--control-*`
+tokens in `src/looks/looks.css`, which own how these controls read.
+
+Panels stay slim (#175). The header holds the name, its title and the status
+light in about 38 px. A title or a spaced name may take a second line rather than
+clip, and a word with more letters than the panel has HP tightens instead.
+Module IDs appear only on hover, focus or selection; panel names for assistive
+technology still include them. ACCENT rests on one line and opens over the controls below it while focused, so nothing moves.
+
+A module keeps its full category color whether or not it reaches OUT. Routing
+shows on the status light, lit green when connected and an empty ring when not,
+with a tooltip and the panel's existing “not connected to OUT” name. The light
+appears in every look. On Instrument it also flashes white on each event.
+
+Panels overlap two rails, each with one hole per HP, and the pinned OUT panel has
+matching rails. Looks that have screws on their boards show two fixing screws.
 
 The rack toolbar offers Fit rack and manual 75%, 100%, 125% and 150% zoom.
 Fit recalculates when the viewport or row count changes; zoom is local view

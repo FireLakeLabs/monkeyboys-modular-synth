@@ -38,7 +38,8 @@ Where a Strudel function has a close hardware cousin (`.ply()` ≈ a ratchet, `.
 - **Instrument category bands (#58/#85, decided 3 November 2026):** new
   Hardware modules keep Instrument as their default look. Its header band uses
   the module's category colour with dark, contrasting text; Powder coat stays
-  available. Disconnected modules use a darker band and readable light text.
+  available. Disconnected modules keep the same band and show routing on the
+  status light, replacing the darker band ([#175](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/175)).
 
 ## Colours
 

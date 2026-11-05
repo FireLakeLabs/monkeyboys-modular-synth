@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG, VCF, SEQ } from '../modules/catalog'
+import { CATALOG, VCF, SEQ, getModuleSpec } from '../modules/catalog'
 import { demoPatch } from '../patch/demo'
 import { generate, generateDocument } from '../codegen/generate'
 import { read } from '../reader'
@@ -25,6 +25,7 @@ import {
   removeRow,
   addRow,
   routedModules,
+  switchStyle,
 } from './model'
 
 const ref = (module: string, jack: string) => ({ module, jack })
@@ -32,6 +33,35 @@ function add(patch: Patch, type: string, row = 1) {
   return placeModule(patch, type, row)
 }
 const sounding = (patch: Patch) => generate(patch).split('// ── @monkeyboy')[0]
+
+describe('switchStyle', () => {
+  const switches = CATALOG.flatMap((spec) =>
+    spec.controls.flatMap((control) => (control.kind === 'switch' ? [{ spec, control }] : [])),
+  )
+
+  it('lights off/on switches, segments short lists and keeps long lists as dropdowns', () => {
+    for (const { spec, control } of switches) {
+      const style = switchStyle(control, spec.hp)
+      const values = control.options.map((option) => option.value)
+      if (values.join() === 'off,on') expect(style).toBe('toggle')
+      else if (values.length > 4 || values.length < 2) expect(style).toBe('dropdown')
+      else expect(style).not.toBe('toggle')
+    }
+  })
+
+  it('falls back to a dropdown only when the labels cannot fit the panel', () => {
+    const style = (type: string, id: string) => {
+      const spec = getModuleSpec(type)
+      const control = spec.controls.find((candidate) => candidate.id === id)
+      if (control?.kind !== 'switch') throw new Error('Missing switch')
+      return switchStyle(control, spec.hp)
+    }
+    expect(style('rev', 'mode')).toBe('segments')
+    expect(style('lfo', 'mode')).toBe('segments')
+    expect(style('smpl', 'bank')).toBe('dropdown')
+    expect(style('jux', 'right')).toBe('dropdown')
+  })
+})
 
 describe('rack editing', () => {
   it('adds a sequence, oscillator and filter before the starter mixer and output without moving neighbors', () => {

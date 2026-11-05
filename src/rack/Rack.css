@@ -43,6 +43,8 @@
   font-family: inherit;
 }
 .rack-frame {
+  --rail-holes: radial-gradient(circle at 6px 8px, #08090b 0 2px, #ffffff1c 2.5px, transparent 3px)
+    0 0 / 12px 16px;
   display: flex;
   position: relative;
   height: 100%;
@@ -113,14 +115,46 @@
   position: absolute;
   left: 0;
   width: 100%;
-  height: 420px;
-  border-block: 12px solid;
+  height: 406px;
+  margin-top: 12px;
+  border-block: 16px solid;
   border-image: linear-gradient(#454a53, #22262b) 1;
   background: repeating-linear-gradient(90deg, transparent 0 11px, #ffffff04 11px 12px);
 }
+/* Panels overlap both rails, so they read as bolted to something. One hole per HP. */
+.rack-row::before,
+.rack-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--rail-holes);
+}
+.rack-row::before {
+  top: -16px;
+}
+.rack-row::after {
+  bottom: -16px;
+}
+.output-surface::before,
+.output-surface::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--rail-holes), linear-gradient(#454a53, #22262b);
+}
+.output-surface::before {
+  top: 12px;
+}
+.output-surface::after {
+  top: 402px;
+}
 .row-label {
   position: absolute;
-  top: 4px;
+  top: -15px;
   right: 6px;
   font: 11px monospace;
   color: #c2c7cf;
@@ -152,10 +186,11 @@
 }
 .module-header {
   position: relative;
-  flex: 0 0 60px;
+  flex: 0 0 auto;
+  min-height: 36px;
   width: 100%;
   text-align: left;
-  padding: 8px;
+  padding: 3px 6px 3px 9px;
   background: linear-gradient(#1b1d20, #080a0c);
   color: #e4e6ea;
   border: 0;
@@ -163,27 +198,40 @@
 }
 .module-header strong {
   display: block;
+  padding-right: 6px;
+  overflow-wrap: anywhere;
   font:
-    700 24px 'Barlow Condensed',
+    700 19px/20px 'Barlow Condensed',
     sans-serif;
-  letter-spacing: 0.04em;
+}
+/* A word with more letters than the panel has HP cannot wrap, so it tightens instead. */
+.module-panel .module-header strong[data-tight='true'] {
+  font-size: 17px;
+  letter-spacing: 0;
 }
 .module-header small {
   display: block;
   font:
-    11px 'Barlow Condensed',
+    11px/1.1 'Barlow Condensed',
     sans-serif;
   color: #b2b6bc;
 }
+/* The status light: lit when routed to OUT, an empty ring when it is not. */
 .module-dot {
   position: absolute;
-  top: 12px;
-  right: 7px;
-  width: 6px;
-  height: 6px;
-  background: var(--category);
+  top: 6px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  background: #2fd27a;
   border-radius: 50%;
-  box-shadow: 0 0 5px var(--category);
+  box-shadow:
+    0 0 0 1px #0008,
+    0 0 5px #2fd27a;
+}
+.module-panel.inactive .module-dot {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px currentColor;
 }
 .cat-pattern {
   --category: var(--pattern);
@@ -224,81 +272,26 @@
   scrollbar-width: thin;
   flex: 1;
   min-height: 0;
-  padding: 4px 5px;
+  padding: 5px 3px;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
   justify-content: center;
-  gap: 4px 2px;
+  gap: 5px 2px;
 }
+/* Two knobs fit an 8 HP panel and three a 12 HP one, without changing catalog widths. */
 .numeric-control {
   display: flex;
   align-items: center;
   flex-direction: column;
-  width: 50px;
+  width: clamp(42px, calc(33.3% - 2px), 56px);
+  min-width: 0;
   font:
     11px 'Barlow Condensed',
     sans-serif;
 }
-/* Dense catalog panels use rows without changing their HP or text size. */
-.module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
-    :has(> :nth-child(4)),
-    :has(> .switch-control)
-  ) {
-  padding-block: 8px;
-  gap: 1px;
-}
-.module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
-    :has(> :nth-child(4)),
-    :has(> .switch-control)
-  )
-  .numeric-control {
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+.numeric-control:has(.control-error) {
   width: 100%;
-}
-.module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
-    :has(> :nth-child(4)),
-    :has(> .switch-control)
-  )
-  .numeric-control
-  .knob {
-  flex-shrink: 0;
-  margin: 0 2px;
-}
-.module-controls:has(> .switch-control) > .switch-control {
-  gap: 2px;
-}
-/* A sequence grid keeps its mode label beside the select to reserve knob space. */
-.module-controls:has(> .step-editor):has(> .switch-control) {
-  padding-block: 4px;
-}
-.module-controls:has(> .step-editor) > .switch-control {
-  flex-direction: row;
-  align-items: center;
-}
-.module-controls:has(> .step-editor) > .switch-control select {
-  flex: 1;
-  min-width: 0;
-}
-/* Four plain level controls can share two compact rows on a wider panel. */
-.module-controls:has(> .numeric-control:nth-child(4):last-child):not(:has(> .switch-control))
-  .numeric-control {
-  width: calc(50% - 1px);
-}
-.module-controls:has(> .numeric-control:nth-child(4):last-child):not(:has(> .switch-control))
-  .knob {
-  margin-inline: 0;
-}
-.module-controls:not(:has(> :is(.grid-editor, .text-control))):is(
-    :has(> :nth-child(4)),
-    :has(> .switch-control)
-  )
-  .numeric-control
-  label {
-  flex: 1;
-  min-width: 60px;
 }
 .knob {
   position: relative;
@@ -312,7 +305,7 @@
   box-shadow: 1px 2px 4px #0009;
   touch-action: none;
   cursor: ns-resize;
-  margin: 3px;
+  margin: 2px;
 }
 .knob span {
   position: absolute;
@@ -329,12 +322,11 @@
   gap: 1px;
   width: 100%;
 }
-.numeric-control input,
-.numeric-control .readout {
+.numeric-control input {
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  padding: 3px 1px;
+  padding: 1px;
   font:
     12px 'JetBrains Mono',
     monospace;
@@ -344,8 +336,31 @@
   border: 1px solid #60676e;
   border-radius: 3px;
 }
+/* The label sits directly above, so the ring must not cover it. */
+.numeric-control input:focus-visible {
+  outline-offset: 0;
+}
+/* Values print on the panel, like the boards, and become a field when clicked. */
+.numeric-control .readout {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  overflow-wrap: anywhere;
+  font:
+    12px/14px 'Barlow Condensed',
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: text;
+}
+.numeric-control .readout:hover {
+  text-decoration: underline dotted;
+}
 .control-error {
-  width: 90px;
+  width: 100%;
   z-index: 2;
   background: #261c1f;
   color: #ffb7c8;
@@ -361,8 +376,14 @@
     11px 'Barlow Condensed',
     sans-serif;
 }
+/* A label shares its control's line whenever the panel is wide enough. */
+.switch-control {
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 1px 4px;
+}
 .switch-control select,
-.switch-control input,
+.switch-control input:not([type='radio']),
 .module-panel textarea {
   width: 100%;
   box-sizing: border-box;
@@ -372,12 +393,124 @@
   padding: 4px 1px;
   font-size: 12px;
 }
+.switch-control select,
+.switch-control input:not([type='radio']) {
+  flex: 1 1 62px;
+  width: auto;
+  min-width: 0;
+  padding-block: 2px;
+}
+.segments {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--control-line);
+  border-radius: var(--control-radius);
+  background: var(--control-bg);
+}
+.segments label {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.segments label + label {
+  border-left: 1px solid var(--control-line);
+}
+.segments input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.segments span {
+  display: block;
+  padding: 0 3px;
+  font:
+    600 11px/19px 'Barlow Condensed',
+    sans-serif;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--control-ink);
+}
+.segments input:checked + span {
+  background: var(--control-on-bg);
+  color: var(--control-on-ink);
+}
+.segments input:focus-visible + span {
+  outline: 2px solid #7db9f6;
+  outline-offset: -2px;
+}
+/* Selecting on press wakes a module's cables. Like jacks, buttons stay above them,
+   or a cable crossing the panel takes the release and the click is lost. */
+.toggle-control,
+.segments label {
+  position: relative;
+  z-index: 2;
+}
+.toggle-control {
+  align-self: flex-start;
+  width: 100%;
+  min-width: 0;
+  padding: 0 3px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--control-radius);
+  background: var(--control-bg);
+  color: var(--control-ink);
+  font:
+    600 11px/19px 'Barlow Condensed',
+    sans-serif;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+/* Neighboring toggles, such as MUTE and SOLO, share a line. */
+.toggle-control:has(+ .toggle-control),
+.toggle-control + .toggle-control {
+  width: calc(50% - 1px);
+}
+.toggle-control[aria-pressed='true'] {
+  background: var(--control-on-bg);
+  color: var(--control-on-ink);
+  box-shadow: 0 0 6px var(--control-on-bg);
+}
 .module-panel textarea {
   min-height: 110px;
   resize: vertical;
   font:
     12px 'JetBrains Mono',
     monospace;
+}
+/* ACCENT is usually `1`, so it rests on one line and opens over the controls below it.
+   Opening downward keeps it reachable: a scroller can reach overflow below, never above. */
+.notation-control {
+  position: relative;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  min-height: 22px;
+}
+.module-panel .notation-control textarea {
+  flex: 1;
+  min-width: 0;
+  height: 22px;
+  min-height: 0;
+  padding-block: 2px;
+  overflow: hidden;
+  resize: none;
+  white-space: pre;
+}
+.module-panel .notation-control textarea:focus {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 96px;
+  overflow: auto;
+  white-space: pre-wrap;
 }
 .patch-box {
   flex-shrink: 1;
@@ -454,10 +587,6 @@
 .jack.unresolved {
   outline-style: dashed;
 }
-.module-panel.inactive .module-dot {
-  box-shadow: none;
-  opacity: 0.45;
-}
 .plug-collar {
   fill: var(--signal);
   stroke: #30343b;
@@ -474,6 +603,12 @@
   color: #e4e6ea;
   background: #090a0c;
   padding: 1px 3px;
+  visibility: hidden;
+}
+.module-panel:hover .module-id,
+.module-panel.selected .module-id,
+.module-panel:focus-within .module-id {
+  visibility: visible;
 }
 .cables {
   position: absolute;

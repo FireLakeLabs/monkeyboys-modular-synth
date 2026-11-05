@@ -155,10 +155,11 @@ export async function verifyEffectsProof() {
       const converted = makeRackEditable(saveLayout(read(source)))
       const filter = converted.patch.modules.find((m) => m.type === 'vcf')
       await load(converted.source)
-      const mode = document.querySelector(`[data-module="${filter.id}"] select[aria-label="MODE"]`)
+      const mode = document.querySelector(
+        `[data-module="${filter.id}"] [aria-label="MODE"] input[value="dj"]`,
+      )
       assert(mode, 'Missing VCF mode control')
-      mode.value = 'dj'
-      mode.dispatchEvent(new Event('change', { bubbles: true }))
+      mode.click()
       await until(
         () =>
           read(editorSource()).patch.modules.find((m) => m.id === filter.id)?.values.mode === 'dj',

@@ -111,6 +111,11 @@ export function inspectPanels(look) {
         )
       }
     }
+    for (const text of panel.querySelectorAll(
+      '.segments, .toggle-control, .module-header strong',
+    )) {
+      assert(text.scrollWidth <= text.clientWidth + 1, `${id}: clipped ${text.textContent}`)
+    }
     for (const readout of panel.querySelectorAll('.readout')) {
       assert(parseFloat(getComputedStyle(readout).fontSize) >= 12, `${id}: undersized value`)
       assert(readout.scrollWidth <= readout.clientWidth + 1, `${id}: value overflow`)

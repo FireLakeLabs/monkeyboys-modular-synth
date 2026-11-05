@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { chooseSwitch, switchValue } from './panel-controls.mjs'
 
 const output = process.argv[3] ?? '/tmp/monkeyboy-panels'
 await mkdir(output, { recursive: true })
@@ -76,20 +77,21 @@ try {
     const actual = await suite('current')
     assert.equal(actual.layout, 'restored', `${example.type}.${example.control} layout`)
     assert.deepEqual(actual.patch, expected)
-    const label = await page.evaluate(
-      async ({ type, control }) =>
-        (await import('/src/modules/catalog.ts'))
-          .getModuleSpec(type)
-          .controls.find((c) => c.id === control).label,
-      example,
-    )
+    const { label, kind } = await page.evaluate(async ({ type, control }) => {
+      const { getModuleSpec } = await import('/src/modules/catalog.ts')
+      return getModuleSpec(type).controls.find((c) => c.id === control)
+    }, example)
     const subject = panel(`${example.type}1`)
-    const locator = subject.getByLabel(label, { exact: true })
-    assert((await locator.count()) > 0, `${label} missing`)
-    await locator.last().scrollIntoViewIfNeeded()
-    assert(await locator.last().isVisible(), `${label} unreachable`)
-    if (typeof example.value === 'string')
-      assert.equal(await locator.last().inputValue(), example.value)
+    if (kind === 'switch') {
+      assert.equal(await switchValue(subject, label), example.value)
+    } else {
+      const locator = subject.getByLabel(label, { exact: true })
+      assert((await locator.count()) > 0, `${label} missing`)
+      await locator.last().scrollIntoViewIfNeeded()
+      assert(await locator.last().isVisible(), `${label} unreachable`)
+      if (typeof example.value === 'string')
+        assert.equal(await locator.last().inputValue(), example.value)
+    }
     const source = await suite('source')
     assert(source.includes(example.call))
     results.controls.push(`${example.type}.${example.control}`)
@@ -121,14 +123,14 @@ try {
   await suite('loadCase', 4)
   await synced()
   assert.equal(await panel('osc1').getByRole('slider', { name: 'PW', exact: true }).count(), 1)
-  await panel('osc1').getByLabel('WAVE', { exact: true }).selectOption('sine')
+  await chooseSwitch(panel('osc1'), 'WAVE', 'sine')
   await synced()
   assert.equal(await panel('osc1').getByRole('slider', { name: 'PW', exact: true }).count(), 0)
   assert(!(await suite('source')).includes('.pw('))
   await suite('loadCase', 17)
   await synced()
   assert.equal(await panel('vcf1').getByRole('slider', { name: 'DRIVE', exact: true }).count(), 1)
-  await panel('vcf1').getByLabel('TYPE', { exact: true }).selectOption('12db')
+  await chooseSwitch(panel('vcf1'), 'TYPE', '12db')
   await synced()
   assert.equal(await panel('vcf1').getByRole('slider', { name: 'DRIVE', exact: true }).count(), 0)
   assert(!(await suite('source')).includes('.drive('))
@@ -167,8 +169,8 @@ try {
   const sounding = await page.evaluate(() => window.panelPCM())
   assert(sounding.rms > 0.0001)
   results.crossfader = { patch: cross, pcm: sounding }
-  await panel('mix1').getByLabel('MUTE 1', { exact: true }).selectOption('on')
-  await panel('mix1').getByLabel('MUTE 2', { exact: true }).selectOption('on')
+  await chooseSwitch(panel('mix1'), 'MUTE 1', 'on')
+  await chooseSwitch(panel('mix1'), 'MUTE 2', 'on')
   await synced()
   await page.waitForTimeout(600)
   const silent = await page.evaluate(() => window.panelPCM())
