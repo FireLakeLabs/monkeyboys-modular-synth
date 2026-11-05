@@ -13,13 +13,17 @@ export function railWidth(patch: Patch): RailHp {
   return patch.railHp ?? ROW_HP
 }
 
-/** The case includes the pinned 8 HP output panel and frame padding. */
+/** Palette and code columns, rack padding, the pinned output panel and rail inset. */
+const RACK_CHROME = 180 + 420 + 36 + OUTPUT_PANEL_WIDTH + 36
+
+/** Whole HP of rail visible at 100% zoom beside the palette and code. */
+export function visibleRailHp(windowWidth: number): number {
+  return Math.max(0, Math.floor((windowWidth - RACK_CHROME) / HP))
+}
+
 export function defaultRailWidth(windowWidth: number): RailHp {
-  return (
-    [...RAIL_WIDTHS]
-      .reverse()
-      .find((width) => width * HP + OUTPUT_PANEL_WIDTH + 72 <= windowWidth) ?? 64
-  )
+  const visible = visibleRailHp(windowWidth)
+  return [...RAIL_WIDTHS].reverse().find((width) => width <= visible) ?? ROW_HP
 }
 
 export function validateRailBounds(patch: Patch): void {

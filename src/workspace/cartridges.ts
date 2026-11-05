@@ -21,10 +21,11 @@ export function ownedPacks(document: SourceDocument): SamplePack[] {
     : []
 }
 
-export function cartridges(document: SourceDocument) {
+function readCartridges(document: SourceDocument) {
+  const body = sourceBody(document.source)
   const owned = ownedPacks(document)
-  const proven = ownedSampleCalls(sourceBody(document.source), owned)
-  const calls = sampleCalls(sourceBody(document.source))
+  const proven = ownedSampleCalls(body, owned)
+  const calls = sampleCalls(body)
   const entries = calls.map((call) => ({
     ...call,
     ownership:
@@ -40,6 +41,19 @@ export function cartridges(document: SourceDocument) {
     ).map((pack) => ({ pack, text: '', start: -1, end: -1, ownership: 'factory' as const })),
     ...entries,
   ]
+}
+
+type Cartridges = readonly ReturnType<typeof readCartridges>[number][]
+const cartridgesByDocument = new WeakMap<SourceDocument, Cartridges>()
+
+/** Rendering reads this often, so each accepted document is parsed once. */
+export function cartridges(document: SourceDocument): Cartridges {
+  let entries = cartridgesByDocument.get(document)
+  if (!entries) {
+    entries = readCartridges(document)
+    cartridgesByDocument.set(document, entries)
+  }
+  return entries
 }
 
 function writePacks(document: SourceDocument, packs: SamplePack[], source: string): SourceDocument {

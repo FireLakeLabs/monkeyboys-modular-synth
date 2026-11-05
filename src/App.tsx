@@ -5,7 +5,7 @@ import { CartridgeBay } from './samples/CartridgeBay'
 import { withFactoryPacks } from './workspace/cartridges'
 
 import { CycleClock } from './rack/PatternVisuals'
-import { defaultRailWidth } from './patch/layout'
+import { defaultRailWidth, visibleRailHp } from './patch/layout'
 import {
   useCallback,
   useMemo,
@@ -57,6 +57,9 @@ const SourceEditor = lazy(() =>
 type Replacement =
   { kind: 'file'; file: File } | { kind: 'new' } | { kind: 'library'; entry: LibraryPatch }
 
+const newPatch = () =>
+  fromPatch(starterPatch(defaultRailWidth(window.innerWidth), visibleRailHp(window.innerWidth)))
+
 function Logo() {
   return (
     <svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true">
@@ -78,9 +81,7 @@ export default function App() {
   const sampleResources = useSyncExternalStore(subscribeSamplePacks, getSamplePacks)
   const [autosave] = useState(() => createAutosave())
   const [recovery, setRecovery] = useState(() => autosave.load())
-  const [document, setDocument] = useState(() =>
-    fromPatch(starterPatch(defaultRailWidth(window.innerWidth))),
-  )
+  const [document, setDocument] = useState(newPatch)
   const [history] = useState(() => createDocumentHistory(document))
   const draggingKnob = useRef(false)
   const [draft, setDraft] = useState(document.source)
@@ -101,6 +102,7 @@ export default function App() {
   const [pendingReplacement, setPendingReplacement] = useState<Replacement | null>(null)
   const [libraryOpen, setLibraryOpen] = useState(false)
   const [rackGeneration, setRackGeneration] = useState(0)
+  const [patchLoads, setPatchLoads] = useState(0)
   const [replacing, setReplacing] = useState(false)
   const [slowAudio, setSlowAudio] = useState<typeof audio | null>(null)
   const [emptyPlay, setEmptyPlay] = useState<SourceDocument | null>(null)
@@ -211,7 +213,7 @@ export default function App() {
     if (!next) return false
     cancelReplacement()
     install(next, false)
-    setSelected(null)
+    setSelected((id) => (next.patch.modules.some((module) => module.id === id) ? id : null))
     setRackGeneration((generation) => generation + 1)
     return true
   }
@@ -397,7 +399,7 @@ export default function App() {
             case 'file':
               return replacement.file.text()
             case 'new':
-              return fromPatch(starterPatch(defaultRailWidth(window.innerWidth)))
+              return newPatch()
             case 'library':
               return renameDocument(readLibraryPatch(replacement.entry), replacement.entry.title)
           }
@@ -414,6 +416,7 @@ export default function App() {
       setSelected(null)
       setPendingReplacement(null)
       setRackGeneration((generation) => generation + 1)
+      setPatchLoads((loads) => loads + 1)
       setLibraryOpen(false)
     } catch (failure) {
       if (operation === replacementRevision.current)
@@ -624,7 +627,8 @@ export default function App() {
       </fieldset>
       <main className="workspace" data-view={workspaceView} data-rack-focus={rackFocus}>
         <Rack
-          key={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
+          panelKey={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
+          patchLoads={patchLoads}
           patch={patch}
           sampleResources={seatedResources(document, sampleResources)}
           soundCrate={

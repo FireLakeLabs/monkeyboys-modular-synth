@@ -68,7 +68,7 @@ with only proven tempo setup reports “Nothing reaches OUT yet” and brings OU
 highlighted input into view; it does not initialize audio. Unclassified imported
 statements still reach the engine because reader coverage does not prove silence.
 
-New racks place MIX at the right end of the first rail, with OUT pinned beside it
+New racks place MIX at the right end of the visible first rail, with OUT pinned beside it
 at the right edge of the rack frame, outside the scrolling rails. Palette clicks
 fill free space from the left. Clicks and drag previews share the same placement
 search: nearest whole HP on the requested rail, then the next free rail or a new
@@ -198,6 +198,8 @@ labels and a selected checkmark. Delete uses the same destructive colors in the
 menu, selection tools and confirmation. Escape and an outside primary click
 close the menu and return focus to that module's header; Show in code retains its
 editor-focus action. There is no Close menu item.
+Delete and Backspace remove the selected module or cable from anywhere in the rack,
+except in text fields, the code editor and controls that use those keys themselves.
 
 The shared SEQ, DRUMS, CV SEQ and CHORD editors flash sounding source cells for
 up to 400 ms, replacing the previous cell flash on the next event. Since #147,
@@ -275,17 +277,19 @@ See [browser observations and limits](mid-width-verification.md).
 
 OUT keeps its catalog IN, BPM and VOL controls and all four Hardware looks, but
 occupies a fixed case panel to the right of the rail viewport. Rail
-scrolling never moves OUT. In a short pane, OUT scales to keep its controls and
+scrolling never moves OUT. A cable to a jack scrolled out of the rail viewport
+ends at that viewport's edge, so it never crosses OUT. In a short pane, OUT scales to keep its controls and
 IN visible; rack focus restores the available height. Cables use measured jack centers in the frame's SVG
 coordinates, refreshed on scrolling, zoom, resize, look and workspace changes.
 The panel cannot be moved, duplicated or deleted. Selecting OUT in the palette
 selects the existing panel.
 
 The rail-width control offers 64, 84 and 104 HP and saves that choice per patch.
-New patches choose the widest full-window case that fits; files without a saved
+New patches choose the widest rail visible at 100% beside the palette and code,
+and 64 HP when none fits; files without a saved
 width stay at 64. The normal palette/code columns can still require zoom or
 scroll. Changing the window or a look never moves rail modules. A width reduction
-that would strand a module is refused. MIX starts at the saved rail's right end;
+that would strand a module is refused. MIX starts at the visible rail's right end;
 palette insertion and drag previews retain the nearest-free-interval rule.
 Fit rack uses the rail viewport after reserving space for OUT.
 
