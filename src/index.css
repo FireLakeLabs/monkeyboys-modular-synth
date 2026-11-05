@@ -35,3 +35,33 @@ body {
 button {
   font: inherit;
 }
+
+/* One style for app chrome. Panel controls with their own class style themselves. */
+button:not([class]),
+.button {
+  padding: 6px 10px;
+  border: 1px solid #414650;
+  border-radius: 5px;
+  background: #202328;
+  color: var(--text);
+  font:
+    12px 'Barlow',
+    sans-serif;
+  cursor: pointer;
+}
+button:not([class]):hover:enabled,
+.button:hover:enabled {
+  border-color: #6b717b;
+}
+button:not([class]):disabled,
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+button:not([class])[aria-pressed='true'],
+.button[aria-pressed='true'],
+.button-primary {
+  background: var(--audio);
+  border-color: var(--audio);
+  color: #1a1408;
+}

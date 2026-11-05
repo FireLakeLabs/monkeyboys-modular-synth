@@ -43,6 +43,11 @@ The green **Locked** and blue **V1 scope** notes on the canvas match [`decisions
 
 ## App chrome
 
+The app fills the window and the page itself never scrolls; the palette, rack and
+code each scroll on their own. Selection tools, prompts and destinations float
+over the rack, and Connections and notes open as one-at-a-time footer popovers, so
+the rack frame keeps its size. Chrome buttons share one style in `src/index.css`.
+
 The top-bar Patch library opens the nested collection browser from #45. It uses
 the existing dark surfaces, orange primary action and Barlow panel typography.
 The module picker stays alongside the rack. Its independently scrollable palette
@@ -293,7 +298,7 @@ that would strand a module is refused. MIX starts at the visible rail's right en
 palette insertion and drag previews retain the nearest-free-interval rule.
 Fit rack uses the rail viewport after reserving space for OUT.
 
-**Focus rack** hides the palette and code at every window size. **Restore
+**Focus rack**, in the rack toolbar, hides the palette and code at every window size. **Restore
 workspace** restores the previous view; the editor remains mounted, retaining
 its document, draft and selection. Show in code leaves rack focus. Focus and zoom
 are local view state and never change saved width or executable source.
@@ -333,7 +338,7 @@ measurements and the [parser requirements](nested-step-editor.md#what-147-must-h
 
 ## Effect order notes (#134)
 
-The Connections area shows a neutral “You hear” note listing stage module names
+A rack footer popover shows a neutral “You hear” note listing stage module names
 and IDs in audible order. It distinguishes inline FX with per-note send tails
 from native orbit sends. Reordering supported effects does not mark cables or
 connection targets as warnings. Audio fan-out retains its existing level warning. Repeated native setters share

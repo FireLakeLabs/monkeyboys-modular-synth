@@ -29,7 +29,12 @@ export function ReplacementPrompt({
       <button type="button" onClick={exportCurrent}>
         Export current
       </button>
-      <button type="button" className="confirm-replacement" disabled={replacing} onClick={confirm}>
+      <button
+        type="button"
+        className="button button-primary confirm-replacement"
+        disabled={replacing}
+        onClick={confirm}
+      >
         {action}
       </button>
       {replacing && (

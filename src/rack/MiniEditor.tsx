@@ -545,7 +545,7 @@ export function MiniEditor({
       </div>
       <button
         type="button"
-        className="mini-text-toggle"
+        className="button mini-text-toggle"
         onClick={() => {
           setTray(null)
           setDraft(null)

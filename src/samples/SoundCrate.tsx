@@ -21,7 +21,7 @@ function Card({ sound, report }: { sound: SampleSound; report: (message: string)
     <div className="sound-stack" data-sound={sound.name}>
       <button
         type="button"
-        className="sound-card"
+        className="button sound-card"
         draggable
         disabled={!count}
         aria-label={`Audition ${soundToken(choice)}`}
