@@ -31,6 +31,7 @@ Where a Strudel function has a close hardware cousin (`.ply()` ≈ a ratchet, `.
 - Racks are built up module by module, mixing looks freely.
 - **Looks never change executable code.** They are presentation only; their saved metadata changes in the trailing rack comment block.
 - A look may rearrange a module’s panel (move knobs and jacks). A module’s **width stays the same in every look**, so switching looks never pushes neighbours along the rail. Cables are drawn from live jack positions and redraw to follow.
+- **Catalog widths may grow (decided 4 November 2026, [#176](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/176)):** expanding a module is fine when reasonable and worth it, such as for panels that otherwise scroll. Earlier notes that existing widths stay fixed described those features, not a lasting limit. A module keeps one width across its looks, and saved patches must have a defined outcome before any width changes.
 - Each look is defined by **layout rules** applied to a module’s control list, not by hand-drawing every module in every look.
 - Switch looks from the module’s **right-click menu** (long-press on touch). The menu also offers “use for all modules in this family”.
 - Category colours and cable colours stay constant across looks.
@@ -63,7 +64,7 @@ A module’s category colour is used for its dot on the panel and for the code i
 
 ## Interaction policy
 
-- **Code application (#56, decided 3 November 2026):** Ctrl/Cmd+Enter applies
+- **Code application (#56, decided 3 November 2026; [#180](#usability-review-188-decided-4-november-2026) changes the default):** Ctrl/Cmd+Enter applies
   editor code and starts playback if stopped; Ctrl/Cmd+. stops from anywhere in
   the app. Explicit apply is the default, with auto-apply as an opt-in toggle,
   so the shortcuts carry over to the Strudel REPL and workshop. Until applied,
@@ -73,7 +74,7 @@ A module’s category colour is used for its dot on the panel and for the code i
   [#70](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/70) owns
   implementation, shortcut discovery and integration with the existing #12
   error-state behavior; see the [contract and observed verification](code-application.md).
-- **Library rack ownership (#55, decided 3 November 2026):** module exercises
+- **Library rack ownership (#55, decided 3 November 2026; [#181](#usability-review-188-decided-4-november-2026) removes the consent step):** module exercises
   and the planned Start here collection (#80) are authored in generator style,
   with saved rack state, so rack edits work immediately. Attribution stays visible
   in the library. Attributed showcases (#46/#47) retain exact source. A refused
@@ -105,7 +106,7 @@ production acceptance for #9–#11.
   [panel input and zoom](design.md#panel-controls-and-rack-zoom-81-82-84-92-94-95). This expands the prior
   v1 scope; touch remains later.
 - **Occupied inputs:** offer Replace / Cancel before replacing a cable; preserve
-  the old connection until confirmation.
+  the old connection until confirmation. [#179](#usability-review-188-decided-4-november-2026) replaces this.
 - **Module deletion:** remove the module and its attached cables without
   reconnecting the remaining neighbors automatically.
 - **New patch:** a silent MIX → OUT starter rack, with no voices and no autoplay.
@@ -114,6 +115,36 @@ production acceptance for #9–#11.
   side effects do not roll back, and unreported late errors or never-settling
   evaluations remain engine limits. The [#36 recovery contract](audio-recovery.md)
   defines observable late errors and Stop independent of pending evaluation.
+
+## Usability review (#188, decided 4 November 2026)
+
+The owner accepted these from the [usability review](usability-review.md). They
+are decided, not yet built. Each issue owns its implementation, and the rules
+they replace stay in force until it lands. The owner also approved the
+[mockups](design/usability-review.html) as the design direction. They remain
+sketches: their control names and pack counts are illustrative.
+
+- **Undo replaces routine confirmations ([#179](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/179)):** deleting a module,
+  replacing a cable and loading over changed work act at once and offer undo. A
+  prompt remains only where undo cannot help, such as an unapplied code draft.
+- **Code applies by itself while stopped ([#180](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/180)):** readable code
+  auto-applies while stopped. Explicit Apply remains while playing, so typing
+  cannot disturb live audio. Drafts never disable Play, which uses the last
+  applied code. The Auto-apply toggle now means “also apply while playing”. The
+  rack stays locked during an unapplied draft, and that state must be unmistakable
+  rather than a silent dim. Auto-applied typing groups into undo steps that end at
+  good stopping spots: finished code that adds or removes a module, or a short
+  pause on finished code. Auto-apply waits for the same check, so a half-typed word
+  never reaches the rack. This replaces the explicit default from #56.
+- **Make rack-editable no longer asks first ([#181](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/181)):** a rack edit
+  that needs conversion completes at once and shows “Code rewritten in rack
+  style · Undo”. Undo is the safety net, and it restored Trance's exact source.
+  Showcases keep their exact source until that first edit. This replaces the
+  consent step from #55.
+- **Jack targets depend on zoom ([#186](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/186)):** jacks keep 24 px targets at
+  75% zoom and above. Below that, the rack is an overview with no live jacks and
+  every cable drawn, and clicking a module zooms in. The Connections list remains
+  the accessible route. This replaces the every-zoom rule from #94.
 
 ## Rack case (#133, decided 3 November 2026)
 

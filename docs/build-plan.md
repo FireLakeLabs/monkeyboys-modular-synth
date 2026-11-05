@@ -26,6 +26,8 @@ feature was reverified on the public host.
   guarded Stop and a rerun of the acceptance suite. The remaining issue-level
   reconciliation/closure must use those results, not repeat completed #4/#6/#8
   integration. This documentation change does not close #12.
+- **Next usability work:** [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188) orders the [usability review](usability-review.md)
+  follow-ups. Start with its first wave, which needs no design decisions.
 - **Supported limits:** imported mutations outside the
   [preservation matrix](translation-rules.md#imported-structural-edits-35) are
   refused; ambiguous external edits may reset affected layout. Samples have no

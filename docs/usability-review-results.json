@@ -1,0 +1,1234 @@
+{
+  "reviewedCommit": "fa290cd",
+  "date": "2026-11-04",
+  "environment": {
+    "browser": "Playwright headless Chromium",
+    "viewport": "1600x1000 unless noted",
+    "machine": "Linux, 16 cores, load average about 1",
+    "audio": "Transport stopped; nothing was heard"
+  },
+  "knobLatency": {
+    "method": "Production build. One keydown ArrowUp on the first knob, timed to two animation frames, value change confirmed. 7 steps per round, 5 rounds. Trance was measured after Make rack-editable.",
+    "profile": "Unminified build, Function loops, 5 steps: sourceBody 3504 ms self of 4368 ms sampled; reached through cartridges() from App, SoundCrate and CartridgeBay.",
+    "results": [
+      {
+        "patch": "1 · First sounds",
+        "modules": 5,
+        "stepMedianMs": 85,
+        "stepRangeMs": [81, 102],
+        "loadMedianMs": 268,
+        "failedSteps": 0,
+        "rounds": 5
+      },
+      {
+        "patch": "Three-voice sketch",
+        "modules": 12,
+        "stepMedianMs": 299,
+        "stepRangeMs": [287, 308],
+        "loadMedianMs": 631,
+        "failedSteps": 0,
+        "rounds": 5
+      },
+      {
+        "patch": "Function loops",
+        "modules": 21,
+        "stepMedianMs": 708,
+        "stepRangeMs": [693, 725],
+        "loadMedianMs": 1051,
+        "failedSteps": 0,
+        "rounds": 5
+      },
+      {
+        "patch": "Switch Angel",
+        "modules": 29,
+        "stepMedianMs": 1180,
+        "stepRangeMs": [1152, 1197],
+        "loadMedianMs": 1402,
+        "failedSteps": 0,
+        "rounds": 5
+      }
+    ]
+  },
+  "scrollers": {
+    "fresh1600": {
+      "pageOverflowPx": 43,
+      "inside": ["library", "cartridges", "rack-scroll", "mix1 controls"]
+    },
+    "tranceAt100": {
+      "total": 12,
+      "inModules": 8,
+      "cablesDrawn": 28,
+      "jackPx": [24, 24],
+      "panelPx": [168, 390]
+    },
+    "tranceAtFit": {
+      "zoomPercent": 14,
+      "total": 54,
+      "inModules": 51,
+      "inPatchBoxes": 28,
+      "cablesDrawn": 1,
+      "cablesInPatch": 28,
+      "jackPx": [24, 24],
+      "panelPx": [24, 55]
+    }
+  },
+  "rackResize": {
+    "frameHeightBeforeSelectPx": 614,
+    "frameHeightAfterSelectPx": 570
+  },
+  "railDefault": {
+    "viewportWidthPx": 831,
+    "railSurfaceWidthPx": 1284,
+    "mixVisible": false
+  },
+  "codeEditReset": {
+    "action": "Type one space in the code pane",
+    "before": {
+      "zoom": "75%",
+      "filter": "osc",
+      "cables": "All",
+      "playDisabled": false
+    },
+    "after": {
+      "zoom": "100%",
+      "filter": "",
+      "cables": "Focus",
+      "playDisabled": true,
+      "rackInert": true
+    }
+  },
+  "undo": {
+    "deleteRestoresModule": true,
+    "loadRestoresPreviousPatch": true,
+    "conversionTested": true,
+    "conversion": {
+      "patch": "Switch Angel trance demo",
+      "sourceLengthBefore": 26636,
+      "sourceLengthConverted": 27610,
+      "undoRestoresExactSource": true,
+      "redoRestoresExactConvertedSource": true,
+      "knobValues": {
+        "before": 0,
+        "converted": 0.05,
+        "undone": 0
+      },
+      "moduleCounts": [29, 29, 29],
+      "cableCounts": [28, 28, 28],
+      "sameEditRefusedAgainAfterUndo": true
+    }
+  },
+  "deleteKeys": {
+    "deleteOnFocusedHeader": true,
+    "backspaceOnFocusedHeader": false,
+    "deleteAfterClickingPanelBody": false
+  },
+  "modulesAtDefaultSize": [
+    {
+      "module": "MIX",
+      "hp": 12,
+      "controlsHeightPx": 225,
+      "contentHeightPx": 827,
+      "dropdowns": 8,
+      "twoOptionDropdowns": 8,
+      "onOffDropdowns": 8,
+      "largestDropdown": 2
+    },
+    {
+      "module": "SEQ",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 444,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "GATES",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "SWITCH",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "DRUMS",
+      "hp": 14,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 313,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "QUANT",
+      "hp": 8,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 13
+    },
+    {
+      "module": "CLOCK",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 1,
+      "largestDropdown": 2
+    },
+    {
+      "module": "EUCLID",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "RATCHET",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "CHANCE",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "CHORD",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "ARP",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "ITER",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "JUX",
+      "hp": 10,
+      "controlsHeightPx": 212,
+      "contentHeightPx": 212,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 4
+    },
+    {
+      "module": "CHUNK",
+      "hp": 12,
+      "controlsHeightPx": 212,
+      "contentHeightPx": 212,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "EVERY",
+      "hp": 12,
+      "controlsHeightPx": 212,
+      "contentHeightPx": 212,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "SOMETIMES",
+      "hp": 14,
+      "controlsHeightPx": 212,
+      "contentHeightPx": 212,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 4
+    },
+    {
+      "module": "OFF",
+      "hp": 12,
+      "controlsHeightPx": 199,
+      "contentHeightPx": 199,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "LAYER",
+      "hp": 12,
+      "controlsHeightPx": 201,
+      "contentHeightPx": 201,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "REV / PALINDROME",
+      "hp": 14,
+      "controlsHeightPx": 243,
+      "contentHeightPx": 243,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "SHUFFLE",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "RIBBON",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "TIME LENS",
+      "hp": 12,
+      "controlsHeightPx": 257,
+      "contentHeightPx": 257,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 4
+    },
+    {
+      "module": "WARP",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 3
+    },
+    {
+      "module": "ECHO",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "OSC",
+      "hp": 9,
+      "controlsHeightPx": 225,
+      "contentHeightPx": 318,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 6
+    },
+    {
+      "module": "NOISE",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 4
+    },
+    {
+      "module": "HARMONIC",
+      "hp": 14,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 16
+    },
+    {
+      "module": "SMPL",
+      "hp": 8,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 856,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 3
+    },
+    {
+      "module": "SPLICE",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 342,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 4
+    },
+    {
+      "module": "WAVETABLE",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 22
+    },
+    {
+      "module": "VCF",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 4
+    },
+    {
+      "module": "VCA",
+      "hp": 8,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "FM OP",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 2,
+      "onOffDropdowns": 2,
+      "largestDropdown": 2
+    },
+    {
+      "module": "ENV",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "LFO",
+      "hp": 8,
+      "controlsHeightPx": 259,
+      "contentHeightPx": 318,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 7
+    },
+    {
+      "module": "S&H",
+      "hp": 8,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "ATTENUVERTER",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "MOD MIX",
+      "hp": 8,
+      "controlsHeightPx": 243,
+      "contentHeightPx": 243,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "CV SEQ",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "DELAY",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "REVERB",
+      "hp": 8,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 441,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 1
+    },
+    {
+      "module": "DRIVE",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 2,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 8
+    },
+    {
+      "module": "FOLDER",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "LO-FI",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 1,
+      "largestDropdown": 2
+    },
+    {
+      "module": "FORMANT",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "COMP",
+      "hp": 12,
+      "controlsHeightPx": 259,
+      "contentHeightPx": 259,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "PHASER",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 1,
+      "largestDropdown": 2
+    },
+    {
+      "module": "PAN",
+      "hp": 10,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "SHIFT",
+      "hp": 10,
+      "controlsHeightPx": 259,
+      "contentHeightPx": 259,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "AUX",
+      "hp": 12,
+      "controlsHeightPx": 225,
+      "contentHeightPx": 225,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "DUCK",
+      "hp": 12,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "SCOPE",
+      "hp": 14,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 1,
+      "twoOptionDropdowns": 1,
+      "onOffDropdowns": 0,
+      "largestDropdown": 2
+    },
+    {
+      "module": "CODE",
+      "hp": 14,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    },
+    {
+      "module": "OUT",
+      "hp": 8,
+      "controlsHeightPx": 270,
+      "contentHeightPx": 270,
+      "dropdowns": 0,
+      "twoOptionDropdowns": 0,
+      "onOffDropdowns": 0,
+      "largestDropdown": 0
+    }
+  ],
+  "libraryEdits": {
+    "note": "Up to four knobs per patch.",
+    "patchesTested": 74,
+    "patchesRefused": ["Switch Angel trance demo (cosimo t"],
+    "patches": [
+      {
+        "patch": "1 · First sounds",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "2 · First notes",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "3 · First effects",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "4 · Pattern effects",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "SPLICE exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "WAVETABLE exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "GATES exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "SWITCH exercise",
+        "modules": 8,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "AUX exercise",
+        "modules": 8,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "DUCK exercise",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "SEQ exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "DRUMS exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "QUANT exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "CLOCK exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "EUCLID exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "RATCHET exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "CHANCE exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "CHORD exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "ARP exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "OSC exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "NOISE exercise",
+        "modules": 4,
+        "codeModules": 0,
+        "knobEditsAccepted": 3,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "HARMONIC exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "FM OP exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "SMPL exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "VCF exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "VCA exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "ENV exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "LFO exercise",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "S&H exercise",
+        "modules": 9,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "ATTENUVERTER exercise",
+        "modules": 8,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "MOD MIX exercise",
+        "modules": 9,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "CV SEQ exercise",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "DELAY exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "REVERB exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "DRIVE exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "FOLDER exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "LO-FI exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "FORMANT exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "COMP exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "PHASER exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "PAN exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "SHIFT exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "MIX exercise",
+        "modules": 9,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "SCOPE exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "OUT exercise",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "ITER exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "JUX exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "CHUNK exercise",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "EVERY exercise",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "SOMETIMES exercise",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "OFF exercise",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "LAYER exercise",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "REV / PALINDROME exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "SHUFFLE exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "RIBBON exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "TIME LENS exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "WARP exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "ECHO exercise",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "CODE exercise",
+        "modules": 6,
+        "codeModules": 1,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Noise, harmonics and FM",
+        "modules": 19,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Chords, clocks and gates",
+        "modules": 13,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "A ribbon of time",
+        "modules": 11,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Enveloped synth",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Quantized sequence",
+        "modules": 6,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Sample, scale and mix CV",
+        "modules": 11,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "LFO sweep and tremolo",
+        "modules": 8,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Filter envelope",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "909 drum machine",
+        "modules": 5,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Echo into room",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Function loops",
+        "modules": 21,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Iterate and juxtapose",
+        "modules": 7,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Custom helper",
+        "modules": 6,
+        "codeModules": 1,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      },
+      {
+        "patch": "Switch Angel trance demo (cosimo t",
+        "modules": 29,
+        "codeModules": 14,
+        "knobEditsAccepted": 1,
+        "knobEditsRefused": 3,
+        "refusal": "Cannot safely edit drums1 DROP; edit its code instead"
+      },
+      {
+        "patch": "Three-voice sketch",
+        "modules": 12,
+        "codeModules": 0,
+        "knobEditsAccepted": 4,
+        "knobEditsRefused": 0
+      }
+    ]
+  },
+  "typingProbe": {
+    "method": "Each keystroke prefix passed through tryRead. The reader only; not the live editor.",
+    "base": "$: note(\"c2 e2\").s(\"sawtooth\"), 4 modules",
+    "cases": [
+      {
+        "typed": ".lpf(800) .room(0.5) .delay(0.4) on new lines",
+        "keys": 39,
+        "readable": 24,
+        "unreadable": 15,
+        "structureChanges": 6,
+        "structureChangesWithoutNewCode": 3,
+        "cleanStops": [".lpf(800)", ".room(0.5)", ".delay(0.4)"],
+        "halfTypedResult": ".l, .r and .d each collapse the voice to 3 modules with 1 CODE"
+      },
+      {
+        "typed": "Pattern notes inside a string",
+        "keys": 8,
+        "readable": 8,
+        "unreadable": 0,
+        "structureChanges": 0
+      },
+      {
+        "typed": "New voice $: s(\"bd sd\")",
+        "keys": 13,
+        "readable": 3,
+        "unreadable": 10,
+        "structureChanges": 2,
+        "structureChangesWithoutNewCode": 1
+      }
+    ]
+  }
+}
