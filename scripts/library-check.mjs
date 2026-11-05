@@ -586,8 +586,10 @@ export async function verifyOnRampUI() {
   const results = []
   for (const entry of entries) {
     await choose(entry.title)
-    const first = library().querySelector('.patch-collections details')
-    assert(first.querySelector('summary').textContent === 'Start here', 'Start here is not first')
+    // Your own patches lead, and Start here is the first built-in collection.
+    const [mine, first] = library().querySelectorAll('.patch-collections details')
+    assert(mine.querySelector('summary').textContent === 'My patches', 'My patches is not first')
+    assert(first.querySelector('summary').textContent === 'Start here', 'Start here is not next')
     assert(
       [...first.querySelectorAll('button')].map((e) => e.textContent).join('|') ===
         '1 · First sounds|2 · First notes|3 · First effects|4 · Pattern effects',

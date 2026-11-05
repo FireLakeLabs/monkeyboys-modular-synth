@@ -5,6 +5,7 @@ export function FileMenu({
   newPatch,
   openFile,
   openLibrary,
+  save,
   exportFile,
   bounce,
   bounceCycles,
@@ -16,6 +17,7 @@ export function FileMenu({
   newPatch: () => void
   openFile: () => void
   openLibrary: () => void
+  save: () => void
   exportFile: () => void
   bounce: () => void
   bounceCycles: string
@@ -70,6 +72,9 @@ export function FileMenu({
         </button>
         <button type="button" onClick={run(openLibrary)}>
           Patch library
+        </button>
+        <button type="button" title="Ctrl/Cmd+S" onClick={run(save)}>
+          Save patch
         </button>
         <button type="button" onClick={run(exportFile)}>
           Export

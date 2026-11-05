@@ -110,6 +110,7 @@ test.describe('File menu', () => {
       'New patch',
       'Open file',
       'Patch library',
+      'Save patch',
       'Export',
       'Bounce WAV',
       'Open in Strudel',

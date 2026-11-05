@@ -48,8 +48,8 @@ each scroll on their own. Selection tools, prompts and destinations float
 over the rack, and Connections and notes open as one-at-a-time footer popovers, so
 the rack frame keeps its size. Chrome buttons share one style in `src/index.css`.
 
-The header's **File** menu holds New patch, Open file, Patch library, Export, Bounce
-WAV and Open in Strudel (#178). It is a button that shows and hides plain buttons, so
+The header's **File** menu holds New patch, Open file, Patch library, Save patch, Export,
+Bounce WAV and Open in Strudel (#178, #182). It is a button that shows and hides plain buttons, so
 Tab, Enter and Space work as usual, Escape returns to File, and a click elsewhere
 closes it. An action returns focus to File first, so a dialog it opens returns there
 too. The code pane keeps Apply code, Auto-apply while playing and Copy, plus its status

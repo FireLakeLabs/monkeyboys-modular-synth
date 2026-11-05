@@ -28,10 +28,13 @@ export function WorkspaceNotice({
   notice,
   act,
   dismiss,
+  raised = false,
 }: {
   notice: Notice | null
   act: (action: NoticeAction) => void
   dismiss: () => void
+  /** Sits above the usual message, for one that must not be replaced by it. */
+  raised?: boolean
 }) {
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
@@ -44,7 +47,7 @@ export function WorkspaceNotice({
   // The live region stays mounted, so a new message is announced rather than inserted silently.
   return (
     // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
-    <div className="workspace-notice-region" role="status" aria-live="polite">
+    <div className="workspace-notice-region" data-raised={raised} role="status" aria-live="polite">
       {notice && (
         // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
         <div

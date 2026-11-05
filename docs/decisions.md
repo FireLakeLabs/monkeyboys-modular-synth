@@ -83,8 +83,8 @@ A module’s category colour is used for its dot on the panel and for the code i
   statements and CODE remain available. See [library ownership](patch-library.md#rack-ownership-55-and-75).
 - **Patch library (#45):** a top-bar modal browser with nested, collapsible
   collections and explicit patch selection/loading. The initial repository-owned
-  collection includes module exercises; personal library editing, accounts and
-  sharing remain later. Loading uses the guarded workspace replacement path and
+  collection includes module exercises. [My patches](patch-library.md#my-patches-182)
+  stores your own work in this browser; accounts and sharing remain later. Loading uses the guarded workspace replacement path and
   leaves audio stopped. See [entry and loading contract](patch-library.md).
 - **Local recovery (#60, decided 3 November 2026; [#183](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/183) removed the prompt):** save the accepted file and
   unfinished draft together in browser storage. A reload restores them silently,

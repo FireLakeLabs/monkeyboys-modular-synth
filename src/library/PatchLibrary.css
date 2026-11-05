@@ -147,3 +147,66 @@
     padding: 0 0 12px;
   }
 }
+
+.my-patches-empty,
+.my-patches-storage {
+  color: var(--muted);
+  font-size: 12px;
+}
+.my-patches-storage[data-warning='true'] {
+  color: #f5a4af;
+}
+.my-patch-name {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+}
+.my-patch-name input,
+.save-prompt input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #414650;
+  border-radius: 5px;
+  background: #0a0b0d;
+  color: var(--text);
+  font: inherit;
+}
+.my-patch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.my-patch-deleted {
+  font-size: 12px;
+}
+.save-prompt {
+  width: min(400px, calc(100vw - 48px));
+  padding: 20px;
+  border: 1px solid #414650;
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 20px 80px #0008;
+}
+.save-prompt::backdrop {
+  background: #0009;
+}
+.save-prompt h2 {
+  margin: 0 0 12px;
+  font:
+    22px 'Barlow Condensed',
+    sans-serif;
+}
+.save-prompt label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+}
+.save-prompt p {
+  color: var(--muted);
+  font-size: 12px;
+}
+.save-prompt button {
+  margin-right: 8px;
+}
