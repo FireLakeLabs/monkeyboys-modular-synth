@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "playwright test",
+    "test:browser:report": "node scripts/browser-report.mts",
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

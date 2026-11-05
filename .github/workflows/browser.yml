@@ -3,9 +3,10 @@ name: Browser acceptance
 on:
   push:
     branches: [main]
-  # Exercise changes to the harness itself before they land on main.
+  # Exercise app and harness changes before they land on main.
   pull_request:
     paths:
+      - 'src/**'
       - '.github/workflows/browser.yml'
       - 'playwright.config.mjs'
       - 'tests/browser/**'

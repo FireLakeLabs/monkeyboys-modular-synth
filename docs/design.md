@@ -248,6 +248,14 @@ surfaced errors and motion changes clear the old feedback. This affects neither
 saved source nor rack geometry. See the [original browser evidence](feedback-verification.md#module-menu-and-step-playheads-89-90)
 and [nested acceptance](nested-step-editor-verification.md).
 
+## Controls and the cable layer
+
+Cables are drawn over the panels, and selecting on press wakes a module's cables, so
+a cable can appear under the pointer between press and release. Interactive panel
+controls therefore stay above the cable layer, as jacks do. New controls need the
+same treatment. Test them with a real pointer click on a panel that has a cable
+crossing it: a synthetic click or a hit-target check passes while real clicks are lost.
+
 ## Rack visual hierarchy (#85, #86, #96, #88)
 
 The #58 decision keeps new Hardware modules in Instrument and gives their header

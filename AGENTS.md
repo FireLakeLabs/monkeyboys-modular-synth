@@ -17,6 +17,7 @@ A browser modular synth whose rack and Strudel code are editable views of the sa
 - Keep patch transformations testable without React or browser audio; keep Strudel initialization and playback behind `src/strudel/engine.ts`.
 - Use the Node version in `.node-version`, npm, and the committed lockfile; bootstrap with `npm ci`.
 - For code, configuration, or tooling changes, run `npm run check`, the same gate used in CI. The build includes TypeScript checking. Add focused behavior tests for generation, import, graph validation, or persistence changes; catalog integrity tests alone do not prove translation correctness.
+- For changes to `src/`, run `npm run test:browser:report` on the final commit and read its `RESULT` line. See [reading a local run](docs/ci.md#reading-a-local-run).
 - For playback or live-editing changes, verify the affected behavior in a browser when the task and harness permit it. Report separately what was heard or observed and what only passed static/unit checks. For documentation or skill-only changes, run `npm run format:check` and `npm run check:skills`, verify relevant links, and validate changed examples/scripts. CI still runs the full gate.
 
 ## Skill routing
@@ -42,5 +43,7 @@ Ordinary development requests use the development guidance above; they do not au
 - For stacked PRs, register a native GitHub stack and verify every layer's API membership; chained base branches alone are incomplete. See [stack verification](docs/ci.md#native-stacked-pull-requests).
 - Retain the upstream review defaults: one Sol reviewer for `sol-loop`; three providers for `council`. Resolve model availability when invoked, honor user-specified models, and report unavailable providers rather than silently substituting. No fixed model IDs are configured here.
 - In T3 Code, use its delegation and PR-watch lifecycle as directed by the active harness. Skill fallbacks apply only when the harness allows them. Link created or updated PRs to the thread; stop watching at handoff.
-- Keep reviews and fixes within the issue's goal. Lead PR descriptions with the problem and resulting behavior, include observed verification, and link the relevant issue. Keep unrelated findings as follow-ups.
+- Keep reviews and fixes within the issue's goal. Lead PR descriptions with the problem and resulting behavior, include observed verification, and link the relevant issue. Keep unrelated findings as follow-ups, filed as issues on the relevant tracking issue rather than left in PR text.
+- Wait for **Full browser suites** before merging whenever it runs on a PR, even though it is not a required check. See [browser acceptance](docs/ci.md#full-browser-acceptance).
+- Push a new branch by explicit name, as in `git push -u origin HEAD:refs/heads/<branch>`. A branch created from `origin/main` tracks it, so a plain `git push` can target `main`.
 - Keep repo-specific workflow preferences in this file. The vendored skills, their source revision, license, and update guidance are documented in [.agents/README.md](.agents/README.md).
