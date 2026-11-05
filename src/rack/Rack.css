@@ -1,8 +1,19 @@
 .rack {
-  display: block;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  min-height: 0;
   padding: 18px;
-  overflow: hidden;
+  overflow-y: auto;
+}
+.rack > * {
+  flex-shrink: 0;
+}
+/* Everything that comes and goes floats here, so the frame never changes size. */
+.rack-stage {
+  position: relative;
+  flex: 1 0 430px;
+  min-height: 430px;
 }
 .rack-toolbar {
   display: flex;
@@ -31,22 +42,10 @@
 .module-panel textarea {
   font-family: inherit;
 }
-.rack-toolbar button,
-.selection-tools button,
-.rack-status button,
-.replace-prompt button,
-.connections button {
-  padding: 6px 10px;
-  background: #202328;
-  color: var(--text);
-  border: 1px solid #414650;
-  border-radius: 5px;
-  cursor: pointer;
-}
 .rack-frame {
   display: flex;
   position: relative;
-  height: max(430px, calc(100vh - 290px));
+  height: 100%;
   overflow: hidden;
   border: 1px solid #25282d;
   border-radius: 10px;
@@ -85,11 +84,6 @@
 .cable-mode-mark {
   display: inline-block;
   width: 1em;
-}
-.cable-visibility button[aria-pressed='true'] {
-  background: #f4a462;
-  color: #181b20;
-  border-color: #f4a462;
 }
 .cable-visibility-state {
   flex-basis: 100%;
@@ -535,38 +529,115 @@
 }
 .add-row {
   width: 100%;
-  padding: 9px;
+  padding: 7px;
   margin: 8px 0;
   color: var(--muted);
   background: transparent;
   border: 1px dashed #414650;
   border-radius: 4px;
+  font-size: 12px;
   cursor: pointer;
 }
-.rack-status {
-  font-size: 12px;
-  color: var(--muted);
+/* Panels are tight, so their chrome buttons shrink without changing style. */
+.module-controls button:not([class]),
+.module-controls .button {
+  padding: 2px 6px;
+  font-size: 11px;
+}
+.rack-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   min-height: 30px;
+  font-size: 12px;
+}
+.rack-status {
+  flex: 1;
+  min-width: 0;
+  color: var(--muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .rack-status button {
   margin-left: 10px;
 }
-.replace-prompt,
-.selection-tools {
+.rack-popover {
+  position: relative;
+  flex-shrink: 0;
+}
+.rack-popover summary {
+  cursor: pointer;
+}
+.rack-popover summary[data-warning='true'] {
+  color: var(--pattern);
+}
+.rack-popover > div {
+  position: absolute;
+  z-index: 25;
+  right: 0;
+  bottom: calc(100% + 8px);
+  box-sizing: border-box;
+  width: min(420px, 60vw);
+  max-height: min(320px, 50vh);
+  padding: 8px 10px;
+  overflow-y: auto;
+  border: 1px solid #414650;
+  border-radius: 6px;
+  background: #15171b;
+  box-shadow: 0 8px 24px #000a;
+}
+.rack-stage > .replace-prompt,
+.selection-tools,
+.output-connections {
+  position: absolute;
+  z-index: 20;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
-  padding: 8px 0;
+  margin: 0;
+  padding: 6px 8px;
+  border: 1px solid #414650;
+  border-radius: 6px;
+  background: #1b1d21;
+  box-shadow: 0 6px 18px #000a;
   font-size: 12px;
+}
+.rack-stage > .replace-prompt {
+  top: 12px;
+  left: 50%;
+  width: min(460px, calc(100% - 24px));
+  transform: translateX(-50%);
+  padding: 10px 12px;
+}
+.rack-stage > .replace-prompt legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+  font-weight: 600;
+}
+/* Selecting happens on press, so tools appearing under a pointer must not take its click. */
+.rack-frame:active ~ .selection-tools {
+  pointer-events: none;
+}
+/* Footer popovers rise from the bottom, so these stay clear at the top. */
+.selection-tools.cable-tools {
+  left: 50%;
+  top: 12px;
+  transform: translateX(-50%);
+}
+.output-connections {
+  left: 8px;
+  bottom: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  max-height: 40%;
+  overflow-y: auto;
 }
 .rack-warning {
   font-size: 12px;
   color: var(--pattern);
-}
-.connections {
-  font-size: 12px;
-  margin: 10px 0;
 }
 .connections button {
   display: block;

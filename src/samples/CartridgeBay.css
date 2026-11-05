@@ -106,15 +106,6 @@
   border: 1px solid var(--border);
   border-radius: 3px;
 }
-.cartridge-bay button {
-  font: inherit;
-  font-size: 12px;
-  padding: 6px 9px;
-  cursor: pointer;
-}
-.cartridge-bay button:disabled {
-  cursor: default;
-}
 .cartridge-error {
   font-size: 12px;
   color: #f5a4af;
@@ -132,24 +123,6 @@
 .rack:has(.cartridge-bay) .rack-frame {
   min-height: 200px;
   flex-basis: 200px;
-}
-
-@media (min-width: 1151px) {
-  .workspace .rack:has(.cartridge-bay) {
-    display: flex;
-    flex-direction: column;
-    height: calc(100dvh - 108px);
-    overflow: auto;
-  }
-  .rack:has(.cartridge-bay) > * {
-    flex-shrink: 0;
-  }
-  .rack:has(.cartridge-bay) .rack-frame {
-    min-height: 430px;
-    flex-basis: 430px;
-    height: auto;
-    flex-grow: 1;
-  }
 }
 
 @media (max-width: 1150px) {

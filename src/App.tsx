@@ -541,7 +541,7 @@ export default function App() {
         />
         <button
           type="button"
-          className="open-library"
+          className="button open-library"
           onClick={() => {
             cancelReplacement()
             setError(null)
@@ -605,14 +605,6 @@ export default function App() {
         </button>
       </header>
 
-      <button
-        className="rack-focus-toggle"
-        type="button"
-        aria-pressed={rackFocus}
-        onClick={() => setRackFocus((focus) => !focus)}
-      >
-        {rackFocus ? 'Restore workspace' : 'Focus rack'}
-      </button>
       <fieldset className="workspace-views" aria-label="Workspace view">
         {(['rack', 'code', 'both'] as const).map((view) => (
           <button
@@ -629,6 +621,15 @@ export default function App() {
         <Rack
           panelKey={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
           patchLoads={patchLoads}
+          focusToggle={
+            <button
+              type="button"
+              aria-pressed={rackFocus}
+              onClick={() => setRackFocus((focus) => !focus)}
+            >
+              {rackFocus ? 'Restore workspace' : 'Focus rack'}
+            </button>
+          }
           patch={patch}
           sampleResources={seatedResources(document, sampleResources)}
           soundCrate={

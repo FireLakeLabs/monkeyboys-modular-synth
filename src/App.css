@@ -1,5 +1,6 @@
 .app {
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -270,7 +271,7 @@
 
 .library {
   flex: 0 0 180px;
-  max-height: calc(100vh - 65px);
+  min-height: 0;
   overflow-y: auto;
   box-sizing: border-box;
 }
@@ -297,6 +298,10 @@
   flex: 1 1 600px;
 }
 .code {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
   flex: 0 0 420px;
   box-sizing: border-box;
 }
@@ -369,28 +374,6 @@
   border-radius: 4px;
   background: #202328;
   color: #e4e6ea;
-}
-.code-actions button,
-.restore-prompt button,
-.open-library,
-.replace-prompt button,
-.import-code,
-.editor-status > button,
-.code .error button {
-  border: 1px solid #414650;
-  background: #202328;
-  color: #e4e6ea;
-  border-radius: 4px;
-  padding: 6px 10px;
-  font:
-    12px 'Barlow',
-    sans-serif;
-  cursor: pointer;
-}
-.replace-prompt .confirm-replacement {
-  background: var(--audio);
-  border-color: var(--audio);
-  color: #1a1408;
 }
 .apply-shortcuts {
   font-size: 11px;
@@ -475,11 +458,13 @@
   overflow-wrap: anywhere;
 }
 
-.source-surface {
+.code > * {
+  flex-shrink: 0;
+}
+.code .source-surface {
   display: block;
-  height: 55vh;
-  min-height: 390px;
-  resize: vertical;
+  flex: 1 0 300px;
+  min-height: 300px;
   overflow: hidden;
   border: 1px solid #343d46;
   border-radius: 6px 6px 0 0;
@@ -588,10 +573,6 @@
 }
 
 @media (max-width: 1150px) {
-  .app {
-    height: 100dvh;
-    min-height: 0;
-  }
   .workspace-views {
     display: flex;
     flex-shrink: 0;
@@ -601,19 +582,6 @@
     border: 0;
     min-width: 0;
     border-bottom: 1px solid var(--border);
-  }
-  .workspace-views button {
-    padding: 5px 14px;
-    border: 1px solid #414650;
-    border-radius: 4px;
-    background: #202328;
-    color: var(--text);
-    cursor: pointer;
-  }
-  .workspace-views button[aria-pressed='true'] {
-    background: var(--audio);
-    border-color: var(--audio);
-    color: #1a1408;
   }
   .workspace {
     display: grid;
@@ -663,24 +631,13 @@
   .rack > * {
     flex-shrink: 0;
   }
-  .rack .rack-frame {
+  .rack .rack-stage {
     flex: 1 0 120px;
-    height: auto;
     min-height: 120px;
-  }
-  .code {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .code > * {
-    flex-shrink: 0;
   }
   .code .source-surface {
-    flex: 1 0 120px;
-    height: auto;
+    flex-basis: 120px;
     min-height: 120px;
-    resize: none;
   }
   .workspace[data-view='rack'] {
     grid-template-columns: minmax(0, 1fr);
@@ -703,20 +660,6 @@
   }
 }
 
-.rack-focus-toggle {
-  align-self: flex-start;
-  margin: 6px 18px;
-  padding: 5px 12px;
-  background: #202328;
-  border: 1px solid #414650;
-  border-radius: 4px;
-  color: var(--text);
-  cursor: pointer;
-}
-.rack-focus-toggle[aria-pressed='true'] {
-  background: var(--audio);
-  color: #1a1408;
-}
 .workspace[data-rack-focus='true'] {
   display: flex;
 }

@@ -421,7 +421,7 @@ test('ordered FX chains preserve rack/source and schedule real audio', async ({ 
   const result = await page.evaluate(async () =>
     (await import('/scripts/effects-check.mjs')).verifyEffectsProof(),
   )
-  await page.locator('.rack-note').scrollIntoViewIfNeeded()
+  await page.locator('.rack-notes summary').click()
   await expect(page.locator('.rack-note')).toBeVisible()
   await info.attach('ordered-filters', { body: await page.screenshot(), contentType: 'image/png' })
   await record(info, result)

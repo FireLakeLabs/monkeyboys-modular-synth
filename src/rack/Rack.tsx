@@ -77,6 +77,7 @@ const curve = (a: Point, b: Point) =>
 export function Rack({
   panelKey,
   patchLoads,
+  focusToggle,
   patch,
   cartridgeBay,
 
@@ -104,6 +105,7 @@ export function Rack({
   /** Panels rebuild their local drafts on this; the rack's own view state does not. */
   panelKey: string
   patchLoads: number
+  focusToggle: ReactNode
   patch: Patch
   cartridgeBay?: ReactNode
 
@@ -203,6 +205,8 @@ export function Rack({
     }
   }, [menu, locked])
   const [points, setPoints] = useState<Record<string, Point>>({})
+  const tools = useRef<HTMLDivElement>(null)
+  const [toolPoint, setToolPoint] = useState<Point | null>(null)
   const [wire, setWire] = useState<Wiring | null>(null)
   const [pointer, setPointer] = useState<Point | null>(null)
   const [target, setTarget] = useState<JackRef | null>(null)
@@ -288,6 +292,19 @@ export function Rack({
           }
       }
       setPoints(next)
+      const panel = selected && element.querySelector(`[data-module="${CSS.escape(selected)}"]`)
+      if (panel) {
+        const frame = element.getBoundingClientRect()
+        const rect = panel.getBoundingClientRect()
+        const size = tools.current?.getBoundingClientRect()
+        const height = size?.height ?? 0
+        const above = rect.top - frame.top - height - 4
+        // Without room above, the bottom edge keeps the tools off this module's controls.
+        setToolPoint({
+          x: Math.max(8, Math.min(rect.left - frame.left, frame.width - (size?.width ?? 0) - 8)),
+          y: above >= 8 ? above : frame.height - height - 8,
+        })
+      }
     }
     const contextMenu = (event: MouseEvent) => {
       if (!(event.target instanceof Element)) return
@@ -316,7 +333,7 @@ export function Rack({
       window.removeEventListener('resize', measure)
       element.removeEventListener('scroll', measure, true)
     }
-  }, [patch, rows, locked, select, scale, outputScale, panelKey])
+  }, [patch, rows, locked, select, selected, scale, outputScale, panelKey])
 
   // Gestures and selections belong to the panels they started on.
   const [seenPanels, setSeenPanels] = useState(panelKey)
@@ -359,6 +376,7 @@ export function Rack({
         setMenu(null)
         cancelReplacement()
         setDeleteId(null)
+        setSelectedOutput(null)
         setMessage('Cancelled')
       }
     }
@@ -454,7 +472,10 @@ export function Rack({
     const spec = getModuleSpec(owner.type)
     return `function · ${loopRole(spec, owner)} · ${loopInfo.functions[owner.id] ?? 'Close RETURN and connect the module to OUT to write the function'}`
   }
-  const warnings = patch.cables.flatMap((c) => cableWarnings(patch, c))
+  // Prompts sit top-centre, where the module tools could otherwise cover them.
+  const prompting = !!deleteId || !!replacement || !!replacementPrompt
+  const notes = effectNotes(patch)
+  const uniqueWarnings = [...new Set(patch.cables.flatMap((c) => cableWarnings(patch, c)))]
   function applySound(module: string, choice: SoundChoice, row?: number) {
     if (
       !sampleResources.some((resource) =>
@@ -850,6 +871,7 @@ export function Rack({
               ))}
             </select>
           </label>
+          {focusToggle}
           <div className="rack-zoom">
             <button type="button" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>
               Fit rack
@@ -882,190 +904,334 @@ export function Rack({
             New patch
           </button>
         </div>
-        <div
-          ref={surface}
-          inert={locked}
-          className="rack-frame"
-          onDragOver={(event) => {
-            if (!placement) return
-            event.preventDefault()
-            const bounds = rails.current?.getBoundingClientRect()
-            if (!bounds) return
-            const row = Math.max(
-              0,
-              Math.min(rows - 1, Math.floor((event.clientY - bounds.top) / scale / ROW_HEIGHT)),
-            )
-            const position = placementPosition(
-              patch,
-              placement.type,
-              row,
-              Math.round((event.clientX - bounds.left) / scale / HP),
-              placement.moving,
-            )
-            setGhost(position)
-            setMessage(
-              `${getModuleSpec(placement.type).name} · row ${position.row + 1}, HP ${position.hp}`,
-            )
-          }}
-          onDragLeave={(event) => {
-            if (
-              !(event.relatedTarget instanceof Node) ||
-              !event.currentTarget.contains(event.relatedTarget)
-            )
-              setGhost(null)
-          }}
-          onDrop={(event) => {
-            event.preventDefault()
-            if (ghost) place(ghost.row, ghost.hp)
-          }}
-          onPointerMove={(event) => {
-            const panel = document
-              .elementsFromPoint(event.clientX, event.clientY)
-              .find((element) => element.matches('[data-module]'))
-            setHoveredModule(panel?.getAttribute('data-module') ?? null)
-            if (wire && surface.current) {
-              const gesture = wireGesture.current
-              if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 4)
-                gesture.dragged = true
-              const b =
-                surface.current.querySelector('.cables')?.getBoundingClientRect() ??
-                surface.current.getBoundingClientRect()
-              setPointer({
-                x: event.clientX - b.left,
-                y: event.clientY - b.top,
-              })
-            }
-          }}
-          onPointerLeave={() => setHoveredModule(null)}
-          onPointerUp={(event) => {
-            if (wire && event.target instanceof Element && !event.target.closest('[data-jack]'))
-              cancel()
-          }}
-        >
-          <div ref={viewport} className="rack-scroll">
-            <div
-              ref={rails}
-              className="rack-surface"
-              style={
-                { width: railHp * HP, height, zoom: scale, '--rack-zoom': scale } as CSSProperties
+        <div className="rack-stage">
+          <div
+            ref={surface}
+            inert={locked}
+            className="rack-frame"
+            onDragOver={(event) => {
+              if (!placement) return
+              event.preventDefault()
+              const bounds = rails.current?.getBoundingClientRect()
+              if (!bounds) return
+              const row = Math.max(
+                0,
+                Math.min(rows - 1, Math.floor((event.clientY - bounds.top) / scale / ROW_HEIGHT)),
+              )
+              const position = placementPosition(
+                patch,
+                placement.type,
+                row,
+                Math.round((event.clientX - bounds.left) / scale / HP),
+                placement.moving,
+              )
+              setGhost(position)
+              setMessage(
+                `${getModuleSpec(placement.type).name} · row ${position.row + 1}, HP ${position.hp}`,
+              )
+            }}
+            onDragLeave={(event) => {
+              if (
+                !(event.relatedTarget instanceof Node) ||
+                !event.currentTarget.contains(event.relatedTarget)
+              )
+                setGhost(null)
+            }}
+            onDrop={(event) => {
+              event.preventDefault()
+              if (ghost) place(ghost.row, ghost.hp)
+            }}
+            onPointerMove={(event) => {
+              const panel = document
+                .elementsFromPoint(event.clientX, event.clientY)
+                .find((element) => element.matches('[data-module]'))
+              setHoveredModule(panel?.getAttribute('data-module') ?? null)
+              if (wire && surface.current) {
+                const gesture = wireGesture.current
+                if (gesture && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 4)
+                  gesture.dragged = true
+                const b =
+                  surface.current.querySelector('.cables')?.getBoundingClientRect() ??
+                  surface.current.getBoundingClientRect()
+                setPointer({
+                  x: event.clientX - b.left,
+                  y: event.clientY - b.top,
+                })
               }
+            }}
+            onPointerLeave={() => setHoveredModule(null)}
+            onPointerUp={(event) => {
+              if (wire && event.target instanceof Element && !event.target.closest('[data-jack]'))
+                cancel()
+            }}
+          >
+            <div ref={viewport} className="rack-scroll">
+              <div
+                ref={rails}
+                className="rack-surface"
+                style={
+                  { width: railHp * HP, height, zoom: scale, '--rack-zoom': scale } as CSSProperties
+                }
+              >
+                {Array.from({ length: rows }, (_, row) => (
+                  <div key={row} className="rack-row" style={{ top: row * ROW_HEIGHT }}>
+                    <span className="row-label">
+                      {row + 1} / {railHp} HP
+                    </span>
+                    {!patch.modules.some((m) => m.type !== 'out' && m.row === row) && rows > 1 && (
+                      <button
+                        type="button"
+                        className="remove-row"
+                        aria-label={`Remove row ${row + 1}`}
+                        onClick={() => {
+                          edit((p) => removeRow(p, row))
+                        }}
+                      >
+                        Remove row
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {renderModules(patch.modules.filter((m) => m.type !== 'out'))}
+                {placement && ghost && ghost.row < rows && (
+                  <div
+                    className="placement-ghost"
+                    style={{
+                      left: ghost.hp * HP,
+                      top: ghost.row * ROW_HEIGHT + 20,
+                      width: getModuleSpec(placement.type).hp * HP,
+                    }}
+                  >
+                    {getModuleSpec(placement.type).name}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div
+              className="output-panel"
+              style={{ flexBasis: OUTPUT_PANEL_WIDTH * outputScale }}
+              aria-label="Pinned output panel"
             >
-              {Array.from({ length: rows }, (_, row) => (
-                <div key={row} className="rack-row" style={{ top: row * ROW_HEIGHT }}>
-                  <span className="row-label">
-                    {row + 1} / {railHp} HP
-                  </span>
-                  {!patch.modules.some((m) => m.type !== 'out' && m.row === row) && rows > 1 && (
-                    <button
-                      type="button"
-                      className="remove-row"
-                      aria-label={`Remove row ${row + 1}`}
-                      onClick={() => {
-                        edit((p) => removeRow(p, row))
+              <div
+                className="output-surface"
+                style={
+                  {
+                    width: OUTPUT_PANEL_WIDTH,
+                    height: 430,
+                    zoom: outputScale,
+                    '--rack-zoom': outputScale,
+                  } as CSSProperties
+                }
+              >
+                {renderModules(patch.modules.filter((m) => m.type === 'out'))}
+              </div>
+            </div>
+            <svg className="cables" width="100%" height="100%" aria-label="Patch cables">
+              {patch.cables.map((c) => {
+                const start = points[keyOf(c.from)],
+                  b = points[keyOf(c.to)]
+                const siblings = patch.cables.filter((other) => keyOf(other.from) === keyOf(c.from))
+                const offset =
+                  (siblings.findIndex((other) => other.id === c.id) - (siblings.length - 1) / 2) * 5
+                const a = start && { x: start.x + offset, y: start.y }
+                const warning = cableWarnings(patch, c).join(' ')
+                return a && b ? (
+                  <g
+                    key={c.id}
+                    className={`cable signal-${cableKind(patch, c, loopInfo.members)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
+                  >
+                    <path d={curve(a, b)} className="cable-shadow" />
+                    <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
+                    <path
+                      d={curve(a, b)}
+                      onPointerEnter={() => {
+                        if (
+                          !pinnedProbe &&
+                          cableSignal(patch, c.from, loopInfo.members) === 'pattern'
+                        )
+                          setProbeCable(c.id)
+                      }}
+                      onPointerLeave={() => {
+                        if (!pinnedProbe) setProbeCable(null)
+                      }}
+                      onClick={(event) => {
+                        if (event.altKey) {
+                          setProbeCable(c.id)
+                          setPinnedProbe(true)
+                          return
+                        }
+                        setSelectedCable(c.id)
+                        cancel()
                       }}
                     >
-                      Remove row
-                    </button>
+                      <title>
+                        {keyOf(c.from)} → {keyOf(c.to)}
+                        {cableKind(patch, c, loopInfo.members) === 'audio-mod'
+                          ? ' · audio-mod ≋'
+                          : ''}
+                        {functionLabel(c.from) ? ` · ${functionLabel(c.from)}` : ''}
+                        {warning ? ` · △ ${warning}` : ''}
+                      </title>
+                    </path>
+                    {cableKind(patch, c, loopInfo.members) === 'audio-mod' && (
+                      <path d={curve(a, b)} className="audio-mod-core" />
+                    )}
+                  </g>
+                ) : null
+              })}
+              {wire && points[keyOf(wire.from)] && (pointer || target) && (
+                <path
+                  className={`provisional signal-${target ? cableKind(patch, { id: 'pending', from: wire.from, to: target }, loopInfo.members) : cableSignal(patch, wire.from, loopInfo.members)}`}
+                  d={curve(
+                    points[keyOf(wire.from)] ?? { x: 0, y: 0 },
+                    (target && points[keyOf(target)]) || pointer || { x: 0, y: 0 },
                   )}
-                </div>
-              ))}
-              {renderModules(patch.modules.filter((m) => m.type !== 'out'))}
-              {placement && ghost && ghost.row < rows && (
-                <div
-                  className="placement-ghost"
-                  style={{
-                    left: ghost.hp * HP,
-                    top: ghost.row * ROW_HEIGHT + 20,
-                    width: getModuleSpec(placement.type).hp * HP,
-                  }}
-                >
-                  {getModuleSpec(placement.type).name}
-                </div>
+                />
               )}
-            </div>
+            </svg>
           </div>
-          <div
-            className="output-panel"
-            style={{ flexBasis: OUTPUT_PANEL_WIDTH * outputScale }}
-            aria-label="Pinned output panel"
-          >
-            <div
-              className="output-surface"
-              style={
+          {replacementPrompt}
+          {deleteId && !locked && (
+            <fieldset className="replace-prompt">
+              <legend>
+                Delete {deleteId} and its{' '}
                 {
-                  width: OUTPUT_PANEL_WIDTH,
-                  height: 430,
-                  zoom: outputScale,
-                  '--rack-zoom': outputScale,
-                } as CSSProperties
-              }
+                  patch.cables.filter((c) => c.from.module === deleteId || c.to.module === deleteId)
+                    .length
+                }{' '}
+                cables?
+              </legend>
+              <button
+                type="button"
+                ref={(element) => element?.focus()}
+                onClick={() => setDeleteId(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="button destructive"
+                onClick={() => {
+                  if (edit((p) => removeModule(p, deleteId))) {
+                    const index = patch.modules.findIndex((m) => m.id === deleteId)
+                    select(patch.modules[index + 1]?.id ?? patch.modules[index - 1]?.id ?? null)
+                    cancel()
+                    setDeleteId(null)
+                  }
+                }}
+              >
+                Delete module
+              </button>
+            </fieldset>
+          )}
+          {replacement && wire && !locked && (
+            <fieldset className="replace-prompt">
+              <legend>Replace connection</legend>
+              <p>
+                Replace {replacement.module} {replacement.jack} connection?
+              </p>
+              <button
+                type="button"
+                ref={(element) => {
+                  element?.focus()
+                }}
+                onClick={cancel}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  edit((p) => connect(p, wire.from, replacement, true, wire.moving))
+                  cancel()
+                }}
+              >
+                Replace
+              </button>
+            </fieldset>
+          )}
+          {module && toolPoint && !locked && !prompting && !currentCable && (
+            <div
+              ref={tools}
+              className="selection-tools"
+              style={{ left: toolPoint.x, top: toolPoint.y }}
             >
-              {renderModules(patch.modules.filter((m) => m.type === 'out'))}
+              <span>
+                {module.id} · {getModuleSpec(module.type).hp} HP
+              </span>
+              <button type="button" onClick={() => setMenu({ id: module.id, x: 220, y: 150 })}>
+                Module menu
+              </button>
+              <button
+                type="button"
+                disabled={!!getModuleSpec(module.type).unique}
+                className="button destructive"
+                aria-label={`Delete ${module.id} and attached cables`}
+                onClick={() => setDeleteId(module.id)}
+              >
+                Delete
+              </button>
             </div>
-          </div>
-          <svg className="cables" width="100%" height="100%" aria-label="Patch cables">
-            {patch.cables.map((c) => {
-              const start = points[keyOf(c.from)],
-                b = points[keyOf(c.to)]
-              const siblings = patch.cables.filter((other) => keyOf(other.from) === keyOf(c.from))
-              const offset =
-                (siblings.findIndex((other) => other.id === c.id) - (siblings.length - 1) / 2) * 5
-              const a = start && { x: start.x + offset, y: start.y }
-              const warning = cableWarnings(patch, c).join(' ')
-              return a && b ? (
-                <g
-                  key={c.id}
-                  className={`cable signal-${cableKind(patch, c, loopInfo.members)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
-                >
-                  <path d={curve(a, b)} className="cable-shadow" />
-                  <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
-                  <path
-                    d={curve(a, b)}
-                    onPointerEnter={() => {
-                      if (
-                        !pinnedProbe &&
-                        cableSignal(patch, c.from, loopInfo.members) === 'pattern'
-                      )
-                        setProbeCable(c.id)
-                    }}
-                    onPointerLeave={() => {
-                      if (!pinnedProbe) setProbeCable(null)
-                    }}
-                    onClick={(event) => {
-                      if (event.altKey) {
-                        setProbeCable(c.id)
-                        setPinnedProbe(true)
-                        return
-                      }
+          )}
+          {currentCable && !locked && !replacement && (
+            <div className="selection-tools cable-tools">
+              <span>
+                {keyOf(currentCable.from)} → {keyOf(currentCable.to)}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  edit((p) => removeCable(p, currentCable.id))
+                  setSelectedCable(null)
+                  setMessage('Cable removed')
+                }}
+              >
+                Remove cable
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setProbeCable(currentCable.id)
+                  setPinnedProbe(true)
+                }}
+              >
+                Probe cable
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setWire({ from: currentCable.from, moving: currentCable.id })
+                  setMessage(
+                    'Choose a new input. Original cable stays until accepted. Escape cancels.',
+                  )
+                }}
+              >
+                Move destination
+              </button>
+            </div>
+          )}
+          {selectedOutput && !locked && (
+            <div
+              className="connections output-connections"
+              aria-label={`${selectedOutput} destinations`}
+            >
+              <strong>{selectedOutput} destinations</strong>
+              {patch.cables
+                .filter((c) => keyOf(c.from) === selectedOutput)
+                .map((c) => (
+                  <button
+                    type="button"
+                    key={c.id}
+                    onClick={() => {
                       setSelectedCable(c.id)
                       cancel()
                     }}
                   >
-                    <title>
-                      {keyOf(c.from)} → {keyOf(c.to)}
-                      {cableKind(patch, c, loopInfo.members) === 'audio-mod'
-                        ? ' · audio-mod ≋'
-                        : ''}
-                      {functionLabel(c.from) ? ` · ${functionLabel(c.from)}` : ''}
-                      {warning ? ` · △ ${warning}` : ''}
-                    </title>
-                  </path>
-                  {cableKind(patch, c, loopInfo.members) === 'audio-mod' && (
-                    <path d={curve(a, b)} className="audio-mod-core" />
-                  )}
-                </g>
-              ) : null
-            })}
-            {wire && points[keyOf(wire.from)] && (pointer || target) && (
-              <path
-                className={`provisional signal-${target ? cableKind(patch, { id: 'pending', from: wire.from, to: target }, loopInfo.members) : cableSignal(patch, wire.from, loopInfo.members)}`}
-                d={curve(
-                  points[keyOf(wire.from)] ?? { x: 0, y: 0 },
-                  (target && points[keyOf(target)]) || pointer || { x: 0, y: 0 },
-                )}
-              />
-            )}
-          </svg>
+                    Select cable to {keyOf(c.to)}
+                  </button>
+                ))}
+            </div>
+          )}
         </div>
         <button
           type="button"
@@ -1090,14 +1256,53 @@ export function Rack({
             ? ` · ${getModuleSpec(placement.type).name} · ${getModuleSpec(placement.type).hp} HP at 0`
             : ''}
         </button>
-        <div className="rack-status" aria-live="polite">
-          {message}
-          {wire && (
-            <button type="button" onClick={cancel}>
-              Cancel cable
-            </button>
+        <footer className="rack-footer">
+          <div className="rack-status" aria-live="polite">
+            {message}
+            {wire && (
+              <button type="button" onClick={cancel}>
+                Cancel cable
+              </button>
+            )}
+          </div>
+          {notes.length + uniqueWarnings.length > 0 && (
+            <details name="rack-popover" className="rack-notes rack-popover">
+              <summary data-warning={uniqueWarnings.length > 0}>
+                {uniqueWarnings.length ? `△ Warnings (${uniqueWarnings.length})` : 'You hear'}
+              </summary>
+              <div>
+                {notes.map((note) => (
+                  <p className="rack-note" key={note}>
+                    {note}
+                  </p>
+                ))}
+                {uniqueWarnings.map((warning) => (
+                  <p className="rack-warning" key={warning}>
+                    △ {warning}
+                  </p>
+                ))}
+              </div>
+            </details>
           )}
-        </div>
+          <details name="rack-popover" className="connections rack-popover">
+            <summary>Connections ({patch.cables.length})</summary>
+            <div>
+              {patch.cables.map((c) => (
+                <button
+                  type="button"
+                  key={c.id}
+                  aria-pressed={selectedCable === c.id}
+                  title={functionLabel(c.from) || undefined}
+                  onClick={() => setSelectedCable(c.id)}
+                >
+                  {keyOf(c.from)} → {keyOf(c.to)}
+                  {functionLabel(c.from) ? ' · function λ' : ''}
+                  {cableKind(patch, c, loopInfo.members) === 'audio-mod' ? ' · audio-mod ≋' : ''}
+                </button>
+              ))}
+            </div>
+          </details>
+        </footer>
         {wire && target && hintPoint && (
           <div
             id="cable-target-hint"
@@ -1107,66 +1312,6 @@ export function Rack({
           >
             {candidate(target)?.message}
           </div>
-        )}
-        {replacementPrompt}
-        {deleteId && !locked && (
-          <fieldset className="replace-prompt">
-            <legend>
-              Delete {deleteId} and its{' '}
-              {
-                patch.cables.filter((c) => c.from.module === deleteId || c.to.module === deleteId)
-                  .length
-              }{' '}
-              cables?
-            </legend>
-            <button
-              type="button"
-              ref={(element) => element?.focus()}
-              onClick={() => setDeleteId(null)}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="destructive"
-              onClick={() => {
-                if (edit((p) => removeModule(p, deleteId))) {
-                  const index = patch.modules.findIndex((m) => m.id === deleteId)
-                  select(patch.modules[index + 1]?.id ?? patch.modules[index - 1]?.id ?? null)
-                  cancel()
-                  setDeleteId(null)
-                }
-              }}
-            >
-              Delete module
-            </button>
-          </fieldset>
-        )}
-        {replacement && wire && !locked && (
-          <fieldset className="replace-prompt">
-            <legend>Replace connection</legend>
-            <p>
-              Replace {replacement.module} {replacement.jack} connection?
-            </p>
-            <button
-              type="button"
-              ref={(element) => {
-                element?.focus()
-              }}
-              onClick={cancel}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                edit((p) => connect(p, wire.from, replacement, true, wire.moving))
-                cancel()
-              }}
-            >
-              Replace
-            </button>
-          </fieldset>
         )}
         {menu && menuModule && !locked && (
           <dialog
@@ -1233,7 +1378,7 @@ export function Rack({
             <button
               type="button"
               disabled={!!getModuleSpec(menuModule.type).unique}
-              className="destructive"
+              className="button destructive"
               aria-keyshortcuts="Delete Backspace"
               onClick={() => {
                 setDeleteId(menuModule.id)
@@ -1243,62 +1388,6 @@ export function Rack({
               Delete <kbd aria-hidden="true">⌫</kbd>
             </button>
           </dialog>
-        )}
-        {module && !locked && (
-          <div className="selection-tools">
-            <span>
-              {module.id} · {getModuleSpec(module.type).hp} HP
-            </span>
-            <button type="button" onClick={() => setMenu({ id: module.id, x: 220, y: 150 })}>
-              Module menu
-            </button>
-            <button
-              type="button"
-              disabled={!!getModuleSpec(module.type).unique}
-              className="destructive"
-              onClick={() => setDeleteId(module.id)}
-            >
-              Delete {module.id} and attached cables
-            </button>
-          </div>
-        )}
-        <details className="connections">
-          <summary>Connections ({patch.cables.length})</summary>
-          {patch.cables.map((c) => (
-            <button
-              type="button"
-              key={c.id}
-              aria-pressed={selectedCable === c.id}
-              title={functionLabel(c.from) || undefined}
-              onClick={() => setSelectedCable(c.id)}
-            >
-              {keyOf(c.from)} → {keyOf(c.to)}
-              {functionLabel(c.from) ? ' · function λ' : ''}
-              {cableKind(patch, c, loopInfo.members) === 'audio-mod' ? ' · audio-mod ≋' : ''}
-            </button>
-          ))}
-        </details>
-        {selectedOutput && !locked && (
-          <div
-            className="connections output-connections"
-            aria-label={`${selectedOutput} destinations`}
-          >
-            <strong>{selectedOutput} destinations</strong>
-            {patch.cables
-              .filter((c) => keyOf(c.from) === selectedOutput)
-              .map((c) => (
-                <button
-                  type="button"
-                  key={c.id}
-                  onClick={() => {
-                    setSelectedCable(c.id)
-                    cancel()
-                  }}
-                >
-                  Select cable to {keyOf(c.to)}
-                </button>
-              ))}
-          </div>
         )}
         {probeCable && (
           <CableProbe
@@ -1311,53 +1400,6 @@ export function Rack({
             }}
           />
         )}
-        {currentCable && !locked && (
-          <div className="selection-tools">
-            <span>
-              {keyOf(currentCable.from)} → {keyOf(currentCable.to)}
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                edit((p) => removeCable(p, currentCable.id))
-                setSelectedCable(null)
-                setMessage('Cable removed')
-              }}
-            >
-              Remove cable
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setProbeCable(currentCable.id)
-                setPinnedProbe(true)
-              }}
-            >
-              Probe cable
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setWire({ from: currentCable.from, moving: currentCable.id })
-                setMessage(
-                  'Choose a new input. Original cable stays until accepted. Escape cancels.',
-                )
-              }}
-            >
-              Move destination
-            </button>
-          </div>
-        )}
-        {effectNotes(patch).map((note) => (
-          <p className="rack-note" key={note}>
-            {note}
-          </p>
-        ))}
-        {[...new Set(warnings)].map((warning) => (
-          <p className="rack-warning" key={warning}>
-            △ {warning}
-          </p>
-        ))}
       </div>
     </>
   )

@@ -132,7 +132,8 @@ try {
   await page.getByRole('button', { name: 'All cables', exact: true }).click()
   const path = page.locator('.cable.signal-pattern path:not(.cable-shadow)').first()
   const point = await path.evaluate((path) => {
-    const p = path.getPointAtLength(path.getTotalLength() * 0.55),
+    // Pattern cables are dotted every 9 px, and only the dots take the pointer.
+    const p = path.getPointAtLength(Math.round((path.getTotalLength() * 0.55) / 9) * 9),
       screen = new DOMPoint(p.x, p.y).matrixTransform(path.getScreenCTM())
     return { x: screen.x, y: screen.y }
   })
@@ -249,7 +250,7 @@ try {
   assert.equal(safety.executed, false)
   assert.equal(safety.running, false)
   await page.locator('.connections > summary').first().click()
-  await page.locator('.connections > button').filter({ hasText: 'rev1:out' }).first().click()
+  await page.locator('.connections button').filter({ hasText: 'rev1:out' }).first().click()
   await page.getByRole('button', { name: 'Probe cable', exact: true }).click()
   await page.getByText('Not probed · CODE upstream', { exact: true }).waitFor()
   pass('Downstream CODE UI says Not probed; side effect never executes and transport stays stopped')

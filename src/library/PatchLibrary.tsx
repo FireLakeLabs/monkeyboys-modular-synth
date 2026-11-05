@@ -128,7 +128,11 @@ export function PatchLibrary({
               {confirmation || (
                 <div className="patch-load">
                   <p>Loading replaces the current patch. Press Play afterward to start audio.</p>
-                  <button type="button" className="load-patch" onClick={() => requestLoad(entry)}>
+                  <button
+                    type="button"
+                    className="button button-primary load-patch"
+                    onClick={() => requestLoad(entry)}
+                  >
                     Load patch…
                   </button>
                 </div>

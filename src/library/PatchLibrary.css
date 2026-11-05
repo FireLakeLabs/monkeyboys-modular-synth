@@ -62,18 +62,9 @@
   cursor: pointer;
   font-size: 14px;
 }
-.patch-library button {
-  border: 1px solid #414650;
-  background: #202328;
-  color: #e4e6ea;
-  border-radius: 4px;
-  padding: 8px 10px;
-  font:
-    13px 'Barlow',
-    sans-serif;
-  cursor: pointer;
-}
 .patch-collections button {
+  padding: 8px 10px;
+  font-size: 13px;
   width: 100%;
   text-align: left;
   margin: 3px 0;
@@ -81,6 +72,7 @@
   border-color: transparent;
 }
 .patch-collections button[aria-pressed='true'] {
+  color: var(--text);
   background: #f4a46218;
   border-color: #f4a46266;
   box-shadow: inset 3px 0 var(--audio);
@@ -124,16 +116,6 @@
   border-top: 1px solid var(--border);
   margin-top: 24px;
   padding-top: 10px;
-}
-.patch-library .load-patch,
-.patch-library .confirm-replacement {
-  background: var(--audio);
-  border-color: var(--audio);
-  color: #1a1408;
-}
-.patch-library button:disabled {
-  opacity: 0.5;
-  cursor: wait;
 }
 .replace-prompt {
   margin: 14px 0;
