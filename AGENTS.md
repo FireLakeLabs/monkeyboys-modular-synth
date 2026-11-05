@@ -30,6 +30,7 @@ Project skills live in `.agents/skills/`. Read the selected `SKILL.md` and its r
 | “full stop”                       | [full-stop](.agents/skills/full-stop/SKILL.md)                     | The same preparation, with an open PR ready for the user to merge.                 |
 | “council”                         | [council](.agents/skills/council/SKILL.md)                         | Review using three providers and reconcile findings.                               |
 | “sol loop”                        | [sol-loop](.agents/skills/sol-loop/SKILL.md)                       | Bounded Sol review with an explicit verdict and findings.                          |
+| “orchestrate”                     | [orchestrate](.agents/skills/orchestrate/SKILL.md)                 | Run waves in their own threads, review each, and land lessons; the owner approves. |
 | File, open, or create a PR        | [file-pr](.agents/skills/file-pr/SKILL.md)                         | A concise PR describing the problem, outcome, and verification.                    |
 | Take over a PR, branch, or thread | [takeover](.agents/skills/takeover/SKILL.md)                       | Finish the requested scope while preserving contributor credit.                    |
 | Monitor, watch, or babysit a PR   | [babysit-pr](.agents/skills/babysit-pr/SKILL.md)                   | Address CI/review findings and report readiness; merge only when authorized.       |
