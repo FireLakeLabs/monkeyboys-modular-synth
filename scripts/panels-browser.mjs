@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
-import { chooseSwitch, switchValue } from './panel-controls.mjs'
+import { chooseSwitch, openMore, switchValue } from './panel-controls.mjs'
 
 const output = process.argv[3] ?? '/tmp/monkeyboy-panels'
 await mkdir(output, { recursive: true })
@@ -77,11 +77,11 @@ try {
     const actual = await suite('current')
     assert.equal(actual.layout, 'restored', `${example.type}.${example.control} layout`)
     assert.deepEqual(actual.patch, expected)
-    const { label, kind } = await page.evaluate(async ({ type, control }) => {
+    const { label, kind, more } = await page.evaluate(async ({ type, control }) => {
       const { getModuleSpec } = await import('/src/modules/catalog.ts')
       return getModuleSpec(type).controls.find((c) => c.id === control)
     }, example)
-    const subject = panel(`${example.type}1`)
+    const subject = more ? await openMore(panel(`${example.type}1`)) : panel(`${example.type}1`)
     if (kind === 'switch') {
       assert.equal(await switchValue(subject, label), example.value)
     } else {
@@ -92,6 +92,7 @@ try {
       if (typeof example.value === 'string')
         assert.equal(await locator.last().inputValue(), example.value)
     }
+    if (more) await page.keyboard.press('Escape')
     const source = await suite('source')
     assert(source.includes(example.call))
     results.controls.push(`${example.type}.${example.control}`)
@@ -136,8 +137,10 @@ try {
   assert(!(await suite('source')).includes('.drive('))
   await suite('loadCase', 26)
   await synced()
-  await panel('mix1').getByLabel('NAME 1', { exact: true }).fill('bass')
-  await panel('mix1').getByLabel('NAME 1', { exact: true }).press('Enter')
+  const mixerNames = await openMore(panel('mix1'))
+  await mixerNames.getByLabel('NAME 1', { exact: true }).fill('bass')
+  await mixerNames.getByLabel('NAME 1', { exact: true }).press('Enter')
+  await page.keyboard.press('Escape')
   await synced()
   assert((await suite('source')).includes('_bass:'))
   await page.screenshot({ path: `${output}/mixer.png` })

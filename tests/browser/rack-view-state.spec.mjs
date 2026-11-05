@@ -1,4 +1,5 @@
 import { test, expect } from 'playwright/test'
+import { openMore } from '../../scripts/panel-controls.mjs'
 
 const add = (page, name) => page.getByRole('button', { name: `Add ${name}`, exact: true }).click()
 const header = (page, id) => page.locator(`[data-module="${id}"] .module-header`)
@@ -57,11 +58,13 @@ test('rack view state survives typing, applying and undoing', async ({ page }) =
 
 test('panels still show an externally changed value after a code edit', async ({ page }) => {
   await add(page, 'MIX')
-  const name = page.locator('[data-module="mix1"]').getByLabel('NAME 1')
+  const mix = page.locator('[data-module="mix1"]')
+  const name = (await openMore(mix)).getByLabel('NAME 1')
   await name.fill('lead')
   await name.blur()
   await expect(page.locator('.sync-status')).toContainText('Rack matches code')
   await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await openMore(mix)
   await expect(name).toHaveValue('')
 })
 

@@ -194,6 +194,15 @@ shows on the status light, lit green when connected and an empty ring when not,
 with a tooltip and the panel's existing “not connected to OUT” name. The light
 appears in every look. On Instrument it also flashes white on each event.
 
+No module scrolls at default size in any look (#176), and no catalog width changed
+to get there. MIX stands as four channel strips, each with a fader, M and S, and
+SPLICE fits with a shorter text box. Rarely used fields move to a More flyout
+beside the panel, dark like the nested editor's tray so it reads the same beside
+every look. The flyout takes focus when it opens and follows its panel as the rack
+scrolls. It opens on the free side and stays full size at any zoom. Escape closes
+it and returns focus to More, and clicking outside closes it. A panel can still
+scroll in a mode that adds controls, such as OSC's supersaw.
+
 Panels overlap two rails, each with one hole per HP, and the pinned OUT panel has
 matching rails. Looks that have screws on their boards show two fixing screws.
 

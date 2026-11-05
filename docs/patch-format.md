@@ -207,6 +207,22 @@ Snapshots cannot contain nested rack blocks. Copy/Export save the exact current
 draft; Open reads plain `.strudel` files. Chosen names survive reducing a split
 to one branch. See [workspace evidence and limits](workspace-verification.md).
 
+### Saved neighbors that no longer fit (#176)
+
+Saved positions are absolute, so they cannot follow a module that grows. No
+catalog width has changed, so no saved patch reaches these cases today. They
+define what any future width change inherits. Opening a patch never rewrites its
+source in either case:
+
+- **Past the rail:** the saved block is invalid, as for any off-rail position. The
+  executable source stays exact and the rack auto-lays out.
+- **Onto a neighbor:** the saved positions restore as written and the panels
+  overlap. Rack edits are refused with “Modules cannot overlap” until a move
+  separates them, and that move is the first change to the saved block.
+
+Check both before widening a module. An overlap blocks editing until the person
+moves it, so a change that creates overlaps in existing patches needs its own plan.
+
 ## Patch names (#62)
 
 The editable header title is stored as optional `name: string` in `Patch` and

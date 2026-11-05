@@ -1,5 +1,6 @@
 /* Every panel uses the same catalog width and control tree. */
-.module-panel {
+.module-panel,
+.module-flyout {
   --panel-ink: #ecece9;
   /* Looks own how buttons and segments read. */
   --control-bg: #15171a;
@@ -8,6 +9,8 @@
   --control-on-bg: var(--category);
   --control-on-ink: #10151b;
   --control-radius: 3px;
+}
+.module-panel {
   --screw: radial-gradient(circle, #d9dce0 0 1px, #555a61 1.5px 2.5px, transparent 3px);
 }
 /* Two fixing screws, as on the boards. Painted last so headers cannot cover them. */

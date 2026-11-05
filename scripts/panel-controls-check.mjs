@@ -43,6 +43,14 @@ export function expectedAfter(id, control, value) {
   return generate(patch)
 }
 export const currentSource = () => editorSource()
+/** Inner scrollers left in any panel at default size. */
+export function overflowingPanels() {
+  return [...document.querySelectorAll('.module-panel')].flatMap((panel) =>
+    [...panel.querySelectorAll('.module-controls, .patch-box')]
+      .filter((box) => box.scrollHeight > box.clientHeight + 1)
+      .map((box) => `${panel.dataset.module} ${box.className}`),
+  )
+}
 export function accentHeight(id) {
   return document.querySelector(`[data-module="${id}"] .notation-control textarea`).offsetHeight
 }

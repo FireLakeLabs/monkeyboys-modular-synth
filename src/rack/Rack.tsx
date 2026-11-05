@@ -24,7 +24,9 @@ import type { CodeConversion } from '../workspace/codeConversion'
 import type { SourceConnectionAssessment } from '../workspace/connections'
 import { RAIL_WIDTHS, railWidth, OUTPUT_PANEL_WIDTH } from '../patch/layout'
 import { observeActivity } from './activity'
+import type { Control } from '../modules/types'
 import { ControlEditor } from './Controls'
+import { MoreFlyout } from './MoreFlyout'
 import {
   HP,
   ROW_HEIGHT,
@@ -36,6 +38,7 @@ import {
   removeRow,
   addRow,
   rackRows,
+  panelControls,
   routedModules,
   connect,
   placementPosition,
@@ -494,6 +497,29 @@ export function Rack({
   const renderModules = (modules: Patch['modules']) =>
     modules.map((m) => {
       const spec = getModuleSpec(m.type)
+      const layout = panelControls(spec)
+      const controlEditor = (control: Control) => (
+        <ControlEditor
+          key={control.id}
+          patch={patch}
+          module={m}
+          control={control}
+          dropSample={
+            m.type === 'drums'
+              ? (choice, row) => {
+                  applySound(m.id, choice, row)
+                }
+              : undefined
+          }
+          notationEscaped={escapedNotation.includes(`${m.id}:${control.id}`)}
+          {...(m.type === 'code' && sourceModules.includes(m.id)
+            ? { editSource: () => showCode(m.id) }
+            : {})}
+          commit={(value, historyGroup) =>
+            edit((p) => setValue(p, m.id, control.id, value), undefined, historyGroup)
+          }
+        />
+      )
       return (
         <section
           key={`${m.id}:${panelKey}`}
@@ -568,35 +594,19 @@ export function Rack({
               />
             )}
             {m.type === 'splice' && <RazorMarks module={m} />}
-            {[...spec.controls]
-              .filter((control) => control.id !== spec.sampleTarget?.control)
-              .sort((a, b) =>
-                'group' in a || 'group' in b
-                  ? 0
-                  : Number(a.kind === 'knob') - Number(b.kind === 'knob'),
-              )
-              .map((control) => (
-                <ControlEditor
-                  key={control.id}
-                  patch={patch}
-                  module={m}
-                  control={control}
-                  dropSample={
-                    m.type === 'drums'
-                      ? (choice, row) => {
-                          applySound(m.id, choice, row)
-                        }
-                      : undefined
-                  }
-                  notationEscaped={escapedNotation.includes(`${m.id}:${control.id}`)}
-                  {...(m.type === 'code' && sourceModules.includes(m.id)
-                    ? { editSource: () => showCode(m.id) }
-                    : {})}
-                  commit={(value, historyGroup) =>
-                    edit((p) => setValue(p, m.id, control.id, value), undefined, historyGroup)
-                  }
-                />
-              ))}
+            {layout.loose.map(controlEditor)}
+            {layout.strips.map(({ group, controls }) => (
+              // A channel's controls read as one labelled strip.
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+              <div key={group} className="channel-strip" role="group" aria-label={group}>
+                {controls.map(controlEditor)}
+              </div>
+            ))}
+            {layout.more.length > 0 && (
+              <MoreFlyout label={`${spec.name} ${m.id} settings`} locked={locked}>
+                {layout.more.map(controlEditor)}
+              </MoreFlyout>
+            )}
             {conversions
               .filter((offer) => offer.module === m.id)
               .map((offer) => (

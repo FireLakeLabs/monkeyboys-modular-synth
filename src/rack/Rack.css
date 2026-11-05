@@ -279,6 +279,95 @@
   justify-content: center;
   gap: 5px 2px;
 }
+/* A mixer's channels stand side by side, with its More button beneath them. */
+.module-controls:has(> .channel-strip) {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+.module-controls > .more-toggle {
+  width: 100%;
+}
+.module-controls:has(> .channel-strip) > .more-toggle {
+  grid-column: 1 / -1;
+}
+.channel-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  min-height: 0;
+}
+.channel-strip .numeric-control {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+.channel-strip .toggle-control {
+  flex: none;
+  width: 100%;
+}
+.channel-strip .toggle-control[data-short='M'] {
+  --control-on-bg: #ef5a5a;
+}
+.channel-strip .toggle-control[data-short='S'] {
+  --control-on-bg: #f2d24b;
+}
+.fader {
+  position: relative;
+  flex: 1;
+  width: 24px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  touch-action: none;
+  cursor: ns-resize;
+}
+.fader::before {
+  content: '';
+  position: absolute;
+  inset: 0 9px;
+  border: 1px solid var(--control-line);
+  border-radius: 3px;
+  background: var(--control-bg);
+}
+.fader span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--level) * (100% - 12px));
+  height: 12px;
+  border: 1px solid #111;
+  border-radius: 2px;
+  background: linear-gradient(#e8eaed, #8c9199);
+}
+/* Dark like the nested editor's tray, so it reads the same beside every look. */
+.module-flyout {
+  position: fixed;
+  z-index: 1000;
+  width: 220px;
+  max-height: min(90vh, 420px);
+  margin: 0;
+  padding: 8px;
+  overflow: auto;
+  border: 1px solid #a99c7c;
+  border-radius: 5px;
+  background: #20272e;
+  color: #f6eedc;
+  box-shadow: 0 4px 15px #0008;
+  font-size: 12px;
+}
+.module-flyout strong {
+  display: block;
+  margin-bottom: 6px;
+}
+.module-flyout-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 2px;
+}
 /* Two knobs fit an 8 HP panel and three a 12 HP one, without changing catalog widths. */
 .numeric-control {
   display: flex;
@@ -446,6 +535,7 @@
 }
 /* Selecting on press wakes a module's cables. Like jacks, buttons stay above them,
    or a cable crossing the panel takes the release and the click is lost. */
+.more-toggle,
 .toggle-control,
 .segments label {
   position: relative;
@@ -467,8 +557,8 @@
   cursor: pointer;
 }
 /* Neighboring toggles, such as MUTE and SOLO, share a line. */
-.toggle-control:has(+ .toggle-control),
-.toggle-control + .toggle-control {
+.module-controls > .toggle-control:has(+ .toggle-control),
+.module-controls > .toggle-control + .toggle-control {
   width: calc(50% - 1px);
 }
 .toggle-control[aria-pressed='true'] {
@@ -477,7 +567,7 @@
   box-shadow: 0 0 6px var(--control-on-bg);
 }
 .module-panel textarea {
-  min-height: 110px;
+  min-height: 72px;
   resize: vertical;
   font:
     12px 'JetBrains Mono',

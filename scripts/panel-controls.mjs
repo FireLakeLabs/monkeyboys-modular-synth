@@ -1,3 +1,11 @@
+/** Opens a panel's More flyout, which floats outside the panel, and returns it. */
+export async function openMore(panel) {
+  await panel.getByRole('button', { name: /^More / }).click()
+  const flyout = panel.page().locator('.module-flyout')
+  await flyout.waitFor()
+  return flyout
+}
+
 /** Reads a catalog switch's option value from whichever control the panel shows. */
 export async function switchValue(panel, label) {
   const group = panel.getByRole('radiogroup', { name: label, exact: true })

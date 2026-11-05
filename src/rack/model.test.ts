@@ -24,6 +24,7 @@ import {
   cableWarnings,
   removeRow,
   addRow,
+  panelControls,
   routedModules,
   switchStyle,
 } from './model'
@@ -33,6 +34,44 @@ function add(patch: Patch, type: string, row = 1) {
   return placeModule(patch, type, row)
 }
 const sounding = (patch: Patch) => generate(patch).split('// ── @monkeyboy')[0]
+
+describe('panelControls', () => {
+  it('places every control exactly once, without the sample slot', () => {
+    for (const spec of CATALOG) {
+      const { loose, strips, more } = panelControls(spec)
+      const placed = [...loose, ...strips.flatMap((strip) => strip.controls), ...more]
+      expect(placed.map((control) => control.id).toSorted()).toEqual(
+        spec.controls
+          .filter((control) => control.id !== spec.sampleTarget?.control)
+          .map((control) => control.id)
+          .toSorted(),
+      )
+    }
+  })
+
+  it('stands MIX in four channel strips with names and outputs in More', () => {
+    const { loose, strips, more } = panelControls(getModuleSpec('mix'))
+    expect(loose).toEqual([])
+    expect(strips.map(({ group, controls }) => [group, controls.map(({ id }) => id)])).toEqual(
+      [1, 2, 3, 4].map((n) => [`CH ${n}`, [`ch${n}`, `mute${n}`, `solo${n}`]]),
+    )
+    expect(more.map(({ id }) => id).toSorted()).toEqual(
+      [1, 2, 3, 4].flatMap((n) => [`channels${n}`, `name${n}`]).toSorted(),
+    )
+  })
+
+  it('keeps every tape position reachable when SMPL moves its knobs to More', () => {
+    expect(panelControls(getModuleSpec('smpl')).more.map(({ id }) => id)).toEqual([
+      'bank',
+      'begin',
+      'end',
+      'loop',
+      'loopBegin',
+      'loopEnd',
+      'cut',
+    ])
+  })
+})
 
 describe('switchStyle', () => {
   const switches = CATALOG.flatMap((spec) =>

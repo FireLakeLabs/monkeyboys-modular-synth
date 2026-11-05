@@ -15,6 +15,19 @@ rules:
 - Two to four options: a segmented control, if the labels fit the panel's HP.
 - Anything else, including short lists with long labels: a compact dropdown.
 
+## Panel placement (#176)
+
+The catalog also decides where a control appears, again without changing what it
+writes. `panelControls` in `src/rack/model.ts` reads this data:
+
+- `group`: controls that share one become a channel strip. A strip's knob draws as
+  a fader, with the same range, keyboard use, double-click reset and editable value.
+- `short`: printed on a narrow toggle, as `M` and `S` on MIX. `label` remains its
+  accessible name.
+- `more`: rarely used controls move to a More flyout beside the panel. MIX keeps
+  NAME and OUTPUT there. SMPL keeps BANK, LOOP and CUT there with the BEGIN, END,
+  LOOP BEGIN and LOOP END knobs, whose positions the tape also draws and moves.
+
 ## Call bindings (#128)
 
 Knob, switch and text controls may declare `call` in the catalog. The generator visits
@@ -491,9 +504,9 @@ is in [engine findings](engine-spike.md).
 
 Hardware · Utility · 12 HP
 
-| Control | Kind    | Range          | Default | Writes                                               |
-| ------- | ------- | -------------- | ------- | ---------------------------------------------------- |
-| CH 1–4  | knob ×4 | 0–1, step 0.05 | 0.8     | `.postgain(x)` on that channel’s voice, omitted at 1 |
+| Control | Kind     | Range          | Default | Writes                                               |
+| ------- | -------- | -------------- | ------- | ---------------------------------------------------- |
+| CH 1–4  | fader ×4 | 0–1, step 0.05 | 0.8     | `.postgain(x)` on that channel’s voice, omitted at 1 |
 
 | Jack       | Dir | Signal |
 | ---------- | --- | ------ |

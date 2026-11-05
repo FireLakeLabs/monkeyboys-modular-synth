@@ -2,7 +2,7 @@ import type { SoundChoice } from '../samples/crate'
 import { controlValue } from '../modules/values'
 import { controlEnabled } from '../modules/bindings'
 import { getModuleSpec } from '../modules/catalog'
-import { useRef, useState } from 'react'
+import { useRef, useState, type CSSProperties } from 'react'
 import { patternNumber } from '../modules/bindings'
 import type { Control, KnobControl, SwitchControl } from '../modules/types'
 import type { ControlValue, Patch, PlacedModule } from '../patch/types'
@@ -27,10 +27,12 @@ export function Numeric({
   control,
   value,
   commit,
+  fader = false,
 }: {
   control: KnobControl
   value: number
   commit: Commit
+  fader?: boolean
 }) {
   const [draft, setDraft] = useState<string | null>(null)
   const [error, setError] = useState('')
@@ -70,7 +72,7 @@ export function Numeric({
     <div className="numeric-control">
       <button
         type="button"
-        className="knob"
+        className={fader ? 'fader' : 'knob'}
         // A rotary control uses custom pointer capture and logarithmic keyboard movement.
         // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
         role="slider"
@@ -81,7 +83,11 @@ export function Numeric({
         aria-valuetext={`${control.label} ${value}${control.unit ? ` ${control.unit}` : ''}`}
         aria-orientation="vertical"
         title="Drag or use arrows · Shift for fine control · Home/End for limits · Backspace or double-click to reset"
-        style={{ transform: `rotate(${-135 + normalized(control, value) * 270}deg)` }}
+        style={
+          fader
+            ? ({ '--level': normalized(control, value) } as CSSProperties)
+            : { transform: `rotate(${-135 + normalized(control, value) * 270}deg)` }
+        }
         onPointerDown={(event) => {
           if (event.button !== 0) return
           event.currentTarget.setPointerCapture(event.pointerId)
@@ -95,11 +101,13 @@ export function Numeric({
         onPointerMove={(event) => {
           const current = drag.current
           if (!current) return
+          // A fader follows the pointer along its own track.
+          const travel = fader ? event.currentTarget.getBoundingClientRect().height : 200
           current.position = Math.max(
             0,
             Math.min(
               1,
-              current.position + (current.y - event.clientY) / (event.shiftKey ? 2000 : 200),
+              current.position + (current.y - event.clientY) / (travel * (event.shiftKey ? 10 : 1)),
             ),
           )
           current.y = event.clientY
@@ -269,7 +277,9 @@ export function ControlEditor({
         )
       }
       const n = module.values[control.id] ?? knob.default
-      return typeof n === 'number' ? <Numeric control={knob} value={n} commit={commit} /> : null
+      return typeof n === 'number' ? (
+        <Numeric control={knob} value={n} commit={commit} fader={control.group !== undefined} />
+      ) : null
     }
     case 'switch':
       return (
@@ -375,10 +385,13 @@ function SwitchEditor({
       <button
         type="button"
         className="toggle-control"
+        aria-label={control.label}
         aria-pressed={value === 'on'}
+        data-short={control.short}
+        title={control.short ? control.label : undefined}
         onClick={() => commit(value === 'on' ? 'off' : 'on')}
       >
-        {control.label}
+        {control.short ?? control.label}
       </button>
     )
   if (style === 'segments')

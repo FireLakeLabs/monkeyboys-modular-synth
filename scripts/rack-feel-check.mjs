@@ -139,7 +139,7 @@ export function inspectPanels(look) {
           `${id}: overlapping jack targets`,
         )
     }
-    for (const slider of panel.querySelectorAll('.knob')) {
+    for (const slider of panel.querySelectorAll('.knob, .fader')) {
       assert(slider.getAttribute('role') === 'slider', `${id}: missing slider role`)
       for (const name of ['min', 'max', 'now', 'text'])
         assert(slider.hasAttribute(`aria-value${name}`), `${id}: missing slider value${name}`)

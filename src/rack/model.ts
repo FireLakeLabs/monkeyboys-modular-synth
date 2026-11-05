@@ -4,7 +4,7 @@ import { generate } from '../codegen/generate'
 import { graph, functionMembers, isSteps, requireNode } from '../codegen/graph'
 import { getModuleSpec, VOICE_EFFECT_ORDER } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
-import type { JackSignal, KnobControl, SwitchControl } from '../modules/types'
+import type { Control, JackSignal, KnobControl, ModuleSpec, SwitchControl } from '../modules/types'
 import type { Cable, ControlValue, JackRef, Patch, PlacedModule } from '../patch/types'
 import { HP, ROW_HP, railWidth, validatePositions, type RailHp } from '../patch/layout'
 
@@ -18,6 +18,34 @@ export type SwitchStyle = 'toggle' | 'segments' | 'dropdown'
 const SEGMENT_CHARACTER = 4.8
 const SEGMENT_PADDING = 7
 const PANEL_INSET = 10
+
+export interface PanelControls {
+  loose: readonly Control[]
+  strips: readonly { group: string; controls: readonly Control[] }[]
+  more: readonly Control[]
+}
+
+/** Where a module's controls appear. Placement never changes a value or its call. */
+export function panelControls(spec: ModuleSpec): PanelControls {
+  const shown = spec.controls
+    .filter((control) => control.id !== spec.sampleTarget?.control)
+    .toSorted((a, b) =>
+      'group' in a || 'group' in b ? 0 : Number(a.kind === 'knob') - Number(b.kind === 'knob'),
+    )
+  const more = shown.filter((control) => 'more' in control && control.more)
+  const panel = shown.filter((control) => !more.includes(control))
+  const groups = [
+    ...new Set(panel.flatMap((c) => ('group' in c && c.group !== undefined ? [c.group] : []))),
+  ]
+  return {
+    loose: panel.filter((control) => !('group' in control && control.group !== undefined)),
+    strips: groups.map((group) => ({
+      group,
+      controls: panel.filter((control) => 'group' in control && control.group === group),
+    })),
+    more,
+  }
+}
 
 /** Presentation only: every style commits the same catalog option values. */
 export function switchStyle(control: SwitchControl, hp: number): SwitchStyle {
