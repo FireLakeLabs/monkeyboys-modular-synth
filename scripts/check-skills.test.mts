@@ -73,6 +73,47 @@ await test('unmodified vendor content must still match upstream', (t) => {
   assert.ok(checkSkills(root, manifest).some((error) => error.includes('differs from upstream')))
 })
 
+await test('a repo-owned skill can change without recorded hashes', (t) => {
+  const root = fixture(t)
+  const path = join(root, '.agents/skills/orchestrate/SKILL.md')
+  writeFileSync(path, `${readFileSync(path, 'utf8')}\nChanged policy.\n`)
+  assert.deepEqual(checkSkills(root), [])
+})
+
+await test('a repo-owned skill still needs working links and its identity', (t) => {
+  const root = fixture(t)
+  const path = join(root, '.agents/skills/orchestrate/SKILL.md')
+  const text = readFileSync(path, 'utf8')
+  writeFileSync(path, `${text.replace('name: orchestrate', 'name: other')}\n[gone](gone.md)\n`)
+  const errors = checkSkills(root)
+  assert.ok(errors.some((error) => error.includes('Broken local link')))
+  assert.ok(errors.some((error) => error.includes('Invalid skill identity')))
+})
+
+await test('a repo-owned skill must declare dependencies that exist', (t) => {
+  const manifest = structuredClone(lock)
+  manifest.repoSkills[0]?.dependencies.push('missing-skill')
+  assert.ok(
+    checkSkills(fixture(t), manifest).some((error) =>
+      error.includes('orchestrate: missing dependency missing-skill'),
+    ),
+  )
+})
+
+await test('a repo-owned skill registers its support files', (t) => {
+  const root = fixture(t)
+  writeFileSync(join(root, '.agents/skills/orchestrate/unreviewed.sh'), 'exit 0\n')
+  assert.ok(checkSkills(root).some((error) => error.includes('Unregistered file')))
+})
+
+await test('a repo-owned skill cannot reuse a vendored name', (t) => {
+  const manifest = structuredClone(lock)
+  const skill = manifest.repoSkills[0]
+  assert.ok(skill)
+  skill.name = 'tdd'
+  assert.ok(checkSkills(fixture(t), manifest).some((error) => error === 'Duplicate skill name'))
+})
+
 await test(
   'executable helpers retain executable mode',
   { skip: process.platform === 'win32' },

@@ -321,5 +321,22 @@
         }
       ]
     }
+  ],
+  "repoSkills": [
+    {
+      "name": "orchestrate",
+      "dependencies": [
+        "full-send",
+        "full-stop",
+        "file-pr",
+        "babysit-pr",
+        "principle-encode-lessons-in-structure"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/orchestrate/SKILL.md"
+        }
+      ]
+    }
   ]
 }
