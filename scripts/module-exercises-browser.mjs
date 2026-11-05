@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
-import { chooseSwitch } from './panel-controls.mjs'
+import { fileAction, chooseSwitch } from './panel-controls.mjs'
 const output = process.argv[3] ?? '/tmp/monkeyboy-module-exercises'
 await mkdir(output, { recursive: true })
 const browser = await chromium.launch({
@@ -86,7 +86,7 @@ async function status(value) {
   )
 }
 async function load(entry) {
-  await page.getByRole('button', { name: 'Patch library', exact: true }).click()
+  await fileAction(page, 'Patch library')
   await page.getByRole('button', { name: entry.title, exact: true }).click()
   await page.getByRole('button', { name: 'Load patch', exact: true }).click()
   await page.locator('.patch-library').waitFor({ state: 'detached' })

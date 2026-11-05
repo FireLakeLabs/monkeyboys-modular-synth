@@ -164,11 +164,11 @@ test('a cable to an off-screen jack ends at the rail edge, not across OUT', asyn
 })
 
 test('a slow draft does not reset an open sound drawer', async ({ page }) => {
-  await page.getByRole('button', { name: 'SOUNDS', exact: true }).click()
-  await expect(page.getByLabel('Filter sounds')).toBeVisible()
+  await page.getByRole('tab', { name: 'Sounds' }).click()
+  await expect(page.getByLabel('Search sounds')).toBeVisible()
   await page.locator('.cm-line').first().click()
   await page.keyboard.press('End')
   await page.keyboard.type('.l')
   await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
-  await expect(page.getByLabel('Filter sounds')).toBeVisible()
+  await expect(page.getByLabel('Search sounds')).toBeVisible()
 })

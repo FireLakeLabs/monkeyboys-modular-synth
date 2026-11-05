@@ -1,4 +1,4 @@
-import { useState, useSyncExternalStore } from 'react'
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from 'react'
 import type { SourceDocument } from '../reader/types'
 import {
   auditionSample,
@@ -58,9 +58,16 @@ function Card({ sound, report }: { sound: SampleSound; report: (message: string)
     </div>
   )
 }
-export function SoundCrate({ document, locked }: { document: SourceDocument; locked: boolean }) {
+export function SoundCrate({
+  document,
+  locked,
+  active,
+}: {
+  document: SourceDocument
+  locked: boolean
+  active: boolean
+}) {
   const resources = useSyncExternalStore(subscribeSamplePacks, getSamplePacks)
-  const [open, setOpen] = useState(false)
   const [filter, setFilter] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -72,66 +79,61 @@ export function SoundCrate({ document, locked }: { document: SourceDocument; loc
       .catch((error) => setMessage(String(error)))
       .finally(() => setLoading(false))
   }
+  const loadOnFirstVisit = useEffectEvent(load)
+  // Sounds load when you first come to browse them, not on every page load.
+  const loaded = useRef(false)
+  useEffect(() => {
+    if (!active || loaded.current) return
+    loaded.current = true
+    loadOnFirstVisit()
+  }, [active])
   return (
     <section className="sound-crate" aria-label="Sound crate" inert={locked}>
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={() => {
-          setOpen(!open)
-          if (!open) load()
-        }}
-      >
-        SOUNDS
-      </button>
-      {open && (
-        <>
-          <label>
-            Filter sounds
-            <input
-              type="search"
-              value={filter}
-              onChange={(event) => setFilter(event.target.value)}
-            />
-          </label>
-          <button type="button" disabled={loading || locked} onClick={load}>
-            {loading ? 'Loading sounds…' : 'Refresh sounds'}
-          </button>
-          <p>Click to audition · flip variants · drag onto a sample slot or DRUMS row</p>
-          {entries.map((entry, index) => {
-            const pack = entry.pack
-            const resource = pack && seated.find((resource) => resource.key === packKey(pack))
-            const drawers = new Map<string, SampleSound[]>()
-            for (const sound of resource?.sounds ?? []) {
-              if (!sound.name.toLowerCase().includes(filter.toLowerCase())) continue
-              const at = sound.name.lastIndexOf('_')
-              const bank =
-                at > 0 && !sound.name.startsWith('wt_') ? sound.name.slice(0, at) : 'Sounds'
-              drawers.set(bank, [...(drawers.get(bank) ?? []), sound])
-            }
-            return (
-              <details className="sound-pack" open key={`${entry.start}-${index}`}>
+      <label className="sound-search">
+        <span className="sr-only">Search sounds</span>
+        <input
+          type="search"
+          value={filter}
+          placeholder="Search sounds"
+          onChange={(event) => setFilter(event.target.value)}
+        />
+      </label>
+      <p>Click to hear · drag onto a sampler or DRUMS row</p>
+      {entries.map((entry, index) => {
+        const pack = entry.pack
+        const resource = pack && seated.find((resource) => resource.key === packKey(pack))
+        const drawers = new Map<string, SampleSound[]>()
+        for (const sound of resource?.sounds ?? []) {
+          if (!sound.name.toLowerCase().includes(filter.toLowerCase())) continue
+          const at = sound.name.lastIndexOf('_')
+          const bank = at > 0 && !sound.name.startsWith('wt_') ? sound.name.slice(0, at) : 'Sounds'
+          drawers.set(bank, [...(drawers.get(bank) ?? []), sound])
+        }
+        return (
+          <details className="sound-pack" open key={`${entry.start}-${index}`}>
+            <summary>
+              {entry.pack ? packLabel(entry.pack).name : 'samples()'}
+              {resource?.status === 'registered' ? '' : ` · ${resource?.status ?? 'not loaded'}`}
+            </summary>
+            {resource?.error && <p role="alert">{resource.error}</p>}
+            {[...drawers].map(([bank, sounds]) => (
+              // Searching opens every match, so search stays the quick way in.
+              <details className="sound-bank" key={bank} open={!!filter || bank === 'Sounds'}>
                 <summary>
-                  {entry.pack ? packLabel(entry.pack).name : 'samples()'} ·{' '}
-                  {resource?.status ?? 'not loaded'}
+                  {bank} · {sounds.length} sounds
                 </summary>
-                {resource?.error && <p role="alert">{resource.error}</p>}
-                {[...drawers].map(([bank, sounds]) => (
-                  <details className="sound-bank" key={bank} open={bank === 'Sounds'}>
-                    <summary>
-                      {bank} · {sounds.length} sounds
-                    </summary>
-                    {sounds.map((sound) => (
-                      <Card key={sound.name} sound={sound} report={setMessage} />
-                    ))}
-                  </details>
+                {sounds.map((sound) => (
+                  <Card key={sound.name} sound={sound} report={setMessage} />
                 ))}
               </details>
-            )
-          })}
-          <output aria-live="polite">{message}</output>
-        </>
-      )}
+            ))}
+          </details>
+        )
+      })}
+      <button type="button" disabled={loading || locked} onClick={load}>
+        {loading ? 'Loading sounds…' : 'Refresh sounds'}
+      </button>
+      <output aria-live="polite">{message}</output>
     </section>
   )
 }

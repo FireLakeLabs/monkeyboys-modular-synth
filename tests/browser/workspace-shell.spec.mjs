@@ -1,4 +1,5 @@
 import { test, expect } from 'playwright/test'
+import { fileAction } from '../../scripts/panel-controls.mjs'
 
 const add = (page, name) => page.getByRole('button', { name: `Add ${name}`, exact: true }).click()
 const header = (page, id) => page.locator(`[data-module="${id}"] .module-header`)
@@ -84,7 +85,7 @@ test('a replacement prompt is not covered by the selection tools', async ({ page
   await page.keyboard.press('End')
   await page.keyboard.type('.l')
   await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
-  await page.getByRole('button', { name: 'New patch', exact: true }).click()
+  await fileAction(page, 'New patch')
   await expect(page.locator('fieldset.replace-prompt legend')).toBeVisible()
   await expect(page.locator('.selection-tools')).toHaveCount(0)
 })
@@ -106,7 +107,7 @@ test('footer popovers open one at a time', async ({ page }) => {
 
 test('a selected library patch stays readable', async ({ page }) => {
   await open(page, 1600, 1000)
-  await page.getByRole('button', { name: 'Patch library' }).click()
+  await fileAction(page, 'Patch library')
   const entry = page.locator('.patch-collections button').first()
   await entry.click()
   await expect(entry).toHaveAttribute('aria-pressed', 'true')
@@ -149,7 +150,7 @@ test('a prompt stays usable while the rack is locked by a draft', async ({ page 
   await page.keyboard.press('End')
   await page.keyboard.type('.l')
   await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
-  await page.getByRole('button', { name: 'New patch', exact: true }).click()
+  await fileAction(page, 'New patch')
   const prompt = page.locator('fieldset.replace-prompt')
   await expect(prompt).toBeVisible()
   await prompt.getByRole('button', { name: 'Cancel', exact: true }).click()
@@ -171,8 +172,9 @@ test('Focus rack sits in the rack toolbar and takes no row of its own', async ({
 
 test('every chrome button shares one style, with no browser defaults left', async ({ page }) => {
   await open(page, 1600, 1000)
-  await page.getByRole('button', { name: 'SOUNDS', exact: true }).click()
-  await page.locator('.cartridge-heading').click()
+  await page.getByRole('tab', { name: 'Sounds' }).click()
+  await page.getByRole('tab', { name: 'Packs' }).click()
+  await page.getByRole('tab', { name: 'Modules' }).click()
   await add(page, 'SEQ')
   await add(page, 'DRUMS')
   const unstyled = await page.evaluate(() =>

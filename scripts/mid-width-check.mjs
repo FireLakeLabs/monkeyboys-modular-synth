@@ -47,9 +47,10 @@ export function inspectLayout() {
     Math.abs(rect('.rack').top - rect('.code').top) < 1,
     'Rack/code are not alongside each other',
   )
-  const palette = document.querySelector('.library')
-  assert(palette.scrollWidth > palette.clientWidth, 'Palette is not a horizontal strip')
-  assert(palette.scrollHeight <= palette.clientHeight + 1, 'Palette needs vertical scrolling')
+  const dock = document.querySelector('.library')
+  const panel = dock.querySelector('.dock-panel:not([hidden])')
+  assert(dock.scrollHeight <= dock.clientHeight + 1, 'The dock scrolls as well as its tab')
+  assert(panel.scrollWidth <= panel.clientWidth + 1, 'The dock tab scrolls sideways')
   return {
     width: innerWidth,
     height: innerHeight,

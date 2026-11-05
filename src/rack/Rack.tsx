@@ -74,6 +74,12 @@ interface Placement {
 }
 /** A load fits the whole rack when it can; below this, jacks and labels stop being usable. */
 const READABLE_ZOOM = 0.75
+const DOCK_TABS = [
+  { id: 'modules', label: 'Modules' },
+  { id: 'sounds', label: 'Sounds' },
+  { id: 'packs', label: 'Packs' },
+] as const
+const RAIL_LABELS = { 64: 'Narrow', 84: 'Medium', 104: 'Wide' } as const
 const CABLE_MODES = [
   { id: 'all', label: 'All' },
   { id: 'focus', label: 'Focus' },
@@ -91,6 +97,7 @@ export function Rack({
   focusToggle,
   patch,
   cartridgeBay,
+  packWarning,
 
   document: sourceDocument,
 
@@ -99,8 +106,7 @@ export function Rack({
   edit,
   selected,
   select,
-  newPatch,
-  replacementPrompt,
+  prompting,
   cancelReplacement,
   locked,
   lockStrip,
@@ -122,11 +128,12 @@ export function Rack({
   patchOpens: number
   focusToggle: ReactNode
   patch: Patch
-  cartridgeBay?: ReactNode
+  cartridgeBay: ReactNode
+  packWarning: boolean
 
   document: SourceDocument
 
-  soundCrate?: ReactNode
+  soundCrate: (active: boolean) => ReactNode
   sampleResources: readonly SamplePackResource[]
   locked: boolean
   lockStrip: ReactNode
@@ -143,11 +150,11 @@ export function Rack({
   assess: (from: JackRef, to: JackRef, moving?: string) => ConnectionAssessment
   selected: string | null
   select: (id: string | null) => void
-  newPatch: () => void
-  replacementPrompt: ReactNode
+  prompting: boolean
   cancelReplacement: () => void
 }) {
   const [moduleFilter, setModuleFilter] = useState('')
+  const [dockTab, setDockTab] = useState<(typeof DOCK_TABS)[number]['id']>('modules')
   const [probeCable, setProbeCable] = useState<string | null>(null)
   const [pinnedProbe, setPinnedProbe] = useState(false)
   const palette = PALETTE_CATEGORIES.map((category) => ({
@@ -501,7 +508,6 @@ export function Rack({
     return `function · ${loopRole(spec, owner)} · ${loopInfo.functions[owner.id] ?? 'Close RETURN and connect the module to OUT to write the function'}`
   }
   // Prompts sit top-centre, where the module tools could otherwise cover them.
-  const prompting = !!replacementPrompt
   const notes = effectNotes(patch)
   const uniqueWarnings = [...new Set(patch.cables.flatMap((c) => cableWarnings(patch, c)))]
   function applySound(module: string, choice: SoundChoice, row?: number) {
@@ -782,77 +788,124 @@ export function Rack({
     })
   return (
     <>
+      {/* An inert dock passes a touch to the aside, which reports it. */}
       <aside
         className={`library ${locked ? 'library-locked' : ''}`}
-        inert={locked}
         aria-label="Module library"
+        onPointerDown={(event) => {
+          if (locked && event.target === event.currentTarget) touchBlocked()
+        }}
       >
-        {soundCrate}
-        <div className="palette-heading">
-          <h2>MODULES</h2>
-          <label className="module-filter">
-            Filter modules
-            <input
-              type="search"
-              value={moduleFilter}
-              onChange={(event) => setModuleFilter(event.target.value)}
-              placeholder="Name or Strudel call"
-            />
-          </label>
+        <div className="dock-tabs" role="tablist" aria-label="Library">
+          {DOCK_TABS.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              id={`dock-tab-${id}`}
+              aria-selected={dockTab === id}
+              aria-controls={`dock-panel-${id}`}
+              onClick={() => setDockTab(id)}
+            >
+              {label}
+              {id === 'packs' && packWarning && (
+                <span className="dock-warning" title="Pack warning">
+                  △
+                </span>
+              )}
+            </button>
+          ))}
         </div>
-        {palette.length === 0 && <output>No matching modules.</output>}
-        {palette.map((category) => (
-          <section key={category.id}>
-            <h3>{category.label}</h3>
-            <ul>
-              {category.modules.map((spec) => (
-                <li key={spec.id}>
-                  <button
-                    type="button"
-                    draggable
-                    className={`chip cat-${spec.category} chip-${spec.family}`}
-                    aria-label={`Add ${spec.name}`}
-                    title={`${spec.title} · ${spec.hp} HP · click to add or drag onto a rail`}
-                    onDragStart={(event) => {
-                      const existing = spec.unique && patch.modules.find((m) => m.type === spec.id)
-                      if (existing) {
-                        event.preventDefault()
-                        select(existing.id)
-                        return
-                      }
-                      event.dataTransfer.setData('text/plain', spec.id)
-                      setPlacement({ type: spec.id })
-                    }}
-                    onDragEnd={() => {
-                      setPlacement(null)
-                      setGhost(null)
-                    }}
-                    onClick={() => {
-                      const existing = spec.unique && patch.modules.find((m) => m.type === spec.id)
-                      if (existing) {
-                        select(existing.id)
-                        return
-                      }
-                      const position = placementPosition(patch, spec.id)
-                      edit((p) => placeModule(p, spec.id, position.row, position.hp))
-                    }}
-                  >
-                    <span className="chip-heading">
-                      <span className="chip-name">{spec.name}</span>
-                      <span className="chip-family">{spec.family}</span>
-                    </span>
-                    <span className="chip-title">{spec.title}</span>
-                    <code className="chip-call">{spec.paletteCall}</code>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        <div className="dock-body" inert={locked}>
+          <div
+            className="dock-panel"
+            id="dock-panel-modules"
+            role="tabpanel"
+            aria-labelledby="dock-tab-modules"
+            hidden={dockTab !== 'modules'}
+          >
+            <label className="module-filter">
+              <span className="sr-only">Filter modules</span>
+              <input
+                type="search"
+                value={moduleFilter}
+                onChange={(event) => setModuleFilter(event.target.value)}
+                placeholder="Name or Strudel call"
+              />
+            </label>
+            {palette.length === 0 && <output>No matching modules.</output>}
+            {palette.map((category) => (
+              <section key={category.id}>
+                <h3>{category.label}</h3>
+                <ul>
+                  {category.modules.map((spec) => (
+                    <li key={spec.id}>
+                      <button
+                        type="button"
+                        draggable
+                        className={`chip cat-${spec.category} chip-${spec.family}`}
+                        aria-label={`Add ${spec.name}`}
+                        aria-describedby={`chip-about-${spec.id}`}
+                        title={`${spec.title} · ${spec.paletteCall} · click to add or drag onto a rail`}
+                        onDragStart={(event) => {
+                          const existing =
+                            spec.unique && patch.modules.find((m) => m.type === spec.id)
+                          if (existing) {
+                            event.preventDefault()
+                            select(existing.id)
+                            return
+                          }
+                          event.dataTransfer.setData('text/plain', spec.id)
+                          setPlacement({ type: spec.id })
+                        }}
+                        onDragEnd={() => {
+                          setPlacement(null)
+                          setGhost(null)
+                        }}
+                        onClick={() => {
+                          const existing =
+                            spec.unique && patch.modules.find((m) => m.type === spec.id)
+                          if (existing) {
+                            select(existing.id)
+                            return
+                          }
+                          const position = placementPosition(patch, spec.id)
+                          edit((p) => placeModule(p, spec.id, position.row, position.hp))
+                        }}
+                      >
+                        <span id={`chip-about-${spec.id}`} hidden>
+                          {spec.title}
+                        </span>
+                        <span className="chip-name">{spec.name}</span>
+                        <code className="chip-call">{spec.paletteCall}</code>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+          <div
+            className="dock-panel"
+            id="dock-panel-sounds"
+            role="tabpanel"
+            aria-labelledby="dock-tab-sounds"
+            hidden={dockTab !== 'sounds'}
+          >
+            {soundCrate(dockTab === 'sounds')}
+          </div>
+          <div
+            className="dock-panel"
+            id="dock-panel-packs"
+            role="tabpanel"
+            aria-labelledby="dock-tab-packs"
+            hidden={dockTab !== 'packs'}
+          >
+            {cartridgeBay}
+          </div>
+        </div>
       </aside>
       <div className={`rack ${locked ? 'rack-locked' : ''}`} aria-label="Rack">
-        {cartridgeBay}
-
         <PatchCredits source={sourceDocument.source} />
         <div className="rack-toolbar">
           <h2>
@@ -878,7 +931,7 @@ export function Rack({
                 {label}
               </button>
             ))}
-            <span id="cable-visibility-state" className="cable-visibility-state">
+            <span id="cable-visibility-state" className="sr-only">
               {cableVisibilityText}
             </span>
           </fieldset>
@@ -895,7 +948,7 @@ export function Rack({
             >
               {RAIL_WIDTHS.map((width) => (
                 <option key={width} value={width}>
-                  {width} HP
+                  {RAIL_LABELS[width]}
                 </option>
               ))}
             </select>
@@ -923,15 +976,6 @@ export function Rack({
               </select>
             </label>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              cancelReplacement()
-              newPatch()
-            }}
-          >
-            New patch
-          </button>
         </div>
         {/* An inert rack passes a touch to the stage, which reports it. */}
         <div
@@ -963,9 +1007,7 @@ export function Rack({
                 placement.moving,
               )
               setGhost(position)
-              setMessage(
-                `${getModuleSpec(placement.type).name} · row ${position.row + 1}, HP ${position.hp}`,
-              )
+              setMessage(`${getModuleSpec(placement.type).name} · row ${position.row + 1}`)
             }}
             onDragLeave={(event) => {
               if (
@@ -1012,9 +1054,7 @@ export function Rack({
               >
                 {Array.from({ length: rows }, (_, row) => (
                   <div key={row} className="rack-row" style={{ top: row * ROW_HEIGHT }}>
-                    <span className="row-label">
-                      {row + 1} / {railHp} HP
-                    </span>
+                    <span className="row-label">Row {row + 1}</span>
                     {!patch.modules.some((m) => m.type !== 'out' && m.row === row) && rows > 1 && (
                       <button
                         type="button"
@@ -1127,16 +1167,13 @@ export function Rack({
               )}
             </svg>
           </div>
-          {replacementPrompt}
           {module && toolPoint && !locked && !prompting && !currentCable && (
             <div
               ref={tools}
               className="selection-tools"
               style={{ left: toolPoint.x, top: toolPoint.y }}
             >
-              <span>
-                {module.id} · {getModuleSpec(module.type).hp} HP
-              </span>
+              <span>{module.id}</span>
               <button type="button" onClick={() => setMenu({ id: module.id, x: 220, y: 150 })}>
                 Module menu
               </button>
@@ -1220,7 +1257,7 @@ export function Rack({
             if (placement) {
               event.preventDefault()
               setGhost({ row: rows, hp: 0 })
-              setMessage(`${getModuleSpec(placement.type).name} · new row, HP 0`)
+              setMessage(`${getModuleSpec(placement.type).name} · new row`)
             }
           }}
           onDragLeave={() => setGhost(null)}
@@ -1230,9 +1267,7 @@ export function Rack({
           }}
         >
           + Add row
-          {placement && ghost?.row === rows
-            ? ` · ${getModuleSpec(placement.type).name} · ${getModuleSpec(placement.type).hp} HP at 0`
-            : ''}
+          {placement && ghost?.row === rows ? ` · ${getModuleSpec(placement.type).name}` : ''}
         </button>
         <footer className="rack-footer">
           <div className="rack-status" aria-live="polite">

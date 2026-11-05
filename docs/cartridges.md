@@ -1,6 +1,6 @@
 # Sample cartridges (#137)
 
-The cartridge bay is a setup rail above the rack. It adds sample packs without
+The cartridge list is the Packs tab of the left dock. It adds sample packs without
 adding modules or changing module widths. The dependent #138
 [crate and tape contract](sound-crate.md) owns auditioning, sample drop slots,
 SPLICE and WAVETABLE.
@@ -11,7 +11,7 @@ SPLICE and WAVETABLE.
 `packKey` includes both source and base. `FACTORY_PACKS` owns the two pinned
 manifest/audio-base pairs previously private to the engine. The bay always shows
 them; they cannot be ejected. Registration remains lazy until Play/Bounce or
-opening/refreshing SOUNDS.
+visiting or refreshing the Sounds tab.
 
 `Patch.cartridges` and the optional v1 envelope `cartridges` array own only calls
 written by the bay. `packSetup` writes them before opaque `prelude`, tempo and

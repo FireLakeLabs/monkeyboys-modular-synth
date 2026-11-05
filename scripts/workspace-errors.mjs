@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { fileAction } from './panel-controls.mjs'
 
 // Run against the Vite development server; this suite replaces only the audio adapter.
 // Real engine/resource probes below use separate fresh browser contexts.
@@ -135,7 +136,7 @@ try {
   assert.deepEqual(await patch(page), projectedRack)
   assert.equal(await page.locator('.module-panel').count(), longRack.modules.length)
   const failedDownload = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Export', exact: true }).click()
+  await fileAction(page, 'Export')
   assert.equal(await readFile(await (await failedDownload).path(), 'utf8'), failedLayout)
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await waitStatus(page, 'Ready')
@@ -175,7 +176,7 @@ try {
   )
   assert.match(await page.getByRole('alert').textContent(), /Line 2, column/)
   const download = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Export', exact: true }).click()
+  await fileAction(page, 'Export')
   assert.equal(await readFile(await (await download).path(), 'utf8'), invalid)
   await page.screenshot({ path: `${output}/syntax.png` })
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
@@ -208,7 +209,7 @@ try {
     assert.equal(await sourceText(page), '$: note(')
     assert(await page.getByRole('button', { name: 'Play', exact: true }).isEnabled())
     const failedDraftDownload = page.waitForEvent('download')
-    await page.getByRole('button', { name: 'Export', exact: true }).click()
+    await fileAction(page, 'Export')
     assert.equal(await readFile(await (await failedDraftDownload).path(), 'utf8'), '$: note(')
     await page.evaluate(() => {
       window.audioFixture.play = 'ok'
@@ -255,7 +256,7 @@ try {
     document.querySelector('.code')?.textContent.includes('Could not replace patch'),
   )
   assert.equal(await sourceText(page), retained)
-  await page.getByRole('button', { name: 'New patch', exact: true }).click()
+  await fileAction(page, 'New patch')
   await page.waitForFunction(() =>
     document.querySelector('.code')?.textContent.includes('Could not replace patch'),
   )
@@ -325,7 +326,7 @@ try {
     const before = await sourceText(page)
     await page.getByRole('button', { name: 'Play', exact: true }).click()
     await page.waitForFunction(() => window.audioFixture.release !== null)
-    await page.getByRole('button', { name: 'New patch', exact: true }).click()
+    await fileAction(page, 'New patch')
     await waitStatus(page, 'Stopping audio')
     if (action === 'Escape') await page.keyboard.press('Escape')
     else
@@ -348,7 +349,7 @@ try {
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
   const exactDownload = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Export', exact: true }).click()
+  await fileAction(page, 'Export')
   assert.equal(await readFile(await (await exactDownload).path(), 'utf8'), invalidFile)
   pass('ui', 'imported invalid CRLF draft exports exact bytes with exact editor-state line endings')
   await context.close()
@@ -400,9 +401,9 @@ try {
   await audio.getByRole('button', { name: 'Play', exact: true }).click()
   await waitStatus(audio, 'Playing')
   assert.equal(await sourceText(audio), saved)
-  await audio.locator('.cartridge-bay summary').click()
+  await audio.getByRole('tab', { name: 'Packs' }).click()
   await audio.locator('.cartridge-error').first().waitFor()
-  assert.match(await audio.locator('.cartridge-bay summary').textContent(), /Pack warning/)
+  assert.match(await audio.locator('.pack-warning').textContent(), /Pack warning/)
   failManifest = false
   async function rms() {
     return audio.evaluate(async () => {
@@ -586,7 +587,7 @@ try {
   await waitStatus(hang, 'Ready')
   const hungDraft = await sourceText(hang)
   const hungDownload = hang.waitForEvent('download')
-  await hang.getByRole('button', { name: 'Export', exact: true }).click()
+  await fileAction(hang, 'Export')
   assert.equal(
     await readFile(await (await hungDownload).path(), 'utf8'),
     await hang.evaluate(

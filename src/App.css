@@ -119,12 +119,50 @@
 
 .library {
   flex: 1 1 220px;
-  padding: 18px 14px;
   border-right: 1px solid var(--border);
   background: var(--panel);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+}
+.dock-tabs {
+  display: flex;
+  flex: none;
+  border-bottom: 1px solid var(--border);
+}
+.dock-tabs button {
+  flex: 1;
+  padding: 9px 2px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+}
+.dock-tabs button[aria-selected='true'] {
+  border-bottom-color: var(--audio);
+  color: var(--text);
+}
+.dock-warning {
+  margin-left: 4px;
+  color: #f5a4af;
+}
+.dock-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+/* Each tab is one vertical scroll; nothing inside it scrolls again. */
+.dock-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 12px;
+  overflow-y: auto;
+}
+.dock-panel[hidden] {
+  display: none;
 }
 
 .library h2,
@@ -141,15 +179,15 @@
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
 }
 
 .chip {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 7px 8px;
+  gap: 1px;
+  padding: 4px 6px;
   border-radius: 7px;
   border: 1px solid #2a2d33;
   background: #1a1c20;
@@ -159,35 +197,14 @@
 .chip-name {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-}
-
-.chip-title {
-  font-size: 11px;
-  color: var(--muted);
-  white-space: normal;
+  font-size: 13px;
+  letter-spacing: 0.02em;
   overflow-wrap: anywhere;
 }
 
-.chip-heading {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  width: 100%;
-}
-.chip-family {
-  margin-left: auto;
-  padding: 1px 4px;
-  border: 1px solid #414650;
-  border-radius: 3px;
-  font-size: 9px;
-  color: var(--muted);
-}
 .chip-call {
-  font-size: 11px;
-  color: var(--text);
+  font-size: 10px;
+  color: var(--muted);
   overflow-wrap: anywhere;
 }
 .module-filter {
@@ -272,7 +289,6 @@
 .library {
   flex: 0 0 180px;
   min-height: 0;
-  overflow-y: auto;
   box-sizing: border-box;
 }
 .library h3 {
@@ -342,10 +358,6 @@
   margin-top: 12px;
   font-size: 10px;
 }
-.palette-heading {
-  display: grid;
-  gap: 8px;
-}
 .workspace-views {
   display: none;
 }
@@ -374,10 +386,6 @@
   border-radius: 4px;
   background: #202328;
   color: #e4e6ea;
-}
-.apply-shortcuts {
-  font-size: 11px;
-  color: var(--muted);
 }
 .sync-status {
   font-size: 12px;
@@ -439,7 +447,6 @@
   margin: 0 0 8px;
 }
 .audio-note,
-.share-note,
 .source-selection {
   font-size: 11px;
   color: var(--muted);
@@ -573,32 +580,22 @@
   }
   .library {
     grid-column: 1 / -1;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 10px 14px;
-    max-height: none;
     min-height: 0;
-    overflow: auto;
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
-  .library > * {
-    flex: 0 0 auto;
+  .dock-body {
+    flex: none;
+    height: 150px;
   }
-  .palette-heading {
-    width: 150px;
-  }
-  .library h2,
-  .library h3 {
-    margin: 0 0 6px;
+  .dock-panel {
+    padding: 8px 12px;
   }
   .library ul {
-    display: flex;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
   }
-  .library li {
-    width: 150px;
-    flex-shrink: 0;
+  .library h3 {
+    margin: 0 0 6px;
   }
   .workspace .rack,
   .workspace .code {
@@ -671,6 +668,40 @@
   width: 100%;
   height: 4px;
   accent-color: #e6d35f;
+}
+
+.file-menu {
+  position: relative;
+}
+.file-menu-items {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  left: 0;
+  display: grid;
+  gap: 4px;
+  min-width: 200px;
+  padding: 6px;
+  border: 1px solid #414650;
+  border-radius: 6px;
+  background: #15171b;
+  box-shadow: 0 8px 24px #000a;
+}
+.file-menu-items[hidden] {
+  display: none;
+}
+.file-menu-items button {
+  width: 100%;
+  text-align: left;
+}
+.file-menu-bounce {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.file-menu-bounce button {
+  flex: 1;
+  width: auto;
 }
 
 @media (max-width: 1150px) {

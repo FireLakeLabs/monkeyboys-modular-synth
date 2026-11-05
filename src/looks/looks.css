@@ -381,8 +381,7 @@
 .rack-locked .rack-surface {
   opacity: 0.5;
 }
-.rack-locked .rack-surface,
-.library-locked {
+.rack-locked .rack-surface {
   pointer-events: none;
 }
 .module-menu input {

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { fileAction } from './panel-controls.mjs'
 
 // Workspace history acceptance against Vite. --real also measures actual Strudel output.
 const base = process.argv[2] ?? 'http://127.0.0.1:5183'
@@ -78,7 +79,7 @@ async function expectSource(page, source) {
 }
 async function shortcut(page, key, inEditor = false) {
   if (inEditor) await editor(page).focus()
-  else await button(page, 'Patch library').focus()
+  else await page.locator('.file-menu > button').focus()
   await page.keyboard.press(key)
 }
 try {
@@ -147,7 +148,7 @@ try {
   await expectSource(page, original)
   pass('cable deletion restores complete source and saved wiring')
 
-  await button(page, 'New patch').click()
+  await fileAction(page, 'New patch')
   await page.locator('.workspace-notice').waitFor()
   const replacement = (await saved(page)).source
   assert.equal(await page.locator('.module-panel').count(), 2)

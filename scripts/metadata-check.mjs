@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { fileAction } from './panel-controls.mjs'
 
 const base = process.argv[2] ?? 'http://127.0.0.1:5180'
 const output = process.argv[3] ?? '/tmp/mms-metadata'
@@ -38,7 +39,7 @@ async function selection(from, to = from) {
 }
 async function exportSource() {
   const download = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Export', exact: true }).click()
+  await fileAction(page, 'Export')
   const stream = await (await download).createReadStream()
   const chunks = []
   for await (const chunk of stream) chunks.push(chunk)
@@ -75,7 +76,7 @@ try {
   )
   pass('Silent starter shows code and one metadata fold while retaining the complete file')
 
-  await page.getByRole('button', { name: 'Patch library', exact: true }).click()
+  await fileAction(page, 'Patch library')
   await page.getByRole('button', { name: 'Enveloped synth', exact: true }).click()
   await page.getByRole('button', { name: 'Load patch', exact: true }).click()
   await page.getByRole('dialog').waitFor({ state: 'hidden' })

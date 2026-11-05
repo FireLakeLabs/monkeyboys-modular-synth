@@ -1,3 +1,9 @@
+/** File actions live in the File menu, which closes after each one. */
+export async function fileAction(page, name) {
+  await page.locator('.file-menu > button').click()
+  await page.locator('#file-menu-items').getByRole('button', { name, exact: true }).click()
+}
+
 /** Opens a panel's More flyout, which floats outside the panel, and returns it. */
 export async function openMore(panel) {
   await panel.getByRole('button', { name: /^More / }).click()

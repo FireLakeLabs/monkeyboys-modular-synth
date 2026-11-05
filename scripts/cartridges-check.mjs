@@ -76,7 +76,7 @@ export async function verifyCartridges() {
   try {
     seat('https://packs.example.test/good/strudel.json')
     await pause(0)
-    button('Seat cartridge').click()
+    button('Add pack').click()
     await until(() => bay().querySelector('[data-status="loading"]'))
     const duringLoad = read(editorSource())
     assert(
@@ -129,7 +129,7 @@ export async function verifyCartridges() {
 
     seat('https://packs.example.test/bad/strudel.json')
     await pause(0)
-    button('Seat cartridge').click()
+    button('Add pack').click()
     await until(() => bay().querySelector('.cartridge-error'))
     assert(status() === 'Playing', 'Pack failure stopped unrelated voice')
     replaceSource(sourceBody(editorSource()) + "\n$: s('unavailable_pack_sound*8')\n")
@@ -162,7 +162,7 @@ export async function verifyCartridges() {
     )
     seat('github:person/cartridge-test/dev')
     await pause(0)
-    button('Seat cartridge').click()
+    button('Add pack').click()
     await until(() => bay().textContent.includes('follows dev'))
     assert(
       editorSource().includes("samples('github:person/cartridge-test/dev');"),

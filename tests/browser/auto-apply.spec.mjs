@@ -215,7 +215,7 @@ test.describe('the locked rack', () => {
     await expect(strip(page)).toContainText('Fix the code or revert to unlock', { timeout: 4000 })
     await expect(strip(page).getByRole('button', { name: 'Apply', exact: true })).toHaveCount(0)
     expect(await page.locator('.rack-frame').evaluate((element) => element.inert)).toBe(true)
-    expect(await page.locator('aside.library').evaluate((element) => element.inert)).toBe(true)
+    expect(await page.locator('.dock-body').evaluate((element) => element.inert)).toBe(true)
     const out = await page.locator('.output-panel .module-panel').boundingBox()
     await expect(page.locator('.rack-stage')).toHaveCSS('cursor', 'not-allowed')
     await page.mouse.click(out.x + out.width / 2, out.y + out.height / 2)
