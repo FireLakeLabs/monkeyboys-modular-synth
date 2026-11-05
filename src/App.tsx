@@ -23,7 +23,7 @@ import { setValue, starterPatch, validateRack } from './rack/model'
 import { getModuleSpec } from './modules/catalog'
 import { Numeric } from './rack/Controls'
 import { createPlayback } from './strudel/playback'
-import { tryRead } from './reader'
+import { read, tryRead } from './reader'
 import type { ReadResult, SourceDocument } from './reader/types'
 import {
   applyRackEdit,
@@ -45,6 +45,13 @@ import { changesModules, isFinished } from './workspace/finishedCode'
 import { createDocumentHistory } from './workspace/history'
 import { patchFilename, patchName, renameDocument } from './workspace/naming'
 import { PatchLibrary } from './library/PatchLibrary'
+import { SavePrompt } from './library/SavePrompt'
+import {
+  createMyPatches,
+  failureMessage,
+  STORE_FAILURES,
+  type SavedPatch,
+} from './library/myPatches'
 import { readLibraryPatch } from './library/load'
 import { assessDocumentConnection } from './workspace/connections'
 import type { LibraryPatch } from './library/catalog'
@@ -61,7 +68,17 @@ const SourceEditor = lazy(() =>
 const PAUSE_MS = 1200
 
 type Replacement =
-  { kind: 'file'; file: File } | { kind: 'new' } | { kind: 'library'; entry: LibraryPatch }
+  | { kind: 'file'; file: File }
+  | { kind: 'new' }
+  | { kind: 'library'; entry: LibraryPatch }
+  | { kind: 'saved'; entry: SavedPatch }
+
+const replacementName = (replacement: Exclude<Replacement, { kind: 'new' }>) =>
+  replacement.kind === 'file'
+    ? replacement.file.name
+    : replacement.kind === 'library'
+      ? replacement.entry.title
+      : replacement.entry.name
 
 /** The revision a readable draft would become, with its rack proven. */
 function acceptable(document: SourceDocument) {
@@ -111,6 +128,17 @@ export default function App() {
   )
   const [playback] = useState(() => createPlayback(document))
   const audio = useSyncExternalStore(playback.subscribe, playback.getSnapshot)
+  const [myPatches] = useState(() => createMyPatches())
+  const [saved, setSaved] = useState(() => myPatches.load())
+  // The entry Ctrl/Cmd+S updates; a patch without one asks for a name first. Each revision
+  // remembers its entry, so undoing a load can never save the old patch over the new one.
+  const savedId = useRef<string | null>(null)
+  const [savedIds] = useState(() => new WeakMap<SourceDocument, string | null>())
+  const [savedRevisions] = useState(() => new Map<string, string>())
+  const [naming, setNaming] = useState<string | null>(null)
+  // Its own message: work isn't safe until this is dealt with, whatever else happens.
+  const [saveFailure, setSaveFailure] = useState<Notice | null>(null)
+  const dismissSaveFailure = useCallback(() => setSaveFailure(null), [])
   const [notice, setNotice] = useState<Notice | null>(
     restored && {
       message:
@@ -208,6 +236,8 @@ export default function App() {
     (next: SourceDocument, record = true, historyGroup?: object) => {
       if (record) history.accept(next, historyGroup)
       if (!historyGroup) typingGroup.current = null
+      if (record) savedIds.set(next, savedId.current)
+      else savedId.current = savedIds.get(next) ?? null
       draftTyped.current = false
       setLockSettled(false)
       // A notice's Undo must take back that action, so newer work retires it.
@@ -222,7 +252,7 @@ export default function App() {
       draftSaved.current = autosave.save(next)
       playback.update(next).catch((failure: unknown) => setError(String(failure)))
     },
-    [autosave, playback, history],
+    [autosave, playback, history, savedIds],
   )
 
   useEffect(() => {
@@ -253,7 +283,8 @@ export default function App() {
       draggingKnob.current ||
       replacing ||
       pendingReplacement ||
-      libraryOpen
+      libraryOpen ||
+      naming !== null
     )
       return false
     if (current.current.phase !== 'readable') {
@@ -470,6 +501,10 @@ export default function App() {
         event.preventDefault()
         event.stopPropagation()
         if (!event.repeat) stepHistory(event.shiftKey ? 'redo' : 'undo')
+      } else if (event.key.toLowerCase() === 's' && !event.shiftKey) {
+        event.preventDefault()
+        event.stopPropagation()
+        if (!event.repeat) savePatch()
       } else if (event.key === '.') {
         event.preventDefault()
         event.stopPropagation()
@@ -550,6 +585,8 @@ export default function App() {
               return replacement.file.text()
             case 'new':
               return newPatch()
+            case 'saved':
+              return replacement.entry.source
             case 'library':
               return renameDocument(readLibraryPatch(replacement.entry), replacement.entry.title)
           }
@@ -570,12 +607,22 @@ export default function App() {
           message: [
             replacement.kind === 'new'
               ? 'Started a new patch'
-              : `Loaded ${replacement.kind === 'file' ? replacement.file.name : replacement.entry.title}`,
+              : `Loaded ${replacementName(replacement)}`,
             ...(stopsAudio ? ['Playback stopped'] : []),
           ].join(' · '),
           action: 'undo',
         })
-      cleanSource.current = typeof next === 'string' ? null : next.source
+      cleanSource.current =
+        replacement.kind === 'saved' && opened
+          ? current.current.document.source
+          : typeof next === 'string'
+            ? null
+            : next.source
+      // An unreadable saved draft leaves the old accepted patch, which stays unlinked.
+      savedId.current = replacement.kind === 'saved' && opened ? replacement.entry.id : null
+      if (replacement.kind === 'saved' && opened)
+        savedRevisions.set(replacement.entry.id, replacement.entry.revision)
+      savedIds.set(current.current.document, savedId.current)
       setSelected(null)
       setPendingReplacement(null)
       setRackGeneration((generation) => generation + 1)
@@ -623,17 +670,89 @@ export default function App() {
       : work.draft
   }
 
-  function exportDraft() {
-    const url = URL.createObjectURL(new Blob([exportSource()], { type: 'text/plain' }))
+  function download(source: string, filename: string) {
+    const url = URL.createObjectURL(new Blob([source], { type: 'text/plain' }))
     const link = window.document.createElement('a')
     link.href = url
-    link.download = patchFilename(
-      current.current.document.patch,
-      'strudel',
-      current.current.document.source,
-    )
+    link.download = filename
     link.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+
+  function exportDraft() {
+    const { patch, source } = current.current.document
+    download(exportSource(), patchFilename(patch, 'strudel', source))
+  }
+
+  /** Ctrl/Cmd+S. A failed save keeps the work open and says so until dismissed. */
+  function writeSaved(name: string) {
+    // The exact accepted file, or the exact draft; Export adds factory setup, not saving.
+    const { document: accepted, draft, phase: state } = current.current
+    const id = savedId.current ?? undefined
+    const result = myPatches.save({
+      id,
+      revision: id && savedRevisions.get(id),
+      name,
+      source: state === 'readable' ? accepted.source : draft,
+    })
+    setSaved(myPatches.load())
+    if (!result.ok) {
+      // Nothing was overwritten, so the next save asks for a new name.
+      if (result.failure === 'conflict') {
+        savedId.current = null
+        savedIds.set(accepted, null)
+      }
+      setSaveFailure({
+        message: `Couldn’t save ${name}. ${STORE_FAILURES[result.failure]}`,
+        tone: 'error',
+        sticky: true,
+      })
+      return
+    }
+    setSaveFailure(null)
+    savedId.current = result.value.id
+    savedRevisions.set(result.value.id, result.value.revision)
+    savedIds.set(accepted, result.value.id)
+    if (state === 'readable') cleanSource.current = accepted.source
+    setNotice({ message: `Saved ${name}${state === 'readable' ? '' : ' with its unapplied code'}` })
+  }
+
+  function savePatch() {
+    if (composing || editor.current?.composing || libraryOpen || naming !== null) return
+    settleDraft(true, false)
+    const work = current.current
+    const fallback = patchName(work.document.patch, work.document.source)
+    if (!savedId.current) {
+      setNaming(fallback)
+      return
+    }
+    // A name typed in the header wins; otherwise the entry keeps the name you gave it.
+    const latest = myPatches.load()
+    const entry = latest.ok ? latest.value.find((item) => item.id === savedId.current) : undefined
+    const typed = work.phase === 'readable' ? work.document.patch.name?.trim() : undefined
+    saveNamed(typed || entry?.name || fallback)
+  }
+
+  function nameOpenPatch(name: string) {
+    if (current.current.phase !== 'readable' || current.current.document.layout === 'invalid')
+      return
+    try {
+      const named = renameDocument(current.current.document, name)
+      if (named !== current.current.document) install(named)
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : String(failure))
+    }
+  }
+
+  function saveNamed(name: string) {
+    setNaming(null)
+    nameOpenPatch(name)
+    writeSaved(name)
+  }
+
+  function storeChanged(result: Parameters<typeof failureMessage>[0]) {
+    setSaved(myPatches.load())
+    return failureMessage(result)
   }
 
   const status = {
@@ -661,7 +780,7 @@ export default function App() {
       title={
         pendingReplacement.kind === 'new'
           ? 'Replace this patch?'
-          : `Replace this patch with ${pendingReplacement.kind === 'file' ? pendingReplacement.file.name : pendingReplacement.entry.title}?`
+          : `Replace this patch with ${replacementName(pendingReplacement)}?`
       }
       action={
         pendingReplacement.kind === 'new'
@@ -673,7 +792,7 @@ export default function App() {
       stopWarning={
         pendingReplacement.kind === 'new'
           ? 'Starting a new patch stops playback.'
-          : `Loading ${pendingReplacement.kind === 'file' ? pendingReplacement.file.name : pendingReplacement.entry.title} stops playback.`
+          : `Loading ${replacementName(pendingReplacement)} stops playback.`
       }
       replacing={replacing}
       cancel={cancelReplacement}
@@ -728,8 +847,10 @@ export default function App() {
           openLibrary={() => {
             cancelReplacement()
             setError(null)
+            setSaved(myPatches.load())
             setLibraryOpen(true)
           }}
+          save={savePatch}
           exportFile={exportDraft}
           bounce={() => {
             playback
@@ -1084,10 +1205,16 @@ export default function App() {
         </section>
       </main>
       {/* Any file action can run while the rack or code pane is hidden, so this floats. */}
-      {pendingReplacement && pendingReplacement.kind !== 'library' && (
+      {pendingReplacement && !['library', 'saved'].includes(pendingReplacement.kind) && (
         <div className="workspace-prompt">{replacementPrompt}</div>
       )}
       <WorkspaceNotice notice={notice} act={noticeAction} dismiss={dismissNotice} />
+      <WorkspaceNotice
+        notice={saveFailure}
+        act={noticeAction}
+        dismiss={dismissSaveFailure}
+        raised
+      />
       {libraryOpen && (
         <PatchLibrary
           close={() => {
@@ -1100,7 +1227,7 @@ export default function App() {
             setError(null)
           }}
           confirmation={
-            pendingReplacement?.kind === 'library' ? (
+            pendingReplacement?.kind === 'library' || pendingReplacement?.kind === 'saved' ? (
               replacementPrompt
             ) : replacing ? (
               <output className="pending-note" aria-live="polite">
@@ -1109,7 +1236,45 @@ export default function App() {
             ) : null
           }
           error={error}
+          saved={saved}
+          usage={myPatches.usage()}
+          loadSaved={(entry) => {
+            requestReplacement({ kind: 'saved', entry }).catch((failure: unknown) =>
+              setError(String(failure)),
+            )
+          }}
+          renameSaved={(entry, name) => {
+            const result = myPatches.rename(entry.id, name)
+            // Only a tab that was up to date stays so; a stale one must still conflict.
+            if (result.ok && savedRevisions.get(entry.id) === result.value.previous)
+              savedRevisions.set(entry.id, result.value.revision)
+            const failure = storeChanged(result)
+            // The open patch is this entry, so its name changes too.
+            if (!failure && savedId.current === entry.id) nameOpenPatch(name)
+            return failure
+          }}
+          exportSaved={(entry) => {
+            const filename = patchFilename({ name: entry.name }, 'strudel', entry.source)
+            try {
+              const saved = read(entry.source)
+              download(
+                saved.layout === 'invalid' ? entry.source : withFactoryPacks(saved).source,
+                filename,
+              )
+            } catch {
+              download(entry.source, filename) // An unreadable draft exports exactly.
+            }
+          }}
+          deleteSaved={(entry) => {
+            const result = myPatches.remove(entry.id)
+            if (result.ok && savedId.current === entry.id) savedId.current = null
+            return storeChanged(result)
+          }}
+          restoreSaved={(entry, index) => storeChanged(myPatches.restore(entry, index))}
         />
+      )}
+      {naming !== null && (
+        <SavePrompt name={naming} save={saveNamed} cancel={() => setNaming(null)} />
       )}
     </div>
   )

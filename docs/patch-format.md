@@ -255,6 +255,15 @@ files still open byte-for-byte under the default title.
 
 See [unit and browser verification](patch-names-verification.md).
 
+## My patches (#182)
+
+`localStorage` key `monkeyboy.patches.v1` holds a JSON envelope with `version: 1` and
+`patches`, each with `id`, `name`, `source`, `savedAt` and `revision`. `source` is the exact
+accepted file, or the exact draft when one was unapplied, so reopening one is the
+[round trip](#in-memory) every file already has: sound, formatting and saved rack state
+stay separate checks. `name` lets the library list entries without reading them. No
+rack metadata changes. An envelope that cannot be read is reported and never rewritten.
+
 ## Local workspace recovery (#60)
 
 The browser keeps one recovery copy in `localStorage`, under

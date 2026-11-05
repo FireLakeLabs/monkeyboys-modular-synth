@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { getModuleSpec } from '../modules/catalog'
 import { PATCH_LIBRARY, type LibraryNode, type LibraryPatch } from './catalog'
+import { MyPatchDetail, MyPatchesList } from './MyPatches'
+import type { SavedPatch, StoreResult } from './myPatches'
 import './PatchLibrary.css'
 
 function CollectionItems({
@@ -59,9 +61,23 @@ export function PatchLibrary({
   cancelReplacement,
   confirmation,
   error,
+  saved,
+  usage,
+  loadSaved,
+  renameSaved,
+  exportSaved,
+  deleteSaved,
+  restoreSaved,
 }: {
   close: () => void
   requestLoad: (entry: LibraryPatch) => void
+  saved: StoreResult<SavedPatch[]>
+  usage: number
+  loadSaved: (entry: SavedPatch) => void
+  renameSaved: (entry: SavedPatch, name: string) => string | null
+  exportSaved: (entry: SavedPatch) => void
+  deleteSaved: (entry: SavedPatch) => string | null
+  restoreSaved: (entry: SavedPatch, index: number) => string | null
   cancelReplacement: () => void
   confirmation: ReactNode
   error: string | null
@@ -71,6 +87,10 @@ export function PatchLibrary({
     entry: LibraryPatch
     path: readonly string[]
   } | null>(null)
+  const [mine, setMine] = useState<string | null>(null)
+  const [deleted, setDeleted] = useState<{ entry: SavedPatch; index: number } | null>(null)
+  const [storeError, setStoreError] = useState<string | null>(null)
+  const savedEntry = saved.ok ? saved.value.find((item) => item.id === mine) : undefined
   useEffect(() => {
     const element = dialog.current
     const opener = document.activeElement
@@ -94,7 +114,7 @@ export function PatchLibrary({
       <header>
         <div>
           <h2 id="patch-library-title">Patch library</h2>
-          <p>Built-in collections · editable Strudel patches</p>
+          <p>Your patches and the built-in collections</p>
         </div>
         <button type="button" onClick={close}>
           Close library
@@ -102,22 +122,81 @@ export function PatchLibrary({
       </header>
       <div className="patch-browser">
         <nav className="patch-collections" aria-label="Patch collections">
+          <MyPatchesList
+            saved={saved}
+            selected={savedEntry?.id}
+            choose={(item) => {
+              cancelReplacement()
+              setSelection(null)
+              setMine(item.id)
+            }}
+            load={(item) => {
+              setSelection(null)
+              setMine(item.id)
+              loadSaved(item)
+            }}
+          />
           <CollectionItems
             nodes={PATCH_LIBRARY}
             path={[]}
             selected={entry?.id}
             choose={(entry, path) => {
               cancelReplacement()
+              setMine(null)
               setSelection({ entry, path })
             }}
             load={(entry, path) => {
+              setMine(null)
               setSelection({ entry, path })
               requestLoad(entry)
             }}
           />
         </nav>
         <section className="patch-detail" aria-label="Selected patch" aria-live="polite">
-          {entry && selection ? (
+          {deleted && (
+            <p className="my-patch-deleted">
+              Deleted {deleted.entry.name}{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  const failure = restoreSaved(deleted.entry, deleted.index)
+                  setStoreError(failure)
+                  // The only copy stays here until it is safely back.
+                  if (failure) return
+                  setMine(deleted.entry.id)
+                  setDeleted(null)
+                }}
+              >
+                Undo
+              </button>
+            </p>
+          )}
+          {storeError && (
+            <p className="error" role="alert">
+              {storeError}
+            </p>
+          )}
+          {savedEntry ? (
+            <>
+              <MyPatchDetail
+                entry={savedEntry}
+                usage={usage}
+                load={() => loadSaved(savedEntry)}
+                rename={(name) => renameSaved(savedEntry, name)}
+                exportFile={() => exportSaved(savedEntry)}
+                remove={() => {
+                  const index = saved.ok ? saved.value.indexOf(savedEntry) : 0
+                  const failure = deleteSaved(savedEntry)
+                  setStoreError(failure)
+                  if (!failure) {
+                    setDeleted({ entry: savedEntry, index })
+                    setMine(null)
+                  }
+                }}
+              />
+              {confirmation}
+            </>
+          ) : entry && selection ? (
             <>
               <p className="patch-path">{selection.path.join(' / ')}</p>
               <h3>{entry.title}</h3>

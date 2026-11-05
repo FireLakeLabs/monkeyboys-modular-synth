@@ -538,6 +538,9 @@
   transform: translateX(-50%);
   pointer-events: none;
 }
+.workspace-notice-region[data-raised='true'] {
+  bottom: 104px;
+}
 .workspace-notice {
   display: flex;
   gap: 10px;

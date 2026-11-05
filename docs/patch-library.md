@@ -161,6 +161,36 @@ restore saved looks, positions, output names and nonsounding values. Library
 collection paths and selection are browser metadata and are not exported. See
 [patch format](patch-format.md) and [translation rules](translation-rules.md).
 
+## My patches (#182)
+
+The library opens with **My patches**, kept in this browser. **Ctrl/Cmd+S** or File →
+Save patch saves. The first save of a patch asks for a name, and later saves update
+that entry without asking. Loading a saved patch links it, so saving updates it too.
+New, Open file and built-in patches start unlinked. Each revision remembers its entry,
+so undoing a load can never save the old patch over the one that was loaded. A reload
+starts unlinked, so the next save asks for a name again.
+
+A saved entry is the exact accepted file, so plain Strudel with its rack metadata, and
+[no new format](patch-format.md#my-patches-182) appears. An unapplied draft is saved as
+it is and says so, and it opens like a file: readable code applies, and unreadable
+code returns as a draft beside the previous rack. Export adds factory setup as Export
+does anywhere else, and renaming updates the entry and the saved patch name together.
+
+Patches can be renamed, exported and deleted from the library. Delete acts at once and
+offers Undo in the library, which puts the entry back in its place. Double-click or
+Enter loads a saved patch, and an unapplied draft still prompts first.
+
+Browsers give a site about 5 MB, shared with [local recovery](patch-format.md#local-workspace-recovery-60).
+The library shows use against that, and warns above 80%. A save that fails keeps your
+work open and shows a message until dismissed: storage full, storage unavailable, or
+saved patches that cannot be read. It is a separate message, so later edits and their
+messages never hide it. An unreadable
+store is left exactly as it was and never overwritten. Each write starts from what
+storage holds, so another tab's saves survive, and a save that would replace a newer
+revision from another tab is refused, keeping that revision; the next save asks for a new
+name. Undoing a delete keeps both versions if the patch was saved again meanwhile, and a
+failed Undo keeps the entry so it can be tried again. Clearing browser data removes these patches, so Export is the durable copy.
+
 ## Original #45 browser verification
 
 Observed in this implementation session: the UI and real-engine checks passed,
