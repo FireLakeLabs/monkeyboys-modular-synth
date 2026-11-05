@@ -70,6 +70,37 @@ test('segments are radios and off/on switches are pressed buttons, from the keyb
   await expect(crush).toBeFocused()
 })
 
+test('a cable crossing a panel never takes clicks from its buttons and segments', async ({
+  page,
+}) => {
+  // Selecting on press wakes a module's cables, so one can sit over a control at release.
+  for (const type of ['lofi', 'lfo']) {
+    const { id } = await loadCase(page, type)
+    const hits = await page.evaluate((id) => {
+      const svg = document.querySelector('.cables')
+      const cover = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+      for (const [name, value] of Object.entries({ width: '100%', height: '100%' }))
+        cover.setAttribute(name, value)
+      cover.style.pointerEvents = 'all'
+      svg.append(cover)
+      const controls = document.querySelectorAll(
+        `[data-module="${id}"] :is(.toggle-control, .segments label)`,
+      )
+      const covered = [...controls].filter((control) => {
+        control.scrollIntoView({ block: 'nearest' })
+        const rect = control.getBoundingClientRect()
+        return (
+          document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2) === cover
+        )
+      })
+      cover.remove()
+      return { controls: controls.length, covered: covered.map((control) => control.textContent) }
+    }, id)
+    expect(hits.controls, type).toBeGreaterThan(0)
+    expect(hits.covered, type).toEqual([])
+  }
+})
+
 test('values read as plain text, stay click-to-edit, and ACCENT opens on demand', async ({
   page,
 }) => {

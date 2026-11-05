@@ -444,6 +444,13 @@
   outline: 2px solid #7db9f6;
   outline-offset: -2px;
 }
+/* Selecting on press wakes a module's cables. Like jacks, buttons stay above them,
+   or a cable crossing the panel takes the release and the click is lost. */
+.toggle-control,
+.segments label {
+  position: relative;
+  z-index: 2;
+}
 .toggle-control {
   align-self: flex-start;
   width: 100%;
