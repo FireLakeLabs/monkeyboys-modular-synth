@@ -100,7 +100,22 @@
   "undo": {
     "deleteRestoresModule": true,
     "loadRestoresPreviousPatch": true,
-    "conversionTested": false
+    "conversionTested": true,
+    "conversion": {
+      "patch": "Switch Angel trance demo",
+      "sourceLengthBefore": 26636,
+      "sourceLengthConverted": 27610,
+      "undoRestoresExactSource": true,
+      "redoRestoresExactConvertedSource": true,
+      "knobValues": {
+        "before": 0,
+        "converted": 0.05,
+        "undone": 0
+      },
+      "moduleCounts": [29, 29, 29],
+      "cableCounts": [28, 28, 28],
+      "sameEditRefusedAgainAfterUndo": true
+    }
   },
   "deleteKeys": {
     "deleteOnFocusedHeader": true,

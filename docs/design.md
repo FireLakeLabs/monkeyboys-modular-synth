@@ -25,7 +25,8 @@ are owner-approved. See [rack evidence](rack-verification.md) and
 [workspace/looks evidence](workspace-verification.md) for implementation and limits.
 
 The [usability review](usability-review.md) and its [mockups](design/usability-review.html)
-record proposed refinements, tracked in [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188). They are not yet the design.
+record refinements, tracked in [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188). [Owner decisions](decisions.md#usability-review-188-decided-4-november-2026)
+are settled but not yet built; the rest are proposals.
 
 ## Boards
 
@@ -177,7 +178,7 @@ state and changes neither source nor saved rack positions. Cable measurements,
 wire pointers and module placement convert viewport coordinates back to rack
 coordinates. Fit leaves an extra 24 screen pixels below the rails for wrapped
 jack targets. Jacks reserve at least 24 screen pixels, growing their layout boxes
-when zoomed out and wrapping into additional rows as needed. Cables whose jack
+when zoomed out and wrapping into additional rows as needed; [#186](decisions.md#usability-review-188-decided-4-november-2026) limits this to 75% and above. Cables whose jack
 centres are clipped inside a scrolling patch box are hidden until the jacks
 return into view; their connections and saved positions remain intact.
 

@@ -3,8 +3,9 @@
 Review of `fa290cd` on 4 November 2026, tracked in
 [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188). The
 owner reported that the app had grown messier as features landed. This records
-what was observed and proposed. Proposals are not settled until
-[`decisions.md`](decisions.md) records them.
+what was observed and proposed. The owner's choices are in
+[`decisions.md`](decisions.md#usability-review-188-decided-4-november-2026); anything
+not recorded there is still a proposal.
 
 - [Mockups beside real panels](design/usability-review.html)
 - [Measurements](usability-review-results.json)
@@ -48,8 +49,9 @@ Other observed results:
 - **Layout shift:** selecting a module shrinks the rack frame from 614 to 570 px.
 - **New patch:** 1,284 px of rail in an 831 px viewport leaves MIX off-screen.
 - **Delete:** the key works only on a focused header. Backspace does nothing.
-- **Undo:** restores a deleted module and the previous patch after a load. Undo
-  after Make rack-editable was not tested.
+- **Undo:** restores a deleted module and the previous patch after a load. After
+  Make rack-editable on Trance, undo restored the exact source (26,636 characters;
+  conversion made it 27,610), and redo restored the exact converted source.
 - **Dropdowns:** about 35 of 42 setting dropdowns have four or fewer options, and
   at least 13 are off/on.
 - **Refused edits:** only the Trance demo refused a knob edit among all 74 library
@@ -68,7 +70,7 @@ Other observed results:
 | Saving and loading   | My patches, Ctrl+S, shorter load and restore                 | #182, #183             |
 | Sounds               | Real cartridges and whole-panel drop targets                 | #184, #185             |
 | Large racks          | Overview zoom and better import layout                       | #186, #187             |
-| Open owner decisions | Confirmations, apply behavior, conversion, 24 px jacks       | #179, #180, #181, #186 |
+| Decided by the owner | Confirmations, apply behavior, conversion, 24 px jacks       | #179, #180, #181, #186 |
 
 ## Limits
 
