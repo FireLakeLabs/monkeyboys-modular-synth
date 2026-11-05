@@ -56,6 +56,8 @@ interface CallControl {
   /** Mode-specific controls retain saved values but neither display nor emit while inactive. */
   when?: readonly { control: string; values: readonly string[] }[]
   group?: string
+  /** Rarely used: shown in the panel's More flyout, with the same value and call. */
+  more?: true
 }
 
 export interface KnobControl extends CallControl {
@@ -86,6 +88,8 @@ export interface SwitchControl extends CallControl {
   kind: 'switch'
   id: string
   label: string
+  /** Printed on a narrow toggle; `label` remains its accessible name. */
+  short?: string
   options: readonly SwitchOption[]
   default: string
   omitAt?: string

@@ -129,7 +129,7 @@ export function Tape({
               aria-valuenow={position}
               aria-orientation="horizontal"
               title={`${control?.label} ${position}`}
-              style={{ left: `calc(12px + (100% - 24px) * ${position})`, top: index * 19 }}
+              style={{ left: `calc(12px + (100% - 24px) * ${position})`, top: index * 17 }}
               onPointerDown={(event) => {
                 const bounds = event.currentTarget.parentElement?.getBoundingClientRect()
                 if (!bounds || event.button !== 0) return

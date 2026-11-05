@@ -57,9 +57,9 @@
 .sample-slot {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   border: 1px dashed currentColor;
-  padding: 5px;
+  padding: 3px;
   font-size: 11px;
   min-width: 0;
   overflow-wrap: anywhere;
@@ -70,14 +70,16 @@
   font-size: 12px;
 }
 .tape-view {
+  width: 100%;
   min-width: 0;
-  padding: 4px;
-  margin: 4px 0;
+  padding: 2px 4px;
+  margin: 0;
 }
 .tape-view label {
   font-size: 11px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 .tape-view input[type='range'] {
   width: 100%;
@@ -131,13 +133,14 @@
   flex-shrink: 0;
 }
 .tape-strip {
-  height: 78px;
+  height: 70px;
+  margin-block: 1px;
 }
 .tape-mark {
   position: absolute;
   transform: translateX(-50%);
   width: 24px;
-  height: 18px;
+  height: 16px;
   padding: 0;
   border: 1px solid #ffd097;
   border-radius: 1px;

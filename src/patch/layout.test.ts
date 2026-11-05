@@ -122,6 +122,21 @@ describe('per-patch rails and pinned output (#133)', () => {
     expect(sourceBody(saveLayout(document).source)).toBe(sourceBody(source))
   })
 
+  it('restores saved neighbors that overlap, keeps exact source, and lets a move resolve them', () => {
+    // A module that grew would overlap the neighbor saved beside it.
+    const document = fromPatch(
+      placeModule(placeModule(starterPatch(104), 'vcf', 1, 0), 'lfo', 1, 10),
+    )
+    const overlapping = document.source.replace(/"hp": 10\b/, '"hp": 4')
+    expect(overlapping).not.toBe(document.source)
+    const reopened = read(overlapping)
+    expect(reopened.layout).toBe('restored')
+    expect(reopened.source).toBe(overlapping)
+    expect(reopened.patch.modules.find((m) => m.id === 'lfo1')?.hp).toBe(4)
+    expect(() => validateRack(reopened.patch)).toThrow('Modules cannot overlap')
+    expect(() => placeModule(reopened.patch, 'lfo', 1, 10, 'lfo1')).not.toThrow()
+  })
+
   it('rejects invalid widths and off-rail metadata while retaining executable bytes', () => {
     const document = fromPatch(placeModule(starterPatch(104), 'vcf', 0, 80))
     const bad = read(document.source.replace('"railHp": 104', '"railHp": 64'))

@@ -277,6 +277,7 @@ export const SMPL: ModuleSpec = {
       id: 'bank',
       omitAt: '',
       call: { method: 'bank', argument: { kind: 'string' }, read: 'merge' },
+      more: true,
       label: 'BANK',
       options: [{ value: '', label: 'default' }, ...opts('RolandTR909', 'RolandTR808')],
       default: 'RolandTR909',
@@ -304,6 +305,8 @@ export const SMPL: ModuleSpec = {
       numericCall('cut', 'CUT', 'cut', 0, 32, 1, 0),
     ].map((control) => ({
       ...control,
+      // N stays on the panel; the tape already draws and moves the other positions.
+      ...(control.id === 'n' ? {} : { more: true as const }),
       ...('call' in control && control.call
         ? { call: { ...control.call, read: 'merge' as const } }
         : {}),
@@ -840,6 +843,7 @@ export const MIX: ModuleSpec = {
           kind: 'switch',
           id: `mute${n}`,
           label: `MUTE ${n}`,
+          short: 'M',
           options: opts('off', 'on'),
           default: 'off',
         },
@@ -847,11 +851,12 @@ export const MIX: ModuleSpec = {
           kind: 'switch',
           id: `solo${n}`,
           label: `SOLO ${n}`,
+          short: 'S',
           options: opts('off', 'on'),
           default: 'off',
         },
-        { kind: 'text', id: `name${n}`, label: `NAME ${n}`, default: '' },
-        { kind: 'text', id: `channels${n}`, label: `OUTPUT ${n}`, default: '1:2' },
+        { kind: 'text', id: `name${n}`, label: `NAME ${n}`, default: '', more: true },
+        { kind: 'text', id: `channels${n}`, label: `OUTPUT ${n}`, default: '1:2', more: true },
       ] satisfies Control[]
     ).map((control) => ({ ...control, group: `CH ${n}` })),
   ),
