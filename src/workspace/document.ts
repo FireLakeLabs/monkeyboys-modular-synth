@@ -72,7 +72,7 @@ export function fromPatch(patch: Patch): SourceDocument {
   return read(generate(patch))
 }
 
-/** Explicitly relinquish source formatting while retaining opaque setup and CODE. */
+/** Relinquish source formatting while retaining opaque setup and CODE. */
 export function makeRackEditable(document: SourceDocument, next = document.patch): SourceDocument {
   if (JSON.stringify(document.patch) !== document.patchRevision)
     throw new Error('Stale source spans')
@@ -404,6 +404,28 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
     ),
   )
   return saveLayout({ ...document, source: changed }, next)
+}
+
+/**
+ * Apply a rack edit, rewriting imported source in rack style only when it cannot
+ * keep the edit. A failed rewrite throws RackEditRefused, so nothing changes.
+ */
+export function applyRackEdit(
+  document: SourceDocument,
+  next: Patch,
+): { document: SourceDocument; converted: boolean } {
+  try {
+    return { document: editDocument(document, next), converted: false }
+  } catch (failure) {
+    if (!(failure instanceof RackEditRefused)) throw failure
+    try {
+      return { document: makeRackEditable(document, next), converted: true }
+    } catch (conversion) {
+      throw new RackEditRefused(
+        conversion instanceof Error ? conversion.message : String(conversion),
+      )
+    }
+  }
 }
 
 export function replaceLayout(document: SourceDocument): SourceDocument {

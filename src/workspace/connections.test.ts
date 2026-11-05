@@ -12,7 +12,7 @@ function fixture() {
 }
 
 describe('source-aware cable preview', () => {
-  it('blocks graph-valid CV edits before committing, without changing source or saved rack', () => {
+  it('warns before a graph-valid CV edit that needs a rewrite, changing nothing', () => {
     const document = fixture()
     const before = structuredClone(document)
     const from = { module: 'lfo1', jack: 'out' }
@@ -20,9 +20,8 @@ describe('source-aware cable preview', () => {
     expect(assessConnection(document.patch, from, to).kind).toBe('valid')
     expect(() => editDocument(document, connect(document.patch, from, to))).toThrow(RackEditRefused)
     expect(assessDocumentConnection(document, from, to)).toMatchObject({
-      kind: 'blocked',
-      sourceRefused: true,
-      message: expect.stringMatching(/came from code.*Add the cable in code.*rack.editable/),
+      kind: 'warning',
+      message: expect.stringMatching(/came from code.*rewrites it in rack style.*Undo/),
     })
     expect(document).toEqual(before)
 
@@ -49,7 +48,7 @@ describe('source-aware cable preview', () => {
     expect(read(next.source).patch).toEqual(next.patch)
 
     expect(assessDocumentConnection(next, from, { module: 'vcf1', jack: 'cv' }).kind).toBe(
-      'blocked',
+      'warning',
     )
     expect(assessDocumentConnection(next, { module: 'lfo1', jack: 'out' }, to).kind).toBe('blocked')
   })

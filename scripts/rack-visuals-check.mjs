@@ -169,14 +169,6 @@ try {
   const beforeReplace = await source()
   await page.locator('[data-jack="osc2:out"]').click()
   await page.locator('[data-jack="mix1:in1"]').click({ timeout: 3000 })
-  await page.locator('.replace-prompt').getByRole('button', { name: 'Cancel', exact: true }).click()
-  assert.equal(await source(), beforeReplace)
-  await page.locator('[data-jack="osc2:out"]').click()
-  await page.locator('[data-jack="mix1:in1"]').click({ timeout: 3000 })
-  await page
-    .locator('.replace-prompt')
-    .getByRole('button', { name: 'Replace', exact: true })
-    .click()
   assert.equal(
     await page.getByRole('button', { name: 'reverb1:out → mix1:in1', exact: true }).count(),
     0,

@@ -75,7 +75,7 @@ inputs require STEP/numeric patterns; ENV is attached directly to CV. Utilities
 and CV SEQ return absolute values in destination units. They do not receive an
 additional destination `.range()`. Source imports recognize these forms without
 evaluation; unsupported configs retain CODE. Coupled imported edits that cannot
-preserve source are refused through the existing explicit conversion flow.
+preserve source convert the code on edit, with Undo.
 Generic ENV objects on native VCA/filter targets retain CODE, preserving their additive behavior rather than substituting native ADSR. Shared saved sources reconcile only fields represented by each adapter, retaining inactive pitch/sampling settings.
 Exact source, complete saved identity and real engine events are checked
 independently; [browser PCM](modulation-verification.md) proves within-note motion.
@@ -429,20 +429,23 @@ generation or the existing proven literal/name edits.
 
 Cable target previews (#76) run the same source-aware edit boundary before a
 jack is marked valid, including the proposed replacement or moved cable.
-Source-refused targets show the blocked state and a plain explanation beside
-the jack on hover and focus. Activating such a target retains the explicit
-conversion offer below; it does not commit the cable without consent. Supported
+Targets that need a rewrite show a warning state and say so beside the jack on
+hover and focus. Activating one converts the code as described below. Supported
 imported edits remain available. See [browser evidence](interaction-verification.md#cable-refusal-preview-76).
 
-## Explicit rack conversion (#55/#75)
+## Rack conversion on edit (#55/#75/#181)
 
-The imported preservation matrix still governs edits until a user consents to
-**Make rack-editable** at a refusal. Conversion regenerates the proposed graph,
-retains opaque setup as [prelude metadata](patch-format.md#opaque-setup-on-an-explicit-rack-conversion-75)
-and keeps CODE fragments, then completes that proposed edit atomically. Subsequent
+The imported preservation matrix governs edits until one cannot preserve source.
+That edit then converts: it regenerates the proposed graph, retains opaque setup as
+[prelude metadata](patch-format.md#opaque-setup-on-a-rack-conversion-75)
+and keeps CODE fragments, and completes atomically with “Code rewritten in rack
+style · Undo”. Undo restores the exact prior source and redo the exact converted
+source, as one history step that includes any knob gesture around the rewrite. After
+Undo the same edit converts again and reports again. A conversion that fails, such
+as mixed helper and pattern declarations, changes nothing and explains why. Subsequent
 rack edits use the canonical generator path. Library exercises are already authored
-this way; attributed showcases retain exact source until consent. See
-[library ownership and conversion limits](patch-library.md#rack-ownership-55-and-75).
+this way; attributed showcases retain exact source until that first converting
+edit. See [library ownership and conversion limits](patch-library.md#rack-ownership-55-and-75).
 
 ## Source-independent grid views (#66)
 
@@ -544,7 +547,7 @@ Imported unrepresentable products remain exact CODE, while generated files
 recover the full nested saved rack. Imports with custom orbits retain CODE and
 never gain overriding routing. Conditional settings and default omission do not
 rewrite an imported document; literal edits still use proven source spans and
-unsupported structural edits retain the existing conversion/refusal boundary.
+unsupported structural edits convert the code on edit, with Undo.
 
 New single-call controls use catalog bindings, including text ACCENT rows and
 conditional modes. Multi-word scale spaces write colon-separated engine names.
@@ -595,8 +598,7 @@ snapshots independently verify these addresses, controls and graph semantics.
 External changes restore nested identities only when the complete enclosing
 lambda matches; ambiguous changes auto-place. Source-aware scalar edits carry
 fresh descriptors while retaining IDs, comments and lambda identifiers. Source
-owned loop wiring changes are refused through the existing explicit conversion
-flow; generated racks support normal connection, replacement, deletion and undo.
+owned loop wiring changes convert the code on edit, with Undo; generated racks support normal connection, replacement, deletion and undo.
 
 Graph validation permits one chain per loop, nested loops and attached CV. It
 rejects sources, modulation utilities, MIX, OUT, branches, shared members, named
@@ -692,7 +694,7 @@ Untouched documents retain every source byte; saving/reopening preserves their
 independently projected rack. GATES and four-reference SWITCH forms also have
 source-aware adapters; unsupported or ambiguous forms retain CODE. Safe canonical
 rack edits regenerate the complete graph; unsafe edits to source-owned routing
-use the existing refusal/explicit conversion flow.
+convert the code on edit, with Undo.
 
 ## Readable cable probes (#139)
 
@@ -757,7 +759,7 @@ panel. Lookahead validates the complete call before creating that owner; an inva
 or computed argument cannot introduce the panel's default slice call. Counts are
 1–64 integers; slice/splice also take literal order text. Array cut points, computed
 arguments and other unsupported forms remain exact CODE. Existing saved CODE
-ownership stays authoritative. Imported mode/arity changes retain the existing
-explicit conversion/refusal boundary; literal sample, count, order and tape edits
+ownership stays authoritative. Imported mode/arity changes convert the code on
+edit, with Undo; literal sample, count, order and tape edits
 preserve surrounding source. Source, complete saved rack and engine events have
 independent [acceptance checks](sound-crate.md).

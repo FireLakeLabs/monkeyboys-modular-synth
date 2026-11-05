@@ -225,11 +225,45 @@ and code views fit alongside each other.
 
 See the [browser matrix, screenshots and verification limits](rack-feel-verification.md).
 
+## Messages and undo (#179, #181, #183)
+
+A short message replaces routine confirmations. Deleting a module, replacing a
+cable and loading over changed work act at once and say so, as in “Deleted OSC and
+2 cables · Undo”. A clean load has nothing to take back, so it stays quiet. A load
+that stopped playback says “Playback stopped”, because Undo does not restart it.
+
+One message shows at a time, low in the window, so it never moves the rack. It
+stays for 12 seconds, and hovering or focusing it holds it open. Escape from inside
+it or its × dismisses it. It sits in a polite live region that stays mounted, so
+screen readers announce each new message. Its Undo works by mouse and keyboard, and
+Ctrl/Cmd+Z does the same thing.
+
+Undo must take back the action it names, so any newer edit, draft or undo retires
+the message. Only the live values of the same knob gesture keep it. After a delete,
+focus moves to the next module, which is also selected. After Undo it returns to the
+restored module, or the jack of a restored cable, and otherwise to Redo.
+
+A rack edit that needs a rewrite completes at once and says “Code rewritten in rack
+style · Undo” every time, joined to any other message, as in “Deleted QUANT · Code
+rewritten in rack style”. An edit that cannot be converted explains why in the same
+place, with no Undo because nothing changed.
+
+A prompt remains only for an unapplied code draft, which Undo cannot restore. It
+offers Cancel, Export code and the action. While a replacement waits for audio to
+stop, the message offers Cancel.
+
+Double-clicking a library patch, or pressing Enter on it, loads it. A single click
+and Space only select. A file or library load opens at Fit when that is at least
+75%, and otherwise at 75%, scrolled to the first modules. New keeps the current zoom.
+
+A reload restores the last work silently, with its draft, and the message offers
+Start new. Start new is itself undoable.
+
 ## Module menu and grid activity (#89, #90)
 
 Look choices show miniature panels using the existing look/category styles, with
 labels and a selected checkmark. Delete uses the same destructive colors in the
-menu, selection tools and confirmation. Escape and an outside primary click
+menu and selection tools, and acts at once. Escape and an outside primary click
 close the menu and return focus to that module's header; Show in code retains its
 editor-focus action. There is no Close menu item.
 Delete and Backspace remove the selected module or cable from anywhere in the rack,

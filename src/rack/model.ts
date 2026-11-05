@@ -465,7 +465,7 @@ export function assessConnection(
         `${from.module}:${from.jack} → ${to.module}:${to.jack} · ${signal === 'any' ? 'signal unresolved until its source is connected' : signal}`,
         ...warnings,
         ...(opaque ? ['CODE semantics are unverified; inspect the source.'] : []),
-        ...(occupied ? [`Replace ${to.module} ${to.jack} connection?`] : []),
+        ...(occupied ? [`Replaces the cable into ${to.module} ${to.jack}`] : []),
       ].join(' · '),
     }
   } catch (error) {

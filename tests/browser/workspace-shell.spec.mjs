@@ -30,7 +30,9 @@ for (const [width, height] of [
   })
 }
 
-test('the rack keeps its size through selection, prompts, notes and popovers', async ({ page }) => {
+test('the rack keeps its size through selection, messages, notes and popovers', async ({
+  page,
+}) => {
   await open(page, 1600, 1000)
   await add(page, 'OSC')
   await add(page, 'DELAY')
@@ -40,9 +42,10 @@ test('the rack keeps its size through selection, prompts, notes and popovers', a
   expect(await frameSize(page)).toEqual(size)
 
   await page.keyboard.press('Delete')
-  await expect(page.locator('fieldset.replace-prompt')).toBeVisible()
+  await expect(page.locator('.workspace-notice')).toContainText('Deleted OSC')
   expect(await frameSize(page)).toEqual(size)
-  await page.keyboard.press('Escape')
+  await page.locator('.workspace-notice').getByRole('button', { name: 'Undo' }).click()
+  await expect(header(page, 'osc1')).toBeVisible()
 
   await page.locator('details.connections summary').click()
   await expect(page.locator('details.connections button').first()).toBeVisible()
@@ -72,33 +75,17 @@ test('selection tools float beside the selected module, on the rack', async ({ p
   )
 })
 
-test('the delete prompt is not covered by the selection tools', async ({ page }) => {
+test('a replacement prompt is not covered by the selection tools', async ({ page }) => {
   await open(page, 1600, 1000)
   await add(page, 'OSC')
   await header(page, 'osc1').click()
-  await page.keyboard.press('Delete')
+  await expect(page.locator('.selection-tools')).toBeVisible()
+  await page.locator('.cm-line').first().click()
+  await page.keyboard.press('End')
+  await page.keyboard.type(' ')
+  await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
+  await page.getByRole('button', { name: 'New patch', exact: true }).click()
   await expect(page.locator('fieldset.replace-prompt legend')).toBeVisible()
-  await expect(page.locator('.selection-tools')).toHaveCount(0)
-  await page.keyboard.press('Escape')
-  await expect(page.locator('.selection-tools')).toBeVisible()
-})
-
-test('a cable replacement prompt is not covered by the selection tools', async ({ page }) => {
-  await open(page, 1600, 1000)
-  await add(page, 'OSC')
-  await add(page, 'NOISE')
-  const patch = async (from) => {
-    await page.locator(`[data-jack="${from}"]`).focus()
-    await page.keyboard.press('Enter')
-    await page.locator('[data-jack="mix1:in1"]').focus()
-    await page.keyboard.press('Enter')
-  }
-  await patch('osc1:out')
-  await expect(page.locator('details.connections summary')).toHaveText('Connections (2)')
-  await header(page, 'noise1').click()
-  await expect(page.locator('.selection-tools')).toBeVisible()
-  await patch('noise1:out')
-  await expect(page.getByRole('button', { name: 'Replace', exact: true })).toBeVisible()
   await expect(page.locator('.selection-tools')).toHaveCount(0)
 })
 

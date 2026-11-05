@@ -4,7 +4,14 @@ import { generate } from '../codegen/generate'
 import { libraryPatches } from '../library/catalog'
 import { read } from '../reader'
 import { connect, placeModule, renameOutput, setValue } from '../rack/model'
-import { editDocument, makeRackEditable, RackEditRefused, sourceBody } from './document'
+import {
+  applyRackEdit,
+  editDocument,
+  makeRackEditable,
+  RackEditRefused,
+  sourceBody,
+} from './document'
+import { createDocumentHistory } from './history'
 
 const fixture =
   "// original\nconst turn = x => x.hurry(2);\nsetcpm(110/4)\n$: note('c3 e3').s('triangle').chunk(4, turn).lpf(800).lpq(1).gain(.2);\n"
@@ -24,7 +31,71 @@ function proposedCV(source = fixture) {
   return { document, next }
 }
 
-describe('explicit rack conversion', () => {
+describe('a rack edit that needs conversion', () => {
+  const trance = () => {
+    const entry = libraryPatches().find((item) => item.id === 'switch-angel-trance-demo')
+    if (!entry) throw new Error('Missing showcase')
+    return read(entry.source)
+  }
+  const drop = (document: ReturnType<typeof read>) =>
+    setValue(document.patch, 'drums1', 'drop', 0.05)
+
+  it('leaves a source-preserving edit alone', () => {
+    const document = read(fixture)
+    const out = document.patch.modules.find((module) => module.type === 'out')
+    if (!out) throw new Error('Missing output')
+    const result = applyRackEdit(document, setValue(document.patch, out.id, 'bpm', 114))
+    expect(result.converted).toBe(false)
+    expect(sourceBody(result.document.source)).toContain('// original')
+  })
+
+  it('completes at once, and undo and redo return the exact source each time', () => {
+    const original = trance()
+    const history = createDocumentHistory(original)
+    const first = applyRackEdit(original, drop(original))
+    expect(first.converted).toBe(true)
+    expect(first.document.patch.modules.find((m) => m.id === 'drums1')?.values.drop).toBe(0.05)
+    history.accept(first.document)
+
+    // Formatting: exact bytes come back.
+    const undone = history.step('undo')
+    expect(undone?.source).toBe(original.source)
+    // Saved rack state: read separately from the source text.
+    expect(read(original.source).patch).toEqual(original.patch)
+    if (!undone) throw new Error('Missing undo')
+    expect(read(undone.source).patch).toEqual(original.patch)
+
+    expect(history.step('redo')?.source).toBe(first.document.source)
+    history.step('undo')
+    // The same edit needs converting again, so it must report again.
+    expect(applyRackEdit(undone, drop(undone)).converted).toBe(true)
+  })
+
+  it('keeps the rewrite and the edit in one undo step across a knob gesture', () => {
+    const original = trance()
+    const history = createDocumentHistory(original)
+    const gesture = {}
+    let document = original
+    for (const value of [0.05, 0.1, 0.15]) {
+      document = applyRackEdit(document, setValue(document.patch, 'drums1', 'drop', value)).document
+      history.accept(document, gesture)
+    }
+    expect(history.step('undo')?.source).toBe(original.source)
+    expect(history.canUndo).toBe(false)
+  })
+
+  it('changes nothing when the rewrite itself is refused', () => {
+    const { document, next } = proposedCV(
+      "setcpm(110/4)\nconst turn = x => x.hurry(2), lead = note('c3 e3').s('triangle').chunk(4, turn).lpf(800).lpq(1).gain(.2);\n$: lead;\n",
+    )
+    const before = structuredClone(document)
+    expect(() => editDocument(document, next)).toThrow(RackEditRefused)
+    expect(() => applyRackEdit(document, next)).toThrow(/Separate helper and pattern/)
+    expect(document).toEqual(before)
+  })
+})
+
+describe('rack conversion', () => {
   it('refuses atomically, then completes the same edit while keeping setup, CODE and rack identity', () => {
     const { document, next } = proposedCV()
     const original = structuredClone(document)

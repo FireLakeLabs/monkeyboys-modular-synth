@@ -109,7 +109,7 @@ try {
   await expectSource(page, original)
 
   await page.getByRole('button', { name: 'Select osc1', exact: true }).press('Delete')
-  await button(page, 'Delete module').click()
+  await page.locator('.workspace-notice').waitFor()
   const deleted = (await saved(page)).source
   assert.notEqual(deleted, original)
   assert.equal(await page.locator('[data-module=osc1]').count(), 0)
@@ -148,7 +148,7 @@ try {
   pass('cable deletion restores complete source and saved wiring')
 
   await button(page, 'New patch').click()
-  await button(page, 'Replace patch').click()
+  await page.locator('.workspace-notice').waitFor()
   const replacement = (await saved(page)).source
   assert.equal(await page.locator('.module-panel').count(), 2)
   await shortcut(page, 'Control+z')
@@ -267,7 +267,7 @@ try {
   pass('accepted undo/redo during playback reaches the normal engine update path')
   await button(page, 'Stop').click()
   await page.reload()
-  await button(page, 'Restore last patch').click()
+  await editor(page).waitFor()
   await accepted(page)
   assert(await button(page, 'Undo').isDisabled())
   assert(await button(page, 'Redo').isDisabled())

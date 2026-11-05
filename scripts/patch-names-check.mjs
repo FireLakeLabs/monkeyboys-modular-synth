@@ -33,14 +33,13 @@ async function rename(name, key = 'Enter') {
   await new Promise(requestAnimationFrame)
 }
 async function open(source, filename = 'externally-renamed.strudel') {
+  document.querySelector('.workspace-notice-dismiss')?.click()
   const input = document.querySelector('input[type="file"]')
   const transfer = new DataTransfer()
   transfer.items.add(new File([source], filename, { type: 'text/plain' }))
   input.files = transfer.files
   input.dispatchEvent(new Event('change', { bubbles: true }))
-  await until(() => document.querySelector('.replace-prompt'))
-  button('Open patch', document.querySelector('.replace-prompt')).click()
-  await until(() => !document.querySelector('.replace-prompt'))
+  await until(() => document.querySelector('.workspace-notice')?.textContent.includes(filename))
   await until(() => document.querySelector('.sync-status').textContent.startsWith('Rack matches'))
 }
 async function exported() {
@@ -106,9 +105,7 @@ export async function verifyPatchNames() {
   await rename('   ')
   assert((await exported()).filename === 'Untitled patch.strudel', 'Blank name has no fallback')
   button('New patch').click()
-  await until(() => document.querySelector('.replace-prompt'))
-  button('Replace patch', document.querySelector('.replace-prompt')).click()
-  await until(() => !document.querySelector('.replace-prompt'))
+  await until(() => document.querySelectorAll('.module-panel').length === 2)
   assert(nameInput().value === 'Untitled patch', 'New inherited old name')
   checks.push('Older unnamed files, blank titles and New use Untitled patch')
 
@@ -118,7 +115,7 @@ export async function verifyPatchNames() {
     const library = document.querySelector('.patch-library')
     button(entry.title, library).click()
     await until(() => library.querySelector('h3')?.textContent === entry.title)
-    button('Load patch…', library).click()
+    button('Load patch', library).click()
     await until(
       () => !document.querySelector('.patch-library') || library.querySelector('.replace-prompt'),
     )

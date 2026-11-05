@@ -25,9 +25,8 @@ import { createPlayback } from './strudel/playback'
 import { tryRead } from './reader'
 import type { ReadResult, SourceDocument } from './reader/types'
 import {
-  editDocument,
+  applyRackEdit,
   fromPatch,
-  makeRackEditable,
   RackEditRefused,
   replaceLayout,
   saveLayout,
@@ -38,7 +37,7 @@ import { prepareReplacement } from './workspace/open'
 import { mayHaveOutput, strudelUrl } from './workspace/transport'
 import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { createAutosave } from './workspace/autosave'
-import { RestorePrompt } from './workspace/RestorePrompt'
+import { WorkspaceNotice, type Notice, type NoticeAction } from './workspace/WorkspaceNotice'
 import { createDocumentHistory } from './workspace/history'
 import { patchFilename, patchName, renameDocument } from './workspace/naming'
 import { PatchLibrary } from './library/PatchLibrary'
@@ -80,29 +79,45 @@ function Logo() {
 export default function App() {
   const sampleResources = useSyncExternalStore(subscribeSamplePacks, getSamplePacks)
   const [autosave] = useState(() => createAutosave())
-  const [recovery, setRecovery] = useState(() => autosave.load())
-  const [document, setDocument] = useState(newPatch)
+  // Reloading returns your work at once; a draft comes back beside its accepted rack.
+  const [restored] = useState(() => autosave.load())
+  const [document, setDocument] = useState(() => restored?.document ?? newPatch())
   const [history] = useState(() => createDocumentHistory(document))
   const draggingKnob = useRef(false)
-  const [draft, setDraft] = useState(document.source)
-  const [phase, setPhase] = useState<'readable' | 'editing' | 'invalid'>('readable')
+  const [draft, setDraft] = useState(restored?.draft ?? document.source)
+  const [phase, setPhase] = useState<'readable' | 'editing' | 'invalid'>(
+    draft === document.source ? 'readable' : 'editing',
+  )
   const [diagnostic, setDiagnostic] = useState<Extract<ReadResult, { kind: 'invalid' }> | null>(
     null,
   )
   const [playback] = useState(() => createPlayback(document))
   const audio = useSyncExternalStore(playback.subscribe, playback.getSnapshot)
-  const [refusedEdit, setRefusedEdit] = useState<{
-    document: SourceDocument
-    patch: Patch
-    revision: number
-    message: string
-    point: { x: number; y: number }
-  } | null>(null)
+  const [notice, setNotice] = useState<Notice | null>(
+    restored && {
+      message:
+        restored.draft === restored.document.source
+          ? 'Restored your last patch'
+          : 'Restored your last patch and its unapplied code',
+      action: 'start-new',
+    },
+  )
+  const dismissNotice = useCallback(() => setNotice(null), [])
+  const undoFocus = useRef<string | null>(null)
+  useEffect(() => {
+    if (!undoFocus.current) return
+    // Undo rebuilds the panels. Only focus that fell to the page moves; a caret stays put.
+    const active = window.document.activeElement
+    if (!active || active === window.document.body)
+      window.document.querySelector<HTMLElement>(undoFocus.current)?.focus()
+    undoFocus.current = null
+  })
   const [error, setError] = useState<string | null>(null)
   const [pendingReplacement, setPendingReplacement] = useState<Replacement | null>(null)
   const [libraryOpen, setLibraryOpen] = useState(false)
   const [rackGeneration, setRackGeneration] = useState(0)
   const [patchLoads, setPatchLoads] = useState(0)
+  const [patchOpens, setPatchOpens] = useState(0)
   const [replacing, setReplacing] = useState(false)
   const [slowAudio, setSlowAudio] = useState<typeof audio | null>(null)
   const [emptyPlay, setEmptyPlay] = useState<SourceDocument | null>(null)
@@ -124,7 +139,7 @@ export default function App() {
   const [codeSelection, setCodeSelection] = useState<{ start: number; end: number } | null>(null)
   const current = useRef({ document, draft, phase })
   // Exact source includes saved rack layout; files and recovered work stay protected.
-  const cleanSource = useRef<string | null>(document.source)
+  const cleanSource = useRef<string | null>(restored ? null : document.source)
   const draftSaved = useRef(true)
   const editor = useRef<EditorView>(null)
   useEffect(() => {
@@ -150,7 +165,7 @@ export default function App() {
   )
   const selectedRanges = locked ? [] : document.bindings.filter((b) => b.module === selected)
   const cancelReplacement = useCallback(() => {
-    setRefusedEdit(null)
+    setNotice((shown) => (shown?.action === 'cancel-load' ? null : shown))
     replacementRevision.current++
     setReplacing(false)
     setPendingReplacement(null)
@@ -159,7 +174,8 @@ export default function App() {
   const install = useCallback(
     (next: SourceDocument, record = true, historyGroup?: object) => {
       if (record) history.accept(next, historyGroup)
-      setRefusedEdit(null)
+      // A notice's Undo must take back that action, so newer work retires it.
+      setNotice((shown) => (shown && historyGroup && shown.group === historyGroup ? shown : null))
       workRevision.current++
       current.current = { document: next, draft: next.source, phase: 'readable' }
       setDocument(next)
@@ -198,7 +214,6 @@ export default function App() {
       composing ||
       editor.current?.composing ||
       draggingKnob.current ||
-      recovery ||
       replacing ||
       pendingReplacement ||
       libraryOpen
@@ -211,6 +226,8 @@ export default function App() {
     }
     const next = history.step(direction)
     if (!next) return false
+    if (direction === 'undo' && notice?.action === 'undo')
+      undoFocus.current = notice.undoFocus ?? '.history-redo'
     cancelReplacement()
     install(next, false)
     setSelected((id) => (next.patch.modules.some((module) => module.id === id) ? id : null))
@@ -219,7 +236,7 @@ export default function App() {
   }
 
   function changeDraft(source: string) {
-    setRefusedEdit(null)
+    setNotice(null)
     workRevision.current++
     current.current = { ...current.current, draft: source, phase: 'editing' }
     setDraft(source)
@@ -293,7 +310,6 @@ export default function App() {
     if (
       composing ||
       editor.current?.composing ||
-      recovery ||
       replacing ||
       pendingReplacement ||
       libraryOpen ||
@@ -339,9 +355,8 @@ export default function App() {
     else if (current.current.phase === 'readable') playAccepted()
   }
 
-  const edit: RackEdit = (action, point = { x: 220, y: 150 }, historyGroup) => {
+  const edit: RackEdit = (action, { group, notice: done, undoFocus: focus } = {}) => {
     if (current.current.phase !== 'readable' || composing) return false
-    setRefusedEdit(null)
     const accepted = current.current.document
     let next: Patch
     try {
@@ -351,47 +366,44 @@ export default function App() {
       return false
     }
     try {
-      install(editDocument(accepted, next), true, historyGroup)
+      const result = applyRackEdit(accepted, next)
+      install(result.document, true, group)
+      // Every rewrite says so, whatever else this edit reports.
+      const messages = [done, result.converted ? 'Code rewritten in rack style' : undefined]
+      const message = messages.filter(Boolean).join(' · ')
+      if (message) setNotice({ message, action: 'undo', group, undoFocus: focus })
       return true
     } catch (failure) {
-      if (failure instanceof RackEditRefused) {
-        setError(null)
-        setRefusedEdit({
-          document: accepted,
-          patch: next,
-          revision: workRevision.current,
-          message: failure.message,
-          point,
-        })
-      } else setError(failure instanceof Error ? failure.message : String(failure))
+      const reason = failure instanceof Error ? failure.message : String(failure)
+      if (failure instanceof RackEditRefused)
+        setNotice({ message: `Can’t make that edit from the rack: ${reason}`, tone: 'error' })
+      else setError(reason)
       return false
     }
   }
 
-  function convertAndRetry() {
-    if (!refusedEdit) return
-    if (
-      refusedEdit.revision !== workRevision.current ||
-      refusedEdit.document !== current.current.document ||
-      current.current.phase !== 'readable'
-    ) {
-      setRefusedEdit(null)
+  function noticeAction(action: NoticeAction) {
+    if (action === 'cancel-load') {
+      cancelReplacement()
       return
     }
-    try {
-      install(makeRackEditable(refusedEdit.document, refusedEdit.patch))
-      setRackGeneration((generation) => generation + 1)
-    } catch (failure) {
-      setRefusedEdit(null)
-      setError(failure instanceof Error ? failure.message : String(failure))
+    if (action === 'start-new') {
+      setNotice(null)
+      requestReplacement({ kind: 'new' }).catch((failure: unknown) => setError(String(failure)))
+      return
     }
+    stepHistory('undo')
   }
 
   async function replaceWork(replacement: Replacement): Promise<void> {
     const operation = ++replacementRevision.current
     const revision = workRevision.current
+    const replaced = current.current.document.source
+    const stopsAudio = needsStop
     setReplacing(true)
     setError(null)
+    if (stopsAudio)
+      setNotice({ message: 'Waiting for audio to stop…', action: 'cancel-load', sticky: true })
     try {
       const next = await prepareReplacement(
         async () => {
@@ -412,13 +424,28 @@ export default function App() {
         const readable = readDraft(next)
         if (readable) install(readable)
       } else install(next)
+      const opened = current.current.phase === 'readable'
+      // Identical source records no history step, so Undo would take back something older.
+      const replacedWork = current.current.document.source !== replaced
+      if (opened && replacedWork && replaced !== cleanSource.current)
+        setNotice({
+          message: [
+            replacement.kind === 'new'
+              ? 'Started a new patch'
+              : `Loaded ${replacement.kind === 'file' ? replacement.file.name : replacement.entry.title}`,
+            ...(stopsAudio ? ['Playback stopped'] : []),
+          ].join(' · '),
+          action: 'undo',
+        })
       cleanSource.current = typeof next === 'string' ? null : next.source
       setSelected(null)
       setPendingReplacement(null)
       setRackGeneration((generation) => generation + 1)
       setPatchLoads((loads) => loads + 1)
+      if (opened && replacement.kind !== 'new') setPatchOpens((opens) => opens + 1)
       setLibraryOpen(false)
     } catch (failure) {
+      setNotice((shown) => (shown?.action === 'cancel-load' ? null : shown))
       if (operation === replacementRevision.current)
         setError(failure instanceof Error ? failure.message : String(failure))
     } finally {
@@ -429,15 +456,9 @@ export default function App() {
   async function requestReplacement(replacement: Replacement) {
     cancelReplacement()
     setError(null)
-    const work = current.current
-    if (
-      work.phase === 'readable' &&
-      !composing &&
-      work.document.source === cleanSource.current &&
-      work.draft === cleanSource.current
-    ) {
-      await replaceWork(replacement)
-    } else setPendingReplacement(replacement)
+    // Undo restores accepted work, but it cannot restore a draft that was never applied.
+    if (current.current.phase === 'readable' && !composing) await replaceWork(replacement)
+    else setPendingReplacement(replacement)
   }
 
   function showCode(id: string) {
@@ -560,6 +581,7 @@ export default function App() {
         </button>
         <button
           type="button"
+          className="button history-redo"
           onClick={() => stepHistory('redo')}
           disabled={composing || replacing || locked || !history.canRedo}
           title="Shift+Ctrl/Cmd+Z"
@@ -578,7 +600,7 @@ export default function App() {
               value={typeof out?.values.bpm === 'number' ? out.values.bpm : tempoControl.default}
               commit={(value, historyGroup) =>
                 !!out &&
-                edit((p) => setValue(p, out.id, tempoControl.id, value), undefined, historyGroup)
+                edit((p) => setValue(p, out.id, tempoControl.id, value), { group: historyGroup })
               }
             />
           )}
@@ -621,6 +643,7 @@ export default function App() {
         <Rack
           panelKey={`${locked ? 'locked' : 'ready'}-${rackGeneration}`}
           patchLoads={patchLoads}
+          patchOpens={patchOpens}
           focusToggle={
             <button
               type="button"
@@ -914,53 +937,7 @@ export default function App() {
           </Suspense>
         </section>
       </main>
-      {recovery && (
-        <RestorePrompt
-          hasDraft={recovery.draft !== recovery.document.source}
-          restore={() => {
-            cleanSource.current = null
-            history.reset(recovery.document)
-            install(recovery.document, false)
-            if (recovery.draft !== recovery.document.source) changeDraft(recovery.draft)
-            setRecovery(null)
-          }}
-          discard={() => {
-            autosave.discard()
-            setRecovery(null)
-          }}
-        />
-      )}
-      {refusedEdit && (
-        <div
-          className="rack-edit-refusal"
-          role="alertdialog"
-          aria-label="Make rack-editable?"
-          aria-describedby="rack-edit-refusal-description"
-          style={{
-            left: Math.max(8, Math.min(refusedEdit.point.x, window.innerWidth - 348)),
-            top: Math.max(8, Math.min(refusedEdit.point.y, window.innerHeight - 300)),
-          }}
-        >
-          <p id="rack-edit-refusal-description">
-            This edit cannot preserve the imported source. Make rack-editable rewrites the code in
-            MonkeyBoy’s style, retaining setup code and CODE blocks, then completes this edit.
-          </p>
-          <details>
-            <summary>Why this edit was refused</summary>
-            {refusedEdit.message}
-          </details>
-          <button
-            type="button"
-            ref={(element) => element?.focus()}
-            onClick={() => setRefusedEdit(null)}
-          >
-            Cancel
-          </button>
-          <button type="button" onClick={convertAndRetry}>
-            Make rack-editable
-          </button>
-        </div>
-      )}
+      <WorkspaceNotice notice={notice} act={noticeAction} dismiss={dismissNotice} />
       {libraryOpen && (
         <PatchLibrary
           close={() => {
@@ -972,7 +949,15 @@ export default function App() {
             cancelReplacement()
             setError(null)
           }}
-          confirmation={pendingReplacement?.kind === 'library' ? replacementPrompt : null}
+          confirmation={
+            pendingReplacement?.kind === 'library' ? (
+              replacementPrompt
+            ) : replacing ? (
+              <output className="pending-note" aria-live="polite">
+                Waiting for audio to stop. Close cancels the load.
+              </output>
+            ) : null
+          }
           error={error}
         />
       )}

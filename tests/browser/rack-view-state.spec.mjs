@@ -3,7 +3,7 @@ import { openMore } from '../../scripts/panel-controls.mjs'
 
 const add = (page, name) => page.getByRole('button', { name: `Add ${name}`, exact: true }).click()
 const header = (page, id) => page.locator(`[data-module="${id}"] .module-header`)
-const prompt = (page) => page.locator('fieldset.replace-prompt')
+const notice = (page) => page.locator('.workspace-notice')
 
 test.beforeEach(async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 })
@@ -72,26 +72,28 @@ test('Delete and Backspace act on the selected module wherever rack focus is', a
   await add(page, 'OSC')
   await header(page, 'osc1').click()
   await page.keyboard.press('Backspace')
-  await expect(prompt(page)).toContainText('Delete osc1')
-  await page.keyboard.press('Escape')
-  await expect(prompt(page)).toHaveCount(0)
+  await expect(notice(page)).toContainText('Deleted OSC')
+  await expect(header(page, 'osc1')).toHaveCount(0)
+  await notice(page).getByRole('button', { name: 'Undo' }).click()
+  await expect(header(page, 'osc1')).toBeVisible()
 
   await page.locator('[data-module="osc1"] .module-controls').click({ position: { x: 3, y: 3 } })
   await page.keyboard.press('Delete')
-  await expect(prompt(page)).toContainText('Delete osc1')
-  await page.keyboard.press('Escape')
+  await expect(notice(page)).toContainText('Deleted OSC')
+  await notice(page).getByRole('button', { name: 'Undo' }).click()
+  await expect(header(page, 'osc1')).toBeVisible()
 
   // The patch name, code editor and a focused knob keep their own Backspace.
   await page.getByLabel('Patch name').click()
   await page.keyboard.press('Backspace')
-  await expect(prompt(page)).toHaveCount(0)
+  await expect(header(page, 'osc1')).toBeVisible()
   await page.getByLabel('Patch name').blur()
   await header(page, 'osc1').click()
   await page.locator('.cm-line').first().click()
   await page.keyboard.press('End')
   await page.keyboard.press('Backspace')
   await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
-  await expect(prompt(page)).toHaveCount(0)
+  await expect(header(page, 'osc1')).toBeVisible()
   await page.getByRole('button', { name: 'Revert to last readable code' }).click()
 
   const knob = page.locator('[data-module="osc1"] .knob').first()
@@ -99,7 +101,7 @@ test('Delete and Backspace act on the selected module wherever rack focus is', a
   await knob.press('ArrowUp')
   await expect(knob).not.toHaveAttribute('aria-valuenow', '0')
   await knob.press('Backspace')
-  await expect(prompt(page)).toHaveCount(0)
+  await expect(header(page, 'osc1')).toBeVisible()
   await expect(knob).toHaveAttribute('aria-valuenow', '0')
 })
 

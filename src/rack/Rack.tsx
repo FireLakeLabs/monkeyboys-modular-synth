@@ -21,7 +21,6 @@ import { LOOK_LAYOUT } from '../looks/layout'
 import { PALETTE_CATEGORIES, paletteModules, getModuleSpec } from '../modules/catalog'
 import type { JackRef, Patch } from '../patch/types'
 import type { CodeConversion } from '../workspace/codeConversion'
-import type { SourceConnectionAssessment } from '../workspace/connections'
 import { RAIL_WIDTHS, railWidth, OUTPUT_PANEL_WIDTH } from '../patch/layout'
 import { observeActivity } from './activity'
 import type { Control } from '../modules/types'
@@ -49,13 +48,18 @@ import {
   setLook,
   duplicateModule,
   renameOutput,
+  type ConnectionAssessment,
 } from './model'
 
-export type RackEdit = (
-  action: (patch: Patch) => Patch,
-  point?: Point,
-  historyGroup?: object,
-) => boolean
+export interface RackEditOptions {
+  /** Live values of one gesture share a group, and so one undo step. */
+  group?: object | undefined
+  /** Says what happened when the rack alone would not show it, with an Undo. */
+  notice?: string | undefined
+  /** Where keyboard focus goes after that Undo. */
+  undoFocus?: string | undefined
+}
+export type RackEdit = (action: (patch: Patch) => Patch, options?: RackEditOptions) => boolean
 interface Point {
   x: number
   y: number
@@ -68,18 +72,22 @@ interface Placement {
   type: string
   moving?: string
 }
+/** A load fits the whole rack when it can; below this, jacks and labels stop being usable. */
+const READABLE_ZOOM = 0.75
 const CABLE_MODES = [
   { id: 'all', label: 'All' },
   { id: 'focus', label: 'Focus' },
   { id: 'dim', label: 'Dim' },
 ] as const
 const keyOf = (ref: JackRef) => `${ref.module}:${ref.jack}`
+const moduleHeader = (id: string) => `[data-module="${CSS.escape(id)}"] .module-header`
 const curve = (a: Point, b: Point) =>
   `M ${a.x} ${a.y} Q ${(a.x + b.x) / 2} ${Math.max(a.y, b.y) + Math.min(120, 28 + Math.abs(a.x - b.x) / 5)} ${b.x} ${b.y}`
 
 export function Rack({
   panelKey,
   patchLoads,
+  patchOpens,
   focusToggle,
   patch,
   cartridgeBay,
@@ -88,7 +96,7 @@ export function Rack({
 
   soundCrate,
   sampleResources,
-  edit: requestEdit,
+  edit,
   selected,
   select,
   newPatch,
@@ -108,6 +116,8 @@ export function Rack({
   /** Panels rebuild their local drafts on this; the rack's own view state does not. */
   panelKey: string
   patchLoads: number
+  /** Counts file and library loads, which open at a readable view. */
+  patchOpens: number
   focusToggle: ReactNode
   patch: Patch
   cartridgeBay?: ReactNode
@@ -126,7 +136,7 @@ export function Rack({
   conversionStopped: boolean
   convertCode: (id: string) => void
   edit: RackEdit
-  assess: (from: JackRef, to: JackRef, moving?: string) => SourceConnectionAssessment
+  assess: (from: JackRef, to: JackRef, moving?: string) => ConnectionAssessment
   selected: string | null
   select: (id: string | null) => void
   newPatch: () => void
@@ -140,18 +150,6 @@ export function Rack({
     ...category,
     modules: paletteModules(category.id, moduleFilter),
   })).filter((category) => category.modules.length > 0)
-  const editOrigin = useRef<HTMLElement | null>(null)
-  const rememberOrigin = (event: { target: EventTarget }) => {
-    if (event.target instanceof HTMLElement) editOrigin.current = event.target
-  }
-  const edit: RackEdit = (action, _point, historyGroup) => {
-    const bounds = editOrigin.current?.getBoundingClientRect()
-    return requestEdit(
-      action,
-      bounds ? { x: bounds.left, y: bounds.bottom + 8 } : undefined,
-      historyGroup,
-    )
-  }
   const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null)
   const menuElement = useRef<HTMLDialogElement>(null)
   const [allLooks, setAllLooks] = useState(false)
@@ -214,7 +212,6 @@ export function Rack({
   const [pointer, setPointer] = useState<Point | null>(null)
   const [target, setTarget] = useState<JackRef | null>(null)
   const [hintPoint, setHintPoint] = useState<Point | null>(null)
-  const [replacement, setReplacement] = useState<JackRef | null>(null)
   const [selectedCable, setSelectedCable] = useState<string | null>(null)
   const [hoveredModule, setHoveredModule] = useState<string | null>(null)
   const [cableVisibility, setCableVisibility] =
@@ -235,7 +232,12 @@ export function Rack({
   )
   const [selectedOutput, setSelectedOutput] = useState<string | null>(null)
   const wireGesture = useRef<{ x: number; y: number; dragged: boolean } | null>(null)
-  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const pendingFocus = useRef<string | null>(null)
+  useEffect(() => {
+    if (!pendingFocus.current) return
+    surface.current?.querySelector<HTMLElement>(pendingFocus.current)?.focus()
+    pendingFocus.current = null
+  })
   const routed = routedModules(patch)
   const railHp = railWidth(patch)
   const rows = rackRows(patch)
@@ -250,9 +252,11 @@ export function Rack({
     ),
   )
   const scale = zoom === 'fit' ? fitScale : zoom
+  const latestFit = useRef(fitScale)
+  latestFit.current = fitScale
   const outputScale = Math.max(0.1, Math.min(1, viewportSize.height / 430))
   const candidates = useMemo(() => {
-    const results = new Map<string, SourceConnectionAssessment>()
+    const results = new Map<string, ConnectionAssessment>()
     if (wire)
       for (const module of patch.modules)
         for (const jack of getModuleSpec(module.type).jacks)
@@ -346,11 +350,9 @@ export function Rack({
     setPointer(null)
     setTarget(null)
     setHintPoint(null)
-    setReplacement(null)
     setPlacement(null)
     setGhost(null)
     setMenu(null)
-    setDeleteId(null)
     setSelectedOutput(null)
     setSelectedCable(null)
     setProbeCable(null)
@@ -359,12 +361,14 @@ export function Rack({
   useLayoutEffect(() => {
     viewport.current?.scrollTo(0, 0)
   }, [patchLoads])
+  useLayoutEffect(() => {
+    if (patchOpens) setZoom(latestFit.current >= READABLE_ZOOM ? 'fit' : READABLE_ZOOM)
+  }, [patchOpens])
   function clearWire() {
     setWire(null)
     setPointer(null)
     setTarget(null)
     setHintPoint(null)
-    setReplacement(null)
     wireGesture.current = null
   }
   function cancel() {
@@ -378,14 +382,12 @@ export function Rack({
         cancel()
         setMenu(null)
         cancelReplacement()
-        setDeleteId(null)
         setSelectedOutput(null)
         setMessage('Cancelled')
       }
     }
     const outsideDrop = (event: PointerEvent) => {
-      if (event.target instanceof Element && !event.target.closest('[data-jack], .replace-prompt'))
-        clearWire()
+      if (event.target instanceof Element && !event.target.closest('[data-jack]')) clearWire()
     }
     window.addEventListener('keydown', escape)
     window.addEventListener('pointerup', outsideDrop)
@@ -416,12 +418,29 @@ export function Rack({
       const target = patch.modules.find((m) => m.id === id)
       if (!target || getModuleSpec(target.type).unique) return
       event.preventDefault()
-      select(target.id)
-      setDeleteId(target.id)
+      deleteModule(target.id)
     }
     window.addEventListener('keydown', remove)
     return () => window.removeEventListener('keydown', remove)
   })
+  function deleteModule(id: string) {
+    const index = patch.modules.findIndex((m) => m.id === id)
+    const target = patch.modules[index]
+    if (!target) return
+    const cables = patch.cables.filter((c) => c.from.module === id || c.to.module === id).length
+    const name = getModuleSpec(target.type).name
+    if (
+      edit((p) => removeModule(p, id), {
+        notice: `Deleted ${name}${cables ? ` and ${cables} ${cables === 1 ? 'cable' : 'cables'}` : ''}`,
+        undoFocus: moduleHeader(id),
+      })
+    ) {
+      const neighbour = patch.modules[index + 1]?.id ?? patch.modules[index - 1]?.id ?? null
+      select(neighbour)
+      if (neighbour) pendingFocus.current = moduleHeader(neighbour)
+      cancel()
+    }
+  }
   function candidate(to: JackRef) {
     return candidates.get(keyOf(to)) ?? null
   }
@@ -440,17 +459,19 @@ export function Rack({
     const result = candidate(to)
     setMessage(result?.message ?? '')
     if (!result || result.kind === 'blocked') {
-      // A blocked source edit can still offer the existing explicit conversion.
-      if (result && 'sourceRefused' in result)
-        edit((p) => connect(p, wire.from, to, true, wire.moving))
       cancel()
       return
     }
-    if (patch.cables.some((c) => keyOf(c.to) === keyOf(to) && c.id !== wire.moving)) {
-      setReplacement(to)
-      return
-    }
-    edit((p) => connect(p, wire.from, to, false, wire.moving))
+    const occupied = patch.cables.some((c) => keyOf(c.to) === keyOf(to) && c.id !== wire.moving)
+    edit(
+      (p) => connect(p, wire.from, to, occupied, wire.moving),
+      occupied
+        ? {
+            notice: `Replaced the cable into ${to.module} ${to.jack}`,
+            undoFocus: `[data-jack="${CSS.escape(keyOf(to))}"]`,
+          }
+        : undefined,
+    )
     cancel()
   }
   function place(row: number, hp: number) {
@@ -476,7 +497,7 @@ export function Rack({
     return `function · ${loopRole(spec, owner)} · ${loopInfo.functions[owner.id] ?? 'Close RETURN and connect the module to OUT to write the function'}`
   }
   // Prompts sit top-centre, where the module tools could otherwise cover them.
-  const prompting = !!deleteId || !!replacement || !!replacementPrompt
+  const prompting = !!replacementPrompt
   const notes = effectNotes(patch)
   const uniqueWarnings = [...new Set(patch.cables.flatMap((c) => cableWarnings(patch, c)))]
   function applySound(module: string, choice: SoundChoice, row?: number) {
@@ -516,7 +537,7 @@ export function Rack({
             ? { editSource: () => showCode(m.id) }
             : {})}
           commit={(value, historyGroup) =>
-            edit((p) => setValue(p, m.id, control.id, value), undefined, historyGroup)
+            edit((p) => setValue(p, m.id, control.id, value), { group: historyGroup })
           }
         />
       )
@@ -588,9 +609,7 @@ export function Rack({
             {m.type === 'smpl' && (
               <Tape
                 module={m}
-                commit={(id, value, group) =>
-                  edit((p) => setValue(p, m.id, id, value), undefined, group)
-                }
+                commit={(id, value, group) => edit((p) => setValue(p, m.id, id, value), { group })}
               />
             )}
             {m.type === 'splice' && <RazorMarks module={m} />}
@@ -668,7 +687,6 @@ export function Rack({
                         setWire({ from: ref })
                         setMessage('Choose an input. Escape cancels.')
                         setPointer(points[keyOf(ref)] ?? null)
-                        setReplacement(null)
                       }
                     }}
                     onFocus={(event) => {
@@ -761,8 +779,6 @@ export function Rack({
   return (
     <>
       <aside
-        onPointerDownCapture={rememberOrigin}
-        onClickCapture={rememberOrigin}
         className={`library ${locked ? 'library-locked' : ''}`}
         inert={locked}
         aria-label="Module library"
@@ -830,13 +846,7 @@ export function Rack({
           </section>
         ))}
       </aside>
-      <div
-        className={`rack ${locked ? 'rack-locked' : ''}`}
-        aria-label="Rack"
-        onPointerUpCapture={rememberOrigin}
-        onClickCapture={rememberOrigin}
-        onFocusCapture={rememberOrigin}
-      >
+      <div className={`rack ${locked ? 'rack-locked' : ''}`} aria-label="Rack">
         {cartridgeBay}
 
         <PatchCredits source={sourceDocument.source} />
@@ -1106,65 +1116,6 @@ export function Rack({
             </svg>
           </div>
           {replacementPrompt}
-          {deleteId && !locked && (
-            <fieldset className="replace-prompt">
-              <legend>
-                Delete {deleteId} and its{' '}
-                {
-                  patch.cables.filter((c) => c.from.module === deleteId || c.to.module === deleteId)
-                    .length
-                }{' '}
-                cables?
-              </legend>
-              <button
-                type="button"
-                ref={(element) => element?.focus()}
-                onClick={() => setDeleteId(null)}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="button destructive"
-                onClick={() => {
-                  if (edit((p) => removeModule(p, deleteId))) {
-                    const index = patch.modules.findIndex((m) => m.id === deleteId)
-                    select(patch.modules[index + 1]?.id ?? patch.modules[index - 1]?.id ?? null)
-                    cancel()
-                    setDeleteId(null)
-                  }
-                }}
-              >
-                Delete module
-              </button>
-            </fieldset>
-          )}
-          {replacement && wire && !locked && (
-            <fieldset className="replace-prompt">
-              <legend>Replace connection</legend>
-              <p>
-                Replace {replacement.module} {replacement.jack} connection?
-              </p>
-              <button
-                type="button"
-                ref={(element) => {
-                  element?.focus()
-                }}
-                onClick={cancel}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  edit((p) => connect(p, wire.from, replacement, true, wire.moving))
-                  cancel()
-                }}
-              >
-                Replace
-              </button>
-            </fieldset>
-          )}
           {module && toolPoint && !locked && !prompting && !currentCable && (
             <div
               ref={tools}
@@ -1182,13 +1133,13 @@ export function Rack({
                 disabled={!!getModuleSpec(module.type).unique}
                 className="button destructive"
                 aria-label={`Delete ${module.id} and attached cables`}
-                onClick={() => setDeleteId(module.id)}
+                onClick={() => deleteModule(module.id)}
               >
                 Delete
               </button>
             </div>
           )}
-          {currentCable && !locked && !replacement && (
+          {currentCable && !locked && (
             <div className="selection-tools cable-tools">
               <span>
                 {keyOf(currentCable.from)} → {keyOf(currentCable.to)}
@@ -1396,7 +1347,7 @@ export function Rack({
               className="button destructive"
               aria-keyshortcuts="Delete Backspace"
               onClick={() => {
-                setDeleteId(menuModule.id)
+                deleteModule(menuModule.id)
                 setMenu(null)
               }}
             >

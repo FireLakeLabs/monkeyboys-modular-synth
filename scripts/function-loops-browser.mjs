@@ -63,8 +63,6 @@ try {
     .click()
   await page.getByRole('button', { name: 'Move destination', exact: true }).click()
   await page.locator('[data-jack="rev1:in"]').click()
-  const replace = page.getByRole('button', { name: 'Replace', exact: true })
-  if (await replace.count()) await replace.click()
   await synced()
   results.repatched = await suite('currentFunctionRack')
   assert.match(results.repatched.body, /y => y\.rev\(\)/)

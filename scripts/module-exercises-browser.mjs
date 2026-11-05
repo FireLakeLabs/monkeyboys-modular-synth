@@ -88,9 +88,7 @@ async function status(value) {
 async function load(entry) {
   await page.getByRole('button', { name: 'Patch library', exact: true }).click()
   await page.getByRole('button', { name: entry.title, exact: true }).click()
-  await page.getByRole('button', { name: 'Load patch…', exact: true }).click()
-  const confirm = page.getByRole('button', { name: 'Load patch', exact: true })
-  if (await confirm.isVisible()) await confirm.click()
+  await page.getByRole('button', { name: 'Load patch', exact: true }).click()
   await page.locator('.patch-library').waitFor({ state: 'detached' })
   await status('Ready')
 }

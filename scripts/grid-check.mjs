@@ -40,7 +40,6 @@ async function edit(cell, value) {
   await pause()
 }
 export async function verifyGrids() {
-  button('Discard saved patch')?.click()
   button('Close library')?.click()
   const { read } = await import('../src/reader/index.ts')
   const { sourceBody, saveLayout } = await import('../src/workspace/document.ts')

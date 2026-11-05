@@ -35,7 +35,7 @@ export async function loadTrance() {
     library().querySelector('.patch-path').textContent === 'Complete patches / Trance',
     'Wrong collection',
   )
-  button('Load patch…', library()).click()
+  button('Load patch', library()).click()
   await until(() => !library() || library().querySelector('.replace-prompt'))
   if (library()) button('Load patch', library()).click()
   await until(() => !library())
@@ -243,8 +243,6 @@ export async function verifyTrance() {
     const input = document.querySelector('input[type=file]')
     input.files = transfer.files
     input.dispatchEvent(new Event('change', { bubbles: true }))
-    await until(() => source() === saved || document.querySelector('.replace-prompt'))
-    if (document.querySelector('.replace-prompt')) button('Open patch').click()
     await until(() => source() === saved)
     await until(() =>
       document.querySelector('.sync-status').textContent.startsWith('Rack matches code'),
@@ -284,6 +282,22 @@ export async function verifyTrance() {
     )
     document.querySelector('.topbar .play[aria-label=Stop]').click()
     await until(() => status() === 'Ready')
+
+    // A converting edit and its Undo are a source round trip, so events must match too.
+    const beforeConversion = source()
+    const knob = document.querySelector('[data-module="vcf1"] [role="slider"]')
+    knob.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true, cancelable: true }),
+    )
+    await until(() => source() !== beforeConversion)
+    const notice = document.querySelector('.workspace-notice')
+    assert(notice.textContent.includes('Code rewritten in rack style'), 'Rewrite not announced')
+    button('Undo', notice).click()
+    await until(() => source() === beforeConversion)
+    const undonePCM = await play()
+    assert(eventSnapshot(events()) === eventSnapshot(firstEvents), 'Undo changed sound events')
+    document.querySelector('.topbar .play[aria-label=Stop]').click()
+    await until(() => status() === 'Ready')
     return {
       status: 'passed',
       ...layout,
@@ -293,6 +307,7 @@ export async function verifyTrance() {
       firstPCM,
       secondPCM,
       reopenedPCM,
+      undonePCM,
       exactSource: true,
       savedRackIdentity: true,
       renderedRackIdentity: true,

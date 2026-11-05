@@ -251,20 +251,15 @@ try {
   await waitStatus(page, 'Audio state unknown')
   const retained = await sourceText(page)
   await open(page, '$: note("g3").s("sine")\n')
-  assert.equal(await sourceText(page), retained)
-  await page.getByRole('button', { name: 'Open patch', exact: true }).click()
   await page.waitForFunction(() =>
     document.querySelector('.code')?.textContent.includes('Could not replace patch'),
   )
   assert.equal(await sourceText(page), retained)
-  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
   await page.getByRole('button', { name: 'New patch', exact: true }).click()
-  await page.getByRole('button', { name: 'Replace patch', exact: true }).click()
   await page.waitForFunction(() =>
     document.querySelector('.code')?.textContent.includes('Could not replace patch'),
   )
   assert.equal(await sourceText(page), retained)
-  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
   await page.evaluate(() => {
     window.audioFixture.stop = 'ok'
   })
@@ -283,7 +278,6 @@ try {
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await page.waitForFunction(() => window.audioFixture.release !== null)
   await open(page, '$: note("a3").s("sine")\n')
-  await page.getByRole('button', { name: 'Open patch', exact: true }).click()
   await waitStatus(page, 'Stopping audio')
   await replaceSource(page, '// work typed during Stop\n$: note("e3").s("sine")\n')
   await accepted(page)
@@ -304,14 +298,12 @@ try {
     document.querySelector('.code')?.textContent.includes('Replacement cancelled'),
   )
   assert.match(await sourceText(page), /work typed during Stop/)
-  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
   pass(
     'ui',
     'pending evaluation/Stop warning does not claim cancellation; edits cancel pending Open replacement',
   )
 
   await open(page, '// unsupported preserved\n$: note("g3").s("sine").chunkBack(4, x => x.rev())\n')
-  await page.getByRole('button', { name: 'Open patch', exact: true }).click()
   await page.waitForFunction(() =>
     document.querySelector('.cm-content')?.textContent.includes('// unsupported preserved'),
   )
@@ -334,10 +326,13 @@ try {
     await page.getByRole('button', { name: 'Play', exact: true }).click()
     await page.waitForFunction(() => window.audioFixture.release !== null)
     await page.getByRole('button', { name: 'New patch', exact: true }).click()
-    await page.getByRole('button', { name: 'Replace patch', exact: true }).click()
     await waitStatus(page, 'Stopping audio')
     if (action === 'Escape') await page.keyboard.press('Escape')
-    else await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+    else
+      await page
+        .locator('.workspace-notice')
+        .getByRole('button', { name: /^Cancel/ })
+        .click()
     await page.evaluate(() => {
       window.audioFixture.release()
       window.audioFixture.releaseStop()
@@ -349,7 +344,6 @@ try {
   pass('ui', 'Cancel and Escape invalidate New replacement while Stop is pending')
   const invalidFile = '// imported CRLF 🐒\r\n$: note('
   await open(page, invalidFile)
-  await page.getByRole('button', { name: 'Open patch', exact: true }).click()
   await page.waitForFunction(
     () => document.querySelector('.sync-status')?.textContent === 'Rack shows previous code',
   )
@@ -609,7 +603,6 @@ try {
     /previous evaluation is still pending/,
   )
   await hang.reload()
-  await hang.getByRole('button', { name: 'Restore last patch', exact: true }).click()
   await waitStatus(hang, 'Ready')
   await code(hang, '$: note("c3").s("sine")\n')
   await hang.getByRole('button', { name: 'Play', exact: true }).click()

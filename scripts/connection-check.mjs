@@ -16,6 +16,8 @@ const jack = (key) => document.querySelector(`[data-jack="${key}"]`)
 const button = (text) =>
   [...document.querySelectorAll('button')].find((button) => button.textContent.trim() === text)
 
+const notice = () => document.querySelector('.workspace-notice')?.textContent ?? ''
+
 export async function prepareConnectionFixture() {
   enableAutoApply()
   replaceSource(
@@ -34,17 +36,17 @@ export async function verifyConnectionTargets() {
   const beforePatch = JSON.stringify(read(before).patch)
   const results = []
 
-  // Pointer path: inspect the target before the drop, then retain the conversion offer.
+  // Pointer path: inspect the target before the drop, then convert with Undo.
   jack('lfo1:out').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
-  await until(() => jack('vcf1:cv').classList.contains('blocked'))
+  await until(() => jack('vcf1:cv').classList.contains('warning'))
   const target = jack('vcf1:cv')
   target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true }))
   await until(() => document.querySelector('[role="tooltip"]'))
   const reason = document.querySelector('[role="tooltip"]').textContent
-  assert(reason.includes('This patch came from code. Add the cable in code'), 'Unclear reason')
+  assert(reason.includes('rewrites it in rack style'), 'Unclear reason')
   assert(target.title === reason, 'Hover title differs from visible reason')
-  assert(!document.querySelector('.rack-edit-refusal'), 'Refusal appeared before drop')
-  assert(!target.classList.contains('valid'), 'Refused target looks valid')
+  assert(editorSource() === before, 'Preview changed source')
+  assert(target.classList.contains('warning'), 'Converting target gives no warning')
   const bounds = target.getBoundingClientRect()
   target.dispatchEvent(
     new PointerEvent('pointermove', {
@@ -55,25 +57,27 @@ export async function verifyConnectionTargets() {
     }),
   )
   target.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }))
-  await until(() => document.querySelector('.rack-edit-refusal'))
-  assert(editorSource() === before, 'Blocked drop changed source')
-  assert(JSON.stringify(read(editorSource()).patch) === beforePatch, 'Blocked drop changed rack')
-  button('Cancel').click()
-  await until(() => !document.querySelector('.rack-edit-refusal'))
-  results.push('Pointer drag blocks imported CV before drop; plain local reason; atomic Cancel')
+  await until(() => editorSource() !== before)
+  assert(notice().includes('Code rewritten in rack style'), 'Rewrite was not announced')
+  button('Undo', document.querySelector('.workspace-notice')).click()
+  await until(() => editorSource() === before)
+  assert(JSON.stringify(read(editorSource()).patch) === beforePatch, 'Undo left a rack change')
+  results.push(
+    'Pointer drop warns before converting, says so after, and Undo restores exact source',
+  )
 
   // Keyboard activation uses the same assessment and exposes the reason on focus.
   jack('lfo1:out').focus()
   jack('lfo1:out').click()
-  await until(() => target.classList.contains('blocked'))
-  target.focus()
+  // Undo rebuilt the panels, so find the jack again.
+  const retried = jack('vcf1:cv')
+  await until(() => retried.classList.contains('warning'))
+  retried.focus()
   await until(() => document.querySelector('[role="tooltip"]'))
   assert(document.querySelector('[role="tooltip"]').textContent === reason, 'Focus reason differs')
-  assert(target.getAttribute('aria-describedby') === 'cable-target-hint', 'Missing description')
-  target.click()
-  await until(() => document.querySelector('.rack-edit-refusal'))
-  button('Make rack-editable').click()
-  await until(() => !document.querySelector('.rack-edit-refusal') && editorSource() !== before)
+  assert(retried.getAttribute('aria-describedby') === 'cable-target-hint', 'Missing description')
+  retried.click()
+  await until(() => editorSource() !== before)
   assert(
     read(editorSource()).patch.cables.some(
       (cable) =>
@@ -81,7 +85,7 @@ export async function verifyConnectionTargets() {
     ),
     'Conversion did not complete cable',
   )
-  results.push('Keyboard focus gives the same blocked reason; explicit conversion completes cable')
+  results.push('Keyboard focus gives the same reason; conversion completes the cable')
 
   // A supported imported replacement must stay available and never produce a refusal.
   await prepareConnectionFixture()
@@ -95,14 +99,11 @@ export async function verifyConnectionTargets() {
   await until(() => jack('vcf1:in').classList.contains('valid'))
   const snapshot = editorSource()
   jack('vcf1:in').click()
-  await until(() => document.querySelector('.replace-prompt'))
-  assert(editorSource() === snapshot, 'Replacement committed before consent')
-  button('Replace').click()
   await until(() => editorSource() !== snapshot)
-  assert(!document.querySelector('.rack-edit-refusal'), 'Valid-looking target refused on drop')
+  assert(!notice().includes('rewritten'), 'A supported replacement rewrote the code')
   assert(editorSource().includes('// retain'), 'Supported replacement lost comments')
   assert(read(editorSource()).layout === 'restored', 'Replacement lost saved identity')
-  results.push('Supported imported replacement stays valid, confirms Replace, saves and reopens')
+  results.push('Supported imported replacement stays valid, acts at once, saves and reopens')
 
   // Type-incompatible inputs still use the graph boundary.
   jack('lfo1:out').click()
@@ -111,7 +112,7 @@ export async function verifyConnectionTargets() {
   jack('vcf1:in').click()
   await until(() => !button('Cancel cable'))
   assert(editorSource() === validSource, 'Incompatible drop changed source')
-  assert(!document.querySelector('.rack-edit-refusal'), 'Incompatible drop offered conversion')
+  assert(!notice().includes('rewritten'), 'Incompatible drop converted the code')
   assert(document.querySelector('.transport-status').textContent === 'Ready', 'Audio started')
   results.push('Incompatible target remains blocked; no mutation, conversion or autoplay')
   return results

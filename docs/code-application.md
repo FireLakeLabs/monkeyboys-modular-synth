@@ -26,7 +26,7 @@ Composition and repeated Enter do not trigger Apply. The shortcut runs before
 CodeMirror's Enter handler, so applying does not insert a newline. Acceptance
 checkpoints local editor history; unaccepted draft undo/redo stays local. Global
 accepted-document undo/redo remains owned by #63. Apply is suppressed while a
-replacement/restore/library dialog is active; Stop remains global.
+replacement prompt or the library is active; Stop remains global.
 
 File/library loading and New remain explicit, silent replacement operations.
 A valid file is accepted even with auto-apply off; an invalid file remains a
