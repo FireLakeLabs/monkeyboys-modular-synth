@@ -43,17 +43,31 @@ The green **Locked** and blue **V1 scope** notes on the canvas match [`decisions
 
 ## App chrome
 
-The app fills the window and the page itself never scrolls; the palette, rack and
-code each scroll on their own. Selection tools, prompts and destinations float
+The app fills the window and the page itself never scrolls; the dock, rack and code
+each scroll on their own. Selection tools, prompts and destinations float
 over the rack, and Connections and notes open as one-at-a-time footer popovers, so
 the rack frame keeps its size. Chrome buttons share one style in `src/index.css`.
 
-The top-bar Patch library opens the nested collection browser from #45. It uses
-the existing dark surfaces, orange primary action and Barlow panel typography.
-The module picker stays alongside the rack. Its independently scrollable palette
-groups chips by the six categories, shows family badges and catalog-owned Strudel
-calls, and filters names/calls (#79). Labels wrap without ellipsis; rack module
-widths stay fixed. See the
+The header's **File** menu holds New patch, Open file, Patch library, Export, Bounce
+WAV and Open in Strudel (#178). It is a button that shows and hides plain buttons, so
+Tab, Enter and Space work as usual, Escape returns to File, and a click elsewhere
+closes it. An action returns focus to File first, so a dialog it opens returns there
+too. The code pane keeps Apply code, Auto-apply while playing and Copy, plus its status
+bar, and the rack toolbar is one row at 1600 px.
+
+Visible text is plain: rail widths read Narrow, Medium and Wide, rows read Row 1, and
+packs are added, not seated. Exact engine detail stays behind the ⓘ control, so
+nothing overpromises readiness.
+
+The left dock has **Modules**, **Sounds** and **Packs** tabs (#177), and each tab has
+one vertical scroll. Modules groups compact two-column chips by the six categories,
+with the catalog-owned Strudel call on each chip, the title in its tooltip and accessible
+description, and a filter on names and calls (#79). Labels wrap without ellipsis; rack
+module widths stay fixed. Sounds opens on search; searching opens every matching bank,
+and sounds load on the first visit. Packs holds the cartridge list, and a pack warning
+also shows on the tab, so it is seen from any tab. The tabs stay usable while the rack
+is locked. The Patch library opens the nested collection browser from #45. It uses the
+existing dark surfaces, orange primary action and Barlow panel typography. See the
 [library interaction contract and observed layouts](patch-library.md).
 
 An editable patch name sits beside the brand. Enter or blur saves it; Escape
@@ -61,7 +75,7 @@ cancels. New and unnamed files display **Untitled patch**; library loads use the
 entry title. Export uses a sanitized filename while metadata retains the full
 name. See [persistence and compatibility](patch-format.md#patch-names-62).
 
-**Bounce WAV** beside Export takes a cycle count and downloads the applied patch
+**Bounce WAV** in the File menu takes a cycle count and downloads the applied patch
 under the same sanitized name. It stops playback and leaves explicit Play
 available afterwards. See [bounds, engine contract and observed PCM](wav-bounce.md).
 
@@ -79,7 +93,7 @@ fill free space from the left. Clicks and drag previews share the same placement
 search: nearest whole HP on the requested rail, then the next free rail or a new
 one, without shifting neighbors. Saved and imported positions are retained.
 
-Open file is a keyboard-focusable button that opens the hidden file picker.
+Open file opens the hidden file picker.
 Open in Strudel opens a separate tab using the accepted executable source,
 without rack metadata, encoded as UTF-8 Base64 in the URL hash. An unreadable
 draft shows that the last readable code will be used. Copy and Export retain
@@ -216,12 +230,10 @@ when zoomed out and wrapping into additional rows as needed; [#186](decisions.md
 centres are clipped inside a scrolling patch box are hidden until the jacks
 return into view; their connections and saved positions remain intact.
 
-The cartridge bay starts collapsed, with keyboard-accessible pack controls under
-its disclosure. Pack warnings remain signposted in the summary. The rack frame
-retains at least 430 px of height on desktop even with the bay expanded; short
-workspaces scroll the rack pane instead of shrinking the rails and pinned OUT
-into thumbnails. The mid-width workspace retains its 200 px minimum so the rack
-and code views fit alongside each other.
+The rack frame retains at least 430 px of height on desktop; short workspaces scroll
+the rack pane instead of shrinking the rails and pinned OUT into thumbnails. The
+mid-width workspace retains its 200 px minimum so the rack and code views fit
+alongside each other.
 
 See the [browser matrix, screenshots and verification limits](rack-feel-verification.md).
 
@@ -248,7 +260,8 @@ style · Undo” every time, joined to any other message, as in “Deleted QUANT
 rewritten in rack style”. An edit that cannot be converted explains why in the same
 place, with no Undo because nothing changed.
 
-A prompt remains only for an unapplied code draft, which Undo cannot restore. It
+A prompt remains only for an unapplied code draft, which Undo cannot restore. It floats
+over the workspace, because a File action can run while the rack or code is hidden. It
 offers Cancel, Export code and the action. While a replacement waits for audio to
 stop, the message offers Cancel.
 
@@ -354,14 +367,14 @@ local view state and do not write source or rack metadata. See
 ## Mid-width workspace (#91)
 
 At widths up to 1150 px, a Rack / Code / Both button group switches local view
-state. Both is the default: rack and code share the space below the palette
+state. Both is the default: rack and code share the space below the dock
 side by side. Rack gives the rack the full width; Code gives the editor the full
-workspace and hides the palette. At 700 px and below, Both divides that space
+workspace and hides the dock. At 700 px and below, Both divides that space
 vertically. The workspace uses the viewport height; each pane scrolls internally
 when its content needs more room, leaving the view controls and transport reachable.
 
-The palette becomes a horizontally scrollable strip with category groups, full
-chip labels/calls and its existing filter. Module widths and saved positions
+The dock becomes a 150 px band across the top with the same three tabs, and each tab
+keeps its one vertical scroll. Chips fill the width. Module widths and saved positions
 remain catalog-owned. View changes keep the editor mounted, retaining drafts,
 selection and undo. Show in code opens Code from Rack, preserves Both when both
 panes are visible, and focuses/selects the module's source after revealing it.
@@ -450,10 +463,10 @@ path available when cables are faded. See [acceptance evidence](function-loops-v
 
 ## Sound crate and tape (#138)
 
-SOUNDS opens a bounded drawer in the module palette. Seated packs, including both
-factories, have sections; bank-prefixed names have labelled drawers. Each sound is
-a draggable card with previous/next variant controls and an audition action. The
-filter retains pack sections. Opening/refreshing loads inventories through the
+The dock's Sounds tab opens on search. Seated packs, including both factories, have
+sections; bank-prefixed names have labelled drawers. Each sound is a draggable card
+with previous/next variant controls and an audition action. Searching retains pack
+sections and opens matching banks. A first visit or refresh loads inventories through the
 engine without applying source or starting transport. Historical unseated registry
 entries are excluded. Manifest status and errors retain #137's distinctions.
 
@@ -470,17 +483,15 @@ shows one razor mark per division; its count/mode/order controls own the code.
 All controls remain inside the existing panel scroller; widths and jack positions
 follow the existing look/zoom rules. See [acceptance and limits](sound-crate.md).
 
-## Cartridge rail (#137)
+## Cartridge list (#137)
 
-The collapsible bay sits above the rack toolbar and scrolls its cartridge row horizontally.
-Each card shows pack name, source, branch/pin, file count and a textual status
+The dock's Packs tab lists cartridges in one column. Each card shows pack name, source, branch/pin, file count and a textual status
 beside its LED. Counts/status are unknown before registration. Factory and
 source-owned cards have no Eject action. Bay-owned ejection uses an inline
 confirmation with Cancel when sample modules or opaque CODE may depend on it.
-Seating takes a GitHub shortcut or manifest URL through a labeled form. The bay
-shares the code/rack draft lock and accepted-document history. It never changes
-module widths or cable geometry. Short panes retain a usable minimum case height
-and scroll the rack pane. See the [source and engine contract](cartridges.md).
+Adding a pack takes a GitHub shortcut or manifest URL through a labeled form. The
+list shares the code/rack draft lock and accepted-document history. It never changes
+module widths or cable geometry. See the [source and engine contract](cartridges.md).
 
 ## Audio-mod cables (#136)
 

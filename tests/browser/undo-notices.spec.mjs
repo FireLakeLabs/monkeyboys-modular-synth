@@ -1,4 +1,5 @@
 import { test, expect } from 'playwright/test'
+import { fileAction } from '../../scripts/panel-controls.mjs'
 
 const add = (page, name) => page.getByRole('button', { name: `Add ${name}`, exact: true }).click()
 const header = (page, id) => page.locator(`[data-module="${id}"] .module-header`)
@@ -29,7 +30,7 @@ async function open(page) {
 }
 
 async function load(page, title) {
-  await page.getByRole('button', { name: 'Patch library' }).click()
+  await fileAction(page, 'Patch library')
   await page.locator('.patch-collections').getByRole('button', { name: title }).click()
   await page.locator('.load-patch').click()
   await page.locator('.patch-library').waitFor({ state: 'detached' })
@@ -215,7 +216,7 @@ test.describe('undo instead of a confirmation', () => {
     await page.keyboard.type('.l')
     await expect(page.locator('.sync-status')).toHaveText('Unapplied changes')
     const draft = await source(page)
-    await page.getByRole('button', { name: 'New patch', exact: true }).click()
+    await fileAction(page, 'New patch')
     const prompt = page.locator('fieldset.replace-prompt')
     await expect(prompt).toContainText('Undo can’t bring back code')
     await expect(prompt.getByRole('button', { name: 'Cancel', exact: true })).toBeFocused()
@@ -312,7 +313,7 @@ test.describe('shorter loading and restore', () => {
     page.locator('.patch-collections').getByRole('button', { name: title, exact: true })
 
   test('double-click or Enter loads; Space and a single click only select', async ({ page }) => {
-    await page.getByRole('button', { name: 'Patch library' }).click()
+    await fileAction(page, 'Patch library')
     await entry(page, 'Enveloped synth').click()
     await expect(page.locator('.patch-detail h3')).toHaveText('Enveloped synth')
     await expect(page.locator('.patch-library')).toBeVisible()
@@ -325,7 +326,7 @@ test.describe('shorter loading and restore', () => {
     await page.locator('.patch-library').waitFor({ state: 'detached' })
     await expect(page.getByLabel('Patch name')).toHaveValue('Enveloped synth')
 
-    await page.getByRole('button', { name: 'Patch library' }).click()
+    await fileAction(page, 'Patch library')
     await entry(page, 'Quantized sequence').focus()
     await page.keyboard.press('Enter')
     await page.locator('.patch-library').waitFor({ state: 'detached' })

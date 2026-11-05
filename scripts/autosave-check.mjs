@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { fileAction } from './panel-controls.mjs'
 
 // Uses the development server's real app, reader and public CodeMirror state.
 const url = process.argv[2] ?? 'http://127.0.0.1:5180'
@@ -46,7 +47,7 @@ async function assertStopped(page) {
 }
 async function exported(page) {
   const download = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Export', exact: true }).click()
+  await fileAction(page, 'Export')
   const stream = await (await download).createReadStream()
   const chunks = []
   for await (const chunk of stream) chunks.push(chunk)

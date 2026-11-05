@@ -1,7 +1,7 @@
 # Engineering standards
 
 The [rack layout browser regressions](../tests/browser/rack-layout.spec.mjs) guard
-the cartridge disclosure, usable rack height, and fitted MIX cables: clipped jack
+the Packs tab, usable rack height, and fitted MIX cables: clipped jack
 targets cannot leave cables dangling on other rails. Both checks failed before
 the fixes. Scrolling the output jack back into view restores its cable at the
 measured endpoint, without changing the source. This is part of browser acceptance,

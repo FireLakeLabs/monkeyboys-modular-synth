@@ -23,7 +23,7 @@ const library = () => document.querySelector('.patch-library')
 const rewritten = () =>
   document.querySelector('.workspace-notice')?.textContent.includes('Code rewritten in rack style')
 async function choose(title) {
-  button('Patch library').focus()
+  button('File').focus()
   button('Patch library').click()
   await until(() => library()?.open)
   button(title, library()).click()
@@ -83,7 +83,7 @@ export async function verifyLibraryUI() {
   )
   button('Close library', library()).click()
   await until(() => !library())
-  assert(document.activeElement === button('Patch library'), 'Close did not restore opener focus')
+  assert(document.activeElement === button('File'), 'Close did not restore opener focus')
   assert(
     source() === initial && JSON.stringify(read(source()).patch) === initialRack,
     'Closing replaced current work',
@@ -559,7 +559,6 @@ export async function verifyOnRampUI() {
     'Wrong palette category order',
   )
   for (const chip of document.querySelectorAll('.chip')) {
-    assert(chip.querySelector('.chip-family')?.textContent, 'Missing family badge')
     assert(chip.querySelector('.chip-call')?.textContent, 'Missing Strudel call')
     for (const text of chip.querySelectorAll('span, code')) {
       assert(text.scrollWidth <= text.clientWidth + 1, `Clipped chip text: ${text.textContent}`)

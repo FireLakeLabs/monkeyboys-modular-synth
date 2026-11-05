@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { fileAction } from './panel-controls.mjs'
 
 // Real workspace/editor with a recording audio adapter; run against the Vite dev server.
 const base = process.argv[2] ?? 'http://127.0.0.1:5173'
@@ -98,7 +99,7 @@ try {
   await page.waitForTimeout(600)
   assert.equal(await calls(), 1)
   assert.equal((await saved(page)).source, accepted)
-  await page.getByRole('button', { name: 'Patch library', exact: true }).focus()
+  await page.locator('.file-menu > button').focus()
   await page.keyboard.press('Meta+Period')
   await waitStatus(page, 'Ready')
   await page.waitForFunction(() =>
@@ -142,7 +143,7 @@ try {
   assert.equal(await calls(), beforeInvalid)
   assert.equal(await page.locator('.transport-status').textContent(), 'Playing')
   const download = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Export', exact: true }).click()
+  await fileAction(page, 'Export')
   const stream = await (await download).createReadStream()
   const chunks = []
   for await (const chunk of stream) chunks.push(chunk)
@@ -213,7 +214,7 @@ try {
   await edit(page, '$: note("g3").s("sine")\n')
   await source(page).press('Control+Enter')
   await page.waitForFunction(() => typeof window.audioFixture.release === 'function')
-  await page.getByRole('button', { name: 'Patch library', exact: true }).click()
+  await fileAction(page, 'Patch library')
   await page.keyboard.press('Control+Period')
   await waitStatus(page, 'Ready')
   await page.evaluate(() => {

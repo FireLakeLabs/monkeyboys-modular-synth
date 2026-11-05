@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { fileAction } from './panel-controls.mjs'
 
 // node scripts/output-panel-browser.mjs [url] [evidence directory]
 const output = process.argv[3] ?? '/tmp/monkeyboy-output-panel'
@@ -30,7 +31,7 @@ try {
       await probe.getByLabel('Rail width', { exact: true }).inputValue(),
       String(expected),
     )
-    await probe.getByRole('button', { name: 'New patch', exact: true }).click()
+    await fileAction(probe, 'New patch')
     await probe.waitForFunction(
       () => document.querySelector('[aria-label="Rail width"]').value === '64',
     )

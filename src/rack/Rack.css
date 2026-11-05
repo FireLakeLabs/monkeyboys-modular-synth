@@ -87,11 +87,6 @@
   display: inline-block;
   width: 1em;
 }
-.cable-visibility-state {
-  flex-basis: 100%;
-  color: #c2c7cf;
-  overflow-wrap: anywhere;
-}
 .rack-zoom,
 .rack-zoom label {
   display: flex;
@@ -812,7 +807,6 @@
   background: #15171b;
   box-shadow: 0 8px 24px #000a;
 }
-.rack-stage > .replace-prompt,
 .selection-tools,
 .output-connections {
   position: absolute;
@@ -829,14 +823,28 @@
   box-shadow: 0 6px 18px #000a;
   font-size: 12px;
 }
-.rack-stage > .replace-prompt {
-  top: 12px;
+.workspace-prompt {
+  position: fixed;
+  z-index: 30;
+  top: 76px;
   left: 50%;
-  width: min(460px, calc(100% - 24px));
+  width: min(460px, calc(100vw - 24px));
   transform: translateX(-50%);
-  padding: 10px 12px;
 }
-.rack-stage > .replace-prompt legend {
+.workspace-prompt > .replace-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #414650;
+  border-radius: 6px;
+  background: #1b1d21;
+  box-shadow: 0 6px 18px #000a;
+  font-size: 12px;
+}
+.workspace-prompt > .replace-prompt legend {
   float: left;
   width: 100%;
   padding: 0;
@@ -1177,21 +1185,14 @@ select:focus-visible {
   cursor: not-allowed;
 }
 .rack-stage[data-locked='true'] > .rack-frame::after,
-.library-locked::before {
+.library-locked .dock-body::after {
   z-index: 24;
   background: repeating-linear-gradient(135deg, #0000 0 9px, #f4a46224 9px 11px), #0a0b0d66;
   content: '';
   pointer-events: none;
 }
-.rack-stage[data-locked='true'] > .rack-frame::after {
+.rack-stage[data-locked='true'] > .rack-frame::after,
+.library-locked .dock-body::after {
   position: absolute;
   inset: 0;
-}
-/* Sticky, so the hatching stays over the list however far it has scrolled. */
-.library-locked::before {
-  position: sticky;
-  top: 0;
-  flex: none;
-  height: 100dvh;
-  margin: -18px -14px calc(18px - 100dvh);
 }

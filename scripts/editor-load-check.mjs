@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
+import { fileAction } from './panel-controls.mjs'
 
 // Compare optimized app builds served by Vite preview. No Play/audio startup is timed.
 const before = process.argv[2] ?? 'http://127.0.0.1:4174'
@@ -75,7 +76,7 @@ try {
           )
           throw error
         })
-      await page.getByRole('button', { name: 'Export', exact: true }).click()
+      await fileAction(page, 'Export')
       const source = await page.evaluate(() => window.exportedSource)
       expectedSource ??= source
       assert.equal(source, expectedSource)

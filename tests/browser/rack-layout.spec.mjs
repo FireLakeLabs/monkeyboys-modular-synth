@@ -13,13 +13,13 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('.sync-status')).toContainText('Rack matches code')
 })
 
-test('cartridges leave a usable rack while pack controls remain available', async ({ page }) => {
+test('packs leave the rack alone while their controls remain available', async ({ page }) => {
   const frame = await page.locator('.rack-frame').boundingBox()
   expect(frame.height).toBeGreaterThanOrEqual(430)
   await expect(page.locator('.cartridge-bay input')).toBeHidden()
-  await page.locator('.cartridge-bay summary').click()
+  await page.getByRole('tab', { name: 'Packs' }).click()
   await expect(page.locator('.cartridge-bay input')).toBeVisible()
-  expect((await page.locator('.rack-frame').boundingBox()).height).toBeGreaterThanOrEqual(430)
+  expect(await page.locator('.rack-frame').boundingBox()).toEqual(frame)
 })
 
 test('Fit never draws cables to clipped mixer jacks and keeps source intact', async ({ page }) => {

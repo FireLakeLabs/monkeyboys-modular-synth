@@ -1,12 +1,24 @@
 .sound-crate {
-  border-bottom: 1px solid #45484f;
-  padding: 8px 0;
   font-size: 12px;
 }
-.sound-crate > button:first-child {
-  width: 100%;
-  color: #f4a462;
-  font-weight: 700;
+/* The list is long, so search stays in reach as the tab scrolls. */
+.sound-search {
+  position: sticky;
+  z-index: 1;
+  top: -12px;
+  display: block;
+  margin: -12px -12px 0;
+  padding: 12px;
+  background: var(--panel);
+}
+.sound-search input {
+  box-sizing: border-box;
+  padding: 7px;
+  border: 1px solid #414650;
+  border-radius: 5px;
+  background: #0a0b0d;
+  color: var(--text);
+  font: inherit;
 }
 .sound-crate input {
   width: 100%;
@@ -117,20 +129,6 @@
   font: inherit;
   color: inherit;
   background: transparent;
-}
-@media (max-width: 1150px) {
-  .sound-crate {
-    flex: 0 0 190px;
-    max-height: 160px;
-    overflow-y: auto;
-    padding: 4px;
-  }
-}
-
-.sound-crate {
-  max-height: 34vh;
-  overflow-y: auto;
-  flex-shrink: 0;
 }
 .tape-strip {
   height: 70px;

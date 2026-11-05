@@ -119,7 +119,7 @@ production acceptance for #9–#11.
 
 The owner accepted these from the [usability review](usability-review.md). Each
 issue owns its implementation, and the rules it replaces stay in force until it
-lands. #179, #180 and #181 have shipped; see [messages and undo](design.md#messages-and-undo-179-181-183)
+lands. #179, #180 and #181 have shipped, as has the dock and File menu (#177, #178); see [messages and undo](design.md#messages-and-undo-179-181-183)
 and [code application](code-application.md). The owner also approved the
 [mockups](design/usability-review.html) as the design direction. They remain
 sketches: their control names and pack counts are illustrative.

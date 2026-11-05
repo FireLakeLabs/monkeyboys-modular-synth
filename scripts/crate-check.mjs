@@ -54,10 +54,10 @@ export async function verifySoundCrate() {
   try {
     input(document.querySelector('.cartridge-bay input'), url)
     await pause(0)
-    button('Seat cartridge').click()
+    button('Add pack').click()
     await until(() => editorSource().includes(url))
     const before = editorSource()
-    button('SOUNDS').click()
+    button('Sounds').click()
     await until(
       () => getSamplePacks().filter((resource) => resource.status === 'registered').length >= 3,
     )
@@ -306,7 +306,7 @@ export async function verifyCrateReview() {
     drop('drums1', '.mini-row-name', 'reviewhit')
     await until(() => document.body.textContent.includes('different sampler banks'))
     assert(editorSource() === before, 'Mixed-bank fan-out refusal changed source')
-    button('SOUNDS').click()
+    button('Sounds').click()
     await until(() => button('Audition stalledhit:0'))
     button('Audition stalledhit:0').click()
     await until(() => held)

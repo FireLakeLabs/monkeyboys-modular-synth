@@ -1,4 +1,5 @@
 import { chromium } from 'playwright'
+import { fileAction } from './panel-controls.mjs'
 
 // Times one knob step against a production build: `npm run build`, `npm run preview`,
 // then pass its URL. Add `playing` as a third argument to step during playback, which
@@ -12,7 +13,7 @@ const patches = ['1 · First sounds', 'Three-voice sketch', 'Function loops', 'S
 const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)]
 
 async function loadPatch(page, name) {
-  await page.getByRole('button', { name: 'Patch library' }).click()
+  await fileAction(page, 'Patch library')
   await page.locator('.patch-collections button').filter({ hasText: name }).first().click()
   const started = Date.now()
   await page

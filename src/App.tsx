@@ -2,6 +2,7 @@ import { SoundCrate } from './samples/SoundCrate'
 import { seatedResources } from './samples/crate'
 import { getSamplePacks, subscribeSamplePacks } from './strudel/engine'
 import { CartridgeBay } from './samples/CartridgeBay'
+import { usePackWarning } from './samples/packWarning'
 import { withFactoryPacks } from './workspace/cartridges'
 
 import { CycleClock } from './rack/PatternVisuals'
@@ -39,6 +40,7 @@ import { ReplacementPrompt } from './workspace/ReplacementPrompt'
 import { createAutosave } from './workspace/autosave'
 import { WorkspaceNotice, type Notice, type NoticeAction } from './workspace/WorkspaceNotice'
 import { RackLock, type LockReason } from './workspace/RackLock'
+import { FileMenu } from './workspace/FileMenu'
 import { changesModules, isFinished } from './workspace/finishedCode'
 import { createDocumentHistory } from './workspace/history'
 import { patchFilename, patchName, renameDocument } from './workspace/naming'
@@ -188,6 +190,7 @@ export default function App() {
   const out = patch.modules.find((module) => module.type === 'out')
   const tempoControl = getModuleSpec('out').controls.find((control) => control.id === 'bpm')
   const emptyOutput = emptyPlay === document
+  const packWarning = usePackWarning(document)
   const assess = useCallback(
     (from: JackRef, to: JackRef, moving?: string) =>
       assessDocumentConnection(document, from, to, moving),
@@ -714,17 +717,54 @@ export default function App() {
             if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur()
           }}
         />
-        <button
-          type="button"
-          className="button open-library"
-          onClick={() => {
+        <FileMenu
+          newPatch={() => {
+            cancelReplacement()
+            requestReplacement({ kind: 'new' }).catch((failure: unknown) =>
+              setError(String(failure)),
+            )
+          }}
+          openFile={() => fileInput.current?.click()}
+          openLibrary={() => {
             cancelReplacement()
             setError(null)
             setLibraryOpen(true)
           }}
-        >
-          Patch library
-        </button>
+          exportFile={exportDraft}
+          bounce={() => {
+            playback
+              .bounce(Number(bounceCycles))
+              .catch((failure: unknown) => setError(String(failure)))
+          }}
+          bounceCycles={bounceCycles}
+          setBounceCycles={setBounceCycles}
+          bouncing={audio.status === 'bouncing'}
+          bounceDisabled={
+            rackLocked ||
+            audio.status === 'bouncing' ||
+            !Number.isInteger(Number(bounceCycles)) ||
+            Number(bounceCycles) < 1 ||
+            Number(bounceCycles) > 128
+          }
+          openInStrudel={() =>
+            window.open(strudelUrl(current.current.document), '_blank', 'noopener,noreferrer')
+          }
+        />
+        <input
+          ref={fileInput}
+          hidden
+          type="file"
+          accept=".strudel,.js,.txt"
+          onChange={(event) => {
+            const file = event.target.files?.[0]
+            if (file) {
+              requestReplacement({ kind: 'file', file }).catch((failure: unknown) =>
+                setError(String(failure)),
+              )
+            }
+            event.target.value = ''
+          }}
+        />
         <button
           type="button"
           onClick={() => stepHistory('undo')}
@@ -792,15 +832,11 @@ export default function App() {
           </button>
         ))}
       </fieldset>
-      {/* An inert rack or module list passes a touch to its parent, which reports it. */}
       <main
         className="workspace"
         data-view={workspaceView}
         data-rack-focus={rackFocus}
         data-locked={lockReason !== null}
-        onPointerDown={(event) => {
-          if (lockReason && event.target === event.currentTarget) setPulsing(true)
-        }}
       >
         <Rack
           panelKey={String(rackGeneration)}
@@ -817,9 +853,13 @@ export default function App() {
           }
           patch={patch}
           sampleResources={seatedResources(document, sampleResources)}
-          soundCrate={
-            <SoundCrate document={document} locked={rackLocked || audio.status === 'bouncing'} />
-          }
+          soundCrate={(active) => (
+            <SoundCrate
+              document={document}
+              locked={rackLocked || audio.status === 'bouncing'}
+              active={active}
+            />
+          )}
           cartridgeBay={
             <CartridgeBay
               document={document}
@@ -830,6 +870,7 @@ export default function App() {
 
           document={document}
           locked={lockReason !== null}
+          packWarning={packWarning}
           lockStrip={
             <RackLock
               reason={lockReason}
@@ -878,8 +919,7 @@ export default function App() {
           assess={assess}
           selected={selected}
           select={setSelected}
-          newPatch={() => requestReplacement({ kind: 'new' })}
-          replacementPrompt={pendingReplacement?.kind === 'new' ? replacementPrompt : null}
+          prompting={!!pendingReplacement}
           cancelReplacement={cancelReplacement}
         />
 
@@ -887,12 +927,12 @@ export default function App() {
           <h2>
             STRUDEL <small>Live code · editable</small>
           </h2>
-          <span className="apply-shortcuts">Ctrl/Cmd+Enter to apply · Ctrl/Cmd+. to stop</span>
           <div className="code-actions">
             <button
               type="button"
               onClick={() => applyCode()}
               disabled={composing || audio.status === 'bouncing'}
+              title="Ctrl/Cmd+Enter to apply · Ctrl/Cmd+. to stop"
             >
               Apply code
             </button>
@@ -914,73 +954,7 @@ export default function App() {
             >
               Copy
             </button>
-            <button type="button" onClick={exportDraft}>
-              Export
-            </button>
-            <label className="bounce-cycles">
-              Cycles
-              <input
-                aria-label="Bounce cycles"
-                type="number"
-                min="1"
-                max="128"
-                step="1"
-                value={bounceCycles}
-                disabled={audio.status === 'bouncing'}
-                onChange={(event) => setBounceCycles(event.currentTarget.value)}
-              />
-            </label>
-            <button
-              type="button"
-              disabled={
-                rackLocked ||
-                audio.status === 'bouncing' ||
-                !Number.isInteger(Number(bounceCycles)) ||
-                Number(bounceCycles) < 1 ||
-                Number(bounceCycles) > 128
-              }
-              onClick={() =>
-                playback
-                  .bounce(Number(bounceCycles))
-                  .catch((failure: unknown) => setError(String(failure)))
-              }
-              title="Download the applied patch as a WAV; stops playback. 1–128 cycles, up to 10 minutes."
-            >
-              {audio.status === 'bouncing' ? 'Bouncing…' : 'Bounce WAV'}
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                window.open(strudelUrl(current.current.document), '_blank', 'noopener,noreferrer')
-              }
-            >
-              Open in Strudel
-            </button>
-            <button type="button" onClick={() => fileInput.current?.click()}>
-              Open file
-            </button>
-            <input
-              ref={fileInput}
-              hidden
-              type="file"
-              accept=".strudel,.js,.txt"
-              onChange={(event) => {
-                const file = event.target.files?.[0]
-                if (file) {
-                  requestReplacement({ kind: 'file', file }).catch((failure: unknown) =>
-                    setError(String(failure)),
-                  )
-                }
-                event.target.value = ''
-              }}
-            />
           </div>
-          {rackLocked && (
-            <p className="share-note">
-              Open in Strudel uses the last applied code while this draft has unapplied changes.
-            </p>
-          )}
-          {pendingReplacement?.kind === 'file' && replacementPrompt}
           <Suspense fallback={<output className="source-surface">Loading source editor…</output>}>
             <SourceEditor
               editor={editor}
@@ -1109,6 +1083,10 @@ export default function App() {
           </Suspense>
         </section>
       </main>
+      {/* Any file action can run while the rack or code pane is hidden, so this floats. */}
+      {pendingReplacement && pendingReplacement.kind !== 'library' && (
+        <div className="workspace-prompt">{replacementPrompt}</div>
+      )}
       <WorkspaceNotice notice={notice} act={noticeAction} dismiss={dismissNotice} />
       {libraryOpen && (
         <PatchLibrary

@@ -1,6 +1,7 @@
 import { useState, useSyncExternalStore } from 'react'
 import type { SourceDocument } from '../reader/types'
 import { getSamplePacks, getSampleWarnings, subscribeSamplePacks } from '../strudel/engine'
+import { usePackWarning } from './packWarning'
 import { cartridges, ejectPack, packUsers, seatPack } from '../workspace/cartridges'
 import { packKey, packLabel, userPack, type SamplePack } from './packs'
 import './CartridgeBay.css'
@@ -24,11 +25,7 @@ export function CartridgeBay({
     users: string[]
   } | null>(null)
   const entries = cartridges(document)
-  const failedPack = entries.some(
-    ({ pack }) =>
-      pack && resources.find((resource) => resource.key === packKey(pack))?.status === 'failed',
-  )
-  const hasWarning = Boolean(warnings.length || error || failedPack)
+  const hasWarning = usePackWarning(document) || !!error
   function eject(pack: SamplePack) {
     try {
       install(ejectPack(document, pack))
@@ -39,15 +36,8 @@ export function CartridgeBay({
     }
   }
   return (
-    <details className="cartridge-bay" aria-label="Sample cartridge bay" data-warning={hasWarning}>
-      <summary className="cartridge-heading">
-        <h2>CARTRIDGES</h2>
-        <span>
-          {hasWarning
-            ? 'Pack warning · expand for details'
-            : 'Sample packs · manifests, not decoded audio'}
-        </span>
-      </summary>
+    <section className="cartridge-bay" aria-label="Sample packs" data-warning={hasWarning}>
+      {hasWarning && <p className="pack-warning">Pack warning · see below</p>}
       <ul className="cartridges">
         {entries.map((entry, index) => {
           const { pack } = entry
@@ -68,10 +58,10 @@ export function CartridgeBay({
                 </span>
                 <span>
                   {entry.ownership === 'factory'
-                    ? 'factory'
+                    ? 'built in'
                     : entry.ownership === 'source'
-                      ? 'source-owned'
-                      : 'bay-owned'}
+                      ? 'from your code'
+                      : 'added here'}
                 </span>
               </div>
               {resource?.error && (
@@ -111,7 +101,7 @@ export function CartridgeBay({
         }}
       >
         <label>
-          Seat a sample pack
+          Add a sample pack
           <input
             value={input}
             onChange={(event) => setInput(event.currentTarget.value)}
@@ -120,7 +110,7 @@ export function CartridgeBay({
           />
         </label>
         <button type="submit" disabled={locked || !input.trim()}>
-          Seat cartridge
+          Add pack
         </button>
       </form>
       {warnings.map((warning) => (
@@ -144,6 +134,6 @@ export function CartridgeBay({
           </button>
         </fieldset>
       )}
-    </details>
+    </section>
   )
 }
