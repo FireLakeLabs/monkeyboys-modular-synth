@@ -228,6 +228,32 @@ test('More holds rarely used fields beside the panel and writes the same source'
   await expect.poll(async () => (await flyout.boundingBox()).y).toBeGreaterThan(before.y)
 })
 
+test('Escape in a More field cancels the edit, closes More and writes nothing', async ({
+  page,
+}) => {
+  const { id, source } = await loadCase(page, 'mix')
+  const panel = page.locator(`[data-module="${id}"]`)
+  const toggle = panel.getByRole('button', { name: /^More / })
+  const flyout = await openMore(panel)
+  await flyout.getByLabel('NAME 1', { exact: true }).fill('dropped')
+  await page.keyboard.press('Escape')
+  await expect(flyout).toBeHidden()
+  await expect(toggle).toBeFocused()
+  expect(await suite(page, 'currentSource')).toBe(source)
+  await openMore(panel)
+  await expect(flyout.getByLabel('NAME 1', { exact: true })).toHaveValue('')
+  await page.keyboard.press('Escape')
+
+  const smpl = await loadCase(page, 'smpl')
+  const sampler = page.locator(`[data-module="${smpl.id}"]`)
+  const more = await openMore(sampler)
+  await more.getByRole('button', { name: 'Set CUT', exact: true }).click()
+  await more.getByRole('textbox', { name: 'CUT', exact: true }).fill('5')
+  await page.keyboard.press('Escape')
+  await expect(more).toBeHidden()
+  expect(await suite(page, 'currentSource')).toBe(smpl.source)
+})
+
 test('More opens on the free side of a panel at the right end of the rail', async ({ page }) => {
   const { id } = await loadCase(page, 'mix')
   const panel = page.locator(`[data-module="${id}"]`)
