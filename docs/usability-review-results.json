@@ -1199,5 +1199,36 @@
         "knobEditsRefused": 0
       }
     ]
+  },
+  "typingProbe": {
+    "method": "Each keystroke prefix passed through tryRead. The reader only; not the live editor.",
+    "base": "$: note(\"c2 e2\").s(\"sawtooth\"), 4 modules",
+    "cases": [
+      {
+        "typed": ".lpf(800) .room(0.5) .delay(0.4) on new lines",
+        "keys": 39,
+        "readable": 24,
+        "unreadable": 15,
+        "structureChanges": 6,
+        "structureChangesWithoutNewCode": 3,
+        "cleanStops": [".lpf(800)", ".room(0.5)", ".delay(0.4)"],
+        "halfTypedResult": ".l, .r and .d each collapse the voice to 3 modules with 1 CODE"
+      },
+      {
+        "typed": "Pattern notes inside a string",
+        "keys": 8,
+        "readable": 8,
+        "unreadable": 0,
+        "structureChanges": 0
+      },
+      {
+        "typed": "New voice $: s(\"bd sd\")",
+        "keys": 13,
+        "readable": 3,
+        "unreadable": 10,
+        "structureChanges": 2,
+        "structureChangesWithoutNewCode": 1
+      }
+    ]
   }
 }

@@ -130,7 +130,10 @@ they replace stay in force until it lands.
   cannot disturb live audio. Drafts never disable Play, which uses the last
   applied code. The Auto-apply toggle now means “also apply while playing”. The
   rack stays locked during an unapplied draft, and that state must be unmistakable
-  rather than a silent dim. This replaces the explicit default from #56.
+  rather than a silent dim. Auto-applied typing groups into undo steps that end at
+  good stopping spots: finished code that adds or removes a module, or a short
+  pause on finished code. Auto-apply waits for the same check, so a half-typed word
+  never reaches the rack. This replaces the explicit default from #56.
 - **Make rack-editable no longer asks first ([#181](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/181)):** a rack edit
   that needs conversion completes at once and shows “Code rewritten in rack
   style · Undo”. Undo is the safety net, and it restored Trance's exact source.

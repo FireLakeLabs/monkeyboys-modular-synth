@@ -52,6 +52,10 @@ Other observed results:
 - **Undo:** restores a deleted module and the previous patch after a load. After
   Make rack-editable on Trance, undo restored the exact source (26,636 characters;
   conversion made it 27,610), and redo restored the exact converted source.
+- **Typing:** the reader accepted 24 of 39 keystrokes while adding three effects
+  to a voice, but a half-typed `.l` collapsed the voice into one CODE block (5
+  modules to 3). Module changes without new CODE fell exactly after the three
+  finished calls. Typing inside a pattern string changed no modules.
 - **Dropdowns:** about 35 of 42 setting dropdowns have four or fewer options, and
   at least 13 are off/on.
 - **Refused edits:** only the Trance demo refused a knob edit among all 74 library
