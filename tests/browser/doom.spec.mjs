@@ -37,6 +37,7 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
     const steady = await page.evaluate(() => window.doomProbe.read())
     expect(steady.triggers[0].cycle).toBe(0)
     expect(steady.triggers[0].cps).toBeCloseTo(56 / 240, 10)
+    expect(steady.drivePeak).toBeGreaterThan(0)
     expect(steady.drivePeak).toBeLessThanOrEqual(4)
     expect(steady.orbits.sort()).toEqual(['1', '2', '3'])
     expect(steady.buses).toEqual([])
@@ -77,17 +78,21 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
         (t) => t.orbit === 1 && t.cutoff === 1800 && t.distort === 1 && t.postgain === 0.1,
       ),
     ).toBe(true)
-    await run(page, 'stopDoom')
+    const ringing = await page.evaluate(async () =>
+      (await import('/scripts/doom-check.mjs')).stopHeldDoom(window.doomProbe),
+    )
+    expect(ringing.held.end).toBeGreaterThan(ringing.requestedAt + 3)
     await page.waitForTimeout(300)
     const stopped = await page.evaluate(() => window.doomProbe.read().triggers.length)
-    await page.waitForTimeout(800)
+    await page.waitForTimeout(5500)
     expect(await page.evaluate(() => window.doomProbe.read().triggers.length)).toBe(stopped)
-    const ringing = await run(page, 'liveDoomPCM', 200)
     // Replay after the Stop scheduling observation.
     await play(page)
     const replay = await run(page, 'liveDoomPCM', 300)
     const replayState = await page.evaluate(() => window.doomProbe.read())
+    expect(replayState.triggers[stopped].cycle).toBe(0)
     await run(page, 'stopDoom')
+    await run(page, 'loadDoom')
     const roundTrip = await run(page, 'doomRoundTrip')
     // Reloading always restores the repository default without starting audio.
     for (let i = 0; i < 2; i++) {
@@ -120,6 +125,7 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
       body: await readFile(await audio.path()),
       contentType: 'audio/wav',
     })
+    const defaultBytes = await readFile(await audio.path())
     const comparisons = {}
     for (const [name, control] of [
       ['anchor-solo', 'SOLO 1'],
@@ -131,15 +137,25 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
       const pending = page.waitForEvent('download')
       comparisons[name] = await run(page, 'bounceDoom')
       const rendered = await pending
+      const comparisonBytes = await readFile(await rendered.path())
+      expect(comparisonBytes.equals(defaultBytes)).toBe(false)
+      let energy = 0
+      for (let offset = 44; offset < defaultBytes.length; offset += 2) {
+        const sample =
+          (defaultBytes.readInt16LE(offset) - comparisonBytes.readInt16LE(offset)) / 32768
+        energy += sample * sample
+      }
+      comparisons[name].differenceRMS = Math.sqrt(energy / ((defaultBytes.length - 44) / 2))
+      if (name === 'warning-muted') expect(comparisons[name].differenceRMS).toBeGreaterThan(0.01)
       await rendered.saveAs(info.outputPath(`${name}.wav`))
       await info.attach(name, {
         body: await readFile(await rendered.path()),
         contentType: 'audio/wav',
       })
     }
-    expect(wav.accents.opening).toBeGreaterThan(wav.accents.pickup)
-    expect(comparisons['anchor-solo'].accents.opening).toBeGreaterThan(
-      comparisons['anchor-solo'].accents.pickup,
+    expect(wav.accents.strongGsharp).toBeGreaterThan(wav.accents.softGsharp)
+    expect(comparisons['anchor-solo'].accents.strongGsharp).toBeGreaterThan(
+      comparisons['anchor-solo'].accents.softGsharp,
     )
     expect(await run(page, 'loadDoom')).toEqual(loaded)
     expect(errors).toEqual([])

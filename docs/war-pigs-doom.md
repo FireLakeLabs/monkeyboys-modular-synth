@@ -51,7 +51,7 @@ per-note amp gain/velocity/envelope before filter and distortion regardless of
 that cable drawing: VCA controls drive input, MIX `postgain` controls post-drive
 balance. Each dyad note saturates separately, without shared chord intermodulation.
 Defaults are cutoff 720 Hz, filter ENV amount 2, soft drive 2.5, VCA .9 and
-MIX .25. Low triangle support uses VCA .3/MIX .5; warning uses .15/.2. OUT VOL
+MIX .25. Low triangle support uses VCA .3/MIX .5; warning uses .5/.6. OUT VOL
 is .8. Rack cutoff/drive/MIX edits affect future onsets; held notes retain their
 existing settings. A warning edit can take a phrase to sound.
 
@@ -97,15 +97,20 @@ core/transpiler 1.2.6, Chromium 156.0.8078.4:
   oscillator has the expected .0583333333 Hz rate and finite gate/release lifetime.
   All three orbit slots are present once warning starts, with no buses. Repeated
   short loads/plays retain only the two triggered orbits and settle to zero
-  connected DRIVE worklets. Transient restart overlap is outside the steady cap.
+  connected DRIVE worklets. An immediate Stop/Play observed **6** overlapping primary oscillators,
+  **6** connected DRIVE worklets and replay PCM peak **.4126**. Transient restart overlap is outside the steady cap.
 - The default stereo 44.1 kHz, 16-bit WAV is **4,536,044 bytes**, exactly
-  **25.7142857 seconds**, peak **.53543**, RMS **.15886**, with **0** full-scale
-  samples. The opening/pickup windows are RMS **.21843/.12640**; the anchor-solo
-  comparison independently retains that measured accent. Warning-muted and
+  **25.7142857 seconds**, peak **.53912**, RMS **.15952**, with **0** full-scale
+  samples. The accent check compares the same G♯3 pitch at velocities .8 and .5 in
+  anchor-solo PCM (**.14293/.11277 RMS**), separately from polyphony and low
+  support. The warning-muted difference is **.01459 RMS** over the phrase;
+  warning VCA/MIX were raised from .15/.2 to .5/.6 after review. Warning-muted and
   anchor-solo renders cover the same whole phrase at unchanged tempo/levels.
 - The focused browser case passes library-stopped loading, bar-1 scheduler
   start, actual cutoff/drive/MIX edits on future onsets, Stop’s scheduling
-  boundary, finite restart overlap, cleanup and separate export/reopen claims.
+  boundary over **5.5 seconds** without new onsets, finite restart overlap,
+  cleanup and separate export/reopen claims. A known held anchor immediately
+  after Stop still measured **.0257 RMS / .0870 peak**; Stop does not cut it off.
   Export adds the app’s standard factory-pack setup; the original executable
   body is an exact suffix, all module/cable/layout state survives, and the
   exported file itself reopens byte-exact with its complete saved identity.

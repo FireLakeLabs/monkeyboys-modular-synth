@@ -40,8 +40,8 @@ warning: note("~@24 b4@16 ~@8")
   .decay(0.4)
   .sustain(0.45)
   .release(0.6)
-  .gain(0.15)
-  .postgain(0.2)
+  .gain(0.5)
+  .postgain(0.6)
   .orbit(3)
 
 // ── @monkeyboy rack v1 ──
@@ -241,11 +241,11 @@ warning: note("~@24 b4@16 ~@8")
 //         },
 //         {
 //           "name": "gain",
-//           "arguments": "[{\"type\":\"Literal\",\"value\":0.15}]"
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.5}]"
 //         },
 //         {
 //           "name": "postgain",
-//           "arguments": "[{\"type\":\"Literal\",\"value\":0.2}]"
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.6}]"
 //         },
 //         {
 //           "name": "orbit",
@@ -674,7 +674,7 @@ warning: note("~@24 b4@16 ~@8")
 //       "values": {
 //         "ch1": 0.25,
 //         "ch2": 0.5,
-//         "ch3": 0.2,
+//         "ch3": 0.6,
 //         "ch4": 1,
 //         "name1": "anchor",
 //         "name2": "low",
@@ -782,7 +782,7 @@ warning: note("~@24 b4@16 ~@8")
 //       "hp": 31,
 //       "look": "instrument",
 //       "values": {
-//         "level": 0.15
+//         "level": 0.5
 //       },
 //       "bindings": [
 //         {

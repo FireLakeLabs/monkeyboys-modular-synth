@@ -185,6 +185,7 @@ export function verifyDoomEvents() {
 export async function doomRoundTrip() {
   await stopDoom()
   const before = editorSource()
+  assert(before === doomEntry.source, 'Export must start from bundled default bytes')
   const original = URL.createObjectURL.bind(URL)
   let blob
   URL.createObjectURL = (value) => {
@@ -277,7 +278,7 @@ export async function bounceDoom() {
       peak,
       rms: Math.sqrt(sum / (frames * channels)),
       clipped,
-      accents: { opening: rmsWindow(0.03), pickup: rmsWindow(1.28) },
+      accents: { strongGsharp: rmsWindow(3.03), softGsharp: rmsWindow(2.78) },
       bytes: buffer.byteLength,
     }
   } finally {
@@ -412,4 +413,27 @@ export async function immediateDoomReplay() {
   const pcm = await liveDoomPCM(300)
   await stopDoom()
   return { before, elapsed, pcm }
+}
+
+export async function stopHeldDoom(probe) {
+  let held
+  await until(() => {
+    const time = web.getAudioContext().currentTime
+    held = probe
+      .read()
+      .oscillators.find(
+        (o) =>
+          !o.offline &&
+          o.frequency > 20 &&
+          o.type === 'sawtooth' &&
+          time > o.begin + 0.15 &&
+          time < o.end - 3,
+      )
+    return held
+  }, 'known held anchor before Stop')
+  const requestedAt = web.getAudioContext().currentTime
+  await stopDoom()
+  const stoppedAt = web.getAudioContext().currentTime
+  const pcm = await liveDoomPCM(200)
+  return { requestedAt, stoppedAt, held, pcm }
 }
