@@ -289,11 +289,23 @@ export function verifyIndustrialEvents() {
   const anchor = all.find((e) => e.orbit === LANES.anchor)
   const hit = all.find((e) => e.orbit === LANES.machinery)
   const startOverrun = rejects(
-    all.flatMap((e) => (e.orbit === LANES.anchor ? [e, e, e] : [e])),
+    [
+      ...all,
+      ...Array.from({ length: 24 }, (_, n) => ({
+        ...anchor,
+        begin: 6 + n / 4,
+        end: 6 + n / 4 + 0.001,
+      })),
+    ],
     /phrase start budget/,
   )
   const overlapOverrun = rejects(
-    [...all, ...[0, 6, 12].flatMap((begin) => [1, 2, 3].map(() => ({ ...anchor, begin })))],
+    [
+      ...all,
+      ...[0, 6, 12].flatMap((begin) =>
+        [1, 2, 3].map(() => ({ ...anchor, begin, end: begin + anchor.end - anchor.begin })),
+      ),
+    ],
     /voice overlap budget/,
   )
   const windowOverrun = rejects(
@@ -444,12 +456,18 @@ const held = (wav, t0, t1, root, fifth) => {
   }
 }
 const seconds = (slot) => slot * SLOT_SECONDS
-const hitBand = (wav, hits, low, high) => {
-  let energy = 0
+// Every hit in a session replays the same random samples, so a few narrow bins vary
+// widely between sessions. Level and centroid over the whole noise band do not.
+const hitSpectrum = (wav, hits) => {
+  let energy = 0,
+    moment = 0
   for (const slot of hits)
-    for (let frequency = low; frequency <= high; frequency += 100)
-      energy += wav.amplitude(seconds(slot), seconds(slot) + 0.12, frequency) ** 2
-  return Math.sqrt(energy)
+    for (let frequency = 1200; frequency <= 8000; frequency += 100) {
+      const power = wav.amplitude(seconds(slot), seconds(slot) + 0.12, frequency) ** 2
+      energy += power
+      moment += power * frequency
+    }
+  return { level: Math.sqrt(energy), centroid: moment / energy }
 }
 
 export async function bounceIndustrial() {
@@ -510,8 +528,7 @@ export async function bounceIndustrial() {
         emptyGroupRMS: Math.max(
           ...EMPTY_GROUPS.map((slot) => wav.rms(seconds(slot), seconds(slot + 3))),
         ),
-        band: hitBand(wav, hits, 1600, 2400),
-        upperBand: hitBand(wav, hits, 2600, 3400),
+        ...hitSpectrum(wav, hits),
       },
       // Carrier level under the first hit of each bar, compared across renders.
       carrierDuringHit: [

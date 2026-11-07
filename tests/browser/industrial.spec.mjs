@@ -212,13 +212,11 @@ test('Industrial triplets: six-cycle identity, budgets, audio, edits and stopped
     expect(machinery.noise.afterGateRMS).toBeLessThan(0.0005)
     expect(machinery.noise.emptyGroupRMS).toBeLessThan(0.0005)
 
-    // Live edits: lower INDEX thins the sidebands, a lower MIX level and higher filter
-    // change the machinery band.
+    // Live edits: lower INDEX thins the sidebands, the lower MIX level drops the machinery
+    // and the higher filter raises its spectrum.
     expect(editedWav.fm.dMid.sidebandRatio).toBeLessThan(wav.fm.dMid.sidebandRatio / 2)
-    expect(editedWav.noise.band).toBeLessThan(wav.noise.band)
-    expect(editedWav.noise.upperBand / editedWav.noise.band).toBeGreaterThan(
-      wav.noise.upperBand / wav.noise.band,
-    )
+    expect(editedWav.noise.level).toBeLessThan(wav.noise.level * 0.75)
+    expect(editedWav.noise.centroid).toBeGreaterThan(wav.noise.centroid * 1.1)
 
     expect(await run(page, 'loadIndustrial')).toEqual(loaded)
     expect(errors).toEqual([])

@@ -25,6 +25,8 @@ stereo **44,100 Hz / 16-bit PCM** download. Comparison MP3s use ffmpeg
 [Render metadata, hashes and measured results](render.json) identify the files
 and source. Regenerate these files after any sound change. Noise samples change
 between browser sessions, so a new render will not match these bytes.
+The `measured` block keeps the field names of the rendered revision; later test
+commits renamed some fixtures and noise fields without changing the sound.
 
 No one has listened to these as part of the implementation or automated checks.
 See the [arrangement and acceptance report](../../war-pigs-industrial-triplets.md)
