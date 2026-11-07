@@ -91,7 +91,59 @@ The isolated-reply fixture uses the production engine’s Bounce path and observ
 float PCM before 16-bit WAV quantization, fitting a scaled waveform to each tap
 rather than comparing envelope peaks. Live Stop tail PCM is measured separately.
 
-Observed results and rendered audio are recorded after final qualification.
+### Observed focused qualification
+
+Observed on 7 November 2026 in Chromium 156.0.8078.4 with Node 24.22.2 and the
+locked engine (web/webaudio/superdough 1.3.0, core/transpiler 1.2.6).
+[Audio downloads and provenance](evidence/war-pigs-dub-afterimage/README.md)
+include the unchanged default Bounce WAV, dry-anchor and delay-muted comparisons,
+and isolated reply/low comparisons. Source revision `711e9ed` renders 25.714286 s,
+peak .089905, RMS .026840, zero full-scale samples. Reply-solo peaks .014648;
+low-solo peaks .041412. Default versus delay-muted difference is .0001803 RMS.
+These are signal differences, not proof of perceived audibility.
+
+| Budget per phrase / peak                     |    Measured |         Cap |
+| -------------------------------------------- | ----------: | ----------: |
+| Expanded starts (dry/reply/low)              | 26 (17/4/5) | 48 (32/8/8) |
+| Sliding 1/8-cycle starts, seams included     |           4 |           8 |
+| Event and live source voices (dry/reply/low) |   5 (3/1/2) |   8 (4/2/2) |
+| Final orbit slots / active native delay bus  |       3 / 1 |       3 / 1 |
+
+Source start/stop observations agree with gate + effective release + .01 s cleanup;
+no modulation oscillators or noise sources were created. Two sampled complete
+live phrases measured .026814 and .026886 RMS, with no measured level buildup.
+The event budget passes at 40/56/240, including repeat seams. Delay taps do not
+create Strudel source triggers or additional oscillators.
+
+The default isolated reply has a dry peak .010664 in the left channel. Fitted
+taps occur at **.535714, 1.074331 and 1.612948 s**, with waveform correlations
+above .999999 and amplitude ratios **.2, .05, .0125** to the source. The first
+repeat is on the 1/8-cycle grid; each later feedback pass adds one 128-frame
+quantum (2.902 ms at 44.1 kHz). The source is silent in .3–.45 s before the
+first repeat. At 40/240 the first taps are .75/.124989 s; natural source/tap
+overlap occurs at 240. The high-tempo analysis subtracts a matched dry reference
+and earlier fitted taps to distinguish that overlap. Requests for 1/4 and 3/8
+cycle at 56 both produce **1.0 s**, confirming the native ceiling.
+
+The tail’s measured peak in the last second before the six-second deadline is
+**−134.39 dB** relative to the last dry reply at 56 (−98.27 dB at 40).
+A separate live isolated reply/Stop check gives **−134.52 dB**. Zero send and
+zero feedback fixtures produce no new echoes; live bypass retains the existing
+bus and previous feedback. Positive feedback edits retain that bus, leave it
+unchanged before the next reply, and update it at the next onset.
+
+Stop PCM remained .029574 RMS with a held dry source due to finish 4.44 seconds
+after the request. No new onset arrived over **8 seconds**, longer than the
+longest lane onset gap (7.5 seconds). An **isolated** immediate restart peaked
+at **6 primary / 4 dry / 2 low** sources. The separate **cumulative** rapid
+load/Play sequence, including already ringing sources, peaked at **12 / 8 / 4**.
+These transient counts exceed steady caps and are not described as persistent
+leaks: the notes have finite ends, and all stopped within the six-second settle
+window. Replacement resets the old delay object rather than accumulating buses.
+
+The PR records the final full-browser RESULT, hosted checks, reviewer ledger and
+any subsequent observations. The committed measurements identify the rendered
+source revision; test-only changes do not imply a different sound.
 
 ## Listening and delivery limits
 

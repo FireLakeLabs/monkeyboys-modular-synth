@@ -141,9 +141,15 @@ test('Dub afterimage: phrase, sources, native delay PCM, transport and saved ide
     await run(page, 'loadDub')
     const roundTrip = await run(page, 'dubRoundTrip')
     expect(roundTrip.fanout).toEqual(['env2->vcf1.cv', 'env2->vca2.cv'])
+    const reloadSource = await page.evaluate(async () =>
+      (await import('/scripts/editor-browser.mjs')).editorSource(),
+    )
     await page.reload()
     await page.locator('.cm-content').waitFor()
     await expect(page.locator('.transport-status')).toHaveText('Ready')
+    expect(
+      await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource()),
+    ).toBe(reloadSource)
     await page.evaluate(async (check) => {
       window.dubProbe = (await import(check)).installDubProbe()
     }, check)
@@ -200,6 +206,9 @@ test('Dub afterimage: phrase, sources, native delay PCM, transport and saved ide
     expect(
       settled.oscillators.filter((o) => !o.offline && (o.end ?? Infinity) > settled.now),
     ).toEqual([])
+    expect(settled.delays).toEqual([])
+    expect(settled.buses).toEqual([])
+    expect(settled.orbits.sort()).toEqual(['1', '3'])
     await run(page, 'loadDub')
     expect(errors).toEqual([])
     const evidence = {
@@ -219,6 +228,8 @@ test('Dub afterimage: phrase, sources, native delay PCM, transport and saved ide
       immediate,
       isolatedRestart,
       cumulativeRepeatedLoad,
+      settled: { orbits: settled.orbits, delays: settled.delays, buses: settled.buses },
+      reloadExact: true,
       errors,
       physicalListening: false,
     }
