@@ -46,10 +46,11 @@ leaves three empty dotted-quarter groups between reply starts. Their native
 The reply itself uses the shortened hold’s gap; its first repeat starts as that
 gap closes, at slots **10/22/34/46**, together with the dry D3/G♯3 pickups.
 At 22/46 it also meets a low E2 onset. The second repeat falls under the next
-ornament; the third repeat from slot 45 reaches the next phrase’s opening hit
-at roughly .0125 of its reply source amplitude, with the measured feedback
-quantum offsets. A familiar listener must compare default against delay-muted
-at those pickups and the phrase seam to judge delay audibility and whether the
+ornament; every third repeat reaches the next bar’s downbeat at slots
+**12/24/36/48**, including the next phrase’s opening hit at 48, at roughly .0125
+of its reply source amplitude, with the measured feedback quantum offsets. A familiar listener must compare default against delay-muted
+at those pickups and downbeats, including the phrase seam, to judge delay
+audibility and whether the
 opening emphasis stays clear. A placement change requires new audio renders.
 
 ## Rack and engine semantics
