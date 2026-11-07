@@ -27,3 +27,10 @@ and source independently. Regenerate these files after any sound change.
 Familiar-listener recognition, perceived drive and masking remain unverified
 by listening. See the [arrangement and acceptance report](../../war-pigs-doom.md)
 for source attribution, test coverage and the finite Stop/replay overlap limit.
+
+The conflict-resolution rebase onto `main` at
+`6da7624ebb46019300c8324a26fd575b598a5978` retained the complete Doom patch file
+and all three audio files byte-for-byte. The original rendered revision and
+hashes above remain the audio provenance. The owner accepted repository-hosted
+delivery and reported the listening criteria met in the implementation thread;
+that acceptance carries forward to this unchanged sound.
