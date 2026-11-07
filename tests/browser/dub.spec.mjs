@@ -259,9 +259,8 @@ test('Dub native delay: waveform spacing, decay, clamping and bypass', async ({ 
     expect(result.taps[0].seconds).toBeCloseTo(expected, 2)
     result.taps.forEach((tap, i) => {
       expect(tap.correlation).toBeGreaterThan(0.98)
-      expect(tap.seconds - expected * (i + 1)).toBeLessThanOrEqual(
-        ((i + 1) * 128) / result.rate + 0.001,
-      )
+      expect(tap.seconds).toBeGreaterThanOrEqual(expected * (i + 1) - 1 / result.rate)
+      expect(tap.seconds - expected * (i + 1)).toBeLessThanOrEqual((i * 128 + 1) / result.rate)
     })
     expect(result.tailDb).toBeLessThan(-60)
     if (result.bpm === 56 && result.sync === 0.125)
