@@ -36,3 +36,16 @@ These committed files and immutable PR links make the audio downloadable. They
 are **not native GitHub media attachments**; #212’s explicit attachment delivery
 acceptance remains separate until native upload succeeds or the owner decides
 whether this concrete delivery is acceptable.
+
+## Modernization after Doom and Industrial landed
+
+PR #215 was rebased onto main `20bdaef1a8c54bbffcc780a4effccd7cce0b4cb4`
+with all three entries in the single `war-pigs-experiments` collection. The
+rendered Dub source and all five audio files remain byte-identical to old PR
+head `c2acb2d58577543db87aa0d12973af4fb9b3fad3`; their SHA-256 hashes still
+match `render.json`. No new render was made. The real render revision remains
+`711e9ed99b0e185699eba0d2bff61247377bc79b`, with the tempo, levels and engine
+provenance stated above. The PR records the current reviewed head, final local
+and hosted checks, and verified immutable public downloads.
+
+This rebase supplies no new human listening or attachment-hosting acceptance.
