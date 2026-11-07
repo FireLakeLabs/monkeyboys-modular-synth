@@ -518,6 +518,13 @@ exports[`built-in patch library > switch-angel-trance-demo: preserves exact sour
 }
 `;
 
+exports[`built-in patch library > war-pigs-doom-instrument: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "c184bf337b63d9acb60144be217c6182e46183c6065cc37aa0029c7c94ec2ce6",
+  "projection": "4b5322b3a0ccd9f44df30e7fae5e177b519b767016c16c11c3389e0751a96d8d",
+}
+`;
+
 exports[`built-in patch library > war-pigs-industrial-triplets: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "afd4c3d739cbe0e92c236404274f671c93a1bfa5acae27f96f78843471c595da",
