@@ -473,3 +473,12 @@ unsupported lookahead and saved CODE owners cannot invent slicing defaults. The
 crate uses #137's seated inventory and status API. The separate browser suite
 checks cold audition without transport, five drop destinations and tape/code
 updates; physical listening and other-browser coverage remain unverified.
+
+The #211 Industrial acceptance derives its stopped-scheduling wait from the longest
+gap between onsets in any lane, and names an isolated restart’s peaks
+(`immediateRestart`) separately from the maximum across repeated loads
+(`cumulativeRepeatedLoad`). Live edits are checked as events and again in a Bounce
+of the edited rack. Noise samples differ between sessions, so noise PCM is held to
+level and envelope bounds, not digests. Module/HP and source/rack invariants run in
+`npm run check`; PCM, lifetimes and scheduling run in the full browser suite.
+Neither path establishes subjective listening acceptance.

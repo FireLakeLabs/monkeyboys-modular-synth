@@ -281,3 +281,17 @@ CV, effect insertion and mixer channel edits, checks attribution and export
 identity, then verifies a nearby showcase conversion, its message, Undo and Redo,
 retained registrations and a later CV edit. The signal group also queries real
 Strudel onset events independently of source/rack checks.
+
+## War Pigs experiments (#211)
+
+Complete patches → War Pigs experiments contains **War Pigs · Industrial triplet
+machine** (`war-pigs-industrial-triplets`), a generator-owned, 20-module
+interpretation of the first four slow opening bars. It loads stopped at 56 BPM;
+press Play explicitly. Mute MIX machinery to hear the anchor alone, restore it,
+then reduce FM INDEX. Black Sabbath composed the music; Jake Brown’s
+[Ultimate Guitar transcription](https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414)
+was consulted. The [Songsterr link](https://www.songsterr.com/a/wsa/black-sabbath-war-pigs-tab-s10137)
+is retained for provenance, with no available notation or note-level corroboration.
+The new modular arrangement and synthesis are distinct from the composition and
+transcription and are not labelled an original MIT exercise. See the
+[selected adaptation, engine semantics and acceptance evidence](war-pigs-industrial-triplets.md).

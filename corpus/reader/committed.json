@@ -112,5 +112,11 @@
     "path": "src/library/patches/sound-effects.strudel",
     "license": "MIT",
     "provenance": "Repository-owned original; LICENSE; src/library/catalog.ts attribution"
+  },
+  {
+    "id": "war-pigs-industrial-triplets",
+    "path": "src/library/patches/war-pigs-industrial-triplets.strudel",
+    "license": "New synthesis/arrangement; underlying Black Sabbath composition and Jake Brown transcription credited, not claimed MIT",
+    "provenance": "Issue #211; new modular adaptation; https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414; Songsterr metadata only; docs/war-pigs-industrial-triplets.md"
   }
 ]

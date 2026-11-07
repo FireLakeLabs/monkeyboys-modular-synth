@@ -1,0 +1,759 @@
+{
+  "patch": "war-pigs-industrial-triplets",
+  "renderedRevision": "e6f3de97782c6a46b11c6335cc31431f736bb578",
+  "source": {
+    "path": "src/library/patches/war-pigs-industrial-triplets.strudel",
+    "sha256": "afd4c3d739cbe0e92c236404274f671c93a1bfa5acae27f96f78843471c595da",
+    "executableBodySha256": "ae97ab79c678a25290cefe1fd31ec2f905e06133d833260fae94e7e3abc9138e"
+  },
+  "tempo": {
+    "bpm": 56,
+    "cyclesPerSecond": 0.23333333333333334,
+    "cycles": 6,
+    "seconds": 25.714285714285715,
+    "outVol": 0.8
+  },
+  "render": {
+    "method": "File → Bounce WAV (OfflineAudioContext), production engine.bounce",
+    "browser": "Chromium 156.0.8078.4",
+    "node": "v24.22.2",
+    "engine": {
+      "@strudel/web": "1.3.0",
+      "@strudel/webaudio": "1.3.0",
+      "superdough": "1.3.0",
+      "@strudel/core": "1.2.6",
+      "@strudel/transpiler": "1.2.6"
+    },
+    "mp3": "ffmpeg libmp3lame -b:a 192k, no normalization"
+  },
+  "files": {
+    "default.wav": {
+      "sha256": "01a58a2f834186acf6742a8ee0fbc2673728962dabb40730f22cbf21dd4f7c21",
+      "bytes": 4536044
+    },
+    "anchor-solo.mp3": {
+      "sha256": "efc6718549b3f05bb3cd9ca920a6d96ef11aa2a90dcc45667836fd0e019ff82f",
+      "bytes": 618831
+    },
+    "machinery-muted.mp3": {
+      "sha256": "bb6ebca2030dcbc25d2b990ca980772cee4733100946cc77629805013bc67085",
+      "bytes": 618831
+    }
+  },
+  "measured": {
+    "revision": "e6f3de97782c6a46b11c6335cc31431f736bb578",
+    "browser": "156.0.8078.4",
+    "events": {
+      "budget": {
+        "starts": {
+          "total": 45,
+          "anchor": 17,
+          "machinery": 23,
+          "low": 5
+        },
+        "windowPeak": 4,
+        "voices": {
+          "total": 5,
+          "anchor": 3,
+          "machinery": 1,
+          "low": 2
+        }
+      },
+      "repeats": 3,
+      "negativeFixturesRejected": {
+        "stackedChords": true,
+        "denseNoise": true,
+        "longGate": true,
+        "filledGroup": true
+      },
+      "longestGapSeconds": 7.5,
+      "events": [
+        {
+          "slot": 0,
+          "slots": 10,
+          "note": "b3",
+          "orbit": 1,
+          "velocity": 1
+        },
+        {
+          "slot": 0,
+          "slots": 10,
+          "note": "e3",
+          "orbit": 1,
+          "velocity": 1
+        },
+        {
+          "slot": 0,
+          "slots": 10,
+          "note": "e2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 3,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 1
+        },
+        {
+          "slot": 6,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.8
+        },
+        {
+          "slot": 8,
+          "slots": 0.25,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.45
+        },
+        {
+          "slot": 8.5,
+          "slots": 0.25,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.6
+        },
+        {
+          "slot": 9,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.9
+        },
+        {
+          "slot": 10,
+          "slots": 0.5,
+          "note": "d3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 10.5,
+          "slots": 1.5,
+          "note": "e3",
+          "orbit": 1,
+          "velocity": 0.8
+        },
+        {
+          "slot": 12,
+          "slots": 10,
+          "note": "a3",
+          "orbit": 1,
+          "velocity": 0.95
+        },
+        {
+          "slot": 12,
+          "slots": 10,
+          "note": "d3",
+          "orbit": 1,
+          "velocity": 0.95
+        },
+        {
+          "slot": 12,
+          "slots": 10,
+          "note": "d2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 15,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 1
+        },
+        {
+          "slot": 18,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.8
+        },
+        {
+          "slot": 20,
+          "slots": 0.166667,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.4
+        },
+        {
+          "slot": 20.333333,
+          "slots": 0.166667,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.5
+        },
+        {
+          "slot": 20.666667,
+          "slots": 0.166667,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.65
+        },
+        {
+          "slot": 21,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.9
+        },
+        {
+          "slot": 22,
+          "slots": 1,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 22,
+          "slots": 12,
+          "note": "e2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 23,
+          "slots": 0.5,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 23.5,
+          "slots": 0.5,
+          "note": "a3",
+          "orbit": 1,
+          "velocity": 0.7
+        },
+        {
+          "slot": 24,
+          "slots": 10,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.85
+        },
+        {
+          "slot": 27,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 1
+        },
+        {
+          "slot": 30,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.8
+        },
+        {
+          "slot": 31,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.5
+        },
+        {
+          "slot": 32,
+          "slots": 0.25,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.45
+        },
+        {
+          "slot": 32.5,
+          "slots": 0.25,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.6
+        },
+        {
+          "slot": 33,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.9
+        },
+        {
+          "slot": 34,
+          "slots": 1,
+          "note": "d3",
+          "orbit": 1,
+          "velocity": 0.65
+        },
+        {
+          "slot": 35,
+          "slots": 1,
+          "note": "e3",
+          "orbit": 1,
+          "velocity": 0.8
+        },
+        {
+          "slot": 36,
+          "slots": 10,
+          "note": "a3",
+          "orbit": 1,
+          "velocity": 0.95
+        },
+        {
+          "slot": 36,
+          "slots": 10,
+          "note": "d3",
+          "orbit": 1,
+          "velocity": 0.95
+        },
+        {
+          "slot": 36,
+          "slots": 10,
+          "note": "d2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 39,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 1
+        },
+        {
+          "slot": 42,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.8
+        },
+        {
+          "slot": 44,
+          "slots": 0.166667,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.4
+        },
+        {
+          "slot": 44.333333,
+          "slots": 0.166667,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.5
+        },
+        {
+          "slot": 44.666667,
+          "slots": 0.166667,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.65
+        },
+        {
+          "slot": 45,
+          "slots": 0.5,
+          "note": "c3",
+          "orbit": 2,
+          "velocity": 0.9
+        },
+        {
+          "slot": 46,
+          "slots": 1,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 46,
+          "slots": 2,
+          "note": "e2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 47,
+          "slots": 0.5,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 47.5,
+          "slots": 0.5,
+          "note": "a3",
+          "orbit": 1,
+          "velocity": 0.7
+        }
+      ]
+    },
+    "pcm": {
+      "peak": 0.5395483374595642,
+      "rms": 0.12585479938729346
+    },
+    "steadyPeaks": {
+      "primary": 5,
+      "anchor": 3,
+      "low": 2,
+      "modulators": 4,
+      "noise": 1
+    },
+    "sources": {
+      "anchorVoices": 19,
+      "lowVoices": 6,
+      "modulators": 19,
+      "noiseHits": 24,
+      "noiseBuffers": 1,
+      "noiseLifetime": 0.3278571428571446
+    },
+    "stop": {
+      "ringing": {
+        "requestedAt": 39.14666666666667,
+        "stoppedAt": 39.328,
+        "held": {
+          "begin": 38.96942857142857,
+          "end": 44.53657142857143,
+          "frequency": 207.65234375,
+          "type": "triangle",
+          "offline": false
+        },
+        "pcm": {
+          "peak": 0.2365867644548416,
+          "rms": 0.09127814725348132
+        }
+      },
+      "heldAtStopSeconds": 5.389904761904759,
+      "noNewOnsetsForMs": 8000
+    },
+    "replay": {
+      "peak": 0.47419387102127075,
+      "rms": 0.16418474350761877
+    },
+    "roundTrip": {
+      "sourceExact": true,
+      "rackExact": true,
+      "fanout": ["env1->vcf1.cv", "env1->vca1.cv", "env2->vcf2.cv", "env2->vca2.cv"]
+    },
+    "immediateRestart": {
+      "before": 60.32,
+      "elapsed": 0.19200000000000017,
+      "pcm": {
+        "peak": 0.46360331773757935,
+        "rms": 0.1442444525650933
+      },
+      "peaks": {
+        "primary": 6,
+        "anchor": 4,
+        "low": 2,
+        "modulators": 4,
+        "noise": 0
+      }
+    },
+    "cumulativeRepeatedLoad": {
+      "primary": 9,
+      "anchor": 6,
+      "low": 3,
+      "modulators": 6,
+      "noise": 0
+    },
+    "settledOrbits": ["1", "3"],
+    "editedWav": {
+      "seconds": 25.714285714285715,
+      "rate": 44100,
+      "channels": 2,
+      "bytes": 4536044,
+      "peak": 0.5057373046875,
+      "rms": 0.12355481985727836,
+      "clipped": 0,
+      "fm": {
+        "eEarly": {
+          "carriers": [0.11783945678213065, 0.11768288773978541],
+          "sidebands": [
+            0.02403773491510136, 0.024315301910932372, 0.024142077255441013, 0.024740017777455894
+          ],
+          "sidebandRatio": 0.21022612762664186
+        },
+        "eMid": {
+          "carriers": [0.11784657952289389, 0.12206030467853747],
+          "sidebands": [
+            0.02417622043262404, 0.02434785239704352, 0.024169455550236113, 0.02472802017097813
+          ],
+          "sidebandRatio": 0.20983231139240874
+        },
+        "eLate": {
+          "carriers": [0.11783620629188842, 0.11797421566752045],
+          "sidebands": [
+            0.024191022401523373, 0.02432846516820784, 0.02415031651529862, 0.024778438179492508
+          ],
+          "sidebandRatio": 0.21027864829689616
+        },
+        "dMid": {
+          "carriers": [0.11192711349276435, 0.11718977534678517],
+          "sidebands": [
+            0.023066874126089987, 0.023033461782356376, 0.022943348001923443, 0.02336287826156446
+          ],
+          "sidebandRatio": 0.20873296498506397
+        }
+      },
+      "noise": {
+        "hitPeak": 0.401275634765625,
+        "hitRMS": 0.14386817156408965,
+        "afterGateRMS": 0.14275169787383601,
+        "emptyGroupRMS": 0.1462303868477884,
+        "band": 0.00547371866129658,
+        "upperBand": 0.013094329188826068
+      },
+      "carrierDuringHit": [0.11787387148551422, 0.1119571097625434],
+      "lowRoot": 0.08580964253239612
+    },
+    "wav": {
+      "seconds": 25.714285714285715,
+      "rate": 44100,
+      "channels": 2,
+      "bytes": 4536044,
+      "peak": 0.547821044921875,
+      "rms": 0.12434261218748696,
+      "clipped": 0,
+      "fm": {
+        "eEarly": {
+          "carriers": [0.09388333866882807, 0.08846017162749767],
+          "sidebands": [
+            0.054056218809827784, 0.05468785042513867, 0.05421583980137985, 0.05554855925039612
+          ],
+          "sidebandRatio": 0.627949937564093
+        },
+        "eMid": {
+          "carriers": [0.09388696146568078, 0.10210718336144783],
+          "sidebands": [
+            0.05413188146310835, 0.054583652796717945, 0.054212578872648715, 0.05550581347938563
+          ],
+          "sidebandRatio": 0.5911983156433824
+        },
+        "eLate": {
+          "carriers": [0.09389140094470556, 0.08868532050643549],
+          "sidebands": [
+            0.05403634831726638, 0.054559483489048606, 0.05426807916184532, 0.05560596847874269
+          ],
+          "sidebandRatio": 0.6270030729009726
+        },
+        "dMid": {
+          "carriers": [0.08917361859552389, 0.09414112968261347],
+          "sidebands": [
+            0.051457419093709454, 0.05172402619284885, 0.05145440660678155, 0.052443334038691336
+          ],
+          "sidebandRatio": 0.5881036887890042
+        }
+      },
+      "noise": {
+        "hitPeak": 0.547821044921875,
+        "hitRMS": 0.1490278272516173,
+        "afterGateRMS": 0.1431630730287211,
+        "emptyGroupRMS": 0.14652229206063574,
+        "band": 0.02251520400429033,
+        "upperBand": 0.050424606895842376
+      },
+      "carrierDuringHit": [0.09390702431898029, 0.08912135506956631],
+      "lowRoot": 0.08580883045541851
+    },
+    "comparisons": {
+      "anchor-solo": {
+        "seconds": 25.714285714285715,
+        "rate": 44100,
+        "channels": 2,
+        "bytes": 4536044,
+        "peak": 0.475341796875,
+        "rms": 0.10863602353278377,
+        "clipped": 0,
+        "fm": {
+          "eEarly": {
+            "carriers": [0.09388449839387525, 0.0940131768153695],
+            "sidebands": [
+              0.054062061571247814, 0.05468554280160311, 0.054214748704547504, 0.05554740692944597
+            ],
+            "sidebandRatio": 0.5916568536842683
+          },
+          "eMid": {
+            "carriers": [0.09388396719853376, 0.09402214329544593],
+            "sidebands": [
+              0.05413091841704801, 0.05458273460034092, 0.054212426223357944, 0.055505335040765054
+            ],
+            "sidebandRatio": 0.591212074830514
+          },
+          "eLate": {
+            "carriers": [0.09388873390880895, 0.09399060739931349],
+            "sidebands": [
+              0.05402111163649549, 0.054589123241983534, 0.05422632528298574, 0.05550237194146018
+            ],
+            "sidebandRatio": 0.5911504994344456
+          },
+          "dMid": {
+            "carriers": [0.08917039935847369, 0.08933306989995425],
+            "sidebands": [
+              0.05145838779925165, 0.05172347959771325, 0.051454162283154414, 0.052442690515891704
+            ],
+            "sidebandRatio": 0.588117703780455
+          }
+        },
+        "noise": {
+          "hitPeak": 0.30029296875,
+          "hitRMS": 0.12468250668056748,
+          "afterGateRMS": 0.12678030045654767,
+          "emptyGroupRMS": 0.1336690104568253,
+          "band": 0.005595828987193437,
+          "upperBand": 0.004251475790613856
+        },
+        "carrierDuringHit": [0.09386710883934737, 0.08911490904650983],
+        "lowRoot": 2.275810786221357e-5,
+        "differenceRMS": 0.06125529996699452
+      },
+      "machinery-solo": {
+        "seconds": 25.714285714285715,
+        "rate": 44100,
+        "channels": 2,
+        "bytes": 4536044,
+        "peak": 0.22784423828125,
+        "rms": 0.010340126522348956,
+        "clipped": 0,
+        "fm": {
+          "eEarly": {
+            "carriers": [0, 0],
+            "sidebands": [0, 0, 0, 0],
+            "sidebandRatio": null
+          },
+          "eMid": {
+            "carriers": [0, 0],
+            "sidebands": [0, 0, 0, 0],
+            "sidebandRatio": null
+          },
+          "eLate": {
+            "carriers": [1.1627711968404267e-5, 2.1836350582368246e-5],
+            "sidebands": [
+              9.018096560407469e-6, 3.685169866388944e-5, 4.089974908503457e-5,
+              0.00013804749698890256
+            ],
+            "sidebandRatio": 11.872283847760942
+          },
+          "dMid": {
+            "carriers": [0, 0],
+            "sidebands": [0, 0, 0, 0],
+            "sidebandRatio": null
+          }
+        },
+        "noise": {
+          "hitPeak": 0.22784423828125,
+          "hitRMS": 0.05363109376102402,
+          "afterGateRMS": 0,
+          "emptyGroupRMS": 0,
+          "band": 0.021581969728056583,
+          "upperBand": 0.0503841157507811
+        },
+        "carrierDuringHit": [4.551026585952106e-5, 3.2955610175092555e-6],
+        "lowRoot": 0,
+        "differenceRMS": 0.1239139259595632
+      },
+      "low-solo": {
+        "seconds": 25.714285714285715,
+        "rate": 44100,
+        "channels": 2,
+        "bytes": 4536044,
+        "peak": 0.238311767578125,
+        "rms": 0.06036991588711248,
+        "clipped": 0,
+        "fm": {
+          "eEarly": {
+            "carriers": [7.328711226642991e-7, 0.00942001892504296],
+            "sidebands": [
+              7.271237244433947e-6, 1.2782877115420785e-6, 6.737432227787015e-8,
+              2.616741673978274e-8
+            ],
+            "sidebandRatio": 9.92157695885178
+          },
+          "eMid": {
+            "carriers": [5.205308303323867e-7, 0.009419920462211498],
+            "sidebands": [
+              7.314164933197223e-6, 1.3351592691069651e-6, 7.41632553645968e-8, 2.86067875520475e-8
+            ],
+            "sidebandRatio": 14.051357781299407
+          },
+          "eLate": {
+            "carriers": [4.323422473546347e-7, 0.009419949689466472],
+            "sidebands": [
+              7.3978434732321634e-6, 1.3621184851588819e-6, 1.0663378418155309e-7,
+              3.705769619523777e-8
+            ],
+            "sidebandRatio": 17.111081599120197
+          },
+          "dMid": {
+            "carriers": [8.793093468505686e-7, 0.009445790795660918],
+            "sidebands": [
+              1.0154729139213918e-5, 1.8838420733810934e-6, 1.3270756729762437e-7,
+              9.697173263509756e-8
+            ],
+            "sidebandRatio": 11.548528598706719
+          }
+        },
+        "noise": {
+          "hitPeak": 0.10565185546875,
+          "hitRMS": 0.06163653339825806,
+          "afterGateRMS": 0.06151242578195556,
+          "emptyGroupRMS": 0.06543591116591489,
+          "band": 0.0003497659913430155,
+          "upperBand": 0.00010370069922204485
+        },
+        "carrierDuringHit": [8.866647449669527e-7, 3.927000424420204e-6],
+        "lowRoot": 0.0857867661571431,
+        "differenceRMS": 0.10912708235609925
+      },
+      "machinery-muted": {
+        "seconds": 25.714285714285715,
+        "rate": 44100,
+        "channels": 2,
+        "bytes": 4536044,
+        "peak": 0.52044677734375,
+        "rms": 0.12391389078142788,
+        "clipped": 0,
+        "fm": {
+          "eEarly": {
+            "carriers": [0.09388333866882807, 0.08846017162749767],
+            "sidebands": [
+              0.054056218809827784, 0.05468785042513867, 0.05421583980137985, 0.05554855925039612
+            ],
+            "sidebandRatio": 0.627949937564093
+          },
+          "eMid": {
+            "carriers": [0.09388696146568078, 0.10210718336144783],
+            "sidebands": [
+              0.05413188146310835, 0.054583652796717945, 0.054212578872648715, 0.05550581347938563
+            ],
+            "sidebandRatio": 0.5911983156433824
+          },
+          "eLate": {
+            "carriers": [0.09388731148035753, 0.0886652785894171],
+            "sidebands": [
+              0.054028228499913525, 0.054589647857612486, 0.05422708581221734, 0.05550368684395956
+            ],
+            "sidebandRatio": 0.6259912304678007
+          },
+          "dMid": {
+            "carriers": [0.08917361859552389, 0.09414112968261347],
+            "sidebands": [
+              0.051457419093709454, 0.05172402619284885, 0.05145440660678155, 0.052443334038691336
+            ],
+            "sidebandRatio": 0.5881036887890042
+          }
+        },
+        "noise": {
+          "hitPeak": 0.396820068359375,
+          "hitRMS": 0.1390992903546224,
+          "afterGateRMS": 0.1431630730287211,
+          "emptyGroupRMS": 0.14652229206063574,
+          "band": 0.005607045547820876,
+          "upperBand": 0.004252292426993548
+        },
+        "carrierDuringHit": [0.09386700469752354, 0.08911968417292851],
+        "lowRoot": 0.08580883045541851,
+        "differenceRMS": 0.010343541753339427
+      }
+    },
+    "errors": [],
+    "physicalListening": false
+  }
+}

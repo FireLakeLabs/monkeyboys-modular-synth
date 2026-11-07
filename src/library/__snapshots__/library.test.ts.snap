@@ -517,3 +517,10 @@ exports[`built-in patch library > switch-angel-trance-demo: preserves exact sour
   "projection": "165ce4fad8d721869edde499bf3deaaf33aca58d80fa5a07c78db39c1b594cf4",
 }
 `;
+
+exports[`built-in patch library > war-pigs-industrial-triplets: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "afd4c3d739cbe0e92c236404274f671c93a1bfa5acae27f96f78843471c595da",
+  "projection": "01ddd476e5acc50caedca54484770ac419efd60da51683b4430f393008735c08",
+}
+`;
