@@ -18,6 +18,7 @@ import effects from './patches/echo-room.strudel?raw'
 import alien from './patches/iter-jux.strudel?raw'
 import code from './patches/custom-helper.strudel?raw'
 import layered from './patches/layered-sketch.strudel?raw'
+import dub from './patches/war-pigs-dub-afterimage.strudel?raw'
 import trance from './patches/switch-angel-trance-demo.strudel?raw'
 import doom from './patches/war-pigs-doom-instrument.strudel?raw'
 import industrial from './patches/war-pigs-industrial-triplets.strudel?raw'
@@ -374,6 +375,22 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
               url: 'https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414',
             },
             exercises: ['seq', 'clock', 'osc', 'fmop', 'noise', 'vcf', 'vca', 'env', 'mix', 'out'],
+          },
+          {
+            kind: 'patch',
+            id: 'war-pigs-dub-afterimage',
+            title: 'War Pigs · Dub afterimage',
+            description:
+              'A dry E/D anchor, low roots and sparse filtered triangle replies leave room for a quiet native delay. Four slow opening bars at 56 BPM.',
+            tryThis:
+              'Mute afterimage, then restore it and change DELAY MIX (the delay send). Wait for the next reply onset, which can take several seconds, for bus edits to take effect.',
+            source: dub,
+            attribution: {
+              author:
+                'Black Sabbath composition · Jake Brown transcription consulted · original Dub afterimage arrangement and synthesis by MonkeyBoy’s Modular Synth contributors',
+              url: 'https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414',
+            },
+            exercises: ['seq', 'clock', 'osc', 'vcf', 'vca', 'env', 'pan', 'delay', 'mix', 'out'],
           },
         ],
       },
