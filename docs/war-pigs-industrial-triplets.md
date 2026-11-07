@@ -86,7 +86,7 @@ ordinary rack edits and snapshot digests.
 
 `tests/browser/industrial.spec.mjs` uses the actual library and production engine.
 It separately checks onset/gate/velocity snapshots over three repetitions, budgets
-including both seams, four rejected overrun fixtures, live PCM, oscillator and
+including both seams, five overrun fixtures, each rejected by the limit it targets, live PCM, oscillator and
 noise-source lifetimes, one modulator per anchor voice, the shared noise buffer,
 three orbits with no buses, per-onset edits and their rendered effect, Stop,
 replay, repeated load/Play, export/reopen, and whole-phrase Bounce WAV renders.

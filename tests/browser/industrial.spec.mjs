@@ -134,7 +134,7 @@ test('Industrial triplets: six-cycle identity, budgets, audio, edits and stopped
     const cumulativeRepeatedLoad = (await sources(page, beforeRepeats)).peaks
     await page.waitForTimeout(6000)
     const settled = await probe(page)
-    const stale = (o) => !o.offline && o.end > settled.now
+    const stale = (o) => !o.offline && (o.end ?? Infinity) > settled.now
     expect(settled.oscillators.filter(stale)).toEqual([])
     expect(settled.noises.filter(stale)).toEqual([])
     expect(settled.buses).toEqual([])

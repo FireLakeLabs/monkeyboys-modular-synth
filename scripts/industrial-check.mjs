@@ -276,27 +276,49 @@ export function verifyIndustrialEvents() {
     'Noise ENV fan-out to the BP filter changed',
   )
   const budget = eventBudget(all)
-  const rejects = (fixture) => {
+  // Each fixture exceeds one limit alone, so the named check must be what rejects it.
+  const rejects = (fixture, reason) => {
     try {
       eventBudget(fixture)
-      return false
-    } catch {
-      return true
+    } catch (error) {
+      if (reason.test(error.message)) return true
+      throw error
     }
+    return false
   }
-  const stackedChords = rejects(all.flatMap((e) => (e.orbit === 1 ? [e, e, e] : [e])))
-  const denseNoise = rejects([
-    ...all,
-    ...all
-      .filter((e) => e.orbit === LANES.machinery)
-      .flatMap((e) => [1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({ ...e, begin: e.begin + n / 96 }))),
-  ])
-  const longGate = rejects(all.map((e) => (e.orbit === 2 ? { ...e, end: e.begin + SLOT } : e)))
-  const filledGroup = rejects([
-    ...all,
-    { ...all.find((e) => e.orbit === LANES.machinery), begin: 1 / 8, end: 1 / 8 + 1 / 16 },
-  ])
-  assert(stackedChords && denseNoise && longGate && filledGroup, 'An overrun fixture passed')
+  const anchor = all.find((e) => e.orbit === LANES.anchor)
+  const hit = all.find((e) => e.orbit === LANES.machinery)
+  const startOverrun = rejects(
+    all.flatMap((e) => (e.orbit === LANES.anchor ? [e, e, e] : [e])),
+    /phrase start budget/,
+  )
+  const overlapOverrun = rejects(
+    [...all, ...[0, 6, 12].flatMap((begin) => [1, 2, 3].map(() => ({ ...anchor, begin })))],
+    /voice overlap budget/,
+  )
+  const windowOverrun = rejects(
+    [
+      ...all,
+      ...[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({
+        ...hit,
+        begin: 6.5 + n / 80,
+        end: 6.5 + n / 80 + 0.001,
+      })),
+    ],
+    /sliding window budget/,
+  )
+  const longGate = rejects(
+    all.map((e) => (e.orbit === LANES.machinery && e.begin === 6.375 ? { ...e, end: 6.5 } : e)),
+    /noise gate/,
+  )
+  const filledGroup = rejects(
+    [...all, { ...hit, begin: 1 / 8, end: 1 / 8 + 1 / 16 }],
+    /empty group/,
+  )
+  assert(
+    startOverrun && overlapOverrun && windowOverrun && longGate && filledGroup,
+    'An overrun fixture passed',
+  )
   const laneGap = (orbit) => {
     const list = all.filter((e) => e.orbit === orbit)
     return Math.max(...list.slice(1).map((e, i) => e.begin - (list[i]?.begin ?? e.begin)))
@@ -304,7 +326,13 @@ export function verifyIndustrialEvents() {
   return {
     budget,
     repeats: 3,
-    negativeFixturesRejected: { stackedChords, denseNoise, longGate, filledGroup },
+    negativeFixturesRejected: {
+      startOverrun,
+      overlapOverrun,
+      windowOverrun,
+      longGate,
+      filledGroup,
+    },
     longestGapSeconds: Math.max(...Object.values(LANES).map(laneGap)) / CPS,
     events: first.map((e) => ({
       slot: rounded(e.begin / SLOT),
