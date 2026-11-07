@@ -115,17 +115,17 @@ stops it with the note. Every source had a finite end. All live noise hits used
 one cached buffer, and a hit lived at most .328 seconds.
 
 The default stereo 44.1 kHz, 16-bit WAV lasts exactly 25.7142857 seconds, peaks at
-.524 with RMS .124 and no full-scale samples. In anchor-solo PCM, sidebands stay
+.548 with RMS .124 and no full-scale samples. In anchor-solo PCM, sidebands stay
 .59 of the carrier at early, middle and late windows of the E dyad and in the D
-dyad, with the carriers strongest. Noise hits peak at .186 alone, and both the
+dyad, with the carriers strongest. Noise hits peak at .228 alone, and both the
 empty groups and the span after each gate measure 0 in the machinery-solo render.
 Against the machinery-muted render, E and D carrier levels under a hit stay within
-the test’s ±10%. Noise samples vary between browser sessions, so tests use level and envelope
+the test’s ±10% (measured ratio 1.0). Noise samples vary between browser sessions, so tests use level and envelope
 bounds rather than sample digests; identical hits within a session are expected
 because each starts at the cached buffer’s beginning.
 
 **Stop** ends scheduling, not sound. A dyad held at Stop had 5.4 seconds of gate
-left, and master output right after Stop measured .090 RMS. No new onset arrived
+left, and master output right after Stop measured .091 RMS. No new onset arrived
 over 8 seconds, longer than the longest gap between onsets in any lane (7.5 s, low).
 **Immediate Stop/Play** overlaps old and new notes: an isolated restart peaked at
 6 primary oscillators, 4 anchor voices and 4 modulators, at the anchor cap and
