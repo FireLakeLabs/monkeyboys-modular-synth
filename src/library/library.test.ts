@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { CATALOG } from '../modules/catalog'
+import { CATALOG, getModuleSpec } from '../modules/catalog'
 import { generate } from '../codegen/generate'
 import { read } from '../reader'
 import {
@@ -154,6 +154,15 @@ describe('built-in patch library', () => {
       `${entry.id}: retains executable bytes and saved %i HP`,
       (width) => {
         const original = readLibraryPatch(entry)
+        if (
+          original.patch.modules.some(
+            (module) => module.type !== 'out' && module.hp + getModuleSpec(module.type).hp > width,
+          )
+        ) {
+          expect(() => setRailWidth(original.patch, width)).toThrow('Module extends past the rail')
+          expect(read(original.source).patch).toEqual(original.patch)
+          return
+        }
         const saved = editDocument(saveLayout(original), setRailWidth(original.patch, width))
         expect(sourceBody(saved.source)).toBe(sourceBody(entry.source))
         expect(saved.patch.railHp).toBe(width)
