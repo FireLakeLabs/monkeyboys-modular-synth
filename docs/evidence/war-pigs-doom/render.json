@@ -555,7 +555,7 @@
     "transpiler": "1.2.6"
   },
   "steady": {
-    "drivePeak": 3,
+    "cumulativeDrivePeak": 3,
     "orbits": ["1", "2", "3"],
     "buses": []
   },
@@ -564,7 +564,9 @@
     "orbits": ["1", "2"],
     "buses": []
   },
-  "restartDrivePeak": 6,
+  "immediateAnchorVoices": 4,
+  "immediateConnectedDrive": 4,
+  "cumulativeDrivePeak": 6,
   "sourceSHA256": "11a7d27facca579bc6c1521edb2c13d345e6c3db2a188a16547fd1f5678ce1d8",
   "filesSHA256": {
     "anchor-solo.mp3": "a0e9b4420d6fc32f8352c38fe54781b29142e6510ceb0b2182debdeef2cbce32",

@@ -37,8 +37,8 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
     const steady = await page.evaluate(() => window.doomProbe.read())
     expect(steady.triggers[0].cycle).toBe(0)
     expect(steady.triggers[0].cps).toBeCloseTo(56 / 240, 10)
-    expect(steady.drivePeak).toBeGreaterThan(0)
-    expect(steady.drivePeak).toBeLessThanOrEqual(4)
+    expect(steady.cumulativeDrivePeak).toBeGreaterThan(0)
+    expect(steady.cumulativeDrivePeak).toBeLessThanOrEqual(4)
     expect(steady.orbits.sort()).toEqual(['1', '2', '3'])
     expect(steady.buses).toEqual([])
     const primaries = steady.oscillators.filter((o) => o.frequency > 20)
@@ -82,6 +82,7 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
       (await import('/scripts/doom-check.mjs')).stopHeldDoom(window.doomProbe),
     )
     expect(ringing.held.end).toBeGreaterThan(ringing.requestedAt + 3)
+    expect(ringing.pcm.rms).toBeGreaterThan(0.001)
     await page.waitForTimeout(300)
     const stopped = await page.evaluate(() => window.doomProbe.read().triggers.length)
     await page.waitForTimeout(5500)
@@ -116,6 +117,15 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
         ),
       { list: immediateState.oscillators, after: immediateReplay.before },
     )
+    const immediateAnchorPeak = await page.evaluate(
+      async ({ list, after }) =>
+        (await import('/scripts/doom-check.mjs')).overlap(
+          list.filter((o) => !o.offline && o.type === 'sawtooth' && o.end > after),
+        ),
+      { list: immediateState.oscillators, after: immediateReplay.before },
+    )
+    const immediateConnectedDrive = immediateState.activeDrive
+    expect(immediateConnectedDrive).toBe(immediateAnchorPeak)
     await run(page, 'loadDoom')
     const download = page.waitForEvent('download')
     const wav = await run(page, 'bounceDoom')
@@ -168,6 +178,8 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
       primaryPeak,
       immediateReplay,
       immediatePrimaryPeak,
+      immediateAnchorPeak,
+      immediateConnectedDrive,
       immediateState,
       ringing,
       replay,

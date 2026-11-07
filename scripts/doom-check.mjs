@@ -293,7 +293,7 @@ export function installDoomProbe() {
     triggers = [],
     worklets = new WeakSet(),
     active = new Set()
-  let drivePeak = 0
+  let cumulativeDrivePeak = 0
   // oxlint-disable-next-line typescript/unbound-method -- Each captured prototype method is called with its original receiver.
   const start = OscillatorNode.prototype.start,
     // oxlint-disable-next-line typescript/unbound-method -- Reapplied with the original oscillator receiver.
@@ -332,7 +332,7 @@ export function installDoomProbe() {
   AudioNode.prototype.connect = function (...args) {
     if (worklets.has(this) && !(this.context instanceof OfflineAudioContext)) {
       active.add(this)
-      drivePeak = Math.max(drivePeak, active.size)
+      cumulativeDrivePeak = Math.max(cumulativeDrivePeak, active.size)
     }
     return connect.apply(this, args)
   }
@@ -362,7 +362,7 @@ export function installDoomProbe() {
     read: () => ({
       oscillators: structuredClone(oscillators),
       triggers: structuredClone(triggers),
-      drivePeak,
+      cumulativeDrivePeak,
       activeDrive: active.size,
       orbits: Object.keys(web.getSuperdoughAudioController().nodes),
       buses: Object.keys(web.getSuperdoughAudioController().buses ?? {}),

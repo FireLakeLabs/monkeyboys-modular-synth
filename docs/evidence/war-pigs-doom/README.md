@@ -13,7 +13,8 @@ Rendered from clean implementation commit
 `febaadb5603a32d1880f56fd9f4afaa73dd07084`: **War Pigs · Doom instrument**, OUT
 **56 BPM**, VOL **.8**, default VCA/MIX levels. Each render starts at cycle zero
 and covers the complete six-cycle phrase (**25.7142857 seconds**). Later commits
-that only add these evidence files leave the patch source and sound unchanged.
+that only change evidence, tests or documentation leave the patch source and
+sound unchanged.
 
 The production **File → Bounce WAV** path uses Chromium **156.0.8078.4**,
 OfflineAudioContext and locked Strudel web/webaudio/superdough **1.3.0**,

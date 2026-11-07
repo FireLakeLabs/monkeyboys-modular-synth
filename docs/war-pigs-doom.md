@@ -97,8 +97,11 @@ core/transpiler 1.2.6, Chromium 156.0.8078.4:
   oscillator has the expected .0583333333 Hz rate and finite gate/release lifetime.
   All three orbit slots are present once warning starts, with no buses. Repeated
   short loads/plays retain only the two triggered orbits and settle to zero
-  connected DRIVE worklets. An immediate Stop/Play observed **6** overlapping primary oscillators,
-  **6** connected DRIVE worklets and replay PCM peak **.4126**. Transient restart overlap is outside the steady cap.
+  connected DRIVE worklets. An immediate Stop/Play observed **6** overlapping
+  primary oscillators, including **4** anchor voices, matching **4** active
+  DRIVE worklets, and replay PCM peak **.4126**. Separately, the cumulative
+  connected DRIVE peak was **6** across the repeated load/Play sequence.
+  Transient restart overlap is outside the steady cap.
 - The default stereo 44.1 kHz, 16-bit WAV is **4,536,044 bytes**, exactly
   **25.7142857 seconds**, peak **.53912**, RMS **.15952**, with **0** full-scale
   samples. The accent check compares the same G♯3 pitch at velocities .8 and .5 in
@@ -109,8 +112,10 @@ core/transpiler 1.2.6, Chromium 156.0.8078.4:
 - The focused browser case passes library-stopped loading, bar-1 scheduler
   start, actual cutoff/drive/MIX edits on future onsets, Stop’s scheduling
   boundary over **5.5 seconds** without new onsets, finite restart overlap,
-  cleanup and separate export/reopen claims. A known held anchor immediately
-  after Stop still measured **.0257 RMS / .0870 peak**; Stop does not cut it off.
+  cleanup and separate export/reopen claims. The committed render evidence
+  measured master output while a known anchor was held immediately after Stop:
+  **.02596 RMS / .08695 peak**. This includes any sounding low/warning voices;
+  the browser test now requires nonzero master PCM in that Stop window.
   Export adds the app’s standard factory-pack setup; the original executable
   body is an exact suffix, all module/cable/layout state survives, and the
   exported file itself reopens byte-exact with its complete saved identity.
