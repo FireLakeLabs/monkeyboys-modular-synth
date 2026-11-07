@@ -118,5 +118,11 @@
     "path": "src/library/patches/war-pigs-industrial-triplets.strudel",
     "license": "New synthesis/arrangement; underlying Black Sabbath composition and Jake Brown transcription credited, not claimed MIT",
     "provenance": "Issue #211; new modular adaptation; https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414; Songsterr metadata only; docs/war-pigs-industrial-triplets.md"
+  },
+  {
+    "id": "war-pigs-doom-instrument",
+    "path": "src/library/patches/war-pigs-doom-instrument.strudel",
+    "license": "New synthesis/arrangement; underlying Black Sabbath composition and Jake Brown transcription credited, not claimed MIT",
+    "provenance": "Issue #210; new modular adaptation; https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414; Songsterr metadata only; docs/war-pigs-doom.md"
   }
 ]

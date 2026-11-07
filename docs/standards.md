@@ -474,6 +474,14 @@ crate uses #137's seated inventory and status API. The separate browser suite
 checks cold audition without transport, five drop destinations and tape/code
 updates; physical listening and other-browser coverage remain unverified.
 
+The #210 Doom acceptance compares the isolated restart’s active DRIVE worklets
+with the anchor oscillator lifetimes in that same window. The probe separately
+names its earlier maximum `cumulativeDrivePeak`; using that maximum as the
+isolated count fails the browser guard. Module/HP and source/rack invariants
+run in `npm run check`; PCM, finite lifetimes and stopped/restarted scheduling
+run in the full browser suite. Historical report figures remain reviewed
+observations, and neither path establishes subjective listening acceptance.
+
 The #211 Industrial acceptance derives its stopped-scheduling wait from the longest
 gap between onsets in any lane, and names an isolated restart’s peaks
 (`immediateRestart`) separately from the maximum across repeated loads

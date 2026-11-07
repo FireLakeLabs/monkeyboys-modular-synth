@@ -1,0 +1,1132 @@
+setcpm(56/4)
+
+anchor: note("[e3,b3]@9 ~ d3 e3 [d3,a3]@9 ~ g#3 a3 g#3@9 ~ d3 e3 [d3,a3]@9 ~ g#3 a3")
+  .velocity("1@9 1 0.6 0.75 0.95@9 1 0.5 0.65 0.8@9 1 0.6 0.75 0.95@9 1 0.5 0.65")
+  .slow(6)
+  .s("sawtooth")
+  .lpf(720)
+  .lpq(0.5)
+  .lpenv(2)
+  .lpattack(0.02)
+  .lpdecay(0.7)
+  .lpsustain(0.6)
+  .lprelease(0.1)
+  .soft(2.5)
+  .attack(0.02)
+  .decay(0.7)
+  .sustain(0.6)
+  .release(0.1)
+  .gain(0.9)
+  .postgain(0.25)
+  .orbit(1)
+
+low: note("e2@9 ~@3 d2@9 ~@3 e2@9 ~@3 d2@9 ~@3")
+  .slow(6)
+  .s("triangle")
+  .attack(0.05)
+  .decay(0.6)
+  .sustain(0.7)
+  .release(0.15)
+  .gain(0.3)
+  .postgain(0.5)
+  .orbit(2)
+
+warning: note("~@24 b4@16 ~@8")
+  .slow(6)
+  .s("sine")
+  .transpose(0)
+  .vib(0.058333333333333334).vibmod(3)
+  .attack(1.5)
+  .decay(0.4)
+  .sustain(0.45)
+  .release(0.6)
+  .gain(0.5)
+  .postgain(0.6)
+  .orbit(3)
+
+// ── @monkeyboy rack v1 ──
+// {
+//   "version": 1,
+//   "name": "War Pigs · Doom instrument",
+//   "scopes": [
+//     {
+//       "id": "scope1",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"setcpm\"},\"arguments\":[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":56},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "setcpm",
+//           "arguments": "[{\"type\":\"BinaryExpression\",\"left\":{\"type\":\"Literal\",\"value\":56},\"operator\":\"/\",\"right\":{\"type\":\"Literal\",\"value\":4}}]"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "scope2",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"[e3,b3]@9 ~ d3 e3 [d3,a3]@9 ~ g#3 a3 g#3@9 ~ d3 e3 [d3,a3]@9 ~ g#3 a3\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"[e3,b3]@9 ~ d3 e3 [d3,a3]@9 ~ g#3 a3 g#3@9 ~ d3 e3 [d3,a3]@9 ~ g#3 a3\"}]"
+//         },
+//         {
+//           "name": "velocity",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"1@9 1 0.6 0.75 0.95@9 1 0.5 0.65 0.8@9 1 0.6 0.75 0.95@9 1 0.5 0.65\"}]"
+//         },
+//         {
+//           "name": "slow",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":6}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"sawtooth\"}]"
+//         },
+//         {
+//           "name": "lpf",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":720}]"
+//         },
+//         {
+//           "name": "lpq",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.5}]"
+//         },
+//         {
+//           "name": "lpenv",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":2}]"
+//         },
+//         {
+//           "name": "lpattack",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.02}]"
+//         },
+//         {
+//           "name": "lpdecay",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.7}]"
+//         },
+//         {
+//           "name": "lpsustain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.6}]"
+//         },
+//         {
+//           "name": "lprelease",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.1}]"
+//         },
+//         {
+//           "name": "soft",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":2.5}]"
+//         },
+//         {
+//           "name": "attack",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.02}]"
+//         },
+//         {
+//           "name": "decay",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.7}]"
+//         },
+//         {
+//           "name": "sustain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.6}]"
+//         },
+//         {
+//           "name": "release",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.1}]"
+//         },
+//         {
+//           "name": "gain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.9}]"
+//         },
+//         {
+//           "name": "postgain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.25}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 18,
+//         "orbit": 1
+//       }
+//     },
+//     {
+//       "id": "scope3",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"e2@9 ~@3 d2@9 ~@3 e2@9 ~@3 d2@9 ~@3\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"e2@9 ~@3 d2@9 ~@3 e2@9 ~@3 d2@9 ~@3\"}]"
+//         },
+//         {
+//           "name": "slow",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":6}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"triangle\"}]"
+//         },
+//         {
+//           "name": "attack",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.05}]"
+//         },
+//         {
+//           "name": "decay",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.6}]"
+//         },
+//         {
+//           "name": "sustain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.7}]"
+//         },
+//         {
+//           "name": "release",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.15}]"
+//         },
+//         {
+//           "name": "gain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.3}]"
+//         },
+//         {
+//           "name": "postgain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.5}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":2}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 9,
+//         "orbit": 2
+//       }
+//     },
+//     {
+//       "id": "scope4",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"~@24 b4@16 ~@8\"}],\"optional\":false}",
+//       "calls": [
+//         {
+//           "name": "note",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"~@24 b4@16 ~@8\"}]"
+//         },
+//         {
+//           "name": "slow",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":6}]"
+//         },
+//         {
+//           "name": "s",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":\"sine\"}]"
+//         },
+//         {
+//           "name": "transpose",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0}]"
+//         },
+//         {
+//           "name": "vib",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.058333333333333334}]"
+//         },
+//         {
+//           "name": "vibmod",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":3}]"
+//         },
+//         {
+//           "name": "attack",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":1.5}]"
+//         },
+//         {
+//           "name": "decay",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.4}]"
+//         },
+//         {
+//           "name": "sustain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.45}]"
+//         },
+//         {
+//           "name": "release",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.6}]"
+//         },
+//         {
+//           "name": "gain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.5}]"
+//         },
+//         {
+//           "name": "postgain",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":0.6}]"
+//         },
+//         {
+//           "name": "orbit",
+//           "arguments": "[{\"type\":\"Literal\",\"value\":3}]"
+//         }
+//       ],
+//       "routing": {
+//         "call": 12,
+//         "orbit": 3
+//       }
+//     }
+//   ],
+//   "modules": [
+//     {
+//       "id": "seq1",
+//       "type": "seq",
+//       "row": 0,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "[e3,b3]@9 ~ d3 e3 [d3,a3]@9 ~ g#3 a3 g#3@9 ~ d3 e3 [d3,a3]@9 ~ g#3 a3",
+//         "mode": "note",
+//         "rate": 1,
+//         "accent": "1@9 1 0.6 0.75 0.95@9 1 0.5 0.65 0.8@9 1 0.6 0.75 0.95@9 1 0.5 0.65"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "clock1",
+//       "type": "clock",
+//       "row": 0,
+//       "hp": 10,
+//       "look": "instrument",
+//       "values": {
+//         "division": 6,
+//         "swingMode": "off",
+//         "swing": 0,
+//         "offset": 0,
+//         "grid": 4
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             2
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc1",
+//       "type": "osc",
+//       "row": 0,
+//       "hp": 22,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "sawtooth",
+//         "tune": 0
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             3
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vcf1",
+//       "type": "vcf",
+//       "row": 0,
+//       "hp": 31,
+//       "look": "instrument",
+//       "values": {
+//         "mode": "lp",
+//         "type": "12db",
+//         "cutoff": 720,
+//         "res": 0.5,
+//         "envAmt": 2
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             4
+//           ],
+//           "role": "module"
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             5
+//           ],
+//           "role": "module"
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             6
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "drive1",
+//       "type": "drive",
+//       "row": 0,
+//       "hp": 41,
+//       "look": "instrument",
+//       "values": {
+//         "type": "soft",
+//         "arguments": "value",
+//         "amount": 2.5
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             11
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vca1",
+//       "type": "vca",
+//       "row": 0,
+//       "hp": 53,
+//       "look": "instrument",
+//       "values": {
+//         "level": 0.9
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             16
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "env1",
+//       "type": "env",
+//       "row": 0,
+//       "hp": 61,
+//       "look": "instrument",
+//       "values": {
+//         "atk": 0.02,
+//         "dec": 0.7,
+//         "sus": 0.6,
+//         "rel": 0.1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             7
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vcf1",
+//             "jack": "cv",
+//             "control": "cutoff"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             8
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vcf1",
+//             "jack": "cv",
+//             "control": "cutoff"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             9
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vcf1",
+//             "jack": "cv",
+//             "control": "cutoff"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             10
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vcf1",
+//             "jack": "cv",
+//             "control": "cutoff"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             12
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca1",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             13
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca1",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             14
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca1",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             15
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca1",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "id": "seq2",
+//       "type": "seq",
+//       "row": 1,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "e2@9 ~@3 d2@9 ~@3 e2@9 ~@3 d2@9 ~@3",
+//         "mode": "note",
+//         "rate": 1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "clock2",
+//       "type": "clock",
+//       "row": 1,
+//       "hp": 10,
+//       "look": "instrument",
+//       "values": {
+//         "division": 6,
+//         "swingMode": "off",
+//         "swing": 0,
+//         "offset": 0,
+//         "grid": 4
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc2",
+//       "type": "osc",
+//       "row": 1,
+//       "hp": 22,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "triangle",
+//         "tune": 0
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             2
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vca2",
+//       "type": "vca",
+//       "row": 1,
+//       "hp": 31,
+//       "look": "instrument",
+//       "values": {
+//         "level": 0.3
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             7
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "env2",
+//       "type": "env",
+//       "row": 1,
+//       "hp": 39,
+//       "look": "instrument",
+//       "values": {
+//         "atk": 0.05,
+//         "dec": 0.6,
+//         "sus": 0.7,
+//         "rel": 0.15
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             3
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca2",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             4
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca2",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             5
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca2",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             6
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca2",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "id": "mix1",
+//       "type": "mix",
+//       "row": 1,
+//       "hp": 49,
+//       "look": "instrument",
+//       "values": {
+//         "ch1": 0.25,
+//         "ch2": 0.5,
+//         "ch3": 0.6,
+//         "ch4": 1,
+//         "name1": "anchor",
+//         "name2": "low",
+//         "name3": "warning"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             17
+//           ],
+//           "role": "mixer"
+//         },
+//         {
+//           "scope": "scope3",
+//           "calls": [
+//             8
+//           ],
+//           "role": "mixer"
+//         },
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             11
+//           ],
+//           "role": "mixer"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "seq3",
+//       "type": "seq",
+//       "row": 2,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "~@24 b4@16 ~@8",
+//         "mode": "note",
+//         "rate": 1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "clock3",
+//       "type": "clock",
+//       "row": 2,
+//       "hp": 10,
+//       "look": "instrument",
+//       "values": {
+//         "division": 6,
+//         "swingMode": "off",
+//         "swing": 0,
+//         "offset": 0,
+//         "grid": 4
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             1
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "osc3",
+//       "type": "osc",
+//       "row": 2,
+//       "hp": 22,
+//       "look": "instrument",
+//       "values": {
+//         "wave": "sine",
+//         "tune": 0
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             2
+//           ],
+//           "role": "module"
+//         },
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             3
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "vca3",
+//       "type": "vca",
+//       "row": 2,
+//       "hp": 31,
+//       "look": "instrument",
+//       "values": {
+//         "level": 0.5
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             10
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "env3",
+//       "type": "env",
+//       "row": 2,
+//       "hp": 39,
+//       "look": "instrument",
+//       "values": {
+//         "atk": 1.5,
+//         "dec": 0.4,
+//         "sus": 0.45,
+//         "rel": 0.6
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             6
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca3",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             7
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca3",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             8
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca3",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         },
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             9
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "vca3",
+//             "jack": "cv",
+//             "control": "level"
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "id": "lfo1",
+//       "type": "lfo",
+//       "row": 2,
+//       "hp": 49,
+//       "look": "instrument",
+//       "values": {
+//         "mode": "SMOOTH",
+//         "shape": "sine",
+//         "rate": 4,
+//         "depth": 3
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope4",
+//           "calls": [
+//             4,
+//             5
+//           ],
+//           "role": "cv",
+//           "target": {
+//             "module": "osc3",
+//             "jack": "tune",
+//             "control": "tune"
+//           }
+//         }
+//       ]
+//     },
+//     {
+//       "id": "out1",
+//       "type": "out",
+//       "look": "instrument",
+//       "values": {
+//         "bpm": 56,
+//         "vol": 0.8
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope1",
+//           "calls": [
+//             0
+//           ],
+//           "role": "tempo"
+//         }
+//       ]
+//     }
+//   ],
+//   "cables": [
+//     {
+//       "id": "cable1",
+//       "from": {
+//         "module": "seq1",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "clock1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable2",
+//       "from": {
+//         "module": "clock1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "osc1",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "cable3",
+//       "from": {
+//         "module": "osc1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vcf1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable4",
+//       "from": {
+//         "module": "vcf1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "drive1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable5",
+//       "from": {
+//         "module": "drive1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vca1",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable6",
+//       "from": {
+//         "module": "env1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vcf1",
+//         "jack": "cv"
+//       }
+//     },
+//     {
+//       "id": "cable7",
+//       "from": {
+//         "module": "env1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vca1",
+//         "jack": "cv"
+//       }
+//     },
+//     {
+//       "id": "cable8",
+//       "from": {
+//         "module": "vca1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "mix1",
+//         "jack": "in1"
+//       }
+//     },
+//     {
+//       "id": "cable9",
+//       "from": {
+//         "module": "seq2",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "clock2",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable10",
+//       "from": {
+//         "module": "clock2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "osc2",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "cable11",
+//       "from": {
+//         "module": "osc2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vca2",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable12",
+//       "from": {
+//         "module": "env2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vca2",
+//         "jack": "cv"
+//       }
+//     },
+//     {
+//       "id": "cable13",
+//       "from": {
+//         "module": "vca2",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "mix1",
+//         "jack": "in2"
+//       }
+//     },
+//     {
+//       "id": "cable14",
+//       "from": {
+//         "module": "seq3",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "clock3",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable15",
+//       "from": {
+//         "module": "clock3",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "osc3",
+//         "jack": "note"
+//       }
+//     },
+//     {
+//       "id": "cable16",
+//       "from": {
+//         "module": "osc3",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vca3",
+//         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "cable17",
+//       "from": {
+//         "module": "env3",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "vca3",
+//         "jack": "cv"
+//       }
+//     },
+//     {
+//       "id": "cable18",
+//       "from": {
+//         "module": "vca3",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "mix1",
+//         "jack": "in3"
+//       }
+//     },
+//     {
+//       "id": "cable19",
+//       "from": {
+//         "module": "lfo1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "osc3",
+//         "jack": "tune"
+//       }
+//     },
+//     {
+//       "id": "cable20",
+//       "from": {
+//         "module": "mix1",
+//         "jack": "out"
+//       },
+//       "to": {
+//         "module": "out1",
+//         "jack": "in"
+//       }
+//     }
+//   ],
+//   "names": {},
+//   "rows": 3,
+//   "railHp": 84
+// }

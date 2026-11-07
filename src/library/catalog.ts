@@ -19,6 +19,7 @@ import alien from './patches/iter-jux.strudel?raw'
 import code from './patches/custom-helper.strudel?raw'
 import layered from './patches/layered-sketch.strudel?raw'
 import trance from './patches/switch-angel-trance-demo.strudel?raw'
+import doom from './patches/war-pigs-doom-instrument.strudel?raw'
 import industrial from './patches/war-pigs-industrial-triplets.strudel?raw'
 
 export interface LibraryPatch {
@@ -343,6 +344,21 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
         id: 'war-pigs-experiments',
         title: 'War Pigs experiments',
         children: [
+          {
+            kind: 'patch',
+            id: 'war-pigs-doom-instrument',
+            title: 'War Pigs · Doom instrument',
+            description:
+              'Four slow opening bars interpreted as a driven E/D anchor, low roots and a quiet synthesized warning. Six cycles at 56 BPM; no drums.',
+            tryThis: 'Open the anchor VCF CUTOFF, then compare DRIVE amount and MIX anchor level.',
+            source: doom,
+            attribution: {
+              author:
+                'Black Sabbath composition · consulted transcription by Jake Brown · new modular arrangement and synthesis by MonkeyBoy’s Modular Synth contributors',
+              url: 'https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414',
+            },
+            exercises: ['seq', 'clock', 'osc', 'vcf', 'drive', 'vca', 'env', 'lfo', 'mix', 'out'],
+          },
           {
             kind: 'patch',
             id: 'war-pigs-industrial-triplets',
