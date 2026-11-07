@@ -23,7 +23,12 @@ Later test/document/evidence changes do not change the sound when this source
 hash still matches. Refresh the audio after any sound-affecting change.
 
 No one has listened to these as part of this implementation. Human recognition,
-timbre, reply clarity, delay audibility and masking remain unverified. See the
+timbre, reply clarity, delay audibility and masking remain unverified. The first
+repeats start on the dry pickups at slots **10/22/34/46** (also on low E2 at
+22/46); the last reply’s third repeat reaches the next phrase’s opening hit.
+Compare default with delay-muted at those points and judge whether the echo is
+audible and the opening emphasis stays clear. The reply-solo file helps expose
+the echoes separately. See the
 [arrangement and verification record](../../war-pigs-dub-afterimage.md).
 
 These committed files and immutable PR links make the audio downloadable. They

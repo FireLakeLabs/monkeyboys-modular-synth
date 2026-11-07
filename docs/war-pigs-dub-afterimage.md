@@ -5,12 +5,14 @@ Sabbath’s composition, using Jake Brown’s public
 [Ultimate Guitar transcription](https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414)
 as documented in [#212](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/212).
 The issue records slow 12/8, quarter = 56, standard tuning. The transcription
-could not be fetched again in this implementation session. The
+was unavailable in this implementation session. The
 [Songsterr page](https://www.songsterr.com/a/wsa/black-sabbath-war-pigs-tab-s10137)
 still supplies no readable note-level corroboration here. The selected-note
-mapping below follows the issue’s source evidence and the prior opening
-adaptation; no original recording was heard. No recording, lyrics or full tab
-is bundled.
+mapping below follows #212’s source evidence and
+[the reading of Jake Brown’s tab recorded for #214](https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/be41de5fde8745923162402c34bce0d434ea3812/docs/war-pigs-industrial-triplets.md#selected-adaptation).
+That record identifies bar 3 as open E with G♯, tied for ten eighths; it is
+adaptation evidence, rather than a fresh note-level check here. No original
+recording was heard. No recording, lyrics or full tab is bundled.
 
 ## Selected adaptation
 
@@ -34,12 +36,21 @@ and fixed accents retain the long/short hierarchy. This version trims the
 source’s ten-eighth holds to 8½, leaving an authored breath for a reply at
 slot 9 of each bar. Even at OUT 240 the held source’s .05 s release plus .01 s
 cleanup finishes before that reply and before the single-note pickup.
-Low E anticipates bar 3 at slot 22; it does not double every ornament.
+Low E anticipates bar 3 at slot 22; it does not double every ornament. Bar 3’s
+open E is left to that low E2 root; the dry anchor keeps G♯3 alone.
 
 The four upper replies are new arrangement choices, not transcribed parts or
 cloned anchor audio. Each lasts one eighth slot; their twelve-slot spacing
 leaves three empty dotted-quarter groups between reply starts. Their native
 1/8-cycle delay is a separate, quieter echo, not the dotted-quarter rhythm.
+The reply itself uses the shortened hold’s gap; its first repeat starts as that
+gap closes, at slots **10/22/34/46**, together with the dry D3/G♯3 pickups.
+At 22/46 it also meets a low E2 onset. The second repeat falls under the next
+ornament; the third repeat from slot 45 reaches the next phrase’s opening hit
+at roughly .0125 of its reply source amplitude, with the measured feedback
+quantum offsets. A familiar listener must compare default against delay-muted
+at those pickups and the phrase seam to judge delay audibility and whether the
+opening emphasis stays clear. A placement change requires new audio renders.
 
 ## Rack and engine semantics
 
@@ -137,9 +148,10 @@ after the request. No new onset arrived over **8 seconds**, longer than the
 longest lane onset gap (7.5 seconds). An **isolated** immediate restart peaked
 at **6 primary / 4 dry / 2 low** sources. The separate **cumulative** rapid
 load/Play sequence, including already ringing sources, peaked at **12 / 8 / 4**.
-These transient counts exceed steady caps and are not described as persistent
-leaks: the notes have finite ends, and all stopped within the six-second settle
-window. Replacement resets the old delay object rather than accumulating buses.
+The isolated restart stays within the numeric 8/4/2 total/dry/low caps; the
+cumulative sequence exceeds them. Both are transport transients, rather than
+steady playback or persistent leaks: the notes have finite ends, and all stopped
+within the six-second settle window. Replacement resets the old delay object rather than accumulating buses.
 
 The PR records the final full-browser RESULT, hosted checks, reviewer ledger and
 any subsequent observations. The committed measurements identify the rendered
