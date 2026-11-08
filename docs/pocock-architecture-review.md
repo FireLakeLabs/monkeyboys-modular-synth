@@ -16,7 +16,7 @@ The scan started with recent change history. Across the latest 80 commits affect
 
 Project decisions and the module, translation, patch-format, design and engineering specs supplied domain vocabulary; no `GLOSSARY.md` or `docs/adr/` was present. Relevant issue bodies and available discussions were read, including [#76](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/76), [#200](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/200), [#202](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/202), [#207](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/207), [#217](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/217), [#218](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/218), and [#219](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/219). Proposed issue designs remain proposals.
 
-This is an architectural assessment, with recommendations rather than settled designs. No application behavior, saved format, or product decision changed. The interactive selection/grilling steps were omitted at the owner’s request; no detailed replacement interfaces were designed.
+This is a point-in-time architectural assessment kept in the repository for full-stop review, rather than a specification or decision. Keeping it here is a deliberate departure from the skill’s temporary-report destination; the visual companion stays in the temporary directory. No application behavior, saved format, or product decision changed. The interactive selection/grilling steps were omitted at the owner’s request; no detailed replacement interfaces were designed.
 
 ## What already works well
 
@@ -36,7 +36,7 @@ The folder structure is useful: catalog, patch, generation, reading, workspace, 
 
 **Files:** `src/App.tsx`, `src/workspace/{document,history,finishedCode,open,autosave}.ts`, `src/library/myPatches.ts`.
 
-[`App.tsx:127`](../src/App.tsx#L127) begins a collection of accepted-document, draft, history, save-identity and revision state. [`install`:235](../src/App.tsx#L235), [`settleDraft`:400](../src/App.tsx#L400), [`replaceWork`:571](../src/App.tsx#L571) and [`writeSaved`:688](../src/App.tsx#L688) coordinate rules across those modules. A maintainer changing acceptance must understand draft grouping, recovery writes, playback updates, replacement cancellation and which My patches entry belongs to an undo revision.
+[`App.tsx:115`](../src/App.tsx#L115) begins a collection of accepted-document, draft, history, save-identity and revision state. [`install`:235](../src/App.tsx#L235), [`settleDraft`:400](../src/App.tsx#L400), [`replaceWork`:571](../src/App.tsx#L571) and [`writeSaved`:688](../src/App.tsx#L688) coordinate rules across those modules. A maintainer changing acceptance must understand draft grouping, recovery writes, playback updates, replacement cancellation and which My patches entry belongs to an undo revision.
 
 There is direct test-surface evidence: [`finishedCode.test.ts:17–36`](../src/workspace/finishedCode.test.ts#L17) implements a miniature typing/acceptance/history loop. It tests useful policy, but does not execute the production coordination in `App`. The [#202 paste/undo gap](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/202) illustrates a related policy spanning editor origin, undo and application; it does not prove this architecture caused the gap. Existing browser tests already exercise real production paths, so this is not a claim that the workflow is untested.
 
@@ -80,7 +80,7 @@ The existing [`rackEditable.test.ts:87`](../src/workspace/rackEditable.test.ts#L
 
 **Files:** `src/rack/Rack.tsx`, `src/patch/layout.ts`, `src/looks/layout.ts`, affected browser checks.
 
-[`Rack.tsx:279`](../src/rack/Rack.tsx#L279) measures live jack centers, clips hidden controls, clamps rail endpoints and places tools. [`Rack.tsx:996`](../src/rack/Rack.tsx#L996) separately converts drag coordinates using rail geometry and zoom; [`:1033`](../src/rack/Rack.tsx#L1033) again selects the cable frame for pointer coordinates. Knowing which coordinate space applies is part of the effective interface spread through the rack implementation.
+[`Rack.tsx:280`](../src/rack/Rack.tsx#L280) measures live jack centers, clips hidden controls, clamps rail endpoints and places tools. [`Rack.tsx:996`](../src/rack/Rack.tsx#L996) separately converts drag coordinates using rail geometry and zoom; [`:1033`](../src/rack/Rack.tsx#L1033) again selects the cable frame for pointer coordinates. Knowing which coordinate space applies is part of the effective interface spread through the rack implementation.
 
 **Deepening:** concentrate measurement ownership and coordinate conversion in a rack-geometry module. Keep DOM observation in a browser adapter; keep positions, clipping and transforms internally coherent. Its callers should not need to reconstruct which frame or scale a point belongs to.
 
@@ -95,7 +95,7 @@ The existing [`rackEditable.test.ts:87`](../src/workspace/rackEditable.test.ts#L
 
 The [fixed-width/live-jack decision](decisions.md#looks) remains authoritative. This recommendation does not authorize look-dependent module widths, resize-driven saved-layout changes, or the arrangement proposal in [#218](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/218).
 
-## 4. Deepen speculative reader projection internally
+## 4. Concentrate reader projection rollback ownership
 
 **Worth exploring · in-process, internal seam**
 
