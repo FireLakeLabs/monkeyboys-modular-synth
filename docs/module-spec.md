@@ -518,6 +518,8 @@ Hardware · Utility · 12 HP
 | OUT        | out | audio  |
 
 Writes one `$:` line per connected input, in channel order ([rule 2](translation-rules.md#2-each-mixer-input-is-a--line)).
+Each channel's ARRANGE lane (in More, and in the rack footer’s Arrange popover) chooses the
+cycles that voice plays; see [arranger lanes](translation-rules.md#arranger-lanes-141).
 
 ### OUT — Output
 
@@ -683,6 +685,7 @@ retain their previous omission rules and saved-file semantics.
 | MIX SOLO 1–4       | off / on                        | off / no prefix   | `S` label prefix; keeps all orbit slots                                                                                           |
 | MIX NAME 1–4       | text                            | empty / `$`       | channel label; separate from named fan-out outputs                                                                                |
 | MIX OUTPUT 1–4     | text positive integer pair      | `1:2` / `1:2`     | `.channels("3:4")`, before orbit; actual hardware outputs depend on the device                                                    |
+| MIX ARRANGE 1–4    | text lane, `0`/`1` per cycle    | empty / always    | `.mask("<0!4 1!12>")` before gain and routing; edited in the [Arrange](arranger.md) footer popover                                |
 
 OSC adds `pulse` to WAVE. All new controls retain their inactive values in rack
 metadata. Newly imported calls with omitted delay time read as SYNC, matching

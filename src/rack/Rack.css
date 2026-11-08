@@ -774,6 +774,8 @@
   font-size: 11px;
 }
 .rack-footer {
+  /* Anchors the full-width arranger popover. */
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -1251,13 +1253,22 @@ select:focus-visible {
   border: 2px solid #8cf5da;
   z-index: 9999;
 }
-/* Arranger lane (#141): compact, beneath the rails, one row per mixer channel. */
-.arranger {
-  margin: 0 0 8px;
+/* Arranger lane (#141): a full-width footer popover along the rack's bottom edge. */
+.rack-popover.arranger-popover {
+  position: static;
+}
+.rack-popover.arranger-popover > section {
+  position: absolute;
+  z-index: 25;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 8px);
+  box-sizing: border-box;
   padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--panel-2);
+  border: 1px solid #414650;
+  border-radius: 6px;
+  background: #15171b;
+  box-shadow: 0 8px 24px #000a;
   font-size: 12px;
 }
 .arranger-header {

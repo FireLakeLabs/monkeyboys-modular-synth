@@ -1363,8 +1363,6 @@ export function Rack({
           + Add row
           {placement && ghost?.row === rows ? ` · ${getModuleSpec(placement.type).name}` : ''}
         </button>
-        {/* A loaded patch starts from its own song length. */}
-        <ArrangerLane key={patchLoads} patch={patch} edit={edit} locked={locked} />
         <footer className="rack-footer">
           <div className="rack-status" aria-live="polite">
             {message}
@@ -1393,6 +1391,8 @@ export function Rack({
               </div>
             </details>
           )}
+          {/* A loaded patch starts from its own song length. */}
+          <ArrangerLane key={patchLoads} patch={patch} edit={edit} locked={locked} />
           <details ref={connections} name="rack-popover" className="connections rack-popover">
             <summary>Connections ({patch.cables.length})</summary>
             <div>

@@ -542,6 +542,21 @@ width or cable geometry changes. The local exported reference boards were
 available; the live private canvas was unavailable. See the
 [observed acceptance record](pattern-visibility-verification.md).
 
+## Arranger lane (#141)
+
+**Arrange** sits in the rack footer beside Connections and opens as one of the
+same one-at-a-time footer popovers, spanning the rack's full width along its
+bottom edge. Like the others it floats over the rack, so the rack frame, Fit zoom
+and pinned OUT keep their size; an inline lane shrank the frame and pushed Fit
+below the 75% overview threshold. Its summary counts arranged channels
+(**Arrange (2)**). The panel has the song length (− / + in cycles) and a one-line
+hint. Each connected MIX channel is a row: its name (channel NAME, else the module
+feeding it), one 18 px cell per cycle with a brighter edge every four cycles, and
+the exact code it writes in code ink (`.mask("<0!2 1!2>")`, or _every cycle_).
+Playing cycles use the audio orange. Rows scroll inside the panel beyond about six
+rows or the width of the song. The panel is inert while the rack is locked. See
+the [interaction contract](arranger.md#contract).
+
 ## Sound assignment (#185)
 
 Dragging a seated sound outlines compatible panels and dims other modules. The

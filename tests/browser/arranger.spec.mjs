@@ -29,6 +29,12 @@ async function open(page) {
   await page.goto('/')
   await page.locator('.cm-content').waitFor()
 }
+// Arrange is a footer popover, so the rack frame keeps its size.
+async function openLane(page) {
+  const summary = page.locator('.arranger-popover > summary')
+  if ((await page.locator('.arranger-popover[open]').count()) === 0) await summary.click()
+  await expect(lane(page)).toBeVisible()
+}
 
 async function drag(page, label, from, to) {
   const start = await cells(page, label).nth(from).boundingBox()
@@ -48,7 +54,9 @@ test('lane edits write per-voice masks, undo, recover and play only their cycles
   await open(page)
   await replaceSource(page, await run(page, 'arrangerSong'))
   await accepted(page)
-  await expect(lane(page)).toBeVisible()
+  const frame = await page.locator('.rack-frame').boundingBox()
+  await openLane(page)
+  expect(await page.locator('.rack-frame').boundingBox()).toEqual(frame)
   await expect(cells(page, 'osc1')).toHaveCount(16)
 
   // A shorter song changes only the view while no lane runs past it.
@@ -98,6 +106,8 @@ test('lane edits write per-voice masks, undo, recover and play only their cycles
   await page.reload()
   await page.locator('.cm-content').waitFor()
   await accepted(page)
+  await openLane(page)
+  await expect(page.locator('.arranger-popover > summary')).toHaveText('Arrange (2)')
   expect(await source(page)).toBe(beforeReload)
   expect(await pressed(page, 'osc1')).toBe('truefalsefalsefalse')
   expect(await pressed(page, 'osc2')).toBe('falsefalsetruetrue')
@@ -145,6 +155,7 @@ $: note("g4").s("square")
 `
   await replaceSource(page, imported)
   await accepted(page)
+  await openLane(page)
   expect(await pressed(page, 'osc1')).toBe('truetruefalsefalse')
   // An imported literal changes in place; comments and other bytes stay.
   await cells(page, 'osc1').nth(2).focus()
