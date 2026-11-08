@@ -80,6 +80,10 @@ under the same sanitized name. It stops playback and leaves explicit Play
 available afterwards. See [bounds, engine contract and observed PCM](wav-bounce.md).
 
 The header owns the single Play/Stop control and a catalog-backed BPM readout.
+A muted 20 px GitHub mark follows Play/Stop at the right end of the header,
+with a 44 px target, a hover highlight and a visible keyboard focus ring.
+Its “View source on GitHub” link opens the project repository in a new tab,
+keeping the patch open. It remains available in rack focus.
 BPM edits use the same source-preserving operation as OUT; OUT and code edits
 update the header. Stop remains available while starting, applying, stopping or
 recovering unknown scheduling, including with an invalid draft. Playing a patch
