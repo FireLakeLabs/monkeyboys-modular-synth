@@ -79,8 +79,9 @@ The [build plan](docs/build-plan.md#build-order) owns implementation status and 
 
 [`AGENTS.md`](AGENTS.md) maps development tasks to the project specs and the
 project-local [tstack workflows and adapted pstack standards](.agents/README.md). Use “full stop” to prepare a PR
-for your merge, “full send” to carry it through merge, “sol loop” for a Sol
-review, or “council” for a review across three providers. See the agent guide
+for your merge, “full send” to carry it through merge, “review loop” to select a
+reviewer using the project policy, “sol loop” or “opus loop” to choose the reviewer,
+or “council” for a review across three providers. See the agent guide
 for the remaining workflows and verification expectations. The
 [standards inventory](docs/standards.md) records enforcement and remaining gaps;
 the [pstack adoption review](.agents/pstack-review.md) explains the selection.

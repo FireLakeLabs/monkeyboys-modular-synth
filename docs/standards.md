@@ -89,7 +89,7 @@ workflow evidence; local branch relationships and CI do not establish membership
 | UI                   | Use semantic controls, names, focus behavior, keyboard operation, and reduced motion. Advanced keyboard patching may remain outside v1. Rack controls stay above the cable layer and are tested with a real pointer, as in [design](design.md#controls-and-the-cable-layer). |
 | Stored user data     | Review lost work and multiple tabs from round 1: stale tabs, full or unreadable storage, undo, reload. On #205, most Sol findings were two-tab cases, including a blocker that silently overwrote a saved patch; it took 5 rounds.                                           |
 | Browser evidence     | Full suite on the final commit and after every review fix, `RESULT` line read, [**Full browser suites**](ci.md#full-browser-acceptance) waited for. Process rules only: that check is not required, so nothing blocks a merge that skips them.                               |
-| Agent workflow       | tstack owns explicitly requested PR/review workflows. pstack engineering skills do not authorize delegation, commits, external messages, or shipping by themselves.                                                                                                          |
+| Agent workflow       | tstack supplies PR workflows; [review-loop](../.agents/skills/review-loop/SKILL.md) owns model review under [AGENTS.md](../AGENTS.md). pstack skills alone do not authorize delegation, commits, external messages, or shipping.                                             |
 
 Record narrow exceptions beside the affected code with their reason and removal
 condition. Review whether an exception reveals a missing abstraction or boundary.

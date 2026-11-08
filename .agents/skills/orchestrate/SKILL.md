@@ -61,6 +61,7 @@ Suggested grouping: PR by PR, with reasons. Adjust if the code suggests better.
 Owner decisions: settled, so do not reopen. Say where each is recorded. Ask about
   a new product decision with the question tool, simple mockup first. Decide
   smaller things yourself and list them.
+Reviewer: <owner's explicit reviewer choice, otherwise project review policy>.
 Where to be careful: risky areas, invariants, what went wrong here before.
 Process: pointers to the docs holding our lessons, one line per costly one.
 Done means: each PR through its gate, issues closed, specs updated, replaced rules
