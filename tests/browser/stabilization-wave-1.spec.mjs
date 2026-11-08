@@ -301,7 +301,7 @@ for (const [width, expected] of [
   })
 }
 
-test('Packs cards stay inside the dock and retain clipped source URLs', async ({ page }) => {
+test('Packs cartridges stay inside the dock', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   await page.getByRole('tab', { name: 'Packs', exact: true }).click()
   const cards = await page.locator('.cartridge').evaluateAll((items) =>

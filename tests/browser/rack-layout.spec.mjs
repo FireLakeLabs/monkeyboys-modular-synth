@@ -18,6 +18,7 @@ test('packs leave the rack alone while their controls remain available', async (
   expect(frame.height).toBeGreaterThanOrEqual(430)
   await expect(page.locator('.cartridge-bay input')).toBeHidden()
   await page.getByRole('tab', { name: 'Packs' }).click()
+  await page.getByRole('button', { name: 'Add sample pack' }).click()
   await expect(page.locator('.cartridge-bay input')).toBeVisible()
   expect(await page.locator('.rack-frame').boundingBox()).toEqual(frame)
 })

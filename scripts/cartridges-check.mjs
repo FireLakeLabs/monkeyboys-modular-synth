@@ -22,7 +22,11 @@ const button = (name) =>
   )
 const status = () => document.querySelector('.transport-status').textContent
 const bay = () => document.querySelector('.cartridge-bay')
-function seat(source) {
+async function seat(source) {
+  if (!bay().querySelector('input')) {
+    button('+ Add sample pack').click()
+    await until(() => bay().querySelector('input'))
+  }
   const input = bay().querySelector('input')
   Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, source)
   input.dispatchEvent(new Event('input', { bubbles: true }))
@@ -74,7 +78,7 @@ export async function verifyCartridges() {
     return fetch(...args)
   }
   try {
-    seat('https://packs.example.test/good/strudel.json')
+    await seat('https://packs.example.test/good/strudel.json')
     await pause(0)
     button('Add pack').click()
     await until(() => bay().querySelector('[data-status="loading"]'))
@@ -127,7 +131,7 @@ export async function verifyCartridges() {
       'Eject warns for CODE users; Cancel preserves exact source and consent removes only owned setup',
     )
 
-    seat('https://packs.example.test/bad/strudel.json')
+    await seat('https://packs.example.test/bad/strudel.json')
     await pause(0)
     button('Add pack').click()
     await until(() => bay().querySelector('.cartridge-error'))
@@ -160,7 +164,7 @@ export async function verifyCartridges() {
     checks.push(
       'A deferred failed-pack retry keeps the previous unavailable sample nonfatal and its synth producing PCM',
     )
-    seat('github:person/cartridge-test/dev')
+    await seat('github:person/cartridge-test/dev')
     await pause(0)
     button('Add pack').click()
     await until(() => bay().textContent.includes('follows dev'))

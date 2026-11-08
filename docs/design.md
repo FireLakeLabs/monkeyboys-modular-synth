@@ -494,11 +494,20 @@ follow the existing look/zoom rules. See [acceptance and limits](sound-crate.md)
 
 ## Cartridge list (#137)
 
-The dock's Packs tab lists cartridges in one column. Each card shows pack name, source, branch/pin, file count and a textual status
-beside its LED. Counts/status are unknown before registration. Factory and
-source-owned cards have no Eject action. Bay-owned ejection uses an inline
-confirmation with Cancel when sample modules or opaque CODE may depend on it.
-Adding a pack takes a GitHub shortcut or manifest URL through a labeled form. The
+The dock's Packs tab is a bay of cartridge shells (#184): notched shells with grip
+ridges and a pack-colored stripe, laid out as a single column in the 180 px dock
+and as a shelf when the dock spans the window at mid and narrow widths. Each label
+shows the pack name, its branch or pin, a sound count and a worded status (not
+loaded, loading, ready or failed) beside its LED, so status never relies on color.
+Counts/status are unknown before registration. The source URL stays off the shell:
+a readout below the bay shows source, ownership and file count for the cartridge
+under the pointer or with focus, and pressing a label pins it for touch. Screen
+readers get the same detail as the label's description. Failures are listed below
+the bay in words. Factory and source-owned cartridges have no Eject action;
+bay-owned ones carry a keyboard-reachable Eject that uses an inline confirmation
+with Cancel when sample modules or opaque CODE may depend on it.
+The empty slot at the end of the bay is the way to add a pack: it opens a labeled
+form for a GitHub shortcut or manifest URL, and Escape or Cancel closes it. The
 list shares the code/rack draft lock and accepted-document history. It never changes
 module widths or cable geometry. See the [source and engine contract](cartridges.md).
 
