@@ -1,0 +1,1572 @@
+{
+  "injected": true,
+  "historicalCause": "unknown",
+  "evidence": {
+    "capturedAt": 1794171132632,
+    "requests": [
+      {
+        "url": "http://127.0.0.1:5173/",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132004,
+        "headersAt": 1794171132007,
+        "finishedAt": 1794171132013
+      },
+      {
+        "url": "http://127.0.0.1:5173/@vite/client",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132012,
+        "headersAt": 1794171132020,
+        "finishedAt": 1794171132021
+      },
+      {
+        "url": "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Big+Shoulders+Display:wght@800&family=Fredoka:wght@600&family=Quicksand:wght@700&family=Syncopate:wght@400&family=VT323&family=Chakra+Petch:wght@700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132012,
+        "headersAt": 1794171132080,
+        "finishedAt": 1794171132080
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/main.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132012,
+        "headersAt": 1794171132019,
+        "finishedAt": 1794171132019
+      },
+      {
+        "url": "http://127.0.0.1:5173/@react-refresh",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132014,
+        "headersAt": 1794171132021,
+        "finishedAt": 1794171132021
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132020,
+        "headersAt": 1794171132032,
+        "finishedAt": 1794171132032
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132020,
+        "headersAt": 1794171132079,
+        "finishedAt": 1794171132079
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/index.css",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132021,
+        "headersAt": 1794171132049,
+        "finishedAt": 1794171132049
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/App.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132021,
+        "headersAt": 1794171132051,
+        "finishedAt": 1794171132051
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132021,
+        "headersAt": 1794171132049,
+        "finishedAt": 1794171132050
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/vite/dist/client/env.mjs",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132021,
+        "headersAt": 1794171132049,
+        "finishedAt": 1794171132049
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-DgVJeC5g.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132032,
+        "headersAt": 1794171132052,
+        "finishedAt": 1794171132052
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/SoundCrate.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132053,
+        "headersAt": 1794171132067,
+        "finishedAt": 1794171132067
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/crate.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132053,
+        "headersAt": 1794171132067,
+        "finishedAt": 1794171132067
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/strudel/engine.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132076,
+        "finishedAt": 1794171132076
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132076,
+        "finishedAt": 1794171132076
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/packWarning.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132073,
+        "finishedAt": 1794171132073
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/cartridges.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132076,
+        "finishedAt": 1794171132076
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/PatternVisuals.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132076,
+        "finishedAt": 1794171132076
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/patch/layout.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132076,
+        "finishedAt": 1794171132076
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/Rack.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132076,
+        "finishedAt": 1794171132076
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/model.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132076,
+        "finishedAt": 1794171132076
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/modules/catalog.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132088,
+        "finishedAt": 1794171132088
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/Controls.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132080,
+        "finishedAt": 1794171132080
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/strudel/playback.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132080,
+        "finishedAt": 1794171132080
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/reader/index.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132080,
+        "finishedAt": 1794171132080
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/document.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132088,
+        "finishedAt": 1794171132088
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/codeConversion.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132079,
+        "finishedAt": 1794171132079
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/open.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132055,
+        "headersAt": 1794171132088,
+        "finishedAt": 1794171132088
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/transport.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132056,
+        "headersAt": 1794171132090,
+        "finishedAt": 1794171132090
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/ReplacementPrompt.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132056,
+        "headersAt": 1794171132090,
+        "finishedAt": 1794171132090
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/autosave.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132056,
+        "headersAt": 1794171132090,
+        "finishedAt": 1794171132090
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/WorkspaceNotice.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132056,
+        "headersAt": 1794171132090,
+        "finishedAt": 1794171132090
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/RackLock.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132056,
+        "headersAt": 1794171132193,
+        "finishedAt": 1794171132193
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/FileMenu.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132056,
+        "headersAt": 1794171132193,
+        "finishedAt": 1794171132193
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/finishedCode.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/history.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/naming.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/PatchLibrary.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/SavePrompt.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/myPatches.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/load.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/connections.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/App.css",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/Rack.css",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/looks/looks.css",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132057,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/packs.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132067,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/SoundCrate.css",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132067,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/modules/values.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132073,
+        "headersAt": 1794171132195,
+        "finishedAt": 1794171132195
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/patch/mini.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132073,
+        "headersAt": 1794171132197,
+        "finishedAt": 1794171132197
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/codegen/graph.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132073,
+        "headersAt": 1794171132197,
+        "finishedAt": 1794171132197
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/patch/notation.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132073,
+        "headersAt": 1794171132197,
+        "finishedAt": 1794171132197
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/acorn.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132076,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.css",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/credits.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/manifest.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/strudel/activity.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/strudel/sourceLocations.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/modules/effects.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/codegen/effects.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/codegen/generate.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/modules/looks.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/SamplePanel.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/samples/drag.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/modules/functions.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132199,
+        "finishedAt": 1794171132199
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/looks/layout.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132201,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/activity.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132079,
+        "headersAt": 1794171132201,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/MoreFlyout.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132080,
+        "headersAt": 1794171132201,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom-CFuoV50Q.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132082,
+        "headersAt": 1794171132201,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/modules/bindings.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132089,
+        "headersAt": 1794171132201,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/MiniEditor.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132089,
+        "headersAt": 1794171132201,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/reader/read.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132089,
+        "headersAt": 1794171132201,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/codegen/routing.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132089,
+        "headersAt": 1794171132201,
+        "finishedAt": 1794171132201
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/reader/notationLiteral.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132201,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/codegen/layout.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132201,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/reader/layout.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132201,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/reader/syntax.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132202,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/structure.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/catalog.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/MyPatches.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/PatchLibrary.css",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_mini_krill-parser__js.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/patch/euclidean.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/patch/miniEdits.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/patch/miniLayout.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/rack/MiniEditor.css",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132228,
+        "finishedAt": 1794171132228
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/patch/importLayout.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132230,
+        "finishedAt": 1794171132230
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/reader/metadata.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132230,
+        "finishedAt": 1794171132230
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/reader/diagnostics.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132230,
+        "finishedAt": 1794171132230
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/reader/modulation.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132205,
+        "headersAt": 1794171132230,
+        "finishedAt": 1794171132231
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/sound-effects.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132230,
+        "headersAt": 1794171132239,
+        "finishedAt": 1794171132239
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/module-exercises.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132230,
+        "headersAt": 1794171132239,
+        "finishedAt": 1794171132239
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/function-loops.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132230,
+        "headersAt": 1794171132239,
+        "finishedAt": 1794171132239
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/pattern-hardware.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132239,
+        "finishedAt": 1794171132242
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/pattern-alien.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132239,
+        "finishedAt": 1794171132242
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modulation-utilities.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132239,
+        "finishedAt": 1794171132242
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/first-sounds.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132239,
+        "finishedAt": 1794171132242
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/first-notes.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132242,
+        "finishedAt": 1794171132247
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/first-effects.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132245,
+        "finishedAt": 1794171132248
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/pattern-effects.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132247,
+        "finishedAt": 1794171132249
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/enveloped-synth.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132247,
+        "finishedAt": 1794171132249
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/quantized-sequence.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132247,
+        "finishedAt": 1794171132249
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/lfo-sweep.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132231,
+        "headersAt": 1794171132248,
+        "finishedAt": 1794171132249
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/filter-envelope.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132249,
+        "finishedAt": 1794171132250
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/drum-machine.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132249,
+        "finishedAt": 1794171132250
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/echo-room.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132249,
+        "finishedAt": 1794171132250
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/iter-jux.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132249,
+        "finishedAt": 1794171132250
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/custom-helper.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132249,
+        "finishedAt": 1794171132250
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/layered-sketch.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132249,
+        "finishedAt": 1794171132250
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-dub-afterimage.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132250,
+        "finishedAt": 1794171132251
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/switch-angel-trance-demo.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132250,
+        "finishedAt": 1794171132251
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-doom-instrument.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132250,
+        "finishedAt": 1794171132251
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-industrial-triplets.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132232,
+        "headersAt": 1794171132251,
+        "finishedAt": 1794171132251
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/splice.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132242,
+        "headersAt": 1794171132254,
+        "finishedAt": 1794171132254
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/wavetable.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132243,
+        "headersAt": 1794171132254,
+        "finishedAt": 1794171132255
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/seq.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132243,
+        "headersAt": 1794171132254,
+        "finishedAt": 1794171132255
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/gates.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132243,
+        "headersAt": 1794171132254,
+        "finishedAt": 1794171132255
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/switch.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132243,
+        "headersAt": 1794171132255,
+        "finishedAt": 1794171132255
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/aux.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132255,
+        "finishedAt": 1794171132255
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/duck.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132255,
+        "finishedAt": 1794171132255
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/drums.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132256,
+        "finishedAt": 1794171132256
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/quant.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132257,
+        "finishedAt": 1794171132257
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/clock.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132257,
+        "finishedAt": 1794171132257
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/euclid.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132257,
+        "finishedAt": 1794171132257
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/ratchet.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132257,
+        "finishedAt": 1794171132257
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/chance.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132257,
+        "finishedAt": 1794171132257
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/chord.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132259,
+        "finishedAt": 1794171132259
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/arp.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132259,
+        "finishedAt": 1794171132259
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/osc.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132259,
+        "finishedAt": 1794171132260
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/noise.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132259,
+        "finishedAt": 1794171132260
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/harmonic.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132260,
+        "finishedAt": 1794171132260
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/fmop.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132260,
+        "finishedAt": 1794171132260
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/smpl.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132262,
+        "finishedAt": 1794171132262
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/vcf.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132262,
+        "finishedAt": 1794171132262
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/vca.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132262,
+        "finishedAt": 1794171132262
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/env.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132262,
+        "finishedAt": 1794171132262
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/lfo.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132262,
+        "finishedAt": 1794171132262
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/samplehold.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132262,
+        "finishedAt": 1794171132262
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/attenuverter.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132265,
+        "finishedAt": 1794171132265
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/modmix.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132245,
+        "headersAt": 1794171132264,
+        "finishedAt": 1794171132264
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/cvseq.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132264,
+        "finishedAt": 1794171132265
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/delay.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132265,
+        "finishedAt": 1794171132265
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/reverb.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132265,
+        "finishedAt": 1794171132265
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/drive.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132265,
+        "finishedAt": 1794171132265
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/folder.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132267,
+        "finishedAt": 1794171132267
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/lofi.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132266,
+        "finishedAt": 1794171132266
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/formant.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132267,
+        "finishedAt": 1794171132267
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/comp.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132267,
+        "finishedAt": 1794171132267
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/phaser.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132267,
+        "finishedAt": 1794171132267
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/pan.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132267,
+        "finishedAt": 1794171132267
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/shift.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132269,
+        "finishedAt": 1794171132269
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/mix.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132269,
+        "finishedAt": 1794171132269
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/scope.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132269,
+        "finishedAt": 1794171132269
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/out.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132269,
+        "finishedAt": 1794171132269
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/iter.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132270,
+        "finishedAt": 1794171132270
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/jux.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132270,
+        "finishedAt": 1794171132270
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/chunk.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132270,
+        "finishedAt": 1794171132271
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/every.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132271,
+        "finishedAt": 1794171132271
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/sometimes.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132247,
+        "headersAt": 1794171132271,
+        "finishedAt": 1794171132271
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/off.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132248,
+        "headersAt": 1794171132271,
+        "finishedAt": 1794171132271
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/layer.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132248,
+        "headersAt": 1794171132272,
+        "finishedAt": 1794171132272
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/rev.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132248,
+        "headersAt": 1794171132272,
+        "finishedAt": 1794171132272
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/shuffle.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132248,
+        "headersAt": 1794171132272,
+        "finishedAt": 1794171132272
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/ribbon.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132248,
+        "headersAt": 1794171132272,
+        "finishedAt": 1794171132272
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/time-lens.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132248,
+        "headersAt": 1794171132272,
+        "finishedAt": 1794171132272
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/warp.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132248,
+        "headersAt": 1794171132273,
+        "finishedAt": 1794171132273
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/echo.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132248,
+        "headersAt": 1794171132273,
+        "finishedAt": 1794171132273
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/library/patches/modules/code.strudel?import&raw",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132249,
+        "headersAt": 1794171132273,
+        "finishedAt": 1794171132273
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/SourceEditor.tsx",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132435,
+        "headersAt": 1794171132464,
+        "finishedAt": 1794171132464
+      },
+      {
+        "url": "https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7E_DMs5.woff2",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132436,
+        "headersAt": 1794171132509,
+        "finishedAt": 1794171132512
+      },
+      {
+        "url": "https://fonts.gstatic.com/s/bigshouldersdisplay/v24/fC1MPZJEZG-e9gHhdI4-NBbfd2ys3SjJCx12wPgf9g-_3F0YdQ88FFkwSA.woff2",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132436,
+        "headersAt": 1794171132509,
+        "finishedAt": 1794171132509
+      },
+      {
+        "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132436,
+        "headersAt": 1794171132509,
+        "finishedAt": 1794171132509
+      },
+      {
+        "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4-Lwz3bWuQ.woff2",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132436,
+        "headersAt": 1794171132513,
+        "finishedAt": 1794171132513
+      },
+      {
+        "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132436,
+        "headersAt": 1794171132515,
+        "finishedAt": 1794171132515
+      },
+      {
+        "url": "https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E30-8s51os.woff2",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132436,
+        "headersAt": 1794171132513,
+        "finishedAt": 1794171132513
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_state.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132469,
+        "headersAt": 1794171132474,
+        "finishedAt": 1794171132474
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_view.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132469,
+        "headersAt": 1794171132474,
+        "finishedAt": 1794171132474
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_commands.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132470,
+        "headersAt": 1794171132476,
+        "finishedAt": 1794171132476
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_lang-javascript.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132470,
+        "headersAt": 1794171132486,
+        "finishedAt": 1794171132486
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/highlighting.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132470,
+        "headersAt": 1794171132482,
+        "finishedAt": 1794171132482
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/editorChanges.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132470,
+        "headersAt": 1794171132482,
+        "finishedAt": 1794171132482
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/metadataFolding.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132470,
+        "headersAt": 1794171132482,
+        "finishedAt": 1794171132482
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/soundingTokens.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132470,
+        "headersAt": 1794171132482,
+        "finishedAt": 1794171132482
+      },
+      {
+        "url": "http://127.0.0.1:5173/src/workspace/sourceDiagnostics.ts",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132470,
+        "headersAt": 1794171132483,
+        "finishedAt": 1794171132483
+      },
+      {
+        "url": "https://stabilization.example/pending.wav",
+        "state": "failed",
+        "status": null,
+        "at": 1794171132471,
+        "error": {
+          "errorText": "net::ERR_FAILED"
+        },
+        "finishedAt": 1794171132483
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-pFrPsHWw.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132474,
+        "headersAt": 1794171132509,
+        "finishedAt": 1794171132509
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-kZ9knBKX.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132474,
+        "headersAt": 1794171132515,
+        "finishedAt": 1794171132515
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-C_-QiPIc.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132480,
+        "headersAt": 1794171132509,
+        "finishedAt": 1794171132509
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_merge.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132485,
+        "headersAt": 1794171132514,
+        "finishedAt": 1794171132514
+      },
+      {
+        "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_language.js?v=aae626d4",
+        "state": "finished",
+        "status": 200,
+        "at": 1794171132485,
+        "headersAt": 1794171132513,
+        "finishedAt": 1794171132514
+      },
+      {
+        "url": "https://stabilization.example/missing.wav",
+        "state": "failed",
+        "status": null,
+        "at": 1794171132624,
+        "error": {
+          "errorText": "net::ERR_FAILED"
+        },
+        "finishedAt": 1794171132626
+      }
+    ],
+    "browser": {
+      "clock": {
+        "timeOrigin": 1794171132003.4,
+        "now": 631.5999999940395
+      },
+      "decodes": [
+        {
+          "at": 624.2999999821186,
+          "bytes": 4,
+          "state": "failed",
+          "error": "EncodingError: Unable to decode audio data"
+        }
+      ],
+      "starts": [],
+      "contexts": [
+        {
+          "state": "closed",
+          "currentTime": 0.010666666666666666,
+          "sampleRate": 48000
+        }
+      ],
+      "readiness": "Decode observations are not mapped to sound names; fetched bytes alone do not prove decoded readiness."
+    }
+  }
+}

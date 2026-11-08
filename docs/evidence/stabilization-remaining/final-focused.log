@@ -1,0 +1,57 @@
+
+> monkeyboys-modular-synth@0.0.0 test:browser:report
+> node scripts/browser-report.mts tests/browser/stabilization-remaining.spec.mjs tests/browser/stabilization-wave-1.spec.mjs tests/browser/rack-layout.spec.mjs tests/browser/rack-view-state.spec.mjs --workers=1
+
+[WebServer] (node:644350) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 31 tests using 1 worker
+
+(node:644391) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/31] tests/browser/rack-layout.spec.mjs:16:1 › packs leave the rack alone while their controls remain available
+[2/31] tests/browser/rack-layout.spec.mjs:25:1 › Fit never draws cables to clipped mixer jacks and keeps source intact
+[3/31] tests/browser/rack-view-state.spec.mjs:32:1 › rack view state survives typing, applying and undoing
+[4/31] tests/browser/rack-view-state.spec.mjs:61:1 › panels still show an externally changed value after a code edit
+[5/31] tests/browser/rack-view-state.spec.mjs:73:1 › Delete and Backspace act on the selected module wherever rack focus is
+[6/31] tests/browser/rack-view-state.spec.mjs:110:1 › Delete removes a selected cable and the menu shows the shortcut
+[7/31] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1440px
+[8/31] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1600px
+[9/31] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1920px
+[10/31] tests/browser/rack-view-state.spec.mjs:142:1 › a cable to an off-screen jack ends at the rail edge, not across OUT
+[11/31] tests/browser/rack-view-state.spec.mjs:166:1 › a slow draft does not reset an open sound drawer
+(node:644824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[12/31] tests/browser/stabilization-remaining.spec.mjs:15:1 › overview draws every cable and navigates by pointer and keyboard without changing source
+[13/31] tests/browser/stabilization-remaining.spec.mjs:70:1 › overview Connections selects removes and repatches cables without using jacks
+[14/31] tests/browser/stabilization-remaining.spec.mjs:97:1 › Trance import fits both dimensions and supports readable module navigation
+[15/31] tests/browser/stabilization-remaining.spec.mjs:130:1 › native sound drag highlights panels and selection plus Enter assigns a seated sound
+[16/31] tests/browser/stabilization-remaining.spec.mjs:207:3 › bounded natural sample probes attempt 1
+[17/31] tests/browser/stabilization-remaining.spec.mjs:207:3 › bounded natural sample probes attempt 2
+[18/31] tests/browser/stabilization-remaining.spec.mjs:207:3 › bounded natural sample probes attempt 3
+[19/31] tests/browser/stabilization-remaining.spec.mjs:269:1 › injected fetch and decode failures remain distinguishable from readiness
+[20/31] tests/browser/stabilization-remaining.spec.mjs:323:1 › a clipped off-screen MIX endpoint stays at the rail viewport edge
+(node:645371) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[21/31] tests/browser/stabilization-wave-1.spec.mjs:39:1 › supersaw fits note and freq in every Hardware look and preserves the complete file
+[22/31] tests/browser/stabilization-wave-1.spec.mjs:81:1 › SPLICE marks span the strip and follow COUNT in every Hardware look
+[23/31] tests/browser/stabilization-wave-1.spec.mjs:109:1 › More Escape preserves status even after a committed control drops focus
+[24/31] tests/browser/stabilization-wave-1.spec.mjs:154:1 › every catalog name keeps whole words with loaded fonts in the 180px dock
+[25/31] tests/browser/stabilization-wave-1.spec.mjs:201:1 › native cable hover and selection cover gaps while dim cables pass through
+[26/31] tests/browser/stabilization-wave-1.spec.mjs:294:3 › new patches retain the default rail width at 1280px
+[27/31] tests/browser/stabilization-wave-1.spec.mjs:294:3 › new patches retain the default rail width at 1600px
+[28/31] tests/browser/stabilization-wave-1.spec.mjs:294:3 › new patches retain the default rail width at 1920px
+[29/31] tests/browser/stabilization-wave-1.spec.mjs:294:3 › new patches retain the default rail width at 2200px
+[30/31] tests/browser/stabilization-wave-1.spec.mjs:304:1 › Packs cards stay inside the dock and retain clipped source URLs
+[31/31] tests/browser/stabilization-wave-1.spec.mjs:321:1 › the narrow-screen module dock retains many compact columns
+  31 passed (1.4m)
+
+RESULT passed=31 failed=0 exit=0
+Log: /tmp/monkeyboy-browser-644299.log

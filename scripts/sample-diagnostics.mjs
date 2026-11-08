@@ -1,17 +1,32 @@
 // Test-only observation installed before navigation; never changes resource readiness.
 export async function installSampleDiagnostics(page) {
   const requests = []
-  page.on('response', (response) =>
-    requests.push({ url: response.url(), status: response.status(), at: Date.now() }),
-  )
-  page.on('requestfailed', (request) =>
-    requests.push({ url: request.url(), error: request.failure(), at: Date.now() }),
-  )
+  const byRequest = new Map()
+  page.on('request', (request) => {
+    const entry = { url: request.url(), state: 'requested', status: null, at: Date.now() }
+    byRequest.set(request, entry)
+    requests.push(entry)
+  })
+  page.on('response', (response) => {
+    const entry = byRequest.get(response.request())
+    if (entry)
+      Object.assign(entry, { state: 'headers', status: response.status(), headersAt: Date.now() })
+  })
+  page.on('requestfinished', (request) => {
+    const entry = byRequest.get(request)
+    if (entry) Object.assign(entry, { state: 'finished', finishedAt: Date.now() })
+  })
+  page.on('requestfailed', (request) => {
+    const entry = byRequest.get(request)
+    if (entry)
+      Object.assign(entry, { state: 'failed', error: request.failure(), finishedAt: Date.now() })
+  })
   await page.addInitScript(() => {
     const decodes = []
     const starts = []
     const contexts = new Set()
     window.sampleDiagnostics = () => ({
+      clock: { timeOrigin: performance.timeOrigin, now: performance.now() },
       decodes,
       starts,
       contexts: [...contexts].map((context) => ({
@@ -56,7 +71,8 @@ export async function installSampleDiagnostics(page) {
     }
   })
   return async () => ({
-    requests,
+    capturedAt: Date.now(),
+    requests: structuredClone(requests),
     browser: await page.evaluate(() => window.sampleDiagnostics?.() ?? { readiness: 'unknown' }),
   })
 }

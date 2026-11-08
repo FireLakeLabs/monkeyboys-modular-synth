@@ -1,0 +1,118 @@
+
+> monkeyboys-modular-synth@0.0.0 test:browser:report
+> node scripts/browser-report.mts tests/browser/stabilization-remaining.spec.mjs tests/browser/stabilization-wave-1.spec.mjs -g clipped off-screen|native cable hover
+
+[WebServer] (node:642745) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 2 workers
+
+(node:642787) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:642786) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] tests/browser/stabilization-wave-1.spec.mjs:201:1 › native cable hover and selection cover gaps while dim cables pass through
+[2/2] tests/browser/stabilization-remaining.spec.mjs:290:1 › a clipped off-screen MIX endpoint stays at the rail viewport edge
+  1) tests/browser/stabilization-remaining.spec.mjs:290:1 › a clipped off-screen MIX endpoint stays at the rail viewport edge 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 1048
+    Received:    1246.125
+
+      320 |     }
+      321 |   })
+    > 322 |   expect(geometry.endpoint.x).toBeLessThanOrEqual(geometry.view.right + 1)
+          |                               ^
+      323 |   expect(geometry.endpoint.y).toBeLessThanOrEqual(geometry.view.bottom + 1)
+      324 | })
+      325 |
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/stabilization-remaining.spec.mjs:322:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stabilization-remaining-a--a9bf4-s-at-the-rail-viewport-edge/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stabilization-remaining-a--a9bf4-s-at-the-rail-viewport-edge/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stabilization-remaining-a--a9bf4-s-at-the-rail-viewport-edge/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stabilization-remaining-a--a9bf4-s-at-the-rail-viewport-edge/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2) tests/browser/stabilization-wave-1.spec.mjs:201:1 › native cable hover and selection cover gaps while dim cables pass through 
+
+    Error: function missed curve points
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 26
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "hit": false,
+    +     "top": "chunk1:out → mix1:in1",
+    +     "x": 568.3939208984375,
+    +     "y": 493.7596740722656,
+    +   },
+    +   Object {
+    +     "hit": false,
+    +     "top": "chunk1:out → mix1:in1",
+    +     "x": 569.3472290039062,
+    +     "y": 495.5178527832031,
+    +   },
+    +   Object {
+    +     "hit": false,
+    +     "top": "chunk1:out → mix1:in1",
+    +     "x": 570.318115234375,
+    +     "y": 497.266357421875,
+    +   },
+    +   Object {
+    +     "hit": false,
+    +     "top": "chunk1:out → mix1:in1",
+    +     "x": 571.3076171875,
+    +     "y": 499.0044250488281,
+    +   },
+    + ]
+
+      265 |       points.filter((p) => !p.hit),
+      266 |       `${kind} missed curve points`,
+    > 267 |     ).toEqual([])
+          |       ^
+      268 |     const point = points[Math.floor(points.length / 2)]
+      269 |     await page.mouse.move(point.x, point.y)
+      270 |     if (kind === 'pattern') await expect(page.locator('.cable-probe')).toBeVisible()
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/stabilization-wave-1.spec.mjs:267:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stabilization-wave-1-nativ-6996d-ile-dim-cables-pass-through/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stabilization-wave-1-nativ-6996d-ile-dim-cables-pass-through/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stabilization-wave-1-nativ-6996d-ile-dim-cables-pass-through/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stabilization-wave-1-nativ-6996d-ile-dim-cables-pass-through/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    tests/browser/stabilization-remaining.spec.mjs:290:1 › a clipped off-screen MIX endpoint stays at the rail viewport edge 
+    tests/browser/stabilization-wave-1.spec.mjs:201:1 › native cable hover and selection cover gaps while dim cables pass through 
+
+RESULT passed=0 failed=2 exit=1
+Log: /tmp/monkeyboy-browser-642651.log

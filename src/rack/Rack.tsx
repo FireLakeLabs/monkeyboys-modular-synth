@@ -305,18 +305,14 @@ export function Rack({
       for (const jack of element.querySelectorAll<HTMLButtonElement>('[data-jack]')) {
         const rect = jack.getBoundingClientRect()
         const id = jack.dataset.jack
-        const x = rect.left + rect.width / 2
-        const y = rect.top + rect.height / 2
+        let x = rect.left + rect.width / 2
+        let y = rect.top + rect.height / 2
         const box = jack.closest('.patch-box')?.getBoundingClientRect()
         // Scrolled-out jacks have geometry beyond their panel. Drawing to those
         // hidden targets makes fitted MIX cables appear to end on other rails.
-        if (!overview && box && (x < box.left || x > box.right || y < box.top || y > box.bottom)) {
-          if (id)
-            next[id] = {
-              x: Math.max(box.left, Math.min(x, box.right)) - bounds.left,
-              y: Math.max(box.top, Math.min(y, box.bottom)) - bounds.top,
-            }
-          continue
+        if (!overview && box) {
+          x = Math.max(box.left, Math.min(x, box.right))
+          y = Math.max(box.top, Math.min(y, box.bottom))
         }
         // Rail jacks scrolled out of the viewport pin to its edge, so cables never cross OUT.
         const rail = jack.closest('.rack-scroll')

@@ -220,14 +220,22 @@ for (let attempt = 1; attempt <= 3; attempt++) {
           const { libraryPatches } = await import('/src/library/catalog.ts')
           await load(
             fixture === 'soft'
-              ? '$: s("bd*2").soft()\n'
+              ? '$: s("bd*2").soft().gain(0.1)\n'
               : libraryPatches().find((entry) => entry.id === 'exercise-smpl').source,
           )
         }, fixture)
         await page.getByRole('button', { name: 'Play', exact: true }).click()
         await expect(page.locator('.transport-status')).toHaveText('Playing')
         const pcm = await page.evaluate(() => window.auditMeasure())
-        observations.push({ fixture, attempt, pcm, diagnostics: await diagnostics() })
+        observations.push({
+          fixture,
+          attempt,
+          pcm,
+          source: await page.evaluate(async () =>
+            (await import('/scripts/editor-browser.mjs')).editorSource(),
+          ),
+          diagnostics: await diagnostics(),
+        })
         await page.getByRole('button', { name: 'Stop', exact: true }).click()
         expect(pcm.rms).toBeGreaterThan(0.0001)
       }
@@ -264,7 +272,32 @@ test('injected fetch and decode failures remain distinguishable from readiness',
   const { installSampleDiagnostics } = await import('../../scripts/sample-diagnostics.mjs')
   const diagnostics = await installSampleDiagnostics(page)
   await page.route('https://stabilization.example/missing.wav', (route) => route.abort('failed'))
+  let releaseRequest
+  const held = new Promise((resolve) => {
+    releaseRequest = resolve
+  })
+  await page.route('https://stabilization.example/pending.wav', (route) => releaseRequest(route))
   await page.goto('/')
+  await page.evaluate(() => {
+    fetch('https://stabilization.example/pending.wav').catch(() => {})
+  })
+  const pendingRoute = await held
+  const pendingSnapshot = await diagnostics()
+  const failed = page.waitForEvent('requestfailed', (request) =>
+    request.url().endsWith('pending.wav'),
+  )
+  await pendingRoute.abort('failed')
+  await failed
+  const failedSnapshot = await diagnostics()
+  expect(
+    pendingSnapshot.requests.find((request) => request.url.endsWith('pending.wav'))?.state,
+  ).toBe('requested')
+  expect(
+    failedSnapshot.requests.find((request) => request.url.endsWith('pending.wav'))?.state,
+  ).toBe('failed')
+  expect(
+    pendingSnapshot.requests.find((request) => request.url.endsWith('pending.wav'))?.state,
+  ).toBe('requested')
   await page.evaluate(async () => {
     await fetch('https://stabilization.example/missing.wav').catch(() => {})
     const context = new AudioContext()
@@ -285,4 +318,40 @@ test('injected fetch and decode failures remain distinguishable from readiness',
     body: JSON.stringify({ injected: true, historicalCause: 'unknown', evidence }),
     contentType: 'application/json',
   })
+})
+
+test('a clipped off-screen MIX endpoint stays at the rail viewport edge', async ({ page }) => {
+  await page.goto('/')
+  await page.locator('.cm-content').waitFor()
+  await page.evaluate(async () => {
+    const m = await import('/src/rack/model.ts')
+    const { generate } = await import('/src/codegen/generate.ts')
+    let patch = m.placeModule(m.starterPatch(104), 'mix', 0, 84, 'mix1')
+    patch = m.placeModule(patch, 'lfo', 0, 0)
+    patch = m.connect(patch, { module: 'lfo1', jack: 'out' }, { module: 'mix1', jack: 'cv1' })
+    await (await import('/scripts/rack-feel-check.mjs')).load(generate(patch))
+    await document.fonts.ready
+  })
+  await page.getByLabel('Rack zoom').selectOption('1')
+  await page.addStyleTag({
+    content:
+      '[data-module="mix1"] .patch-box {max-height:40px; min-height:40px; flex:0 0 40px; overflow:auto}',
+  })
+  await page.waitForTimeout(80)
+  const geometry = await page.evaluate(() => {
+    const cable = [...document.querySelectorAll('.cable')].find((g) =>
+      g.querySelector('title').textContent.includes('lfo1:out → mix1:cv1'),
+    )
+    const path = cable.querySelector('.cable-paint')
+    const endpoint = path
+      .getPointAtLength(path.getTotalLength())
+      .matrixTransform(path.getScreenCTM())
+    const view = document.querySelector('.rack-scroll').getBoundingClientRect()
+    return {
+      endpoint: { x: endpoint.x, y: endpoint.y },
+      view: { right: view.right, bottom: view.bottom },
+    }
+  })
+  expect(geometry.endpoint.x).toBeLessThanOrEqual(geometry.view.right + 1)
+  expect(geometry.endpoint.y).toBeLessThanOrEqual(geometry.view.bottom + 1)
 })

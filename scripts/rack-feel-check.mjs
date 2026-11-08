@@ -211,18 +211,9 @@ export function inspectCables() {
       let x = rect.left + rect.width / 2
       let y = rect.top + rect.height / 2
       const box = jack.closest('.patch-box')?.getBoundingClientRect()
-      if (
-        surface.dataset.overview !== 'true' &&
-        box &&
-        (x < box.left || x > box.right || y < box.top || y > box.bottom)
-      ) {
-        return [
-          jack.dataset.jack,
-          {
-            x: Math.max(box.left, Math.min(x, box.right)) - bounds.left,
-            y: Math.max(box.top, Math.min(y, box.bottom)) - bounds.top,
-          },
-        ]
+      if (surface.dataset.overview !== 'true' && box) {
+        x = Math.max(box.left, Math.min(x, box.right))
+        y = Math.max(box.top, Math.min(y, box.bottom))
       }
       // Rail jacks scrolled out of view pin to the viewport edge rather than crossing OUT.
       const rail = jack.closest('.rack-scroll')
