@@ -1,9 +1,9 @@
 # Project skills
 
 This repo contains nine unmodified [tstack](https://github.com/t3dotgg/tstack)
-workflow skills and eight adapted [pstack](https://github.com/cursor/plugins/tree/ae5650febf4320793844c12c4adaa937f417f8da/pstack)
-engineering skills. Supporting files are local; no user-wide installation or
-Cursor companion plugin is required.
+workflow skills, eight adapted [pstack](https://github.com/cursor/plugins/tree/ae5650febf4320793844c12c4adaa937f417f8da/pstack)
+engineering skills and one [repo-owned](#repo-owned-skills) skill. Supporting files
+are local; no user-wide installation or Cursor companion plugin is required.
 
 ## Tstack provenance
 
@@ -22,6 +22,14 @@ Cursor companion plugin is required.
 [skills-lock.json](skills-lock.json) records each source path, upstream file hash,
 installed file hash, executable mode, and skill dependency. The original and
 adapted hashes distinguish upstream content from deliberate local changes.
+
+## Repo-owned skills
+
+[`orchestrate`](skills/orchestrate/SKILL.md) was written for this repo and has no
+upstream or separate license. It is listed under `repoSkills` in
+[skills-lock.json](skills-lock.json), so upstream updates never touch it. Edit it
+directly: it has no recorded hashes, and Git history is its record. The checker
+still verifies its registration, identity, dependencies and links.
 
 ## Discovery and requirements
 

@@ -7,16 +7,62 @@ import lock from '../.agents/skills-lock.json' with { type: 'json' }
 const repoRoot = fileURLToPath(new URL('../', import.meta.url))
 const digest = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex')
 
+type SkillRegistration = {
+  name: string
+  dependencies: readonly string[]
+  files: readonly { path: string }[]
+}
+
 export function checkSkills(root = repoRoot, manifest = lock): string[] {
   const errors: string[] = []
   const knownFiles = new Set<string>()
-  const names = new Set(manifest.skills.map((skill) => skill.name))
+  const allSkills = [...manifest.skills, ...manifest.repoSkills]
+  const names = new Set(allSkills.map((skill) => skill.name))
   const inside = (path: string) => {
     const rel = relative(root, path)
     return rel !== '..' && !rel.startsWith(`..${sep}`) && !rel.startsWith(sep)
   }
+  const checkRegistration = (skill: SkillRegistration) => {
+    for (const dependency of skill.dependencies) {
+      if (!names.has(dependency)) errors.push(`${skill.name}: missing dependency ${dependency}`)
+    }
+    const entry = `.agents/skills/${skill.name}/SKILL.md`
+    if (!skill.files.some((file) => file.path === entry))
+      errors.push(`${skill.name}: missing entry point`)
+  }
+  const registeredPath = (skillName: string, file: string) => {
+    const path = resolve(root, file)
+    if (knownFiles.has(file)) errors.push(`Duplicate file: ${file}`)
+    knownFiles.add(file)
+    if (!file.startsWith(`.agents/skills/${skillName}/`) || !inside(path)) {
+      errors.push(`File outside its skill: ${file}`)
+      return undefined
+    }
+    if (!existsSync(path) || !lstatSync(path).isFile()) {
+      errors.push(`Missing regular file: ${file}`)
+      return undefined
+    }
+    return path
+  }
+  const checkMarkdown = (skillName: string, file: string, path: string) => {
+    if (!file.endsWith('.md')) return
+    const text = readFileSync(path, 'utf8')
+    if (
+      file === `.agents/skills/${skillName}/SKILL.md` &&
+      (!text.startsWith(`---\nname: ${skillName}\n`) || !/^description: .+/m.test(text))
+    ) {
+      errors.push(`Invalid skill identity/frontmatter: ${file}`)
+    }
+    for (const match of text.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
+      const target = match[1]?.split('#')[0]
+      if (!target || /^[a-z][a-z0-9+.-]*:/i.test(target)) continue
+      const linked = resolve(dirname(path), target)
+      if (!inside(linked) || !existsSync(linked))
+        errors.push(`Broken local link: ${file} -> ${target}`)
+    }
+  }
   if (manifest.version !== 1) errors.push('Unsupported skill lock version')
-  if (names.size !== manifest.skills.length) errors.push('Duplicate skill name')
+  if (names.size !== allSkills.length) errors.push('Duplicate skill name')
 
   for (const source of Object.values(manifest.sources)) {
     const path = resolve(root, source.license.path)
@@ -29,24 +75,10 @@ export function checkSkills(root = repoRoot, manifest = lock): string[] {
 
   for (const skill of manifest.skills) {
     if (!(skill.source in manifest.sources)) errors.push(`Unknown source: ${skill.source}`)
-    for (const dependency of skill.dependencies) {
-      if (!names.has(dependency)) errors.push(`${skill.name}: missing dependency ${dependency}`)
-    }
-    const entry = `.agents/skills/${skill.name}/SKILL.md`
-    if (!skill.files.some((file) => file.path === entry))
-      errors.push(`${skill.name}: missing entry point`)
+    checkRegistration(skill)
     for (const file of skill.files) {
-      const path = resolve(root, file.path)
-      if (knownFiles.has(file.path)) errors.push(`Duplicate file: ${file.path}`)
-      knownFiles.add(file.path)
-      if (!file.path.startsWith(`.agents/skills/${skill.name}/`) || !inside(path)) {
-        errors.push(`File outside its skill: ${file.path}`)
-        continue
-      }
-      if (!existsSync(path) || !lstatSync(path).isFile()) {
-        errors.push(`Missing regular file: ${file.path}`)
-        continue
-      }
+      const path = registeredPath(skill.name, file.path)
+      if (!path) continue
       if (digest(path) !== file.sha256) errors.push(`Content drift: ${file.path}`)
       if (!/^[a-f0-9]{64}$/.test(file.upstreamSha256))
         errors.push(`Invalid upstream hash: ${file.path}`)
@@ -59,21 +91,16 @@ export function checkSkills(root = repoRoot, manifest = lock): string[] {
       ) {
         errors.push(`Executable mode drift: ${file.path}`)
       }
-      if (!file.path.endsWith('.md')) continue
-      const text = readFileSync(path, 'utf8')
-      if (
-        file.path === entry &&
-        (!text.startsWith(`---\nname: ${skill.name}\n`) || !/^description: .+/m.test(text))
-      ) {
-        errors.push(`Invalid skill identity/frontmatter: ${file.path}`)
-      }
-      for (const match of text.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
-        const target = match[1]?.split('#')[0]
-        if (!target || /^[a-z][a-z0-9+.-]*:/i.test(target)) continue
-        const linked = resolve(dirname(path), target)
-        if (!inside(linked) || !existsSync(linked))
-          errors.push(`Broken local link: ${file.path} -> ${target}`)
-      }
+      checkMarkdown(skill.name, file.path, path)
+    }
+  }
+
+  // Repo-owned skills have no upstream to match, so Git history is their record.
+  for (const skill of manifest.repoSkills) {
+    checkRegistration(skill)
+    for (const file of skill.files) {
+      const path = registeredPath(skill.name, file.path)
+      if (path) checkMarkdown(skill.name, file.path, path)
     }
   }
 
@@ -118,7 +145,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         `${JSON.stringify(next, null, 2)}\n`,
       )
     process.stdout.write(
-      `Verified ${next.skills.length} skills and their local dependencies${updating ? '; updated reviewed adaptation hashes' : ''}.\n`,
+      `Verified ${next.skills.length + next.repoSkills.length} skills and their local dependencies${updating ? '; updated reviewed adaptation hashes' : ''}.\n`,
     )
   }
 }
