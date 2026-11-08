@@ -81,10 +81,10 @@ other mask stay source-owned CODE with exact bytes.
 
 ## Verification
 
-Observed on 8 November 2026 at `6372e52`, Node 24.22.2, Chromium from the
-pinned Playwright.
+Observed on 8 November 2026 with Node 24.22.2 and the pinned Playwright Chromium,
+on `12d49ca` (rebased onto `3af8609`) unless noted.
 
-- `npm run check` passed: 2428 unit cases, formatting, skill integrity, lint,
+- `npm run check` passed: 2432 unit cases, formatting, skill integrity, lint,
   reader coverage, guardrails, TypeScript and production build.
 - **Engine events** (pinned core, no audio): the spike above, plus per-channel
   lanes on fan-out branches (alternate cycles, with a muted, named branch) and on
@@ -93,15 +93,31 @@ pinned Playwright.
   with events preserved through reader projection.
 - **Exact source and saved identity** are separate checks: generated files
   restore the complete rack; plain code keeps every byte; changed, added and
-  removed masks in a saved file reconcile to the new lane. That last check failed
-  before the reader carried lanes through mixer channel restoration.
+  removed masks in a saved file reconcile to the new lane. That check failed
+  before the reader carried lanes through mixer channel restoration. Clearing an
+  imported lane removes only its mask call, including beside line and block
+  comments.
 - **Browser** ([`tests/browser/arranger.spec.mjs`](../tests/browser/arranger.spec.mjs),
-  focused run `RESULT passed=2 failed=0`): pointer drag and keyboard edits write
-  the mask on that voice only; Undo and Redo step through lane edits; a code edit
-  moves the lane; reload recovers the exact file and lane. Playing at 240 BPM,
-  recorded engine triggers showed orbit 1 only in cycle 0 of each four and orbit 2
-  only in cycles 2 and 3, with nonzero master PCM. An imported lane edits only its
-  literal; adding a lane to an unmasked imported channel converts with Undo, and
-  Undo restores the exact source. Screenshots are in
+  `RESULT passed=2 failed=0`): opening Arrange leaves the rack frame unchanged;
+  pointer drag and keyboard edits write the mask on that voice only; Undo and Redo
+  step through lane edits; a code edit moves the lane; reload recovers the exact
+  file and lane. Playing at 240 BPM, recorded engine triggers showed orbit 1 only
+  in cycle 0 of each four and orbit 2 only in cycles 2 and 3, with nonzero master
+  PCM. An imported lane edits only its literal; adding a lane to an unmasked
+  imported channel converts with Undo, which restores the exact source; playing
+  the last rested cycle removes only the mask call. Screenshots are in
   [evidence](evidence/arranger/).
+- **Full local suite.** At `6372e52` (inline lane): 190 of 191 passed;
+  `verifyOnRampUI` failed 4 of 4 when repeated, because the lane shrank the rack
+  and Fit fell below the 75% overview threshold. Main passed it. Arrange became a
+  footer popover, and the test then passed 2 of 2. At `8bfce31`: 189 of 191
+  passed; `sound-effects-browser` and `module-exercises-browser` reported silent
+  sample PCM with recorded sample starts, the
+  [#207](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/207)
+  signature, and passed 2 of 2 on a focused rerun. No cause is inferred. After
+  rebasing, the arranger, rack-layout and workspace-chrome specs passed 23 of 23.
+  The hosted **Full browser suites** run is the merge gate.
 - Physical listening was not done. Touch and other browsers were not tested.
+- **Review:** three Sol rounds (GPT-6.1 Sol, high effort) on an Opus 5.5
+  implementation; two rounds found imported-lane clearing bugs, fixed above.
+  Approved on `12d49ca`.
