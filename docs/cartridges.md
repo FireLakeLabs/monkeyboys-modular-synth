@@ -137,3 +137,6 @@ adopts that policy only at pattern installation. A deferred-fetch regression
 failed before this handoff fix and passes afterward. The real browser check also
 holds a failed-pack retry open while the previous synth produces PCM. Both
 900×768 and 1024×768 workspace checks pass with the compact cartridge rail.
+
+#184 replaced the cards with cartridge shells and an add slot; see
+[design](design.md#cartridge-list-137). Ownership and eject rules are unchanged.

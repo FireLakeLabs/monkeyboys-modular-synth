@@ -52,6 +52,8 @@ export async function verifySoundCrate() {
     return fetch(...args)
   }
   try {
+    button('+ Add sample pack').click()
+    await until(() => document.querySelector('.cartridge-bay input'))
     input(document.querySelector('.cartridge-bay input'), url)
     await pause(0)
     button('Add pack').click()
