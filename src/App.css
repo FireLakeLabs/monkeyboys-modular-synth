@@ -178,12 +178,19 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 4px;
 }
 
+.library li {
+  flex: 1 1 calc(50% - 2px);
+  min-width: min-content;
+}
+
 .chip {
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -199,7 +206,7 @@
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.02em;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 
 .chip-call {

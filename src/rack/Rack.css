@@ -706,7 +706,7 @@
   stroke: var(--signal);
   stroke-width: 5;
   stroke-linecap: round;
-  pointer-events: stroke;
+  pointer-events: none;
   cursor: pointer;
 }
 .cable .cable-shadow {
@@ -714,13 +714,19 @@
   stroke-width: 8;
   pointer-events: none;
 }
-.cable.signal-pattern path:not(.cable-shadow),
+.cable.signal-pattern path.cable-paint,
 .provisional.signal-pattern {
   stroke-dasharray: 1 8;
 }
-.cable.signal-mod path:not(.cable-shadow),
+.cable.signal-mod path.cable-paint,
 .provisional.signal-mod {
   stroke-dasharray: 10 6;
+}
+.cable .cable-hit {
+  stroke: transparent;
+  stroke-width: 12;
+  stroke-dasharray: none;
+  pointer-events: stroke;
 }
 .cable.faded {
   opacity: 0.08;
@@ -728,7 +734,7 @@
 .cable.faded path {
   pointer-events: none;
 }
-.selected-cable path {
+.selected-cable path:not(.cable-hit) {
   stroke-width: 7;
   filter: drop-shadow(0 0 3px white);
 }
@@ -1020,7 +1026,7 @@ select:focus-visible {
 .signal-function {
   --signal: #8cf5da;
 }
-.cable.signal-function path:not(.cable-shadow),
+.cable.signal-function path.cable-paint,
 .provisional.signal-function {
   stroke-dasharray: 16 4 3 4;
 }
@@ -1051,7 +1057,7 @@ select:focus-visible {
 .signal-audio-mod {
   --signal: #f4a462;
 }
-.cable.signal-audio-mod path:not(.cable-shadow) {
+.cable.signal-audio-mod path.cable-paint {
   stroke-width: 7;
 }
 .cable.signal-audio-mod .audio-mod-core {

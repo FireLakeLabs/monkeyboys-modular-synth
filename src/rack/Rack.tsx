@@ -389,7 +389,7 @@ export function Rack({
   }
   useEffect(() => {
     const escape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && !event.defaultPrevented) {
         cancel()
         setMenu(null)
         cancelReplacement()
@@ -1119,8 +1119,10 @@ export function Rack({
                   >
                     <path d={curve(a, b)} className="cable-shadow" />
                     <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
+                    <path d={curve(a, b)} className="cable-paint" />
                     <path
                       d={curve(a, b)}
+                      className="cable-hit"
                       onPointerEnter={() => {
                         if (
                           !pinnedProbe &&

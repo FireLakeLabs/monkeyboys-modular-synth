@@ -208,13 +208,16 @@ export const OSC: ModuleSpec = {
       when: [{ control: 'wave', values: ['pulse'] }],
     }),
     numericCall('voices', 'VOICES', 'unison', 1, 100, 1, 5, {
+      more: true,
       when: [{ control: 'wave', values: ['supersaw'] }],
     }),
     numericCall('detune', 'DETUNE', 'detune', 0, 24, 0.01, 0.18, {
       unit: 'st',
+      more: true,
       when: [{ control: 'wave', values: ['supersaw'] }],
     }),
     numericCall('spread', 'SPREAD', 'spread', 0, 1, 0.01, 0.6, {
+      more: true,
       when: [{ control: 'wave', values: ['supersaw'] }],
     }),
     numericCall('noise', 'NOISE', 'noise', 0, 1, 0.01, 0, {
