@@ -32,7 +32,8 @@ Repeat failure and unchanged isolated/full passing reruns also remain unexplaine
 
 ## Verification ledger
 
-Local verification is recorded below; Opus and hosted PR gates remain pending.
+Local verification and bounded Opus approval are recorded below; hosted evidence
+is attached to the implementation PR.
 
 ## Initial verification and harness reconciliation
 
@@ -154,8 +155,10 @@ original two fixtures, and unrelated nested-step Repeat uncertainty stay distinc
 
 ## Review and hosted gates
 
-Pending bounded Opus review and current-head hosted verification. No physical
-listening performed; existing matrices separately prove engine events and PCM.
+The bounded Opus result is recorded below. Hosted checks and merge evidence are
+recorded on the implementation PR and the #219 completion comment; local checks
+do not substitute for the hosted complete-suite gate. No physical listening was
+performed; existing matrices separately prove engine events and PCM.
 
 ## Opus round 1 and acceptance correction
 
@@ -205,7 +208,7 @@ neighbors, all-look geometry, connection targets, More Escape, injected snapshot
 and Trance playback/events/export-reopen. Under the merged verification policy,
 these bounded UI/source-row fixes use affected coverage; they do not change the
 reader, engine or playback. The final hosted complete suite remains mandatory.
-A fresh Opus round must assess the actual row-specific non-drag path against the
+Round two below assesses the actual row-specific non-drag path against the
 issue wording before #185 is closed.
 
 Before round two, rebased onto `4d41cd7` (PR #224). That incoming change adds only
@@ -213,3 +216,31 @@ the two Pocock architecture-analysis documents. Comparing the pre-rebase
 `214bedb` with the rebased worktree found no differences in `src`, `scripts` or
 `tests`; the unit/browser results above therefore cover identical executable and
 test inputs. The analysis documents are not part of this bundle's scope.
+
+## Opus round 2: approved
+
+T3 reported `claudeAgent` / `claude-opus-5-5`, high effort, for both rounds;
+usage was not exposed. Read-only round two approved clean
+`ab95fb727153e9b0711f912f30b5074e10532958`. The reviewer checked the seven-file
+code/test delta since `7188b13`, the immediate callers, the row-chooser screenshot
+and a small throwaway parser script outside the repository. It did not run
+browser suites or edit files. All S1–S3 and N1–N3 were resolved, including the
+actual DRUMS row-specific non-drag path required by #185. Two rounds total; no
+blocker or should remains. Subsequent shipping-ledger edits are documentation
+only and do not change the reviewed behavior.
+
+N4 is a nonblocking label nit retained for parent audit: non-stacked multipart
+DRUMS notation such as `bd*2 . hh*3` or `bd | sd` appears as one choice, while the
+existing row-zero mutation changes its first part. No source is lost; that
+mutation behavior is unchanged. Stacked-row assignment and preservation are
+verified. A future small label correction can use the first part's span or
+explicitly refuse that uncommon notation. No follow-up issue was filed, no
+extra process lesson landed, and no speculative expansion was added.
+
+Final code/test diff versus the shipping base `4d41cd7`: 34 files, +1100/-71.
+The full change additionally retains the committed studies, decisions, raw
+failure/success records and screenshots. The owner accepted #187's overview plus
+100% detail navigation. #207 remains OPEN with BOUNDED UNRESOLVED diagnosis;
+#219 remains for the parent to audit and close. #218 and expansion work remain
+separate. Final PR checks, merge SHA and post-merge main evidence are reported
+through the implementation PR and the linked tracker completion record.
