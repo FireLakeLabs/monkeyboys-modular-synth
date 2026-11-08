@@ -82,3 +82,39 @@ test('the empty slot adds a pack, and its Eject is reachable from the keyboard',
   await expect(shell).toHaveCount(0)
   expect(await editorSource(page)).not.toContain(PACK)
 })
+
+test('a wrapped, ejectable pack keeps its status and Eject inside the shell on the shelf', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 768 })
+  await openPacks(page)
+  await page.getByRole('button', { name: 'Add sample pack' }).click()
+  await page
+    .getByLabel('Pack address')
+    .fill('github:person/an-exceptionally-long-field-tapes-repo/dev')
+  await page.keyboard.press('Enter')
+  const shell = page.locator('.cartridge').filter({ hasText: 'follows dev' })
+  const box = await shell.evaluate((e) => {
+    const inside = (child) => {
+      const r = child.getBoundingClientRect()
+      const parent = child.parentElement.getBoundingClientRect()
+      return r.top >= parent.top && r.bottom <= parent.bottom + 0.5
+    }
+    return {
+      status: inside(e.querySelector('.cartridge-status')),
+      eject: inside(e.querySelector('.cartridge-eject-button')),
+    }
+  })
+  expect(box).toEqual({ status: true, eject: true })
+})
+
+test('keyboard focus shows its own source even while the pointer rests on another pack', async ({
+  page,
+}) => {
+  await openPacks(page)
+  const labels = page.locator('.cartridge-label')
+  await labels.first().hover()
+  await expect(page.locator('.cartridge-readout')).toContainText('Dirt Samples')
+  await labels.nth(1).focus()
+  await expect(page.locator('.cartridge-readout')).toContainText('Drum Machines')
+})

@@ -12,7 +12,6 @@
 /* The bay: a tray of cartridge shells, closed by an empty slot that adds a pack. */
 .library .cartridges {
   grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  align-items: end;
   gap: 8px;
   padding: 8px 8px 0;
   background: linear-gradient(#1b1d21, #0f1012);
@@ -25,7 +24,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  height: 108px;
+  min-height: 108px;
   padding: 14px 6px 6px;
   box-sizing: border-box;
   border-radius: 5px 5px 0 0;
@@ -138,7 +137,7 @@
 }
 .cartridge-slot {
   display: flex;
-  height: 108px;
+  min-height: 108px;
 }
 .cartridge-slot button {
   flex: 1;

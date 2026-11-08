@@ -126,7 +126,11 @@ export function CartridgeBay({
                 onClick={() => setPinned(pinned === entry.key ? null : entry.key)}
                 onMouseEnter={() => setHovered(entry.key)}
                 onMouseLeave={() => setHovered(null)}
-                onFocus={() => setFocused(entry.key)}
+                onFocus={() => {
+                  // The latest interaction wins: a stale hover must not hide the focused source.
+                  setHovered(null)
+                  setFocused(entry.key)
+                }}
                 onBlur={() => setFocused(null)}
               >
                 <strong>{breakable(label.name)}</strong>
