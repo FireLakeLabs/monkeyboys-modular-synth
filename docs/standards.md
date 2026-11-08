@@ -7,6 +7,14 @@ the fixes. Scrolling the output jack back into view restores its cable at the
 measured endpoint, without changing the source. This is part of browser acceptance,
 separate from the deterministic gate; physical listening is not covered.
 
+The [Wave 1 browser regressions](../tests/browser/stabilization-wave-1.spec.mjs)
+cover continuous cable pointer targets, unchanged selected shadows, supersaw and
+SPLICE panel geometry, More Escape, loaded-font whole-word chip names, Packs bounds
+and responsive dock columns. Narrow columns and selected-shadow checks failed
+before the review fixes. These are browser checks, separate from the deterministic
+gate; screenshots and independent source/saved-rack proof are recorded in the
+[wave evidence](stabilization-wave-1.md).
+
 This is the enforcement inventory. Product behavior remains defined by the
 [decisions](decisions.md), [module spec](module-spec.md), [translation rules](translation-rules.md),
 and [patch format](patch-format.md). Skills supply procedures, not competing

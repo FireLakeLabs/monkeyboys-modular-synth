@@ -103,9 +103,8 @@ try {
     return {
       layout: doc.layout,
       patch: doc.patch,
-      dash: getComputedStyle(
-        document.querySelector('.cable.signal-function path:not(.cable-shadow)'),
-      ).strokeDasharray,
+      dash: getComputedStyle(document.querySelector('.cable.signal-function .cable-paint'))
+        .strokeDasharray,
     }
   })
   assert.equal(results.partialLoop.layout, 'restored')

@@ -69,8 +69,8 @@ The disconnected screenshot fixtures demonstrate presentation only; connected
 regression fixtures provide the source/identity proof. Playwright's dedicated
 regressions enable visible scrollbars with `ignoreDefaultArgs`.
 
-Full local/hosted browser results and the bounded Opus ledger are recorded below
-as those gates complete. No physical listening has been performed; the full
+The local full-run attempt and bounded Opus ledger are recorded below. Final
+current-head local/hosted results remain attached to the implementation PR. No physical listening has been performed; the full
 browser suite's existing PCM checks remain separate from these UI observations.
 
 Focused final regression: `npx playwright test tests/browser/stabilization-wave-1.spec.mjs
@@ -105,3 +105,27 @@ At 1024 px, Modules has eight ~121.5 px chips across the first row and the dock
 body stays 150 px high ([screenshot](evidence/stabilization-wave-1/narrow-review.png)).
 `npm run check` passed again after the review fixes. Added regression coverage
 for Packs bounds, compact responsive columns and the selected 8 px cable shadow.
+
+## Complete-suite attempt and retained uncertainty
+
+On clean `09a59a1`, the full background run completed with
+`RESULT passed=176 failed=2 exit=1` (log `/tmp/wave1-full-review1.log`). All eleven
+Wave 1 regressions passed. The failures were:
+
+- `nested-steps-browser`: immediate assertion after native Repeat Enter did not
+  see `c3*2`. The exact unchanged script passed in isolation afterward, including
+  that assertion, its four-look matrix and live edit. No cause is established;
+  neither its assertion nor application code was changed to accept the failure.
+- `function-loops-browser`: its old “every non-shadow path” selector applied both
+  paint-style and title assertions to both new SVG paths. The adaptation asserts
+  the same dash/color on paint and lambda title on the actual hit path. The
+  standalone full function-loop script then passed forms, native repatch,
+  undo/redo, exact source and accessible styling. Related pointer/paint selectors
+  in the visual, routing and probe checks were adapted without removing assertions;
+  the probe now uses an arbitrary curve position instead of snapping to a dot.
+
+The isolated nested-step proof measured RMS 0.006222 before edit, 0.001600 after
+live edit and 0 after Stop (405,504 / 6,338,560 / 6,963,200 sampled values).
+These are browser WebAudio measurements, not physical listening or a performance
+claim. Final complete-run outcomes, current-head hosted checks and the Opus
+re-check verdict are linked from the implementation PR on [#219](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/219).
