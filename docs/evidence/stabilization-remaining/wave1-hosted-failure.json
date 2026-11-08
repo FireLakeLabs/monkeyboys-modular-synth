@@ -5,12 +5,7 @@
     {
       "id": "exercise-splice",
       "type": "splice",
-      "action": [
-        "knob",
-        "SLICES",
-        8,
-        "count"
-      ],
+      "action": ["knob", "SLICES", 8, "count"],
       "pcm": {
         "rms": 0.0009534199526949031,
         "samples": 540672
@@ -23,12 +18,7 @@
     {
       "id": "exercise-wavetable",
       "type": "wavetable",
-      "action": [
-        "knob",
-        "POSITION",
-        0.8,
-        "wt"
-      ],
+      "action": ["knob", "POSITION", 0.8, "wt"],
       "pcm": {
         "rms": 0.0018346924235496302,
         "samples": 1361920
@@ -41,12 +31,7 @@
     {
       "id": "exercise-gates",
       "type": "gates",
-      "action": [
-        "mini",
-        "GATES",
-        "x*8",
-        "steps"
-      ],
+      "action": ["mini", "GATES", "x*8", "steps"],
       "pcm": {
         "rms": 0.002313481828078689,
         "samples": 2361344
@@ -59,12 +44,7 @@
     {
       "id": "exercise-switch",
       "type": "switch",
-      "action": [
-        "mini",
-        "SELECT",
-        "<0 1 2 3>",
-        "steps"
-      ],
+      "action": ["mini", "SELECT", "<0 1 2 3>", "steps"],
       "pcm": {
         "rms": 0.002375270775571083,
         "samples": 3194880
@@ -77,13 +57,7 @@
     {
       "id": "exercise-aux",
       "type": "aux",
-      "action": [
-        "knob",
-        "CUTOFF",
-        3000,
-        "cutoff",
-        "vcf"
-      ],
+      "action": ["knob", "CUTOFF", 3000, "cutoff", "vcf"],
       "pcm": {
         "rms": 0.002550994562892528,
         "samples": 4007936
@@ -96,12 +70,7 @@
     {
       "id": "exercise-duck",
       "type": "duck",
-      "action": [
-        "knob",
-        "DEPTH",
-        0,
-        "depth"
-      ],
+      "action": ["knob", "DEPTH", 0, "depth"],
       "pcm": {
         "rms": 0.0019531228300182831,
         "samples": 6594560
@@ -114,12 +83,7 @@
     {
       "id": "exercise-seq",
       "type": "seq",
-      "action": [
-        "mini",
-        "STEPS",
-        "d3 e3 g3 b3",
-        "steps"
-      ],
+      "action": ["mini", "STEPS", "d3 e3 g3 b3", "steps"],
       "pcm": {
         "rms": 0.0014672789252181508,
         "samples": 9011200
@@ -132,12 +96,7 @@
     {
       "id": "exercise-drums",
       "type": "drums",
-      "action": [
-        "mini",
-        "GRID",
-        "bd bd sd hh",
-        "grid"
-      ],
+      "action": ["mini", "GRID", "bd bd sd hh", "grid"],
       "pcm": {
         "rms": 0.000048520497682993385,
         "samples": 9830400
@@ -148,12 +107,7 @@
     {
       "id": "exercise-quant",
       "type": "quant",
-      "action": [
-        "switch",
-        "SCALE",
-        "major",
-        "scale"
-      ],
+      "action": ["switch", "SCALE", "major", "scale"],
       "pcm": {
         "rms": 0.001118316081656233,
         "samples": 10366976
@@ -166,12 +120,7 @@
     {
       "id": "exercise-clock",
       "type": "clock",
-      "action": [
-        "knob",
-        "DIV",
-        1,
-        "division"
-      ],
+      "action": ["knob", "DIV", 1, "division"],
       "pcm": {
         "rms": 0.001205442262200327,
         "samples": 11098112
@@ -184,12 +133,7 @@
     {
       "id": "exercise-euclid",
       "type": "euclid",
-      "action": [
-        "knob",
-        "PULSES",
-        5,
-        "pulses"
-      ],
+      "action": ["knob", "PULSES", 5, "pulses"],
       "pcm": {
         "rms": 0.0006931111272938226,
         "samples": 11720704
@@ -202,12 +146,7 @@
     {
       "id": "exercise-ratchet",
       "type": "ratchet",
-      "action": [
-        "text",
-        "REPEATS",
-        "4",
-        "repeats"
-      ],
+      "action": ["text", "REPEATS", "4", "repeats"],
       "pcm": {
         "rms": 0.001299780985406966,
         "samples": 12554240
@@ -220,12 +159,7 @@
     {
       "id": "exercise-chance",
       "type": "chance",
-      "action": [
-        "knob",
-        "DROP",
-        0,
-        "drop"
-      ],
+      "action": ["knob", "DROP", 0, "drop"],
       "pcm": {
         "rms": 0.0008109184852741318,
         "samples": 13848576
@@ -238,12 +172,7 @@
     {
       "id": "exercise-chord",
       "type": "chord",
-      "action": [
-        "mini",
-        "CHORDS",
-        "<C Fm7 G7>",
-        "chords"
-      ],
+      "action": ["mini", "CHORDS", "<C Fm7 G7>", "chords"],
       "pcm": {
         "rms": 0.002063724313184929,
         "samples": 14131200
@@ -256,12 +185,7 @@
     {
       "id": "exercise-arp",
       "type": "arp",
-      "action": [
-        "text",
-        "INDICES",
-        "3 2 1 0",
-        "indices"
-      ],
+      "action": ["text", "INDICES", "3 2 1 0", "indices"],
       "pcm": {
         "rms": 0.0009075594005849741,
         "samples": 15583232
@@ -274,12 +198,7 @@
     {
       "id": "exercise-osc",
       "type": "osc",
-      "action": [
-        "switch",
-        "WAVE",
-        "triangle",
-        "wave"
-      ],
+      "action": ["switch", "WAVE", "triangle", "wave"],
       "pcm": {
         "rms": 0.0007432318180677015,
         "samples": 16633856
@@ -292,12 +211,7 @@
     {
       "id": "exercise-noise",
       "type": "noise",
-      "action": [
-        "switch",
-        "TYPE",
-        "pink",
-        "wave"
-      ],
+      "action": ["switch", "TYPE", "pink", "wave"],
       "pcm": {
         "rms": 0.00019711669215807736,
         "samples": 17326080
@@ -310,12 +224,7 @@
     {
       "id": "exercise-harmonic",
       "type": "harmonic",
-      "action": [
-        "drawbar",
-        "Partial 3",
-        1,
-        "partials"
-      ],
+      "action": ["drawbar", "Partial 3", 1, "partials"],
       "pcm": {
         "rms": 0.0009636529291779951,
         "samples": 17825792
@@ -328,12 +237,7 @@
     {
       "id": "exercise-fmop",
       "type": "fmop",
-      "action": [
-        "knob",
-        "INDEX",
-        0,
-        "index"
-      ],
+      "action": ["knob", "INDEX", 0, "index"],
       "pcm": {
         "rms": 0.0010161845482360085,
         "samples": 18599936
@@ -346,12 +250,7 @@
     {
       "id": "exercise-smpl",
       "type": "smpl",
-      "action": [
-        "knob",
-        "SPEED",
-        0.5,
-        "speed"
-      ],
+      "action": ["knob", "SPEED", 0.5, "speed"],
       "pcm": {
         "rms": 0.0010021043217993098,
         "samples": 19453952
@@ -364,12 +263,7 @@
     {
       "id": "exercise-vcf",
       "type": "vcf",
-      "action": [
-        "knob",
-        "CUTOFF",
-        5000,
-        "cutoff"
-      ],
+      "action": ["knob", "CUTOFF", 5000, "cutoff"],
       "pcm": {
         "rms": 0.000683695503769198,
         "samples": 20078592
@@ -382,12 +276,7 @@
     {
       "id": "exercise-vca",
       "type": "vca",
-      "action": [
-        "knob",
-        "LEVEL",
-        0,
-        "level"
-      ],
+      "action": ["knob", "LEVEL", 0, "level"],
       "pcm": {
         "rms": 0.0009627285817594208,
         "samples": 20940800
@@ -400,12 +289,7 @@
     {
       "id": "exercise-env",
       "type": "env",
-      "action": [
-        "knob",
-        "ATK",
-        0.3,
-        "atk"
-      ],
+      "action": ["knob", "ATK", 0.3, "atk"],
       "pcm": {
         "rms": 0.0004628527182088068,
         "samples": 21770240
@@ -418,12 +302,7 @@
     {
       "id": "exercise-lfo",
       "type": "lfo",
-      "action": [
-        "knob",
-        "RATE",
-        0.5,
-        "rate"
-      ],
+      "action": ["knob", "RATE", 0.5, "rate"],
       "pcm": {
         "rms": 0.0007096959877291654,
         "samples": 23287808
@@ -436,12 +315,7 @@
     {
       "id": "exercise-samplehold",
       "type": "samplehold",
-      "action": [
-        "knob",
-        "STEPS",
-        16,
-        "rate"
-      ],
+      "action": ["knob", "STEPS", 16, "rate"],
       "pcm": {
         "rms": 0.0006622790639442635,
         "samples": 26380288
@@ -454,12 +328,7 @@
     {
       "id": "exercise-attenuverter",
       "type": "attenuverter",
-      "action": [
-        "knob",
-        "MAX",
-        600,
-        "max"
-      ],
+      "action": ["knob", "MAX", 600, "max"],
       "pcm": {
         "rms": 0.0006262231246335256,
         "samples": 29444096
@@ -472,14 +341,7 @@
     {
       "id": "exercise-modmix",
       "type": "modmix",
-      "action": [
-        "mini",
-        "STEPS",
-        "<0 0>",
-        "steps",
-        "cvseq",
-        1
-      ],
+      "action": ["mini", "STEPS", "<0 0>", "steps", "cvseq", 1],
       "pcm": {
         "rms": 0.0005397240476714455,
         "samples": 31586304
@@ -492,12 +354,7 @@
     {
       "id": "exercise-cvseq",
       "type": "cvseq",
-      "action": [
-        "mini",
-        "STEPS",
-        "<200 800 1600 3200>",
-        "steps"
-      ],
+      "action": ["mini", "STEPS", "<200 800 1600 3200>", "steps"],
       "pcm": {
         "rms": 0.0005347305169193426,
         "samples": 31952896
@@ -510,12 +367,7 @@
     {
       "id": "exercise-delay",
       "type": "delay",
-      "action": [
-        "knob",
-        "MIX",
-        0,
-        "mix"
-      ],
+      "action": ["knob", "MIX", 0, "mix"],
       "pcm": {
         "rms": 0.0008594661752249352,
         "samples": 32514048
@@ -528,12 +380,7 @@
     {
       "id": "exercise-reverb",
       "type": "reverb",
-      "action": [
-        "knob",
-        "ROOM",
-        0,
-        "room"
-      ],
+      "action": ["knob", "ROOM", 0, "room"],
       "pcm": {
         "rms": 0.0007528006593268665,
         "samples": 33546240
@@ -546,12 +393,7 @@
     {
       "id": "exercise-drive",
       "type": "drive",
-      "action": [
-        "switch",
-        "TYPE",
-        "hard",
-        "type"
-      ],
+      "action": ["switch", "TYPE", "hard", "type"],
       "pcm": {
         "rms": 0.0008590456026023043,
         "samples": 34476032
@@ -564,12 +406,7 @@
     {
       "id": "exercise-folder",
       "type": "folder",
-      "action": [
-        "knob",
-        "FOLD",
-        2,
-        "amount"
-      ],
+      "action": ["knob", "FOLD", 2, "amount"],
       "pcm": {
         "rms": 0.0007324788410967368,
         "samples": 35237888
@@ -582,12 +419,7 @@
     {
       "id": "exercise-lofi",
       "type": "lofi",
-      "action": [
-        "knob",
-        "BITS",
-        16,
-        "bits"
-      ],
+      "action": ["knob", "BITS", 16, "bits"],
       "pcm": {
         "rms": 0.0006629649528195867,
         "samples": 36075520
@@ -600,12 +432,7 @@
     {
       "id": "exercise-formant",
       "type": "formant",
-      "action": [
-        "text",
-        "VOWEL",
-        "a",
-        "vowel"
-      ],
+      "action": ["text", "VOWEL", "a", "vowel"],
       "pcm": {
         "rms": 0.0003991638551479183,
         "samples": 36945920
@@ -618,12 +445,7 @@
     {
       "id": "exercise-comp",
       "type": "comp",
-      "action": [
-        "text",
-        "THR:RATIO:KNEE:ATK:REL",
-        "0:8:10:.005:.1",
-        "compressor"
-      ],
+      "action": ["text", "THR:RATIO:KNEE:ATK:REL", "0:8:10:.005:.1", "compressor"],
       "pcm": {
         "rms": 0.002380807996760525,
         "samples": 37711872
@@ -636,12 +458,7 @@
     {
       "id": "exercise-phaser",
       "type": "phaser",
-      "action": [
-        "knob",
-        "RATE",
-        0.25,
-        "rate"
-      ],
+      "action": ["knob", "RATE", 0.25, "rate"],
       "pcm": {
         "rms": 0.000421175621399302,
         "samples": 38592512
@@ -654,12 +471,7 @@
     {
       "id": "exercise-pan",
       "type": "pan",
-      "action": [
-        "knob",
-        "PAN",
-        1,
-        "pan"
-      ],
+      "action": ["knob", "PAN", 1, "pan"],
       "pcm": {
         "rms": 0.00046345189724722436,
         "samples": 39149568
@@ -672,12 +484,7 @@
     {
       "id": "exercise-shift",
       "type": "shift",
-      "action": [
-        "knob",
-        "SHIFT",
-        0,
-        "shift"
-      ],
+      "action": ["knob", "SHIFT", 0, "shift"],
       "pcm": {
         "rms": 0.0006770193324670258,
         "samples": 40034304
@@ -690,12 +497,7 @@
     {
       "id": "exercise-mix",
       "type": "mix",
-      "action": [
-        "knob",
-        "CH 1",
-        0,
-        "ch1"
-      ],
+      "action": ["knob", "CH 1", 0, "ch1"],
       "pcm": {
         "rms": 0.0007352243137361724,
         "samples": 41336832
@@ -708,12 +510,7 @@
     {
       "id": "exercise-scope",
       "type": "scope",
-      "action": [
-        "knob",
-        "TAP",
-        2,
-        "id"
-      ],
+      "action": ["knob", "TAP", 2, "id"],
       "pcm": {
         "rms": 0.0008443766366740406,
         "samples": 42723328
@@ -726,12 +523,7 @@
     {
       "id": "exercise-out",
       "type": "out",
-      "action": [
-        "knob",
-        "BPM",
-        90,
-        "bpm"
-      ],
+      "action": ["knob", "BPM", 90, "bpm"],
       "pcm": {
         "rms": 0.0006685431939388772,
         "samples": 43587584
@@ -744,12 +536,7 @@
     {
       "id": "exercise-iter",
       "type": "iter",
-      "action": [
-        "knob",
-        "STEPS",
-        1,
-        "steps"
-      ],
+      "action": ["knob", "STEPS", 1, "steps"],
       "pcm": {
         "rms": 0.0006616229550088089,
         "samples": 44576768
@@ -762,12 +549,7 @@
     {
       "id": "exercise-jux",
       "type": "jux",
-      "action": [
-        "switch",
-        "RIGHT",
-        "fast2",
-        "right"
-      ],
+      "action": ["switch", "RIGHT", "fast2", "right"],
       "pcm": {
         "rms": 0.00046130474659287964,
         "samples": 45760512
@@ -780,12 +562,7 @@
     {
       "id": "exercise-chunk",
       "type": "chunk",
-      "action": [
-        "knob",
-        "CHUNKS",
-        2,
-        "chunks"
-      ],
+      "action": ["knob", "CHUNKS", 2, "chunks"],
       "pcm": {
         "rms": 0.0006450016341547545,
         "samples": 47155200
@@ -798,12 +575,7 @@
     {
       "id": "exercise-every",
       "type": "every",
-      "action": [
-        "knob",
-        "CYCLES",
-        2,
-        "cycles"
-      ],
+      "action": ["knob", "CYCLES", 2, "cycles"],
       "pcm": {
         "rms": 0.0006373479631937316,
         "samples": 48021504
@@ -816,12 +588,7 @@
     {
       "id": "exercise-sometimes",
       "type": "sometimes",
-      "action": [
-        "knob",
-        "CHANCE",
-        1,
-        "probability"
-      ],
+      "action": ["knob", "CHANCE", 1, "probability"],
       "pcm": {
         "rms": 0.0006739526853475372,
         "samples": 48877568
@@ -834,12 +601,7 @@
     {
       "id": "exercise-off",
       "type": "off",
-      "action": [
-        "knob",
-        "TIME",
-        0.25,
-        "time"
-      ],
+      "action": ["knob", "TIME", 0.25, "time"],
       "pcm": {
         "rms": 0.0006899116315095246,
         "samples": 50028544
@@ -852,13 +614,7 @@
     {
       "id": "exercise-layer",
       "type": "layer",
-      "action": [
-        "switch",
-        "MODE",
-        "palindrome",
-        "mode",
-        "rev"
-      ],
+      "action": ["switch", "MODE", "palindrome", "mode", "rev"],
       "pcm": {
         "rms": 0.0008686915973736499,
         "samples": 51556352
@@ -871,12 +627,7 @@
     {
       "id": "exercise-rev",
       "type": "rev",
-      "action": [
-        "switch",
-        "MODE",
-        "palindrome",
-        "mode"
-      ],
+      "action": ["switch", "MODE", "palindrome", "mode"],
       "pcm": {
         "rms": 0.0006032576362624129,
         "samples": 53178368
@@ -889,12 +640,7 @@
     {
       "id": "exercise-shuffle",
       "type": "shuffle",
-      "action": [
-        "knob",
-        "SLICES",
-        8,
-        "slices"
-      ],
+      "action": ["knob", "SLICES", 8, "slices"],
       "pcm": {
         "rms": 0.000602385600321569,
         "samples": 54032384
@@ -907,12 +653,7 @@
     {
       "id": "exercise-ribbon",
       "type": "ribbon",
-      "action": [
-        "knob",
-        "OFFSET",
-        2,
-        "offset"
-      ],
+      "action": ["knob", "OFFSET", 2, "offset"],
       "pcm": {
         "rms": 0.0005997906110297738,
         "samples": 55033856
@@ -925,12 +666,7 @@
     {
       "id": "exercise-time-lens",
       "type": "time-lens",
-      "action": [
-        "knob",
-        "START",
-        0,
-        "start"
-      ],
+      "action": ["knob", "START", 0, "start"],
       "pcm": {
         "rms": 0.0005790713422653727,
         "samples": 55998464
@@ -943,12 +679,7 @@
     {
       "id": "exercise-warp",
       "type": "warp",
-      "action": [
-        "switch",
-        "MODE",
-        "press",
-        "mode"
-      ],
+      "action": ["switch", "MODE", "press", "mode"],
       "pcm": {
         "rms": 0.0005366266547314298,
         "samples": 56872960
@@ -961,12 +692,7 @@
     {
       "id": "exercise-echo",
       "type": "echo",
-      "action": [
-        "knob",
-        "TIMES",
-        1,
-        "times"
-      ],
+      "action": ["knob", "TIMES", 1, "times"],
       "pcm": {
         "rms": 0.001035849973778267,
         "samples": 58181632
@@ -979,12 +705,7 @@
     {
       "id": "exercise-code",
       "type": "code",
-      "action": [
-        "source",
-        "CODE source",
-        ".struct(\"x*8\")",
-        "text"
-      ],
+      "action": ["source", "CODE source", ".struct(\"x*8\")", "text"],
       "pcm": {
         "rms": 0.0005098742467269568,
         "samples": 60020736
@@ -998,12 +719,7 @@
   "bugs": [
     {
       "id": "exercise-drums",
-      "action": [
-        "mini",
-        "GRID",
-        "bd bd sd hh",
-        "grid"
-      ],
+      "action": ["mini", "GRID", "bd bd sd hh", "grid"],
       "error": "AssertionError [ERR_ASSERTION]: silent baseline"
     }
   ],

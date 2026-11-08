@@ -1,5 +1,4 @@
-import { useRef, useState } from 'react'
-import { allowSound, receiveSound } from './drag'
+import { useRef } from 'react'
 import { getModuleSpec } from '../modules/catalog'
 import { controlValue } from '../modules/values'
 import type { ControlValue, PlacedModule } from '../patch/types'
@@ -17,7 +16,6 @@ export function SampleSlot({
   clear: () => void
   drop: (choice: SoundChoice) => void
 }) {
-  const [error, setError] = useState('')
   const spec = getModuleSpec(module.type)
   const target = spec.sampleTarget
   if (!target) return null
@@ -39,15 +37,6 @@ export function SampleSlot({
       {module.type === 'reverb' ? 'IR' : module.type === 'wavetable' ? 'TABLE' : 'SAMPLE'} · drop
       sound
       <select
-        onDragOver={allowSound}
-        onDrop={(event) => {
-          try {
-            receiveSound(event, drop)
-            setError('')
-          } catch (error) {
-            setError(String(error))
-          }
-        }}
         aria-label={target.prefix ? 'Seated wavetable' : `Sound for ${module.id}`}
         value={selected}
         onChange={(event) => {
@@ -76,7 +65,6 @@ export function SampleSlot({
           )),
         )}
       </select>
-      {error && <output role="alert">{error}</output>}
     </div>
   )
 }

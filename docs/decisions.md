@@ -143,8 +143,9 @@ sketches: their control names and pack counts are illustrative.
   consent step from #55.
 - **Jack targets depend on zoom ([#186](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/186)):** jacks keep 24 px targets at
   75% zoom and above. Below that, the rack is an overview with no live jacks and
-  every cable drawn, and clicking a module zooms in. The Connections list remains
-  the accessible route. This replaces the every-zoom rule from #94.
+  every cable drawn, and clicking a module or activating its keyboard navigation button zooms in.
+  Connections remains complete, with selection, removal and a destination chooser
+  for every cable. File/library loads use Fit, including overview. This replaces the every-zoom rule from #94.
 
 ## Rack case (#133, decided 3 November 2026)
 

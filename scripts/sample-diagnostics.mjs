@@ -22,6 +22,7 @@ export async function installSampleDiagnostics(page) {
       readiness:
         'Decode observations are not mapped to sound names; fetched bytes alone do not prove decoded readiness.',
     })
+    // oxlint-disable-next-line typescript/unbound-method -- Original receiver is preserved with apply.
     const decode = BaseAudioContext.prototype.decodeAudioData
     BaseAudioContext.prototype.decodeAudioData = function (...args) {
       contexts.add(this)
@@ -39,6 +40,7 @@ export async function installSampleDiagnostics(page) {
       )
       return result
     }
+    // oxlint-disable-next-line typescript/unbound-method -- Original receiver is preserved with apply.
     const start = AudioBufferSourceNode.prototype.start
     AudioBufferSourceNode.prototype.start = function (...args) {
       contexts.add(this.context)

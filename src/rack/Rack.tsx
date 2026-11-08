@@ -2,6 +2,7 @@ import type { SourceDocument } from '../reader/types'
 import { CableProbe, PatchCredits, ScopeDisplay } from './PatternVisuals'
 
 import { SampleSlot, Tape, RazorMarks } from '../samples/SamplePanel'
+import { allowSound, receiveSound } from '../samples/drag'
 import { dropSound, variantCount, type SoundChoice } from '../samples/crate'
 import type { SamplePackResource } from '../strudel/engine'
 import {
@@ -133,7 +134,11 @@ export function Rack({
 
   document: SourceDocument
 
-  soundCrate: (active: boolean) => ReactNode
+  soundCrate: (
+    active: boolean,
+    assign: (choice: SoundChoice) => void,
+    dragging: (choice: SoundChoice | null) => void,
+  ) => ReactNode
   sampleResources: readonly SamplePackResource[]
   locked: boolean
   lockStrip: ReactNode
@@ -153,6 +158,7 @@ export function Rack({
   prompting: boolean
   cancelReplacement: () => void
 }) {
+  const [draggedSound, setDraggedSound] = useState<SoundChoice | null>(null)
   const [moduleFilter, setModuleFilter] = useState('')
   const [dockTab, setDockTab] = useState<(typeof DOCK_TABS)[number]['id']>('modules')
   const [probeCable, setProbeCable] = useState<string | null>(null)
@@ -263,8 +269,20 @@ export function Rack({
     ),
   )
   const scale = zoom === 'fit' ? fitScale : zoom
-  const latestFit = useRef(fitScale)
-  latestFit.current = fitScale
+  const overview = scale < READABLE_ZOOM
+  useEffect(() => {
+    if (overview) clearWire()
+  }, [overview])
+  function zoomToModule(id: string) {
+    clearWire()
+    selectModule(id)
+    setZoom(1)
+    requestAnimationFrame(() =>
+      surface.current
+        ?.querySelector(`[data-module="${CSS.escape(id)}"]`)
+        ?.scrollIntoView({ block: 'center', inline: 'center' }),
+    )
+  }
   const outputScale = Math.max(0.1, Math.min(1, viewportSize.height / 430))
   const candidates = useMemo(() => {
     const results = new Map<string, ConnectionAssessment>()
@@ -292,7 +310,14 @@ export function Rack({
         const box = jack.closest('.patch-box')?.getBoundingClientRect()
         // Scrolled-out jacks have geometry beyond their panel. Drawing to those
         // hidden targets makes fitted MIX cables appear to end on other rails.
-        if (box && (x < box.left || x > box.right || y < box.top || y > box.bottom)) continue
+        if (!overview && box && (x < box.left || x > box.right || y < box.top || y > box.bottom)) {
+          if (id)
+            next[id] = {
+              x: Math.max(box.left, Math.min(x, box.right)) - bounds.left,
+              y: Math.max(box.top, Math.min(y, box.bottom)) - bounds.top,
+            }
+          continue
+        }
         // Rail jacks scrolled out of the viewport pin to its edge, so cables never cross OUT.
         const rail = jack.closest('.rack-scroll')
         const visible = rail?.getBoundingClientRect()
@@ -351,7 +376,7 @@ export function Rack({
       window.removeEventListener('resize', measure)
       element.removeEventListener('scroll', measure, true)
     }
-  }, [patch, rows, locked, select, selected, scale, outputScale, panelKey])
+  }, [patch, rows, locked, select, selected, scale, overview, outputScale, panelKey])
 
   // Gestures and selections belong to the panels they started on.
   const [seenPanels, setSeenPanels] = useState(panelKey)
@@ -373,7 +398,9 @@ export function Rack({
     viewport.current?.scrollTo(0, 0)
   }, [patchLoads])
   useLayoutEffect(() => {
-    if (patchOpens) setZoom(latestFit.current >= READABLE_ZOOM ? 'fit' : READABLE_ZOOM)
+    // A file-open event resets local navigation after the new viewport is measured.
+    // oxlint-disable-next-line react/set-state-in-effect
+    if (patchOpens) setZoom('fit')
   }, [patchOpens])
   function clearWire() {
     setWire(null)
@@ -529,6 +556,11 @@ export function Rack({
     modules.map((m) => {
       const spec = getModuleSpec(m.type)
       const layout = panelControls(spec)
+      const acceptsSound =
+        !!draggedSound &&
+        (m.type === 'drums' ||
+          (!!spec.sampleTarget &&
+            (!spec.sampleTarget.prefix || draggedSound.name.startsWith(spec.sampleTarget.prefix))))
       const controlEditor = (control: Control) => (
         <ControlEditor
           key={control.id}
@@ -552,12 +584,27 @@ export function Rack({
         />
       )
       return (
+        // HTML drag targets use native drag events without adding keyboard semantics to the panel.
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <section
           key={`${m.id}:${panelKey}`}
           aria-label={`${spec.name} ${m.id}${!routed.has(m.id) ? ' · not connected to OUT' : ''}`}
           data-jacks={LOOK_LAYOUT[m.look].jacks}
           data-module={m.id}
           data-editing={editingModule === m.id}
+          data-sound-target={draggedSound ? acceptsSound : undefined}
+          onDragOver={(event) => {
+            if (!overview && spec.sampleTarget && m.type !== 'drums') allowSound(event)
+          }}
+          onDrop={(event) => {
+            if (!overview && spec.sampleTarget && m.type !== 'drums') {
+              try {
+                receiveSound(event, (choice) => applySound(m.id, choice))
+              } catch (error) {
+                setMessage(String(error))
+              }
+            }
+          }}
           className={`module-panel cat-${spec.category} family-${spec.family} look-${m.look} ${selected === m.id ? 'selected' : ''} ${!routed.has(m.id) ? 'inactive' : ''}`}
           style={
             m.type === 'out'
@@ -565,13 +612,24 @@ export function Rack({
               : { left: m.hp * HP, top: m.row * ROW_HEIGHT + 20, width: spec.hp * HP }
           }
         >
+          {overview && (
+            <button
+              type="button"
+              className="overview-module"
+              aria-label={`Zoom to ${m.id}`}
+              onClick={() => zoomToModule(m.id)}
+            >
+              {spec.name} ↗
+            </button>
+          )}
           {spec.family === 'alien' && <span className="activity-glow" aria-hidden="true" />}
           <button
             type="button"
             className="module-header"
             aria-label={`Select ${m.id}`}
             aria-pressed={selected === m.id}
-            draggable={m.type !== 'out'}
+            draggable={!overview && m.type !== 'out'}
+            tabIndex={overview ? -1 : 0}
             onClick={() => selectModule(m.id)}
             onDragStart={(event) => {
               if (m.type === 'out') {
@@ -602,6 +660,7 @@ export function Rack({
           </button>
           <div
             className="module-controls"
+            inert={overview}
             onFocus={() => selectModule(m.id)}
             onPointerDown={() => selectModule(m.id)}
           >
@@ -651,7 +710,7 @@ export function Rack({
                 </button>
               ))}
           </div>
-          <div className="patch-box">
+          <div className="patch-box" inert={overview}>
             {spec.jacks.map((jack) => {
               const ref = { module: m.id, jack: jack.id }
               const state = wire && jack.direction === 'in' ? candidate(ref) : null
@@ -670,6 +729,7 @@ export function Rack({
                   <button
                     type="button"
                     data-jack={keyOf(ref)}
+                    disabled={overview}
                     className={`jack signal-${signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
                     aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}${jack.id === 'send' ? ` · ${loopRole(spec, m)}` : ''}`}
                     aria-describedby={
@@ -892,7 +952,16 @@ export function Rack({
             aria-labelledby="dock-tab-sounds"
             hidden={dockTab !== 'sounds'}
           >
-            {soundCrate(dockTab === 'sounds')}
+            {soundCrate(
+              dockTab === 'sounds',
+              (choice) => {
+                if (!selected) throw new Error('Select a sound-capable module first')
+                if (overview)
+                  throw new Error('Zoom to the selected module before assigning a sound')
+                applySound(selected, choice)
+              },
+              setDraggedSound,
+            )}
           </div>
           <div
             className="dock-panel"
@@ -932,7 +1001,7 @@ export function Rack({
               </button>
             ))}
             <span id="cable-visibility-state" className="sr-only">
-              {cableVisibilityText}
+              {overview ? 'Overview: all cables visible' : cableVisibilityText}
             </span>
           </fieldset>
           <label className="rail-width">
@@ -990,6 +1059,7 @@ export function Rack({
             ref={surface}
             inert={locked}
             className="rack-frame"
+            data-overview={overview}
             onDragOver={(event) => {
               if (!placement) return
               event.preventDefault()
@@ -1115,7 +1185,7 @@ export function Rack({
                 return a && b ? (
                   <g
                     key={c.id}
-                    className={`cable signal-${cableKind(patch, c, loopInfo.members)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus) ? 'faded' : ''}`}
+                    className={`cable signal-${cableKind(patch, c, loopInfo.members)} ${selectedCable === c.id ? 'selected-cable' : ''} ${warning ? 'warning-cable' : ''} ${!overview && (cableVisibility === 'dim' || (cableVisibility === 'focus' && cableFocus && c.from.module !== cableFocus && c.to.module !== cableFocus)) ? 'faded' : ''}`}
                   >
                     <path d={curve(a, b)} className="cable-shadow" />
                     <circle cx={a.x} cy={a.y + 8} r="5" className="plug-collar" />
@@ -1302,6 +1372,30 @@ export function Rack({
           <details name="rack-popover" className="connections rack-popover">
             <summary>Connections ({patch.cables.length})</summary>
             <div>
+              {wire && (
+                <fieldset>
+                  <legend>New destination</legend>
+                  {patch.modules.flatMap((module) =>
+                    getModuleSpec(module.type)
+                      .jacks.filter((jack) => jack.direction === 'in')
+                      .map((jack) => {
+                        const to = { module: module.id, jack: jack.id }
+                        const state = candidate(to)
+                        return (
+                          <button
+                            type="button"
+                            key={keyOf(to)}
+                            disabled={state?.kind === 'blocked'}
+                            title={state?.message}
+                            onClick={() => finish(to)}
+                          >
+                            {keyOf(to)}
+                          </button>
+                        )
+                      }),
+                  )}
+                </fieldset>
+              )}
               {patch.cables.map((c) => (
                 <button
                   type="button"

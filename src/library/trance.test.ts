@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { generate } from '../codegen/generate'
 import { read } from '../reader'
+import { nextPosition } from '../patch/layout'
 import { validateRack, placeModule, setLook, setRailWidth, setValue } from '../rack/model'
 import { editDocument, saveLayout, sourceBody } from '../workspace/document'
 import { readLibraryPatch } from './load'
@@ -81,11 +82,22 @@ describe('issue #46 supplied Switch Angel demo', () => {
     'moves the orbit CODE block onto a widened %i HP rail without changing source or identity',
     (railHp) => {
       const document = saveLayout(readLibraryPatch({ source }))
-      const widened = editDocument(document, setRailWidth(document.patch, railHp))
-      const next = placeModule(widened.patch, 'code', 1, 59, 'code4')
+      // Start from a valid authored narrow case, independent of unsaved import placement.
+      const modules: typeof document.patch.modules = []
+      for (const module of document.patch.modules)
+        modules.push({ ...module, ...nextPosition(modules, module.type, 0, 0, 64) })
+      const narrow = editDocument(document, {
+        ...document.patch,
+        modules,
+        railHp: 64,
+        rows: Math.max(...modules.map((module) => module.row)) + 1,
+      })
+      const widened = editDocument(narrow, setRailWidth(narrow.patch, railHp))
+      const row = widened.patch.rows ?? 4
+      const next = placeModule(widened.patch, 'code', row, 59, 'code4')
       const moved = editDocument(widened, next)
       expect(moved.patch.modules.find((module) => module.id === 'code4')).toMatchObject({
-        row: 1,
+        row,
         hp: 59,
         values: { text: '\n  .o(2)' },
       })

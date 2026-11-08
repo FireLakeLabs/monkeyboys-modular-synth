@@ -156,6 +156,8 @@ try {
       const before = await inspect()
       assert(before.events.length > 0, 'no baseline events')
       assert(before.savedIdentity, 'baseline saved identity')
+      result.baselineEvents = before.events
+      result.baselineSource = before.source
       const pcm = await page.evaluate(() => window.auditMeasure())
       result.pcm = pcm
       result.diagnostics = await diagnostics()
