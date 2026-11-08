@@ -207,3 +207,9 @@ these bounded UI/source-row fixes use affected coverage; they do not change the
 reader, engine or playback. The final hosted complete suite remains mandatory.
 A fresh Opus round must assess the actual row-specific non-drag path against the
 issue wording before #185 is closed.
+
+Before round two, rebased onto `4d41cd7` (PR #224). That incoming change adds only
+the two Pocock architecture-analysis documents. Comparing the pre-rebase
+`214bedb` with the rebased worktree found no differences in `src`, `scripts` or
+`tests`; the unit/browser results above therefore cover identical executable and
+test inputs. The analysis documents are not part of this bundle's scope.
