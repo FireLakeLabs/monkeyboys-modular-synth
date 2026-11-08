@@ -107,13 +107,13 @@
       "name": "full-send",
       "source": "tstack",
       "upstreamPath": "skills/full-send",
-      "adapted": false,
-      "dependencies": ["sol-loop", "file-pr", "babysit-pr"],
+      "adapted": true,
+      "dependencies": ["review-loop", "file-pr", "babysit-pr"],
       "files": [
         {
           "path": ".agents/skills/full-send/SKILL.md",
           "upstreamSha256": "ba585e47cd901506b0e2de13025b0e39bc02462c136cf27491ad3efbdfe66020",
-          "sha256": "ba585e47cd901506b0e2de13025b0e39bc02462c136cf27491ad3efbdfe66020",
+          "sha256": "f7f7c1fd2a8dc4ac41ca7ad1756f5fc0abc47d217e76fbf0a49f8cc45f6854d6",
           "executable": false
         },
         {
@@ -255,13 +255,13 @@
       "name": "sol-loop",
       "source": "tstack",
       "upstreamPath": "skills/sol-loop",
-      "adapted": false,
-      "dependencies": [],
+      "adapted": true,
+      "dependencies": ["review-loop"],
       "files": [
         {
           "path": ".agents/skills/sol-loop/SKILL.md",
           "upstreamSha256": "1db1eb4c4a156ee666070e9a12623d520cd1bd9b19c3fc21003fe5a440ba0b10",
-          "sha256": "1db1eb4c4a156ee666070e9a12623d520cd1bd9b19c3fc21003fe5a440ba0b10",
+          "sha256": "601843c37d20d0563fa1cb7e126571693409a5c88086751f4922fa5b95942f58",
           "executable": false
         }
       ]
@@ -324,6 +324,15 @@
   ],
   "repoSkills": [
     {
+      "name": "opus-loop",
+      "dependencies": ["review-loop"],
+      "files": [
+        {
+          "path": ".agents/skills/opus-loop/SKILL.md"
+        }
+      ]
+    },
+    {
       "name": "orchestrate",
       "dependencies": [
         "full-send",
@@ -335,6 +344,15 @@
       "files": [
         {
           "path": ".agents/skills/orchestrate/SKILL.md"
+        }
+      ]
+    },
+    {
+      "name": "review-loop",
+      "dependencies": [],
+      "files": [
+        {
+          "path": ".agents/skills/review-loop/SKILL.md"
         }
       ]
     }

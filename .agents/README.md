@@ -1,8 +1,8 @@
 # Project skills
 
-This repo contains nine unmodified [tstack](https://github.com/t3dotgg/tstack)
+This repo contains nine [tstack](https://github.com/t3dotgg/tstack)
 workflow skills, eight adapted [pstack](https://github.com/cursor/plugins/tree/ae5650febf4320793844c12c4adaa937f417f8da/pstack)
-engineering skills and one [repo-owned](#repo-owned-skills) skill. Supporting files
+engineering skills and three [repo-owned](#repo-owned-skills) skills. Supporting files
 are local; no user-wide installation or Cursor companion plugin is required.
 
 ## Tstack provenance
@@ -11,6 +11,10 @@ are local; no user-wide installation or Cursor companion plugin is required.
 - Upstream instructions: [README at this revision](https://github.com/t3dotgg/tstack/blob/1085050f3baed1ac724caa4a8166145fb2ac88af/README.md).
 - License: [MIT, copyright Theo Browne](TSTACK-LICENSE). This license covers the imported skills; it does not select a license for the synth application.
 - Repo-specific routing and preferences: [AGENTS.md](../AGENTS.md).
+
+Seven tstack skills are unmodified. Two are deliberately adapted: `sol-loop`
+delegates to the shared review workflow, and `full-send` uses that workflow
+instead of always requesting Sol. Their upstream hashes remain in the lockfile.
 
 ## Pstack provenance
 
@@ -25,11 +29,18 @@ adapted hashes distinguish upstream content from deliberate local changes.
 
 ## Repo-owned skills
 
-[`orchestrate`](skills/orchestrate/SKILL.md) was written for this repo and has no
-upstream or separate license. It is listed under `repoSkills` in
-[skills-lock.json](skills-lock.json), so upstream updates never touch it. Edit it
-directly: it has no recorded hashes, and Git history is its record. The checker
-still verifies its registration, identity, dependencies and links.
+The repo owns [`orchestrate`](skills/orchestrate/SKILL.md),
+[`review-loop`](skills/review-loop/SKILL.md), and
+[`opus-loop`](skills/opus-loop/SKILL.md). `review-loop` generalizes the vendored
+tstack Sol loop; the tstack MIT notice in [TSTACK-LICENSE](TSTACK-LICENSE)
+continues to cover the derived content. The other two have no upstream or
+separate license.
+
+These are listed under `repoSkills` in [skills-lock.json](skills-lock.json), so
+upstream updates never touch them. Edit them directly: they have no recorded
+hashes, and Git history is their record. The checker still verifies registration,
+identity, dependencies and links. Model selection policy lives in
+[AGENTS.md](../AGENTS.md); both model-specific entry points use the shared loop.
 
 ## Discovery and requirements
 
@@ -48,12 +59,16 @@ provider access, review bots, or repository branch protection.
 Resolve the desired upstream commit and read its README and skill changes.
 Install all nine `skills/*` directories from that commit into a temporary
 directory, then compare them with this directory before replacing the vendored
-copies. Preserve the executable bit on `babysit-pr/scripts/pr-wait` and all
-supporting files. Update the revision above and `TSTACK-LICENSE` together.
+copies. Reapply the local `sol-loop` and `full-send` adaptations, checking the
+shared `review-loop` for relevant upstream fixes. Preserve the executable bit on
+`babysit-pr/scripts/pr-wait` and all supporting files. Update the revision above
+and `TSTACK-LICENSE` together.
 
 Keep project preferences in the root `AGENTS.md`, as upstream recommends, so
 updating the skills does not overwrite them. Verify each `SKILL.md`, relative
 dependency link, and imported file against the chosen upstream revision.
+For reviewed local adaptations, retain upstream hashes and update installed
+hashes with `node scripts/check-skills.mts --update-hashes`.
 
 ## Updating pstack and validating the installation
 
