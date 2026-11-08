@@ -36,6 +36,27 @@ on a pull request, and treat a failure as a merge blocker until it is explained.
 A passing local run on the same commit does not replace it, because the job also
 proves behavior on GitHub's slower runners.
 
+### Browser verification policy
+
+For application changes, run the local browser checks covering the affected
+behavior, including neighboring callers of shared controls or styles. Inspect
+real screenshots for UI changes and exercise native pointer or keyboard behavior
+where it matters. Record the commands, revision and observed results.
+
+Run the complete local suite when changes span multiple interacting subsystems,
+such as rack editing, source preservation and playback, when affected coverage is
+unclear, or when diagnosing a failure that requires the full-run conditions.
+A focused check is the default for a change with clear, bounded browser
+coverage. Use
+`npm run test:browser:report` for focused and full runs and read its `RESULT` line.
+
+After a review fix, rerun the affected checks and reassess whether the criteria
+above require a complete local run. Documentation, comments and formatting alone
+use their relevant static checks unless they change executable examples or test
+inputs. The final PR head must pass the complete hosted **Full browser suites**
+check whenever it runs before merge. Local coverage and model review do not
+replace that gate.
+
 To reproduce locally with the pinned Node version:
 
 ```sh
