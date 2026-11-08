@@ -53,9 +53,9 @@ coverage. Use
 After a review fix, rerun the affected checks and reassess whether the criteria
 above require a complete local run. Documentation, comments and formatting alone
 use their relevant static checks unless they change executable examples or test
-inputs. The final PR head must pass the complete hosted **Full browser suites**
-check whenever it runs before merge. Local coverage and model review do not
-replace that gate.
+inputs. The final PR head must complete the hosted **Full browser suites** check
+whenever it runs before merge, with any failure explained as above. Local coverage
+and model review do not replace that gate.
 
 To reproduce locally with the pinned Node version:
 

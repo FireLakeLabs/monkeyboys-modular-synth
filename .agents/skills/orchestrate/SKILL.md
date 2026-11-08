@@ -44,13 +44,15 @@ what you proposed, do that part and say what you left out.
 
 Stay out of wave implementation unless the owner asks you to do one here. First
 confirm the owner said go, `main`'s required checks are green, and approved lessons
-have merged. Check that the last wave's PR passed its hosted browser gate on the
-reviewed head before merging cleanly. Post-merge main browser runs remain
+have merged. Check that each of the last wave's PRs completed its hosted browser
+check on the reviewed head whenever it ran, with any failure explained under the
+[browser verification policy](../../../docs/ci.md#browser-verification-policy),
+before merging cleanly. Post-merge main browser runs remain
 monitoring evidence; a pending run does not block the next launch. Inspect results
 already available, investigate failures, and resolve a confirmed product regression
 before continuing. Keep responsibility for pending results after the next launch.
-Waves that need a local browser suite run one at a time; see
-[browser verification policy](../../../docs/ci.md#browser-verification-policy).
+Waves that need local browser checks, including focused runs, run one at a time;
+see [reading a local run](../../../docs/ci.md#reading-a-local-run).
 
 Use `t3_thread_launch` with a `workspaceStrategy` of `type: "worktree"`,
 `baseRef: "main"`, `startFromOrigin: true` and a named branch. The thread has no
