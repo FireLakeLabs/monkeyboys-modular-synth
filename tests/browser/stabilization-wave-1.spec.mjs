@@ -263,6 +263,10 @@ test('native cable hover and selection cover gaps while dim cables pass through'
     if (kind === 'pattern') await expect(page.locator('.cable-probe')).toBeVisible()
     await page.mouse.click(point.x, point.y)
     await expect(page.locator(`.cable.signal-${kind}.selected-cable`)).toHaveCount(1)
+    await expect(page.locator(`.cable.signal-${kind}.selected-cable .cable-shadow`)).toHaveCSS(
+      'stroke-width',
+      '8px',
+    )
     await page.getByRole('button', { name: 'Dim cables', exact: true }).click()
     const hit = await page.evaluate(
       ({ x, y }) => !!document.elementFromPoint(x, y)?.closest('.cable'),
@@ -287,3 +291,37 @@ for (const [width, expected] of [
     )
   })
 }
+
+test('Packs cards stay inside the dock and retain clipped source URLs', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.getByRole('tab', { name: 'Packs', exact: true }).click()
+  const cards = await page.locator('.cartridge').evaluateAll((items) =>
+    items.map((e) => {
+      const r = e.getBoundingClientRect()
+      const dock = e.closest('.dock-panel').getBoundingClientRect()
+      return { left: r.left, right: r.right, dockLeft: dock.left, dockRight: dock.right }
+    }),
+  )
+  expect(cards.length).toBeGreaterThanOrEqual(2)
+  for (const card of cards) {
+    expect(card.left).toBeGreaterThanOrEqual(card.dockLeft)
+    expect(card.right).toBeLessThanOrEqual(card.dockRight)
+  }
+})
+
+test('the narrow-screen module dock retains many compact columns', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 800 })
+  const positions = await page
+    .locator('#dock-panel-modules section')
+    .first()
+    .locator('.chip')
+    .evaluateAll((items) =>
+      items.map((e) => {
+        const r = e.getBoundingClientRect()
+        return { x: r.x, y: r.y, width: r.width }
+      }),
+    )
+  const firstRow = positions.filter((r) => r.y === positions[0].y)
+  expect(firstRow.length).toBeGreaterThanOrEqual(7)
+  expect(Math.max(...firstRow.map((r) => r.width))).toBeLessThan(150)
+})

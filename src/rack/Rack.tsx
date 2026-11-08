@@ -837,7 +837,7 @@ export function Rack({
             {palette.map((category) => (
               <section key={category.id}>
                 <h3>{category.label}</h3>
-                <ul>
+                <ul className="module-chips">
                   {category.modules.map((spec) => (
                     <li key={spec.id}>
                       <button

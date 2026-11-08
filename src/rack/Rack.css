@@ -724,9 +724,12 @@
 }
 .cable .cable-hit {
   stroke: transparent;
-  stroke-width: 12;
+  stroke-width: 5;
   stroke-dasharray: none;
   pointer-events: stroke;
+}
+.cable:is(.selected-cable, .signal-audio-mod) .cable-hit {
+  stroke-width: 7;
 }
 .cable.faded {
   opacity: 0.08;
@@ -734,7 +737,7 @@
 .cable.faded path {
   pointer-events: none;
 }
-.selected-cable path:not(.cable-hit) {
+.selected-cable path:where(:not(.cable-hit)) {
   stroke-width: 7;
   filter: drop-shadow(0 0 3px white);
 }

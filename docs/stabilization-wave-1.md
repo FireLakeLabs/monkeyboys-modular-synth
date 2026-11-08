@@ -45,7 +45,7 @@ listening will be reported separately. No audio behavior change is intended.
   [SHA-256 evidence](evidence/stabilization-wave-1/source-identity.json) records
   each file; browser regressions separately compare reopened `read(source).patch`
   with the complete fixture graph and assert the executable calls.
-- The cable hit stroke is transparent, solid and 12 px; signal dash selectors
+- The cable hit stroke is transparent and solid, matching the 5/7 px paint widths; signal dash selectors
   target paint explicitly. Selected paint, shadows and the audio-mod center retain
   their previous stroke styles. Faded paths disable hit testing. Existing control
   and jack stacking is unchanged.
@@ -82,3 +82,26 @@ geometry for all catalog names, name/call filtering and default widths
 64/64/84/104 HP at 1280/1600/1920/2200 px. Chromium consumes Escape during a native
 HTML drag and fires dragend: the proof checks removed preview, no insertion and
 unchanged source, not an unrelated footer wording.
+
+## Opus review ledger
+
+Round 1: Claude Opus 5.5 (`claudeAgent`, effort not exposed), read-only review of
+clean `b0309f5` against `d733cb9`. Verdict CHANGES; usage not returned.
+
+| ID  | Severity | Disposition and evidence                                                                                                                                                                                                                                                                                       |
+| --- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S1  | should   | Fixed: scope flex/intrinsic sizes to `module-chips`, restore generic library grid and 112 px responsive chip basis. The new narrow-dock regression failed before (two columns); Packs bounds already passed, so its predicted URL overflow was not observed. Explicit scoping preserves its one-column layout. |
+| S2  | should   | Fixed: `:where(:not(.cable-hit))` restores selected-stroke specificity. New native-selection check failed before: shadow 7 px, expected original 8 px.                                                                                                                                                         |
+| S3  | nit      | Accepted as a small narrowing: solid hit stroke now matches original paint widths (5 px, selected/audio-mod 7 px) rather than expanding panel interception.                                                                                                                                                    |
+
+All changes remain within #192/#206. No unrelated follow-up issues or process
+lessons were filed. Candidate lesson for parent: check selected-state specificity
+and scope layout selectors across every tab and responsive mode; a desktop-only
+geometry probe does not establish the responsive contract.
+
+Review-fix browser observation: at 1280 px, Packs retains two 155 px cards in
+one column with clipped source URLs ([screenshot](evidence/stabilization-wave-1/packs-review.png)).
+At 1024 px, Modules has eight ~121.5 px chips across the first row and the dock
+body stays 150 px high ([screenshot](evidence/stabilization-wave-1/narrow-review.png)).
+`npm run check` passed again after the review fixes. Added regression coverage
+for Packs bounds, compact responsive columns and the selected 8 px cable shadow.
