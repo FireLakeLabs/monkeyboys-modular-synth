@@ -80,7 +80,13 @@ test('overview Connections selects removes and repatches cables without using ja
   await first.click()
   await page.getByRole('button', { name: 'Move destination', exact: true }).click()
   await expect(connections.locator('fieldset')).toBeVisible()
-  await connections.locator('fieldset button:enabled').first().click()
+  await connections.getByRole('button', { name: 'osc2:note', exact: true }).click()
+  const moved = await page.evaluate(async () => {
+    const { read } = await import('/src/reader/index.ts')
+    const { editorSource } = await import('/scripts/editor-browser.mjs')
+    return read(editorSource()).patch.cables.find((cable) => cable.from.module === 'seq1')?.to
+  })
+  expect(moved).toEqual({ module: 'osc2', jack: 'note' })
   await expect(page.locator('.rack-frame')).toHaveAttribute('data-overview', 'true')
   await connections.locator('div > button').first().click()
   const count = await connections.locator('div > button').count()
@@ -185,6 +191,16 @@ test('native sound drag highlights panels and selection plus Enter assigns a sea
   const choices = await page.getByLabel('Seated wavetable').locator('option').allTextContents()
   expect(choices).toContain('wt_fixture:0')
   expect(choices).not.toContain('fixture:0')
+  const unchanged = await page.evaluate(async () =>
+    (await import('/scripts/editor-browser.mjs')).editorSource(),
+  )
+  await page.locator('[data-module="vcf1"] .module-header').click()
+  await card.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.sound-crate output')).toContainText('refused')
+  expect(
+    await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource()),
+  ).toBe(unchanged)
 })
 
 for (let attempt = 1; attempt <= 3; attempt++) {

@@ -33,3 +33,29 @@ Repeat failure and unchanged isolated/full passing reruns also remain unexplaine
 ## Verification ledger
 
 Implementation and verification in progress. No acceptance claimed yet.
+
+## Initial verification and harness reconciliation
+
+`npm ci` used Node 24.22.2. `npm run check` passed with 2,383 unit cases.
+Focused navigation/sound/probe checks initially passed 10/10. A strengthened
+Connections test then failed on an actual destination change: the window
+pointer-up cancellation cleared the wire before the chooser click. Exempting
+only the chooser from that cancellation made the same native test pass.
+
+The first complete local attempt at `ebae110` was deliberately interrupted after
+repeated obsolete harness assumptions: RESULT passed=111 failed=15 exit=130,
+with two interrupted and 58 not run. It is not a passing gate. The raw log is
+retained beside the [55 exercise baseline observations](evidence/stabilization-remaining/first-exercise-probes.json).
+Every baseline was above the unchanged silence threshold. Three exercise edits
+failed afterward because overview intercepted native control input. Their
+nonzero PCM is not a silence reproduction.
+
+Adapted checks navigate to detail before native edits/wiring, test noninteractive
+Fit separately, and author a controlled crowded MIX patch box at 75% for the
+existing scrolling/endpoints proof. The 100%/75% control reachability, typography,
+24px target, source and rack assertions remain; overview checks inert controls
+and hidden internal scrollbars instead. Smoke: 28/29 passed, with only the real
+Connections bug above; its focused recheck passed. Nine adapted suites then had
+7 passing and two geometry assumptions left; both passed after explicit detail
+navigation and the controlled scroll fixture. No assertion or PCM threshold was
+relaxed to accept an unexplained failure.

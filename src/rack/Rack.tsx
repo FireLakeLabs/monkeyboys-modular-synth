@@ -425,7 +425,11 @@ export function Rack({
       }
     }
     const outsideDrop = (event: PointerEvent) => {
-      if (event.target instanceof Element && !event.target.closest('[data-jack]')) clearWire()
+      if (
+        event.target instanceof Element &&
+        !event.target.closest('[data-jack], [data-cable-destinations]')
+      )
+        clearWire()
     }
     window.addEventListener('keydown', escape)
     window.addEventListener('pointerup', outsideDrop)
@@ -546,7 +550,7 @@ export function Rack({
       )
     )
       throw new Error('Choose a sound variant from a seated pack')
-    edit((p) => dropSound(p, module, choice, row))
+    return edit((p) => dropSound(p, module, choice, row))
   }
   function selectModule(id: string) {
     select(id)
@@ -958,7 +962,8 @@ export function Rack({
                 if (!selected) throw new Error('Select a sound-capable module first')
                 if (overview)
                   throw new Error('Zoom to the selected module before assigning a sound')
-                applySound(selected, choice)
+                if (!applySound(selected, choice))
+                  throw new Error('Sound assignment was refused; see the rack message')
               },
               setDraggedSound,
             )}
@@ -1373,7 +1378,7 @@ export function Rack({
             <summary>Connections ({patch.cables.length})</summary>
             <div>
               {wire && (
-                <fieldset>
+                <fieldset data-cable-destinations>
                   <legend>New destination</legend>
                   {patch.modules.flatMap((module) =>
                     getModuleSpec(module.type)

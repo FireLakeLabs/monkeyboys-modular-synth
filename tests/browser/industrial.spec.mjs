@@ -1,7 +1,7 @@
 import { test, expect } from 'playwright/test'
 import { execFileSync } from 'node:child_process'
 import { readFile, writeFile } from 'node:fs/promises'
-import { chooseSwitch } from '../../scripts/panel-controls.mjs'
+import { chooseSwitch, detailPanel } from '../../scripts/panel-controls.mjs'
 
 const check = '/scripts/industrial-check.mjs'
 const run = (page, method, arg) =>
@@ -23,6 +23,7 @@ const sources = (page, after) =>
   )
 const setKnob = async (page, id, label, value) => {
   const panel = page.locator(`[data-module="${id}"]`)
+  await detailPanel(panel)
   await panel.getByRole('button', { name: `Set ${label}`, exact: true }).click()
   const input = panel.getByRole('textbox', { name: label, exact: true })
   await input.fill(value)

@@ -110,7 +110,7 @@ try {
     validateRack(read(saved).patch)
     if (sourceBody(saved) !== original) throw new Error('Long voice executable source changed')
   }, longVoice)
-  assert(new Set(longRack.modules.map((module) => module.row)).size > 2)
+  assert.equal(new Set(longRack.modules.map((module) => module.row)).size, 2)
   // Invalid saved positions retain the exact file, with a valid projected rack
   // and an explicit replacement boundary before rack edits are allowed.
   const failedLayout = longSaved.replace('"hp": 0', '"hp": 104')

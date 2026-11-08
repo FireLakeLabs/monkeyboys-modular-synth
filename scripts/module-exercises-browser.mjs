@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { installSampleDiagnostics } from './sample-diagnostics.mjs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
-import { fileAction, chooseSwitch } from './panel-controls.mjs'
+import { fileAction, chooseSwitch, detailPanel } from './panel-controls.mjs'
 const output = process.argv[3] ?? '/tmp/monkeyboy-module-exercises'
 await mkdir(output, { recursive: true })
 const browser = await chromium.launch({
@@ -166,6 +166,7 @@ try {
       const module = before.patch.modules.filter((m) => m.type === target)[index]
       assert(module, `missing ${target} ${index}`)
       const panel = page.locator(`[data-module="${module.id}"]`)
+      await detailPanel(panel)
       if (kind === 'knob') {
         await panel.getByRole('button', { name: `Set ${label}`, exact: true }).click()
         const input = panel.getByRole('textbox', { name: label, exact: true })

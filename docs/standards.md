@@ -1,11 +1,13 @@
 # Engineering standards
 
 The [rack layout browser regressions](../tests/browser/rack-layout.spec.mjs) guard
-the Packs tab, usable rack height, and fitted MIX cables: clipped jack
-targets cannot leave cables dangling on other rails. Both checks failed before
-the fixes. Scrolling the output jack back into view restores its cable at the
-measured endpoint, without changing the source. This is part of browser acceptance,
-separate from the deterministic gate; physical listening is not covered.
+the Packs tab, usable rack height and fitted MIX cables. The
+[remaining stabilization checks](../tests/browser/stabilization-remaining.spec.mjs)
+cover complete overview cables, disabled jacks, native zoom navigation and
+Connections repatching. Clipped detail jack endpoints pin to the visible
+patch-box edge; the controlled scroll fixture in `scripts/panels-browser.mjs`
+checks that they follow scrolling without changing source. These are browser
+checks, separate from the deterministic gate; physical listening is not covered.
 
 The [Wave 1 browser regressions](../tests/browser/stabilization-wave-1.spec.mjs)
 cover continuous cable pointer targets, unchanged selected shadows, supersaw and
