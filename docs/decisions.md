@@ -143,8 +143,20 @@ sketches: their control names and pack counts are illustrative.
   consent step from #55.
 - **Jack targets depend on zoom ([#186](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/186)):** jacks keep 24 px targets at
   75% zoom and above. Below that, the rack is an overview with no live jacks and
-  every cable drawn, and clicking a module zooms in. The Connections list remains
-  the accessible route. This replaces the every-zoom rule from #94.
+  every cable drawn, and clicking a module or activating its keyboard navigation button zooms in.
+  Connections remains complete, with selection, removal and a destination chooser
+  for every cable. File/library loads use Fit, including overview. This replaces the every-zoom rule from #94.
+
+## Unsaved import readability (#187, decided 8 November 2026)
+
+The owner accepted overview plus readable 100% module navigation as satisfying
+large-import readability: Trance fits at 41% in four 104-HP rows at 1600×1000,
+with all 29 modules and 28 cables visible; pointer or Enter opens full-size
+detail. Unsaved imports minimize row count across 64/84/104 HP rails, preferring
+narrower rails on ties. Saved personal and bundled positions never reflow on
+load or resize. Adjacent CODE blocks remain separate under the
+[preservation study](translation-rules.md#adjacent-code-study-187-8-november-2026).
+Explicit Arrange rack and saved-library refresh remain #218's scope.
 
 ## Rack case (#133, decided 3 November 2026)
 

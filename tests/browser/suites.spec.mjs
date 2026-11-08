@@ -111,8 +111,8 @@ for (const [script, verify] of [
       { script, verify },
     )
     if (verify === 'verifySoundCrate') {
-      // Native pointer capture at Fit exercises the scaled tape coordinate boundary.
-      await page.getByRole('button', { name: 'Fit rack', exact: true }).click()
+      // Native pointer capture at 75% exercises the scaled, interactive tape boundary.
+      await page.getByLabel('Rack zoom').selectOption('0.75')
       const mark = page.locator('.tape-mark[data-mark="begin"]')
       await mark.scrollIntoViewIfNeeded()
       const before = await page.evaluate(async () =>

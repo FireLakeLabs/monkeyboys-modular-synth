@@ -1,0 +1,342 @@
+
+> monkeyboys-modular-synth@0.0.0 test:browser:report
+> node scripts/browser-report.mts
+
+[WebServer] (node:625751) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 186 tests using 2 workers
+
+(node:625792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:625793) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/186] tests/browser/auto-apply.spec.mjs:50:3 › while stopped › pausing after .l leaves the rack unchanged
+[2/186] tests/browser/auto-apply.spec.mjs:43:3 › while stopped › finished code applies by itself and does not start playback
+[3/186] tests/browser/auto-apply.spec.mjs:60:3 › while stopped › a complete call the rack cannot model still applies, and ends a step
+[4/186] tests/browser/auto-apply.spec.mjs:69:3 › while stopped › each finished call is one undo step, ending with no pause needed
+[5/186] tests/browser/auto-apply.spec.mjs:84:3 › while stopped › fast typing still ends a step at each finished call
+[6/186] tests/browser/auto-apply.spec.mjs:96:3 › while stopped › deleting a voice ends a step, even when typing resumes at once
+[7/186] tests/browser/auto-apply.spec.mjs:113:3 › while stopped › a paste is finished text, even with a property read in it
+[8/186] tests/browser/auto-apply.spec.mjs:119:3 › while stopped › moving the caret off an edited word lets finished code apply
+[9/186] tests/browser/auto-apply.spec.mjs:130:3 › while stopped › typing in a pattern string is one step per pause
+[10/186] tests/browser/auto-apply.spec.mjs:149:3 › while stopped › undo never lands on unreadable code or a half-typed word
+[11/186] tests/browser/auto-apply.spec.mjs:162:3 › while stopped › leaving the editor ends a step and applies finished code at once
+[12/186] tests/browser/auto-apply.spec.mjs:168:3 › while stopped › Apply and Ctrl+Enter apply readable half-typed code at once
+[13/186] tests/browser/auto-apply.spec.mjs:180:3 › the locked rack › never flickers while typing, then says so with the reason and a way out
+[14/186] tests/browser/auto-apply.spec.mjs:211:3 › the locked rack › unreadable code says how to get out, and covers rack, OUT and module list
+[15/186] tests/browser/auto-apply.spec.mjs:229:3 › the locked rack › showing the lock and reverting keeps the panels
+[16/186] tests/browser/auto-apply.spec.mjs:246:3 › the locked rack › leaving the editor on unfinished code locks at once
+[17/186] tests/browser/auto-apply.spec.mjs:269:3 › while playing › code applies only on Apply, and Unapplied changes stays visible
+[18/186] tests/browser/auto-apply.spec.mjs:280:3 › while playing › the toggle also applies finished code while playing, with the same check
+[19/186] tests/browser/auto-apply.spec.mjs:294:3 › while playing › stopping applies code typed while playing
+[20/186] tests/browser/auto-apply.spec.mjs:311:5 › Play › a unreadable draft never disables Play, which plays the last applied code
+[21/186] tests/browser/auto-apply.spec.mjs:311:5 › Play › a half-typed draft never disables Play, which plays the last applied code
+[22/186] tests/browser/auto-apply.spec.mjs:324:3 › Play › Play ends a step and applies finished code first
+[23/186] tests/browser/auto-apply.spec.mjs:334:1 › a restored readable draft waits for you instead of applying itself
+[24/186] tests/browser/doom.spec.mjs:16:1 › Doom instrument: six-cycle identity, budgets, audio, edits and stopped replacement
+[25/186] tests/browser/dub.spec.mjs:34:1 › Dub afterimage: phrase, sources, native delay PCM, transport and saved identity
+[26/186] tests/browser/dub.spec.mjs:248:1 › Dub native delay: waveform spacing, decay, clamping and bypass
+[27/186] tests/browser/industrial.spec.mjs:34:1 › Industrial triplets: six-cycle identity, budgets, audio, edits and stopped replacement
+[28/186] tests/browser/my-patches.spec.mjs:28:1 › the first Ctrl+S asks for a name, and later saves update the same entry
+[29/186] tests/browser/my-patches.spec.mjs:50:1 › Escape cancels the first save and writes nothing
+[30/186] tests/browser/my-patches.spec.mjs:58:1 › a saved patch reloads with exact source and rack, from My patches
+[31/186] tests/browser/my-patches.spec.mjs:92:1 › patches can be renamed, exported, deleted and undeleted
+[32/186] tests/browser/my-patches.spec.mjs:121:1 › saved patches survive a reload
+[33/186] tests/browser/my-patches.spec.mjs:132:1 › the File menu saves too
+[34/186] tests/browser/my-patches.spec.mjs:137:1 › an unapplied draft is saved as it is, never dropped
+[35/186] tests/browser/my-patches.spec.mjs:150:1 › a full store says so, and the work stays open
+[36/186] tests/browser/my-patches.spec.mjs:174:1 › an unreadable store is reported and left exactly as it was
+[37/186] tests/browser/my-patches.spec.mjs:186:1 › undoing a load never saves the old patch over the one that was loaded
+[38/186] tests/browser/my-patches.spec.mjs:210:1 › a failed Undo of a delete keeps the entry, so it can be tried again
+[39/186] tests/browser/my-patches.spec.mjs:236:1 › a failed save stays on screen through later edits
+[40/186] tests/browser/my-patches.spec.mjs:268:1 › later saves keep the name you chose
+[41/186] tests/browser/my-patches.spec.mjs:287:1 › a named draft keeps its name on the next save
+[42/186] tests/browser/my-patches.spec.mjs:298:1 › a stale tab cannot overwrite newer work, even by renaming first
+[43/186] tests/browser/my-patches.spec.mjs:338:1 › a library left open in a stale tab cannot overwrite newer work
+[44/186] tests/browser/my-patches.spec.mjs:372:1 › storage use is reported, with a warning when nearly full
+[45/186] tests/browser/my-patches.spec.mjs:399:1 › loading a saved patch over an unapplied draft still asks
+[46/186] tests/browser/panel-controls.spec.mjs:34:1 › toggles and segments write the source and saved rack state the dropdown wrote
+[47/186] tests/browser/panel-controls.spec.mjs:58:1 › segments are radios and off/on switches are pressed buttons, from the keyboard
+[48/186] tests/browser/panel-controls.spec.mjs:85:1 › a cable crossing a panel never takes clicks from its buttons and segments
+[49/186] tests/browser/panel-controls.spec.mjs:116:1 › values read as plain text, stay click-to-edit, and ACCENT opens on demand
+[50/186] tests/browser/panel-controls.spec.mjs:142:1 › headers stay compact and no module scrolls in any look at full size
+[51/186] tests/browser/panel-controls.spec.mjs:160:1 › an open ACCENT editor is never clipped out of reach
+[52/186] tests/browser/panel-controls.spec.mjs:179:1 › More holds rarely used fields beside the panel and writes the same source
+[53/186] tests/browser/panel-controls.spec.mjs:231:1 › Escape in a More field cancels the edit, closes More and writes nothing
+[54/186] tests/browser/panel-controls.spec.mjs:257:1 › More opens on the free side of a panel at the right end of the rail
+[55/186] tests/browser/panel-controls.spec.mjs:270:1 › MIX faders drive the same value by keyboard and pointer, and cables follow
+[56/186] tests/browser/panel-controls.spec.mjs:296:1 › module IDs appear on hover, focus or selection without changing accessible names
+[57/186] tests/browser/rack-layout.spec.mjs:16:1 › packs leave the rack alone while their controls remain available
+[58/186] tests/browser/rack-layout.spec.mjs:25:1 › Fit never draws cables to clipped mixer jacks and keeps source intact
+[59/186] tests/browser/rack-view-state.spec.mjs:32:1 › rack view state survives typing, applying and undoing
+[60/186] tests/browser/rack-view-state.spec.mjs:61:1 › panels still show an externally changed value after a code edit
+[61/186] tests/browser/rack-view-state.spec.mjs:73:1 › Delete and Backspace act on the selected module wherever rack focus is
+[62/186] tests/browser/rack-view-state.spec.mjs:110:1 › Delete removes a selected cable and the menu shows the shortcut
+[63/186] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1440px
+[64/186] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1600px
+[65/186] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1920px
+[66/186] tests/browser/rack-view-state.spec.mjs:142:1 › a cable to an off-screen jack ends at the rail edge, not across OUT
+[67/186] tests/browser/rack-view-state.spec.mjs:166:1 › a slow draft does not reset an open sound drawer
+[68/186] tests/browser/suites.spec.mjs:29:3 › workspace-errors
+[69/186] tests/browser/suites.spec.mjs:29:3 › feedback-check
+[WebServer] 2:33:48 PM [vite] (client) [console.error] TypeError: note(...).missingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:83)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[70/186] tests/browser/suites.spec.mjs:29:3 › autosave-check
+[71/186] tests/browser/suites.spec.mjs:29:3 › metadata-check
+[WebServer] 2:34:04 PM [vite] (client) [console.error] TypeError: note(...).missingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:83)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[72/186] tests/browser/suites.spec.mjs:29:3 › code-application-check
+[WebServer] 2:34:13 PM [vite] (client) [console.error] Error: Audio operation cancelled by Stop
+[WebServer]     at cancelled (http://127.0.0.1:5173/src/strudel/engine.ts:149:9)
+[WebServer]     at editPattern (http://127.0.0.1:5173/src/strudel/engine.ts:210:59)
+[WebServer]     at $ (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5572:44)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5638:71)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+
+[73/186] tests/browser/suites.spec.mjs:29:3 › history-check
+[74/186] tests/browser/suites.spec.mjs:29:3 › sounding-tokens-check
+[75/186] tests/browser/suites.spec.mjs:29:3 › module-behavior-check
+[WebServer] 2:34:34 PM [vite] (client) [console.error] TypeError: note(...).missingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:83)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[WebServer] 2:34:36 PM [vite] (client) [console.error] TypeError: note(...).missingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:76)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[76/186] tests/browser/suites.spec.mjs:29:3 › rack-visuals-check
+[77/186] tests/browser/suites.spec.mjs:29:3 › output-panel-browser
+[78/186] tests/browser/suites.spec.mjs:29:3 › panels-browser
+[79/186] tests/browser/suites.spec.mjs:29:3 › sound-effects-browser
+[80/186] tests/browser/suites.spec.mjs:29:3 › module-exercises-browser
+[81/186] tests/browser/suites.spec.mjs:29:3 › nested-steps-browser
+[82/186] tests/browser/suites.spec.mjs:29:3 › function-loops-browser
+[83/186] tests/browser/suites.spec.mjs:29:3 › pattern-visibility-browser
+[84/186] tests/browser/suites.spec.mjs:68:1 › WAV bounce and live audio recovery
+[85/186] tests/browser/suites.spec.mjs:97:3 › verifyCartridges
+[WebServer] 2:39:05 PM [vite] (client) [console.error] TypeError: s(...).missingBounceMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:4:25)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:4:56)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:443:15
+
+[86/186] tests/browser/suites.spec.mjs:97:3 › verifySoundCrate
+[87/186] tests/browser/suites.spec.mjs:97:3 › verifyCrateReview
+[88/186] tests/browser/suites.spec.mjs:97:3 › verifyConnectionTargets
+[89/186] tests/browser/suites.spec.mjs:97:3 › verifyGrids
+[90/186] tests/browser/suites.spec.mjs:97:3 › verifyReplacementConfirmation
+[91/186] tests/browser/suites.spec.mjs:97:3 › verifyLibraryUI
+[92/186] tests/browser/suites.spec.mjs:97:3 › verifyOnRampUI
+[93/186] tests/browser/suites.spec.mjs:97:3 › verifyLiteralIdentity
+[94/186] tests/browser/suites.spec.mjs:97:3 › checkErrorPositions
+[95/186] tests/browser/suites.spec.mjs:97:3 › checkEditorStatus
+[WebServer] 2:39:37 PM [vite] (client) [console.error] TypeError: note(...).statusBarMissingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:92)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[96/186] tests/browser/suites.spec.mjs:97:3 › verifyCodeConversion
+[97/186] tests/browser/suites.spec.mjs:97:3 › verifyConversionPlayback
+[98/186] tests/browser/suites.spec.mjs:97:3 › verifyPatchNames
+[99/186] tests/browser/suites.spec.mjs:97:3 › verifyPanels
+[100/186] tests/browser/suites.spec.mjs:155:3 › library rack editing batch 1/3
+[101/186] tests/browser/suites.spec.mjs:155:3 › library rack editing batch 2/3
+[102/186] tests/browser/suites.spec.mjs:155:3 › library rack editing batch 3/3
+[103/186] tests/browser/suites.spec.mjs:177:3 › mid-width workspace at 1024px
+[104/186] tests/browser/suites.spec.mjs:177:3 › mid-width workspace at 900px
+[105/186] tests/browser/suites.spec.mjs:188:1 › library audio, replacement Cancel and Stop recovery
+[106/186] tests/browser/suites.spec.mjs:209:1 › trance playback, events and export/reopen
+[107/186] tests/browser/suites.spec.mjs:222:1 › pattern and time module forms, source, rack identity and PCM
+[108/186] tests/browser/suites.spec.mjs:246:1 › pattern module numeric and text controls preserve imported source
+[109/186] tests/browser/suites.spec.mjs:288:1 › imported CHORD branch accepts native deletion and keyboard reconnection
+[110/186] tests/browser/suites.spec.mjs:328:1 › generalized modulation controls and within-note PCM
+[111/186] tests/browser/suites.spec.mjs:388:1 › mixer generalized CV preserves nested gain and within-note PCM
+tests/browser/suites.spec.mjs:388:1 › mixer generalized CV preserves nested gain and within-note PCM
+MIX PCM [{"mode":"SMOOTH","source":"lfo","depth":0.4,"low":0.022313391953389747,"high":0.06261894380877003,"ratio":2.806339078324542,"sampleRate":48000},{"mode":"SMOOTH","source":"lfo","depth":-0.15,"low":0.005699352472282611,"high":0.02073754475992453,"ratio":3.6385790948667314,"sampleRate":48000},{"mode":"STEP","source":"lfo","depth":0.4,"low":0.04214620574393816,"high":0.04270533762785035,"ratio":1.0132664820959028,"sampleRate":48000},{"mode":"STEP","source":"env","depth":0.4,"low":0.04213037082264623,"high":0.054067884099189105,"ratio":1.2833469785204485,"sampleRate":48000},{"mode":"STEP","source":"cvseq","depth":0.4,"low":0.021071837811297563,"high":0.021351992889045348,"ratio":1.0132952370009976,"sampleRate":48000}]
+
+[112/186] tests/browser/suites.spec.mjs:416:1 › ordered FX chains preserve rack/source and schedule real audio
+[113/186] tests/browser/suites.spec.mjs:430:1 › nested cell deletion retains keyboard focus on the surviving neighbor
+[114/186] tests/browser/suites.spec.mjs:448:1 › simultaneous nested drum rows and chord lanes retain every sounding flash
+[115/186] tests/browser/undo-notices.spec.mjs:50:3 › undo instead of a confirmation › deleting a module acts at once and Undo brings back modules, cables and source
+[116/186] tests/browser/undo-notices.spec.mjs:75:3 › undo instead of a confirmation › the message is announced and its Undo works from the keyboard
+[117/186] tests/browser/undo-notices.spec.mjs:100:3 › undo instead of a confirmation › undo from the code editor leaves the caret there
+[118/186] tests/browser/undo-notices.spec.mjs:111:3 › undo instead of a confirmation › a newer edit retires the message, so Undo can never take back the wrong thing
+[119/186] tests/browser/undo-notices.spec.mjs:123:3 › undo instead of a confirmation › the message stays long enough, and hovering holds it open
+[120/186] tests/browser/undo-notices.spec.mjs:140:3 › undo instead of a confirmation › replacing a cable acts at once and Undo restores the old one
+[121/186] tests/browser/undo-notices.spec.mjs:159:3 › undo instead of a confirmation › loading over changed work acts at once and Undo restores it
+[122/186] tests/browser/undo-notices.spec.mjs:174:3 › undo instead of a confirmation › a load that stops playback says so, and Undo does not restart it
+[123/186] tests/browser/undo-notices.spec.mjs:190:3 › undo instead of a confirmation › opening identical source offers no Undo, which would take back an older edit
+[124/186] tests/browser/undo-notices.spec.mjs:206:3 › undo instead of a confirmation › a clean load has nothing to undo, so it stays quiet
+[125/186] tests/browser/undo-notices.spec.mjs:211:3 › undo instead of a confirmation › an unapplied draft still gets a prompt, because undo cannot restore it
+[126/186] tests/browser/undo-notices.spec.mjs:238:3 › conversion on edit › an edit completes without a dialog, says so every time, and Undo is exact
+[127/186] tests/browser/undo-notices.spec.mjs:266:3 › conversion on edit › a knob drag keeps its message and takes back the rewrite in one Undo
+[128/186] tests/browser/undo-notices.spec.mjs:281:3 › conversion on edit › deleting a module that needs a rewrite reports both
+[129/186] tests/browser/undo-notices.spec.mjs:292:1 › an edit that cannot be converted explains why and changes nothing
+[130/186] tests/browser/undo-notices.spec.mjs:316:3 › shorter loading and restore › double-click or Enter loads; Space and a single click only select
+[131/186] tests/browser/undo-notices.spec.mjs:337:3 › shorter loading and restore › a tall patch opens in overview with all modules and cables
+[132/186] tests/browser/undo-notices.spec.mjs:353:3 › shorter loading and restore › a patch that fits opens whole
+[133/186] tests/browser/undo-notices.spec.mjs:363:3 › shorter loading and restore › a reload restores silently, with a dismissible Start new
+[134/186] tests/browser/undo-notices.spec.mjs:387:3 › shorter loading and restore › a draft still comes back after a reload
+[135/186] tests/browser/undo-notices.spec.mjs:401:3 › shorter loading and restore › restored work with no new edits loads without asking
+[136/186] tests/browser/workspace-chrome.spec.mjs:15:3 › left dock › Modules, Sounds and Packs share one dock, and packs leave the rack pane
+[137/186] tests/browser/workspace-chrome.spec.mjs:33:3 › left dock › chips are compact and two-column, and title and call stay available
+[138/186] tests/browser/workspace-chrome.spec.mjs:49:3 › left dock › filtering still matches names and calls
+[139/186] tests/browser/workspace-chrome.spec.mjs:64:5 › left dock › the Modules tab has one vertical scroll
+[140/186] tests/browser/workspace-chrome.spec.mjs:64:5 › left dock › the Sounds tab has one vertical scroll
+[141/186] tests/browser/workspace-chrome.spec.mjs:64:5 › left dock › the Packs tab has one vertical scroll
+[142/186] tests/browser/workspace-chrome.spec.mjs:84:5 › left dock › every tab is reachable at 1024px
+[143/186] tests/browser/workspace-chrome.spec.mjs:84:5 › left dock › every tab is reachable at 900px
+[144/186] tests/browser/workspace-chrome.spec.mjs:84:5 › left dock › every tab is reachable at 640px
+[145/186] tests/browser/workspace-chrome.spec.mjs:106:3 › File menu › holds the file actions, and the code pane keeps only its own
+[146/186] tests/browser/workspace-chrome.spec.mjs:129:3 › File menu › works from the keyboard, and Escape returns to File
+[147/186] tests/browser/workspace-chrome.spec.mjs:140:3 › File menu › a click elsewhere closes it, and closing the library returns to File
+[148/186] tests/browser/workspace-chrome.spec.mjs:149:3 › File menu › Export and New still work from the menu
+[149/186] tests/browser/workspace-chrome.spec.mjs:158:3 › File menu › shortcuts keep working
+[150/186] tests/browser/workspace-chrome.spec.mjs:185:3 › a draft prompt is always on screen › New from the Code view
+[151/186] tests/browser/workspace-chrome.spec.mjs:194:3 › a draft prompt is always on screen › Open from the Rack view
+[152/186] tests/browser/workspace-chrome.spec.mjs:203:3 › a draft prompt is always on screen › Open from Focus rack
+[153/186] tests/browser/workspace-chrome.spec.mjs:213:1 › the rack toolbar is one row at 1600 px
+[154/186] tests/browser/workspace-chrome.spec.mjs:226:1 › visible text is plain, with engine detail behind the info control
+[155/186] tests/browser/workspace-shell.spec.mjs:22:3 › the document never scrolls at 1440×900
+[156/186] tests/browser/workspace-shell.spec.mjs:22:3 › the document never scrolls at 1600×1000
+[157/186] tests/browser/workspace-shell.spec.mjs:22:3 › the document never scrolls at 1920×1080
+[158/186] tests/browser/workspace-shell.spec.mjs:34:1 › the rack keeps its size through selection, messages, notes and popovers
+[159/186] tests/browser/workspace-shell.spec.mjs:62:1 › selection tools float beside the selected module, on the rack
+[160/186] tests/browser/workspace-shell.spec.mjs:79:1 › a replacement prompt is not covered by the selection tools
+[161/186] tests/browser/workspace-shell.spec.mjs:93:1 › footer popovers open one at a time
+[162/186] tests/browser/workspace-shell.spec.mjs:108:1 › a selected library patch stays readable
+[163/186] tests/browser/workspace-shell.spec.mjs:118:1 › selecting a scrolled module never swallows the click
+[164/186] tests/browser/workspace-shell.spec.mjs:139:1 › cable tools stay reachable with the Connections list open
+[165/186] tests/browser/workspace-shell.spec.mjs:147:1 › a prompt stays usable while the rack is locked by a draft
+[166/186] tests/browser/workspace-shell.spec.mjs:160:1 › Focus rack sits in the rack toolbar and takes no row of its own
+[167/186] tests/browser/workspace-shell.spec.mjs:173:1 › every chrome button shares one style, with no browser defaults left
+(node:639593) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[168/186] tests/browser/stabilization-remaining.spec.mjs:15:1 › overview draws every cable and navigates by pointer and keyboard without changing source
+[169/186] tests/browser/stabilization-remaining.spec.mjs:70:1 › overview Connections selects removes and repatches cables without using jacks
+[170/186] tests/browser/stabilization-remaining.spec.mjs:97:1 › Trance import fits both dimensions and supports readable module navigation
+[171/186] tests/browser/stabilization-remaining.spec.mjs:130:1 › native sound drag highlights panels and selection plus Enter assigns a seated sound
+[172/186] tests/browser/stabilization-remaining.spec.mjs:207:3 › bounded natural sample probes attempt 1
+[173/186] tests/browser/stabilization-remaining.spec.mjs:207:3 › bounded natural sample probes attempt 2
+[174/186] tests/browser/stabilization-remaining.spec.mjs:207:3 › bounded natural sample probes attempt 3
+[175/186] tests/browser/stabilization-remaining.spec.mjs:261:1 › injected fetch and decode failures remain distinguishable from readiness
+(node:640230) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[176/186] tests/browser/stabilization-wave-1.spec.mjs:39:1 › supersaw fits note and freq in every Hardware look and preserves the complete file
+[177/186] tests/browser/stabilization-wave-1.spec.mjs:81:1 › SPLICE marks span the strip and follow COUNT in every Hardware look
+[178/186] tests/browser/stabilization-wave-1.spec.mjs:109:1 › More Escape preserves status even after a committed control drops focus
+[179/186] tests/browser/stabilization-wave-1.spec.mjs:154:1 › every catalog name keeps whole words with loaded fonts in the 180px dock
+[180/186] tests/browser/stabilization-wave-1.spec.mjs:201:1 › native cable hover and selection cover gaps while dim cables pass through
+  1) tests/browser/stabilization-wave-1.spec.mjs:201:1 › native cable hover and selection cover gaps while dim cables pass through 
+
+    Error: function missed curve points
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 22
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "hit": false,
+    +     "x": 568.3939208984375,
+    +     "y": 493.7596740722656,
+    +   },
+    +   Object {
+    +     "hit": false,
+    +     "x": 569.3472290039062,
+    +     "y": 495.5178527832031,
+    +   },
+    +   Object {
+    +     "hit": false,
+    +     "x": 570.318115234375,
+    +     "y": 497.266357421875,
+    +   },
+    +   Object {
+    +     "hit": false,
+    +     "x": 571.3076171875,
+    +     "y": 499.0044250488281,
+    +   },
+    + ]
+
+      258 |       points.filter((p) => !p.hit),
+      259 |       `${kind} missed curve points`,
+    > 260 |     ).toEqual([])
+          |       ^
+      261 |     const point = points[Math.floor(points.length / 2)]
+      262 |     await page.mouse.move(point.x, point.y)
+      263 |     if (kind === 'pattern') await expect(page.locator('.cable-probe')).toBeVisible()
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/stabilization-wave-1.spec.mjs:260:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stabilization-wave-1-nativ-6996d-ile-dim-cables-pass-through/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stabilization-wave-1-nativ-6996d-ile-dim-cables-pass-through/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stabilization-wave-1-nativ-6996d-ile-dim-cables-pass-through/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stabilization-wave-1-nativ-6996d-ile-dim-cables-pass-through/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:640521) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[181/186] tests/browser/stabilization-wave-1.spec.mjs:285:3 › new patches retain the default rail width at 1280px
+[182/186] tests/browser/stabilization-wave-1.spec.mjs:285:3 › new patches retain the default rail width at 1600px
+[183/186] tests/browser/stabilization-wave-1.spec.mjs:285:3 › new patches retain the default rail width at 1920px
+[184/186] tests/browser/stabilization-wave-1.spec.mjs:285:3 › new patches retain the default rail width at 2200px
+[185/186] tests/browser/stabilization-wave-1.spec.mjs:295:1 › Packs cards stay inside the dock and retain clipped source URLs
+[186/186] tests/browser/stabilization-wave-1.spec.mjs:312:1 › the narrow-screen module dock retains many compact columns
+  1 failed
+    tests/browser/stabilization-wave-1.spec.mjs:201:1 › native cable hover and selection cover gaps while dim cables pass through 
+  185 passed (17.5m)
+
+RESULT passed=185 failed=1 exit=1
+Log: /tmp/monkeyboy-browser-625704.log

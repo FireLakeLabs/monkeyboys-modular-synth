@@ -1,0 +1,60 @@
+
+> monkeyboys-modular-synth@0.0.0 test:browser:report
+> node scripts/browser-report.mts tests/browser/stabilization-remaining.spec.mjs -g pinned OUT volume
+
+[WebServer] (node:654547) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 1 test using 1 worker
+
+(node:654588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] tests/browser/stabilization-remaining.spec.mjs:383:1 › overview retains pinned OUT volume and tempo controls without enabling jacks
+  1) tests/browser/stabilization-remaining.spec.mjs:383:1 › overview retains pinned OUT volume and tempo controls without enabling jacks 
+
+    Error: expect(locator).not.toHaveAttribute() failed
+
+    Locator:  locator('.output-surface .module-panel').locator('.module-controls')
+    Expected: not have attribute
+    Received: have attribute
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "not toHaveAttribute" locator('.output-surface .module-panel').locator('.module-controls') with timeout 5000ms
+      - waiting for locator('.output-surface .module-panel').locator('.module-controls')
+        14 × locator resolved to <div inert="" class="module-controls">…</div>
+           - unexpected value "attribute present"
+
+
+      389 |   await page.getByLabel('Rack zoom').selectOption('fit')
+      390 |   const output = page.locator('.output-surface .module-panel')
+    > 391 |   await expect(output.locator('.module-controls')).not.toHaveAttribute('inert')
+          |                                                        ^
+      392 |   const volume = output.getByRole('slider', { name: 'VOL', exact: true })
+      393 |   const before = Number(await volume.getAttribute('aria-valuenow'))
+      394 |   await volume.focus()
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/stabilization-remaining.spec.mjs:391:56
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stabilization-remaining-ov-2c34c-rols-without-enabling-jacks/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stabilization-remaining-ov-2c34c-rols-without-enabling-jacks/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stabilization-remaining-ov-2c34c-rols-without-enabling-jacks/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stabilization-remaining-ov-2c34c-rols-without-enabling-jacks/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    tests/browser/stabilization-remaining.spec.mjs:383:1 › overview retains pinned OUT volume and tempo controls without enabling jacks 
+
+RESULT passed=0 failed=1 exit=1
+Log: /tmp/monkeyboy-browser-654501.log

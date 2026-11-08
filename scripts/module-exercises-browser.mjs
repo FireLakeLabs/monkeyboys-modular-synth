@@ -1,8 +1,9 @@
 // Focused library acceptance. Continues after a failure to retain every module repro.
 import assert from 'node:assert/strict'
+import { installSampleDiagnostics } from './sample-diagnostics.mjs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
-import { fileAction, chooseSwitch } from './panel-controls.mjs'
+import { fileAction, chooseSwitch, detailPanel } from './panel-controls.mjs'
 const output = process.argv[3] ?? '/tmp/monkeyboy-module-exercises'
 await mkdir(output, { recursive: true })
 const browser = await chromium.launch({
@@ -13,6 +14,7 @@ const page = await browser.newPage({
   viewport: { width: 1600, height: 1000 },
   ignoreHTTPSErrors: true,
 })
+const diagnostics = await installSampleDiagnostics(page)
 page.setDefaultTimeout(5000)
 const results = {
   browser: browser.version(),
@@ -154,13 +156,17 @@ try {
       const before = await inspect()
       assert(before.events.length > 0, 'no baseline events')
       assert(before.savedIdentity, 'baseline saved identity')
+      result.baselineEvents = before.events
+      result.baselineSource = before.source
       const pcm = await page.evaluate(() => window.auditMeasure())
       result.pcm = pcm
+      result.diagnostics = await diagnostics()
       assert(pcm.rms > 0.0001, 'silent baseline')
       const [kind, label, value, control, target = entry.type, index = 0] = actions[entry.type]
       const module = before.patch.modules.filter((m) => m.type === target)[index]
       assert(module, `missing ${target} ${index}`)
       const panel = page.locator(`[data-module="${module.id}"]`)
+      await detailPanel(panel)
       if (kind === 'knob') {
         await panel.getByRole('button', { name: `Set ${label}`, exact: true }).click()
         const input = panel.getByRole('textbox', { name: label, exact: true })
@@ -208,6 +214,7 @@ try {
         `PASS ${entry.type}: events ${result.eventsBefore}/${result.eventsAfter}, RMS ${pcm.rms}\n`,
       )
     } catch (e) {
+      result.diagnostics = await diagnostics()
       result.status = 'failed'
       result.error = String(e)
       results.bugs.push({ id: entry.id, action: actions[entry.type], error: String(e) })

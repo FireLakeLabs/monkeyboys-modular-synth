@@ -307,6 +307,7 @@ try {
     (await import('/scripts/trance-check.mjs')).loadTrance(),
   )
   const tranceSource = await source()
+  await page.getByLabel('Rack zoom').selectOption('1')
   await button('Dim cables').click()
   await page.setViewportSize({ width: 1600, height: Math.max(1800, trance.rows * 440 + 320) })
   const readable = await page.locator('.module-panel').evaluateAll((panels) =>

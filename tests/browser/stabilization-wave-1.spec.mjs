@@ -249,7 +249,16 @@ test('native cable hover and selection cover gaps while dim cables pass through'
             top.closest('button,input,select,textarea,[data-jack],.module-header')
           )
             continue
-          points.push({ x: p.x, y: p.y, hit: top.closest('.cable') === g })
+          // A shared crossing has one topmost cable; sample unoccluded stroke points.
+          if (top.closest('.cable') && top.closest('.cable') !== g) continue
+          points.push({
+            x: p.x,
+            y: p.y,
+            hit: top.closest('.cable') === g,
+            top:
+              top.closest('.cable')?.querySelector('title')?.textContent ??
+              top.outerHTML.slice(0, 180),
+          })
         }
         return points
       })

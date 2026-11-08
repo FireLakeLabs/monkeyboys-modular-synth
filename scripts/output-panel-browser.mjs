@@ -123,6 +123,7 @@ try {
       JSON.parse(localStorage.getItem('monkeyboy.workspace.v1')).source ===
       (await import('/scripts/editor-browser.mjs')).editorSource(),
   )
+  await page.getByLabel('Rack zoom').selectOption('1')
   for (const id of ['mix1', 'osc1']) {
     const from = page.locator(`[data-jack="${id}:out"]`)
     const to = page.locator('[data-jack="out1:in"]')

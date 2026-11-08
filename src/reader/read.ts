@@ -1,3 +1,4 @@
+import { packImported } from '../patch/importLayout'
 import { packSetup } from '../samples/packs'
 import { planEffects } from '../codegen/effects'
 import { effectRank } from '../modules/effects'
@@ -1930,6 +1931,7 @@ export function read(source: string): SourceDocument {
       )
     }
   }
+  if (saved.kind === 'absent') projection.patch = packImported(projection.patch)
   return {
     kind: 'source',
     source,

@@ -229,9 +229,13 @@ state and changes neither source nor saved rack positions. Cable measurements,
 wire pointers and module placement convert viewport coordinates back to rack
 coordinates. Fit leaves an extra 24 screen pixels below the rails for wrapped
 jack targets. Jacks reserve at least 24 screen pixels, growing their layout boxes
-when zoomed out and wrapping into additional rows as needed; [#186](decisions.md#usability-review-188-decided-4-november-2026) limits this to 75% and above. Cables whose jack
-centres are clipped inside a scrolling patch box are hidden until the jacks
-return into view; their connections and saved positions remain intact.
+when zoomed out and wrapping into additional rows as needed; [#186](decisions.md#usability-review-188-decided-4-november-2026) limits this to 75% and above. Every cable stays drawn; clipped live jack endpoints pin to the visible patch-box edge.
+Below 75%, panels are navigation targets: click or focus and Enter/Space zooms to
+100% and centres the module. Rail controls and every jack are inert; the
+independently sized pinned OUT keeps VOL and BPM available. Internal scrolling is
+hidden, and cable visibility is All. Connections still lists every cable and
+supports selection, removal and a complete destination chooser for repatching.
+Moving a cable selected on the canvas opens that chooser automatically.
 
 The rack frame retains at least 430 px of height on desktop; short workspaces scroll
 the rack pane instead of shrinking the rails and pinned OUT into thumbnails. The
@@ -269,8 +273,7 @@ offers Cancel, Export code and the action. While a replacement waits for audio t
 stop, the message offers Cancel.
 
 Double-clicking a library patch, or pressing Enter on it, loads it. A single click
-and Space only select. A file or library load opens at Fit when that is at least
-75%, and otherwise at 75%, scrolled to the first modules. New keeps the current zoom.
+and Space only select. A file or library load opens at Fit, including overview below 75%. New keeps the current zoom.
 
 A reload restores the last work silently, with its draft, and the message offers
 Start new. Start new is itself undoable.
@@ -529,3 +532,26 @@ and labels it **Motion paused**, without continued sampling. No existing module
 width or cable geometry changes. The local exported reference boards were
 available; the live private canvas was unavailable. See the
 [observed acceptance record](pattern-visibility-verification.md).
+
+## Sound assignment (#185)
+
+Dragging a seated sound outlines compatible panels and dims other modules. The
+native drag image names the sound and variant. SMPL, SPLICE, REVERB and compatible
+WAVETABLE panels accept a drop anywhere; DRUMS keeps individual row targets.
+WAVETABLE accepts seated `wt_` sounds only. Select a module and double-click a
+sound or press Enter on its card to assign without dragging; single click
+continues to audition. For DRUMS this opens a row chooser showing each row's
+notation. Choose a row with pointer or keyboard to apply; opening or cancelling
+the chooser changes nothing. No row is guessed. Native selectors remain keyboard alternatives. Source-aware
+mutations retain bank/refusal rules. Overview consumes panel clicks for zoom
+and refuses sound assignment until detail view, without initiating wiring.
+
+## Unsaved import placement and readability (#187)
+
+Initial placement for imports without saved layouts packs module order over
+64/84/104 HP rails, selecting fewer rows and narrower rails on ties. Fit includes
+both dimensions. The owner accepted overview plus pointer/keyboard navigation to
+readable 100% detail on 8 November 2026; Trance's 29 modules and 28 cables fit in
+four 104-HP rows at 41% on a 1600×1000 window. Saved layouts retain their exact
+positions and width. No adjacent CODE merging is implemented; see the
+[study](translation-rules.md#adjacent-code-study-187-8-november-2026).

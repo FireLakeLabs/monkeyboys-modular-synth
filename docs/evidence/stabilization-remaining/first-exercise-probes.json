@@ -1,0 +1,3748 @@
+{
+  "revision": "ebae110",
+  "runDisposition": "Interrupted complete-suite attempt; 111 passed, 15 failed, 2 interrupted, 58 not run. Exercise baselines below finished before interruption.",
+  "conditions": "Two Playwright workers, no Opus/review or other local suite; resource caches not explicitly cleared.",
+  "entries": [
+    {
+      "id": "exercise-splice",
+      "pcm": {
+        "rms": 0.0005096635032246722,
+        "samples": 663552
+      },
+      "status": "failed",
+      "error": "TimeoutError: locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-module=\"splice1\"]').getByRole('button', { name: 'Set SLICES', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"readout\" aria-label=\"Set SLICES\">4</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to splice1\">SPLICE \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to splice1\">SPLICE \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    9 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to splice1\">SPLICE \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "id": "exercise-wavetable",
+      "pcm": {
+        "rms": 0.0012369017788145967,
+        "samples": 2662400
+      },
+      "status": "failed",
+      "error": "TimeoutError: locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-module=\"wavetable1\"]').getByRole('button', { name: 'Set POSITION', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"readout\" aria-label=\"Set POSITION\">0.4</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to wavetable1\">WAVETABLE \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to wavetable1\">WAVETABLE \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    9 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to wavetable1\">WAVETABLE \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n"
+    },
+    {
+      "id": "exercise-gates",
+      "pcm": {
+        "rms": 0.0014101344994581545,
+        "samples": 6135808
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-switch",
+      "pcm": {
+        "rms": 0.0016123620942978033,
+        "samples": 6881280
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-aux",
+      "pcm": {
+        "rms": 0.0017771627808494121,
+        "samples": 7643136
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-duck",
+      "pcm": {
+        "rms": 0.0015663048824380449,
+        "samples": 9938944
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-seq",
+      "pcm": {
+        "rms": 0.0012586572815779424,
+        "samples": 12025856
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-drums",
+      "pcm": {
+        "rms": 0.0011652700195051758,
+        "samples": 12922880
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-quant",
+      "pcm": {
+        "rms": 0.000969615237415071,
+        "samples": 13553664
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-clock",
+      "pcm": {
+        "rms": 0.001058923036110974,
+        "samples": 14168064
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-euclid",
+      "pcm": {
+        "rms": 0.0006204163771124519,
+        "samples": 14675968
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-ratchet",
+      "pcm": {
+        "rms": 0.0011568542423548579,
+        "samples": 15616000
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-chance",
+      "pcm": {
+        "rms": 0.0007349347454734835,
+        "samples": 16920576
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-chord",
+      "pcm": {
+        "rms": 0.001849496075583008,
+        "samples": 17326080
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-arp",
+      "pcm": {
+        "rms": 0.0008240946052174098,
+        "samples": 18530304
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-osc",
+      "pcm": {
+        "rms": 0.0006783260983201291,
+        "samples": 19703808
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-noise",
+      "pcm": {
+        "rms": 0.00025565723878528257,
+        "samples": 20275200
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-harmonic",
+      "pcm": {
+        "rms": 0.0008983621421288885,
+        "samples": 20744192
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-fmop",
+      "pcm": {
+        "rms": 0.0009345492994783777,
+        "samples": 21667840
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-smpl",
+      "pcm": {
+        "rms": 0.000912118296199461,
+        "samples": 22595584
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-vcf",
+      "pcm": {
+        "rms": 0.0006356277350071328,
+        "samples": 23392256
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-vca",
+      "pcm": {
+        "rms": 0.0008924828477355135,
+        "samples": 24250368
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-env",
+      "pcm": {
+        "rms": 0.0004247966166906689,
+        "samples": 25079808
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-lfo",
+      "pcm": {
+        "rms": 0.0006584827689342307,
+        "samples": 26660864
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-samplehold",
+      "pcm": {
+        "rms": 0.0006232986924585334,
+        "samples": 29491200
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-attenuverter",
+      "pcm": {
+        "rms": 0.000589601324990779,
+        "samples": 32321536
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-modmix",
+      "pcm": {
+        "rms": 0.0005065177795879158,
+        "samples": 34283520
+      },
+      "status": "failed",
+      "error": "TimeoutError: locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-module=\"cvseq2\"]').getByRole('button', { name: 'Text mode', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"button mini-text-toggle\">Text mode</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to cvseq2\">CV SEQ \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to cvseq2\">CV SEQ \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    9 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to cvseq2\">CV SEQ \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "id": "exercise-cvseq",
+      "pcm": {
+        "rms": 0.0005041076474779968,
+        "samples": 34897920
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-delay",
+      "pcm": {
+        "rms": 0.0008177751656066513,
+        "samples": 35395584
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-reverb",
+      "pcm": {
+        "rms": 0.0007224991849603098,
+        "samples": 36458496
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-drive",
+      "pcm": {
+        "rms": 0.0008204249624636363,
+        "samples": 37287936
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-folder",
+      "pcm": {
+        "rms": 0.0006873954035918148,
+        "samples": 38144000
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-lofi",
+      "pcm": {
+        "rms": 0.0006435846387420508,
+        "samples": 39022592
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-formant",
+      "pcm": {
+        "rms": 0.0003895201862627505,
+        "samples": 39866368
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-comp",
+      "pcm": {
+        "rms": 0.002301276873243455,
+        "samples": 40730624
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-phaser",
+      "pcm": {
+        "rms": 0.00040289873073870664,
+        "samples": 41412608
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-pan",
+      "pcm": {
+        "rms": 0.00044562141947773493,
+        "samples": 41916416
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-shift",
+      "pcm": {
+        "rms": 0.0006528921402213752,
+        "samples": 42827776
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-mix",
+      "pcm": {
+        "rms": 0.0007112947446359451,
+        "samples": 43859968
+      },
+      "status": "failed",
+      "error": "TimeoutError: locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-module=\"mix1\"]').getByRole('button', { name: 'Set CH 1', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"readout\" aria-label=\"Set CH 1\">0.8</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to mix1\">MIX \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to mix1\">MIX \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    9 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <button type=\"button\" class=\"overview-module\" aria-label=\"Zoom to mix1\">MIX \u2197</button> intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "id": "exercise-scope",
+      "pcm": {
+        "rms": 0.0008005464995562352,
+        "samples": 47497216
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-out",
+      "pcm": {
+        "rms": 0.0006329124527240164,
+        "samples": 48355328
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-iter",
+      "pcm": {
+        "rms": 0.000629138068281568,
+        "samples": 49215488
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-jux",
+      "pcm": {
+        "rms": 0.0004448230168172405,
+        "samples": 50294784
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-chunk",
+      "pcm": {
+        "rms": 0.0006134893491143151,
+        "samples": 51556352
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-every",
+      "pcm": {
+        "rms": 0.000609052624966525,
+        "samples": 52414464
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-sometimes",
+      "pcm": {
+        "rms": 0.0006220182188931778,
+        "samples": 53276672
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-off",
+      "pcm": {
+        "rms": 0.0006600778269224432,
+        "samples": 54280192
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-layer",
+      "pcm": {
+        "rms": 0.0008324267996018109,
+        "samples": 55812096
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-rev",
+      "pcm": {
+        "rms": 0.0005830679616975979,
+        "samples": 56967168
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-shuffle",
+      "pcm": {
+        "rms": 0.000582368478604637,
+        "samples": 57704448
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-ribbon",
+      "pcm": {
+        "rms": 0.0005785802982567811,
+        "samples": 58562560
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-time-lens",
+      "pcm": {
+        "rms": 0.000562618579893029,
+        "samples": 59176960
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-warp",
+      "pcm": {
+        "rms": 0.0005424191575657914,
+        "samples": 59793408
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-echo",
+      "pcm": {
+        "rms": 0.0010301106805387012,
+        "samples": 60887040
+      },
+      "status": "passed",
+      "error": null
+    },
+    {
+      "id": "exercise-code",
+      "pcm": {
+        "rms": 0.00049008959871061,
+        "samples": 62433280
+      },
+      "status": "passed",
+      "error": null
+    }
+  ],
+  "resourceEvidence": [
+    {
+      "id": "exercise-drums",
+      "type": "drums",
+      "action": ["mini", "GRID", "bd bd sd hh", "grid"],
+      "baselineEvents": [
+        {
+          "value": {
+            "s": "bd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "0",
+          "end": "0.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "1",
+          "end": "1.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "2",
+          "end": "2.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "3",
+          "end": "3.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "4",
+          "end": "4.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "5",
+          "end": "5.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "6",
+          "end": "6.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "7",
+          "end": "7.25"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "0.5",
+          "end": "0.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "1.5",
+          "end": "1.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "2.5",
+          "end": "2.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "3.5",
+          "end": "3.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "4.5",
+          "end": "4.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "5.5",
+          "end": "5.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "6.5",
+          "end": "6.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "7.5",
+          "end": "7.75"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "0.75",
+          "end": "1"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "1.75",
+          "end": "2"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "2.75",
+          "end": "3"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "3.75",
+          "end": "4"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "4.75",
+          "end": "5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "5.75",
+          "end": "6"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "6.75",
+          "end": "7"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "7.75",
+          "end": "8"
+        }
+      ],
+      "baselineSource": "setcpm(120/4)\n\n$: s(\"bd ~ sd hh\")\n  .gain(0.15)\n  .postgain(0.8)\n  .orbit(1)\n\n// \u2500\u2500 @monkeyboy rack v1 \u2500\u2500\n// {\n//   \"version\": 1,\n//   \"name\": \"DRUMS exercise\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bd ~ sd hh\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bd ~ sd hh\\\"}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.15}]\"\n//         },\n//         {\n//           \"name\": \"postgain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.8}]\"\n//         },\n//         {\n//           \"name\": \"orbit\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1}]\"\n//         }\n//       ],\n//       \"routing\": {\n//         \"call\": 3,\n//         \"orbit\": 1\n//       }\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"drums1\",\n//       \"type\": \"drums\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"grid\": \"bd ~ sd hh\",\n//         \"drop\": 0\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 14,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.15\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"smpl1\",\n//       \"type\": \"smpl\",\n//       \"row\": 0,\n//       \"hp\": 22,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bank\": \"\",\n//         \"speed\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 1,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 0.8,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"mixer\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bpm\": 120\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"drums1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"smpl1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"smpl1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {}\n// }\n",
+      "pcm": {
+        "rms": 0.0011652700195051758,
+        "samples": 12922880
+      },
+      "diagnostics": {
+        "requests": [
+          {
+            "url": "http://127.0.0.1:5173/",
+            "status": 200,
+            "at": 1794168629547
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/main.tsx",
+            "status": 200,
+            "at": 1794168629557
+          },
+          {
+            "url": "http://127.0.0.1:5173/@react-refresh",
+            "status": 200,
+            "at": 1794168629559
+          },
+          {
+            "url": "http://127.0.0.1:5173/@vite/client",
+            "status": 200,
+            "at": 1794168629559
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629559
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/index.css",
+            "status": 200,
+            "at": 1794168629580
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/vite/dist/client/env.mjs",
+            "status": 200,
+            "at": 1794168629580
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629582
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/App.tsx",
+            "status": 200,
+            "at": 1794168629583
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-DgVJeC5g.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629584
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SoundCrate.tsx",
+            "status": 200,
+            "at": 1794168629588
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/packWarning.ts",
+            "status": 200,
+            "at": 1794168629589
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/crate.ts",
+            "status": 200,
+            "at": 1794168629589
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.tsx",
+            "status": 200,
+            "at": 1794168629590
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/engine.ts",
+            "status": 200,
+            "at": 1794168629591
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/cartridges.ts",
+            "status": 200,
+            "at": 1794168629592
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/PatternVisuals.tsx",
+            "status": 200,
+            "at": 1794168629592
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/layout.ts",
+            "status": 200,
+            "at": 1794168629592
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Rack.tsx",
+            "status": 200,
+            "at": 1794168629595
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/model.ts",
+            "status": 200,
+            "at": 1794168629595
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/codeConversion.ts",
+            "status": 200,
+            "at": 1794168629597
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/playback.ts",
+            "status": 200,
+            "at": 1794168629598
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/document.ts",
+            "status": 200,
+            "at": 1794168629598
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/catalog.ts",
+            "status": 200,
+            "at": 1794168629599
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Controls.tsx",
+            "status": 200,
+            "at": 1794168629599
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/index.ts",
+            "status": 200,
+            "at": 1794168629603
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/open.ts",
+            "status": 200,
+            "at": 1794168629603
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/transport.ts",
+            "status": 200,
+            "at": 1794168629604
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/ReplacementPrompt.tsx",
+            "status": 200,
+            "at": 1794168629605
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/autosave.ts",
+            "status": 200,
+            "at": 1794168629605
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/WorkspaceNotice.tsx",
+            "status": 200,
+            "at": 1794168629605
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629606
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/RackLock.tsx",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/FileMenu.tsx",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/finishedCode.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/naming.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/history.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/PatchLibrary.tsx",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/load.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/connections.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/SavePrompt.tsx",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/myPatches.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/App.css",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Rack.css",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SoundCrate.css",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/values.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/looks/looks.css",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/packs.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/mini.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/graph.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.css",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/manifest.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/notation.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/activity.ts",
+            "status": 200,
+            "at": 1794168629612
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/sourceLocations.ts",
+            "status": 200,
+            "at": 1794168629612
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/drag.ts",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/credits.ts",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SamplePanel.tsx",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/functions.ts",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/generate.ts",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/looks.ts",
+            "status": 200,
+            "at": 1794168629624
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/looks/layout.ts",
+            "status": 200,
+            "at": 1794168629624
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/activity.ts",
+            "status": 200,
+            "at": 1794168629624
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MoreFlyout.tsx",
+            "status": 200,
+            "at": 1794168629624
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/effects.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/effects.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/routing.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/acorn.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/notationLiteral.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/layout.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/layout.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/syntax.ts",
+            "status": 200,
+            "at": 1794168629626
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/structure.ts",
+            "status": 200,
+            "at": 1794168629626
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/bindings.ts",
+            "status": 200,
+            "at": 1794168629626
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MiniEditor.tsx",
+            "status": 200,
+            "at": 1794168629627
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom-CFuoV50Q.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629629
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/catalog.ts",
+            "status": 200,
+            "at": 1794168629629
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/euclidean.ts",
+            "status": 200,
+            "at": 1794168629631
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_mini_krill-parser__js.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629632
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629632
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/miniEdits.ts",
+            "status": 200,
+            "at": 1794168629632
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/miniLayout.ts",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/metadata.ts",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/PatchLibrary.css",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/MyPatches.tsx",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/read.ts",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MiniEditor.css",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/sound-effects.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629634
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/module-exercises.ts",
+            "status": 200,
+            "at": 1794168629634
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/function-loops.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629641
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-hardware.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629641
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-alien.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629642
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modulation-utilities.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629642
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-sounds.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629642
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-notes.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629642
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-effects.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629643
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-effects.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/enveloped-synth.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/quantized-sequence.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/lfo-sweep.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/filter-envelope.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/drum-machine.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/echo-room.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/iter-jux.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/custom-helper.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/layered-sketch.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-dub-afterimage.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/switch-angel-trance-demo.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/importLayout.ts",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-doom-instrument.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-industrial-triplets.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/diagnostics.ts",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/modulation.ts",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/splice.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/wavetable.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/seq.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/gates.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/switch.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/aux.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/duck.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/drums.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/quant.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/clock.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629648
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/euclid.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629648
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/ratchet.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629648
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chance.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629648
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chord.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/arp.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/osc.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/noise.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/harmonic.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/fmop.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/smpl.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/vcf.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629650
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/vca.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629650
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/env.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629650
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/lfo.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629650
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/samplehold.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/attenuverter.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/modmix.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/cvseq.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/delay.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/reverb.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/drive.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/folder.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/lofi.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629652
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/formant.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629652
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/comp.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629652
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/phaser.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629652
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/pan.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629653
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/shift.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629653
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/mix.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629653
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/scope.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629653
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/out.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629654
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/iter.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629654
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/jux.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629654
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chunk.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629655
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/every.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629655
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/sometimes.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629655
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/off.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629655
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/layer.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629656
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/rev.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629656
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/shuffle.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629656
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/ribbon.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629656
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/time-lens.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629657
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/warp.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629657
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/echo.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629657
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/code.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629657
+          },
+          {
+            "url": "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Big+Shoulders+Display:wght@800&family=Fredoka:wght@600&family=Quicksand:wght@700&family=Syncopate:wght@400&family=VT323&family=Chakra+Petch:wght@700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap",
+            "status": 200,
+            "at": 1794168629722
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/SourceEditor.tsx",
+            "status": 200,
+            "at": 1794168629928
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_state.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629945
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_view.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629946
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_commands.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629948
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/editorChanges.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/highlighting.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/sourceDiagnostics.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/metadataFolding.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/soundingTokens.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_lang-javascript.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629953
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-pFrPsHWw.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629960
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4-Lwz3bWuQ.woff2",
+            "status": 200,
+            "at": 1794168629969
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_language.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629971
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_merge.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629973
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-C_-QiPIc.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629979
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2",
+            "status": 200,
+            "at": 1794168629980
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-kZ9knBKX.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629980
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/bigshouldersdisplay/v24/fC1MPZJEZG-e9gHhdI4-NBbfd2ys3SjJCx12wPgf9g-_3F0YdQ88FFkwSA.woff2",
+            "status": 200,
+            "at": 1794168629995
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7E_DMs5.woff2",
+            "status": 200,
+            "at": 1794168629995
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2",
+            "status": 200,
+            "at": 1794168629995
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E30-8s51os.woff2",
+            "status": 200,
+            "at": 1794168629995
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/library-check.mjs",
+            "status": 200,
+            "at": 1794168630235
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/editor-browser.mjs",
+            "status": 200,
+            "at": 1794168630236
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4873z3bWuQ.woff2",
+            "status": 200,
+            "at": 1794168630700
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168630867
+          },
+          {
+            "url": "https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json",
+            "status": 200,
+            "at": 1794168630965
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json",
+            "status": 200,
+            "at": 1794168630965
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/arpy/arpy01.wav",
+            "status": 200,
+            "at": 1794168631466
+          },
+          {
+            "url": "https://raw.githubusercontent.com/bubobubobubobubo/dough-waveforms/125801fa9a799117fd0a0350a195ab7c2f4cdf13/strudel.json",
+            "status": 200,
+            "at": 1794168641008
+          },
+          {
+            "url": "https://raw.githubusercontent.com/bubobubobubobubo/dough-waveforms/125801fa9a799117fd0a0350a195ab7c2f4cdf13/wt_dbass/AKWF_dbass_0039_reworked.wav",
+            "status": 200,
+            "at": 1794168641347
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/bd/BT0A0A7.wav",
+            "status": 200,
+            "at": 1794168666095
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/sd/rytm-00-hard.wav",
+            "status": 200,
+            "at": 1794168667003
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/hh/000_hh3closedhh.wav",
+            "status": 200,
+            "at": 1794168667342
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-bd/Bassdrum-01.wav",
+            "status": 200,
+            "at": 1794168704527
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-hh/hh01.wav",
+            "status": 200,
+            "at": 1794168704933
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-sd/naredrum.wav",
+            "status": 200,
+            "at": 1794168705427
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/sharetechmono/v16/J7aHnp1uDWRBEqV98dVQztYldFcLowEF.woff2",
+            "status": 200,
+            "at": 1794168833831
+          }
+        ],
+        "browser": {
+          "decodes": [
+            {
+              "at": 1924.2999999821186,
+              "bytes": 11086,
+              "state": "decoded",
+              "duration": 0.1245625,
+              "channels": 1
+            },
+            {
+              "at": 11807.59999999404,
+              "bytes": 1246,
+              "state": "decoded",
+              "duration": 0.0136281179138322,
+              "channels": 1
+            },
+            {
+              "at": 36551.59999999404,
+              "bytes": 25108,
+              "state": "decoded",
+              "duration": 0.2841458333333333,
+              "channels": 1
+            },
+            {
+              "at": 37460.89999997616,
+              "bytes": 81070,
+              "state": "decoded",
+              "duration": 0.229125,
+              "channels": 2
+            },
+            {
+              "at": 37800.09999999404,
+              "bytes": 153960,
+              "state": "decoded",
+              "duration": 0.8720625,
+              "channels": 2
+            }
+          ],
+          "starts": [
+            {
+              "at": 1925.3999999761581,
+              "now": 0.544,
+              "when": 0.5473,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 3158,
+              "now": 1.7813333333333334,
+              "when": 1.8913,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 3560.899999976158,
+              "now": 2.1866666666666665,
+              "when": 2.3912999999999998,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 4058.699999988079,
+              "now": 2.6773333333333333,
+              "when": 2.8912999999999998,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 4558.699999988079,
+              "now": 3.1786666666666665,
+              "when": 3.3912999999999998,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 5059.399999976158,
+              "now": 3.68,
+              "when": 3.8912999999999998,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 5558.5,
+              "now": 4.181333333333333,
+              "when": 4.391299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 6058.5999999940395,
+              "now": 4.682666666666667,
+              "when": 4.891299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 6558.799999982119,
+              "now": 5.184,
+              "when": 5.391299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 7058.699999988079,
+              "now": 5.685333333333333,
+              "when": 5.891299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 7558.899999976158,
+              "now": 6.176,
+              "when": 6.391299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 8058.5999999940395,
+              "now": 6.677333333333333,
+              "when": 6.891299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 8558.399999976158,
+              "now": 7.1786666666666665,
+              "when": 7.391299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 9058.899999976158,
+              "now": 7.68,
+              "when": 7.891299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 9558.5,
+              "now": 8.181333333333333,
+              "when": 8.3913,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 10058.799999982119,
+              "now": 8.682666666666666,
+              "when": 8.8913,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 36552.29999998212,
+              "now": 35.178666666666665,
+              "when": 35.214,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            },
+            {
+              "at": 37461.69999998808,
+              "now": 36.08533333333333,
+              "when": 36.214,
+              "buffer": {
+                "duration": 0.229125,
+                "channels": 2
+              }
+            },
+            {
+              "at": 37803.09999999404,
+              "now": 36.42666666666667,
+              "when": 36.714,
+              "buffer": {
+                "duration": 0.8720625,
+                "channels": 2
+              }
+            },
+            {
+              "at": 38386.89999997616,
+              "now": 37.013333333333335,
+              "when": 37.214,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            }
+          ],
+          "contexts": [
+            {
+              "state": "running",
+              "currentTime": 37.12,
+              "sampleRate": 48000
+            },
+            {
+              "state": "suspended",
+              "currentTime": 0,
+              "sampleRate": 44100
+            }
+          ],
+          "readiness": "Decode observations are not mapped to sound names; fetched bytes alone do not prove decoded readiness."
+        }
+      },
+      "savedIdentity": true,
+      "eventsBefore": 24,
+      "eventsAfter": 32,
+      "status": "passed"
+    },
+    {
+      "id": "exercise-smpl",
+      "type": "smpl",
+      "action": ["knob", "SPEED", 0.5, "speed"],
+      "baselineEvents": [
+        {
+          "value": {
+            "s": "bd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "0",
+          "end": "0.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "1",
+          "end": "1.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "2",
+          "end": "2.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "3",
+          "end": "3.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "4",
+          "end": "4.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "5",
+          "end": "5.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "6",
+          "end": "6.25"
+        },
+        {
+          "value": {
+            "s": "bd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "7",
+          "end": "7.25"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "0.25",
+          "end": "0.5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "1.25",
+          "end": "1.5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "2.25",
+          "end": "2.5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "3.25",
+          "end": "3.5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "4.25",
+          "end": "4.5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "5.25",
+          "end": "5.5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "6.25",
+          "end": "6.5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "7.25",
+          "end": "7.5"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "0.5",
+          "end": "0.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "1.5",
+          "end": "1.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "2.5",
+          "end": "2.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "3.5",
+          "end": "3.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "4.5",
+          "end": "4.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "5.5",
+          "end": "5.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "6.5",
+          "end": "6.75"
+        },
+        {
+          "value": {
+            "s": "sd",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "7.5",
+          "end": "7.75"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "0.75",
+          "end": "1"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "1.75",
+          "end": "2"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "2.75",
+          "end": "3"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "3.75",
+          "end": "4"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "4.75",
+          "end": "5"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "5.75",
+          "end": "6"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "6.75",
+          "end": "7"
+        },
+        {
+          "value": {
+            "s": "hh",
+            "bank": "RolandTR909",
+            "gain": 0.15,
+            "postgain": 0.8,
+            "orbit": 1
+          },
+          "start": "7.75",
+          "end": "8"
+        }
+      ],
+      "baselineSource": "setcpm(120/4)\n\n$: s(\"bd hh sd hh\")\n  .bank(\"RolandTR909\")\n  .gain(0.15)\n  .postgain(0.8)\n  .orbit(1)\n\n// \u2500\u2500 @monkeyboy rack v1 \u2500\u2500\n// {\n//   \"version\": 1,\n//   \"name\": \"SMPL exercise\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bd hh sd hh\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bd hh sd hh\\\"}]\"\n//         },\n//         {\n//           \"name\": \"bank\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"RolandTR909\\\"}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.15}]\"\n//         },\n//         {\n//           \"name\": \"postgain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.8}]\"\n//         },\n//         {\n//           \"name\": \"orbit\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1}]\"\n//         }\n//       ],\n//       \"routing\": {\n//         \"call\": 4,\n//         \"orbit\": 1\n//       }\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"drums1\",\n//       \"type\": \"drums\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"grid\": \"bd hh sd hh\",\n//         \"drop\": 0\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"smpl1\",\n//       \"type\": \"smpl\",\n//       \"row\": 0,\n//       \"hp\": 14,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bank\": \"RolandTR909\",\n//         \"speed\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 22,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.15\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 1,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 0.8,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             3\n//           ],\n//           \"role\": \"mixer\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bpm\": 120\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"drums1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"smpl1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"smpl1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {}\n// }\n",
+      "pcm": {
+        "rms": 0.000912118296199461,
+        "samples": 22595584
+      },
+      "diagnostics": {
+        "requests": [
+          {
+            "url": "http://127.0.0.1:5173/",
+            "status": 200,
+            "at": 1794168629547
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/main.tsx",
+            "status": 200,
+            "at": 1794168629557
+          },
+          {
+            "url": "http://127.0.0.1:5173/@react-refresh",
+            "status": 200,
+            "at": 1794168629559
+          },
+          {
+            "url": "http://127.0.0.1:5173/@vite/client",
+            "status": 200,
+            "at": 1794168629559
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629559
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/index.css",
+            "status": 200,
+            "at": 1794168629580
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/vite/dist/client/env.mjs",
+            "status": 200,
+            "at": 1794168629580
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629582
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/App.tsx",
+            "status": 200,
+            "at": 1794168629583
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-DgVJeC5g.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629584
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SoundCrate.tsx",
+            "status": 200,
+            "at": 1794168629588
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/packWarning.ts",
+            "status": 200,
+            "at": 1794168629589
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/crate.ts",
+            "status": 200,
+            "at": 1794168629589
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.tsx",
+            "status": 200,
+            "at": 1794168629590
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/engine.ts",
+            "status": 200,
+            "at": 1794168629591
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/cartridges.ts",
+            "status": 200,
+            "at": 1794168629592
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/PatternVisuals.tsx",
+            "status": 200,
+            "at": 1794168629592
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/layout.ts",
+            "status": 200,
+            "at": 1794168629592
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Rack.tsx",
+            "status": 200,
+            "at": 1794168629595
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/model.ts",
+            "status": 200,
+            "at": 1794168629595
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/codeConversion.ts",
+            "status": 200,
+            "at": 1794168629597
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/playback.ts",
+            "status": 200,
+            "at": 1794168629598
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/document.ts",
+            "status": 200,
+            "at": 1794168629598
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/catalog.ts",
+            "status": 200,
+            "at": 1794168629599
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Controls.tsx",
+            "status": 200,
+            "at": 1794168629599
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/index.ts",
+            "status": 200,
+            "at": 1794168629603
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/open.ts",
+            "status": 200,
+            "at": 1794168629603
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/transport.ts",
+            "status": 200,
+            "at": 1794168629604
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/ReplacementPrompt.tsx",
+            "status": 200,
+            "at": 1794168629605
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/autosave.ts",
+            "status": 200,
+            "at": 1794168629605
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/WorkspaceNotice.tsx",
+            "status": 200,
+            "at": 1794168629605
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629606
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/RackLock.tsx",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/FileMenu.tsx",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/finishedCode.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/naming.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/history.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/PatchLibrary.tsx",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/load.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/connections.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/SavePrompt.tsx",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/myPatches.ts",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/App.css",
+            "status": 200,
+            "at": 1794168629609
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Rack.css",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SoundCrate.css",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/values.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/looks/looks.css",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/packs.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/mini.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/graph.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.css",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/manifest.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/notation.ts",
+            "status": 200,
+            "at": 1794168629611
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/activity.ts",
+            "status": 200,
+            "at": 1794168629612
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/sourceLocations.ts",
+            "status": 200,
+            "at": 1794168629612
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/drag.ts",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/credits.ts",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SamplePanel.tsx",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/functions.ts",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/generate.ts",
+            "status": 200,
+            "at": 1794168629623
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/looks.ts",
+            "status": 200,
+            "at": 1794168629624
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/looks/layout.ts",
+            "status": 200,
+            "at": 1794168629624
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/activity.ts",
+            "status": 200,
+            "at": 1794168629624
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MoreFlyout.tsx",
+            "status": 200,
+            "at": 1794168629624
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/effects.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/effects.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/routing.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/acorn.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/notationLiteral.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/layout.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/layout.ts",
+            "status": 200,
+            "at": 1794168629625
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/syntax.ts",
+            "status": 200,
+            "at": 1794168629626
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/structure.ts",
+            "status": 200,
+            "at": 1794168629626
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/bindings.ts",
+            "status": 200,
+            "at": 1794168629626
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MiniEditor.tsx",
+            "status": 200,
+            "at": 1794168629627
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom-CFuoV50Q.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629629
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/catalog.ts",
+            "status": 200,
+            "at": 1794168629629
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/euclidean.ts",
+            "status": 200,
+            "at": 1794168629631
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_mini_krill-parser__js.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629632
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629632
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/miniEdits.ts",
+            "status": 200,
+            "at": 1794168629632
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/miniLayout.ts",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/metadata.ts",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/PatchLibrary.css",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/MyPatches.tsx",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/read.ts",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MiniEditor.css",
+            "status": 200,
+            "at": 1794168629633
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/sound-effects.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629634
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/module-exercises.ts",
+            "status": 200,
+            "at": 1794168629634
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/function-loops.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629641
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-hardware.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629641
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-alien.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629642
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modulation-utilities.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629642
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-sounds.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629642
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-notes.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629642
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-effects.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629643
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-effects.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/enveloped-synth.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/quantized-sequence.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/lfo-sweep.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/filter-envelope.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/drum-machine.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/echo-room.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629644
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/iter-jux.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/custom-helper.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/layered-sketch.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-dub-afterimage.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/switch-angel-trance-demo.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/importLayout.ts",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-doom-instrument.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-industrial-triplets.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629645
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/diagnostics.ts",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/modulation.ts",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/splice.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/wavetable.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/seq.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/gates.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629646
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/switch.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/aux.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/duck.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/drums.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/quant.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629647
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/clock.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629648
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/euclid.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629648
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/ratchet.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629648
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chance.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629648
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chord.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/arp.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/osc.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/noise.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/harmonic.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/fmop.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/smpl.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629649
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/vcf.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629650
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/vca.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629650
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/env.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629650
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/lfo.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629650
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/samplehold.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/attenuverter.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/modmix.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/cvseq.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/delay.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/reverb.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/drive.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/folder.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629651
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/lofi.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629652
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/formant.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629652
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/comp.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629652
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/phaser.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629652
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/pan.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629653
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/shift.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629653
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/mix.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629653
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/scope.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629653
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/out.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629654
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/iter.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629654
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/jux.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629654
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chunk.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629655
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/every.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629655
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/sometimes.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629655
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/off.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629655
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/layer.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629656
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/rev.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629656
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/shuffle.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629656
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/ribbon.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629656
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/time-lens.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629657
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/warp.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629657
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/echo.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629657
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/code.strudel?import&raw",
+            "status": 200,
+            "at": 1794168629657
+          },
+          {
+            "url": "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Big+Shoulders+Display:wght@800&family=Fredoka:wght@600&family=Quicksand:wght@700&family=Syncopate:wght@400&family=VT323&family=Chakra+Petch:wght@700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap",
+            "status": 200,
+            "at": 1794168629722
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/SourceEditor.tsx",
+            "status": 200,
+            "at": 1794168629928
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_state.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629945
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_view.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629946
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_commands.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629948
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/editorChanges.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/highlighting.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/sourceDiagnostics.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/metadataFolding.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/soundingTokens.ts",
+            "status": 200,
+            "at": 1794168629952
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_lang-javascript.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629953
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-pFrPsHWw.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629960
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4-Lwz3bWuQ.woff2",
+            "status": 200,
+            "at": 1794168629969
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_language.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629971
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_merge.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629973
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-C_-QiPIc.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629979
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2",
+            "status": 200,
+            "at": 1794168629980
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-kZ9knBKX.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168629980
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/bigshouldersdisplay/v24/fC1MPZJEZG-e9gHhdI4-NBbfd2ys3SjJCx12wPgf9g-_3F0YdQ88FFkwSA.woff2",
+            "status": 200,
+            "at": 1794168629995
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7E_DMs5.woff2",
+            "status": 200,
+            "at": 1794168629995
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2",
+            "status": 200,
+            "at": 1794168629995
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E30-8s51os.woff2",
+            "status": 200,
+            "at": 1794168629995
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/library-check.mjs",
+            "status": 200,
+            "at": 1794168630235
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/editor-browser.mjs",
+            "status": 200,
+            "at": 1794168630236
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4873z3bWuQ.woff2",
+            "status": 200,
+            "at": 1794168630700
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4",
+            "status": 200,
+            "at": 1794168630867
+          },
+          {
+            "url": "https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json",
+            "status": 200,
+            "at": 1794168630965
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json",
+            "status": 200,
+            "at": 1794168630965
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/arpy/arpy01.wav",
+            "status": 200,
+            "at": 1794168631466
+          },
+          {
+            "url": "https://raw.githubusercontent.com/bubobubobubobubo/dough-waveforms/125801fa9a799117fd0a0350a195ab7c2f4cdf13/strudel.json",
+            "status": 200,
+            "at": 1794168641008
+          },
+          {
+            "url": "https://raw.githubusercontent.com/bubobubobubobubo/dough-waveforms/125801fa9a799117fd0a0350a195ab7c2f4cdf13/wt_dbass/AKWF_dbass_0039_reworked.wav",
+            "status": 200,
+            "at": 1794168641347
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/bd/BT0A0A7.wav",
+            "status": 200,
+            "at": 1794168666095
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/sd/rytm-00-hard.wav",
+            "status": 200,
+            "at": 1794168667003
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/hh/000_hh3closedhh.wav",
+            "status": 200,
+            "at": 1794168667342
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-bd/Bassdrum-01.wav",
+            "status": 200,
+            "at": 1794168704527
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-hh/hh01.wav",
+            "status": 200,
+            "at": 1794168704933
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-sd/naredrum.wav",
+            "status": 200,
+            "at": 1794168705427
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/sharetechmono/v16/J7aHnp1uDWRBEqV98dVQztYldFcLowEF.woff2",
+            "status": 200,
+            "at": 1794168833831
+          }
+        ],
+        "browser": {
+          "decodes": [
+            {
+              "at": 1924.2999999821186,
+              "bytes": 11086,
+              "state": "decoded",
+              "duration": 0.1245625,
+              "channels": 1
+            },
+            {
+              "at": 11807.59999999404,
+              "bytes": 1246,
+              "state": "decoded",
+              "duration": 0.0136281179138322,
+              "channels": 1
+            },
+            {
+              "at": 36551.59999999404,
+              "bytes": 25108,
+              "state": "decoded",
+              "duration": 0.2841458333333333,
+              "channels": 1
+            },
+            {
+              "at": 37460.89999997616,
+              "bytes": 81070,
+              "state": "decoded",
+              "duration": 0.229125,
+              "channels": 2
+            },
+            {
+              "at": 37800.09999999404,
+              "bytes": 153960,
+              "state": "decoded",
+              "duration": 0.8720625,
+              "channels": 2
+            },
+            {
+              "at": 74982.29999998212,
+              "bytes": 82232,
+              "state": "decoded",
+              "duration": 0.46591666666666665,
+              "channels": 2
+            },
+            {
+              "at": 75389.89999997616,
+              "bytes": 21228,
+              "state": "decoded",
+              "duration": 0.1561875,
+              "channels": 1
+            },
+            {
+              "at": 75883.29999998212,
+              "bytes": 51108,
+              "state": "decoded",
+              "duration": 0.2894583333333333,
+              "channels": 2
+            }
+          ],
+          "starts": [
+            {
+              "at": 1925.3999999761581,
+              "now": 0.544,
+              "when": 0.5473,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 3158,
+              "now": 1.7813333333333334,
+              "when": 1.8913,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 3560.899999976158,
+              "now": 2.1866666666666665,
+              "when": 2.3912999999999998,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 4058.699999988079,
+              "now": 2.6773333333333333,
+              "when": 2.8912999999999998,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 4558.699999988079,
+              "now": 3.1786666666666665,
+              "when": 3.3912999999999998,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 5059.399999976158,
+              "now": 3.68,
+              "when": 3.8912999999999998,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 5558.5,
+              "now": 4.181333333333333,
+              "when": 4.391299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 6058.5999999940395,
+              "now": 4.682666666666667,
+              "when": 4.891299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 6558.799999982119,
+              "now": 5.184,
+              "when": 5.391299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 7058.699999988079,
+              "now": 5.685333333333333,
+              "when": 5.891299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 7558.899999976158,
+              "now": 6.176,
+              "when": 6.391299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 8058.5999999940395,
+              "now": 6.677333333333333,
+              "when": 6.891299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 8558.399999976158,
+              "now": 7.1786666666666665,
+              "when": 7.391299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 9058.899999976158,
+              "now": 7.68,
+              "when": 7.891299999999999,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 9558.5,
+              "now": 8.181333333333333,
+              "when": 8.3913,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 10058.799999982119,
+              "now": 8.682666666666666,
+              "when": 8.8913,
+              "buffer": {
+                "duration": 0.1245625,
+                "channels": 1
+              }
+            },
+            {
+              "at": 36552.29999998212,
+              "now": 35.178666666666665,
+              "when": 35.214,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            },
+            {
+              "at": 37461.69999998808,
+              "now": 36.08533333333333,
+              "when": 36.214,
+              "buffer": {
+                "duration": 0.229125,
+                "channels": 2
+              }
+            },
+            {
+              "at": 37803.09999999404,
+              "now": 36.42666666666667,
+              "when": 36.714,
+              "buffer": {
+                "duration": 0.8720625,
+                "channels": 2
+              }
+            },
+            {
+              "at": 38386.89999997616,
+              "now": 37.013333333333335,
+              "when": 37.214,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            },
+            {
+              "at": 65284.89999997616,
+              "now": 63.904,
+              "when": 64.014,
+              "buffer": {
+                "duration": 2,
+                "channels": 1
+              }
+            },
+            {
+              "at": 67186.39999997616,
+              "now": 65.81333333333333,
+              "when": 66.014,
+              "buffer": {
+                "duration": 2,
+                "channels": 1
+              }
+            },
+            {
+              "at": 74987.09999999404,
+              "now": 73.61066666666666,
+              "when": 73.6353,
+              "buffer": {
+                "duration": 0.46591666666666665,
+                "channels": 2
+              }
+            },
+            {
+              "at": 75390.29999998212,
+              "now": 74.016,
+              "when": 74.1353,
+              "buffer": {
+                "duration": 0.1561875,
+                "channels": 1
+              }
+            },
+            {
+              "at": 75885.29999998212,
+              "now": 74.50666666666666,
+              "when": 74.6353,
+              "buffer": {
+                "duration": 0.2894583333333333,
+                "channels": 2
+              }
+            },
+            {
+              "at": 76303.09999999404,
+              "now": 74.92266666666667,
+              "when": 75.1353,
+              "buffer": {
+                "duration": 0.1561875,
+                "channels": 1
+              }
+            },
+            {
+              "at": 76803.59999999404,
+              "now": 75.424,
+              "when": 75.6353,
+              "buffer": {
+                "duration": 0.46591666666666665,
+                "channels": 2
+              }
+            }
+          ],
+          "contexts": [
+            {
+              "state": "running",
+              "currentTime": 75.616,
+              "sampleRate": 48000
+            },
+            {
+              "state": "suspended",
+              "currentTime": 0,
+              "sampleRate": 44100
+            }
+          ],
+          "readiness": "Decode observations are not mapped to sound names; fetched bytes alone do not prove decoded readiness."
+        }
+      },
+      "savedIdentity": true,
+      "eventsBefore": 32,
+      "eventsAfter": 32,
+      "status": "passed"
+    }
+  ]
+}

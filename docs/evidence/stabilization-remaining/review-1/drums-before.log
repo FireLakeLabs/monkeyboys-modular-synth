@@ -1,0 +1,58 @@
+
+> monkeyboys-modular-synth@0.0.0 test:browser:report
+> node scripts/browser-report.mts tests/browser/stabilization-remaining.spec.mjs -g native sound drag
+
+[WebServer] (node:662354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 1 test using 1 worker
+
+(node:662406) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] tests/browser/stabilization-remaining.spec.mjs:130:1 › native sound drag highlights panels and selection plus Enter assigns a seated sound
+  1) tests/browser/stabilization-remaining.spec.mjs:130:1 › native sound drag highlights panels and selection plus Enter assigns a seated sound 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('dialog', { name: 'Choose DRUMS row' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('dialog', { name: 'Choose DRUMS row' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Choose DRUMS row' })
+
+
+      207 |   await page.keyboard.press('Enter')
+      208 |   const chooser = page.getByRole('dialog', { name: 'Choose DRUMS row' })
+    > 209 |   await expect(chooser).toBeVisible()
+          |                         ^
+      210 |   expect(
+      211 |     await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource()),
+      212 |   ).toBe(unchanged)
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/stabilization-remaining.spec.mjs:209:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/stabilization-remaining-na-e8cc6-nter-assigns-a-seated-sound/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/stabilization-remaining-na-e8cc6-nter-assigns-a-seated-sound/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/stabilization-remaining-na-e8cc6-nter-assigns-a-seated-sound/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/stabilization-remaining-na-e8cc6-nter-assigns-a-seated-sound/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    tests/browser/stabilization-remaining.spec.mjs:130:1 › native sound drag highlights panels and selection plus Enter assigns a seated sound 
+
+RESULT passed=0 failed=1 exit=1
+Log: /tmp/monkeyboy-browser-662256.log

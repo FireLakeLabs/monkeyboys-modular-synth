@@ -99,7 +99,12 @@ try {
   }
   await suite('jackScrollFixture')
   await synced()
-  await page.getByRole('button', { name: 'Fit rack', exact: true }).click()
+  // Scrolling jack targets exist in detail view; Fit overview intentionally hides them.
+  await page.getByLabel('Rack zoom').selectOption('0.75')
+  // Controlled crowded patch box proves scroll-following even though Fit now forbids inner scrollbars.
+  const scrollFixture = await page.addStyleTag({
+    content: '[data-module="mix1"] .patch-box {max-height: 60px; flex-shrink: 0}',
+  })
   await page.waitForFunction(() => {
     const box = document.querySelector('[data-module="mix1"] .patch-box')
     return box.scrollHeight > box.clientHeight
@@ -119,8 +124,9 @@ try {
   )
   assert.equal(await suite('source'), beforeJackScroll)
   process.stdout.write(
-    'PASS scrolling mixer jacks retain cable endpoints and exact source at Fit zoom\n',
+    'PASS scrolling mixer jacks retain cable endpoints and exact source at 75% zoom\n',
   )
+  await scrollFixture.evaluate((element) => element.remove())
   await suite('loadCase', 4)
   await synced()
   assert.equal(await panel('osc1').getByRole('slider', { name: 'PW', exact: true }).count(), 1)

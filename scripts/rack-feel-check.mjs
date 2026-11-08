@@ -79,6 +79,19 @@ export function inspectPanels(look) {
     assert(spec && panel.offsetWidth === spec.hp * HP, `${id}: width differs from catalog`)
     assert(contrast(panel.querySelector('.module-id')) >= 4.5, `${id}: low ID contrast`)
     const controls = panel.querySelector('.module-controls')
+    if (document.querySelector('.rack-frame')?.dataset.overview === 'true') {
+      assert(controls.inert === (spec.id !== 'out'), `${id}: wrong overview control availability`)
+      assert(getComputedStyle(controls).overflowY === 'hidden', `${id}: overview scrollbars`)
+      assert(
+        [...panel.querySelectorAll('[data-jack]')].every((jack) => jack.disabled),
+        `${id}: live overview jack`,
+      )
+      assert(
+        !!panel.querySelector('.overview-module') === (spec.id !== 'out'),
+        `${id}: wrong overview navigation target`,
+      )
+      continue
+    }
     assert(controls.clientHeight > 0, `${id}: controls have no usable height`)
     assert(
       getComputedStyle(controls).overflowY === 'auto',
@@ -198,8 +211,13 @@ export function inspectCables() {
   const jacks = new Map(
     [...surface.querySelectorAll('[data-jack]')].map((jack) => {
       const rect = jack.getBoundingClientRect()
-      const x = rect.left + rect.width / 2
-      const y = rect.top + rect.height / 2
+      let x = rect.left + rect.width / 2
+      let y = rect.top + rect.height / 2
+      const box = jack.closest('.patch-box')?.getBoundingClientRect()
+      if (surface.dataset.overview !== 'true' && box) {
+        x = Math.max(box.left, Math.min(x, box.right))
+        y = Math.max(box.top, Math.min(y, box.bottom))
+      }
       // Rail jacks scrolled out of view pin to the viewport edge rather than crossing OUT.
       const rail = jack.closest('.rack-scroll')
       const view = rail?.getBoundingClientRect()

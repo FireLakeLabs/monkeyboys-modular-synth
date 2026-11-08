@@ -108,7 +108,10 @@ export async function verifySoundForm(index, override) {
     output.disconnect(analyser)
   }
   const pcm = { rms: Math.sqrt(energy / samples), samples }
-  assert(pcm.rms > 0.0001, `${form.expression}: silent PCM ${pcm.rms}`)
+  assert(
+    pcm.rms > 0.0001,
+    `${form.expression}: silent PCM ${JSON.stringify({ ...pcm, diagnostics: window.sampleDiagnostics?.() ?? 'unknown', patternEvents: captured?.queryArc(0, 4).length })}`,
+  )
   assert(captured.queryArc(0, 4).length > 0, `${form.expression}: no scheduled pattern events`)
   assert(sourceBody(editorSource()) === source, `${form.expression}: playback changed source`)
   const cables = inspectCables()

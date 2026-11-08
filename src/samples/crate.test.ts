@@ -5,7 +5,7 @@ import { read } from '../reader'
 import { parseSource } from '../reader/syntax'
 import { editDocument, saveLayout, sourceBody } from '../workspace/document'
 import { connect, placeModule, setValue, starterPatch } from '../rack/model'
-import { dropSound, replaceDrumRow, seatedResources, variantCount } from './crate'
+import { dropSound, drumSoundRows, replaceDrumRow, seatedResources, variantCount } from './crate'
 import { FACTORY_PACKS, packKey } from './packs'
 let runtime: Record<string, unknown>
 beforeAll(async () => {
@@ -320,4 +320,17 @@ it('refuses qualifying a shared DRUMS row across banked and unbanked consumers',
   )
   expect(generate(patch)).toBe(before)
   expect(read(before).patch).toEqual(patch)
+})
+
+it('offers explicit source rows without splitting a non-stacked drum pattern', () => {
+  const drums = placeModule(starterPatch(), 'drums', 1).modules.find(
+    (module) => module.type === 'drums',
+  )
+  if (!drums) throw new Error('Missing DRUMS fixture')
+  expect(drumSoundRows({ ...drums, values: { grid: '[bd:2 ~]*2, [sd ~]*4, hh*4' } })).toEqual([
+    '[bd:2 ~]*2',
+    '[sd ~]*4',
+    'hh*4',
+  ])
+  expect(drumSoundRows({ ...drums, values: { grid: '<bd sd>' } })).toEqual(['<bd sd>'])
 })

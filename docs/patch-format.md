@@ -38,8 +38,10 @@ interface Patch {
   module positions (at least one row). Placement grows this count; removing the
   last module in a row does not shrink it. Explicit removal of an empty row
   shifts later rows up one, retaining module HP, looks, values and cables.
-- Optional `railHp` is exactly 64, 84 or 104 HP. Missing fields and plain files
-  default to 64 HP. New patches select the widest rail visible at 100% beside the
+- Optional `railHp` is exactly 64, 84 or 104 HP. Missing saved fields default to 64 HP. Plain files without a saved block
+  receive initial compact placement over 64/84/104 HP rails: minimize row count,
+  preferring narrower rails on ties. This never reflows saved personal or bundled
+  positions. New patches select the widest rail visible at 100% beside the
   palette, code and pinned output; the width is then saved,
   never recomputed on resize. The toolbar changes it without moving modules.
   Reductions that strand a module outside the rail are refused. Placement and

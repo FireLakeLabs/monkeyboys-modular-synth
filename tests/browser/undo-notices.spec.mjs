@@ -229,6 +229,7 @@ test.describe('conversion on edit', () => {
   test.beforeEach(async ({ page }) => {
     await open(page)
     await load(page, 'Switch Angel trance demo')
+    await page.getByRole('button', { name: 'Zoom to vcf1', exact: true }).click()
   })
 
   const knob = (page) => page.locator('[data-module="vcf1"] [role="slider"]').first()
@@ -333,11 +334,9 @@ test.describe('shorter loading and restore', () => {
     await expect(page.getByLabel('Patch name')).toHaveValue('Quantized sequence')
   })
 
-  test('a tall patch opens at a readable view with its first modules and cables', async ({
-    page,
-  }) => {
+  test('a tall patch opens in overview with all modules and cables', async ({ page }) => {
     await load(page, 'Switch Angel trance demo')
-    await expect(page.getByLabel('Rack zoom')).toHaveValue('0.75')
+    await expect(page.getByLabel('Rack zoom')).toHaveValue('fit')
     const viewport = await page.locator('.rack-scroll').boundingBox()
     const seen = await page.locator('.module-panel').evaluateAll((panels, frame) => {
       const within = panels.filter((panel) => {

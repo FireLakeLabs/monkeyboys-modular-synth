@@ -1205,3 +1205,49 @@ select:focus-visible {
   position: absolute;
   inset: 0;
 }
+
+/* Overview keeps the real jacks measurable while reserving the panel for navigation. */
+.rack-frame[data-overview='true'] .module-controls,
+.rack-frame[data-overview='true'] .patch-box {
+  overflow: hidden;
+}
+.rack-frame[data-overview='true'] .patch-box {
+  min-height: 32px;
+  flex-shrink: 0;
+}
+.rack-frame[data-overview='true'] .jack {
+  min-width: 24px;
+  min-height: 24px;
+  width: 24px;
+  height: 24px;
+}
+.overview-module {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: transparent;
+  color: transparent;
+  border: 0;
+  cursor: zoom-in;
+}
+.overview-module:focus-visible {
+  outline: 4px solid var(--accent, #f4a462);
+  outline-offset: -4px;
+}
+.module-panel[data-sound-target='true'] {
+  outline: 3px solid #8cf5da;
+  outline-offset: -3px;
+}
+.module-panel[data-sound-target='false'] {
+  opacity: 0.35;
+}
+.sound-drag-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 8px 12px;
+  background: #20242a;
+  color: #8cf5da;
+  border: 2px solid #8cf5da;
+  z-index: 9999;
+}

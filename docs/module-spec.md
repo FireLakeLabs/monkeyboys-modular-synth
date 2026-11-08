@@ -885,3 +885,12 @@ shows a flat baseline when stopped or awaiting a tap. Reduced motion shows a
 static baseline with **Motion paused**, with no sampling/drawing interval. Stop,
 errors, replacement and bounce retain the engine's existing transport boundaries.
 A generator-owned SCOPE exercise is included in the module library.
+
+### Sound target presentation (#185)
+
+The catalog's `sampleTarget` defines panel-wide seated-sound acceptance, including
+WAVETABLE's `wt_` prefix. DRUMS retains per-row targets rather than replacing all
+rows by a panel drop. The crate offers selection followed by double click or Enter. For DRUMS, that
+path requires an explicit choice in the row dialog before applying; it does not
+guess row zero. Native selectors remain available. Presentation never bypasses source-aware
+mutation/refusal or bank semantics. See [sound assignment](design.md#sound-assignment-185).

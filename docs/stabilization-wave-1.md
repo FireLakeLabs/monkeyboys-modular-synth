@@ -30,8 +30,12 @@ translation, reader, arrangement or later-wave work is authorized here.
 
 ## Verification and review ledger
 
-Pending implementation. Browser observations, PCM measurements and physical
-listening will be reported separately. No audio behavior change is intended.
+Completed in [PR #221](https://github.com/FireLakeLabs/monkeyboys-modular-synth/pull/221),
+merged as `ac7dd6a01d73bf554ba5257c84fab0cfd0e10fe1`. The
+[hosted PR run, attempt 2](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/42510337281/attempts/2)
+and [post-merge main run](https://github.com/FireLakeLabs/monkeyboys-modular-synth/actions/runs/42514713475)
+each passed 178 tests. Local final RESULT was 178 passed / 0 failed. Browser
+observations, measured PCM and unperformed physical listening remain distinct below.
 
 ## Implementation observations (8 November 2026)
 
