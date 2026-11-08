@@ -119,6 +119,10 @@
   top: 10px;
   background: #7db9f6;
 }
+.razor-marks {
+  flex: 0 0 calc(100% - 4px);
+  box-sizing: border-box;
+}
 .razor-marks i {
   transform: rotate(12deg);
 }
@@ -150,4 +154,9 @@
 }
 .tape-mark[data-mark^='loop'] {
   border-color: #7db9f6;
+}
+/* The full-width strip takes a row; keep slice order compact and user-resizable. */
+.module-controls:has(> .razor-marks) textarea {
+  min-height: 36px;
+  height: 36px;
 }

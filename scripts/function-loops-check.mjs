@@ -141,7 +141,7 @@ export async function finishFunctionProof() {
 
 export function inspectFunctionUI() {
   const sends = [...document.querySelectorAll('[data-jack$=":send"]')]
-  const cables = [...document.querySelectorAll('.cable.signal-function path:not(.cable-shadow)')]
+  const cables = [...document.querySelectorAll('.cable.signal-function')]
   assert(sends.length > 0 && cables.length > 0, 'Missing function jacks/cables')
   for (const send of sends) {
     assert(
@@ -153,12 +153,15 @@ export function inspectFunctionUI() {
     assert(getComputedStyle(send, '::after').content.includes('λ'), 'Missing non-colour jack mark')
   }
   for (const cable of cables) {
+    const paint = cable.querySelector('.cable-paint')
+    const hit = cable.querySelector('.cable-hit')
+    assert(paint && hit, 'Missing function paint or pointer target')
     assert(
-      getComputedStyle(cable).strokeDasharray === '16px, 4px, 3px, 4px',
+      getComputedStyle(paint).strokeDasharray === '16px, 4px, 3px, 4px',
       'Missing distinct function dash',
     )
-    assert(getComputedStyle(cable).stroke === 'rgb(140, 245, 218)', 'Missing Alien teal')
-    assert(cable.textContent.includes('=>'), 'Cable hover does not show lambda')
+    assert(getComputedStyle(paint).stroke === 'rgb(140, 245, 218)', 'Missing Alien teal')
+    assert(hit.textContent.includes('=>'), 'Cable hover does not show lambda')
   }
   return {
     sends: sends.map((e) => ({ label: e.getAttribute('aria-label'), source: e.title })),

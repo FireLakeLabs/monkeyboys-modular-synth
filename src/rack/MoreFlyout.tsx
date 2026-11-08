@@ -42,6 +42,7 @@ export function MoreFlyout({
     // Committing a value drops focus to the page, so Escape cannot rely on the tray having it.
     const escape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
+      event.preventDefault()
       setOpen(false)
       toggle.current?.focus()
     }

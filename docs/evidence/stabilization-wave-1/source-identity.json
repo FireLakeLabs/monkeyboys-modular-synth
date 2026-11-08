@@ -1,0 +1,62 @@
+{
+  "baseline": "d733cb9",
+  "description": "Full generated UTF-8 file comparison before/after More catalog categorization. Full saved identity is separately asserted by read(source).patch in the browser regression.",
+  "cases": [
+    {
+      "look": "powder",
+      "mode": "note",
+      "exactFile": true,
+      "patchEqual": true,
+      "sha256": "80f172abf73752ca64bcb0adb2eec39f2686efdc74b7ff0b3af8a2b6bafaa2dc"
+    },
+    {
+      "look": "powder",
+      "mode": "freq",
+      "exactFile": true,
+      "patchEqual": true,
+      "sha256": "b9143cab241210579be692690b6cf9573d5f25bb1b3cc62c7329b3a56d79a86c"
+    },
+    {
+      "look": "instrument",
+      "mode": "note",
+      "exactFile": true,
+      "patchEqual": true,
+      "sha256": "c630f31c0b9aaa929a6b91a48108e34437a700d50cb4d42fb444667b453159c6"
+    },
+    {
+      "look": "instrument",
+      "mode": "freq",
+      "exactFile": true,
+      "patchEqual": true,
+      "sha256": "19ef3abd757913586222f6484bc7ba43de59d86938de2bc9a999070219e6f7a3"
+    },
+    {
+      "look": "vintage",
+      "mode": "note",
+      "exactFile": true,
+      "patchEqual": true,
+      "sha256": "180723996952e4d6efd9405dfa62e5358ce6d95bf3abe0d4b161ceb0eeadd74c"
+    },
+    {
+      "look": "vintage",
+      "mode": "freq",
+      "exactFile": true,
+      "patchEqual": true,
+      "sha256": "bbef0abb5c2a21522563697700274e37432dca52801aa22e9315485d5ad538c4"
+    },
+    {
+      "look": "learner",
+      "mode": "note",
+      "exactFile": true,
+      "patchEqual": true,
+      "sha256": "64119768585950962a17cc007f47de44345c89e3e4c5e1375c65fc259f892940"
+    },
+    {
+      "look": "learner",
+      "mode": "freq",
+      "exactFile": true,
+      "patchEqual": true,
+      "sha256": "3d9c23d9a1f1c693d08651f01f93814eeb096cecaa4b19d9ad2aa0de71ca1e8c"
+    }
+  ]
+}

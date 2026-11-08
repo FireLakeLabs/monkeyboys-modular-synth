@@ -125,7 +125,7 @@ export function inspectCable() {
   const cable = document.querySelector('.cable.signal-audio-mod')
   require(cable, 'Missing audio-mod cable')
   const core = cable.querySelector('.audio-mod-core'),
-    outer = cable.querySelector('path:not([class])')
+    outer = cable.querySelector('.cable-paint')
   require(core && outer, 'Missing double stroke')
   require(getComputedStyle(core).strokeDasharray === '3px, 7px', 'Missing distinct dash')
   require(getComputedStyle(core).stroke !== getComputedStyle(outer).stroke, 'Missing two tones')

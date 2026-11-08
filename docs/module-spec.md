@@ -27,6 +27,7 @@ writes. `panelControls` in `src/rack/model.ts` reads this data:
 - `more`: rarely used controls move to a More flyout beside the panel. MIX keeps
   NAME and OUTPUT there. SMPL keeps BANK, LOOP and CUT there with the BEGIN, END,
   LOOP BEGIN and LOOP END knobs, whose positions the tape also draws and moves.
+  OSC keeps VOICES, DETUNE and SPREAD in More when supersaw is selected.
 
 ## Call bindings (#128)
 
@@ -74,7 +75,10 @@ catalog’s optional `paletteCategory` places ITER/JUX in Pattern and CODE in
 Utility, retaining their existing Alien/Cyber colors and family looks. Other
 modules use their existing category. Family is a badge on each chip. Filtering
 matches names, long names, displayed calls and reader function names without case
-sensitivity; chip text wraps instead of truncating. Module widths are unchanged.
+sensitivity; chip text wraps at word boundaries instead of truncating or breaking
+words. Intrinsic word widths allow long names to take a full row within the
+180 px dock; full accessible names remain on the buttons. Module widths and
+new-patch rail sizing are unchanged.
 
 ## Conventions
 

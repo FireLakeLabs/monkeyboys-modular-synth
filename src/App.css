@@ -183,7 +183,19 @@
   gap: 4px;
 }
 
+.library .module-chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.module-chips li {
+  flex: 1 1 calc(50% - 2px);
+  min-width: min-content;
+}
+
 .chip {
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -199,7 +211,7 @@
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.02em;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 
 .chip-call {
@@ -594,8 +606,8 @@
   .dock-panel {
     padding: 8px 12px;
   }
-  .library ul {
-    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  .module-chips li {
+    flex-basis: 112px;
   }
   .library h3 {
     margin: 0 0 6px;

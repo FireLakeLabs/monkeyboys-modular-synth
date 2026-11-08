@@ -60,7 +60,8 @@ packs are added, not seated. Exact engine detail stays behind the ⓘ control, s
 nothing overpromises readiness.
 
 The left dock has **Modules**, **Sounds** and **Packs** tabs (#177), and each tab has
-one vertical scroll. Modules groups compact two-column chips by the six categories,
+one vertical scroll. Modules groups compact chips by the six categories,
+using two columns where whole words fit and a full row for longer names,
 with the catalog-owned Strudel call on each chip, the title in its tooltip and accessible
 description, and a filter on names and calls (#79). Labels wrap without ellipsis; rack
 module widths stay fixed. Sounds opens on search; searching opens every matching bank,
@@ -214,8 +215,10 @@ SPLICE fits with a shorter text box. Rarely used fields move to a More flyout
 beside the panel, dark like the nested editor's tray so it reads the same beside
 every look. The flyout takes focus when it opens and follows its panel as the rack
 scrolls. It opens on the free side and stays full size at any zoom. Escape closes
-it and returns focus to More, and clicking outside closes it. A panel can still
-scroll in a mode that adds controls, such as OSC's supersaw.
+it and returns focus to More without changing rack status; Escape still cancels an
+active cable or placement gesture when no flyout consumes it. Clicking outside
+closes it. OSC keeps its secondary supersaw fields in More and fits in both pitch
+modes in all four Hardware looks.
 
 Panels overlap two rails, each with one hole per HP, and the pinned OUT panel has
 matching rails. Looks that have screws on their boards show two fixing screws.
@@ -321,7 +324,9 @@ and [nested acceptance](nested-step-editor-verification.md).
 Cables are drawn over the panels, and selecting on press wakes a module's cables, so
 a cable can appear under the pointer between press and release. Interactive panel
 controls therefore stay above the cable layer, as jacks do. New controls need the
-same treatment. Test them with a real pointer click on a panel that has a cable
+same treatment. Cable paint keeps its signal-specific dots/dashes; a separate
+continuous transparent stroke owns hover and selection. Faded cables pass the
+pointer through both strokes. Test controls with a real pointer click on a panel that has a cable
 crossing it: a synthetic click or a hit-target check passes while real clicks are lost.
 
 ## Rack visual hierarchy (#85, #86, #96, #88)
@@ -479,7 +484,8 @@ SMPL's tape has B/E/LB/LE markers on separate lanes, all measured over the same
 sample strip. Pointer dragging and left/right arrows edit the associated fractions;
 Home/End reach 0/1. A pointer gesture is one accepted undo group. LOOP is explicit.
 The existing numerical controls and applied code update those same marks. SPLICE
-shows one razor mark per division; its count/mode/order controls own the code.
+shows one razor mark per division across the full sample strip, following COUNT
+in every Hardware look; its count/mode/order controls own the code.
 All controls remain inside the existing panel scroller; widths and jack positions
 follow the existing look/zoom rules. See [acceptance and limits](sound-crate.md).
 
