@@ -4,6 +4,7 @@ import { parse } from 'acorn'
 import { controlValue } from '../modules/values'
 import { numericNotation } from '../patch/notation'
 import { isRailHp } from '../patch/layout'
+import { isArrangement } from '../patch/arrangement'
 import { getModuleSpec } from '../modules/catalog'
 import { callMethod, tupleControls } from '../modules/bindings'
 import { looksFor } from '../modules/looks'
@@ -196,6 +197,8 @@ export function graph(patch: Patch): Map<string, Node> {
           pair.split(':').some((part) => !Number.isSafeInteger(Number(part)))
         )
           throw new Error('Output requires a positive channel pair, such as 1:2')
+        if (!isArrangement(string(node, `arr${channel}`)))
+          throw new Error('Arrange lanes use one 0 or 1 per cycle, such as <1!4 0!4>')
       }
     }
     nodes.set(module.id, node)

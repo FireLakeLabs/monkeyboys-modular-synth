@@ -49,14 +49,14 @@ describe('panelControls', () => {
     }
   })
 
-  it('stands MIX in four channel strips with names and outputs in More', () => {
+  it('stands MIX in four channel strips with names, outputs and arranger lanes in More', () => {
     const { loose, strips, more } = panelControls(getModuleSpec('mix'))
     expect(loose).toEqual([])
     expect(strips.map(({ group, controls }) => [group, controls.map(({ id }) => id)])).toEqual(
       [1, 2, 3, 4].map((n) => [`CH ${n}`, [`ch${n}`, `mute${n}`, `solo${n}`]]),
     )
     expect(more.map(({ id }) => id).toSorted()).toEqual(
-      [1, 2, 3, 4].flatMap((n) => [`channels${n}`, `name${n}`]).toSorted(),
+      [1, 2, 3, 4].flatMap((n) => [`channels${n}`, `name${n}`, `arr${n}`]).toSorted(),
     )
   })
 

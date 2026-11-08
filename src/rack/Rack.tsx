@@ -33,6 +33,7 @@ import { observeActivity } from './activity'
 import type { Control } from '../modules/types'
 import { ControlEditor } from './Controls'
 import { MoreFlyout } from './MoreFlyout'
+import { ArrangerLane } from './ArrangerLane'
 import {
   HP,
   ROW_HEIGHT,
@@ -1362,6 +1363,8 @@ export function Rack({
           + Add row
           {placement && ghost?.row === rows ? ` · ${getModuleSpec(placement.type).name}` : ''}
         </button>
+        {/* A loaded patch starts from its own song length. */}
+        <ArrangerLane key={patchLoads} patch={patch} edit={edit} locked={locked} />
         <footer className="rack-footer">
           <div className="rack-status" aria-live="polite">
             {message}

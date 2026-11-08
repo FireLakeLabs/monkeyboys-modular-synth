@@ -4,7 +4,7 @@ import { creditComments, patchCredits } from './credits'
 import { parse, tokenizer } from 'acorn'
 import { isGrid, isSteps } from '../codegen/graph'
 import { drumText } from '../patch/notation'
-import { sequenceText } from '../rack/model'
+import { routedModules, sequenceText } from '../rack/model'
 import { generate, generateDocument } from '../codegen/generate'
 import {
   descriptor,
@@ -273,6 +273,9 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
     }
   }
   const edits: Edit[] = []
+  // A routed control with no source owner (such as an imported mixer's lane) has
+  // no literal to splice; when that leaves the graph unproven, convert instead.
+  let unowned = false
   for (const module of next.modules) {
     const previous = before.modules.find((m) => m.id === module.id)
     if (!previous) throw new Error('Missing source owner')
@@ -282,7 +285,11 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
       if (JSON.stringify(value) === JSON.stringify(old)) continue
       if ('presentationOnly' in control && control.presentationOnly) continue
       const bindings = document.bindings.filter((b) => b.module === module.id)
-      if (!bindings.length || (module.type === 'out' && control.id === 'vol')) continue
+      if (module.type === 'out' && control.id === 'vol') continue
+      if (!bindings.length) {
+        unowned ||= routedModules(next).has(module.id)
+        continue
+      }
       let spans = bindings.flatMap((b) => b.controls[control.id] ?? [])
       let text =
         typeof value === 'string'
@@ -403,7 +410,12 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
         all.findIndex((other) => other.start === edit.start && other.end === edit.end) === i,
     ),
   )
-  return saveLayout({ ...document, source: changed }, next)
+  try {
+    return saveLayout({ ...document, source: changed }, next)
+  } catch (failure) {
+    if (!unowned) throw failure
+    throw new RackEditRefused(failure instanceof Error ? failure.message : String(failure))
+  }
 }
 
 /**
