@@ -174,4 +174,13 @@ $: note("g4").s("square")
   await page.locator('.workspace-notice').getByRole('button', { name: /^Undo/ }).click()
   await accepted(page)
   expect(await source(page)).toBe(spliced)
+
+  // Playing the last rested cycle clears the lane: only the mask call goes.
+  await cells(page, 'osc1').nth(3).focus()
+  await page.keyboard.press('Space')
+  await accepted(page)
+  expect((await source(page)).split('\n// ── @monkeyboy rack v1')[0]).toBe(
+    imported.replace('.mask("<1!2 0!2>")', '').trimEnd(),
+  )
+  expect(await run(page, 'lanes')).toMatchObject({ arr1: '', arr2: '' })
 })

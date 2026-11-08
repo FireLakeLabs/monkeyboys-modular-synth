@@ -582,7 +582,7 @@ The reader treats a voice's `mask` as the channel's lane only when its single
 argument is lane text (`0`/`1` steps with optional `!n` inside `<…>`, at most 256
 cycles) and only postgain, mixer modulation, `channels` and `orbit` follow it.
 Patterned, mid-chain or repeated masks and `arrange()` stay exact
-CODE. Imported lane literals edit in place; adding a lane where no mask exists
+CODE. Imported lane literals edit in place, and clearing one removes only its mask call; adding a lane where no mask exists
 converts the code on edit, with Undo. Saved-rack reconciliation carries the lane
 with the channel, like its NAME and OUTPUT. See the [spike and contract](arranger.md).
 

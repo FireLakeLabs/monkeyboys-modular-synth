@@ -257,6 +257,25 @@ $: s("hh*8").mask("1 0 1 1")
     expect(read(next.source).patch).toEqual(next.patch)
   })
 
+  it.each([
+    ['inline', '$: s("bd*4").mask("<1 0>") // kick\n', '$: s("bd*4") // kick\n'],
+    [
+      'on its own line',
+      '$: note("c e")\n  .s("sine")\n  // rests\n  .mask("<0 1>")\n  .postgain(0.5)\n',
+      '$: note("c e")\n  .s("sine")\n  // rests\n  .postgain(0.5)\n',
+    ],
+  ])('clears an imported lane %s by removing only its mask call', (_case, source, cleared) => {
+    const doc = read(source)
+    const mix = doc.patch.modules.find((module) => module.type === 'mix')
+    if (!mix) throw new Error('Missing mixer')
+    expect(mix.values.arr1).toBe(source.includes('<1 0>') ? '<1 0>' : '<0 1>')
+    const { document, converted } = applyRackEdit(doc, setValue(doc.patch, 'mix1', 'arr1', ''))
+    expect(converted).toBe(false)
+    expect(sourceBody(document.source)).toBe(cleared)
+    expect(read(document.source).layout).toBe('restored')
+    expect(read(document.source).patch).toEqual(document.patch)
+  })
+
   it('adds a lane to an imported voice by converting the code, with the lane audible', () => {
     const source = `$: s("bd*4")\n$: s("hh*8")\n`
     const doc = read(source)

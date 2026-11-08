@@ -276,6 +276,7 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
   // A routed control with no source owner (such as an imported mixer's lane) has
   // no literal to splice; when that leaves the graph unproven, convert instead.
   let unowned = false
+  const removed: { scope: string; index: number }[] = []
   for (const module of next.modules) {
     const previous = before.modules.find((m) => m.id === module.id)
     if (!previous) throw new Error('Missing source owner')
@@ -316,6 +317,35 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
           spans = [{ start: arg.start, end: arg.end }]
           text = String(value / (call?.name === 'setcps' ? 240 : 4))
         }
+      }
+      // Clearing a lane removes its mask call: an empty mask is not lane text.
+      if (module.type === 'mix' && control.id.startsWith('arr') && value === '' && spans.length) {
+        const body = sourceBody(document.source)
+        for (const span of spans) {
+          const scope = parseSource(body).scopes.find((item) =>
+            item.calls.some((call) => call.name === 'mask' && call.args[0]?.start === span.start),
+          )
+          const index =
+            scope?.calls.findIndex(
+              (call) =>
+                call.name === 'mask' &&
+                call.args[0]?.start === span.start &&
+                call.args[0]?.end === span.end,
+            ) ?? -1
+          const call = scope?.calls[index]
+          if (!scope || !call) throw new RackEditRefused('Clear this lane in the code')
+          // Remove from the `.mask` token, keeping comments before it. A call on
+          // its own line also takes its line break and indentation.
+          const dot = body.lastIndexOf('.', body.lastIndexOf('mask', span.start))
+          const before = /\s*$/.exec(body.slice(call.start, dot))?.[0] ?? ''
+          edits.push({
+            start: before.includes('\n') ? dot - before.length : dot,
+            end: call.end,
+            text: '',
+          })
+          removed.push({ scope: scope.descriptor.id, index })
+        }
+        continue
       }
       if (module.type === 'code' && control.id === 'text' && typeof value === 'string') {
         spans = bindings
@@ -410,8 +440,19 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
         all.findIndex((other) => other.start === edit.start && other.end === edit.end) === i,
     ),
   )
+  // Removed calls leave their owners, and later calls in that scope move up one.
+  const bindings = removed.length
+    ? document.bindings.flatMap((binding) => {
+        const gone = removed.filter((item) => item.scope === binding.scope && !binding.loop)
+        if (!gone.length) return [binding]
+        const calls = binding.calls
+          .filter((index) => !gone.some((item) => item.index === index))
+          .map((index) => index - gone.filter((item) => item.index < index).length)
+        return calls.length ? [{ ...binding, calls }] : []
+      })
+    : document.bindings
   try {
-    return saveLayout({ ...document, source: changed }, next)
+    return saveLayout({ ...document, source: changed, bindings }, next)
   } catch (failure) {
     if (!unowned) throw failure
     throw new RackEditRefused(failure instanceof Error ? failure.message : String(failure))

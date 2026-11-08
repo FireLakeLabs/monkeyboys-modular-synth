@@ -61,7 +61,8 @@ other mask stay source-owned CODE with exact bytes.
 - **Reading.** A voice's mask is that channel's lane when its argument is lane
   text and only postgain, mixer modulation, `channels` and `orbit` follow it. Any
   other mask (patterned, mid-chain, a second mask) stays exact CODE. An imported
-  lane edits in place: only its string literal changes.
+  lane edits in place: only its string literal changes. Clearing it removes only
+  the `.mask(…)` call, keeping comments and other calls.
 - **Timing.** A lane repeats after its own length. A note plays when its start
   falls in a playing cycle; a note started in a rested cycle stays silent even
   if it lasts into a playing one. A lane counts song cycles, so patterns keep
