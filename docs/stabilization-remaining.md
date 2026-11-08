@@ -32,7 +32,7 @@ Repeat failure and unchanged isolated/full passing reruns also remain unexplaine
 
 ## Verification ledger
 
-Implementation and verification in progress. No acceptance claimed yet.
+Local verification is recorded below; Opus and hosted PR gates remain pending.
 
 ## Initial verification and harness reconciliation
 
@@ -99,9 +99,8 @@ Inspected real, font-loaded screenshots:
 [native sound drag](evidence/stabilization-remaining/sound-drag.png).
 Trance retains 29 modules and 28 cables, in four 104-HP rows at 41% Fit at
 1600×1000. Fit is a navigation overview, not legible control text; pointer/Enter
-navigation opens readable 100% detail. The owner has been asked whether this
-satisfies #187's “readable zoom” criterion or whether that criterion stays open.
-No acceptance answer is inferred from elapsed time. CODE merging remains declined;
+navigation opens readable 100% detail. The owner explicitly accepted overview plus readable 100% detail navigation
+as satisfying #187's “readable zoom” criterion on 8 November 2026. CODE merging remains declined;
 no saved personal/bundled positions or catalog widths were changed.
 
 ## #207 bounded diagnostic disposition

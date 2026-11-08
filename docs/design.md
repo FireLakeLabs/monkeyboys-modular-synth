@@ -541,3 +541,13 @@ sound or press Enter on its card to assign without dragging; single click
 continues to audition. Native selectors remain keyboard alternatives. Source-aware
 mutations retain bank/refusal rules. Overview consumes panel clicks for zoom
 and refuses sound assignment until detail view, without initiating wiring.
+
+## Unsaved import placement and readability (#187)
+
+Initial placement for imports without saved layouts packs module order over
+64/84/104 HP rails, selecting fewer rows and narrower rails on ties. Fit includes
+both dimensions. The owner accepted overview plus pointer/keyboard navigation to
+readable 100% detail on 8 November 2026; Trance's 29 modules and 28 cables fit in
+four 104-HP rows at 41% on a 1600×1000 window. Saved layouts retain their exact
+positions and width. No adjacent CODE merging is implemented; see the
+[study](translation-rules.md#adjacent-code-study-187-8-november-2026).
