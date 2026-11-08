@@ -1,8 +1,8 @@
 {
   "$total": {
-    "mappedCallShare": 0.918918918918919,
-    "readableVoiceShare": 0.8518518518518519,
-    "codeFreePatchShare": 0.8947368421052632,
+    "mappedCallShare": 0.9514563106796117,
+    "readableVoiceShare": 0.8888888888888888,
+    "codeFreePatchShare": 0.9090909090909091,
     "parseFailures": 0,
     "codeBlocks": 15,
     "unmappedCalls": 15,
@@ -178,5 +178,29 @@
     "unmapped:dec": 1,
     "unmapped:fm": 1,
     "unmapped:fmh": 1
+  },
+  "war-pigs-doom-instrument": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "war-pigs-dub-afterimage": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
+  },
+  "war-pigs-industrial-triplets": {
+    "mappedCallShare": 1,
+    "readableVoiceShare": 1,
+    "codeFreePatchShare": 1,
+    "parseFailures": 0,
+    "codeBlocks": 0,
+    "unmappedCalls": 0
   }
 }

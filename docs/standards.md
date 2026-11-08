@@ -87,6 +87,8 @@ workflow evidence; local branch relationships and CI do not establish membership
 | Changes              | Prefer scoped, verifiable units. Demonstrate failing regression tests locally; deliver green changes. Broader findings become follow-ups.                                                                                                                                    |
 | Performance          | Validate outputs and work counts; interleave repeated runs, disclose environment/noise, and connect microbenchmarks to a user-visible path. No timing gate without a reliable baseline.                                                                                      |
 | UI                   | Use semantic controls, names, focus behavior, keyboard operation, and reduced motion. Advanced keyboard patching may remain outside v1. Rack controls stay above the cable layer and are tested with a real pointer, as in [design](design.md#controls-and-the-cable-layer). |
+| Stored user data     | Review lost work and multiple tabs from round 1: stale tabs, full or unreadable storage, undo, reload. On #205, most Sol findings were two-tab cases, including a blocker that silently overwrote a saved patch; it took 5 rounds.                                           |
+| Browser evidence     | Full suite on the final commit and after every review fix, `RESULT` line read, [**Full browser suites**](ci.md#full-browser-acceptance) waited for. Process rules only: that check is not required, so nothing blocks a merge that skips them.                               |
 | Agent workflow       | tstack owns explicitly requested PR/review workflows. pstack engineering skills do not authorize delegation, commits, external messages, or shipping by themselves.                                                                                                          |
 
 Record narrow exceptions beside the affected code with their reason and removal
@@ -471,3 +473,20 @@ unsupported lookahead and saved CODE owners cannot invent slicing defaults. The
 crate uses #137's seated inventory and status API. The separate browser suite
 checks cold audition without transport, five drop destinations and tape/code
 updates; physical listening and other-browser coverage remain unverified.
+
+The #210 Doom acceptance compares the isolated restart’s active DRIVE worklets
+with the anchor oscillator lifetimes in that same window. The probe separately
+names its earlier maximum `cumulativeDrivePeak`; using that maximum as the
+isolated count fails the browser guard. Module/HP and source/rack invariants
+run in `npm run check`; PCM, finite lifetimes and stopped/restarted scheduling
+run in the full browser suite. Historical report figures remain reviewed
+observations, and neither path establishes subjective listening acceptance.
+
+The #211 Industrial acceptance derives its stopped-scheduling wait from the longest
+gap between onsets in any lane, and names an isolated restart’s peaks
+(`immediateRestart`) separately from the maximum across repeated loads
+(`cumulativeRepeatedLoad`). Live edits are checked as events and again in a Bounce
+of the edited rack. Noise samples differ between sessions, so noise PCM is held to
+level and envelope bounds, not digests. Module/HP and source/rack invariants run in
+`npm run check`; PCM, lifetimes and scheduling run in the full browser suite.
+Neither path establishes subjective listening acceptance.

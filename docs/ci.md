@@ -52,9 +52,19 @@ exit status of a wrapper: a background command or a pipe into `tail` can report
 success after tests failed. Extra arguments pass through to Playwright, as in
 `npm run test:browser:report -- -g 'output-panel'`.
 
+- **Run the suite as a background job.** It outlasts the 10-minute limit on foreground
+  commands, and that limit cut one Wave 3 run off at test 66 of 101. A cut-off run proves
+  nothing, however well it was going: run it again in full.
 - **One suite per machine.** Each run needs port 5173 with `--strictPort`, so a second
   run fails at once, and two suites competing for CPU cause false timeouts and skew
   latency numbers. Concurrent work should prove changes on GitHub instead.
+- **Keep the machine quiet during suites and latency runs.** Avoid running reviews or
+  other heavy work beside them. Reviews running alongside may have added noise in Wave 3,
+  but that is unproven: of two runs with a silent sample voice, only one overlapped a
+  review ([#207](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/207)).
+- **Do not edit `src/` during a run.** Vite serves it live, so an edit, rebase or branch
+  switch changes the app under the running tests, and the result no longer describes one
+  commit. Wait for the `RESULT` line first.
 - **Stop servers by port or process ID.** `pkill -f <text>` also matches the shell
   running that command, which kills it with exit 144. Find the process with
   `ss -ltnp | grep :5173` and pass its ID to `kill`. A killed run can leave its
@@ -102,6 +112,20 @@ HTML reports, JSON results, child-script logs and available screenshots/traces
 are retained under `playwright-report/` and `test-results/`, including partial
 failure evidence, and uploaded for 14 days. Open `playwright-report/index.html`
 or use `npx playwright show-report` to inspect the report.
+
+### Expected size and duration
+
+At `b4ed8b3` on 5 November 2026 the suite had **163 tests in 9 files**, and
+`npx playwright test --list` prints the current count. The eight GitHub runs for Wave 3's
+pull requests and merges took 15 to 19 minutes in the test step, or 15 to 20 for the whole
+job. The two runs at 163 tests took 16 and 19 minutes in the test step. A full local run
+takes more than 10 minutes.
+
+These are dated observations, not limits; the suite grows with each feature. Compare a
+finished run's `passed` count with the current list, because a shorter run did not cover
+everything. A run well outside this range is worth a look even if it passes:
+[#193](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/193) tracks browser
+test time and reliability.
 
 ### Observed browser baseline
 

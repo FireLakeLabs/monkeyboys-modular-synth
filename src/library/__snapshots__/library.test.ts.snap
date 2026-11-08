@@ -517,3 +517,24 @@ exports[`built-in patch library > switch-angel-trance-demo: preserves exact sour
   "projection": "165ce4fad8d721869edde499bf3deaaf33aca58d80fa5a07c78db39c1b594cf4",
 }
 `;
+
+exports[`built-in patch library > war-pigs-doom-instrument: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "11a7d27facca579bc6c1521edb2c13d345e6c3db2a188a16547fd1f5678ce1d8",
+  "projection": "34ecabdb183a46eeda48a2f4d6c8ea8520e482abdd70a7ab345ddef7b188fe9d",
+}
+`;
+
+exports[`built-in patch library > war-pigs-dub-afterimage: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "36f7763c4556b20c5060d139a57bf71004fa93089e6be5f870b6df1ff214fd1d",
+  "projection": "dde54a4ea278dd75135a59a3bc82ee70afdedb9bfebcf1ee8d3777dca157ca13",
+}
+`;
+
+exports[`built-in patch library > war-pigs-industrial-triplets: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "afd4c3d739cbe0e92c236404274f671c93a1bfa5acae27f96f78843471c595da",
+  "projection": "01ddd476e5acc50caedca54484770ac419efd60da51683b4430f393008735c08",
+}
+`;

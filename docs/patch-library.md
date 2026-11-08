@@ -281,3 +281,30 @@ CV, effect insertion and mixer channel edits, checks attribution and export
 identity, then verifies a nearby showcase conversion, its message, Undo and Redo,
 retained registrations and a later CV edit. The signal group also queries real
 Strudel onset events independently of source/rack checks.
+
+## War Pigs experiments (#210/#211/#212)
+
+Complete patches → War Pigs experiments contains generator-owned, 20-module
+interpretations of the first four slow opening bars. All three load stopped at 56 BPM;
+press Play explicitly.
+
+- **War Pigs · Doom instrument** (`war-pigs-doom-instrument`): try anchor VCF
+  CUTOFF and DRIVE, compensating with the named MIX anchor channel. See its
+  [selected adaptation, engine semantics and acceptance evidence](war-pigs-doom.md).
+- **War Pigs · Industrial triplet machine** (`war-pigs-industrial-triplets`):
+  mute MIX machinery to hear the anchor alone, restore it, then reduce FM INDEX.
+  See its [selected adaptation, engine semantics and acceptance evidence](war-pigs-industrial-triplets.md).
+- **War Pigs · Dub afterimage** (`war-pigs-dub-afterimage`): mute afterimage,
+  restore it and change DELAY MIX (the delay send). Bus edits wait for the next
+  sparse reply onset. See its
+  [selected adaptation, native-delay semantics and verification](war-pigs-dub-afterimage.md).
+
+All three entries share the stable `war-pigs-experiments` collection under
+`complete`; each preserves its own source, saved rack and custom attribution.
+
+Black Sabbath composed the music; Jake Brown’s
+[Ultimate Guitar transcription](https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414)
+was consulted. The [Songsterr link](https://www.songsterr.com/a/wsa/black-sabbath-war-pigs-tab-s10137)
+is retained for provenance, with no available notation or note-level corroboration.
+The new modular arrangements and synthesis are distinct from the composition and
+transcription and are not labelled original MIT exercises.

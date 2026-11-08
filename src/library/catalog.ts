@@ -18,7 +18,10 @@ import effects from './patches/echo-room.strudel?raw'
 import alien from './patches/iter-jux.strudel?raw'
 import code from './patches/custom-helper.strudel?raw'
 import layered from './patches/layered-sketch.strudel?raw'
+import dub from './patches/war-pigs-dub-afterimage.strudel?raw'
 import trance from './patches/switch-angel-trance-demo.strudel?raw'
+import doom from './patches/war-pigs-doom-instrument.strudel?raw'
+import industrial from './patches/war-pigs-industrial-triplets.strudel?raw'
 
 export interface LibraryPatch {
   kind: 'patch'
@@ -45,7 +48,7 @@ const attribution = {
   url: 'https://github.com/FireLakeLabs/monkeyboys-modular-synth',
 }
 
-/** Repository-owned originals. Loading always reads source into a fresh document. */
+/** Bundled exercises and attributed arrangements. Loading reads a fresh document. */
 export const PATCH_LIBRARY: readonly LibraryNode[] = [
   {
     kind: 'collection',
@@ -337,6 +340,60 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
     id: 'complete',
     title: 'Complete patches',
     children: [
+      {
+        kind: 'collection',
+        id: 'war-pigs-experiments',
+        title: 'War Pigs experiments',
+        children: [
+          {
+            kind: 'patch',
+            id: 'war-pigs-doom-instrument',
+            title: 'War Pigs · Doom instrument',
+            description:
+              'Four slow opening bars interpreted as a driven E/D anchor, low roots and a quiet synthesized warning. Six cycles at 56 BPM; no drums.',
+            tryThis: 'Open the anchor VCF CUTOFF, then compare DRIVE amount and MIX anchor level.',
+            source: doom,
+            attribution: {
+              author:
+                'Black Sabbath composition · consulted transcription by Jake Brown · new modular arrangement and synthesis by MonkeyBoy’s Modular Synth contributors',
+              url: 'https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414',
+            },
+            exercises: ['seq', 'clock', 'osc', 'vcf', 'drive', 'vca', 'env', 'lfo', 'mix', 'out'],
+          },
+          {
+            kind: 'patch',
+            id: 'war-pigs-industrial-triplets',
+            title: 'War Pigs · Industrial triplet machine',
+            description:
+              'Four slow opening bars as a sustained metallic FM E/D anchor, low roots and sparse noise machinery on the 12/8 groups of three. Six cycles at 56 BPM; no samples.',
+            tryThis:
+              'Mute MIX machinery to hear the anchor alone, restore it, then reduce FM INDEX.',
+            source: industrial,
+            attribution: {
+              author:
+                'Black Sabbath composition · consulted transcription by Jake Brown · new modular arrangement and synthesis by MonkeyBoy’s Modular Synth contributors',
+              url: 'https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414',
+            },
+            exercises: ['seq', 'clock', 'osc', 'fmop', 'noise', 'vcf', 'vca', 'env', 'mix', 'out'],
+          },
+          {
+            kind: 'patch',
+            id: 'war-pigs-dub-afterimage',
+            title: 'War Pigs · Dub afterimage',
+            description:
+              'A dry E/D anchor, low roots and sparse filtered triangle replies leave room for a quiet native delay. Four slow opening bars at 56 BPM.',
+            tryThis:
+              'Mute afterimage, then restore it and change DELAY MIX (the delay send). Wait for the next reply onset, which can take several seconds, for bus edits to take effect.',
+            source: dub,
+            attribution: {
+              author:
+                'Black Sabbath composition · Jake Brown transcription consulted · original Dub afterimage arrangement and synthesis by MonkeyBoy’s Modular Synth contributors',
+              url: 'https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414',
+            },
+            exercises: ['seq', 'clock', 'osc', 'vcf', 'vca', 'env', 'pan', 'delay', 'mix', 'out'],
+          },
+        ],
+      },
       {
         kind: 'collection',
         id: 'trance',
