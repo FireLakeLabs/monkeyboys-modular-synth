@@ -124,5 +124,11 @@
     "path": "src/library/patches/war-pigs-doom-instrument.strudel",
     "license": "New synthesis/arrangement; underlying Black Sabbath composition and Jake Brown transcription credited, not claimed MIT",
     "provenance": "Issue #210; new modular adaptation; https://tabs.ultimate-guitar.com/tab/black-sabbath/war-pigs-tabs-58414; Songsterr metadata only; docs/war-pigs-doom.md"
+  },
+  {
+    "id": "war-pigs-dub-afterimage",
+    "path": "src/library/patches/war-pigs-dub-afterimage.strudel",
+    "license": "New arrangement/synthesis under repository MIT; underlying Black Sabbath composition and Jake Brown transcription separately attributed, not relicensed",
+    "provenance": "Issue #212 selected opening adaptation; src/library/catalog.ts custom attribution; docs/war-pigs-dub-afterimage.md; no lyrics, recording or full tab"
   }
 ]

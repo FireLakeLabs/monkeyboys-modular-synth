@@ -525,6 +525,13 @@ exports[`built-in patch library > war-pigs-doom-instrument: preserves exact sour
 }
 `;
 
+exports[`built-in patch library > war-pigs-dub-afterimage: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "36f7763c4556b20c5060d139a57bf71004fa93089e6be5f870b6df1ff214fd1d",
+  "projection": "dde54a4ea278dd75135a59a3bc82ee70afdedb9bfebcf1ee8d3777dca157ca13",
+}
+`;
+
 exports[`built-in patch library > war-pigs-industrial-triplets: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "afd4c3d739cbe0e92c236404274f671c93a1bfa5acae27f96f78843471c595da",

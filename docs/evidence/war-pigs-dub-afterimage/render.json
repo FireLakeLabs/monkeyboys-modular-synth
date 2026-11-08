@@ -1,0 +1,1157 @@
+{
+  "patch": "war-pigs-dub-afterimage",
+  "renderedRevision": "711e9ed99b0e185699eba0d2bff61247377bc79b",
+  "source": {
+    "path": "src/library/patches/war-pigs-dub-afterimage.strudel",
+    "sha256": "36f7763c4556b20c5060d139a57bf71004fa93089e6be5f870b6df1ff214fd1d"
+  },
+  "tempo": 56,
+  "master": 0.8,
+  "cycles": 6,
+  "seconds": 25.714285714285715,
+  "start": "bar 1 / cycle 0",
+  "method": "Production File \u2192 Bounce WAV; Chromium OfflineAudioContext; default levels; no normalization",
+  "browser": "156.0.8078.4",
+  "node": "v24.22.2",
+  "engine": {
+    "@strudel/web": "1.3.0",
+    "@strudel/webaudio": "1.3.0",
+    "superdough": "1.3.0",
+    "@strudel/core": "1.2.6",
+    "@strudel/transpiler": "1.2.6"
+  },
+  "comparisons": {
+    "dry-anchor.mp3": "MIX SOLO 1 on",
+    "delay-muted.mp3": "DELAY MIX 0; all source lanes retained",
+    "reply-solo.mp3": "MIX SOLO 2 on",
+    "low-solo.mp3": "MIX SOLO 3 on"
+  },
+  "encoding": "default.wav unchanged 44.1 kHz stereo 16-bit PCM download; MP3 comparisons: ffmpeg libmp3lame -b:a 192k, no normalization",
+  "files": {
+    "default.wav": {
+      "bytes": 4536044,
+      "sha256": "d6e4b7666483d28d39e7e6d40d7a90b996101b4f65ff1751e186ba27b1c42ad7"
+    },
+    "delay-muted.mp3": {
+      "bytes": 618831,
+      "sha256": "2e1c02e3d69c67e5b5ecd1efec8bb5bff2ce2ca8c20d32a2256fafaab6aebfaa"
+    },
+    "dry-anchor.mp3": {
+      "bytes": 618831,
+      "sha256": "37bccb9bc601444ee1f5b94fc1c9cb8eb6a1595e08cbfa0fac5540cbf52da7f0"
+    },
+    "low-solo.mp3": {
+      "bytes": 618831,
+      "sha256": "109ef358bd066de49770ddfd54ca2d806dc30341dfbcd9d830cbd5915a770a6c"
+    },
+    "reply-solo.mp3": {
+      "bytes": 618831,
+      "sha256": "308e59f583ad53ab8c81de7d660a06f8a440e1c94aa2b14147412edde165a727"
+    }
+  },
+  "measured": {
+    "revision": "711e9ed99b0e185699eba0d2bff61247377bc79b",
+    "browser": "156.0.8078.4",
+    "events": {
+      "budgets": [
+        {
+          "bpm": 40,
+          "starts": {
+            "total": 26,
+            "anchor": 17,
+            "reply": 4,
+            "low": 5
+          },
+          "windowPeak": 4,
+          "voices": {
+            "total": 5,
+            "anchor": 3,
+            "reply": 1,
+            "low": 2
+          }
+        },
+        {
+          "bpm": 56,
+          "starts": {
+            "total": 26,
+            "anchor": 17,
+            "reply": 4,
+            "low": 5
+          },
+          "windowPeak": 4,
+          "voices": {
+            "total": 5,
+            "anchor": 3,
+            "reply": 1,
+            "low": 2
+          }
+        },
+        {
+          "bpm": 240,
+          "starts": {
+            "total": 26,
+            "anchor": 17,
+            "reply": 4,
+            "low": 5
+          },
+          "windowPeak": 4,
+          "voices": {
+            "total": 5,
+            "anchor": 3,
+            "reply": 1,
+            "low": 2
+          }
+        }
+      ],
+      "negative": {
+        "density": true,
+        "starts": true,
+        "overlap": true,
+        "gate": true
+      },
+      "longestGapSeconds": 7.5,
+      "bars": [0, 1.5, 3, 4.5, 6],
+      "groups": [
+        0, 0.375, 0.75, 1.125, 1.5, 1.875, 2.25, 2.625, 3, 3.375, 3.75, 4.125, 4.5, 4.875, 5.25,
+        5.625, 6
+      ],
+      "events": [
+        {
+          "slot": 0,
+          "slots": 8.5,
+          "note": "b3",
+          "orbit": 1,
+          "velocity": 1
+        },
+        {
+          "slot": 0,
+          "slots": 8.5,
+          "note": "e3",
+          "orbit": 1,
+          "velocity": 1
+        },
+        {
+          "slot": 0,
+          "slots": 10,
+          "note": "e2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 9,
+          "slots": 1,
+          "note": "b4",
+          "orbit": 2,
+          "velocity": 0.7
+        },
+        {
+          "slot": 10,
+          "slots": 0.5,
+          "note": "d3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 10.5,
+          "slots": 1.5,
+          "note": "e3",
+          "orbit": 1,
+          "velocity": 0.8
+        },
+        {
+          "slot": 12,
+          "slots": 8.5,
+          "note": "a3",
+          "orbit": 1,
+          "velocity": 0.95
+        },
+        {
+          "slot": 12,
+          "slots": 8.5,
+          "note": "d3",
+          "orbit": 1,
+          "velocity": 0.95
+        },
+        {
+          "slot": 12,
+          "slots": 10,
+          "note": "d2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 21,
+          "slots": 1,
+          "note": "a4",
+          "orbit": 2,
+          "velocity": 0.7
+        },
+        {
+          "slot": 22,
+          "slots": 1,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 22,
+          "slots": 12,
+          "note": "e2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 23,
+          "slots": 0.5,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 23.5,
+          "slots": 0.5,
+          "note": "a3",
+          "orbit": 1,
+          "velocity": 0.7
+        },
+        {
+          "slot": 24,
+          "slots": 8.5,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.85
+        },
+        {
+          "slot": 33,
+          "slots": 1,
+          "note": "e4",
+          "orbit": 2,
+          "velocity": 0.7
+        },
+        {
+          "slot": 34,
+          "slots": 1,
+          "note": "d3",
+          "orbit": 1,
+          "velocity": 0.65
+        },
+        {
+          "slot": 35,
+          "slots": 1,
+          "note": "e3",
+          "orbit": 1,
+          "velocity": 0.8
+        },
+        {
+          "slot": 36,
+          "slots": 8.5,
+          "note": "a3",
+          "orbit": 1,
+          "velocity": 0.95
+        },
+        {
+          "slot": 36,
+          "slots": 8.5,
+          "note": "d3",
+          "orbit": 1,
+          "velocity": 0.95
+        },
+        {
+          "slot": 36,
+          "slots": 10,
+          "note": "d2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 45,
+          "slots": 1,
+          "note": "a4",
+          "orbit": 2,
+          "velocity": 0.7
+        },
+        {
+          "slot": 46,
+          "slots": 1,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 46,
+          "slots": 2,
+          "note": "e2",
+          "orbit": 3,
+          "velocity": 1
+        },
+        {
+          "slot": 47,
+          "slots": 0.5,
+          "note": "g#3",
+          "orbit": 1,
+          "velocity": 0.6
+        },
+        {
+          "slot": 47.5,
+          "slots": 0.5,
+          "note": "a3",
+          "orbit": 1,
+          "velocity": 0.7
+        }
+      ]
+    },
+    "live": {
+      "peak": 0.09619145095348358,
+      "rms": 0.027135223009691626,
+      "phaseRMS": [0.02681359997561064, 0.02688568871922365, 0.033762309419741995]
+    },
+    "sources": {
+      "anchor": [
+        {
+          "begin": 0.45130000000000003,
+          "end": 5.064871428571428,
+          "frequency": 164.81378173828125,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 0.45130000000000003,
+          "end": 5.064871428571428,
+          "frequency": 246.941650390625,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 5.808442857142857,
+          "end": 6.136299999999999,
+          "frequency": 146.83238220214844,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 6.0763,
+          "end": 6.939871428571428,
+          "frequency": 164.81378173828125,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 6.879871428571429,
+          "end": 11.493442857142858,
+          "frequency": 146.83238220214844,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 6.879871428571429,
+          "end": 11.493442857142858,
+          "frequency": 220,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 12.237014285714285,
+          "end": 12.832728571428571,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 12.772728571428571,
+          "end": 13.100585714285714,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 13.040585714285713,
+          "end": 13.368442857142856,
+          "frequency": 220,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 13.308442857142857,
+          "end": 17.92201428571429,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 18.665585714285715,
+          "end": 19.261300000000002,
+          "frequency": 146.83238220214844,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 19.2013,
+          "end": 19.797014285714287,
+          "frequency": 164.81378173828125,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 19.737014285714285,
+          "end": 24.350585714285714,
+          "frequency": 146.83238220214844,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 19.737014285714285,
+          "end": 24.350585714285714,
+          "frequency": 220,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 25.094157142857142,
+          "end": 25.68987142857143,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 25.629871428571427,
+          "end": 25.95772857142857,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 25.89772857142857,
+          "end": 26.225585714285714,
+          "frequency": 220,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 26.165585714285715,
+          "end": 30.779157142857144,
+          "frequency": 164.81378173828125,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 26.165585714285715,
+          "end": 30.779157142857144,
+          "frequency": 246.941650390625,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 31.52272857142857,
+          "end": 31.850585714285714,
+          "frequency": 146.83238220214844,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 31.790585714285715,
+          "end": 32.65415714285714,
+          "frequency": 164.81378173828125,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 32.59415714285714,
+          "end": 37.20772857142857,
+          "frequency": 146.83238220214844,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 32.59415714285714,
+          "end": 37.20772857142857,
+          "frequency": 220,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 37.9513,
+          "end": 38.54701428571428,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 38.48701428571429,
+          "end": 38.81487142857143,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 38.754871428571434,
+          "end": 39.082728571428575,
+          "frequency": 220,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 39.02272857142857,
+          "end": 43.6363,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 44.379871428571434,
+          "end": 44.975585714285714,
+          "frequency": 146.83238220214844,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 44.91558571428572,
+          "end": 45.5113,
+          "frequency": 164.81378173828125,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 45.4513,
+          "end": 50.06487142857143,
+          "frequency": 146.83238220214844,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 45.4513,
+          "end": 50.06487142857143,
+          "frequency": 220,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 50.80844285714286,
+          "end": 51.40415714285714,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 51.34415714285714,
+          "end": 51.67201428571428,
+          "frequency": 207.65234375,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 51.61201428571429,
+          "end": 51.93987142857143,
+          "frequency": 220,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 51.879871428571434,
+          "end": 56.49344285714286,
+          "frequency": 164.81378173828125,
+          "type": "square",
+          "offline": false
+        },
+        {
+          "begin": 51.879871428571434,
+          "end": 56.49344285714286,
+          "frequency": 246.941650390625,
+          "type": "square",
+          "offline": false
+        }
+      ],
+      "low": [
+        {
+          "begin": 0.45130000000000003,
+          "end": 5.918442857142856,
+          "frequency": 82.40689086914062,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 6.879871428571429,
+          "end": 12.347014285714284,
+          "frequency": 73.41619110107422,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 12.237014285714285,
+          "end": 18.775585714285715,
+          "frequency": 82.40689086914062,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 19.737014285714285,
+          "end": 25.204157142857145,
+          "frequency": 73.41619110107422,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 25.094157142857142,
+          "end": 26.275585714285718,
+          "frequency": 82.40689086914062,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 26.165585714285715,
+          "end": 31.632728571428576,
+          "frequency": 82.40689086914062,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 32.59415714285714,
+          "end": 38.061299999999996,
+          "frequency": 73.41619110107422,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 37.9513,
+          "end": 44.48987142857143,
+          "frequency": 82.40689086914062,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 45.4513,
+          "end": 50.91844285714286,
+          "frequency": 73.41619110107422,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 50.80844285714286,
+          "end": 51.989871428571426,
+          "frequency": 82.40689086914062,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 51.879871428571434,
+          "end": 57.34701428571429,
+          "frequency": 82.40689086914062,
+          "type": "triangle",
+          "offline": false
+        }
+      ],
+      "reply": [
+        {
+          "begin": 5.272728571428571,
+          "end": 5.968442857142857,
+          "frequency": 493.88330078125,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 11.7013,
+          "end": 12.397014285714286,
+          "frequency": 440,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 18.129871428571427,
+          "end": 18.82558571428571,
+          "frequency": 329.6275634765625,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 24.558442857142857,
+          "end": 25.254157142857142,
+          "frequency": 440,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 30.987014285714285,
+          "end": 31.68272857142857,
+          "frequency": 493.88330078125,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 37.41558571428572,
+          "end": 38.1113,
+          "frequency": 440,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 43.84415714285714,
+          "end": 44.53987142857142,
+          "frequency": 329.6275634765625,
+          "type": "triangle",
+          "offline": false
+        },
+        {
+          "begin": 50.27272857142857,
+          "end": 50.968442857142854,
+          "frequency": 440,
+          "type": "triangle",
+          "offline": false
+        }
+      ],
+      "modulators": [],
+      "noise": [],
+      "peaks": {
+        "primary": 5,
+        "anchor": 3,
+        "low": 2,
+        "reply": 1,
+        "modulators": 0,
+        "noise": 0
+      }
+    },
+    "editedTriggers": [
+      {
+        "cycle": 13.125,
+        "target": 56.7013,
+        "cps": 0.23333333333333334,
+        "duration": 0.125,
+        "release": 0.15,
+        "orbit": 2,
+        "pan": 0.6,
+        "delay": 0.2,
+        "feedback": 0.25,
+        "bandf": 650,
+        "postgain": 0.6
+      },
+      {
+        "cycle": 13.3125,
+        "target": 57.504871428571434,
+        "cps": 0.23333333333333334,
+        "duration": 0.1875,
+        "release": 0.05,
+        "orbit": 1,
+        "postgain": 0.8
+      },
+      {
+        "cycle": 13.5,
+        "target": 58.30844285714286,
+        "cps": 0.23333333333333334,
+        "duration": 1.0625,
+        "release": 0.05,
+        "orbit": 1,
+        "postgain": 0.8
+      },
+      {
+        "cycle": 13.5,
+        "target": 58.30844285714286,
+        "cps": 0.23333333333333334,
+        "duration": 1.0625,
+        "release": 0.05,
+        "orbit": 1,
+        "postgain": 0.8
+      },
+      {
+        "cycle": 13.5,
+        "target": 58.30844285714286,
+        "cps": 0.23333333333333334,
+        "duration": 1.25,
+        "release": 0.1,
+        "orbit": 3,
+        "postgain": 0.5
+      },
+      {
+        "cycle": 14.625,
+        "target": 63.129871428571434,
+        "cps": 0.23333333333333334,
+        "duration": 0.125,
+        "release": 0.15,
+        "orbit": 2,
+        "pan": 0.4,
+        "delay": 0.2,
+        "feedback": 0.15,
+        "bandf": 1500,
+        "postgain": 0.35
+      },
+      {
+        "cycle": 14.75,
+        "target": 63.66558571428572,
+        "cps": 0.23333333333333334,
+        "duration": 0.125,
+        "release": 0.05,
+        "orbit": 1,
+        "postgain": 0.8
+      },
+      {
+        "cycle": 14.75,
+        "target": 63.66558571428572,
+        "cps": 0.23333333333333334,
+        "duration": 1.5,
+        "release": 0.1,
+        "orbit": 3,
+        "postgain": 0.5
+      },
+      {
+        "cycle": 14.875,
+        "target": 64.20129999999999,
+        "cps": 0.23333333333333334,
+        "duration": 0.0625,
+        "release": 0.05,
+        "orbit": 1,
+        "postgain": 0.8
+      },
+      {
+        "cycle": 14.9375,
+        "target": 64.46915714285713,
+        "cps": 0.23333333333333334,
+        "duration": 0.0625,
+        "release": 0.05,
+        "orbit": 1,
+        "postgain": 0.8
+      },
+      {
+        "cycle": 15,
+        "target": 64.73701428571427,
+        "cps": 0.23333333333333334,
+        "duration": 1.0625,
+        "release": 0.05,
+        "orbit": 1,
+        "postgain": 0.8
+      }
+    ],
+    "delays": [
+      {
+        "orbit": "2",
+        "time": 0.5357142686843872,
+        "feedback": 0.25
+      }
+    ],
+    "stopped": {
+      "requestedAt": 77.77066666666667,
+      "stoppedAt": 77.984,
+      "held": {
+        "begin": 77.59415714285713,
+        "end": 82.20772857142856,
+        "frequency": 164.81378173828125,
+        "type": "square",
+        "offline": false
+      },
+      "pcm": {
+        "peak": 0.06476294249296188,
+        "rms": 0.029574182731997602,
+        "phaseRMS": [0.029574182731997602]
+      }
+    },
+    "noNewOnsetsForMs": 8000,
+    "replaced": {
+      "same": true,
+      "present": true,
+      "feedback": 0.15000000596046448
+    },
+    "roundTrip": {
+      "sourceExact": true,
+      "rackExact": true,
+      "fanout": ["env2->vcf1.cv", "env2->vca2.cv"]
+    },
+    "renders": {
+      "default": {
+        "rate": 44100,
+        "channels": 2,
+        "seconds": 25.714285714285715,
+        "peak": 0.08990478515625,
+        "rms": 0.02683952624975337,
+        "clipped": 0
+      },
+      "dry-anchor": {
+        "rate": 44100,
+        "channels": 2,
+        "seconds": 25.714285714285715,
+        "peak": 0.07318115234375,
+        "rms": 0.024370636481092292,
+        "clipped": 0
+      },
+      "reply-solo": {
+        "rate": 44100,
+        "channels": 2,
+        "seconds": 25.714285714285715,
+        "peak": 0.0146484375,
+        "rms": 0.0008889673300427212,
+        "clipped": 0
+      },
+      "low-solo": {
+        "rate": 44100,
+        "channels": 2,
+        "seconds": 25.714285714285715,
+        "peak": 0.041412353515625,
+        "rms": 0.011357985960678378,
+        "clipped": 0
+      },
+      "delay-muted": {
+        "rate": 44100,
+        "channels": 2,
+        "seconds": 25.714285714285715,
+        "peak": 0.089752197265625,
+        "rms": 0.02683897119457256,
+        "clipped": 0
+      }
+    },
+    "differenceRMS": 0.00018031307475316298,
+    "immediate": {
+      "before": 6.037333333333334,
+      "elapsed": 0.28799999999999937,
+      "pcm": {
+        "peak": 0.08233016729354858,
+        "rms": 0.03145486203282297,
+        "phaseRMS": [0.03145486203282297]
+      }
+    },
+    "isolatedRestart": {
+      "primary": 6,
+      "anchor": 4,
+      "low": 2,
+      "reply": 0,
+      "modulators": 0,
+      "noise": 0
+    },
+    "cumulativeRepeatedLoad": {
+      "primary": 12,
+      "anchor": 8,
+      "low": 4,
+      "reply": 0,
+      "modulators": 0,
+      "noise": 0
+    },
+    "errors": [],
+    "physicalListening": false
+  },
+  "nativeDelayPCM": {
+    "taps": [
+      {
+        "bpm": 56,
+        "sync": 0.125,
+        "send": 0.2,
+        "feedback": 0.25,
+        "rate": 44100,
+        "dryPeak": 0.010663539171218872,
+        "taps": [
+          {
+            "seconds": 0.5357142857142857,
+            "correlation": 0.999999999999989,
+            "scale": 0.20000000332324416
+          },
+          {
+            "seconds": 1.0743310657596372,
+            "correlation": 0.999999999999989,
+            "scale": 0.05000000083081104
+          },
+          {
+            "seconds": 1.6129478458049886,
+            "correlation": 0.999999999999989,
+            "scale": 0.01250000020770276
+          }
+        ],
+        "repeatPeaks": [0.0021327079739421606, 0.0005331769934855402, 0.00013329424837138504],
+        "beforeRepeatPeak": 0,
+        "tailEnd": 0.6857142857142857,
+        "tailPeak": 2.0339088191434485e-9,
+        "tailDb": -134.39139778336258,
+        "duration": 8.571428571428571
+      },
+      {
+        "bpm": 40,
+        "sync": 0.125,
+        "send": 0.2,
+        "feedback": 0.25,
+        "rate": 44100,
+        "dryPeak": 0.010663539171218872,
+        "taps": [
+          {
+            "seconds": 0.75,
+            "correlation": 0.999999999999989,
+            "scale": 0.20000000332324416
+          },
+          {
+            "seconds": 1.5029024943310658,
+            "correlation": 0.999999999999989,
+            "scale": 0.05000000083081104
+          },
+          {
+            "seconds": 2.2558049886621316,
+            "correlation": 0.999999999999989,
+            "scale": 0.01250000020770276
+          }
+        ],
+        "repeatPeaks": [0.0021327079739421606, 0.0005331769934855402, 0.00013329424837138504],
+        "beforeRepeatPeak": 0,
+        "tailEnd": 0.9,
+        "tailPeak": 1.301701644251807e-7,
+        "tailDb": -98.26779830368483,
+        "duration": 12
+      },
+      {
+        "bpm": 240,
+        "sync": 0.125,
+        "send": 0.2,
+        "feedback": 0.25,
+        "rate": 44100,
+        "dryPeak": 0.010655251331627369,
+        "taps": [
+          {
+            "seconds": 0.12498866213151927,
+            "correlation": 0.9988868642597211,
+            "scale": 0.1995516667524988
+          },
+          {
+            "seconds": 0.25290249433106576,
+            "correlation": 0.9985560545608785,
+            "scale": 0.053081032332420196
+          },
+          {
+            "seconds": 0.38081632653061226,
+            "correlation": 0.9950660729800266,
+            "scale": 0.011596936978084352
+          }
+        ],
+        "repeatPeaks": [0.006756693124771118, 0.001851470791734755, 0.0005854328046552837],
+        "beforeRepeatPeak": 0,
+        "tailEnd": 0.275,
+        "tailPeak": 4.3354836237834504e-27,
+        "tailDb": -487.81052296011404,
+        "duration": 8
+      },
+      {
+        "bpm": 56,
+        "sync": 0.25,
+        "send": 0.2,
+        "feedback": 0.25,
+        "rate": 44100,
+        "dryPeak": 0.010663539171218872,
+        "taps": [
+          {
+            "seconds": 1,
+            "correlation": 0.999999999999989,
+            "scale": 0.20000000332324416
+          },
+          {
+            "seconds": 2.0029024943310656,
+            "correlation": 0.999999999999989,
+            "scale": 0.05000000083081104
+          },
+          {
+            "seconds": 3.0058049886621316,
+            "correlation": 0.999999999999989,
+            "scale": 0.01250000020770276
+          }
+        ],
+        "repeatPeaks": [0.0021327079739421606, 0.0005331769934855402, 0.00013329424837138504],
+        "beforeRepeatPeak": 0,
+        "tailEnd": 0.6857142857142857,
+        "tailPeak": 2.0827226308028912e-6,
+        "tailDb": -74.18539865056633,
+        "duration": 8.571428571428571
+      },
+      {
+        "bpm": 56,
+        "sync": 0.375,
+        "send": 0.2,
+        "feedback": 0.25,
+        "rate": 44100,
+        "dryPeak": 0.010663539171218872,
+        "taps": [
+          {
+            "seconds": 1,
+            "correlation": 0.999999999999989,
+            "scale": 0.20000000332324416
+          },
+          {
+            "seconds": 2.0029024943310656,
+            "correlation": 0.999999999999989,
+            "scale": 0.05000000083081104
+          },
+          {
+            "seconds": 3.0058049886621316,
+            "correlation": 0.999999999999989,
+            "scale": 0.01250000020770276
+          }
+        ],
+        "repeatPeaks": [0.0021327079739421606, 0.0005331769934855402, 0.00013329424837138504],
+        "beforeRepeatPeak": 0,
+        "tailEnd": 0.6857142857142857,
+        "tailPeak": 2.0827226308028912e-6,
+        "tailDb": -74.18539865056633,
+        "duration": 8.571428571428571
+      }
+    ],
+    "liveTail": {
+      "attack": {
+        "peak": 0.012675466015934944,
+        "rms": 0.0017101659752055856,
+        "phaseRMS": [0.0017101659752055856]
+      },
+      "immediate": {
+        "peak": 0.011496404185891151,
+        "rms": 0.005262968759447992,
+        "phaseRMS": [0.005262968759447992]
+      },
+      "final": {
+        "peak": 2.3824036077257915e-9,
+        "rms": 5.005968129093773e-10,
+        "phaseRMS": [5.005968129093773e-10]
+      },
+      "tailDb": -134.51897194296916
+    },
+    "bypass": [
+      {
+        "bpm": 56,
+        "sync": 0.125,
+        "send": 0,
+        "feedback": 0.25,
+        "rate": 44100,
+        "dryPeak": 0.010663539171218872,
+        "taps": [
+          {
+            "correlation": -1
+          },
+          {
+            "correlation": -1
+          },
+          {
+            "correlation": -1
+          }
+        ],
+        "repeatPeaks": [0, 0, 0],
+        "beforeRepeatPeak": 0,
+        "tailEnd": 0.6857142857142857,
+        "tailPeak": 0,
+        "tailDb": -560.5580273723,
+        "duration": 8.571428571428571
+      },
+      {
+        "bpm": 56,
+        "sync": 0.125,
+        "send": 0.2,
+        "feedback": 0,
+        "rate": 44100,
+        "dryPeak": 0.010663539171218872,
+        "taps": [
+          {
+            "correlation": -1
+          },
+          {
+            "correlation": -1
+          },
+          {
+            "correlation": -1
+          }
+        ],
+        "repeatPeaks": [0, 0, 0],
+        "beforeRepeatPeak": 0,
+        "tailEnd": 0.6857142857142857,
+        "tailPeak": 0,
+        "tailDb": -560.5580273723,
+        "duration": 8.571428571428571
+      }
+    ],
+    "physicalListening": false
+  },
+  "physicalListening": false,
+  "delivery": "Repository evidence files; native GitHub attachment requirement remains separate and unaccepted"
+}
