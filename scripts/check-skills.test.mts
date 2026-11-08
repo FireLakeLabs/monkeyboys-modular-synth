@@ -92,7 +92,9 @@ await test('a repo-owned skill still needs working links and its identity', (t) 
 
 await test('a repo-owned skill must declare dependencies that exist', (t) => {
   const manifest = structuredClone(lock)
-  manifest.repoSkills[0]?.dependencies.push('missing-skill')
+  const skill = manifest.repoSkills.find((skill) => skill.name === 'orchestrate')
+  assert.ok(skill)
+  skill.dependencies.push('missing-skill')
   assert.ok(
     checkSkills(fixture(t), manifest).some((error) =>
       error.includes('orchestrate: missing dependency missing-skill'),
