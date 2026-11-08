@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pocock architecture review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root{color-scheme:light dark}body{margin:0;color:var(--foreground, #18202b);font-family:var(--font-sans,system-ui);line-height:1.55}main{max-width:100%;margin:0}h1{font-size:26px;line-height:1.2;margin:4px 0 12px}h2{font-size:21px;line-height:1.3;margin:2px 0 9px}h3{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted-foreground,#687486);margin:0 0 8px}p{margin:9px 0;font-size:14px}a{color:var(--primary,#3358c4);text-decoration:underline}.intro{margin:14px 0 26px}.muted,.files,.note{color:var(--muted-foreground,#687486)}.files{font-family:var(--font-mono,monospace);font-size:11px;overflow-wrap:anywhere}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted-foreground,#687486)}article{background:var(--card,#f4f5f6);border:1px solid var(--border,#d9dfe7);border-radius:var(--radius,12px);padding:18px;margin:18px 0}.badges{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.badge{font-size:10px;font-weight:700;border-radius:20px;padding:2px 8px}.strong{color:var(--success,#22764a);border:1px solid var(--success,#22764a)}.explore{color:var(--warning,#936b13);border:1px solid var(--warning,#936b13)}.category{font-size:11px;color:var(--muted-foreground,#687486)}.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.schematic{padding:12px;border:1px dashed var(--border,#ccd2dc);border-radius:8px}.box{font-size:11px;text-align:center;border:1px solid var(--border,#ccd2dc);padding:9px 5px;border-radius:5px;min-height:34px;background:var(--secondary,#e9edf4)}.deep{border:2px solid var(--primary,#3358c4)}.deep .box:first-child{border-color:var(--primary,#3358c4);font-weight:700}.deep .box:not(:first-child){background:transparent}.arrow{text-align:center;color:var(--muted-foreground,#687486);font-size:14px;line-height:20px}.wins{font-size:12px;color:var(--success,#22764a)}.note{font-size:12px}.recommendation{border-left:3px solid var(--primary,#3358c4);padding:4px 16px;margin:30px 0}table{width:100%;border-collapse:collapse;font-size:12px;margin:16px 0}td,th{text-align:left;padding:8px;border-bottom:1px solid var(--border,#d9dfe7)}th{color:var(--muted-foreground,#687486);font-weight:500}.foot{font-size:12px;color:var(--muted-foreground,#687486);margin:24px 0}@media(max-width:450px){article{padding:12px}.pair{gap:7px}.box{font-size:10px}.schematic{padding:7px}}
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Architecture against Pocock’s guidance</h1>
+      <p class="muted">MonkeyBoy’s Modular Synth · 8 November 2026 · source 9484126</p>
+      <p class="intro">
+        Strong domain modules; workspace coordination exposes too much caller knowledge. Preserve
+        the catalog, source-owned document and playback seams. Deepen four concrete areas
+        incrementally.
+      </p>
+      <table>
+        <tr>
+          <th>Principle</th>
+          <th>Assessment</th>
+        </tr>
+        <tr>
+          <td>Deep translation interface</td>
+          <td>Strong</td>
+        </tr>
+        <tr>
+          <td>Catalog as shared knowledge</td>
+          <td>Strong</td>
+        </tr>
+        <tr>
+          <td>Caller and test share the seam</td>
+          <td>Mixed in workspace coordination</td>
+        </tr>
+        <tr>
+          <td>Meaningful side-effect adapters</td>
+          <td>Strong foundation</td>
+        </tr>
+      </table>
+      <p class="note">
+        Solid boxes: modules or responsibilities · dashed outline: current seam · thick outline:
+        proposed deep module. Shapes illustrate ownership, not code size. Recommendations remain
+        proposals.
+      </p>
+      <article id="candidate-1">
+        <div class="eyebrow">Candidate 1</div>
+        <h2>Accepted workspace transitions</h2>
+        <div class="badges">
+          <span class="badge strong">Strong</span
+          ><span class="category">in-process + existing adapters</span>
+        </div>
+        <p class="files">
+          App.tsx · workspace/{document,history,finishedCode,open,autosave}.ts ·
+          library/myPatches.ts
+        </p>
+        <div class="pair">
+          <div>
+            <h3>Before</h3>
+            <div class="schematic ">
+              <div class="box">App knows transition ordering</div>
+              <div class="arrow">↓</div>
+              <div class="box">Draft rules · history groups</div>
+              <div class="arrow">↓</div>
+              <div class="box">Recovery · playback · save identity</div>
+            </div>
+          </div>
+          <div>
+            <h3>After · proposed</h3>
+            <div class="schematic deep">
+              <div class="box">Workspace transition interface</div>
+              <div class="arrow">↓</div>
+              <div class="box">Acceptance + history policy</div>
+              <div class="arrow">↓</div>
+              <div class="box">Existing storage / playback adapters</div>
+            </div>
+          </div>
+        </div>
+        <p>
+          <b>Problem.</b> App still coordinates acceptance, draft history, recovery, playback and
+          save identity. A test reconstructs part of that coordination.
+        </p>
+        <p>
+          <b>Deepen.</b> Concentrate acceptance/history policy behind a workspace module; leave
+          rendering, focus and editor transactions in their adapters.
+        </p>
+        <p class="wins">
+          Locality: one owner for accepted revisions. Leverage: tests call production transitions.
+        </p>
+        <p class="note">
+          Start with acceptance/history. Expand only when the same invariant requires it.
+          <a
+            href="https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/94841267a36c29be027a09fdf590b8ec1d851ed1/src/workspace/finishedCode.test.ts#L17"
+            >Source evidence ↗</a
+          >
+        </p>
+      </article>
+      <article id="candidate-2">
+        <div class="eyebrow">Candidate 2</div>
+        <h2>Cable preview and commit feasibility</h2>
+        <div class="badges">
+          <span class="badge strong">Strong</span><span class="category">in-process</span>
+        </div>
+        <p class="files">
+          workspace/{connections,document}.ts · App.tsx · connections/rackEditable tests
+        </p>
+        <div class="pair">
+          <div>
+            <h3>Before</h3>
+            <div class="schematic ">
+              <div class="box">Preview: preserve-source attempt</div>
+              <div class="arrow">↓</div>
+              <div class="box">Predict conversion will work</div>
+              <div class="arrow">↓</div>
+              <div class="box">Commit: conversion can still fail</div>
+            </div>
+          </div>
+          <div>
+            <h3>After · proposed</h3>
+            <div class="schematic deep">
+              <div class="box">One feasibility interface</div>
+              <div class="arrow">↓</div>
+              <div class="box">Preserve · convert · refuse</div>
+              <div class="arrow">↓</div>
+              <div class="box">Preview + commit share policy</div>
+            </div>
+          </div>
+        </div>
+        <p>
+          <b>Problem.</b> Preview interprets preservation refusal as a conversion warning; commit
+          additionally attempts conversion, which can also fail.
+        </p>
+        <p>
+          <b>Deepen.</b> Give preview and commit the same document-edit planning seam, with
+          current-revision validation.
+        </p>
+        <p class="wins">
+          Locality: one owner for edit feasibility. Leverage: the same result informs both callers.
+        </p>
+        <p class="note">
+          The failure mode exists in a test; misleading jack behavior was not reproduced in a
+          browser.
+          <a
+            href="https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/94841267a36c29be027a09fdf590b8ec1d851ed1/src/workspace/rackEditable.test.ts#L87"
+            >Source evidence ↗</a
+          >
+        </p>
+      </article>
+      <article id="candidate-3">
+        <div class="eyebrow">Candidate 3</div>
+        <h2>Live rack geometry</h2>
+        <div class="badges">
+          <span class="badge explore">Worth exploring</span
+          ><span class="category">browser adapter + in-process geometry</span>
+        </div>
+        <p class="files">
+          rack/Rack.tsx · patch/layout.ts · looks/layout.ts · browser geometry checks
+        </p>
+        <div class="pair">
+          <div>
+            <h3>Before</h3>
+            <div class="schematic ">
+              <div class="box">Jack / cable measurement</div>
+              <div class="arrow">↓</div>
+              <div class="box">Pointer frame conversion</div>
+              <div class="arrow">↓</div>
+              <div class="box">Placement scale conversion</div>
+            </div>
+          </div>
+          <div>
+            <h3>After · proposed</h3>
+            <div class="schematic deep">
+              <div class="box">Rack geometry interface</div>
+              <div class="arrow">↓</div>
+              <div class="box">Frames · zoom · clipping</div>
+              <div class="arrow">↓</div>
+              <div class="box">Browser measurement adapter</div>
+            </div>
+          </div>
+        </div>
+        <p>
+          <b>Problem.</b> Measurement, cable pointers and placement separately know coordinate
+          frames, zoom and clipping rules.
+        </p>
+        <p>
+          <b>Deepen.</b> Concentrate frame interpretation and coordinate conversion behind a
+          concrete rack-geometry module.
+        </p>
+        <p class="wins">
+          Locality: coordinate rules concentrate. Leverage: multiple callers share frame
+          interpretation.
+        </p>
+        <p class="note">
+          Keep live-jack measurements, fixed widths and real browser hit-target checks.
+          <a
+            href="https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/94841267a36c29be027a09fdf590b8ec1d851ed1/src/rack/Rack.tsx#L283"
+            >Source evidence ↗</a
+          >
+        </p>
+      </article>
+      <article id="candidate-4">
+        <div class="eyebrow">Candidate 4</div>
+        <h2>Reader projection rollback ownership</h2>
+        <div class="badges">
+          <span class="badge explore">Worth exploring</span
+          ><span class="category">in-process · internal seam</span>
+        </div>
+        <p class="files">reader/read.ts · reader behavior fixtures</p>
+        <div class="pair">
+          <div>
+            <h3>Before</h3>
+            <div class="schematic ">
+              <div class="box">FX: graph + bindings + cursor…</div>
+              <div class="arrow">↓</div>
+              <div class="box">Callback: appended graph + bindings</div>
+              <div class="arrow">↓</div>
+              <div class="box">Scalar: candidate + ID + position</div>
+            </div>
+          </div>
+          <div>
+            <h3>After · proposed</h3>
+            <div class="schematic deep">
+              <div class="box">Internal projection ownership</div>
+              <div class="arrow">↓</div>
+              <div class="box">Explicit relevant commit scopes</div>
+              <div class="arrow">↓</div>
+              <div class="box">read / tryRead stay unchanged</div>
+            </div>
+          </div>
+        </div>
+        <p>
+          <b>Problem.</b> FX, function callbacks and scalar recognizers maintain different rollback
+          inventories across recursive projection.
+        </p>
+        <p>
+          <b>Deepen.</b> Concentrate speculative ownership internally, preserving distinct commit
+          scopes and the existing read/tryRead interface.
+        </p>
+        <p class="wins">
+          Locality: rollback obligations concentrate. Leverage: recognizers need less shared-state
+          knowledge.
+        </p>
+        <p class="note">
+          Maintenance risk, not a newly demonstrated defect. Avoid a universal snapshot policy.
+          <a
+            href="https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/94841267a36c29be027a09fdf590b8ec1d851ed1/src/reader/read.ts#L840"
+            >Source evidence ↗</a
+          >
+        </p>
+      </article>
+      <section class="recommendation">
+        <h2>Top recommendation</h2>
+        <p>
+          <a href="#candidate-1">Accepted workspace transitions</a>: the broadest caller knowledge
+          and clearest duplicated test orchestration. Begin with acceptance/history. Cable
+          feasibility is the smaller first step if preferred.
+        </p>
+      </section>
+      <p class="foot">
+        Observed baseline: 2,382 Vitest tests, 51 guardrail tests, reader coverage, lint, TypeScript
+        and build passed. No app browser suite or audio listening was performed for this report.
+        Council unavailable: only two providers. Full evidence, deletion tests, cautions and source
+        references are in the
+        <a href="pocock-architecture-review.md">accompanying repository report</a>.
+      </p>
+      <p class="foot">
+        Sources:
+        <a
+          href="https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/codebase-design/SKILL.md"
+          >codebase-design</a
+        >
+        ·
+        <a
+          href="https://github.com/mattpocock/skills/blob/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/improve-codebase-architecture/SKILL.md"
+          >improve-codebase-architecture</a
+        >
+        · skills revision 4ae2317
+      </p>
+    </main>
+  </body>
+</html>
