@@ -264,6 +264,16 @@ $: s("hh*8").mask("1 0 1 1")
       '$: note("c e")\n  .s("sine")\n  // rests\n  .mask("<0 1>")\n  .postgain(0.5)\n',
       '$: note("c e")\n  .s("sine")\n  // rests\n  .postgain(0.5)\n',
     ],
+    [
+      'after a line comment',
+      '$: s("bd") // kick\n  .mask("<1 0>").postgain(0.5)\n',
+      '$: s("bd") // kick\n  .postgain(0.5)\n',
+    ],
+    [
+      'with a comment inside',
+      '$: s("bd").mask(/* .mask */ "<1 0>").postgain(0.5)\n',
+      '$: s("bd").postgain(0.5)\n',
+    ],
   ])('clears an imported lane %s by removing only its mask call', (_case, source, cleared) => {
     const doc = read(source)
     const mix = doc.patch.modules.find((module) => module.type === 'mix')

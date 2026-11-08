@@ -334,13 +334,22 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
             ) ?? -1
           const call = scope?.calls[index]
           if (!scope || !call) throw new RackEditRefused('Clear this lane in the code')
-          // Remove from the `.mask` token, keeping comments before it. A call on
-          // its own line also takes its line break and indentation.
-          const dot = body.lastIndexOf('.', body.lastIndexOf('mask', span.start))
-          const before = /\s*$/.exec(body.slice(call.start, dot))?.[0] ?? ''
+          // Find the `.mask` dot by token, so comments inside the call cannot match.
+          const text = body.slice(call.start, call.end)
+          const tokens = [...tokenizer(text, { ecmaVersion: 'latest' })]
+          const name = tokens.findIndex(
+            (token, i) =>
+              text.slice(token.start, token.end) === 'mask' && tokens[i - 1]?.type.label === '.',
+          )
+          const dot = call.start + (tokens[name - 1]?.start ?? 0)
+          // A call alone on its line goes with its line; otherwise only its tokens,
+          // so a following call never joins an earlier line comment.
+          const lineStart = body.lastIndexOf('\n', dot - 1) + 1
+          const after = /^[ \t]*(\r?\n|$)/.exec(body.slice(call.end))
+          const ownLine = /^[ \t]*$/.test(body.slice(lineStart, dot)) && after !== null
           edits.push({
-            start: before.includes('\n') ? dot - before.length : dot,
-            end: call.end,
+            start: ownLine ? lineStart : dot,
+            end: ownLine ? call.end + (after?.[0].length ?? 0) : call.end,
             text: '',
           })
           removed.push({ scope: scope.descriptor.id, index })
