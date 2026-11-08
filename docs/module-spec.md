@@ -890,6 +890,7 @@ A generator-owned SCOPE exercise is included in the module library.
 
 The catalog's `sampleTarget` defines panel-wide seated-sound acceptance, including
 WAVETABLE's `wt_` prefix. DRUMS retains per-row targets rather than replacing all
-rows by a panel drop. The crate offers selection followed by double click or Enter;
-native selectors remain available. Presentation never bypasses source-aware
+rows by a panel drop. The crate offers selection followed by double click or Enter. For DRUMS, that
+path requires an explicit choice in the row dialog before applying; it does not
+guess row zero. Native selectors remain available. Presentation never bypasses source-aware
 mutation/refusal or bank semantics. See [sound assignment](design.md#sound-assignment-185).

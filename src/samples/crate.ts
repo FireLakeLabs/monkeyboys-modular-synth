@@ -1,7 +1,7 @@
 import { getModuleSpec } from '../modules/catalog'
 import { controlValue } from '../modules/values'
 import { buildTree, textCell, type Cell } from '../patch/mini'
-import type { Patch } from '../patch/types'
+import type { Patch, PlacedModule } from '../patch/types'
 import { isGrid } from '../codegen/graph'
 import { drumText } from '../patch/notation'
 import { setValue } from '../rack/model'
@@ -16,6 +16,24 @@ export interface SoundChoice {
   name: string
   n: number
 }
+export type SoundAssignment = { kind: 'assigned' } | { kind: 'choose-row'; rows: readonly string[] }
+
+function drumNotation(module: PlacedModule): string {
+  const control = getModuleSpec(module.type).controls.find((control) => control.id === 'grid')
+  if (!control) throw new Error('Missing drum grid')
+  const value = controlValue(module, control)
+  return typeof value === 'string' ? value : isGrid(value) ? drumText(value) : '~'
+}
+
+/** Source row labels for an explicit choice; non-stacked notation remains one row. */
+export function drumSoundRows(module: PlacedModule): readonly string[] {
+  const text = drumNotation(module)
+  const tree = buildTree(text)
+  return tree.join === 'stack'
+    ? tree.root.map((layer) => text.slice(layer.span.start, layer.span.end))
+    : [text]
+}
+
 export const soundToken = ({ name, n }: SoundChoice) => `${name}:${n}`
 export function soundChoice(value: unknown): SoundChoice {
   if (
@@ -168,10 +186,7 @@ export function dropSound(
   if (!module) throw new Error('Missing sample target')
   const spec = getModuleSpec(module.type)
   if (module.type === 'drums') {
-    const control = spec.controls.find((control) => control.id === 'grid')
-    if (!control) throw new Error('Missing drum grid')
-    const value = controlValue(module, control)
-    const text = typeof value === 'string' ? value : isGrid(value) ? drumText(value) : '~'
+    const text = drumNotation(module)
     const unbanked = unbankDrums(patch, moduleId, text)
     return setValue(
       unbanked.patch,

@@ -157,6 +157,7 @@ test('native sound drag highlights panels and selection plus Enter assigns a sea
       ['vcf', 64],
     ])
       patch = m.placeModule(patch, type, 0, hp)
+    patch = m.setValue(patch, 'drums1', 'grid', '[bd ~]*2, [sd ~]*4, hh*4')
     await (await import('/scripts/rack-feel-check.mjs')).load(generate(patch))
   })
   await page.getByLabel('Rack zoom').selectOption('1')
@@ -191,16 +192,75 @@ test('native sound drag highlights panels and selection plus Enter assigns a sea
   const choices = await page.getByLabel('Seated wavetable').locator('option').allTextContents()
   expect(choices).toContain('wt_fixture:0')
   expect(choices).not.toContain('fixture:0')
-  const unchanged = await page.evaluate(async () =>
+  let unchanged = await page.evaluate(async () =>
     (await import('/scripts/editor-browser.mjs')).editorSource(),
   )
   await page.locator('[data-module="vcf1"] .module-header').click()
   await card.focus()
   await page.keyboard.press('Enter')
   await expect(page.locator('.sound-crate output')).toContainText('refused')
+  await expect(page.locator('.sound-crate output')).toContainText(
+    'selected module does not accept sounds',
+  )
+  await page.locator('[data-module="drums1"] .module-header').click()
+  await card.focus()
+  await page.keyboard.press('Enter')
+  const chooser = page.getByRole('dialog', { name: 'Choose DRUMS row' })
+  await expect(chooser).toBeVisible()
   expect(
     await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource()),
   ).toBe(unchanged)
+  await page.keyboard.press('Escape')
+  await expect(chooser).toHaveCount(0)
+  await expect(card).toBeFocused()
+  const beforeRows = await page.evaluate(
+    async () =>
+      (await import('/src/reader/index.ts')).read(
+        (await import('/scripts/editor-browser.mjs')).editorSource(),
+      ).patch,
+  )
+  await card.dblclick()
+  await expect(chooser).toBeVisible()
+  await expect(chooser.getByRole('button').first()).toBeFocused()
+  await page.evaluate(() => document.fonts.ready)
+  await page.screenshot({ path: 'docs/evidence/stabilization-remaining/drums-row-chooser.png' })
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Enter')
+  await expect(chooser).toHaveCount(0)
+  const afterRows = await page.evaluate(
+    async () =>
+      (await import('/src/reader/index.ts')).read(
+        (await import('/scripts/editor-browser.mjs')).editorSource(),
+      ).patch,
+  )
+  expect(afterRows).toEqual({
+    ...beforeRows,
+    modules: beforeRows.modules.map((module) =>
+      module.id === 'drums1'
+        ? { ...module, values: { ...module.values, grid: '[bd ~]*2, [fixture:0 ~]*4, hh*4' } }
+        : module,
+    ),
+  })
+  unchanged = await page.evaluate(async () =>
+    (await import('/scripts/editor-browser.mjs')).editorSource(),
+  )
+  await page.getByLabel('Rack zoom').selectOption('fit')
+  const dragFrom = await card.boundingBox()
+  const dragTo = await panel.boundingBox()
+  await page.mouse.move(dragFrom.x + dragFrom.width / 2, dragFrom.y + dragFrom.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(dragFrom.x + dragFrom.width / 2 + 12, dragFrom.y + dragFrom.height / 2, {
+    steps: 5,
+  })
+  await page.mouse.move(dragTo.x + dragTo.width / 2, dragTo.y + 30, { steps: 10 })
+  await expect(page.locator('.module-panel[data-sound-target]')).toHaveCount(0)
+  await page.mouse.up()
+  await expect(page.getByLabel('Rack zoom')).toHaveValue('fit')
+  expect(
+    await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).editorSource()),
+  ).toBe(unchanged)
+  await page.getByRole('button', { name: 'Zoom to smpl1', exact: true }).click()
+  await expect(page.getByLabel('Rack zoom')).toHaveValue('1')
 })
 
 for (let attempt = 1; attempt <= 3; attempt++) {
@@ -283,15 +343,15 @@ test('injected fetch and decode failures remain distinguishable from readiness',
   })
   const pendingRoute = await held
   const pendingSnapshot = await diagnostics()
+  expect(
+    pendingSnapshot.requests.find((request) => request.url.endsWith('pending.wav'))?.state,
+  ).toBe('requested')
   const failed = page.waitForEvent('requestfailed', (request) =>
     request.url().endsWith('pending.wav'),
   )
   await pendingRoute.abort('failed')
   await failed
   const failedSnapshot = await diagnostics()
-  expect(
-    pendingSnapshot.requests.find((request) => request.url.endsWith('pending.wav'))?.state,
-  ).toBe('requested')
   expect(
     failedSnapshot.requests.find((request) => request.url.endsWith('pending.wav'))?.state,
   ).toBe('failed')
@@ -354,4 +414,63 @@ test('a clipped off-screen MIX endpoint stays at the rail viewport edge', async 
   })
   expect(geometry.endpoint.x).toBeLessThanOrEqual(geometry.view.right + 1)
   expect(geometry.endpoint.y).toBeLessThanOrEqual(geometry.view.bottom + 1)
+})
+
+test('overview retains pinned OUT volume and tempo controls without enabling jacks', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.locator('.cm-content').waitFor()
+  await load(page, 'setcpm(120/4)\n' + source)
+  await page.getByLabel('Rack zoom').selectOption('fit')
+  const output = page.locator('.output-surface .module-panel')
+  await expect(output.locator('.module-controls')).not.toHaveAttribute('inert')
+  const volume = output.getByRole('slider', { name: 'VOL', exact: true })
+  const before = Number(await volume.getAttribute('aria-valuenow'))
+  await volume.focus()
+  await page.keyboard.press('ArrowDown')
+  await expect
+    .poll(async () => Number(await volume.getAttribute('aria-valuenow')))
+    .toBeLessThan(before)
+  await output.getByRole('button', { name: 'Set BPM', exact: true }).click()
+  await output.getByRole('textbox', { name: 'BPM', exact: true }).fill('130')
+  await page.keyboard.press('Enter')
+  await expect(output.getByRole('button', { name: 'Set BPM', exact: true })).toHaveText('130')
+  await expect(page.getByLabel('Rack zoom')).toHaveValue('fit')
+  await expect(output.locator('[data-jack]')).toBeDisabled()
+})
+
+test('moving an overview canvas cable opens its complete destination chooser', async ({ page }) => {
+  await page.goto('/')
+  await page.locator('.cm-content').waitFor()
+  await load(page, source)
+  await page.getByLabel('Rack zoom').selectOption('fit')
+  const point = await page.locator('.cable').evaluateAll((cables) => {
+    const cable = cables.find((cable) =>
+      cable.querySelector('title').textContent.startsWith('seq1:note → osc1:note'),
+    )
+    const path = cable.querySelector('.cable-hit')
+    for (let distance = 5; distance < path.getTotalLength() - 5; distance += 2) {
+      const point = path.getPointAtLength(distance).matrixTransform(path.getScreenCTM())
+      if (document.elementFromPoint(point.x, point.y)?.closest('.cable') === cable)
+        return { x: point.x, y: point.y }
+    }
+    return null
+  })
+  expect(point).not.toBeNull()
+  await page.mouse.click(point.x, point.y)
+  await page.getByRole('button', { name: 'Move destination', exact: true }).click()
+  const connections = page.locator('.connections.rack-popover')
+  await expect(connections.locator('fieldset')).toBeVisible()
+  await connections.getByRole('button', { name: 'osc2:note', exact: true }).click()
+  await expect
+    .poll(() =>
+      page.evaluate(async () => {
+        const { read } = await import('/src/reader/index.ts')
+        const { editorSource } = await import('/scripts/editor-browser.mjs')
+        return read(editorSource()).patch.cables.find((cable) => cable.from.module === 'seq1')?.to
+          .module
+      }),
+    )
+    .toBe('osc2')
 })

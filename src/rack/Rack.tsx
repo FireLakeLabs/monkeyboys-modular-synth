@@ -3,7 +3,13 @@ import { CableProbe, PatchCredits, ScopeDisplay } from './PatternVisuals'
 
 import { SampleSlot, Tape, RazorMarks } from '../samples/SamplePanel'
 import { allowSound, receiveSound } from '../samples/drag'
-import { dropSound, variantCount, type SoundChoice } from '../samples/crate'
+import {
+  dropSound,
+  drumSoundRows,
+  variantCount,
+  type SoundChoice,
+  type SoundAssignment,
+} from '../samples/crate'
 import type { SamplePackResource } from '../strudel/engine'
 import {
   useEffect,
@@ -136,7 +142,7 @@ export function Rack({
 
   soundCrate: (
     active: boolean,
-    assign: (choice: SoundChoice) => void,
+    assign: (choice: SoundChoice, row?: number) => SoundAssignment,
     dragging: (choice: SoundChoice | null) => void,
   ) => ReactNode
   sampleResources: readonly SamplePackResource[]
@@ -173,6 +179,7 @@ export function Rack({
   const menuModule = patch.modules.find((m) => m.id === menu?.id)
   const surface = useRef<HTMLDivElement>(null)
   const viewport = useRef<HTMLDivElement>(null)
+  const connections = useRef<HTMLDetailsElement>(null)
   const rails = useRef<HTMLDivElement>(null)
   const [zoom, setZoom] = useState<number | 'fit'>(1)
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
@@ -556,6 +563,7 @@ export function Rack({
     modules.map((m) => {
       const spec = getModuleSpec(m.type)
       const layout = panelControls(spec)
+      const moduleOverview = overview && m.type !== 'out'
       const acceptsSound =
         !!draggedSound &&
         (m.type === 'drums' ||
@@ -592,7 +600,7 @@ export function Rack({
           data-jacks={LOOK_LAYOUT[m.look].jacks}
           data-module={m.id}
           data-editing={editingModule === m.id}
-          data-sound-target={draggedSound ? acceptsSound : undefined}
+          data-sound-target={draggedSound && !overview ? acceptsSound : undefined}
           onDragOver={(event) => {
             if (!overview && spec.sampleTarget && m.type !== 'drums') allowSound(event)
           }}
@@ -612,7 +620,7 @@ export function Rack({
               : { left: m.hp * HP, top: m.row * ROW_HEIGHT + 20, width: spec.hp * HP }
           }
         >
-          {overview && (
+          {moduleOverview && (
             <button
               type="button"
               className="overview-module"
@@ -628,8 +636,8 @@ export function Rack({
             className="module-header"
             aria-label={`Select ${m.id}`}
             aria-pressed={selected === m.id}
-            draggable={!overview && m.type !== 'out'}
-            tabIndex={overview ? -1 : 0}
+            draggable={!moduleOverview && m.type !== 'out'}
+            tabIndex={moduleOverview ? -1 : 0}
             onClick={() => selectModule(m.id)}
             onDragStart={(event) => {
               if (m.type === 'out') {
@@ -660,7 +668,7 @@ export function Rack({
           </button>
           <div
             className="module-controls"
-            inert={overview}
+            inert={moduleOverview}
             onFocus={() => selectModule(m.id)}
             onPointerDown={() => selectModule(m.id)}
           >
@@ -954,12 +962,23 @@ export function Rack({
           >
             {soundCrate(
               dockTab === 'sounds',
-              (choice) => {
+              (choice, row) => {
                 if (!selected) throw new Error('Select a sound-capable module first')
                 if (overview)
                   throw new Error('Zoom to the selected module before assigning a sound')
-                if (!applySound(selected, choice))
+                const module = patch.modules.find((module) => module.id === selected)
+                if (module?.type === 'drums' && row === undefined)
+                  return { kind: 'choose-row', rows: drumSoundRows(module) }
+                if (
+                  !module ||
+                  (module.type !== 'drums' && !getModuleSpec(module.type).sampleTarget)
+                )
+                  throw new Error(
+                    'Sound assignment refused: selected module does not accept sounds',
+                  )
+                if (!applySound(selected, choice, row))
                   throw new Error('Sound assignment was refused; see the rack message')
+                return { kind: 'assigned' }
               },
               setDraggedSound,
             )}
@@ -1288,6 +1307,7 @@ export function Rack({
               <button
                 type="button"
                 onClick={() => {
+                  if (connections.current) connections.current.open = true
                   setWire({ from: currentCable.from, moving: currentCable.id })
                   setMessage(
                     'Choose a new input. Original cable stays until accepted. Escape cancels.',
@@ -1370,7 +1390,7 @@ export function Rack({
               </div>
             </details>
           )}
-          <details name="rack-popover" className="connections rack-popover">
+          <details ref={connections} name="rack-popover" className="connections rack-popover">
             <summary>Connections ({patch.cables.length})</summary>
             <div>
               {wire && (

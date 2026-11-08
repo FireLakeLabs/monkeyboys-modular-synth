@@ -156,3 +156,54 @@ original two fixtures, and unrelated nested-step Repeat uncertainty stay distinc
 
 Pending bounded Opus review and current-head hosted verification. No physical
 listening performed; existing matrices separately prove engine events and PCM.
+
+## Opus round 1 and acceptance correction
+
+Read-only Claude Opus 5.5 (`claudeAgent`, high effort, usage not exposed) reviewed
+clean `7188b1372f61cc8928e432e3e5d21bd4c57a49ab` against `9484126`.
+Verdict **CHANGES**. The code/test diff before review was 31 files,
++815/-63; after these fixes it is 34 files, +1100/-71. Evidence/log additions
+are counted separately from this code/test growth. The added row chooser is
+necessary to satisfy the owner's explicit #185 non-drag acceptance, rather than
+excluding DRUMS from that path.
+
+| ID  | Severity | Disposition                                                                                                                                                                                                                                 |
+| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S1  | should   | Fixed: the independently scaled pinned OUT retains VOL/BPM controls and its header in overview; OUT wiring stays disabled. Native VOL decrement and bound BPM edit retain Fit.                                                              |
+| S2  | should   | Fixed: Move destination opens Connections before waiting for a destination. Native canvas selection then pointer repatching works with Connections initially closed.                                                                        |
+| S3  | should   | Fixed with explicit row choice: Enter/double click on a sound with DRUMS selected opens a keyboard/pointer row dialog. Opening/cancelling does not mutate; choosing row two preserves timing, other rows and complete unrelated rack state. |
+| N1  | nit      | Accepted: overview has no sound-target outlines or dimmed target hints; a drag leaves source/Fit intact and the next panel click still zooms.                                                                                               |
+| N2  | nit      | Accepted: selecting a module without a catalog sample target produces a generic refusal before calling the mutation. WAVETABLE keeps its own wt_ validation.                                                                                |
+| N3  | nit      | Clarified: the pending-snapshot assertion now occurs before the controlled abort and again after it, proving later events cannot mutate the earlier capture.                                                                                |
+
+The first review repro had an invalid `out1` assumption: the multi-voice import
+uses `out9`. The [corrected OUT repro](evidence/stabilization-remaining/review-1/output-before.log)
+independently failed on inert controls. The
+[initial repro](evidence/stabilization-remaining/review-1/initial-before.log)
+also records the hidden canvas-move chooser and automatic DRUMS row-zero issue;
+its OUT locator failure is not counted as proof of S1. The final OUT test uses
+an explicit bound tempo so it exercises supported native tempo editing without
+changing the imported-refusal contract.
+
+After R1, the owner clarified that refusing module-wide DRUMS assignment would
+leave #185 incomplete: the non-drag path needs an actual row-specific choice.
+The [native row-dialog regression failed before implementation](evidence/stabilization-remaining/review-1/drums-before.log).
+It now proves Enter opens without mutation, Escape restores focus without an edit,
+and double click then Tab/Enter assigns only the explicitly chosen second row.
+The pure row projection and drop mutation share the same notation accessor;
+`SoundAssignment` distinguishes completed assignment from a required row choice,
+so the crate does not announce completion before the choice. No new workflow
+rule, follow-up issue, module width or saved format was introduced.
+
+Inspected the real font-loaded [row chooser screenshot](evidence/stabilization-remaining/drums-row-chooser.png).
+`npm run check` passed **2,384 unit cases**, reader coverage, guardrails, lint,
+TypeScript and build. The affected browser run passed **16/16**,
+`RESULT passed=16 failed=0 exit=0`
+([log](evidence/stabilization-remaining/review-1/affected-after.log)). It includes
+the corrected review regressions, overview/native sound/row choice, bank/refusal
+neighbors, all-look geometry, connection targets, More Escape, injected snapshots
+and Trance playback/events/export-reopen. Under the merged verification policy,
+these bounded UI/source-row fixes use affected coverage; they do not change the
+reader, engine or playback. The final hosted complete suite remains mandatory.
+A fresh Opus round must assess the actual row-specific non-drag path against the
+issue wording before #185 is closed.

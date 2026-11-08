@@ -231,9 +231,11 @@ coordinates. Fit leaves an extra 24 screen pixels below the rails for wrapped
 jack targets. Jacks reserve at least 24 screen pixels, growing their layout boxes
 when zoomed out and wrapping into additional rows as needed; [#186](decisions.md#usability-review-188-decided-4-november-2026) limits this to 75% and above. Every cable stays drawn; clipped live jack endpoints pin to the visible patch-box edge.
 Below 75%, panels are navigation targets: click or focus and Enter/Space zooms to
-100% and centres the module. Controls and jacks are inert, internal scrolling is
+100% and centres the module. Rail controls and every jack are inert; the
+independently sized pinned OUT keeps VOL and BPM available. Internal scrolling is
 hidden, and cable visibility is All. Connections still lists every cable and
 supports selection, removal and a complete destination chooser for repatching.
+Moving a cable selected on the canvas opens that chooser automatically.
 
 The rack frame retains at least 430 px of height on desktop; short workspaces scroll
 the rack pane instead of shrinking the rails and pinned OUT into thumbnails. The
@@ -538,7 +540,9 @@ native drag image names the sound and variant. SMPL, SPLICE, REVERB and compatib
 WAVETABLE panels accept a drop anywhere; DRUMS keeps individual row targets.
 WAVETABLE accepts seated `wt_` sounds only. Select a module and double-click a
 sound or press Enter on its card to assign without dragging; single click
-continues to audition. Native selectors remain keyboard alternatives. Source-aware
+continues to audition. For DRUMS this opens a row chooser showing each row's
+notation. Choose a row with pointer or keyboard to apply; opening or cancelling
+the chooser changes nothing. No row is guessed. Native selectors remain keyboard alternatives. Source-aware
 mutations retain bank/refusal rules. Overview consumes panel clicks for zoom
 and refuses sound assignment until detail view, without initiating wiring.
 

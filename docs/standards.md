@@ -500,3 +500,11 @@ of the edited rack. Noise samples differ between sessions, so noise PCM is held 
 level and envelope bounds, not digests. Module/HP and source/rack invariants run in
 `npm run check`; PCM, lifetimes and scheduling run in the full browser suite.
 Neither path establishes subjective listening acceptance.
+
+The #185 native sound-assignment regression in
+[the stabilization checks](../tests/browser/stabilization-remaining.spec.mjs)
+requires an explicit DRUMS row choice after Enter or double click. It rejects a
+refusal-only path and automatic row-zero assignment: opening and Escape must
+leave source unchanged; keyboard selection of row two must preserve all other
+rack state and the other rows' exact notation. This is a feature acceptance
+guard in the hosted suite, not a new workflow policy.

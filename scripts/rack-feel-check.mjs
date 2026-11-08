@@ -80,13 +80,16 @@ export function inspectPanels(look) {
     assert(contrast(panel.querySelector('.module-id')) >= 4.5, `${id}: low ID contrast`)
     const controls = panel.querySelector('.module-controls')
     if (document.querySelector('.rack-frame')?.dataset.overview === 'true') {
-      assert(controls.inert, `${id}: overview controls are interactive`)
+      assert(controls.inert === (spec.id !== 'out'), `${id}: wrong overview control availability`)
       assert(getComputedStyle(controls).overflowY === 'hidden', `${id}: overview scrollbars`)
       assert(
         [...panel.querySelectorAll('[data-jack]')].every((jack) => jack.disabled),
         `${id}: live overview jack`,
       )
-      assert(panel.querySelector('.overview-module'), `${id}: missing overview navigation`)
+      assert(
+        !!panel.querySelector('.overview-module') === (spec.id !== 'out'),
+        `${id}: wrong overview navigation target`,
+      )
       continue
     }
     assert(controls.clientHeight > 0, `${id}: controls have no usable height`)

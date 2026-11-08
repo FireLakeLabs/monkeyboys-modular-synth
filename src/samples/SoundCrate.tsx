@@ -9,9 +9,69 @@ import {
 import { cartridges } from '../workspace/cartridges'
 import { packKey, packLabel } from './packs'
 import { seatedResources, SOUND_MIME, soundToken, variantCount } from './crate'
-import type { SoundChoice } from './crate'
+import type { SoundChoice, SoundAssignment } from './crate'
 import type { SampleSound } from './manifest'
 import './SoundCrate.css'
+
+function RowChooser({
+  choice,
+  rows,
+  choose,
+  cancel,
+}: {
+  choice: SoundChoice
+  rows: readonly string[]
+  choose: (row: number) => void
+  cancel: () => void
+}) {
+  const dialog = useRef<HTMLDialogElement>(null)
+  const [error, setError] = useState('')
+  useEffect(() => {
+    const element = dialog.current
+    const opener = document.activeElement
+    element?.showModal()
+    return () => {
+      element?.close()
+      if (opener instanceof HTMLElement) opener.focus()
+    }
+  }, [])
+  return (
+    <dialog
+      ref={dialog}
+      className="sound-row-chooser"
+      aria-label="Choose DRUMS row"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') event.stopPropagation()
+      }}
+      onCancel={(event) => {
+        event.preventDefault()
+        cancel()
+      }}
+    >
+      <h2>Assign {soundToken(choice)}</h2>
+      <p>Choose a DRUMS row</p>
+      {rows.map((text, row) => (
+        <button
+          type="button"
+          key={row}
+          onClick={() => {
+            try {
+              choose(row)
+            } catch (error) {
+              setError(String(error))
+            }
+          }}
+        >
+          Row {row + 1}: <span>{text}</span>
+        </button>
+      ))}
+      {error && <p role="alert">{error}</p>}
+      <button type="button" onClick={cancel}>
+        Cancel
+      </button>
+    </dialog>
+  )
+}
 
 function Card({
   sound,
@@ -21,15 +81,46 @@ function Card({
 }: {
   sound: SampleSound
   report: (message: string) => void
-  assign: (choice: SoundChoice) => void
+  assign: (choice: SoundChoice, row?: number) => SoundAssignment
   dragging: (choice: SoundChoice | null) => void
 }) {
   const [n, setN] = useState(0)
+  const [pending, setPending] = useState<{ choice: SoundChoice; rows: readonly string[] } | null>(
+    null,
+  )
   const count = variantCount(sound.bank)
   const index = n % Math.max(1, count)
   const choice = { name: sound.name, n: index }
+  function requestAssignment() {
+    try {
+      const result = assign(choice)
+      if (result.kind === 'choose-row') {
+        setPending({ choice, rows: result.rows })
+        report(`Choose a DRUMS row for ${soundToken(choice)}`)
+      } else report(`Assigned ${soundToken(choice)}`)
+    } catch (error) {
+      report(String(error))
+    }
+  }
   return (
     <div className="sound-stack" data-sound={sound.name}>
+      {pending && (
+        <RowChooser
+          choice={pending.choice}
+          rows={pending.rows}
+          cancel={() => {
+            setPending(null)
+            report('Sound assignment cancelled')
+          }}
+          choose={(row) => {
+            const result = assign(pending.choice, row)
+            if (result.kind !== 'assigned') throw new Error('Choose a DRUMS row')
+            report(`Assigned ${soundToken(pending.choice)} to row ${row + 1}`)
+            setPending(null)
+          }}
+        />
+      )}
+
       <button
         type="button"
         className="button sound-card"
@@ -47,23 +138,11 @@ function Card({
           setTimeout(() => label.remove(), 0)
         }}
         onDragEnd={() => dragging(null)}
-        onDoubleClick={() => {
-          try {
-            assign(choice)
-            report(`Assigned ${soundToken(choice)}`)
-          } catch (error) {
-            report(String(error))
-          }
-        }}
+        onDoubleClick={requestAssignment}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
             event.preventDefault()
-            try {
-              assign(choice)
-              report(`Assigned ${soundToken(choice)}`)
-            } catch (error) {
-              report(String(error))
-            }
+            requestAssignment()
           }
         }}
         onClick={() => {
@@ -108,7 +187,7 @@ export function SoundCrate({
   document: SourceDocument
   locked: boolean
   active: boolean
-  assign: (choice: SoundChoice) => void
+  assign: (choice: SoundChoice, row?: number) => SoundAssignment
   dragging: (choice: SoundChoice | null) => void
 }) {
   const resources = useSyncExternalStore(subscribeSamplePacks, getSamplePacks)

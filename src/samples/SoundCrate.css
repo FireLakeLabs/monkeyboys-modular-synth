@@ -160,3 +160,31 @@
   min-height: 36px;
   height: 36px;
 }
+
+.sound-row-chooser {
+  width: min(420px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  padding: 20px;
+  border: 1px solid #5b626d;
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+}
+.sound-row-chooser::backdrop {
+  background: #0009;
+}
+.sound-row-chooser h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.sound-row-chooser button {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.sound-row-chooser button span {
+  font-family: 'JetBrains Mono', monospace;
+}
