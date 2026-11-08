@@ -763,3 +763,15 @@ ownership stays authoritative. Imported mode/arity changes convert the code on
 edit, with Undo; literal sample, count, order and tape edits
 preserve surrounding source. Source, complete saved rack and engine events have
 independent [acceptance checks](sound-crate.md).
+
+## Adjacent CODE study (#187, 8 November 2026)
+
+Decision before reader changes: retain separate CODE modules. A CODE block owns
+source call spans and its place in a voice's routing chain; apparent adjacency on
+a rail is not source adjacency. Across scopes, setup statements, callback bodies
+and shared references, combining text would require a new ownership/binding
+representation and independent mutation proofs. Concatenating display text does
+not prove executable byte preservation or full saved module identity. Existing
+saved layouts may also name these blocks independently. This bundle changes
+only unsaved placement; it does not merge CODE or invent ownership. Fewer rows
+come from packing catalog widths, with no change to source spans or module IDs.
