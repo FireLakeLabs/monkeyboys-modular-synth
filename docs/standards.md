@@ -508,3 +508,10 @@ refusal-only path and automatic row-zero assignment: opening and Escape must
 leave source unchanged; keyboard selection of row two must preserve all other
 rack state and the other rows' exact notation. This is a feature acceptance
 guard in the hosted suite, not a new workflow policy.
+
+The #230 arranger playhead uses the existing transport playing flag, including
+live code application. The recording-clock case in the [arranger browser spec](../tests/browser/arranger.spec.mjs)
+holds a rack edit in `applying` and requires the highlight to keep advancing;
+it failed before the duplicated status predicate was removed. The same spec
+separately checks unchanged source, recovery state and history during clock updates.
+This browser guard does not establish physical listening or other-browser behavior.

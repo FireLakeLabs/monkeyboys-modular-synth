@@ -553,7 +553,8 @@ below the 75% overview threshold. Its summary counts arranged channels
 hint. Each connected MIX channel is a row: its name (channel NAME, else the module
 feeding it), one 18 px cell per cycle with a brighter edge every four cycles, and
 the exact code it writes in code ink (`.mask("<0!2 1!2>")`, or _every cycle_).
-Playing cells use the audio orange. While transport is starting or playing, a
+Playing cells use the audio orange. While transport is starting, playing or
+applying a live edit, a
 bright inset outline and matching ruler mark identify the current scheduler cycle
 modulo song length; the outline also marks rested cells. Stop removes it. Reduced
 motion freezes it at the shared header clock snapshot. The playhead writes no

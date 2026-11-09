@@ -282,6 +282,28 @@ export const subscribe = (listener) => {
   await expect(highlighted).toHaveCount(0)
   expect(await source(page)).toBe(saved)
   expect(await page.evaluate(() => localStorage.getItem('monkeyboy.workspace.v1'))).toBe(recovery)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  // A held live rack edit keeps advancing the playhead while evaluation is applying.
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await expect(page.locator('.transport-status')).toHaveText('Starting audio')
+  await page.evaluate(() => window.clockFixture.finish())
+  await expect(page.locator('.transport-status')).toHaveText('Playing')
+  await lane(page).getByRole('button', { name: 'Longer song' }).click()
+  await expect(page.locator('.transport-status')).toHaveText('Applying code')
+  await expect(highlighted).toHaveAttribute('data-cycle', '1') // cycle 11, five-cycle song
+  await page.evaluate(() => {
+    window.clockFixture.cycle = 14.5
+  })
+  await expect(highlighted).toHaveAttribute('data-cycle', '4')
+  await page.evaluate(() => {
+    window.clockFixture.hold = false
+    window.clockFixture.finish()
+  })
+  await expect(page.locator('.transport-status')).toHaveText('Playing')
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
+  await expect(highlighted).toHaveCount(0)
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  expect(await source(page)).toBe(saved)
   // The next Undo still undoes the code edit, not a playhead update.
   await page.getByRole('button', { name: 'Undo', exact: true }).click()
   await accepted(page)

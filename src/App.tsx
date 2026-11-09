@@ -963,7 +963,7 @@ export default function App() {
           panelKey={String(rackGeneration)}
           patchLoads={patchLoads}
           patchOpens={patchOpens}
-          playing={audio.status === 'playing' || audio.status === 'starting'}
+          playing={playing}
           focusToggle={
             <button
               type="button"

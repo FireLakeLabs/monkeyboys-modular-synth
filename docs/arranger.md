@@ -85,7 +85,8 @@ other mask stay source-owned CODE with exact bytes.
   This supersedes the issue's conflicting sound-preservation requirement: the
   opening 16 cycles are unchanged, but later repetitions deliberately change.
   Padding does not repeat the previous lane inside the larger song.
-- **Playhead (#230).** While transport is starting or playing, an outline marks
+- **Playhead (#230).** While transport is starting, playing or applying a live edit,
+  an outline marks
   `floor(scheduler cycle) modulo song length` in every row, including rested cells;
   the ruler marks the same column. It uses the header's engine clock and 100 ms
   display cadence. Stop clears it. Reduced motion freezes the display, matching
@@ -114,7 +115,9 @@ Observed on 8 November 2026 with Node 24.22.2 and the pinned Playwright Chromium
   separately from complete module/cable/value identity.
 - A recording engine double drives starting/playing clock values through cycle
   8 and checks modulo-four highlights, motion-preference changes, Stop, unchanged
-  exact source/recovery state and unchanged next Undo. It performs no audio.
+  exact source/recovery state and unchanged next Undo. A held live rack edit also
+  verifies the playhead keeps advancing while code is applying; this assertion
+  failed before using the existing transport playing flag. It performs no audio.
 - Real playback at 240 BPM records the scheduler clock beside the displayed
   column for six seconds. Away from the 100 ms display-tick boundary, every
   sample matches the scheduler modulo four, all four columns appear, and the
