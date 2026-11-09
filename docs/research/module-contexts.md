@@ -62,15 +62,15 @@ save/reopen. Each module also has a concrete fallback/source-preservation counte
 and saved identity; 48 comparisons query real pinned event values and whole/part
 times over `[0,4)`. Hashes cover complete event arrays; samples/counts remain
 inspectable. Equality in one four-cycle fixture is a bounded observation, not a
-proof over all inputs. Source implementations establish the general claims.
+proof over all inputs. Installed source implementations establish the source-level constraints. The actual web ESM entry is separately hash-pinned: a published bundle may embed a different implementation snapshot. Pure source-package events and installed superdough source consumption do not prove every bundled browser path is identical; browser/PCM acceptance remains required for a future feature.
 These cases are not a new community-coverage baseline and do not modify #145.
 
 **Audio limits:** no browser, new PCM measurement, performance benchmark or
 physical listening here. #247 has the local browser allocation. A consumed
 backend field is source evidence of implementation, not audible acceptance.
 Existing reports cited below are prior evidence and are not reruns of this study.
-Private design-canvas boards were unavailable; the local design exports/specs
-are the presentation reference. No visual claim about the real app is made.
+The private design canvas was not accessed; its current availability was not
+verified. Local design exports/specs provide the presentation reference. No visual claim about the real app is made.
 
 ## Reading the evidence
 
@@ -403,18 +403,68 @@ refresh; this research does not regenerate its racks.
 
 ## Inventory reconciliation and prioritized stories
 
-Pending final reconciliation with #245's committed
-`docs/research/strudel-api-coverage/` inventory. The overlay will join canonical
-families by its schema's `api:<canonical spelling>` IDs, distinguishing aliases
-from packed fields and contextual ownership. Do not close #246 until its actual
-priority families and final corpus observations have been reconciled here.
+Reconciled with #245's committed report and schema-v1 inventory at
+`a4760f136779e214a057faebaf2530d182c7f300`, artifact SHA-256
+`d6b7740209c27a9ba02bdeca828d6fbdd9c14f660229cbd9fc138666f28596f6`.
+See [inventory report](https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/a4760f136779e214a057faebaf2530d182c7f300/docs/research/strudel-api-coverage/README.md).
+The final merged artifact must be refreshed before closure: #245 confirmed scanner
+omissions for Pattern.layer and REPL-injected tempo helpers, currently explicit
+`unresolved-no-inventory-family` entries in this overlay. These are inventory
+coverage bugs, not missing engine behavior. No family IDs are invented locally.
 
-Provisional priorities: #242–244 structural work first; bounded CHUNK variants and
-EVERY aliases next; voicing-context controls after inventory occurrence evidence;
-optional grouping as a design proposal. General receiver/value arithmetic,
-multi-callback transforms, arbitrary setup/register and unsupported backends stay
-CODE/deferred. Corpus occurrence is an input to prioritization, not proof that
-every name needs a panel. Existing #217, #216, #239 and #242–244 retain ownership.
+The adapter uses `aliasToFamily`, with runtime spellings `lpf` → `api:cutoff`,
+`lpq` → `api:resonance`, `sound` → `api:s`, `every` → `api:firstOf`, and `dict` →
+`api:dictionary`. It checks `aliasCollisions` **before** lookup: overlapping
+`fmi1`/`fmh1` definitions stay unresolved rather than gaining false ownership.
+Catalog input hashes are compared with the inventory's recorded inputs. The
+inventory's 1,040 candidate families include utility/classes, generated operators
+and 81 FM matrix setters; that is not a panel count or unsupported-feature count.
+
+The context artifact's schema v1 is an overlay: `matrix[]` is keyed by `moduleId`,
+with catalog data, judgment annotations, positive `exercise`, concrete `fallback`
+and `inventoryFamilies[]` containing `{name,familyId,state}` joins.
+`inventory` records the exact source artifact hash/revision and selected candidate
+joins; `comparisons`, `reader` and `examples` keep proof kinds separate. Null
+family IDs retain a reason. This does not replace #245's authoritative inventory
+schema or rediscover its exports/registrations.
+
+At this preparation revision, reproduce the cross-branch join using the committed
+artifact, without copying its API inventory into this branch:
+
+```sh
+node scripts/module-contexts.mjs --inventory-ref a4760f136779e214a057faebaf2530d182c7f300
+```
+
+After #245 lands, the ordinary command reads that checked-in artifact. Its report
+has 22 **root manifest** committed entries (excluding the 59 focused module
+exercises used here), and five pinned report-only wild files. Those observations
+retain source hashes, attribution and no redistribution claim; this study does
+not fetch, execute or vendor that corpus. The wild sample is four brucelane files
+plus the cosimo/Switch Angel transcription, which also overlaps a committed
+showcase; neither tier estimates community prevalence. Custom or potentially
+shadowed names remain governed by each patch's `callDispositions`, not aggregated
+into pinned behavior by name. In particular, custom `o` is not proof of native
+orbit usage.
+
+Adopt the inventory's evidence-informed priority order as a recommendation:
+
+| Priority | Existing owner / proposed next step                 | Evidence and limits                                                                                                                                     |
+| -------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | #242 then #243/#244 expression shapes               | Three wild unmapped outer calls in the group, including two arrange calls; already selected structural work.                                            |
+| 2        | #251 ordinary sound alias                           | Three wild sound calls plus controlled literal source/chained failures; small importer increment, no new panel.                                         |
+| 3        | #217, informed by #247 wrappers                     | Group has 11 wild unmapped outer occurrences; custom registrations/closures/routing need original-call ownership.                                       |
+| 4        | Audit one bounded argument/companion form at a time | Group has 16 wild unmapped outer calls but many are already known names; C08/C11/C25 show why name-count expansion is wrong. No blanket feature ticket. |
+| 5        | #249 harmonic/voicing options                       | One wild unmapped outer occurrence in the group; useful controlled voicing context, sparse sample demand.                                               |
+| 6        | #248 CHUNK/EVERY modes/aliases                      | No wild occurrences in this small group; strong semantic/reuse evidence, lower demand confidence.                                                       |
+| 7        | Defer deep FM/signal expansion                      | No occurrences in inventory's deep-FM group; C16/C21 show distinct values/contexts, not an audible-completeness claim.                                  |
+| 8        | Keep visualization/external transport setup as CODE | Ten wild unmapped outer calls in that group; neither event fields nor native SCOPE prove transport configuration or arbitrary visualization support.    |
+
+Group counts overlap and are not an additive denominator. This supersedes the
+provisional CHUNK-before-voicing ordering: semantic fit alone does not outweigh
+observed argument/source demand. Optional grouping #250 remains a lower-priority
+nonproduction design experiment. Existing #216, #200 and #239 keep their scopes.
+Unmapped source shapes and utilities are explicit limits/recommendations, not
+unfinished production work in this research item.
 
 Bounded stories filed under the owner's research-follow-up grant:
 
@@ -446,7 +496,7 @@ expanding into one ticket per name:
 - `npm run check`: passed (2,585 unit cases, 53 guardrails, committed reader coverage, formatting/skills/lint/typecheck/build); rerun after inventory adapter.
 - Coverage guard: deliberately removed one annotation; the command rejected it, then passed after byte-exact restoration.
 - Local browser/PCM/listening: not run; application behavior unchanged; no server.
-- Inventory reconciliation, bounded Opus review, PR/hosted checks and protected merge: pending.
+- Initial inventory reconciliation complete; refreshing its confirmed scanner omissions, bounded Opus review, PR/hosted checks and protected merge remain pending.
 
 Implementation provenance: GPT-6.1 Sol in T3 Code through the Codex harness.
 Review policy therefore selects the latest advertised Opus; actual provider,

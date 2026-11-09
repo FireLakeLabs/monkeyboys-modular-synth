@@ -18,6 +18,7 @@
     "src/codegen/generate.ts": "dd5f2db08edc68d98e3ff7d02c11ad0eb13be9322805307279c9ffeb0879671c",
     "src/codegen/effects.ts": "459d66503c000af6c555589855eb82c460226f0ea1d6aa96e829b4136d5c4f5b",
     "src/strudel/engine.ts": "e6aabe6c42be4be38c85af033c5f0fb486f885400f1687a6f12a868f5f4fbac5",
+    "node_modules/@strudel/web/dist/index.mjs": "310ef9c1172ad3ecb4f7981a2743164f01cd42015a3207fce541366b7839bef5",
     "node_modules/@strudel/core/pattern.mjs": "d562fa5f23ad204588d343165ed02376b5874ca74280c248dfe87b56738c0abd",
     "node_modules/@strudel/core/controls.mjs": "108ada29dcbac33d268ba5813624fc3b2323bed019072c222ebd9cd8a93e018f",
     "node_modules/@strudel/core/signal.mjs": "4e94e59e0960e5f3fec27638c4e0be6537de8f10f6783a3691544e5df940abfa",
@@ -32,6 +33,125 @@
     "reader": "production read/generate/save/reopen",
     "events": "real pure pinned kernel; repository-owned fixtures only; [0,4) arcs",
     "audio": "none; no browser or listening"
+  },
+  "inventory": {
+    "path": "docs/research/strudel-api-coverage/inventory.json",
+    "sourceRevision": "a4760f136779e214a057faebaf2530d182c7f300",
+    "sha256": "d6b7740209c27a9ba02bdeca828d6fbdd9c14f660229cbd9fc138666f28596f6",
+    "schemaVersion": 1,
+    "candidateCount": 1040,
+    "aliasCollisions": [
+      {
+        "name": "fmi1",
+        "previous": "api:fmh",
+        "candidate": "api:fmi",
+        "resolution": "Overlapping definitions retained; effective alias ownership unresolved without runtime evidence"
+      },
+      {
+        "name": "fmh1",
+        "previous": "api:fmh",
+        "candidate": "api:fmi",
+        "resolution": "Overlapping definitions retained; effective alias ownership unresolved without runtime evidence"
+      }
+    ],
+    "priorities": [
+      {
+        "rank": 1,
+        "id": "expression-shapes",
+        "owners": [242, 243, 244],
+        "corpus": {
+          "committed": { "syntacticCalls": 6, "unmappedOuterCalls": 1 },
+          "wild": { "syntacticCalls": 3, "unmappedOuterCalls": 3 }
+        }
+      },
+      {
+        "rank": 2,
+        "id": "sound-alias",
+        "owners": [251],
+        "corpus": {
+          "committed": { "syntacticCalls": 0, "unmappedOuterCalls": 0 },
+          "wild": { "syntacticCalls": 3, "unmappedOuterCalls": 3 }
+        }
+      },
+      {
+        "rank": 3,
+        "id": "helper-registrations",
+        "owners": [217, 247],
+        "corpus": {
+          "committed": { "syntacticCalls": 11, "unmappedOuterCalls": 7 },
+          "wild": { "syntacticCalls": 17, "unmappedOuterCalls": 11 }
+        }
+      },
+      {
+        "rank": 4,
+        "id": "argument-and-companion-forms",
+        "owners": [245, 246],
+        "corpus": {
+          "committed": { "syntacticCalls": 84, "unmappedOuterCalls": 6 },
+          "wild": { "syntacticCalls": 20, "unmappedOuterCalls": 16 }
+        }
+      },
+      {
+        "rank": 5,
+        "id": "harmonic-options",
+        "owners": [249],
+        "corpus": {
+          "committed": { "syntacticCalls": 7, "unmappedOuterCalls": 0 },
+          "wild": { "syntacticCalls": 4, "unmappedOuterCalls": 1 }
+        }
+      },
+      {
+        "rank": 6,
+        "id": "loop-variants",
+        "owners": [248],
+        "corpus": {
+          "committed": { "syntacticCalls": 3, "unmappedOuterCalls": 1 },
+          "wild": { "syntacticCalls": 0, "unmappedOuterCalls": 0 }
+        }
+      },
+      {
+        "rank": 7,
+        "id": "deep-fm-and-modulation",
+        "owners": [],
+        "corpus": {
+          "committed": { "syntacticCalls": 0, "unmappedOuterCalls": 0 },
+          "wild": { "syntacticCalls": 0, "unmappedOuterCalls": 0 }
+        }
+      },
+      {
+        "rank": 8,
+        "id": "visual-and-external",
+        "owners": [],
+        "corpus": {
+          "committed": { "syntacticCalls": 0, "unmappedOuterCalls": 0 },
+          "wild": { "syntacticCalls": 10, "unmappedOuterCalls": 10 }
+        }
+      }
+    ],
+    "selectedCandidates": [
+      { "name": "anchor", "familyId": "api:anchor", "state": "joined" },
+      { "name": "arrange", "familyId": "api:arrange", "state": "joined" },
+      { "name": "chunkBack", "familyId": "api:chunkBack", "state": "joined" },
+      { "name": "chunkInto", "familyId": "api:chunkinto", "state": "joined" },
+      { "name": "dict", "familyId": "api:dictionary", "state": "joined" },
+      { "name": "echoWith", "familyId": "api:echoWith", "state": "joined" },
+      { "name": "every", "familyId": "api:firstOf", "state": "joined" },
+      { "name": "fastChunk", "familyId": "api:fastchunk", "state": "joined" },
+      { "name": "fmh1", "familyId": null, "state": "unresolved-alias-collision" },
+      { "name": "fmi1", "familyId": null, "state": "unresolved-alias-collision" },
+      { "name": "inside", "familyId": "api:inside", "state": "joined" },
+      { "name": "irand", "familyId": "api:irand", "state": "joined" },
+      { "name": "layer", "familyId": null, "state": "unresolved-no-inventory-family" },
+      { "name": "mode", "familyId": "api:mode", "state": "joined" },
+      { "name": "offset", "familyId": "api:offset", "state": "joined" },
+      { "name": "outside", "familyId": "api:outside", "state": "joined" },
+      { "name": "rand2", "familyId": "api:rand2", "state": "joined" },
+      { "name": "register", "familyId": "api:register", "state": "joined" },
+      { "name": "sine2", "familyId": "api:sine2", "state": "joined" },
+      { "name": "slowChunk", "familyId": "api:chunk", "state": "joined" },
+      { "name": "sound", "familyId": "api:s", "state": "joined" },
+      { "name": "steady", "familyId": "api:steady", "state": "joined" }
+    ]
   },
   "moduleCount": 59,
   "comparisonCount": 48,
@@ -51,6 +171,12 @@
       "hp": 10,
       "functions": ["note", "n", "fast"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "fast", "familyId": "api:fast", "state": "joined" },
+        { "name": "n", "familyId": "api:n", "state": "joined" },
+        { "name": "note", "familyId": "api:note", "state": "joined" },
+        { "name": "velocity", "familyId": "api:velocity", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -135,6 +261,7 @@
       "hp": 10,
       "functions": ["struct"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "struct", "familyId": "api:struct", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -178,6 +305,7 @@
       "hp": 12,
       "functions": ["pick"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "pick", "familyId": "api:pick", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -227,6 +355,7 @@
       "hp": 12,
       "functions": ["bus"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "bus", "familyId": "api:bus", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -267,6 +396,11 @@
       "hp": 12,
       "functions": ["duck", "duckattack", "duckdepth"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "duck", "familyId": "api:duckorbit", "state": "joined" },
+        { "name": "duckattack", "familyId": "api:duckattack", "state": "joined" },
+        { "name": "duckdepth", "familyId": "api:duckdepth", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -325,6 +459,10 @@
       "hp": 14,
       "functions": ["s"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "s", "familyId": "api:s", "state": "joined" },
+        { "name": "velocity", "familyId": "api:velocity", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -390,6 +528,10 @@
       "hp": 8,
       "functions": ["scale", "scaleTranspose"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "scale", "familyId": "api:scale", "state": "joined" },
+        { "name": "scaleTranspose", "familyId": "api:scaleTranspose", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -485,6 +627,7 @@
       "hp": 12,
       "functions": ["add"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "add", "familyId": "api:add", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -530,6 +673,11 @@
       "hp": 12,
       "functions": ["slow", "swingBy", "late"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "late", "familyId": "api:late", "state": "joined" },
+        { "name": "slow", "familyId": "api:slow", "state": "joined" },
+        { "name": "swingBy", "familyId": "api:swingBy", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -624,6 +772,12 @@
       "hp": 12,
       "functions": ["euclidRot", "euclidLegatoRot"],
       "aliases": { "euclidrot": "euclidRot", "euclidLegato": "euclidLegatoRot" },
+      "inventoryFamilies": [
+        { "name": "euclidLegato", "familyId": "api:euclidLegato", "state": "joined" },
+        { "name": "euclidLegatoRot", "familyId": "api:euclidLegatoRot", "state": "joined" },
+        { "name": "euclidrot", "familyId": "api:euclidrot", "state": "joined" },
+        { "name": "euclidRot", "familyId": "api:euclidrot", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -711,6 +865,7 @@
       "hp": 10,
       "functions": ["ply"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "ply", "familyId": "api:ply", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -756,6 +911,10 @@
       "hp": 10,
       "functions": ["degradeBy", "seed"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "degradeBy", "familyId": "api:degradeBy", "state": "joined" },
+        { "name": "seed", "familyId": "api:seed", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -830,6 +989,10 @@
       "hp": 12,
       "functions": ["chord", "voicing"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "chord", "familyId": "api:chord", "state": "joined" },
+        { "name": "voicing", "familyId": "api:voicing", "state": "joined" }
+      ],
       "source": { "method": "chord", "control": "chords", "suffix": ["voicing"] },
       "soundSource": null,
       "functionLoop": null,
@@ -872,6 +1035,7 @@
       "hp": 10,
       "functions": ["arp"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "arp", "familyId": "api:arp", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -917,6 +1081,17 @@
       "hp": 9,
       "functions": ["transpose", "pw", "unison", "detune", "spread", "noise", "octave", "freq"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "detune", "familyId": "api:detune", "state": "joined" },
+        { "name": "freq", "familyId": "api:freq", "state": "joined" },
+        { "name": "noise", "familyId": "api:noise", "state": "joined" },
+        { "name": "octave", "familyId": "api:octave", "state": "joined" },
+        { "name": "pw", "familyId": "api:pw", "state": "joined" },
+        { "name": "s", "familyId": "api:s", "state": "joined" },
+        { "name": "spread", "familyId": "api:spread", "state": "joined" },
+        { "name": "transpose", "familyId": "api:transpose", "state": "joined" },
+        { "name": "unison", "familyId": "api:unison", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -1089,6 +1264,10 @@
       "hp": 10,
       "functions": ["density"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "density", "familyId": "api:density", "state": "joined" },
+        { "name": "s", "familyId": "api:s", "state": "joined" }
+      ],
       "source": null,
       "soundSource": "wave",
       "functionLoop": null,
@@ -1152,6 +1331,10 @@
       "hp": 14,
       "functions": ["partials"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "partials", "familyId": "api:partials", "state": "joined" },
+        { "name": "s", "familyId": "api:s", "state": "joined" }
+      ],
       "source": null,
       "soundSource": "wave",
       "functionLoop": null,
@@ -1209,6 +1392,12 @@
       "hp": 12,
       "functions": ["fm", "fmh", "fmattack", "fmdecay"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "fm", "familyId": "api:fmi", "state": "joined" },
+        { "name": "fmattack", "familyId": "api:fmattack", "state": "joined" },
+        { "name": "fmdecay", "familyId": "api:fmdecay", "state": "joined" },
+        { "name": "fmh", "familyId": "api:fmh", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -1316,6 +1505,20 @@
       "hp": 8,
       "functions": ["bank", "speed", "begin", "end", "loop", "loopBegin", "loopEnd", "cut"],
       "aliases": { "loopb": "loopBegin", "loope": "loopEnd" },
+      "inventoryFamilies": [
+        { "name": "bank", "familyId": "api:bank", "state": "joined" },
+        { "name": "begin", "familyId": "api:begin", "state": "joined" },
+        { "name": "cut", "familyId": "api:cut", "state": "joined" },
+        { "name": "end", "familyId": "api:end", "state": "joined" },
+        { "name": "loop", "familyId": "api:loop", "state": "joined" },
+        { "name": "loopb", "familyId": "api:loopBegin", "state": "joined" },
+        { "name": "loopBegin", "familyId": "api:loopBegin", "state": "joined" },
+        { "name": "loope", "familyId": "api:loopEnd", "state": "joined" },
+        { "name": "loopEnd", "familyId": "api:loopEnd", "state": "joined" },
+        { "name": "n", "familyId": "api:n", "state": "joined" },
+        { "name": "s", "familyId": "api:s", "state": "joined" },
+        { "name": "speed", "familyId": "api:speed", "state": "joined" }
+      ],
       "source": null,
       "soundSource": "sample",
       "functionLoop": null,
@@ -1471,6 +1674,13 @@
       "hp": 12,
       "functions": ["slice", "splice", "chop", "striate"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "chop", "familyId": "api:chop", "state": "joined" },
+        { "name": "s", "familyId": "api:s", "state": "joined" },
+        { "name": "slice", "familyId": "api:slice", "state": "joined" },
+        { "name": "splice", "familyId": "api:splice", "state": "joined" },
+        { "name": "striate", "familyId": "api:striate", "state": "joined" }
+      ],
       "source": null,
       "soundSource": "sample",
       "functionLoop": null,
@@ -1566,6 +1776,15 @@
         "wavetableWarp": "warp",
         "wavetableWarpMode": "warpmode"
       },
+      "inventoryFamilies": [
+        { "name": "s", "familyId": "api:s", "state": "joined" },
+        { "name": "warp", "familyId": "api:warp", "state": "joined" },
+        { "name": "warpmode", "familyId": "api:warpmode", "state": "joined" },
+        { "name": "wavetablePosition", "familyId": "api:wt", "state": "joined" },
+        { "name": "wavetableWarp", "familyId": "api:warp", "state": "joined" },
+        { "name": "wavetableWarpMode", "familyId": "api:warpmode", "state": "joined" },
+        { "name": "wt", "familyId": "api:wt", "state": "joined" }
+      ],
       "source": null,
       "soundSource": "sample",
       "functionLoop": null,
@@ -1666,6 +1885,14 @@
       "hp": 16,
       "functions": ["bbexpr", "bbst"],
       "aliases": { "byteBeatExpression": "bbexpr", "byteBeatStartTime": "bbst" },
+      "inventoryFamilies": [
+        { "name": "bbexpr", "familyId": "api:byteBeatExpression", "state": "joined" },
+        { "name": "bbst", "familyId": "api:byteBeatStartTime", "state": "joined" },
+        { "name": "byteBeatExpression", "familyId": "api:byteBeatExpression", "state": "joined" },
+        { "name": "byteBeatStartTime", "familyId": "api:byteBeatStartTime", "state": "joined" },
+        { "name": "n", "familyId": "api:n", "state": "joined" },
+        { "name": "s", "familyId": "api:s", "state": "joined" }
+      ],
       "source": null,
       "soundSource": { "fixed": "bytebeat" },
       "functionLoop": null,
@@ -1776,6 +2003,17 @@
         "deltaSlide"
       ],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "deltaSlide", "familyId": "api:deltaSlide", "state": "joined" },
+        { "name": "pitchJump", "familyId": "api:pitchJump", "state": "joined" },
+        { "name": "pitchJumpTime", "familyId": "api:pitchJumpTime", "state": "joined" },
+        { "name": "s", "familyId": "api:s", "state": "joined" },
+        { "name": "slide", "familyId": "api:slide", "state": "joined" },
+        { "name": "zcrush", "familyId": "api:zcrush", "state": "joined" },
+        { "name": "zdelay", "familyId": "api:zdelay", "state": "joined" },
+        { "name": "zmod", "familyId": "api:zmod", "state": "joined" },
+        { "name": "znoise", "familyId": "api:znoise", "state": "joined" }
+      ],
       "source": null,
       "soundSource": "wave",
       "functionLoop": null,
@@ -1929,6 +2167,7 @@
       "hp": 16,
       "functions": ["speak"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "speak", "familyId": "api:speak", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2000,6 +2239,23 @@
         "djf"
       ],
       "aliases": { "cutoff": "lpf", "resonance": "lpq" },
+      "inventoryFamilies": [
+        { "name": "bpenv", "familyId": "api:bpenv", "state": "joined" },
+        { "name": "bpf", "familyId": "api:bandf", "state": "joined" },
+        { "name": "bpq", "familyId": "api:bandq", "state": "joined" },
+        { "name": "cutoff", "familyId": "api:cutoff", "state": "joined" },
+        { "name": "djf", "familyId": "api:djf", "state": "joined" },
+        { "name": "drive", "familyId": "api:drive", "state": "joined" },
+        { "name": "fanchor", "familyId": "api:fanchor", "state": "joined" },
+        { "name": "ftype", "familyId": "api:ftype", "state": "joined" },
+        { "name": "hpenv", "familyId": "api:hpenv", "state": "joined" },
+        { "name": "hpf", "familyId": "api:hcutoff", "state": "joined" },
+        { "name": "hpq", "familyId": "api:hresonance", "state": "joined" },
+        { "name": "lpenv", "familyId": "api:lpenv", "state": "joined" },
+        { "name": "lpf", "familyId": "api:cutoff", "state": "joined" },
+        { "name": "lpq", "familyId": "api:resonance", "state": "joined" },
+        { "name": "resonance", "familyId": "api:resonance", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2161,6 +2417,10 @@
       "hp": 8,
       "functions": ["gain", "velocity"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "gain", "familyId": "api:gain", "state": "joined" },
+        { "name": "velocity", "familyId": "api:velocity", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2262,6 +2522,46 @@
         "bps": "bpsustain",
         "bpr": "bprelease"
       },
+      "inventoryFamilies": [
+        { "name": "att", "familyId": "api:attack", "state": "joined" },
+        { "name": "attack", "familyId": "api:attack", "state": "joined" },
+        { "name": "bpa", "familyId": "api:bpattack", "state": "joined" },
+        { "name": "bpattack", "familyId": "api:bpattack", "state": "joined" },
+        { "name": "bpd", "familyId": "api:bpdecay", "state": "joined" },
+        { "name": "bpdecay", "familyId": "api:bpdecay", "state": "joined" },
+        { "name": "bpr", "familyId": "api:bprelease", "state": "joined" },
+        { "name": "bprelease", "familyId": "api:bprelease", "state": "joined" },
+        { "name": "bps", "familyId": "api:bpsustain", "state": "joined" },
+        { "name": "bpsustain", "familyId": "api:bpsustain", "state": "joined" },
+        { "name": "dec", "familyId": "api:decay", "state": "joined" },
+        { "name": "decay", "familyId": "api:decay", "state": "joined" },
+        { "name": "env", "familyId": "api:env", "state": "joined" },
+        { "name": "hpa", "familyId": "api:hpattack", "state": "joined" },
+        { "name": "hpattack", "familyId": "api:hpattack", "state": "joined" },
+        { "name": "hpd", "familyId": "api:hpdecay", "state": "joined" },
+        { "name": "hpdecay", "familyId": "api:hpdecay", "state": "joined" },
+        { "name": "hpr", "familyId": "api:hprelease", "state": "joined" },
+        { "name": "hprelease", "familyId": "api:hprelease", "state": "joined" },
+        { "name": "hps", "familyId": "api:hpsustain", "state": "joined" },
+        { "name": "hpsustain", "familyId": "api:hpsustain", "state": "joined" },
+        { "name": "lpa", "familyId": "api:lpattack", "state": "joined" },
+        { "name": "lpattack", "familyId": "api:lpattack", "state": "joined" },
+        { "name": "lpd", "familyId": "api:lpdecay", "state": "joined" },
+        { "name": "lpdecay", "familyId": "api:lpdecay", "state": "joined" },
+        { "name": "lpr", "familyId": "api:lprelease", "state": "joined" },
+        { "name": "lprelease", "familyId": "api:lprelease", "state": "joined" },
+        { "name": "lps", "familyId": "api:lpsustain", "state": "joined" },
+        { "name": "lpsustain", "familyId": "api:lpsustain", "state": "joined" },
+        { "name": "pattack", "familyId": "api:pattack", "state": "joined" },
+        { "name": "pdecay", "familyId": "api:pdecay", "state": "joined" },
+        { "name": "penv", "familyId": "api:penv", "state": "joined" },
+        { "name": "prelease", "familyId": "api:prelease", "state": "joined" },
+        { "name": "psustain", "familyId": "api:psustain", "state": "joined" },
+        { "name": "rel", "familyId": "api:release", "state": "joined" },
+        { "name": "release", "familyId": "api:release", "state": "joined" },
+        { "name": "sus", "familyId": "api:sustain", "state": "joined" },
+        { "name": "sustain", "familyId": "api:sustain", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2357,6 +2657,19 @@
         "vibmod"
       ],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "isaw", "familyId": "api:isaw", "state": "joined" },
+        { "name": "lfo", "familyId": "api:lfo", "state": "joined" },
+        { "name": "perlin", "familyId": "api:perlin", "state": "joined" },
+        { "name": "rand", "familyId": "api:rand", "state": "joined" },
+        { "name": "range", "familyId": "api:range", "state": "joined" },
+        { "name": "saw", "familyId": "api:saw", "state": "joined" },
+        { "name": "sine", "familyId": "api:sine", "state": "joined" },
+        { "name": "square", "familyId": "api:square", "state": "joined" },
+        { "name": "tri", "familyId": "api:tri", "state": "joined" },
+        { "name": "vib", "familyId": "api:vib", "state": "joined" },
+        { "name": "vibmod", "familyId": "api:vibmod", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2447,6 +2760,7 @@
       "hp": 8,
       "functions": ["segment"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "segment", "familyId": "api:segment", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2494,6 +2808,10 @@
       "hp": 10,
       "functions": ["mul", "rangex"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "mul", "familyId": "api:mul", "state": "joined" },
+        { "name": "rangex", "familyId": "api:rangex", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2569,6 +2887,7 @@
       "hp": 8,
       "functions": [],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "add", "familyId": "api:add", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2607,6 +2926,7 @@
       "hp": 10,
       "functions": ["mini"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "mini", "familyId": "api:mini", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2650,6 +2970,12 @@
       "hp": 10,
       "functions": ["delay", "delaytime", "delayfeedback", "delaysync"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "delay", "familyId": "api:delay", "state": "joined" },
+        { "name": "delayfeedback", "familyId": "api:delayfeedback", "state": "joined" },
+        { "name": "delaysync", "familyId": "api:delaysync", "state": "joined" },
+        { "name": "delaytime", "familyId": "api:delaytime", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2761,6 +3087,15 @@
       "hp": 8,
       "functions": ["room", "roomsize", "roomfade", "roomlp", "roomdim", "ir"],
       "aliases": { "iresponse": "ir" },
+      "inventoryFamilies": [
+        { "name": "ir", "familyId": "api:ir", "state": "joined" },
+        { "name": "iresponse", "familyId": "api:ir", "state": "joined" },
+        { "name": "room", "familyId": "api:room", "state": "joined" },
+        { "name": "roomdim", "familyId": "api:roomdim", "state": "joined" },
+        { "name": "roomfade", "familyId": "api:roomfade", "state": "joined" },
+        { "name": "roomlp", "familyId": "api:roomlp", "state": "joined" },
+        { "name": "roomsize", "familyId": "api:roomsize", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2891,6 +3226,16 @@
       "hp": 12,
       "functions": ["soft", "hard", "cubic", "diode", "asym", "sinefold", "chebyshev", "shape"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "asym", "familyId": "api:asym", "state": "joined" },
+        { "name": "chebyshev", "familyId": "api:chebyshev", "state": "joined" },
+        { "name": "cubic", "familyId": "api:cubic", "state": "joined" },
+        { "name": "diode", "familyId": "api:diode", "state": "joined" },
+        { "name": "hard", "familyId": "api:hard", "state": "joined" },
+        { "name": "shape", "familyId": "api:shape", "state": "joined" },
+        { "name": "sinefold", "familyId": "api:sinefold", "state": "joined" },
+        { "name": "soft", "familyId": "api:soft", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -2980,6 +3325,7 @@
       "hp": 10,
       "functions": ["fold"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "fold", "familyId": "api:fold", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3028,6 +3374,10 @@
       "hp": 10,
       "functions": ["crush", "coarse"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "coarse", "familyId": "api:coarse", "state": "joined" },
+        { "name": "crush", "familyId": "api:crush", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3102,6 +3452,7 @@
       "hp": 10,
       "functions": ["vowel"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "vowel", "familyId": "api:vowel", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3147,6 +3498,10 @@
       "hp": 12,
       "functions": ["compressor", "transient"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "compressor", "familyId": "api:compressor", "state": "joined" },
+        { "name": "transient", "familyId": "api:transient", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3204,6 +3559,10 @@
       "hp": 10,
       "functions": ["phaser", "phaserdepth"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "phaser", "familyId": "api:phaserrate", "state": "joined" },
+        { "name": "phaserdepth", "familyId": "api:phaserdepth", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3278,6 +3637,7 @@
       "hp": 10,
       "functions": ["pan"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "pan", "familyId": "api:pan", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3329,6 +3689,7 @@
       "hp": 10,
       "functions": ["stretch"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "stretch", "familyId": "api:stretch", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3377,6 +3738,12 @@
       "hp": 12,
       "functions": ["postgain", "stack", "channels", "mask"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "channels", "familyId": "api:channels", "state": "joined" },
+        { "name": "mask", "familyId": "api:mask", "state": "joined" },
+        { "name": "postgain", "familyId": "api:postgain", "state": "joined" },
+        { "name": "stack", "familyId": "api:stack", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3666,6 +4033,7 @@
       "hp": 14,
       "functions": ["analyze"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "analyze", "familyId": "api:analyze", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3725,6 +4093,11 @@
       "hp": 8,
       "functions": ["setcpm", "setCpm", "setcps"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "setcpm", "familyId": null, "state": "unresolved-no-inventory-family" },
+        { "name": "setCpm", "familyId": null, "state": "unresolved-no-inventory-family" },
+        { "name": "setcps", "familyId": null, "state": "unresolved-no-inventory-family" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3778,6 +4151,7 @@
       "hp": 10,
       "functions": ["iter"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "iter", "familyId": "api:iter", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -3826,6 +4200,7 @@
       "hp": 10,
       "functions": ["jux"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "jux", "familyId": "api:jux", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": { "method": "jux", "controls": [], "preset": "rev", "role": "right ear" },
@@ -3890,6 +4265,7 @@
       "hp": 12,
       "functions": ["chunk"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "chunk", "familyId": "api:chunk", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": {
@@ -3944,6 +4320,10 @@
       "hp": 12,
       "functions": ["firstOf", "lastOf"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "firstOf", "familyId": "api:firstOf", "state": "joined" },
+        { "name": "lastOf", "familyId": "api:lastOf", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": {
@@ -4008,6 +4388,12 @@
       "hp": 14,
       "functions": ["sometimesBy", "someCyclesBy", "often", "rarely"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "often", "familyId": "api:often", "state": "joined" },
+        { "name": "rarely", "familyId": "api:rarely", "state": "joined" },
+        { "name": "someCyclesBy", "familyId": "api:someCyclesBy", "state": "joined" },
+        { "name": "sometimesBy", "familyId": "api:sometimesBy", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": {
@@ -4084,6 +4470,7 @@
       "hp": 12,
       "functions": ["off"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "off", "familyId": "api:off", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": {
@@ -4138,6 +4525,9 @@
       "hp": 12,
       "functions": ["superimpose"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "superimpose", "familyId": "api:superimpose", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": {
@@ -4182,6 +4572,10 @@
       "hp": 14,
       "functions": ["rev", "palindrome"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "palindrome", "familyId": "api:palindrome", "state": "joined" },
+        { "name": "rev", "familyId": "api:rev", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -4234,6 +4628,10 @@
       "hp": 10,
       "functions": ["shuffle", "scramble"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "scramble", "familyId": "api:scramble", "state": "joined" },
+        { "name": "shuffle", "familyId": "api:shuffle", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -4298,6 +4696,10 @@
       "hp": 10,
       "functions": ["rib"],
       "aliases": { "ribbon": "rib" },
+      "inventoryFamilies": [
+        { "name": "rib", "familyId": "api:ribbon", "state": "joined" },
+        { "name": "ribbon", "familyId": "api:ribbon", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -4358,6 +4760,12 @@
       "hp": 12,
       "functions": ["zoom", "linger", "compress", "within"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "compress", "familyId": "api:compress", "state": "joined" },
+        { "name": "linger", "familyId": "api:linger", "state": "joined" },
+        { "name": "within", "familyId": "api:within", "state": "joined" },
+        { "name": "zoom", "familyId": "api:zoom", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": {
@@ -4460,6 +4868,11 @@
       "hp": 10,
       "functions": ["brak", "press", "hurry"],
       "aliases": {},
+      "inventoryFamilies": [
+        { "name": "brak", "familyId": "api:brak", "state": "joined" },
+        { "name": "hurry", "familyId": "api:hurry", "state": "joined" },
+        { "name": "press", "familyId": "api:press", "state": "joined" }
+      ],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -4525,6 +4938,7 @@
       "hp": 12,
       "functions": ["echo"],
       "aliases": {},
+      "inventoryFamilies": [{ "name": "echo", "familyId": "api:echo", "state": "joined" }],
       "source": null,
       "soundSource": null,
       "functionLoop": null,
@@ -4594,6 +5008,7 @@
       "hp": 14,
       "functions": [],
       "aliases": {},
+      "inventoryFamilies": [],
       "source": null,
       "soundSource": null,
       "functionLoop": null,

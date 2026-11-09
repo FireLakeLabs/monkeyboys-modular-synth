@@ -4,9 +4,49 @@ import { fileURLToPath } from 'node:url'
 import { readFile, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { isDeepStrictEqual } from 'node:util'
+import { isDeepStrictEqual, parseArgs } from 'node:util'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
+const { values } = parseArgs({ options: { 'inventory-ref': { type: 'string' } } })
+const inventoryRef = values['inventory-ref']
+if (inventoryRef && !/^[a-f0-9]{40}$/.test(inventoryRef))
+  throw new Error('inventory-ref must be a full commit SHA')
+const inventoryPath = 'docs/research/strudel-api-coverage/inventory.json'
+const inventoryText = inventoryRef
+  ? execFileSync('git', ['show', `${inventoryRef}:${inventoryPath}`], {
+      cwd: root,
+      encoding: 'utf8',
+      maxBuffer: 16 * 1024 * 1024,
+    })
+  : await readFile(`${root}${inventoryPath}`, 'utf8')
+const inventory = JSON.parse(inventoryText)
+if (
+  inventory.version !== 1 ||
+  !Array.isArray(inventory.families) ||
+  !Array.isArray(inventory.aliasCollisions) ||
+  !inventory.aliasToFamily ||
+  typeof inventory.aliasToFamily !== 'object' ||
+  Array.isArray(inventory.aliasToFamily)
+)
+  throw new Error('Expected #245 inventory schema v1 alias contract')
+const families = new Set(inventory.families.map((family) => family.id))
+const collisions = new Set(inventory.aliasCollisions.map((collision) => collision.name))
+for (const family of Object.values(inventory.aliasToFamily))
+  if (typeof family !== 'string' || !families.has(family))
+    throw new Error('Invalid inventory family reference')
+function joinNames(names) {
+  return [...new Set(names)]
+    .sort((a, b) => a.localeCompare(b))
+    .map((name) => ({
+      name,
+      familyId: collisions.has(name) ? null : (inventory.aliasToFamily[name] ?? null),
+      state: collisions.has(name)
+        ? 'unresolved-alias-collision'
+        : inventory.aliasToFamily[name]
+          ? 'joined'
+          : 'unresolved-no-inventory-family',
+    }))
+}
 const { module: runtime } = await runnerImport(`${root}docs/research/module-contexts-cases.mjs`, {
   configFile: false,
   resolve: {
@@ -182,6 +222,19 @@ for (const spec of runtime.CATALOG) {
     hp: spec.hp,
     functions: spec.strudel,
     aliases: spec.strudelAliases ?? {},
+    inventoryFamilies: joinNames([
+      ...spec.strudel,
+      ...Object.keys(spec.strudelAliases ?? {}),
+      ...spec.controls.flatMap((control) =>
+        control.call
+          ? typeof control.call.method === 'string'
+            ? [control.call.method]
+            : Object.values(control.call.method.names)
+          : [],
+      ),
+      ...(spec.soundSource ? ['s'] : []),
+      ...(spec.id === 'modmix' ? ['add'] : []),
+    ]),
     source: spec.source ?? null,
     soundSource: spec.soundSource ?? null,
     functionLoop: spec.functionLoop ?? null,
@@ -213,6 +266,7 @@ const files = [
   'src/codegen/generate.ts',
   'src/codegen/effects.ts',
   'src/strudel/engine.ts',
+  'node_modules/@strudel/web/dist/index.mjs',
   'node_modules/@strudel/core/pattern.mjs',
   'node_modules/@strudel/core/controls.mjs',
   'node_modules/@strudel/core/signal.mjs',
@@ -226,6 +280,10 @@ const files = [
 const hashes = Object.fromEntries(
   await Promise.all(files.map(async (path) => [path, hash(await readFile(`${root}${path}`))])),
 )
+for (const input of inventory.provenance.inputs) {
+  if (hashes[input.path] && hashes[input.path] !== input.sha256)
+    throw new Error(`Inventory input drift: ${input.path}`)
+}
 const report = {
   version: 1,
   applicationRevision: execFileSync(
@@ -240,6 +298,49 @@ const report = {
     reader: 'production read/generate/save/reopen',
     events: 'real pure pinned kernel; repository-owned fixtures only; [0,4) arcs',
     audio: 'none; no browser or listening',
+  },
+  inventory: {
+    path: inventoryPath,
+    sourceRevision:
+      inventoryRef ??
+      execFileSync('git', ['log', '-1', '--format=%H', '--', inventoryPath], {
+        cwd: root,
+        encoding: 'utf8',
+      }).trim(),
+    sha256: hash(inventoryText),
+    schemaVersion: inventory.version,
+    candidateCount: inventory.counts.families,
+    aliasCollisions: inventory.aliasCollisions,
+    priorities: inventory.priorities.map(({ rank, id, owners, corpus }) => ({
+      rank,
+      id,
+      owners,
+      corpus,
+    })),
+    selectedCandidates: joinNames([
+      'sound',
+      'chunkBack',
+      'fastChunk',
+      'slowChunk',
+      'every',
+      'dict',
+      'anchor',
+      'mode',
+      'offset',
+      'inside',
+      'outside',
+      'layer',
+      'echoWith',
+      'chunkInto',
+      'sine2',
+      'rand2',
+      'irand',
+      'steady',
+      'fmi1',
+      'fmh1',
+      'register',
+      'arrange',
+    ]),
   },
   moduleCount: matrix.length,
   comparisonCount: observations.length,
