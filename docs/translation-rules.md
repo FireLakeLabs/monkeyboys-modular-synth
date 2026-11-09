@@ -861,3 +861,13 @@ retain the existing conservative conversion limit: explicitly importing the
 executable body without its old rack metadata projects the complete new rack,
 while preserving the body. This deliberately discards the old layout. No automatic
 conversion of saved patches or new grouped-CODE conversion flow is introduced.
+
+## Registered-helper research (#247)
+
+The [bounded study](research/user-defined-modules/README.md) separates parse-only
+syntax candidates from runtime experiments. The production reader still retains
+these helpers through exact CODE. A future #217 wrapper must preserve original
+setup/body/order and bind only proven call arguments; recognizing custom `.o`
+never grants generated routing ownership. Pattern/computed arguments remain
+expressions, and saved CODE retains the explicit-conversion contract. Proposed
+discovery/identity extensions are research, not a new production adapter.

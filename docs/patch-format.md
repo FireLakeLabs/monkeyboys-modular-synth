@@ -489,3 +489,13 @@ module values; its catalog `presentationOnly` flag permits metadata-only edits
 even on imported source. TAP retains the ordinary executable call binding.
 
 See [independent source, saved-rack, event and browser proof](pattern-visibility-verification.md).
+
+## User-defined-module identity study (#247)
+
+The [research report](research/user-defined-modules/README.md) proposes separate
+patch-local definition, instance and argument bindings for #217. Its executable
+`research-247-1` envelope is research data only, not an accepted rack metadata
+version or field. No production format changes here. Exact source, existing saved
+CODE-rack identity and pinned events are proven separately; complete custom-panel
+settings/history/reopen remain #217 acceptance. Live closure state is never a
+saved definition or instance value.

@@ -276,3 +276,13 @@ share the source-aware connection assessment. The chooser is catalog-backed,
 works from inputs or outputs and commits placement plus wiring as one history
 step. See [contract](design.md#jack-discovery-and-connected-placement-233) and
 [verification](jack-discovery-verification.md).
+
+## User-defined-module research (#247)
+
+The [bounded register/subpatch study](research/user-defined-modules/README.md)
+provides parse-only discovery/source/identity probes and separate pinned-engine
+event experiments. It recommends original-call wrappers as #217's first
+production increment. No custom-panel implementation, MIX change, consolidation
+or format extension ships in this research; #217 retains its implementation and
+browser acceptance, while macro authoring/encapsulation/portability remain
+explicit later proposals.
