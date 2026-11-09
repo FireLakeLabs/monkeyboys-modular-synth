@@ -1,70 +1,115 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { getModuleSpec } from '../modules/catalog'
 import { controlValue } from '../modules/values'
 import type { ControlValue, PlacedModule } from '../patch/types'
 import { type SamplePackResource } from '../strudel/engine'
-import { variantCount, type SoundChoice } from './crate'
+import { slotValue, type SoundChoice } from './crate'
+import { findSound, parseToken, soundParts } from './soundIndex'
+import { SoundPicker } from './SoundPicker'
 
+/** A sound slot's readout. Its list exists only while the picker is open. */
 export function SampleSlot({
   module,
   resources,
+  patchSounds,
+  locked,
+  picking,
+  settled,
+  packOrder,
   drop,
   clear,
+  browseAll,
+  openPacks,
+  loadSounds,
 }: {
   module: PlacedModule
   resources: readonly SamplePackResource[]
+  /** Tokens the patch's sound slots hold, for the picker's first view. */
+  patchSounds: readonly string[]
+  locked: boolean
+  /** The Sounds dock is choosing for this slot. */
+  picking: boolean
+  /** Every seated pack's inventory is known, so a sound none of them has is missing. */
+  settled: boolean
+  /** Seated pack keys in seating order, for listing packs. */
+  packOrder: readonly string[]
+  /** Returns false when the rack refused the edit and reported why. */
+  drop: (choice: SoundChoice) => boolean
   clear: () => void
-  drop: (choice: SoundChoice) => void
+  browseAll: (query: string) => void
+  openPacks: () => void
+  loadSounds: () => Promise<void>
 }) {
-  const spec = getModuleSpec(module.type)
-  const target = spec.sampleTarget
+  const [open, setOpen] = useState(false)
+  const readout = useRef<HTMLButtonElement>(null)
+  const target = getModuleSpec(module.type).sampleTarget
   if (!target) return null
-  const control = spec.controls.find((control) => control.id === target.control)
-  const value = control && controlValue(module, control)
-  const selected =
-    typeof value === 'string' && value
-      ? /^[\w-]+$/.test(value)
-        ? `${value}:${module.type === 'smpl' && typeof module.values['n'] === 'number' ? module.values['n'] : 0}`
-        : value
-      : ''
-  const sounds = [
-    ...new Map(
-      resources.flatMap((resource) => resource.sounds).map((sound) => [sound.name, sound]),
-    ).values(),
-  ].filter((sound) => !target.prefix || sound.name.startsWith(target.prefix))
+  const value = slotValue(module)
+  const choice = parseToken(value)
+  const sound = choice ? findSound(resources, choice.name) : undefined
+  // Packs load on first use, so before that a slot cannot tell a missing sound from an unloaded one.
+  const missing = !!value && settled && !(choice && sound && choice.n < sound.count)
+  const parts = choice ? (sound ?? soundParts(choice.name, '')) : { bank: '', short: value }
+  const caption = module.type === 'reverb' ? 'IR' : module.type === 'wavetable' ? 'TABLE' : 'SAMPLE'
   return (
-    <div className="sample-slot">
-      {module.type === 'reverb' ? 'IR' : module.type === 'wavetable' ? 'TABLE' : 'SAMPLE'} · drop
-      sound
-      <select
-        aria-label={target.prefix ? 'Seated wavetable' : `Sound for ${module.id}`}
-        value={selected}
-        onChange={(event) => {
-          const [name, n] = event.target.value.split(':')
-          if (name) drop({ name, n: Number(n ?? 0) })
-          else clear()
-        }}
+    <div className="sample-slot" data-value={value} data-state={missing ? 'missing' : undefined}>
+      <span className="sample-slot-caption">{caption}</span>
+      <button
+        ref={readout}
+        type="button"
+        className="sample-readout"
+        aria-label={`Sound for ${module.id}: ${value || 'none'}${missing ? ', not loaded' : ''}`}
+        aria-haspopup="dialog"
+        aria-expanded={open && !locked}
+        title={value || undefined}
+        disabled={locked}
+        onClick={() => setOpen(!open)}
       >
-        <option value="">{target.prefix ? 'Choose wt_ sound' : 'Choose sound'}</option>
-        {selected &&
-          !sounds.some((sound) =>
-            Array.from(
-              { length: variantCount(sound.bank) },
-              (_, n) => `${sound.name}:${n}`,
-            ).includes(selected),
-          ) && (
-            <option value={selected} disabled>
-              {selected} · unavailable
-            </option>
-          )}
-        {sounds.flatMap((sound) =>
-          Array.from({ length: variantCount(sound.bank) }, (_, n) => (
-            <option key={`${sound.name}:${n}`} value={`${sound.name}:${n}`}>
-              {sound.name}:{n}
-            </option>
-          )),
+        {picking ? (
+          <>
+            <span className="sample-readout-bank">◂ choosing…</span>
+            {value && <span className="sample-readout-token">was {value}</span>}
+          </>
+        ) : value ? (
+          <>
+            {parts.bank && <span className="sample-readout-bank">{parts.bank}</span>}
+            <span className="sample-readout-token">
+              {choice ? `${parts.short}:${choice.n}` : value}
+            </span>
+            {missing && <span className="sample-readout-missing">not loaded</span>}
+          </>
+        ) : (
+          <span className="sample-readout-empty">
+            {target.prefix ? `Choose ${target.prefix} sound` : 'Choose sound'}
+          </span>
         )}
-      </select>
+      </button>
+      {open && !locked && (
+        <SoundPicker
+          moduleId={module.id}
+          prefix={target.prefix}
+          value={value}
+          resources={resources}
+          packOrder={packOrder}
+          patchSounds={patchSounds.filter((token) => token !== value)}
+          anchor={readout}
+          choose={drop}
+          clear={clear}
+          browseAll={(query) => {
+            setOpen(false)
+            browseAll(query)
+          }}
+          openPacks={() => {
+            setOpen(false)
+            openPacks()
+          }}
+          loadSounds={loadSounds}
+          close={(refocus) => {
+            setOpen(false)
+            if (refocus) readout.current?.focus()
+          }}
+        />
+      )}
     </div>
   )
 }

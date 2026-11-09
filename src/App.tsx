@@ -975,13 +975,14 @@ export default function App() {
           }
           patch={patch}
           sampleResources={seatedResources(document, sampleResources)}
-          soundCrate={(active, assign, dragging) => (
+          soundCrate={(active, assign, dragging, pick) => (
             <SoundCrate
               document={document}
               locked={rackLocked || audio.status === 'bouncing'}
               active={active}
               assign={assign}
               dragging={dragging}
+              pick={pick}
             />
           )}
           cartridgeBay={

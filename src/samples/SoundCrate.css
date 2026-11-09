@@ -66,20 +66,104 @@
 .sound-flip button {
   padding: 2px 12px;
 }
+.sound-search label {
+  display: block;
+}
+.sound-pick {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 8px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--audio);
+  border-radius: 6px;
+  background: #2a1e14;
+}
+.sound-pick code {
+  color: var(--audio);
+  font-family: 'JetBrains Mono', monospace;
+}
+.sound-pick small {
+  grid-column: 1 / -1;
+  color: #d8c2ad;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.sound-use {
+  display: block;
+  width: calc(100% - 8px);
+  margin: 0 4px 4px;
+  padding: 3px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--audio);
+  color: #1b1209;
+  font-weight: 600;
+  cursor: pointer;
+}
+/* A small display window: line one names the machine or pack, line two the token. */
 .sample-slot {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  border: 1px dashed currentColor;
-  padding: 3px;
-  font-size: 11px;
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-.sample-slot select {
   width: 100%;
   min-width: 0;
+}
+.sample-slot-caption {
+  font:
+    600 11px 'Barlow Condensed',
+    sans-serif;
+  letter-spacing: 0.06em;
+}
+.sample-readout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  width: 100%;
+  min-width: 0;
+  padding: 3px 5px;
+  border: 1px solid #2e3238;
+  border-radius: 3px;
+  background: #0e0f11;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+.sample-readout:hover,
+.sample-readout[aria-expanded='true'] {
+  border-color: var(--audio);
+}
+.sample-readout span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sample-readout-bank {
+  color: var(--muted);
+  font:
+    500 11px 'Barlow Condensed',
+    sans-serif;
+}
+.sample-readout-token {
+  color: #f6e3cf;
+  font:
+    12px 'JetBrains Mono',
+    monospace;
+}
+.sample-readout-empty {
+  color: var(--muted);
   font-size: 12px;
+}
+.sample-readout-missing {
+  color: #f4c062;
+  font-size: 11px;
+}
+.sample-slot[data-state='missing'] .sample-readout {
+  border-style: dashed;
+  border-color: #b8873a;
 }
 .tape-view {
   width: 100%;

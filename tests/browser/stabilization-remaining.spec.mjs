@@ -168,7 +168,10 @@ test('native sound drag highlights panels and selection plus Enter assigns a sea
   await panel.locator('.module-header').click()
   await card.focus()
   await page.keyboard.press('Enter')
-  await expect(page.locator('[aria-label="Sound for smpl1"]')).toHaveValue('fixture:0')
+  await expect(page.locator('[data-module="smpl1"] .sample-slot')).toHaveAttribute(
+    'data-value',
+    'fixture:0',
+  )
   await page.getByRole('button', { name: 'Undo', exact: true }).click()
   const from = await card.boundingBox()
   const to = await panel.boundingBox()
@@ -184,14 +187,26 @@ test('native sound drag highlights panels and selection plus Enter assigns a sea
   await expect(page.locator('[data-module="vcf1"]')).toHaveAttribute('data-sound-target', 'false')
   await page.screenshot({ path: 'docs/evidence/stabilization-remaining/sound-drag.png' })
   await page.mouse.up()
-  await expect(page.locator('[aria-label="Sound for smpl1"]')).toHaveValue('fixture:0')
+  await expect(page.locator('[data-module="smpl1"] .sample-slot')).toHaveAttribute(
+    'data-value',
+    'fixture:0',
+  )
   await expect(panel).not.toHaveAttribute('data-sound-target')
   await page.locator('[data-module="splice1"] .module-header').click()
   await card.dblclick()
-  await expect(page.locator('[aria-label="Sound for splice1"]')).toHaveValue('fixture:0')
-  const choices = await page.getByLabel('Seated wavetable').locator('option').allTextContents()
-  expect(choices).toContain('wt_fixture:0')
-  expect(choices).not.toContain('fixture:0')
+  await expect(page.locator('[data-module="splice1"] .sample-slot')).toHaveAttribute(
+    'data-value',
+    'fixture:0',
+  )
+  await page.locator('[data-module="wavetable1"] .sample-readout').click()
+  const picker = page.getByRole('dialog', { name: 'Choose sound for wavetable1' })
+  await picker.getByRole('combobox', { name: 'Search sounds' }).fill('fixture')
+  const choices = await picker
+    .getByRole('option')
+    .evaluateAll((options) => options.map((option) => option.getAttribute('aria-label')))
+  expect(choices).toEqual([expect.stringMatching(/^wt_fixture:0,/)])
+  await page.keyboard.press('Escape')
+  await expect(picker).toBeHidden()
   let unchanged = await page.evaluate(async () =>
     (await import('/scripts/editor-browser.mjs')).editorSource(),
   )

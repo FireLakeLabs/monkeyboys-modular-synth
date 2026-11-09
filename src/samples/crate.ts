@@ -35,6 +35,18 @@ export function drumSoundRows(module: PlacedModule): readonly string[] {
 }
 
 export const soundToken = ({ name, n }: SoundChoice) => `${name}:${n}`
+
+/** What a sound slot holds, folding SMPL's separate N into a bare sound name. */
+export function slotValue(module: PlacedModule): string {
+  const spec = getModuleSpec(module.type)
+  const target = spec.sampleTarget
+  const control = target && spec.controls.find((control) => control.id === target.control)
+  const value = control && controlValue(module, control)
+  if (typeof value !== 'string' || !value) return ''
+  if (!/^[\w-]+$/.test(value)) return value
+  const n = module.values['n']
+  return `${value}:${module.type === 'smpl' && typeof n === 'number' ? n : 0}`
+}
 export function soundChoice(value: unknown): SoundChoice {
   if (
     !value ||

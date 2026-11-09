@@ -144,10 +144,10 @@ export async function verifySoundCrate() {
     }
     for (const [module, selector, name, n] of [
       ['drums1', '.mini-row-name', 'cratehit', 1],
-      ['smpl1', '.sample-slot select', 'cratehit', 1],
-      ['reverb1', '.sample-slot select', 'cratehit', 0],
-      ['splice1', '.sample-slot select', 'cratehit', 1],
-      ['wavetable1', '.sample-slot select', 'wt_crate', 0],
+      ['smpl1', '.sample-slot', 'cratehit', 1],
+      ['reverb1', '.sample-slot', 'cratehit', 0],
+      ['splice1', '.sample-slot', 'cratehit', 1],
+      ['wavetable1', '.sample-slot', 'wt_crate', 0],
     ]) {
       const source = editorSource()
       drop(module, selector, name, n)
@@ -157,13 +157,23 @@ export async function verifySoundCrate() {
       assert(generate(reopened) === editorSource(), `${module} drop did not retain exact source`)
       results.push(`${module}: browser drop writes source and restores complete saved rack`)
     }
-    const options = [...document.querySelector('[aria-label="Seated wavetable"]').options].map(
-      (option) => option.value,
+    // The first view lists every sound the slot accepts.
+    document.querySelector('[data-module="wavetable1"] .sample-readout').click()
+    await until(() => document.querySelector('.sound-picker [role="option"]'))
+    const options = [...document.querySelectorAll('.sound-picker [role="option"]')].map((option) =>
+      option.getAttribute('aria-label'),
     )
     assert(
-      options.includes('wt_crate:0') && !options.includes('cratehit:0'),
+      options.some((label) => label.startsWith('wt_crate:0,')) &&
+        !options.some((label) => label.startsWith('cratehit:')),
       'WAVETABLE offered non-wt sounds',
     )
+    document
+      .querySelector('.sound-picker-search')
+      .dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+      )
+    await until(() => !document.querySelector('.sound-picker'))
     const mark = document.querySelector('[data-module="smpl1"] [data-mark="begin"]')
     mark.focus()
     mark.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }))
@@ -295,7 +305,7 @@ export async function verifyCrateReview() {
       ['wavetable1', 'wt_review'],
     ]) {
       const before = editorSource()
-      drop(module, '.sample-slot select', name)
+      drop(module, '.sample-slot', name)
       await until(() => document.body.textContent.includes('Clear smpl1 BANK'))
       assert(editorSource() === before, `${module} inherited-bank refusal changed source`)
       assert(

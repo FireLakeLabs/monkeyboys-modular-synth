@@ -193,6 +193,21 @@ no new metadata is saved. The playhead shares the header's scheduler clock,
 wraps at song length, clears on Stop and freezes under reduced motion.
 See the [contract and evidence](arranger.md).
 
+## Sound picker (#227, decided 8 November 2026)
+
+The owner chose direction A + C from the private sample-picker design canvas. See
+[sound picker](sound-crate.md#sound-picker-227).
+
+- Each sound slot opens a search popup beside its panel. **Browse all in Sounds**
+  hands the search to a pick mode in the Sounds dock.
+- ←/→ change a row's variant and play it.
+- Kind chips follow Strudel's drum suffixes (`bd`, `sd`, `hh` and so on), which
+  `.bank()` relies on. Packs need not follow them, so a short list covers Dirt
+  Samples names and everything else is Other.
+- The native selector is removed. This replaces #185's rule that native selectors
+  remain a keyboard alternative: the popup and the dock's select-then-Enter path
+  are the keyboard routes.
+
 ## Rack case (#133, decided 3 November 2026)
 
 - OUT is pinned at the right edge of the rack frame, outside the rails, retaining
