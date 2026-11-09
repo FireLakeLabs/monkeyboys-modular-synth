@@ -408,16 +408,19 @@ refresh; this research does not regenerate its racks.
 
 ## Inventory reconciliation and prioritized stories
 
-Reconciled with #245's corrected schema-v1 inventory at
-`1d11db5bf9b42dc5a1fd17ea85779423e7022395`, artifact SHA-256
-`8e94f04921bf9530a4ad6981aad4edb4ebded6c81212a268494afd843d7d0221`.
-Its Pattern class-binding and REPL-injection corrections provide `api:layer`,
-`api:setcpm` and `api:setcps`; they were inventory omissions, not engine gaps.
-The final merged artifact and fresh-clone reproduction still need verification
-before closure. Historical preparation used `a4760f136779e214a057faebaf2530d182c7f300`
+Final reconciliation consumes the checked-in [#245 inventory/report](strudel-api-coverage/README.md)
+merged by [PR #253](https://github.com/FireLakeLabs/monkeyboys-modular-synth/pull/253)
+as `5b8b86610d95c535072f666b5482a8d0be2a3f1d`. Its inventory SHA-256 is
+`8e94f04921bf9530a4ad6981aad4edb4ebded6c81212a268494afd843d7d0221`,
+identical to the corrected artifact first inspected at research commit
+`1d11db5bf9b42dc5a1fd17ea85779423e7022395`. Pattern class-binding and
+REPL-injection corrections provide `api:layer`, `api:setcpm` and `api:setcps`;
+these were inventory omissions, not engine gaps.
+
+Historical preparation used `a4760f136779e214a057faebaf2530d182c7f300`
 (hash `d6b7740209c27a9ba02bdeca828d6fbdd9c14f660229cbd9fc138666f28596f6`),
-which had those explicit unresolved entries. Historical object IDs are not needed
-by the final default command and are not assumed reachable in a main-only clone.
+which had those explicit unresolved entries. Historical object IDs are provenance
+only: the final command requires neither object in a main-only clone.
 
 The adapter uses `aliasToFamily`, with runtime spellings `lpf` → `api:cutoff`,
 `lpq` → `api:resonance`, `sound` → `api:s`, `every` → `api:firstOf`, and `dict` →
@@ -439,8 +442,7 @@ The final command reads the committed inventory from the checkout. No Git histor
 is consulted unless an explicit preparation-only `--inventory-ref` is supplied.
 Evidence provenance uses input hashes, so shallow clones and source archives do
 not require an unpublished research commit. `--check` verifies the committed
-matrix/evidence without rewriting files; the final fresh-clone result will be
-recorded below after #245 merges. Its report
+matrix/evidence without rewriting files. Fresh-clone and Git-free checks below verify this final command. Its report
 has 22 **root manifest** committed entries (excluding the 59 focused module
 exercises used here), and five pinned report-only wild files. Those observations
 retain source hashes, attribution and no redistribution claim; this study does
@@ -498,12 +500,14 @@ expanding into one ticket per name:
 
 - `npm ci`: passed on Node 24.22.2; lockfile unchanged; installed source patch verified.
 - Reproduction: 59 exercised modules, 48 pinned event comparisons, 64 reader/document cases, 59 per-module fallback cases and 8 report examples; zero failures.
-- `npm run check`: passed (2,585 unit cases, 54 guardrails, committed reader coverage, formatting/skills/lint/typecheck/build) after review fixes and corrected-inventory join; final rebase gate remains.
+- `npm run check`: passed (2,585 unit cases, 59 guardrails, committed reader coverage, formatting/skills/lint/typecheck/build) after rebasing onto merged #253. The only rebase conflict was adjacent standards research sections; both were preserved.
 - Coverage guard: deliberately removed one annotation; the command rejected it, then passed after byte-exact restoration.
 - `node --test scripts/module-contexts.test.mts`: the mistaken bare-n-as-note assertion failed, then the correct bare-n/scale-to-note case passed; this focused behavior guard runs in the existing CI guardrail gate. Whole historical report snapshots remain explicit research checks.
 - C26 negative guard: intentionally asserted note mode instead of degree for bare n; reproduction rejected the wrong context, then passed after byte-exact fixture restoration.
 - Local browser/PCM/listening: not run; application behavior unchanged; no server.
-- Corrected inventory reconciled; final reachable artifact/fresh-clone proof, Opus recheck, PR/hosted checks and protected merge remain pending.
+- Final default `node scripts/module-contexts.mjs --check`: passes against the inventory committed on main at 5b8b866.
+- Fresh network clone: `git clone --depth 1 --single-branch --branch main https://github.com/FireLakeLabs/monkeyboys-modular-synth.git <scratch>` produced exactly one reachable commit, 5b8b866. The historical a4760f1 object was absent. Applied this reviewed research diff, ran npm ci, the default writer (byte-identical outputs), default --check and the focused Node test: all passed. Temporarily removing that clone's Git metadata also left default --check passing. This tests main plus the proposed research change, without unpublished refs; no inventory is copied from the working tree.
+- Current reviewed behavior is unchanged by rebase. PR-hosted checks/protected merge are the remaining shipping gate at report publication; final status is recorded on [#246](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/246).
 
 Implementation provenance: GPT-6.1 Sol in T3 Code through the Codex harness.
 Review policy selects latest advertised Opus. Round 1 used provider
@@ -531,4 +535,4 @@ browser/audio work. Usage was not exposed. No findings were declined.
 N1 (nit): fixed the frequency-helper citation to name `getFrequencyFromValue`
 and its source location directly. This citation/ledger-only update requires no
 new model round under review-loop policy. No behavior changed after approval.
-Final dependency merge/fresh-clone proof and PR gates still remain.
+The dependency merge and fresh-clone proof above are complete. The rebased behavior matches the reviewed implementation; only citation, ledger and reconciliation prose changed afterward. PR gates remain at report publication.
