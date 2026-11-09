@@ -23,12 +23,8 @@
     },
     "provenance": {
       "type": "object",
-      "required": ["implementationBase", "node", "lock", "inputs", "counting", "exclusions"],
+      "required": ["node", "lock", "inputs", "counting", "exclusions"],
       "properties": {
-        "implementationBase": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{40}$"
-        },
         "inputs": {
           "type": "array",
           "items": {
@@ -225,7 +221,8 @@
               "bundle-class-static",
               "bundle-class-prototype",
               "source-only-candidate",
-              "app-adapter"
+              "app-adapter",
+              "repl-evaluation-scope"
             ]
           }
         },

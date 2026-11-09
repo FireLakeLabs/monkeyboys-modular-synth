@@ -76,6 +76,7 @@ export function scan(source, path, registrationAliases = {}) {
   const aliases = []
   const wrappers = []
   const evalScopes = []
+  const classOwners = new WeakMap()
   let composers
   let hows
   const registrationNames = new Map(
@@ -102,6 +103,7 @@ export function scan(source, path, registrationAliases = {}) {
   const ref = (node) => ({ path, line: node.loc.start.line })
   walk(ast, (node) => {
     if (node.type === 'VariableDeclarator' && node.id.type === 'Identifier') {
+      if (node.init?.type === 'ClassExpression') classOwners.set(node.init, node.id.name)
       if (node.init?.type === 'Identifier')
         aliases.push({ ...ref(node), name: node.id.name, target: node.init.name })
       if (
@@ -154,17 +156,24 @@ export function scan(source, path, registrationAliases = {}) {
     }
     if (scopeLocal && node.type === 'CallExpression' && node.callee.name === scopeLocal) {
       const references = [],
-        direct = []
-      for (const arg of node.arguments)
+        direct = [],
+        members = []
+      for (const arg of node.arguments) {
+        if (arg.type === 'ObjectExpression')
+          for (const property of arg.properties) {
+            const name = keyName(property.key)
+            if (property.type === 'Property' && typeof name === 'string') {
+              direct.push(name)
+              members.push({ name, local: keyName(property.value) })
+            }
+          }
         walk(arg, (child) => {
           if (child.type === 'ArrowFunctionExpression' && child.body.type === 'Identifier')
             references.push(child.body.name)
-          if (child.type === 'ObjectExpression')
-            direct.push(
-              ...child.properties.map((p) => keyName(p.key)).filter((n) => typeof n === 'string'),
-            )
         })
-      if (references.length) evalScopes.push({ ...ref(node), references, direct })
+      }
+      if (references.length || direct.length)
+        evalScopes.push({ ...ref(node), references, direct, members })
     }
     if (node.type === 'VariableDeclarator' && node.init?.type === 'ObjectExpression') {
       const keys = node.init.properties.map((p) => keyName(p.key))
@@ -220,14 +229,15 @@ export function scan(source, path, registrationAliases = {}) {
       } else registrations.push({ ...ref(node), kind, canonical, names, fields, expanded: false })
     }
     if (node.type === 'ClassDeclaration' || node.type === 'ClassExpression') {
-      definitions.push({ ...ref(node), kind: 'class', name: node.id?.name ?? '<anonymous>' })
+      const owner = classOwners.get(node) ?? node.id?.name ?? '<anonymous>'
+      definitions.push({ ...ref(node), kind: 'class', name: owner })
       for (const method of node.body.body) {
         const name = keyName(method.key)
         if (method.type !== 'MethodDefinition') continue
         if (typeof name === 'string')
           methods.push({
             ...ref(method),
-            owner: node.id?.name ?? '<anonymous>',
+            owner,
             name,
             static: method.static,
             kind: method.kind,

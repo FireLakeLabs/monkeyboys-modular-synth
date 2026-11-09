@@ -7,7 +7,7 @@ The versioned report has `version`, `provenance`, `packages`, `surfaces`,
 `families`, `aliasToFamily`, `aliasCollisions`, `priorities`, `unresolvedSites`,
 `examples`, `corpus`, and `counts`. See [JSON Schema](inventory.schema.json).
 `families[].id` is `api:<canonical spelling>`; canonical spelling is the first
-registered name, otherwise the exported/prototype spelling. Exported constructor methods use
+registered name, otherwise the exported/prototype spelling. Pattern methods use ordinary method spellings; other exported constructors use
 `api:Class.method`. Join ordinary runtime spellings through `aliasToFamily`
 (string values), and check `aliasCollisions` before relying on an ambiguous name. Alias spellings are
 in `names`; explicit registration/export aliases share a family. Overlapping
@@ -15,7 +15,8 @@ factory definitions retain separate families and appear in `aliasCollisions`;
 that index is not proof of effective runtime alias ownership. A packed setter's extra event fields are not aliases.
 
 Each family records discovered `evidence` (package path, line and discovery kind),
-`availability` (bundle export / prototype / source-only / app adapter),
+`availability` (bundle export / prototype / initialization namespace /
+REPL-evaluation injection / source-only / app adapter),
 `catalog` owners and control bindings, `reader` observations or explicit unknown,
 `generator` role/evidence or explicit unknown, `backend` evidence or explicit
 unknown, and separate corpus occurrence counts for committed and pinned wild

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -92,8 +92,73 @@ await test('inventory reproduces byte-identical evidence with real reader observ
     assert.equal(new Set(ids).size, ids.length)
     assert.ok(ids.includes('api:fmi88'))
     assert.ok(ids.includes('api:register'))
+    assert.ok(ids.includes('api:layer'))
+    assert.ok(ids.includes('api:setcpm'))
+    assert.ok('aliasCollisions' in report && Array.isArray(report.aliasCollisions))
+    assert.ok(
+      report.aliasCollisions.some(
+        (c: unknown) => c && typeof c === 'object' && 'name' in c && c.name === 'density',
+      ),
+    )
     assert.ok('corpus' in report && Array.isArray(report.corpus))
     assert.equal(report.corpus.length, 2)
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+function scanSnippet(source: string): Record<string, unknown> {
+  const dir = mkdtempSync(resolve(tmpdir(), 'strudel-boundary-'))
+  try {
+    const file = resolve(dir, 'snippet.mjs')
+    writeFileSync(file, source)
+    const result: unknown = JSON.parse(run(['--scan', file]).stdout)
+    assert.ok(result && typeof result === 'object')
+    return Object.fromEntries(Object.entries(result))
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+}
+
+await test('scanner retains public ownership of named and anonymous class expressions', () => {
+  const report = scanSnippet(
+    'let bound = class Internal { layer() {} }; const Other = class { queryArc() {} }; export {bound as Pattern, Other};',
+  )
+  assert.ok(Array.isArray(report.methods))
+  const encoded = JSON.stringify(report.methods)
+  assert.match(encoded, /"owner":"bound","name":"layer"/)
+  assert.match(encoded, /"owner":"Other","name":"queryArc"/)
+})
+
+await test('scanner records direct REPL scope injections separately from namespace setup', () => {
+  const report = scanSnippet(
+    'export function evalScope() {} function inject() { return evalScope({setcpm:setCpm,setCpm,setcps:setCps}); }',
+  )
+  assert.ok(Array.isArray(report.evalScopes))
+  assert.equal(report.evalScopes.length, 1)
+  assert.match(JSON.stringify(report.evalScopes), /setcpm/)
+})
+
+await test('inventory succeeds without git metadata or origin refs', () => {
+  const dir = mkdtempSync(resolve(tmpdir(), 'strudel-no-git-'))
+  try {
+    for (const path of [
+      'src',
+      'corpus',
+      'package.json',
+      'package-lock.json',
+      'docs/research/strudel-api-coverage',
+      'scripts/strudel-api-inventory.mjs',
+      'scripts/strudel-api-inventory-scan.mjs',
+    ])
+      cpSync(resolve(path), resolve(dir, path), { recursive: true })
+    symlinkSync(resolve('node_modules'), resolve(dir, 'node_modules'), 'dir')
+    const result = spawnSync(
+      process.execPath,
+      [resolve(dir, 'scripts/strudel-api-inventory.mjs'), '--output', resolve(dir, 'out.json')],
+      { cwd: dir, encoding: 'utf8' },
+    )
+    assert.equal(result.status, 0, result.stderr)
   } finally {
     rmSync(dir, { recursive: true, force: true })
   }

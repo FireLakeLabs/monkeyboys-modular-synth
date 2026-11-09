@@ -1,7 +1,6 @@
 {
   "version": 1,
   "provenance": {
-    "implementationBase": "d9f06ddc12b135221eec247150c23cce0dadf6c3",
     "node": "v24.22.2",
     "lock": {
       "path": "package-lock.json",
@@ -30,11 +29,11 @@
       },
       {
         "path": "scripts/strudel-api-inventory-scan.mjs",
-        "sha256": "52dd5653b6cfb1b25d8726f27b76cc3aa2d7e08fb0f818aa191ac7fa154467ee"
+        "sha256": "a036fcf724b6d0c429e5c49a58e8204c0be2dd36f33f64886cbbbcbc6e991b5a"
       },
       {
         "path": "scripts/strudel-api-inventory.mjs",
-        "sha256": "11e8788b9eda9cb6447404b9a5d4835e356bd1e7341bebbf3224621241b152d3"
+        "sha256": "59b36ba17747e5ec3e9676341bfdeceaf70431a665ba27ef059b325910844a22"
       },
       {
         "path": "src/codegen/arranger.test.ts",
@@ -598,10 +597,11 @@
     "catalogStrudelNames": 176,
     "coreLiteralRegistrationGroups": 401,
     "coreLiteralGroupsWithoutOwnership": 256,
-    "families": 1040,
+    "families": 1100,
     "bundleExports": 1017,
     "initStrudelScopeNames": 1013,
-    "bundleDirectPatternMethods": 56,
+    "replEvaluationScopeNames": 9,
+    "bundleDirectPatternMethods": 127,
     "unresolvedSites": 40
   },
   "surfaces": {
@@ -4678,6 +4678,60 @@
     "initializationScopes": [
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
+        "line": 5641,
+        "references": [],
+        "direct": [
+          "all",
+          "each",
+          "hush",
+          "cpm",
+          "setCps",
+          "setcps",
+          "setCpm",
+          "setcpm",
+          "compileKabel"
+        ],
+        "members": [
+          {
+            "name": "all",
+            "local": "Ie"
+          },
+          {
+            "name": "each",
+            "local": "rt"
+          },
+          {
+            "name": "hush",
+            "local": "R"
+          },
+          {
+            "name": "cpm",
+            "local": "he"
+          },
+          {
+            "name": "setCps",
+            "local": "re"
+          },
+          {
+            "name": "setcps",
+            "local": "re"
+          },
+          {
+            "name": "setCpm",
+            "local": "de"
+          },
+          {
+            "name": "setcpm",
+            "local": "de"
+          },
+          {
+            "name": "compileKabel",
+            "local": "H"
+          }
+        ]
+      },
+      {
+        "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 20045,
         "references": [
           "M2",
@@ -4688,6 +4742,16 @@
         "direct": [
           "hush",
           "evaluate"
+        ],
+        "members": [
+          {
+            "name": "hush",
+            "local": "dV"
+          },
+          {
+            "name": "evaluate",
+            "local": "hV"
+          }
         ]
       }
     ],
@@ -9679,641 +9743,641 @@
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1091,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "constructor",
         "static": false,
         "kind": "constructor",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1094,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_steps",
         "static": false,
         "kind": "get",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1097,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_steps",
         "static": false,
         "kind": "set",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1100,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "setSteps",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1103,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withSteps",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1106,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "hasSteps",
         "static": false,
         "kind": "get",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1120,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withValue",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1125,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withState",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1132,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "fmap",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1144,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "appWhole",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1174,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "appBoth",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1191,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "appLeft",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1216,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "appRight",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1233,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "bindWhole",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1251,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "bind",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1258,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "join",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1261,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "outerBind",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1264,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "outerJoin",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1267,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "innerBind",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1270,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "innerJoin",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1274,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "resetJoin",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1285,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "restartJoin",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1291,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "squeezeJoin",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1313,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "squeezeBind",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1320,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "polyBind",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1338,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "queryArc",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1352,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "splitQueries",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1363,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withQuerySpan",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1366,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withQuerySpanMaybe",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1380,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withQueryTime",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1391,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withHapSpan",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1401,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withHapTime",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1410,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withHaps",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1420,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withHap",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1429,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "setContext",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1438,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withContext",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1447,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "stripContext",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1458,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "withLoc",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1475,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "filterHaps",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1489,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "filterValues",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1498,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "removeUndefineds",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1508,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "onsetsOnly",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1517,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "discreteOnly",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1525,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "defragmentHaps",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1560,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "firstCycle",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1568,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "firstCycleValues",
         "static": false,
         "kind": "get",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1575,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "showFirstCycle",
         "static": false,
         "kind": "get",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1586,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "sortHapsByPart",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1593,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "asNumber",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1598,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_opIn",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1601,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_opOut",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1604,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_opMix",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1607,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_opSqueeze",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1611,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_opSqueezeOut",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1615,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_opReset",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1618,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_opRestart",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1621,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "_opPoly",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1643,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "layer",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1656,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "superimpose",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1661,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "stack",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1664,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "sequence",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1667,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "seq",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1670,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "cat",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1673,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "fastcat",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1676,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "slowcat",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1681,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "onTrigger",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1702,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "log",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1715,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "logValues",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1720,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "drawLine",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1726,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "unjoin",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 1742,
-        "owner": "yt",
+        "owner": "Pattern",
         "name": "into",
         "static": false,
         "kind": "method",
-        "visibility": "internal-or-unresolved"
+        "visibility": "exported-class"
       },
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
@@ -10813,7 +10877,7 @@
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 3738,
-        "owner": "<anonymous>",
+        "owner": "Ee",
         "name": "constructor",
         "static": false,
         "kind": "constructor",
@@ -10822,7 +10886,7 @@
       {
         "path": "node_modules/@strudel/web/dist/index.mjs",
         "line": 3741,
-        "owner": "<anonymous>",
+        "owner": "Ee",
         "name": "parseInput",
         "static": true,
         "kind": "method",
@@ -22415,6 +22479,318 @@
       }
     },
     {
+      "id": "api:_opIn",
+      "canonical": "_opIn",
+      "names": [
+        "_opIn"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1598,
+          "owner": "_",
+          "name": "_opIn",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:_opMix",
+      "canonical": "_opMix",
+      "names": [
+        "_opMix"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1604,
+          "owner": "_",
+          "name": "_opMix",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:_opOut",
+      "canonical": "_opOut",
+      "names": [
+        "_opOut"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1601,
+          "owner": "_",
+          "name": "_opOut",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:_opPoly",
+      "canonical": "_opPoly",
+      "names": [
+        "_opPoly"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1621,
+          "owner": "_",
+          "name": "_opPoly",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:_opReset",
+      "canonical": "_opReset",
+      "names": [
+        "_opReset"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1615,
+          "owner": "_",
+          "name": "_opReset",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:_opRestart",
+      "canonical": "_opRestart",
+      "names": [
+        "_opRestart"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1618,
+          "owner": "_",
+          "name": "_opRestart",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:_opSqueeze",
+      "canonical": "_opSqueeze",
+      "names": [
+        "_opSqueeze"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1607,
+          "owner": "_",
+          "name": "_opSqueeze",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:_opSqueezeOut",
+      "canonical": "_opSqueezeOut",
+      "names": [
+        "_opSqueezeOut"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1611,
+          "owner": "_",
+          "name": "_opSqueezeOut",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:_polymeterListSteps",
       "canonical": "_polymeterListSteps",
       "names": [
@@ -22507,6 +22883,53 @@
       "availability": [
         "bundle-export",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:_steps",
+      "canonical": "_steps",
+      "names": [
+        "_steps"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1094,
+          "owner": "_",
+          "name": "_steps",
+          "static": false,
+          "kind": "get"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1097,
+          "owner": "_",
+          "name": "_steps",
+          "static": false,
+          "kind": "set"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -22900,6 +23323,45 @@
       "corpus": {
         "committed": 0,
         "wild": 0
+      }
+    },
+    {
+      "id": "api:all",
+      "canonical": "all",
+      "names": [
+        "all"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 5641,
+          "kind": "REPL direct evalScope injection",
+          "names": [
+            "all"
+          ]
+        }
+      ],
+      "availability": [
+        "repl-evaluation-scope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 1
       }
     },
     {
@@ -23419,6 +23881,84 @@
       }
     },
     {
+      "id": "api:appBoth",
+      "canonical": "appBoth",
+      "names": [
+        "appBoth"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1174,
+          "owner": "_",
+          "name": "appBoth",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:appLeft",
+      "canonical": "appLeft",
+      "names": [
+        "appLeft"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1191,
+          "owner": "_",
+          "name": "appLeft",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:apply",
       "canonical": "apply",
       "names": [
@@ -23613,6 +24153,84 @@
       "availability": [
         "bundle-export",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:appRight",
+      "canonical": "appRight",
+      "names": [
+        "appRight"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1216,
+          "owner": "_",
+          "name": "appRight",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:appWhole",
+      "canonical": "appWhole",
+      "names": [
+        "appWhole"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1144,
+          "owner": "_",
+          "name": "appWhole",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -23881,6 +24499,45 @@
         "bundle-export",
         "bundle-registration-prototype",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:asNumber",
+      "canonical": "asNumber",
+      "names": [
+        "asNumber"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1593,
+          "owner": "_",
+          "name": "asNumber",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -24885,11 +25542,59 @@
           "kind": "export",
           "local": "lx",
           "name": "bind"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1251,
+          "owner": "_",
+          "name": "bind",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:bindWhole",
+      "canonical": "bindWhole",
+      "names": [
+        "bindWhole"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1233,
+          "owner": "_",
+          "name": "bindWhole",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -26772,9 +27477,18 @@
           "kind": "export",
           "local": "Mi",
           "name": "cat"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1670,
+          "owner": "_",
+          "name": "cat",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -28518,6 +29232,45 @@
       }
     },
     {
+      "id": "api:compileKabel",
+      "canonical": "compileKabel",
+      "names": [
+        "compileKabel"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 5641,
+          "kind": "REPL direct evalScope injection",
+          "names": [
+            "compileKabel"
+          ]
+        }
+      ],
+      "availability": [
+        "repl-evaluation-scope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:complex",
       "canonical": "complex",
       "names": [
@@ -29250,6 +30003,45 @@
       }
     },
     {
+      "id": "api:constructor",
+      "canonical": "constructor",
+      "names": [
+        "constructor"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1091,
+          "owner": "_",
+          "name": "constructor",
+          "static": false,
+          "kind": "constructor"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:contract",
       "canonical": "contract",
       "names": [
@@ -29483,18 +30275,6 @@
       ],
       "evidence": [
         {
-          "path": "node_modules/@strudel/core/repl.mjs",
-          "line": 206,
-          "kind": "register",
-          "canonical": "cpm",
-          "names": [
-            "cpm"
-          ],
-          "fields": [],
-          "expanded": false,
-          "package": "@strudel/core"
-        },
-        {
           "path": "node_modules/@strudel/core/pattern.mjs",
           "line": 2047,
           "kind": "register",
@@ -29507,6 +30287,26 @@
           "package": "@strudel/core"
         },
         {
+          "path": "node_modules/@strudel/core/repl.mjs",
+          "line": 206,
+          "kind": "register",
+          "canonical": "cpm",
+          "names": [
+            "cpm"
+          ],
+          "fields": [],
+          "expanded": false,
+          "package": "@strudel/core"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 5641,
+          "kind": "REPL direct evalScope injection",
+          "names": [
+            "cpm"
+          ]
+        },
+        {
           "path": "node_modules/@strudel/web/dist/index.mjs",
           "kind": "export",
           "local": "fG",
@@ -29516,7 +30316,8 @@
       "availability": [
         "bundle-export",
         "bundle-registration-prototype",
-        "initStrudel-evalScope"
+        "initStrudel-evalScope",
+        "repl-evaluation-scope"
       ],
       "catalog": [],
       "controls": [],
@@ -30951,6 +31752,45 @@
       }
     },
     {
+      "id": "api:defragmentHaps",
+      "canonical": "defragmentHaps",
+      "names": [
+        "defragmentHaps"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1525,
+          "owner": "_",
+          "name": "defragmentHaps",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:degrade",
       "canonical": "degrade",
       "names": [
@@ -32020,6 +32860,45 @@
       }
     },
     {
+      "id": "api:discreteOnly",
+      "canonical": "discreteOnly",
+      "names": [
+        "discreteOnly"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1517,
+          "owner": "_",
+          "name": "discreteOnly",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:distort",
       "canonical": "distort",
       "names": [
@@ -32587,9 +33466,18 @@
           "kind": "export",
           "local": "$l",
           "name": "drawLine"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1720,
+          "owner": "_",
+          "name": "drawLine",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -33267,6 +34155,45 @@
         "bundle-export",
         "bundle-registration-prototype",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:each",
+      "canonical": "each",
+      "names": [
+        "each"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 5641,
+          "kind": "REPL direct evalScope injection",
+          "names": [
+            "each"
+          ]
+        }
+      ],
+      "availability": [
+        "repl-evaluation-scope"
       ],
       "catalog": [],
       "controls": [],
@@ -34728,45 +35655,11 @@
       ],
       "catalog": [
         {
-          "name": "density",
-          "module": "noise"
-        },
-        {
           "name": "fast",
           "module": "seq"
         }
       ],
-      "controls": [
-        {
-          "module": "noise",
-          "control": "density",
-          "definition": {
-            "kind": "knob",
-            "id": "density",
-            "label": "DENSITY",
-            "min": 0,
-            "max": 1,
-            "step": 0.01,
-            "default": 0.1,
-            "omitAt": 0.02,
-            "call": {
-              "method": "density",
-              "argument": {
-                "kind": "number"
-              },
-              "read": "companion"
-            },
-            "when": [
-              {
-                "control": "wave",
-                "values": [
-                  "crackle"
-                ]
-              }
-            ]
-          }
-        }
-      ],
+      "controls": [],
       "reader": {
         "state": "unknown",
         "reason": "No curated reader observation; metadata does not prove supported forms",
@@ -34798,9 +35691,18 @@
           "kind": "export",
           "local": "Ft",
           "name": "fastcat"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1673,
+          "owner": "_",
+          "name": "fastcat",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -35047,6 +35949,84 @@
       }
     },
     {
+      "id": "api:filterHaps",
+      "canonical": "filterHaps",
+      "names": [
+        "filterHaps"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1475,
+          "owner": "_",
+          "name": "filterHaps",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:filterValues",
+      "canonical": "filterValues",
+      "names": [
+        "filterValues"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1489,
+          "owner": "_",
+          "name": "filterValues",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:filterWhen",
       "canonical": "filterWhen",
       "names": [
@@ -35076,6 +36056,84 @@
         "bundle-export",
         "bundle-registration-prototype",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:firstCycle",
+      "canonical": "firstCycle",
+      "names": [
+        "firstCycle"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1560,
+          "owner": "_",
+          "name": "firstCycle",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:firstCycleValues",
+      "canonical": "firstCycleValues",
+      "names": [
+        "firstCycleValues"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1568,
+          "owner": "_",
+          "name": "firstCycleValues",
+          "static": false,
+          "kind": "get"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -35281,6 +36339,45 @@
         "bundle-export",
         "bundle-registration-prototype",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:fmap",
+      "canonical": "fmap",
+      "names": [
+        "fmap"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1132,
+          "owner": "_",
+          "name": "fmap",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -49356,6 +50453,45 @@
       }
     },
     {
+      "id": "api:hasSteps",
+      "canonical": "hasSteps",
+      "names": [
+        "hasSteps"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1106,
+          "owner": "_",
+          "name": "hasSteps",
+          "static": false,
+          "kind": "get"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:hbrick",
       "canonical": "hbrick",
       "names": [
@@ -50725,6 +51861,14 @@
       "evidence": [
         {
           "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 5641,
+          "kind": "REPL direct evalScope injection",
+          "names": [
+            "hush"
+          ]
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
           "kind": "export",
           "local": "dV",
           "name": "hush"
@@ -50741,7 +51885,8 @@
       "availability": [
         "bundle-class-prototype",
         "bundle-export",
-        "initStrudel-evalScope"
+        "initStrudel-evalScope",
+        "repl-evaluation-scope"
       ],
       "catalog": [],
       "controls": [],
@@ -51137,11 +52282,59 @@
           "kind": "export",
           "local": "dx",
           "name": "innerBind"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1267,
+          "owner": "_",
+          "name": "innerBind",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:innerJoin",
+      "canonical": "innerJoin",
+      "names": [
+        "innerJoin"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1270,
+          "owner": "_",
+          "name": "innerJoin",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -51193,6 +52386,45 @@
         "bundle-export",
         "bundle-registration-prototype",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:into",
+      "canonical": "into",
+      "names": [
+        "into"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1742,
+          "owner": "_",
+          "name": "into",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -51956,6 +53188,45 @@
       }
     },
     {
+      "id": "api:join",
+      "canonical": "join",
+      "names": [
+        "join"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1258,
+          "owner": "_",
+          "name": "join",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:jux",
       "canonical": "jux",
       "names": [
@@ -52624,6 +53895,45 @@
       }
     },
     {
+      "id": "api:layer",
+      "canonical": "layer",
+      "names": [
+        "layer"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1643,
+          "owner": "_",
+          "name": "layer",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:lbrick",
       "canonical": "lbrick",
       "names": [
@@ -53063,6 +54373,45 @@
       }
     },
     {
+      "id": "api:log",
+      "canonical": "log",
+      "names": [
+        "log"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1702,
+          "owner": "_",
+          "name": "log",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 1,
+        "wild": 1
+      }
+    },
+    {
       "id": "api:log2",
       "canonical": "log2",
       "names": [
@@ -53134,6 +54483,45 @@
       "availability": [
         "bundle-export",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:logValues",
+      "canonical": "logValues",
+      "names": [
+        "logValues"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1715,
+          "owner": "_",
+          "name": "logValues",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -57349,6 +58737,84 @@
       }
     },
     {
+      "id": "api:onsetsOnly",
+      "canonical": "onsetsOnly",
+      "names": [
+        "onsetsOnly"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1508,
+          "owner": "_",
+          "name": "onsetsOnly",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:onTrigger",
+      "canonical": "onTrigger",
+      "names": [
+        "onTrigger"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1681,
+          "owner": "_",
+          "name": "onTrigger",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:onTriggerSample",
       "canonical": "onTriggerSample",
       "names": [
@@ -57747,11 +59213,59 @@
           "kind": "export",
           "local": "hx",
           "name": "outerBind"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1261,
+          "owner": "_",
+          "name": "outerBind",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:outerJoin",
+      "canonical": "outerJoin",
+      "names": [
+        "outerJoin"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1264,
+          "owner": "_",
+          "name": "outerJoin",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -60688,9 +62202,18 @@
           "kind": "export",
           "local": "fx",
           "name": "polyBind"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1320,
+          "owner": "_",
+          "name": "polyBind",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -61734,6 +63257,45 @@
           "name": "q",
           "static": false,
           "kind": "prototype-assignment"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:queryArc",
+      "canonical": "queryArc",
+      "names": [
+        "queryArc"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1338,
+          "owner": "_",
+          "name": "queryArc",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
@@ -62940,9 +64502,18 @@
           "kind": "export",
           "local": "ys",
           "name": "removeUndefineds"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1498,
+          "owner": "_",
+          "name": "removeUndefineds",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -63453,6 +65024,45 @@
       }
     },
     {
+      "id": "api:resetJoin",
+      "canonical": "resetJoin",
+      "names": [
+        "resetJoin"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1274,
+          "owner": "_",
+          "name": "resetJoin",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:resetLoadedSounds",
       "canonical": "resetLoadedSounds",
       "names": [
@@ -63743,6 +65353,45 @@
           "name": "restartAll",
           "static": false,
           "kind": "prototype-assignment"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:restartJoin",
+      "canonical": "restartJoin",
+      "names": [
+        "restartJoin"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1285,
+          "owner": "_",
+          "name": "restartJoin",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
@@ -66010,9 +67659,18 @@
           "kind": "export",
           "local": "a0",
           "name": "seq"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1667,
+          "owner": "_",
+          "name": "seq",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -66086,9 +67744,18 @@
           "kind": "export",
           "local": "on",
           "name": "sequence"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1664,
+          "owner": "_",
+          "name": "sequence",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -66241,6 +67908,143 @@
       "generator": {
         "state": "unknown",
         "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:setContext",
+      "canonical": "setContext",
+      "names": [
+        "setContext"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1429,
+          "owner": "_",
+          "name": "setContext",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:setcpm",
+      "canonical": "setcpm",
+      "names": [
+        "setcpm",
+        "setCpm"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 5641,
+          "kind": "REPL direct evalScope injection",
+          "names": [
+            "setCpm",
+            "setcpm"
+          ]
+        }
+      ],
+      "availability": [
+        "repl-evaluation-scope"
+      ],
+      "catalog": [
+        {
+          "name": "setcpm",
+          "module": "out"
+        },
+        {
+          "name": "setCpm",
+          "module": "out"
+        }
+      ],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "catalog-declared",
+        "evidence": "src/modules/catalog.ts; src/codegen/generate.ts",
+        "restriction": "Declaration alone does not prove every form or context; see examples and #246 overlay"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 22,
+        "wild": 4
+      }
+    },
+    {
+      "id": "api:setcps",
+      "canonical": "setcps",
+      "names": [
+        "setcps",
+        "setCps"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 5641,
+          "kind": "REPL direct evalScope injection",
+          "names": [
+            "setCps",
+            "setcps"
+          ]
+        }
+      ],
+      "availability": [
+        "repl-evaluation-scope"
+      ],
+      "catalog": [
+        {
+          "name": "setcps",
+          "module": "out"
+        }
+      ],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "catalog-declared",
+        "evidence": "src/modules/catalog.ts; src/codegen/generate.ts",
+        "restriction": "Declaration alone does not prove every form or context; see examples and #246 overlay"
       },
       "backend": {
         "state": "unknown",
@@ -66708,6 +68512,45 @@
       }
     },
     {
+      "id": "api:setSteps",
+      "canonical": "setSteps",
+      "names": [
+        "setSteps"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1100,
+          "owner": "_",
+          "name": "setSteps",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:setStringParser",
       "canonical": "setStringParser",
       "names": [
@@ -67018,6 +68861,45 @@
         "state": "catalog-declared",
         "evidence": "src/modules/catalog.ts; src/codegen/generate.ts",
         "restriction": "Declaration alone does not prove every form or context; see examples and #246 overlay"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:showFirstCycle",
+      "canonical": "showFirstCycle",
+      "names": [
+        "showFirstCycle"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1575,
+          "owner": "_",
+          "name": "showFirstCycle",
+          "static": false,
+          "kind": "get"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
       },
       "backend": {
         "state": "unknown",
@@ -67816,9 +69698,18 @@
           "kind": "export",
           "local": "Qn",
           "name": "slowcat"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1676,
+          "owner": "_",
+          "name": "slowcat",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -68296,6 +70187,45 @@
         "bundle-export",
         "bundle-registration-prototype",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:sortHapsByPart",
+      "canonical": "sortHapsByPart",
+      "names": [
+        "sortHapsByPart"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1586,
+          "owner": "_",
+          "name": "sortHapsByPart",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -68836,6 +70766,45 @@
       }
     },
     {
+      "id": "api:splitQueries",
+      "canonical": "splitQueries",
+      "names": [
+        "splitQueries"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1352,
+          "owner": "_",
+          "name": "splitQueries",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:spread",
       "canonical": "spread",
       "names": [
@@ -69067,11 +71036,59 @@
           "kind": "export",
           "local": "px",
           "name": "squeezeBind"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1313,
+          "owner": "_",
+          "name": "squeezeBind",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:squeezeJoin",
+      "canonical": "squeezeJoin",
+      "names": [
+        "squeezeJoin"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1291,
+          "owner": "_",
+          "name": "squeezeJoin",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
       ],
       "catalog": [],
       "controls": [],
@@ -69226,9 +71243,18 @@
           "kind": "export",
           "local": "tt",
           "name": "stack"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1661,
+          "owner": "_",
+          "name": "stack",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -70172,6 +72198,45 @@
       }
     },
     {
+      "id": "api:stripContext",
+      "canonical": "stripContext",
+      "names": [
+        "stripContext"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1447,
+          "owner": "_",
+          "name": "stripContext",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:struct",
       "canonical": "struct",
       "names": [
@@ -70503,9 +72568,18 @@
           "kind": "export",
           "local": "ox",
           "name": "superimpose"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1656,
+          "owner": "_",
+          "name": "superimpose",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -73196,6 +75270,45 @@
       }
     },
     {
+      "id": "api:unjoin",
+      "canonical": "unjoin",
+      "names": [
+        "unjoin"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1726,
+          "owner": "_",
+          "name": "unjoin",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:useRNG",
       "canonical": "useRNG",
       "names": [
@@ -75233,6 +77346,201 @@
       }
     },
     {
+      "id": "api:withContext",
+      "canonical": "withContext",
+      "names": [
+        "withContext"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1438,
+          "owner": "_",
+          "name": "withContext",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:withHap",
+      "canonical": "withHap",
+      "names": [
+        "withHap"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1420,
+          "owner": "_",
+          "name": "withHap",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:withHaps",
+      "canonical": "withHaps",
+      "names": [
+        "withHaps"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1410,
+          "owner": "_",
+          "name": "withHaps",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:withHapSpan",
+      "canonical": "withHapSpan",
+      "names": [
+        "withHapSpan"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1391,
+          "owner": "_",
+          "name": "withHapSpan",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:withHapTime",
+      "canonical": "withHapTime",
+      "names": [
+        "withHapTime"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1401,
+          "owner": "_",
+          "name": "withHapTime",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:within",
       "canonical": "within",
       "names": [
@@ -75346,6 +77654,162 @@
       }
     },
     {
+      "id": "api:withLoc",
+      "canonical": "withLoc",
+      "names": [
+        "withLoc"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1458,
+          "owner": "_",
+          "name": "withLoc",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:withQuerySpan",
+      "canonical": "withQuerySpan",
+      "names": [
+        "withQuerySpan"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1363,
+          "owner": "_",
+          "name": "withQuerySpan",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:withQuerySpanMaybe",
+      "canonical": "withQuerySpanMaybe",
+      "names": [
+        "withQuerySpanMaybe"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1366,
+          "owner": "_",
+          "name": "withQuerySpanMaybe",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:withQueryTime",
+      "canonical": "withQueryTime",
+      "names": [
+        "withQueryTime"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1380,
+          "owner": "_",
+          "name": "withQueryTime",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:withSeed",
       "canonical": "withSeed",
       "names": [
@@ -75384,6 +77848,84 @@
       }
     },
     {
+      "id": "api:withState",
+      "canonical": "withState",
+      "names": [
+        "withState"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1125,
+          "owner": "_",
+          "name": "withState",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
+      "id": "api:withSteps",
+      "canonical": "withSteps",
+      "names": [
+        "withSteps"
+      ],
+      "evidence": [
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1103,
+          "owner": "_",
+          "name": "withSteps",
+          "static": false,
+          "kind": "method"
+        }
+      ],
+      "availability": [
+        "bundle-class-prototype"
+      ],
+      "catalog": [],
+      "controls": [],
+      "reader": {
+        "state": "unknown",
+        "reason": "No curated reader observation; metadata does not prove supported forms",
+        "examples": []
+      },
+      "generator": {
+        "state": "unknown",
+        "reason": "No audited writer/adapter role established"
+      },
+      "backend": {
+        "state": "unknown",
+        "reason": "No event/PCM/audio claim established for this family"
+      },
+      "corpus": {
+        "committed": 0,
+        "wild": 0
+      }
+    },
+    {
       "id": "api:withValue",
       "canonical": "withValue",
       "names": [
@@ -75395,9 +77937,18 @@
           "kind": "export",
           "local": "cx",
           "name": "withValue"
+        },
+        {
+          "path": "node_modules/@strudel/web/dist/index.mjs",
+          "line": 1120,
+          "owner": "_",
+          "name": "withValue",
+          "static": false,
+          "kind": "method"
         }
       ],
       "availability": [
+        "bundle-class-prototype",
         "bundle-export",
         "initStrudel-evalScope"
       ],
@@ -77724,9 +80275,18 @@
     "_match": "api:_match",
     "_mod": "api:_mod",
     "_morph": "api:_morph",
+    "_opIn": "api:_opIn",
+    "_opMix": "api:_opMix",
+    "_opOut": "api:_opOut",
+    "_opPoly": "api:_opPoly",
+    "_opReset": "api:_opReset",
+    "_opRestart": "api:_opRestart",
+    "_opSqueeze": "api:_opSqueeze",
+    "_opSqueezeOut": "api:_opSqueezeOut",
     "_polymeterListSteps": "api:_polymeterListSteps",
     "_retime": "api:_retime",
     "_slices": "api:_slices",
+    "_steps": "api:_steps",
     "accelerate": "api:accelerate",
     "activeLabel": "api:activeLabel",
     "ad": "api:ad",
@@ -77734,6 +80294,7 @@
     "addVoicings": "api:addVoicings",
     "adsr": "api:adsr",
     "aliasBank": "api:aliasBank",
+    "all": "api:all",
     "almostAlways": "api:almostAlways",
     "almostNever": "api:almostNever",
     "always": "api:always",
@@ -77744,16 +80305,21 @@
     "anchor": "api:anchor",
     "and": "api:and",
     "animate": "api:animate",
+    "appBoth": "api:appBoth",
+    "appLeft": "api:appLeft",
     "apply": "api:apply",
     "applyFM": "api:applyFM",
     "applyGainCurve": "api:applyGainCurve",
     "applyN": "api:applyN",
     "applyParameterModulators": "api:applyParameterModulators",
+    "appRight": "api:appRight",
+    "appWhole": "api:appWhole",
     "ar": "api:ar",
     "arp": "api:arp",
     "arpWith": "api:arpWith",
     "arrange": "api:arrange",
     "as": "api:as",
+    "asNumber": "api:asNumber",
     "asym": "api:asym",
     "att": "api:attack",
     "attack": "api:attack",
@@ -77775,6 +80341,7 @@
     "binaryN": "api:binaryN",
     "binaryNL": "api:binaryNL",
     "bind": "api:bind",
+    "bindWhole": "api:bindWhole",
     "binshift": "api:binshift",
     "bite": "api:bite",
     "bjork": "api:bjork",
@@ -77853,6 +80420,7 @@
     "color": "api:color",
     "colour": "api:colour",
     "comb": "api:comb",
+    "compileKabel": "api:compileKabel",
     "complex": "api:complex",
     "compose": "api:compose",
     "compress": "api:compress",
@@ -77868,6 +80436,7 @@
     "connectLFO": "api:connectLFO",
     "connectToDestination": "api:connectToDestination",
     "constant": "api:constant",
+    "constructor": "api:constructor",
     "contract": "api:contract",
     "control": "api:control",
     "controls": "api:controls",
@@ -77904,6 +80473,7 @@
     "decay": "api:decay",
     "DEFAULT_MAX_POLYPHONY": "api:DEFAULT_MAX_POLYPHONY",
     "defaultPrebake": "api:defaultPrebake",
+    "defragmentHaps": "api:defragmentHaps",
     "degrade": "api:degrade",
     "degradeBy": "api:degradeBy",
     "degradeByWith": "api:degradeByWith",
@@ -77923,6 +80493,7 @@
     "dict": "api:dictionary",
     "dictionary": "api:dictionary",
     "diode": "api:diode",
+    "discreteOnly": "api:discreteOnly",
     "dist": "api:distort",
     "distort": "api:distort",
     "distortionAlgorithms": "api:distortionAlgorithms",
@@ -77955,6 +80526,7 @@
     "duckorbit": "api:duckorbit",
     "dur": "api:duration",
     "duration": "api:duration",
+    "each": "api:each",
     "early": "api:early",
     "echo": "api:echo",
     "echowith": "api:echoWith",
@@ -77990,7 +80562,11 @@
     "fastGap": "api:fastGap",
     "fft": "api:fft",
     "filter": "api:filter",
+    "filterHaps": "api:filterHaps",
+    "filterValues": "api:filterValues",
     "filterWhen": "api:filterWhen",
+    "firstCycle": "api:firstCycle",
+    "firstCycleValues": "api:firstCycleValues",
     "firstOf": "api:firstOf",
     "fit": "api:fit",
     "flatten": "api:flatten",
@@ -78085,6 +80661,7 @@
     "fm86": "api:fmi86",
     "fm87": "api:fmi87",
     "fm88": "api:fmi88",
+    "fmap": "api:fmap",
     "fmatt": "api:fmattack",
     "fmatt1": "api:fmattack",
     "fmatt2": "api:fmattack2",
@@ -78425,6 +81002,7 @@
     "hard": "api:hard",
     "harmonic": "api:harmonic",
     "hash2code": "api:hash2code",
+    "hasSteps": "api:hasSteps",
     "hbrick": "api:hbrick",
     "hcutoff": "api:hcutoff",
     "hold": "api:hold",
@@ -78464,7 +81042,9 @@
     "initAudioOnFirstClick": "api:initAudioOnFirstClick",
     "initStrudel": "api:initStrudel",
     "innerBind": "api:innerBind",
+    "innerJoin": "api:innerJoin",
     "inside": "api:inside",
+    "into": "api:into",
     "inv": "api:invert",
     "invert": "api:invert",
     "ir": "api:ir",
@@ -78483,6 +81063,7 @@
     "iterBack": "api:iterBack",
     "itri": "api:itri",
     "itri2": "api:itri2",
+    "join": "api:join",
     "jux": "api:jux",
     "juxby": "api:juxBy",
     "juxBy": "api:juxBy",
@@ -78495,6 +81076,7 @@
     "label": "api:label",
     "lastOf": "api:lastOf",
     "late": "api:late",
+    "layer": "api:layer",
     "lbrick": "api:lbrick",
     "legato": "api:clip",
     "leslie": "api:leslie",
@@ -78504,8 +81086,10 @@
     "loadBuffer": "api:loadBuffer",
     "loadWorklets": "api:loadWorklets",
     "lock": "api:lock",
+    "log": "api:log",
     "log2": "api:log2",
     "logKey": "api:logKey",
+    "logValues": "api:logValues",
     "loop": "api:loop",
     "loopat": "api:loopAt",
     "loopAt": "api:loopAt",
@@ -78599,6 +81183,8 @@
     "often": "api:often",
     "onceEnded": "api:onceEnded",
     "onPaint": "api:onPaint",
+    "onsetsOnly": "api:onsetsOnly",
+    "onTrigger": "api:onTrigger",
     "onTriggerSample": "api:onTriggerSample",
     "onTriggerSynth": "api:onTriggerSynth",
     "onTriggerTime": "api:onTriggerTime",
@@ -78608,6 +81194,7 @@
     "oscport": "api:oscport",
     "out": "api:out",
     "outerBind": "api:outerBind",
+    "outerJoin": "api:outerJoin",
     "outside": "api:outside",
     "overgain": "api:overgain",
     "overshape": "api:overshape",
@@ -78696,6 +81283,7 @@
     "pwrate": "api:pwrate",
     "pwsweep": "api:pwsweep",
     "q": "api:q",
+    "queryArc": "api:queryArc",
     "rand": "api:rand",
     "rand2": "api:rand2",
     "randcat": "api:chooseCycles",
@@ -78739,12 +81327,14 @@
     "resetDefaults": "api:resetDefaults",
     "resetDefaultValues": "api:resetDefaultValues",
     "resetGlobalEffects": "api:resetGlobalEffects",
+    "resetJoin": "api:resetJoin",
     "resetLoadedSounds": "api:resetLoadedSounds",
     "resetSeenKeys": "api:resetSeenKeys",
     "resetVoicings": "api:resetVoicings",
     "resonance": "api:resonance",
     "restart": "api:restart",
     "restartAll": "api:restartAll",
+    "restartJoin": "api:restartJoin",
     "rev": "api:rev",
     "reverseBuffer": "api:reverseBuffer",
     "revv": "api:revv",
@@ -78800,6 +81390,11 @@
     "sequenceP": "api:sequenceP",
     "set": "api:set",
     "setAudioContext": "api:setAudioContext",
+    "setContext": "api:setContext",
+    "setcpm": "api:setcpm",
+    "setCpm": "api:setcpm",
+    "setcps": "api:setcps",
+    "setCps": "api:setcps",
     "setCpsFunc": "api:setCpsFunc",
     "setDefault": "api:setDefault",
     "setDefaultAudioContext": "api:setDefaultAudioContext",
@@ -78812,6 +81407,7 @@
     "setMaxPolyphony": "api:setMaxPolyphony",
     "setMultiChannelOrbits": "api:setMultiChannelOrbits",
     "setPattern": "api:setPattern",
+    "setSteps": "api:setSteps",
     "setStringParser": "api:setStringParser",
     "setSuperdoughAudioController": "api:setSuperdoughAudioController",
     "setTime": "api:setTime",
@@ -78819,6 +81415,7 @@
     "setVersionDefaults": "api:setVersionDefaults",
     "setVoicingRange": "api:setVoicingRange",
     "shape": "api:shape",
+    "showFirstCycle": "api:showFirstCycle",
     "shrink": "api:shrink",
     "shrinklist": "api:shrinklist",
     "shuffle": "api:shuffle",
@@ -78844,6 +81441,7 @@
     "sometimes": "api:sometimes",
     "sometimesBy": "api:sometimesBy",
     "songPtr": "api:songPtr",
+    "sortHapsByPart": "api:sortHapsByPart",
     "sound": "api:s",
     "soundAlias": "api:soundAlias",
     "soundMap": "api:soundMap",
@@ -78855,11 +81453,13 @@
     "spiral": "api:spiral",
     "splice": "api:splice",
     "splitAt": "api:splitAt",
+    "splitQueries": "api:splitQueries",
     "spread": "api:spread",
     "square": "api:square",
     "square2": "api:square2",
     "squeeze": "api:squeeze",
     "squeezeBind": "api:squeezeBind",
+    "squeezeJoin": "api:squeezeJoin",
     "squeezeout": "api:squeezeout",
     "squiz": "api:squiz",
     "src": "api:source",
@@ -78885,6 +81485,7 @@
     "stretch": "api:stretch",
     "striate": "api:striate",
     "stringifyValues": "api:stringifyValues",
+    "stripContext": "api:stripContext",
     "struct": "api:struct",
     "structAll": "api:structAll",
     "strudelScope": "api:strudelScope",
@@ -78960,6 +81561,7 @@
     "uniqsortr": "api:uniqsortr",
     "unison": "api:unison",
     "unit": "api:unit",
+    "unjoin": "api:unjoin",
     "useRNG": "api:useRNG",
     "v": "api:vib",
     "val": "api:val",
@@ -79007,8 +81609,19 @@
     "webAudioTimeout": "api:webAudioTimeout",
     "when": "api:when",
     "whenKey": "api:whenKey",
+    "withContext": "api:withContext",
+    "withHap": "api:withHap",
+    "withHaps": "api:withHaps",
+    "withHapSpan": "api:withHapSpan",
+    "withHapTime": "api:withHapTime",
     "within": "api:within",
+    "withLoc": "api:withLoc",
+    "withQuerySpan": "api:withQuerySpan",
+    "withQuerySpanMaybe": "api:withQuerySpanMaybe",
+    "withQueryTime": "api:withQueryTime",
     "withSeed": "api:withSeed",
+    "withState": "api:withState",
+    "withSteps": "api:withSteps",
     "withValue": "api:withValue",
     "wordfall": "api:wordfall",
     "worklet": "api:worklet",
@@ -79056,6 +81669,12 @@
       "name": "fmh1",
       "previous": "api:fmh",
       "candidate": "api:fmi",
+      "resolution": "Overlapping definitions retained; effective alias ownership unresolved without runtime evidence"
+    },
+    {
+      "name": "density",
+      "previous": "api:density",
+      "candidate": "api:fast",
       "resolution": "Overlapping definitions retained; effective alias ownership unresolved without runtime evidence"
     }
   ],
@@ -80987,7 +83606,7 @@
             "orbit": "pinned-name-syntax-only",
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81028,7 +83647,7 @@
             "orbit": "pinned-name-syntax-only",
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "speed": "pinned-name-syntax-only"
           }
         },
@@ -81077,7 +83696,7 @@
             "room": "pinned-name-syntax-only",
             "roomsize": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81126,7 +83745,7 @@
             "postgain": "pinned-name-syntax-only",
             "release": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "sustain": "pinned-name-syntax-only"
           }
         },
@@ -81179,7 +83798,7 @@
             "orbit": "pinned-name-syntax-only",
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81225,7 +83844,7 @@
             "room": "pinned-name-syntax-only",
             "roomsize": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81263,7 +83882,7 @@
             "orbit": "pinned-name-syntax-only",
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81301,7 +83920,7 @@
             "orbit": "pinned-name-syntax-only",
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81354,7 +83973,7 @@
             "ply": "pinned-name-syntax-only",
             "rev": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "sometimesBy": "pinned-name-syntax-only",
             "superimpose": "pinned-name-syntax-only",
             "within": "pinned-name-syntax-only"
@@ -81401,7 +84020,7 @@
             "orbit": "pinned-name-syntax-only",
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81445,7 +84064,7 @@
             "orbit": "pinned-name-syntax-only",
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81490,7 +84109,7 @@
             "postgain": "pinned-name-syntax-only",
             "range": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "slow": "pinned-name-syntax-only"
           }
         },
@@ -81544,7 +84163,7 @@
             "range": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
             "segment": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "slow": "pinned-name-syntax-only"
           }
         },
@@ -81591,7 +84210,7 @@
             "rev": "pinned-name-syntax-only",
             "rib": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "shuffle": "pinned-name-syntax-only",
             "zoom": "pinned-name-syntax-only"
           }
@@ -81635,7 +84254,7 @@
             "orbit": "pinned-name-syntax-only",
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external"
+            "setcpm": "pinned-name-syntax-only"
           }
         },
         {
@@ -81688,7 +84307,7 @@
             "ply": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
             "seed": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "slow": "pinned-name-syntax-only",
             "swingBy": "pinned-name-syntax-only",
             "voicing": "pinned-name-syntax-only"
@@ -81734,7 +84353,7 @@
             "postgain": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
             "scale": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "transpose": "pinned-name-syntax-only"
           }
         },
@@ -81801,7 +84420,7 @@
             "phaser": "pinned-name-syntax-only",
             "phaserdepth": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "soft": "pinned-name-syntax-only",
             "stretch": "pinned-name-syntax-only",
             "transient": "pinned-name-syntax-only",
@@ -81905,7 +84524,7 @@
             "fmh": "pinned-name-syntax-only",
             "gain": "pinned-name-syntax-only",
             "hpf": "pinned-name-syntax-only",
-            "log": "unknown-or-external",
+            "log": "pinned-name-syntax-only",
             "lpenv": "pinned-name-syntax-only",
             "lpf": "pinned-name-syntax-only",
             "mul": "pinned-name-syntax-only",
@@ -81922,7 +84541,7 @@
             "s": "pinned-name-syntax-only",
             "scale": "pinned-name-syntax-only",
             "seg": "pinned-name-syntax-only",
-            "setCpm": "unknown-or-external",
+            "setCpm": "pinned-name-syntax-only",
             "struct": "pinned-name-syntax-only",
             "trancegate": "declared-custom-or-shadowed"
           }
@@ -81989,7 +84608,7 @@
             "postgain": "pinned-name-syntax-only",
             "release": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "slow": "pinned-name-syntax-only",
             "soft": "pinned-name-syntax-only",
             "sustain": "pinned-name-syntax-only",
@@ -82065,7 +84684,7 @@
             "postgain": "pinned-name-syntax-only",
             "release": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "slow": "pinned-name-syntax-only",
             "sustain": "pinned-name-syntax-only",
             "velocity": "pinned-name-syntax-only"
@@ -82147,7 +84766,7 @@
             "postgain": "pinned-name-syntax-only",
             "release": "pinned-name-syntax-only",
             "s": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "slow": "pinned-name-syntax-only",
             "sustain": "pinned-name-syntax-only",
             "velocity": "pinned-name-syntax-only"
@@ -82371,7 +84990,7 @@
           "callDispositions": {
             "acidenv": "declared-custom-or-shadowed",
             "add": "pinned-name-syntax-only",
-            "all": "unknown-or-external",
+            "all": "pinned-name-syntax-only",
             "dec": "pinned-name-syntax-only",
             "diode": "pinned-name-syntax-only",
             "duck": "pinned-name-syntax-only",
@@ -82393,7 +85012,7 @@
             "s": "pinned-name-syntax-only",
             "samples": "pinned-name-syntax-only",
             "scope": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "slider": "unknown-or-external"
           }
         },
@@ -82449,7 +85068,7 @@
             "s": "pinned-name-syntax-only",
             "samples": "pinned-name-syntax-only",
             "seg": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "struct": "pinned-name-syntax-only"
           }
         },
@@ -82536,7 +85155,7 @@
             "arrange": "pinned-name-syntax-only",
             "color": "pinned-name-syntax-only",
             "note": "pinned-name-syntax-only",
-            "setcpm": "unknown-or-external",
+            "setcpm": "pinned-name-syntax-only",
             "sound": "pinned-name-syntax-only",
             "spiral": "pinned-name-syntax-only"
           }
@@ -82645,7 +85264,7 @@
             "fmh": "pinned-name-syntax-only",
             "gain": "pinned-name-syntax-only",
             "hpf": "pinned-name-syntax-only",
-            "log": "unknown-or-external",
+            "log": "pinned-name-syntax-only",
             "lpenv": "pinned-name-syntax-only",
             "lpf": "pinned-name-syntax-only",
             "mul": "pinned-name-syntax-only",
@@ -82662,7 +85281,7 @@
             "s": "pinned-name-syntax-only",
             "scale": "pinned-name-syntax-only",
             "seg": "pinned-name-syntax-only",
-            "setCpm": "unknown-or-external",
+            "setCpm": "pinned-name-syntax-only",
             "slider": "unknown-or-external",
             "struct": "pinned-name-syntax-only",
             "trancegate": "declared-custom-or-shadowed"

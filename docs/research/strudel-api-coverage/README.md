@@ -23,6 +23,8 @@ Node **24.22.2**. Locked packages: web/webaudio/superdough **1.3.0**;
 core/mini/tonal/transpiler/draw **1.2.6**; supradough **1.2.4**.
 [Inventory provenance](inventory.json) records lock integrity, every scanned source
 hash, the actual installed ESM entry hashes, application inputs and counting rules.
+Reproduction depends on these input hashes, not git metadata or mutable remote
+refs; the command also works in shallow CI checkouts and source archives.
 The patched web entry's bytes are authoritative for this app. Published bundles
 can embed a dependency snapshot; matching installed source package versions does
 not prove that every embedded implementation equals its separately installed file.
@@ -91,13 +93,17 @@ A literal registration site is one Acorn call to `register`, `registerControl` o
 `registerMultiControl` whose required names/count can be statically read. Tests,
 benchmarks, comments and documentation examples do not count.
 
-The broader inventory has **1,040 candidate families**, **1,017 web exports**,
-**1,013 names in statically discovered initialization namespaces**, and **56 direct
+The broader inventory has **1,100 candidate families**, **1,017 web exports**,
+**1,013 names in statically discovered initialization namespaces**, and **127 direct
 Pattern class/prototype methods** before generated setters/operators. These are
 intersecting surfaces, never quantities to add. They include utilities,
 constructors and class methods, not just musical transforms. Default `evalScope`
-receives core, webaudio, tonal and transpiler namespaces plus hush/evaluate;
-engine exports alone do not imply REPL scope membership. An exported symbol
+receives core, mini, tonal and webaudio namespaces plus hush/evaluate;
+engine exports alone do not imply REPL scope membership. REPL evaluation separately injects nine helper spellings, including
+`setcpm`/`setCpm`, `setcps`/`setCps`, `all` and `each`. These have
+`repl-evaluation-scope` availability, not package-export or initialization-scope
+availability. The transpiler is supplied to the REPL, not added to these four
+initialization namespaces. An exported symbol
 is not by itself proof that its value is callable or non-undefined. App `samples`/`speak`
 overrides are recorded separately. Class methods such as Fraction arithmetic and
 Pattern queries are not candidate rack panels merely because they are callable.
@@ -112,7 +118,12 @@ names absent from top-level exports. The composer matrix records operations and
 `.add` and its timing modes instead of declaring arithmetic absent because no
 literal registration owns it.
 
-Two numbered-FM aliases (`fmi1`, `fmh1`) have overlapping factory definitions.
+Three names have overlapping definitions: numbered-FM aliases `fmi1`/`fmh1`,
+and `density` (fast alias versus crackle control). Bundled registrations place
+the density control last; `aliasToFamily.density` points to `api:density`,
+while `api:fast.names` retains its historically declared alias. Catalog/control
+association follows the final bundled name candidate, without conflating those
+two behaviors.
 `aliasCollisions` retains both sources and marks effective ownership unresolved;
 these are not grounds to merge the two operators into one behavior. The
 **40 unresolved dynamic sites** include factory bodies whose parameters are
@@ -120,7 +131,10 @@ intentionally open, implementation wrappers and sites also explained by bounded
 expansion. They are discovery uncertainties, not 40 missing APIs. Open-ended
 `register`, `createParam`, arbitrary user factories and runtime sample registries
 cannot be exhaustively enumerated without execution. Bundled internal methods
-are recorded separately with internal/unresolved visibility; private underscore
+are recorded separately with internal/unresolved visibility. Generated underscore
+variants such as `_pianoroll` and `_scope` may still appear as
+`unknown-or-external` in corpus call classification; that category includes
+unresolved generated methods, not just external code. Private underscore
 implementation wrappers are not all promoted into musical families. Dynamic
 sound registry content and fetched sample names remain runtime data, not proof
 of available or decoded audio.
@@ -202,7 +216,7 @@ not a popularity score or an owner decision to implement every proposal.
 | ---- | --------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1    | Nested layers, branches, sections             | Existing #242 → #243/#244                                                       | Shape examples; two wild arrange calls. Preserve section-local time and routing. Large structural prerequisite, already authorized.                     |
 | 2    | Ordinary sound selection aliases              | New [#251](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/251) | Three wild sound calls; controlled root/chained cases fail while s equivalents project. Small importer change, no new panel.                            |
-| 3    | Reusable musical helper controls              | Existing #217, informed by #247                                                 | Four committed/six wild register calls, plus custom-helper occurrences. Closure/collision/source boundaries make this large and risky.                  |
+| 3    | Reusable musical helper controls              | Existing #217, informed by [merged #247](../user-defined-modules/README.md)     | Four committed/six wild register calls, plus custom-helper occurrences. Closure/collision/source boundaries make this large and risky.                  |
 | 4    | Patterned values and companion forms          | Audit one bounded form at a time; #246 context overlay                          | Many note/n/dec/fm names are already available; CV SEQ already covers numeric notation. Do not file a blanket “missing names” ticket.                   |
 | 5    | Harmonic range/voice leading                  | Existing proposal #249                                                          | Default CHORD works; nondefault voicing remains CODE. Controlled value, sparse sample demand; medium scope.                                             |
 | 6    | Phrase-transform modes/aliases                | Existing proposal #248                                                          | #246 owns pure-event comparisons for differing chunk variants and every/firstOf alias. Sparse corpus; reuse existing panels.                            |

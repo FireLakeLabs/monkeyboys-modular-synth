@@ -1,5 +1,4 @@
 import { createHash } from 'node:crypto'
-import { execFileSync } from 'node:child_process'
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { globSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -67,12 +66,15 @@ async function inventory() {
   const web = packages.find((p) => p.name === '@strudel/web')
   const bundle = scan(await bytes(web.entry), web.entry)
   const evalScopeNames = new Set(
-    bundle.evalScopes.flatMap((scope) => [
-      ...scope.direct,
-      ...scope.references.flatMap(
-        (name) => bundle.namespaces.find((n) => n.local === name)?.members.map((m) => m.name) ?? [],
-      ),
-    ]),
+    bundle.evalScopes
+      .filter((scope) => scope.references.length)
+      .flatMap((scope) => [
+        ...scope.direct,
+        ...scope.references.flatMap(
+          (name) =>
+            bundle.namespaces.find((n) => n.local === name)?.members.map((m) => m.name) ?? [],
+        ),
+      ]),
   )
   const exportNames = new Set(bundle.exports.map((x) => x.name))
   const exportedLocal = new Map(bundle.exports.map((x) => [x.local, x.name]))
@@ -151,16 +153,28 @@ async function inventory() {
     f.names = [...new Set(f.names)].sort((a, b) => a.localeCompare(b))
   }
   // Core first: first registration spelling is stable across source/bundle minification.
-  const ordered = scans.toSorted((a, b) =>
-    a.package === '@strudel/core' ? -1 : b.package === '@strudel/core' ? 1 : 0,
+  const ordered = scans.toSorted(
+    (a, b) =>
+      Number(b.package === '@strudel/core') - Number(a.package === '@strudel/core') ||
+      a.path.localeCompare(b.path),
   )
   for (const s of ordered)
     for (const r of s.registrations) {
       const f =
         families.get(`api:${r.canonical}`) ??
         (() => {
+          const previous = byName.get(r.canonical)
           byName.delete(r.canonical)
-          return family(r.canonical)
+          const created = family(r.canonical)
+          if (previous)
+            aliasCollisions.push({
+              name: r.canonical,
+              previous: previous.id,
+              candidate: created.id,
+              resolution:
+                'Overlapping canonical/alias definitions; check bundled registration evidence before relying on ownership',
+            })
+          return created
         })()
       addNames(f, r.names)
       f.evidence.push({ ...r, package: s.package })
@@ -183,7 +197,32 @@ async function inventory() {
   }
   for (const r of bundle.registrations) {
     // Expanded setters are installed on Pattern even when an individual alias is not exported.
-    for (const name of r.names) family(name).availability.push('bundle-registration-prototype')
+    const f = families.get(`api:${r.canonical}`) ?? family(r.canonical)
+    for (const name of r.names) {
+      byName.set(name, f)
+      f.availability.push('bundle-registration-prototype')
+    }
+  }
+  const replScopes = bundle.evalScopes.filter((scope) => !scope.references.length)
+  for (const scope of replScopes) {
+    const groups = Map.groupBy(scope.members, (member) => member.local ?? member.name)
+    for (const members of groups.values()) {
+      const names = members.map((m) => m.name)
+      const canonical = names.includes('setcpm')
+        ? 'setcpm'
+        : names.includes('setcps')
+          ? 'setcps'
+          : names[0]
+      const f = family(canonical)
+      addNames(f, names)
+      f.availability.push('repl-evaluation-scope')
+      f.evidence.push({
+        path: scope.path,
+        line: scope.line,
+        kind: 'REPL direct evalScope injection',
+        names,
+      })
+    }
   }
   for (const e of bundle.exports) {
     const f = family(e.name)
@@ -341,7 +380,7 @@ async function inventory() {
     f.availability = [...new Set(f.availability)].sort((a, b) => a.localeCompare(b))
     if (!f.availability.length) f.availability = ['source-only-candidate']
     f.catalog = f.names.flatMap((name) =>
-      (owners.get(name) ?? []).map((module) => ({ name, module })),
+      byName.get(name) === f ? (owners.get(name) ?? []).map((module) => ({ name, module })) : [],
     )
     f.controls = CATALOG.flatMap((spec) =>
       spec.controls
@@ -351,7 +390,7 @@ async function inventory() {
             (typeof c.call.method === 'string'
               ? [c.call.method]
               : Object.values(c.call.method.names)
-            ).some((name) => f.names.includes(name)),
+            ).some((name) => f.names.includes(name) && byName.get(name) === f),
         )
         .map((c) => ({
           module: spec.id,
@@ -388,10 +427,6 @@ async function inventory() {
   const report = {
     version: 1,
     provenance: {
-      implementationBase: execFileSync('git', ['merge-base', 'HEAD', 'origin/main'], {
-        cwd: root,
-        encoding: 'utf8',
-      }).trim(),
       node: process.version,
       lock: await hash('package-lock.json'),
       inputs: await Promise.all(sourcePaths.map(hash)),
@@ -415,6 +450,7 @@ async function inventory() {
       families: families.size,
       bundleExports: exportNames.size,
       initStrudelScopeNames: evalScopeNames.size,
+      replEvaluationScopeNames: new Set(replScopes.flatMap((scope) => scope.direct)).size,
       bundleDirectPatternMethods: bundleMethods.length,
       unresolvedSites:
         scans.reduce((sum, s) => sum + s.unresolved.length, 0) + bundle.unresolved.length,

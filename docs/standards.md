@@ -572,3 +572,12 @@ The #238 pre-change owner fixture additionally guards canonical standalone and
 separated `lpq` panels and root `s("saw")` DRUMS/implicit-sampler layouts. It failed
 before the Opus review fixes and reopens with exact source and complete saved
 identity afterward. Alias-only companion policy preserves canonical ownership.
+
+## Pinned API inventory research (#245)
+
+`test:guardrails` checks the research inventory's packed-control/alias boundary,
+class-expression ownership, direct REPL scope injection, collision reporting and
+execution without git metadata. These tests reject the observed scanner/CI
+omissions; they do not establish complete API enumeration or audio support.
+The [inventory report](research/strudel-api-coverage/README.md) records remaining
+factory/backend unknowns and the separate manifest-versus-library denominator.
