@@ -65,6 +65,8 @@ test('hover and focus discover compatible jacks in both directions without chang
   await jack(page, 'vcf1:cv').focus()
   await expect(page.locator('#jack-discovery-hint')).toContainText('lfo1:out')
   await expect(jack(page, 'lfo1:out')).toHaveClass(/valid/)
+  await expect(jack(page, 'osc1:out')).toHaveClass(/signal-audio(?:\s|$)/)
+  await expect(jack(page, 'osc1:out')).not.toHaveClass(/signal-audio-mod/)
   await expect(jack(page, 'vcf1:cv')).toHaveAttribute('aria-describedby', 'jack-discovery-hint')
   expect(await source(page)).toBe(before)
   await expect(page.locator('.transport-status')).toHaveText('Ready')

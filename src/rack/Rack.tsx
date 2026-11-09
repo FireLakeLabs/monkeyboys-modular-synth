@@ -540,6 +540,18 @@ export function Rack({
   function candidate(to: JackRef) {
     return candidates.get(keyOf(to)) ?? null
   }
+  function wiringMessage(ref: JackRef) {
+    const direction = jackSpec(patch, ref)?.direction === 'out' ? 'input' : 'output'
+    return `Choose an ${direction}, or drag onto an empty rail. Escape cancels.`
+  }
+  function startWire(ref: JackRef) {
+    if (jackSpec(patch, ref)?.direction === 'out') setSelectedOutput(keyOf(ref))
+    setInspected(null)
+    setTarget(null)
+    setWire({ anchor: ref })
+    setMessage(wiringMessage(ref))
+    setPointer(points[keyOf(ref)] ?? null)
+  }
   function inspectJack(to: JackRef, element: HTMLElement) {
     if (overview || locked || adding) return
     const bounds = element.getBoundingClientRect()
@@ -553,12 +565,18 @@ export function Rack({
       })
       return
     }
+    const assessment = candidate(to)
+    if (!assessment) {
+      setTarget(null)
+      setMessage(wiringMessage(wire.anchor))
+      return
+    }
     setTarget(to)
     setHintPoint({
       x: Math.max(8, Math.min(bounds.left, window.innerWidth - 308)),
       y: Math.max(8, Math.min(bounds.bottom + 8, window.innerHeight - 110)),
     })
-    setMessage(candidate(to)?.message ?? '')
+    setMessage(assessment.message)
   }
   function finish(to: JackRef) {
     if (!wire) return
@@ -833,7 +851,7 @@ export function Rack({
               )
               const incoming = patch.cables.find((c) => keyOf(c.to) === keyOf(ref))
               const signal =
-                state && state.kind !== 'blocked'
+                state && state.kind !== 'blocked' && jack.direction === 'in'
                   ? state.signal
                   : incoming
                     ? cableKind(patch, incoming, loopInfo.members)
@@ -870,13 +888,7 @@ export function Rack({
                         return
                       }
                       wireGesture.current = { x: event.clientX, y: event.clientY, dragged: false }
-                      if (jack.direction === 'out') setSelectedOutput(keyOf(ref))
-                      setInspected(null)
-                      setWire({ anchor: ref })
-                      setMessage(
-                        'Choose an opposite-direction jack, or drag onto an empty rail. Escape cancels.',
-                      )
-                      setPointer(points[keyOf(ref)] ?? null)
+                      startWire(ref)
                     }}
                     onFocus={(event) => inspectJack(ref, event.currentTarget)}
                     onBlur={(event) => {
@@ -890,10 +902,7 @@ export function Rack({
                       if (event.currentTarget !== document.activeElement) {
                         setTarget(null)
                         setInspected(null)
-                        if (wire)
-                          setMessage(
-                            'Choose an opposite-direction jack or an empty rail. Escape cancels.',
-                          )
+                        if (wire) setMessage(wiringMessage(wire.anchor))
                       }
                     }}
                     onPointerUp={() => {
@@ -908,10 +917,8 @@ export function Rack({
                     }}
                     onClick={(event) => {
                       if (event.detail === 0) {
-                        if (!wire) {
-                          setInspected(null)
-                          setWire({ anchor: ref })
-                        } else finish(ref)
+                        if (!wire) startWire(ref)
+                        else finish(ref)
                       }
                     }}
                   />

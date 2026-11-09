@@ -1,7 +1,7 @@
 import type { JackRef, Patch } from '../patch/types'
 import { assessConnection, connect, type ConnectionAssessment } from '../rack/model'
 import type { SourceDocument } from '../reader/types'
-import { applyRackEdit } from './document'
+import { applyRackEdit, RackEditRefused } from './document'
 
 export function assessDocumentConnection(
   document: SourceDocument,
@@ -22,7 +22,13 @@ export function assessDocumentConnection(
           message: `${graph.message} · This patch came from code, so connecting here rewrites it in rack style. Undo brings the code back.`,
         }
       : graph
-  } catch {
-    return { kind: 'blocked', message: 'This cable cannot be saved. Edit the code instead.' }
+  } catch (failure) {
+    return {
+      kind: 'blocked',
+      message:
+        failure instanceof RackEditRefused
+          ? failure.message
+          : 'This cable cannot be saved. Edit the code instead.',
+    }
   }
 }
