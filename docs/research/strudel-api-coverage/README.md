@@ -167,7 +167,14 @@ Production-reader coverage is unchanged from the actual #145 foundation:
 | Committed (22 files)  |      294/309 |           32/36 |           20/22 |   15 | 0 / 0                |
 | Pinned wild (5 files) |        19/69 |            0/17 |             0/5 |   46 | 0 / 0                |
 
-The committed library is authored around the catalog and is not representative
+The committed tier is exactly the 22 entries in
+`corpus/reader/committed.json`, referencing root `src/library/patches/*.strudel`
+files. It excludes the 59 generated exercises under
+`src/library/patches/modules/*.strudel`; 294/309 is therefore **not coverage of
+every bundled library patch**. #246 separately exercises every catalog module in
+its [context matrix](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/246)
+(`docs/research/module-contexts.md` and its machine evidence, landing separately).
+The manifest corpus is authored around the catalog and is not representative
 of community expressiveness. The wild tier is the existing tiny convenience
 sample: cosimo's pinned Switch Angel transcription and four brucelane files,
 with full attribution/URLs in the artifact. One transcription overlaps the
