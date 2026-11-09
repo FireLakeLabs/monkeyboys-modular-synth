@@ -542,3 +542,11 @@ the old Stop-button cleanup reproduced both #232 hosted timeouts locally. The
 assertions now cover accepted CODE plus the settled error state, without racing a
 Stop control that disappears. This is test-harness stabilization, not an audio
 engine change.
+
+The #233 [connection-discovery regressions](../src/workspace/discovery.test.ts)
+check catalog-default compatibility, source conversion viability, atomic
+placement/wiring, exact Undo source and export/reopen identity. The
+[browser cases](../tests/browser/jack-discovery.spec.mjs) separately cover real
+hover/focus, reverse wiring, ghost placement, replacement/cancellation, looks
+and zoom, and live SCOPE PCM through connected placement and Undo/Redo. See
+[observed evidence and limits](jack-discovery-verification.md).

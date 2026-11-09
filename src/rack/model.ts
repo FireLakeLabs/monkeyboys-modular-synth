@@ -434,7 +434,12 @@ export function effectNotes(patch: Patch): string[] {
 
 export type ConnectionAssessment =
   | { kind: 'blocked'; message: string }
-  | { kind: 'valid' | 'warning' | 'unresolved'; signal: JackSignal | 'audio-mod'; message: string }
+  | {
+      kind: 'valid' | 'warning' | 'unresolved'
+      signal: JackSignal | 'audio-mod'
+      message: string
+      replaces?: JackRef
+    }
 
 /** Preview the whole proposed graph without touching committed state. */
 export function assessConnection(
@@ -465,6 +470,7 @@ export function assessConnection(
     return {
       kind: signal === 'any' || opaque ? 'unresolved' : warnings.length ? 'warning' : 'valid',
       signal,
+      ...(occupied ? { replaces: to } : {}),
       message: [
         `${from.module}:${from.jack} → ${to.module}:${to.jack} · ${signal === 'any' ? 'signal unresolved until its source is connected' : signal}`,
         ...warnings,

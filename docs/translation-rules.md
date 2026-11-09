@@ -823,3 +823,15 @@ not prove executable byte preservation or full saved module identity. Existing
 saved layouts may also name these blocks independently. This bundle changes
 only unsaved placement; it does not merge CODE or invent ownership. Fewer rows
 come from packing catalog widths, with no change to source spans or module IDs.
+
+## Connected module placement (#233)
+
+Compatibility discovery is read-only. A selected cable-drop module is placed
+and connected in a single proposed patch, then passed once through the existing
+workspace edit boundary. It does not commit an intermediate disconnected module.
+Stored cable direction remains output → input even when the gesture starts at
+an input. Generated source and saved rack identity follow the ordinary edit,
+Undo/Redo and export/reopen rules; no format or catalog changes are required.
+Imported edits use source-preserving plans when supported and visibly warn
+before falling back to the existing rack-style conversion. CODE paths remain
+unverified, and cancellation retains the exact accepted source and graph.

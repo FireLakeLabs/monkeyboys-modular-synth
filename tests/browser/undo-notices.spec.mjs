@@ -289,7 +289,9 @@ test.describe('conversion on edit', () => {
   })
 })
 
-test('an edit that cannot be converted explains why and changes nothing', async ({ page }) => {
+test('a connection that cannot be converted explains why before committing and changes nothing', async ({
+  page,
+}) => {
   await open(page)
   await page.evaluate(async () => (await import('/scripts/editor-browser.mjs')).enableAutoApply())
   await replaceSource(
@@ -300,11 +302,19 @@ test('an edit that cannot be converted explains why and changes nothing', async 
   await add(page, 'LFO')
   await accepted(page)
   const before = await source(page)
-  await cable(page, 'lfo1:out', 'vcf1:cv')
-  await expect(notice(page)).toContainText('Separate helper and pattern')
+  const beforeRack = await rack(page)
+  await page.locator('[data-jack="lfo1:out"]').focus()
+  await page.keyboard.press('Enter')
+  const target = page.locator('[data-jack="vcf1:cv"]')
+  await target.focus()
+  await expect(target).toHaveClass(/blocked/)
+  await expect(page.locator('#cable-target-hint')).toContainText('Separate helper and pattern')
+  expect(await source(page)).toBe(before)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.rack-status')).toContainText('Separate helper and pattern')
   await expect(undo(page)).toHaveCount(0)
   expect(await source(page)).toBe(before)
-  expect((await rack(page)).cables).not.toContain('lfo1:out→vcf1:cv')
+  expect(await rack(page)).toEqual(beforeRack)
 })
 
 test.describe('shorter loading and restore', () => {
