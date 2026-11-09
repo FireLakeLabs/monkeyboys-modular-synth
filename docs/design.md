@@ -495,9 +495,10 @@ engine without applying source or starting transport. Historical unseated regist
 entries are excluded. Manifest status and errors retain #137's distinctions.
 
 DRUMS row names accept cards. SMPL, REVERB IR, SPLICE and WAVETABLE have catalog-owned
-drop slots with native selectors as a keyboard alternative; clearing restores an
-empty slot. WAVETABLE offers only seated `wt_` sounds. Imported unavailable values
-are shown without adding them to the available inventory.
+sound slots whose readout opens a [search picker](sound-crate.md#sound-picker-227);
+clearing restores an empty slot. WAVETABLE offers only seated `wt_` sounds. Imported
+unavailable values are shown as not loaded without adding them to the available
+inventory.
 
 SMPL's tape has B/E/LB/LE markers on separate lanes, all measured over the same
 sample strip. Pointer dragging and left/right arrows edit the associated fractions;
@@ -588,7 +589,8 @@ WAVETABLE accepts seated `wt_` sounds only. Select a module and double-click a
 sound or press Enter on its card to assign without dragging; single click
 continues to audition. For DRUMS this opens a row chooser showing each row's
 notation. Choose a row with pointer or keyboard to apply; opening or cancelling
-the chooser changes nothing. No row is guessed. Native selectors remain keyboard alternatives. Source-aware
+the chooser changes nothing. No row is guessed. Each slot's [search picker](sound-crate.md#sound-picker-227)
+is the keyboard route. Source-aware
 mutations retain bank/refusal rules. Overview consumes panel clicks for zoom
 and refuses sound assignment until detail view, without initiating wiring.
 

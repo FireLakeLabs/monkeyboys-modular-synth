@@ -137,3 +137,119 @@ checks with no bugs or page errors. Routing compatibility again passes all five
 forms, bus retention/replacement, modulation sidebands, REPL solo and leading-rest
 DUCK startup/reset/replay. These browser observations remain separate from the
 repository gate and do not establish physical listening.
+
+## Sound picker (#227)
+
+Each SMPL, SPLICE, REVERB and WAVETABLE panel used to hold a native selector that
+listed every variant of every seated sound: 4,386 options per panel with the two
+factory packs (901 sounds), rebuilt on every rack render. The owner's
+[decisions](decisions.md#sound-picker-227-decided-8-november-2026) replace it with
+a readout, a search popup and a pick mode in the Sounds dock.
+
+### Readout
+
+Line one names the bank or pack (`RolandTR808`, `Dirt Samples`); line two, in
+monospace, is the rest of the token (`bd:3`, `808bd:3`). Long names end in an
+ellipsis. The accessible name and tooltip carry the full token. An empty slot reads
+“Choose sound” (“Choose wt\_ sound” on WAVETABLE). A value that no seated pack
+provides keeps its token, gains a dashed border and reads “not loaded”, as the old
+selector's “unavailable” option did. The whole panel still accepts dropped cards
+(#185).
+
+### Search popup
+
+Click, Enter or Space on the readout opens the popup beside the panel with focus in
+its search box. Opening it loads the seated packs, as a first visit to Sounds does;
+while they load, a loading line shows under any matches from loaded packs.
+
+- With no query or filter, it lists **In this patch** (the other slots' tokens) and
+  **Recent** (the last five sounds chosen this session; nothing is saved).
+- Results have one row per sound, grouped by pack, capped at 40 with “Showing 40 of
+  N”. Ranking: the name starts with the query; then the part after the bank (`bd`
+  in `RolandTR808_bd`) does; then the name contains it; then the kind does, so
+  `kick` finds kicks. Ties keep pack and manifest order. A name repeated across packs
+  keeps one row, the last registration, which is the one Strudel plays. Sounds with
+  no variants are left out.
+- Kind chips filter the rows. With three or more seated packs, pack chips appear too.
+- ↑/↓ move the active row. ←/→ change its variant and play it. Space plays it
+  again, Enter chooses it, and Esc or a click outside closes with no change. Clicking
+  a row chooses it, and the active row shows ‹ › for pointer flipping. Space never
+  types, because sound names cannot contain spaces.
+- The footer offers **Browse all in Sounds ›** and, for a filled slot, **Clear slot**.
+- WAVETABLE lists only `wt_` sounds. Neither factory pack has any, so its empty state
+  points to Packs.
+- The search box is a combobox that owns a listbox through `aria-activedescendant`.
+
+Every route chooses through the panel's existing drop path, as one undo step with
+the same source and refusals as a dragged card.
+
+Auditions queue in the engine, so flipping quickly would otherwise play a backlog.
+The popup waits 150 ms after the last flip and never queues more than the newest
+request behind one that is playing. Space plays at once. Audio stays behind
+`src/strudel/engine.ts`.
+
+### Kinds
+
+Strudel's [samples guide](https://strudel.cc/learn/samples/) names drum sounds with
+the suffixes `bd`, `sd`, `rim`, `cp`, `hh`, `oh`, `cr`, `rd`, `ht`, `mt`, `lt`, `sh`,
+`cb`, `tb`, `perc`, `misc` and `fx`, and `.bank()` relies on them: `.bank()` puts the
+machine name and `_` in front. Packs may use any names, so this is a convention.
+
+A name of the form `<Bank>_<suffix>`, or exactly `<suffix>`, takes that suffix's kind:
+Kick `bd`; Snare `sd`; Hat `hh`; Open hat `oh`; Clap `cp`; Tom `ht`, `mt`, `lt`;
+Cymbal `cr`, `rd`; Perc `perc`, `cb`, `rim`, `sh`, `tb`. `misc`, `fx` and anything else
+is Other. In the pinned packs this covers 682 of the 683 Drum Machines sounds; the
+exception, `OberheimDMX_`, has an empty suffix. A short list in
+`src/samples/soundIndex.ts` covers Dirt Samples names that do not follow it, such as
+`808bd`, `kicklinn` and `sn`. `reverbkick`, `hc`, `ho`, `rs` and `rm` stay Other until
+someone has listened to them.
+
+### Pick mode
+
+**Browse all in Sounds** selects the module, switches the dock to Sounds, carries the
+query into the crate search and shows “Choosing for smpl1” with **Done**. Each card
+gains **Use**; Use, double-click and Enter assign through the #225 path to that
+module. Pick mode stays on after a choice, so you can try several, and ends with
+Done, Esc or selecting another module. The target panel stays lit and the others dim,
+as during a drag, and its readout reads “choosing…”.
+
+### Index
+
+`soundIndex.ts` indexes each pack resource once. The engine replaces a resource
+rather than mutating it, so the index is cached per resource object and shared by
+every panel. A closed slot only looks its own name up; the list exists only while a
+popup is open.
+
+### Evidence
+
+Observed on 8 November 2026 with Node 24.22.2 and Playwright's Chromium.
+
+- **Lag:** [`scripts/sample-slot-latency.mjs`](../scripts/sample-slot-latency.mjs)
+  adds three SMPL, two SPLICE and one REVERB from the palette, loads both pinned
+  factory packs, then times a knob step from keydown to the second frame, as
+  `knob-latency-check.mjs` does. It ran against production builds of `3af8609`
+  (main) and this branch, alternating for five rounds of nine steps. The six slots
+  held 26,322 `<option>` elements before and none after. The median step fell from
+  **131.8 ms** (range 116.0–139.3) to **33.9 ms** (range 30.7–42.1); all 90 steps
+  changed the knob. An unreported profile put the limiter on main-thread JavaScript:
+  over nine steps, busy time fell from 1,115 ms to 361 ms, mostly React rendering.
+  Opening the picker took a median 9.1 ms, and typing `808` took 28.2 ms from its
+  input event to the second frame, finding 24 sounds. One machine (AMD Ryzen 7 PRO 6850U, 16 logical CPUs), headless; the
+  [runs and environment](evidence/sound-picker/latency.json) are recorded.
+- **Behaviour:** [`tests/browser/sound-picker.spec.mjs`](../tests/browser/sound-picker.spec.mjs)
+  uses small stand-ins for the factory packs and a third pack, with WAV fixtures
+  served locally. It checks that no slot renders a list; the first view; ranking and
+  grouping; that three quick → presses fetch only the last variant's audio file;
+  Space; Enter choosing with focus back on the readout and code
+  `s("RolandTR808_bd:3")`; one Undo restoring the source; Recent; kind and pack chips;
+  no results; Esc and outside click changing nothing; row click; Clear slot;
+  WAVETABLE filtering and its empty state; pick mode with the query carried over,
+  Use twice, Esc, Done and selection ending it; and readouts that fit 8 HP.
+  [Screenshots](evidence/sound-picker/) show the first view, search, kind and pack
+  chips, pick mode, the WAVETABLE empty state and the readout states.
+- `src/samples/soundIndex.test.ts` and `src/samples/latestAudition.test.ts` cover
+  kinds, ranking, filters, repeated names and the latest-only audition queue.
+- The existing crate, #185 assignment and panel checks now read the readout instead
+  of the native selector.
+
+Audio was fetched and decoded in Chromium but not listened to.

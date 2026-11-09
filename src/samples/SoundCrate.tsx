@@ -13,6 +13,14 @@ import type { SoundChoice, SoundAssignment } from './crate'
 import type { SampleSound } from './manifest'
 import './SoundCrate.css'
 
+/** The dock is choosing for one sound slot; each new request carries a new serial. */
+export interface SoundPick {
+  module: string
+  query: string
+  serial: number
+  done: () => void
+}
+
 function RowChooser({
   choice,
   rows,
@@ -78,11 +86,14 @@ function Card({
   report,
   assign,
   dragging,
+  picking,
 }: {
   sound: SampleSound
   report: (message: string) => void
   assign: (choice: SoundChoice, row?: number) => SoundAssignment
   dragging: (choice: SoundChoice | null) => void
+  /** The module the dock is choosing for, if any. */
+  picking: string | null
 }) {
   const [n, setN] = useState(0)
   const [pending, setPending] = useState<{ choice: SoundChoice; rows: readonly string[] } | null>(
@@ -97,7 +108,7 @@ function Card({
       if (result.kind === 'choose-row') {
         setPending({ choice, rows: result.rows })
         report(`Choose a DRUMS row for ${soundToken(choice)}`)
-      } else report(`Assigned ${soundToken(choice)}`)
+      } else report(`Assigned ${soundToken(choice)}${picking ? ` to ${picking}` : ''}`)
     } catch (error) {
       report(String(error))
     }
@@ -156,6 +167,17 @@ function Card({
           {index + 1} / {count} · n={index}
         </span>
       </button>
+      {picking && (
+        <button
+          type="button"
+          className="sound-use"
+          disabled={!count}
+          aria-label={`Use ${soundToken(choice)} for ${picking}`}
+          onClick={requestAssignment}
+        >
+          Use
+        </button>
+      )}
       {count > 1 && (
         <div className="sound-flip">
           <button
@@ -183,15 +205,27 @@ export function SoundCrate({
   active,
   assign,
   dragging,
+  pick,
 }: {
   document: SourceDocument
   locked: boolean
   active: boolean
   assign: (choice: SoundChoice, row?: number) => SoundAssignment
   dragging: (choice: SoundChoice | null) => void
+  pick: SoundPick | null
 }) {
   const resources = useSyncExternalStore(subscribeSamplePacks, getSamplePacks)
   const [filter, setFilter] = useState('')
+  // A new pick carries the panel's search into the dock.
+  const [seenPick, setSeenPick] = useState(0)
+  if (pick && pick.serial !== seenPick) {
+    setSeenPick(pick.serial)
+    setFilter(pick.query)
+  }
+  const search = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (pick?.serial) search.current?.focus()
+  }, [pick?.serial])
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const entries = cartridges(document)
@@ -212,15 +246,29 @@ export function SoundCrate({
   }, [active])
   return (
     <section className="sound-crate" aria-label="Sound crate" inert={locked}>
-      <label className="sound-search">
-        <span className="sr-only">Search sounds</span>
-        <input
-          type="search"
-          value={filter}
-          placeholder="Search sounds"
-          onChange={(event) => setFilter(event.target.value)}
-        />
-      </label>
+      <div className="sound-search">
+        {pick && (
+          <div className="sound-pick">
+            <span>
+              Choosing for <code>{pick.module}</code>
+            </span>
+            <button type="button" onClick={pick.done}>
+              Done
+            </button>
+            <small>Click a card to hear it. Use, double-click or Enter assigns. Esc stops.</small>
+          </div>
+        )}
+        <label>
+          <span className="sr-only">Search sounds</span>
+          <input
+            ref={search}
+            type="search"
+            value={filter}
+            placeholder="Search sounds"
+            onChange={(event) => setFilter(event.target.value)}
+          />
+        </label>
+      </div>
       <p>
         Click to hear · drag to a lit panel or DRUMS row · select a module, then double-click or
         Enter to assign
@@ -255,6 +303,7 @@ export function SoundCrate({
                     report={setMessage}
                     assign={assign}
                     dragging={dragging}
+                    picking={pick?.module ?? null}
                   />
                 ))}
               </details>

@@ -7,11 +7,16 @@ import { allowSound, receiveSound } from '../samples/drag'
 import {
   dropSound,
   drumSoundRows,
+  slotValue,
+  soundToken,
   variantCount,
   type SoundChoice,
   type SoundAssignment,
 } from '../samples/crate'
-import type { SamplePackResource } from '../strudel/engine'
+import { rememberSound } from '../samples/recentSounds'
+import type { SoundPick } from '../samples/SoundCrate'
+import { loadSamplePacks, type SamplePackResource } from '../strudel/engine'
+import { cartridges } from '../workspace/cartridges'
 import {
   useEffect,
   useLayoutEffect,
@@ -156,6 +161,7 @@ export function Rack({
     active: boolean,
     assign: (choice: SoundChoice, row?: number) => SoundAssignment,
     dragging: (choice: SoundChoice | null) => void,
+    pick: SoundPick | null,
   ) => ReactNode
   sampleResources: readonly SamplePackResource[]
   locked: boolean
@@ -177,6 +183,18 @@ export function Rack({
   cancelReplacement: () => void
 }) {
   const [draggedSound, setDraggedSound] = useState<SoundChoice | null>(null)
+  // "Browse all in Sounds" makes the dock choose for one slot until Done, Esc or another selection.
+  const [pick, setPick] = useState<Omit<SoundPick, 'done'> | null>(null)
+  const pickSerial = useRef(0)
+  const activePick = pick && patch.modules.some((m) => m.id === pick.module) ? pick : null
+  useEffect(() => {
+    if (!pick) return undefined
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !event.defaultPrevented) setPick(null)
+    }
+    window.addEventListener('keydown', escape)
+    return () => window.removeEventListener('keydown', escape)
+  }, [pick])
   const [moduleFilter, setModuleFilter] = useState('')
   const [dockTab, setDockTab] = useState<(typeof DOCK_TABS)[number]['id']>('modules')
   const [probeCable, setProbeCable] = useState<string | null>(null)
@@ -668,12 +686,25 @@ export function Rack({
       )
     )
       throw new Error('Choose a sound variant from a seated pack')
-    return edit((p) => dropSound(p, module, choice, row))
+    const applied = edit((p) => dropSound(p, module, choice, row))
+    // Sound slots offer recent choices; DRUMS rows are not slots.
+    if (applied && patch.modules.find((m) => m.id === module)?.type !== 'drums')
+      rememberSound(soundToken(choice))
+    return applied
   }
   function selectModule(id: string) {
     select(id)
     setSelectedCable(null)
+    if (pick && pick.module !== id) setPick(null)
   }
+  function browseSounds(id: string, query: string) {
+    selectModule(id)
+    setPick({ module: id, query, serial: ++pickSerial.current })
+    setDockTab('sounds')
+  }
+  const loadSounds = () =>
+    loadSamplePacks(cartridges(sourceDocument).flatMap((entry) => (entry.pack ? [entry.pack] : [])))
+  const patchSounds = patch.modules.map(slotValue).filter(Boolean)
   const renderModules = (modules: Patch['modules']) =>
     modules.map((m) => {
       const spec = getModuleSpec(m.type)
@@ -719,7 +750,15 @@ export function Rack({
             (!wire && inspected && compatible.some(([key]) => key.startsWith(`${m.id}:`))) ||
             undefined
           }
-          data-sound-target={draggedSound && !overview ? acceptsSound : undefined}
+          data-sound-target={
+            overview
+              ? undefined
+              : draggedSound
+                ? acceptsSound
+                : activePick
+                  ? activePick.module === m.id
+                  : undefined
+          }
           onDragOver={(event) => {
             if (!overview && spec.sampleTarget && m.type !== 'drums') allowSound(event)
           }}
@@ -802,11 +841,17 @@ export function Rack({
             <SampleSlot
               module={m}
               resources={sampleResources}
+              patchSounds={patchSounds}
+              locked={locked}
+              picking={activePick?.module === m.id}
               clear={() => {
                 const target = spec.sampleTarget
                 if (target) edit((p) => setValue(p, m.id, target.control, ''))
               }}
               drop={(choice) => applySound(m.id, choice)}
+              browseAll={(query) => browseSounds(m.id, query)}
+              openPacks={() => setDockTab('packs')}
+              loadSounds={loadSounds}
             />
             {m.type === 'smpl' && (
               <Tape
@@ -1081,10 +1126,11 @@ export function Rack({
             {soundCrate(
               dockTab === 'sounds',
               (choice, row) => {
-                if (!selected) throw new Error('Select a sound-capable module first')
+                const target = activePick?.module ?? selected
+                if (!target) throw new Error('Select a sound-capable module first')
                 if (overview)
                   throw new Error('Zoom to the selected module before assigning a sound')
-                const module = patch.modules.find((module) => module.id === selected)
+                const module = patch.modules.find((module) => module.id === target)
                 if (module?.type === 'drums' && row === undefined)
                   return { kind: 'choose-row', rows: drumSoundRows(module) }
                 if (
@@ -1094,11 +1140,12 @@ export function Rack({
                   throw new Error(
                     'Sound assignment refused: selected module does not accept sounds',
                   )
-                if (!applySound(selected, choice, row))
+                if (!applySound(target, choice, row))
                   throw new Error('Sound assignment was refused; see the rack message')
                 return { kind: 'assigned' }
               },
               setDraggedSound,
+              activePick && { ...activePick, done: () => setPick(null) },
             )}
           </div>
           <div
