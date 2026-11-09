@@ -123,7 +123,7 @@ operators in S5; its event field on a sample does not make the sampler FM-capabl
 Do not fuse FM OP exclusively to OSC or confuse CHIP's `zdelay` with DELAY.
 BYTEBEAT's formulas, CHIP and SPEAK remain separate backend/UI domains.
 
-Bare `n` is not universally pitch: S4's oscillator reads `partials = value.partials ?? value.n`, while S5's frequency helper reads `note`/`freq` (default MIDI note 36). Before QUANT, `n` can supply scale degrees; `scale` consumes it into `note`. With a sampler it selects a sample index; without scale on a stock oscillator it supplies a partial count. C26 records that `n("0 2").s("sawtooth")` imports as SEQ in degree mode plus OSC without proving pitch or sound from that panel label.
+Bare `n` is not universally pitch: S4's oscillator reads `partials = value.partials ?? value.n`, while `superdough/helpers.mjs` `getFrequencyFromValue` (around line 590) reads `note`/`freq` (default MIDI note 36). Before QUANT, `n` can supply scale degrees; `scale` consumes it into `note`. With a sampler it selects a sample index; without scale on a stock oscillator it supplies a partial count. C26 records that `n("0 2").s("sawtooth")` imports as SEQ in degree mode plus OSC without proving pitch or sound from that panel label.
 
 **Voice recognition depends on an audio boundary in today's graph.** C01 proves
 root `s("saw")` is OSC via #238's alias, but `s("sine")` still projects as
@@ -520,5 +520,15 @@ six files, 9,195 insertions (chiefly machine catalog/evidence). Usage not expose
 | S4  | nit      | Effect sketches now include their exact source-owned CODE orbit nodes, plus the SEQ source.                                                                                                                                                                                                |
 | S5  | nit      | Route sketch now matches SEQ → OSC → CODE orbit(7) → MIX channels 3:4; no unrelated DUCK sketch.                                                                                                                                                                                           |
 
-No finding was declined. Recheck will cover the corrected evidence/tooling and
-final inventory integration; the three-round budget has two rounds remaining.
+Round 2: same Claude Opus 5.5/high reviewer, **APPROVE** on clean
+`26eac91477ce56aaf58be420cacf689eb29eb5b5`. Delta from the first reviewed head:
+eight files, +360/−145. All S1–S5 resolved; no new blocker/should. Reviewer reran
+nondestructive reproduction with the corrected inventory (59/48/64/59/8,
+zero failures) and the focused Node guard (one passed), and checked the actual
+bundled oscillator partials/n source. It did not rerun the full gate or do
+browser/audio work. Usage was not exposed. No findings were declined.
+
+N1 (nit): fixed the frequency-helper citation to name `getFrequencyFromValue`
+and its source location directly. This citation/ledger-only update requires no
+new model round under review-loop policy. No behavior changed after approval.
+Final dependency merge/fresh-clone proof and PR gates still remain.
