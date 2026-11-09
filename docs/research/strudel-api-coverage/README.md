@@ -77,17 +77,27 @@ baselines and #145 licensing remain unchanged.
 
 The initial scan is revised as follows, with no coverage percentage inferred:
 
-| Measure                                             | Preliminary | This command |
-| --------------------------------------------------- | ----------: | -----------: |
-| Catalog modules                                     |          58 |           59 |
-| Distinct ownership names, including catalog aliases |         203 |          205 |
-| Literal core registration sites                     |         400 |          401 |
-| Those sites with no catalog-owned spelling          |         255 |          256 |
+| Measure                                             |                        Preliminary |          This command |
+| --------------------------------------------------- | ---------------------------------: | --------------------: |
+| Catalog modules                                     |                                 58 |                    59 |
+| Distinct ownership names, including catalog aliases |                                203 |                   205 |
+| Literal registration count                          | 400 distinct `kind:firstName` keys | 401 source call sites |
+| Registrations with no catalog-owned spelling        |                  255 distinct keys | 256 source call sites |
 
-The exact preliminary command was not retained. Our AST rule includes
-`core/repl.mjs`'s `register('all', ...)`; excluding that one site produces the old
-400/255 pair, but that is a reconciliation hypothesis, not proof of what the old
-scan omitted. Per-file sites: controls 282, euclid 6, impure 1, pattern 78, pick 12,
+The preliminary scan deduplicated by `${kind}:${firstName}`. Its retained
+`strudel-api-ownership.json` has 400 groups, 255 without an owned spelling
+(SHA-256 `0fa2238f0db325abb6ea3f09bcf2cb0d603e5b7339afba3b8609a151702c2433`).
+Reconstruction against the pinned sources gives **401 literal sites / 256
+unowned sites**, or **400 distinct keys / 255 unowned keys** after that
+name-key deduplication. The sole duplicate key is `register:cpm`:
+`core/pattern.mjs:2047` and `core/repl.mjs:206`. The pattern source explicitly
+notes that the REPL redefines `cpm`, using its current cps as divisor. The
+registration-key count is therefore not a count of distinct implementation
+semantics. `repl.mjs` registers `cpm` here, not `all`; the earlier report's
+omitted-`all` hypothesis was incorrect. The one-count difference comes from
+this duplicate key, not alias or packed-control expansion.
+
+Per-file sites: controls 282, euclid 6, impure 1, pattern 78, pick 12,
 repl 1, signal 20, speak 1. Numbered declarations count once here, before expansion.
 A literal registration site is one Acorn call to `register`, `registerControl` or
 `registerMultiControl` whose required names/count can be statically read. Tests,
