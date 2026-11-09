@@ -54,5 +54,47 @@ exports supply the reference.
 The neighboring stabilization run passed all eleven overview, repatching,
 scrolling, pinned-OUT and sound-assignment cases. Its combined run also contained
 the failed initial audio fixture described above; the subsequent dedicated
-feature run passed all eight cases. Full-suite results are recorded below once
-completed. Other browsers, touch and physical listening remain unverified.
+feature run passed all eight cases. Other browsers, touch and physical listening
+remain unverified.
+
+## Full local run and regressions
+
+The first complete local run on `228829c` finished with
+`RESULT passed=201 failed=2 exit=1`. This remains a failed run, separate from
+later focused verification. Its raw output is `/tmp/compatible-jacks-full-browser.log`.
+A briefly overlapping nine-case Wave5 run was disclosed; no performance inference
+is made from this run.
+
+The two failures identified adjacent behavior affected by discovery:
+
+- A connection whose imported-source conversion cannot succeed is now blocked
+  before committing. The old browser case expected an error only after the click;
+  the preview also replaced the specific conversion reason with generic text.
+  The blocked jack now retains the specific reason, and the case checks its
+  local explanation before activation and unchanged source/rack afterwards.
+- Focusing the starting output after pointer-down cleared the wiring instruction.
+  Pointer and keyboard starts now share the same direction-aware prompt, and
+  focusing a jack that is not an opposite endpoint preserves that prompt. The
+  existing More/Escape check continues to require the prompt and cancellation.
+
+A further focused regression first failed with
+`RESULT passed=0 failed=1 exit=1`: hovering a CV input changed OSC OUT's displayed
+signal to audio-mod. Outputs now retain their actual signal marking while the
+proposed connection and receiving CV jack show audio-mod. That before-fix log
+and trace were copied to `/tmp/monkeyboy-233` before rerunning.
+
+The changes were rebased onto `af7040f`; the only conflict combined independent
+additions to the standards inventory. Executable rack changes merged cleanly.
+
+After those fixes and rebase, the complete affected browser files ran with:
+
+```sh
+npm run test:browser:report -- jack-discovery.spec.mjs undo-notices.spec.mjs stabilization-wave-1.spec.mjs
+```
+
+The result was `RESULT passed=40 failed=0 exit=0`, including the original
+More/Escape guard, the specific blocked-conversion explanation before and after
+activation, and the previously failing audio-output marking check. Refreshed
+chooser/hover screenshots were inspected after this run. The raw log is
+`/tmp/233-focused-after.log`; its artifacts were copied to
+`/tmp/monkeyboy-233/focused-after` before the next full run.
