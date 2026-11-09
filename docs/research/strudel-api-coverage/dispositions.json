@@ -1,0 +1,194 @@
+{
+  "orbit": {
+    "generator": {
+      "state": "infrastructure",
+      "evidence": "src/codegen/generate.ts; src/codegen/routing.ts; docs/translation-rules.md#effect-orbits",
+      "restriction": "Only complete writer-validated provenance owns routing; imported orbits remain CODE"
+    },
+    "backend": {
+      "state": "source-backed",
+      "evidence": "node_modules/superdough/superdough.mjs; src/strudel/engine.ts resetGlobalEffects",
+      "restriction": "One delay/reverb bus per orbit; no new PCM or listening claim"
+    }
+  },
+  "bus": {
+    "generator": {
+      "state": "infrastructure",
+      "evidence": "src/codegen/generate.ts; docs/translation-rules.md#multi-input-and-cross-voice-routing-136",
+      "restriction": "AUX/audio-mod shared allocated bus namespace; opaque imported values not authority"
+    }
+  },
+  "bmod": {
+    "generator": {
+      "state": "infrastructure",
+      "evidence": "src/codegen/generate.ts; src/reader/modulation.ts; docs/translation-rules.md#multi-input-and-cross-voice-routing-136",
+      "restriction": "Native relative modulation, explicit target; imported object remains source-owned"
+    }
+  },
+  "duck": {
+    "generator": {
+      "state": "infrastructure",
+      "evidence": "src/codegen/generate.ts; docs/translation-rules.md#multi-input-and-cross-voice-routing-136",
+      "restriction": "Derived target orbits only; SIDE sender private voice; imported addresses stay CODE"
+    }
+  },
+  "samples": {
+    "generator": {
+      "state": "setup-adapter",
+      "evidence": "src/samples/packs.ts; src/strudel/engine.ts registerPack",
+      "restriction": "Bay-owned pinned manifest setup separate from opaque imported samples calls"
+    }
+  },
+  "speak": {
+    "backend": {
+      "state": "app-adapter",
+      "evidence": "src/strudel/engine.ts triggerSpeech and evalScope override",
+      "restriction": "Browser speech API; bypasses effects/MIX level/OUT volume; no physical listening claim"
+    }
+  },
+  "lpf": {
+    "backend": {
+      "state": "source-backed",
+      "evidence": "node_modules/@strudel/core/controls.mjs; node_modules/superdough/superdough.mjs filter processing; src/reader/acid.test.ts",
+      "restriction": "cutoff/resonance aliases; ordered FX 24 dB restriction; no new audio proof"
+    }
+  },
+  "gain": {
+    "backend": {
+      "state": "source-backed",
+      "evidence": "node_modules/superdough/superdough.mjs gain/velocity processing",
+      "restriction": "Scalar/CV reader forms narrower than setter; event fields alone do not prove PCM"
+    }
+  },
+  "add": {
+    "backend": {
+      "state": "pure-event-regression",
+      "evidence": "src/reader/acid.test.ts: checks actual arithmetic semantics and pre-note numeric offsets",
+      "restriction": "Plain arithmetic on wrapped note pattern does not transpose its note field. No physical listening claim"
+    }
+  },
+  "register": {
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/reader/read.ts prelude/source retention; docs/research/strudel-api-coverage/examples.json custom-helper",
+      "restriction": "Never run imported setup to discover panels. #217 owns production custom-helper panels; #247 researches representation"
+    }
+  },
+  "stack": {
+    "generator": {
+      "state": "partial-shape",
+      "evidence": "src/codegen/generate.ts MIX leaf traversal; docs/translation-rules.md#rack-generator-contract-3",
+      "restriction": "Current MIX emits independent labels, not general nested stack; #242 selected dual-mode design"
+    }
+  },
+  "arrange": {
+    "generator": {
+      "state": "deferred-owner",
+      "evidence": "https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/244",
+      "restriction": "Section timing distinct from existing mask arranger; implementation follows #242"
+    }
+  },
+  "lpq": {
+    "backend": {
+      "state": "source-backed",
+      "evidence": "node_modules/@strudel/core/controls.mjs resonance/ lpq; node_modules/superdough/superdough.mjs cutoff Q processing; src/reader/acid.test.ts",
+      "restriction": "Panel supports 0\u201350; no new PCM or listening claim"
+    }
+  },
+  "midichan": {
+    "backend": {
+      "state": "external-backend-required",
+      "evidence": "src/strudel/engine.ts defaultOutput delegates to webaudioOutput; pinned core/controls.mjs registers transport event fields",
+      "restriction": "App does not configure MIDI/OSC output transport. Setter existence does not make these WebAudio features."
+    },
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/modules/catalog.ts has no owner; engine default output is WebAudio",
+      "restriction": "External transport integration is outside this research and current app setup"
+    }
+  },
+  "midimap": {
+    "backend": {
+      "state": "external-backend-required",
+      "evidence": "src/strudel/engine.ts defaultOutput delegates to webaudioOutput; pinned core/controls.mjs registers transport event fields",
+      "restriction": "App does not configure MIDI/OSC output transport. Setter existence does not make these WebAudio features."
+    },
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/modules/catalog.ts has no owner; engine default output is WebAudio",
+      "restriction": "External transport integration is outside this research and current app setup"
+    }
+  },
+  "midiport": {
+    "backend": {
+      "state": "external-backend-required",
+      "evidence": "src/strudel/engine.ts defaultOutput delegates to webaudioOutput; pinned core/controls.mjs registers transport event fields",
+      "restriction": "App does not configure MIDI/OSC output transport. Setter existence does not make these WebAudio features."
+    },
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/modules/catalog.ts has no owner; engine default output is WebAudio",
+      "restriction": "External transport integration is outside this research and current app setup"
+    }
+  },
+  "midicmd": {
+    "backend": {
+      "state": "external-backend-required",
+      "evidence": "src/strudel/engine.ts defaultOutput delegates to webaudioOutput; pinned core/controls.mjs registers transport event fields",
+      "restriction": "App does not configure MIDI/OSC output transport. Setter existence does not make these WebAudio features."
+    },
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/modules/catalog.ts has no owner; engine default output is WebAudio",
+      "restriction": "External transport integration is outside this research and current app setup"
+    }
+  },
+  "midibend": {
+    "backend": {
+      "state": "external-backend-required",
+      "evidence": "src/strudel/engine.ts defaultOutput delegates to webaudioOutput; pinned core/controls.mjs registers transport event fields",
+      "restriction": "App does not configure MIDI/OSC output transport. Setter existence does not make these WebAudio features."
+    },
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/modules/catalog.ts has no owner; engine default output is WebAudio",
+      "restriction": "External transport integration is outside this research and current app setup"
+    }
+  },
+  "miditouch": {
+    "backend": {
+      "state": "external-backend-required",
+      "evidence": "src/strudel/engine.ts defaultOutput delegates to webaudioOutput; pinned core/controls.mjs registers transport event fields",
+      "restriction": "App does not configure MIDI/OSC output transport. Setter existence does not make these WebAudio features."
+    },
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/modules/catalog.ts has no owner; engine default output is WebAudio",
+      "restriction": "External transport integration is outside this research and current app setup"
+    }
+  },
+  "oschost": {
+    "backend": {
+      "state": "external-backend-required",
+      "evidence": "src/strudel/engine.ts defaultOutput delegates to webaudioOutput; pinned core/controls.mjs registers transport event fields",
+      "restriction": "App does not configure MIDI/OSC output transport. Setter existence does not make these WebAudio features."
+    },
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/modules/catalog.ts has no owner; engine default output is WebAudio",
+      "restriction": "External transport integration is outside this research and current app setup"
+    }
+  },
+  "oscport": {
+    "backend": {
+      "state": "external-backend-required",
+      "evidence": "src/strudel/engine.ts defaultOutput delegates to webaudioOutput; pinned core/controls.mjs registers transport event fields",
+      "restriction": "App does not configure MIDI/OSC output transport. Setter existence does not make these WebAudio features."
+    },
+    "generator": {
+      "state": "intentional-CODE",
+      "evidence": "src/modules/catalog.ts has no owner; engine default output is WebAudio",
+      "restriction": "External transport integration is outside this research and current app setup"
+    }
+  }
+}

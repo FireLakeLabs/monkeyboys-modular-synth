@@ -21,7 +21,8 @@
     "check:skills": "node scripts/check-skills.mts",
     "test:guardrails": "node --test scripts/*.test.mts",
     "coverage:reader": "node scripts/reader-coverage.mjs",
-    "coverage:reader:wild": "node scripts/reader-coverage.mjs --wild"
+    "coverage:reader:wild": "node scripts/reader-coverage.mjs --wild",
+    "inventory:strudel": "node scripts/strudel-api-inventory.mjs"
   },
   "dependencies": {
     "@codemirror/commands": "^6.11.1",
