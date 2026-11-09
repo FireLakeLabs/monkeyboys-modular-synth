@@ -102,9 +102,15 @@ test('search, flip variants with sound, choose with Enter and undo in one step',
   const dialog = picker(page, 'smpl1')
   const search = dialog.getByRole('combobox', { name: 'Search sounds' })
   await expect(search).toBeFocused()
-  // The first view lists what the patch already uses.
-  await expect(dialog.getByRole('option')).toHaveCount(1)
-  expect(await optionLabels(dialog)).toEqual(['jazz:1, In this patch, variant 2 of 3'])
+  // The first view lists what the patch already uses, then sounds in pack order.
+  await expect
+    .poll(async () => (await optionLabels(dialog)).slice(0, 3))
+    .toEqual([
+      'jazz:1, In this patch, variant 2 of 3',
+      'bd:0, Dirt Samples, variant 1 of 2',
+      '808bd:0, Dirt Samples, variant 1 of 3',
+    ])
+  await expect(dialog.getByRole('option')).toHaveCount(9)
   await page.screenshot({ path: `${EVIDENCE}/home.png` })
 
   await search.fill('808')
@@ -147,7 +153,7 @@ test('search, flip variants with sound, choose with Enter and undo in one step',
 
   // Recent remembers the choice for the next picker.
   await readout(page, 'reverb1').click()
-  expect(await optionLabels(picker(page, 'reverb1'))).toEqual([
+  expect((await optionLabels(picker(page, 'reverb1'))).slice(0, 2)).toEqual([
     'jazz:1, In this patch, variant 2 of 3',
     'RolandTR808_bd:3, Recent, variant 4 of 4',
   ])
@@ -205,10 +211,12 @@ test('WAVETABLE offers only wt_ sounds and says when there are none', async ({ p
   await setup(page)
   await readout(page, 'wavetable1').click()
   const dialog = picker(page, 'wavetable1')
-  await dialog.getByRole('button', { name: 'Other', exact: true }).click()
+  // Its first view lists every wavetable, and drum kinds do not apply.
   await expect
     .poll(() => optionLabels(dialog))
     .toEqual(['wt_fixture:0, picker.example, variant 1 of 1'])
+  await expect(dialog.getByRole('group', { name: 'Kind' })).toHaveCount(0)
+  await expect(dialog.getByRole('combobox')).toHaveAttribute('placeholder', 'Search 1 wavetable')
   await page.keyboard.press('Enter')
   await expect(slot(page, 'wavetable1')).toHaveAttribute('data-value', 'wt_fixture:0')
 
@@ -216,7 +224,11 @@ test('WAVETABLE offers only wt_ sounds and says when there are none', async ({ p
   await setup(empty, { wavetables: false })
   await readout(empty, 'wavetable1').click()
   const none = picker(empty, 'wavetable1')
-  await expect(none.getByText('No wt_ sounds in the seated packs.')).toBeVisible()
+  await expect(
+    none.getByText(
+      'This slot takes wavetables, sounds named wt_…, and none of the seated packs has any.',
+    ),
+  ).toBeVisible()
   await empty.screenshot({ path: `${EVIDENCE}/wavetable-empty.png` })
   await none.getByRole('button', { name: 'Open Packs', exact: true }).click()
   await expect(empty.getByRole('tab', { name: 'Packs' })).toHaveAttribute('aria-selected', 'true')
@@ -289,6 +301,10 @@ test('readouts fit an 8 HP panel for long, missing and empty values', async ({ p
     patch = m.setValue(patch, 'reverb1', 'ir', 'nosuch:2')
     await (await import('/scripts/rack-feel-check.mjs')).load(generate(patch))
   })
+  // Packs load on first use. Until then no slot claims its sound is missing.
+  await expect(readout(page, 'splice1')).toHaveAccessibleName('Sound for splice1: jazz:1')
+  await expect(readout(page, 'reverb1')).toHaveAccessibleName('Sound for reverb1: nosuch:2')
+  await expect(page.locator('.sample-slot[data-state="missing"]')).toHaveCount(0)
   // Opening a picker loads the seated packs, so the readouts can tell what is missing.
   await readout(page, 'wavetable1').click()
   await page.keyboard.press('Escape')

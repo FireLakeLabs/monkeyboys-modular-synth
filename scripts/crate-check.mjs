@@ -157,12 +157,8 @@ export async function verifySoundCrate() {
       assert(generate(reopened) === editorSource(), `${module} drop did not retain exact source`)
       results.push(`${module}: browser drop writes source and restores complete saved rack`)
     }
-    // Both test sounds are kind Other, so that chip lists every sound the picker offers.
+    // The first view lists every sound the slot accepts.
     document.querySelector('[data-module="wavetable1"] .sample-readout').click()
-    await until(() => document.querySelector('.sound-picker'))
-    ;[...document.querySelectorAll('.sound-picker-chips button')]
-      .find((chip) => chip.textContent === 'Other')
-      .click()
     await until(() => document.querySelector('.sound-picker [role="option"]'))
     const options = [...document.querySelectorAll('.sound-picker [role="option"]')].map((option) =>
       option.getAttribute('aria-label'),

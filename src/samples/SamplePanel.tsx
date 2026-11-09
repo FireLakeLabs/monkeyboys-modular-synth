@@ -14,6 +14,7 @@ export function SampleSlot({
   patchSounds,
   locked,
   picking,
+  settled,
   drop,
   clear,
   browseAll,
@@ -27,6 +28,8 @@ export function SampleSlot({
   locked: boolean
   /** The Sounds dock is choosing for this slot. */
   picking: boolean
+  /** Every seated pack's inventory is known, so a sound none of them has is missing. */
+  settled: boolean
   /** Returns false when the rack refused the edit and reported why. */
   drop: (choice: SoundChoice) => boolean
   clear: () => void
@@ -41,21 +44,18 @@ export function SampleSlot({
   const value = slotValue(module)
   const choice = parseToken(value)
   const sound = choice ? findSound(resources, choice.name) : undefined
-  const loaded = !!choice && !!sound && choice.n < sound.count
+  // Packs load on first use, so before that a slot cannot tell a missing sound from an unloaded one.
+  const missing = !!value && settled && !(choice && sound && choice.n < sound.count)
   const parts = choice ? (sound ?? soundParts(choice.name, '')) : { bank: '', short: value }
   const caption = module.type === 'reverb' ? 'IR' : module.type === 'wavetable' ? 'TABLE' : 'SAMPLE'
   return (
-    <div
-      className="sample-slot"
-      data-value={value}
-      data-state={value && !loaded ? 'missing' : undefined}
-    >
+    <div className="sample-slot" data-value={value} data-state={missing ? 'missing' : undefined}>
       <span className="sample-slot-caption">{caption}</span>
       <button
         ref={readout}
         type="button"
         className="sample-readout"
-        aria-label={`Sound for ${module.id}: ${value || 'none'}${value && !loaded ? ', not loaded' : ''}`}
+        aria-label={`Sound for ${module.id}: ${value || 'none'}${missing ? ', not loaded' : ''}`}
         aria-haspopup="dialog"
         aria-expanded={open && !locked}
         title={value || undefined}
@@ -73,7 +73,7 @@ export function SampleSlot({
             <span className="sample-readout-token">
               {choice ? `${parts.short}:${choice.n}` : value}
             </span>
-            {!loaded && <span className="sample-readout-missing">not loaded</span>}
+            {missing && <span className="sample-readout-missing">not loaded</span>}
           </>
         ) : (
           <span className="sample-readout-empty">

@@ -122,24 +122,23 @@ export function SoundPicker({
   const index = soundIndex(resources).filter((sound) => !prefix || sound.name.startsWith(prefix))
   const packs = [...new Map(index.map((sound) => [sound.packKey, sound.pack]))]
   const filtered = !!query.trim() || !!kind || !!pack
-  const found = filtered
-    ? findSounds(index, { text: query, kind, pack }).map((sound): Row => ({
-        key: sound.name,
-        group: sound.pack,
-        groupKey: sound.packKey,
-        sound,
-        n: 0,
-      }))
-    : []
+  // Unfiltered, the list still shows sounds after the patch's and recent ones, so it never looks empty.
+  const found = (filtered ? findSounds(index, { text: query, kind, pack }) : index).map(
+    (sound): Row => ({ key: sound.name, group: sound.pack, groupKey: sound.packKey, sound, n: 0 }),
+  )
   const own = parseToken(value)
+  const listed = byPack(found.slice(0, SHOWN)).map((row) =>
+    row.sound.name === own?.name ? { ...row, n: own.n } : row,
+  )
   const rows = filtered
-    ? byPack(found.slice(0, SHOWN)).map((row) =>
-        row.sound.name === own?.name ? { ...row, n: own.n } : row,
-      )
-    : homeRows(resources, prefix, [
-        ['In this patch', patchSounds],
-        ['Recent', recentSounds()],
-      ])
+    ? listed
+    : [
+        ...homeRows(resources, prefix, [
+          ['In this patch', patchSounds],
+          ['Recent', recentSounds()],
+        ]),
+        ...listed,
+      ]
   const at = Math.min(active, rows.length - 1)
   const row = rows[at]
   const variant = (row: Row) => variants.get(row.key) ?? row.n
@@ -223,7 +222,7 @@ export function SoundPicker({
         aria-controls={`${id}-list`}
         aria-autocomplete="list"
         aria-activedescendant={row ? `${id}-${row.key}` : undefined}
-        placeholder={`Search ${index.length} sounds`}
+        placeholder={`Search ${index.length} ${prefix ? 'wavetable' : 'sound'}${index.length === 1 ? '' : 's'}`}
         value={query}
         onChange={(event) => {
           setQuery(event.target.value)
@@ -246,23 +245,26 @@ export function SoundPicker({
           action()
         }}
       />
-      <fieldset className="sound-picker-chips">
-        <legend className="sr-only">Kind</legend>
-        {([null, ...SOUND_KINDS] as const).map((option) => (
-          <button
-            key={option ?? 'All'}
-            type="button"
-            aria-pressed={kind === option}
-            onClick={() => {
-              setKind(kind === option ? null : option)
-              setActive(0)
-              refocus()
-            }}
-          >
-            {option ?? 'All'}
-          </button>
-        ))}
-      </fieldset>
+      {/* Kinds name drum sounds; a prefixed slot such as WAVETABLE has none. */}
+      {!prefix && (
+        <fieldset className="sound-picker-chips">
+          <legend className="sr-only">Kind</legend>
+          {([null, ...SOUND_KINDS] as const).map((option) => (
+            <button
+              key={option ?? 'All'}
+              type="button"
+              aria-pressed={kind === option}
+              onClick={() => {
+                setKind(kind === option ? null : option)
+                setActive(0)
+                refocus()
+              }}
+            >
+              {option ?? 'All'}
+            </button>
+          ))}
+        </fieldset>
+      )}
       {packs.length > 2 && (
         <fieldset className="sound-picker-chips">
           <legend className="sr-only">Pack</legend>
@@ -353,8 +355,8 @@ export function SoundPicker({
         {!busy && !playable && (
           <span>
             {prefix
-              ? `No ${prefix} sounds in the seated packs. `
-              : 'No sounds in the seated packs. '}
+              ? `This slot takes wavetables, sounds named ${prefix}…, and none of the seated packs has any. `
+              : 'The seated packs have no sounds. '}
             <button type="button" className="sound-picker-link" onClick={openPacks}>
               Open Packs
             </button>
@@ -366,9 +368,9 @@ export function SoundPicker({
         {found.length > SHOWN && (
           <span>
             Showing {SHOWN} of {found.length}
+            {filtered ? '' : '. Type to narrow, or pick a kind.'}
           </span>
         )}
-        {playable && !filtered && !rows.length && <span>Type to search, or pick a kind.</span>}
         {error && <span role="alert">{error}</span>}
       </output>
       <div className="sound-picker-footer">

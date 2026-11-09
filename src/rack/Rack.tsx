@@ -17,6 +17,7 @@ import { rememberSound } from '../samples/recentSounds'
 import type { SoundPick } from '../samples/SoundCrate'
 import { loadSamplePacks, type SamplePackResource } from '../strudel/engine'
 import { cartridges } from '../workspace/cartridges'
+import { packKey } from '../samples/packs'
 import {
   useEffect,
   useLayoutEffect,
@@ -709,6 +710,19 @@ export function Rack({
   const loadSounds = () =>
     loadSamplePacks(cartridges(sourceDocument).flatMap((entry) => (entry.pack ? [entry.pack] : [])))
   const patchSounds = patch.modules.map(slotValue).filter(Boolean)
+  // Unknown inventories, such as computed samples() calls, never settle.
+  const settled = cartridges(sourceDocument).every((entry) => {
+    const pack = entry.pack
+    return (
+      !!pack &&
+      sampleResources.some(
+        (resource) =>
+          resource.key === packKey(pack) &&
+          (resource.status === 'failed' ||
+            (resource.status === 'registered' && resource.sampleCount !== null)),
+      )
+    )
+  })
   const renderModules = (modules: Patch['modules']) =>
     modules.map((m) => {
       const spec = getModuleSpec(m.type)
@@ -848,6 +862,7 @@ export function Rack({
               patchSounds={patchSounds}
               locked={locked}
               picking={activePick?.module === m.id}
+              settled={settled}
               clear={() => {
                 const target = spec.sampleTarget
                 if (target) edit((p) => setValue(p, m.id, target.control, ''))

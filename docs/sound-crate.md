@@ -151,10 +151,12 @@ a readout, a search popup and a pick mode in the Sounds dock.
 Line one names the bank or pack (`RolandTR808`, `Dirt Samples`); line two, in
 monospace, is the rest of the token (`bd:3`, `808bd:3`). Long names end in an
 ellipsis. The accessible name and tooltip carry the full token. An empty slot reads
-“Choose sound” (“Choose wt\_ sound” on WAVETABLE). A value that no seated pack
-provides keeps its token, gains a dashed border and reads “not loaded”, as the old
-selector's “unavailable” option did. The whole panel still accepts dropped cards
-(#185).
+“Choose sound” (“Choose wt\_ sound” on WAVETABLE). Packs load on first use, so
+until every seated pack's inventory is known a filled slot shows its token without
+judging it. After that, a value that no seated pack provides gains a dashed border
+and reads “not loaded”, as the old selector's “unavailable” option did. Computed
+`samples()` setup never settles, so it never marks a slot missing. The whole panel
+still accepts dropped cards (#185).
 
 ### Search popup
 
@@ -163,21 +165,24 @@ its search box. Opening it loads the seated packs, as a first visit to Sounds do
 while they load, a loading line shows under any matches from loaded packs.
 
 - With no query or filter, it lists **In this patch** (the other slots' tokens) and
-  **Recent** (the last five sounds chosen this session; nothing is saved).
+  **Recent** (the last five sounds chosen this session; nothing is saved), then the
+  slot's sounds in pack order, so a seated pack's sounds always show. Packs appear
+  in seating order: factory packs, then setup order.
 - Results have one row per sound, grouped by pack, capped at 40 with “Showing 40 of
   N”. Ranking: the name starts with the query; then the part after the bank (`bd`
   in `RolandTR808_bd`) does; then the name contains it; then the kind does, so
   `kick` finds kicks. Ties keep pack and manifest order. A name repeated across packs
   keeps one row, the last registration, which is the one Strudel plays. Sounds with
   no variants are left out.
-- Kind chips filter the rows. With three or more seated packs, pack chips appear too.
+- Kind chips filter the rows. WAVETABLE has none, because kinds name drum sounds.
+  With three or more seated packs, pack chips appear too.
 - ↑/↓ move the active row. ←/→ change its variant and play it. Space plays it
   again, Enter chooses it, and Esc or a click outside closes with no change. Clicking
   a row chooses it, and the active row shows ‹ › for pointer flipping. Space never
   types, because sound names cannot contain spaces.
 - The footer offers **Browse all in Sounds ›** and, for a filled slot, **Clear slot**.
 - WAVETABLE lists only `wt_` sounds. Neither factory pack has any, so its empty state
-  points to Packs.
+  says that the slot takes wavetables, named `wt_…`, and points to Packs.
 - The search box is a combobox that owns a listbox through `aria-activedescendant`.
 
 Every route chooses through the panel's existing drop path, as one undo step with
@@ -238,7 +243,8 @@ Observed on 8 November 2026 with Node 24.22.2 and Playwright's Chromium.
   [runs and environment](evidence/sound-picker/latency.json) are recorded.
 - **Behaviour:** [`tests/browser/sound-picker.spec.mjs`](../tests/browser/sound-picker.spec.mjs)
   uses small stand-ins for the factory packs and a third pack, with WAV fixtures
-  served locally. It checks that no slot renders a list; the first view; ranking and
+  served locally. It checks that no slot renders a list; that no readout claims a
+  sound is missing before the packs load; the first view; ranking and
   grouping; that three quick → presses fetch only the last variant's audio file;
   Space; Enter choosing with focus back on the readout and code
   `s("RolandTR808_bd:3")`; one Undo restoring the source; Recent; kind and pack chips;
