@@ -28,6 +28,13 @@ exports[`built-in patch library > enveloped-synth: preserves exact source and in
 }
 `;
 
+exports[`built-in patch library > exercise-add: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "78b0c609c640f732c65a0aa8973477101b6390c5b54e233d273c9f6e9e72acda",
+  "projection": "cbb15007b021a527d3977e800eb906fffd8c7c65a8b3a0c94dae48a37ad3f86b",
+}
+`;
+
 exports[`built-in patch library > exercise-arp: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "914f6c655b151940290af914b17ac802a41bbc956bc09f53084546135ad8f05e",

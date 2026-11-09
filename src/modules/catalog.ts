@@ -189,6 +189,7 @@ export const OSC: ModuleSpec = {
       call: { method: 's', argument: { kind: 'string' }, read: 'merge' },
       label: 'WAVE',
       options: opts('sawtooth', 'square', 'triangle', 'sine', 'supersaw', 'pulse'),
+      aliases: { saw: 'sawtooth' },
       default: 'sawtooth',
     },
     {
@@ -373,7 +374,7 @@ export const VCF: ModuleSpec = {
       when: [{ control: 'mode', values: ['lp', 'hp', 'bp'] }],
       label: 'RES',
       min: 0,
-      max: 20,
+      max: 50,
       step: 0.5,
       default: 1,
     },
@@ -438,6 +439,7 @@ export const VCF: ModuleSpec = {
     'fanchor',
     'djf',
   ],
+  strudelAliases: { cutoff: 'lpf', resonance: 'lpq' },
   orderSensitive: false,
 }
 
@@ -652,6 +654,33 @@ export const MOD_MIX: ModuleSpec = {
     { id: 'in', label: 'A', direction: 'in', signal: 'mod' },
     { id: 'in2', label: 'B', direction: 'in', signal: 'mod' },
     { id: 'out', label: 'OUT', direction: 'out', signal: 'mod' },
+  ],
+  // Nested a.add(b) is read by the modulation adapter; ADD owns the chain call.
+  strudel: [],
+  orderSensitive: true,
+}
+export const ADD: ModuleSpec = {
+  id: 'add',
+  name: 'ADD',
+  title: 'Pattern addition',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 12,
+  paletteCall: '.add("…")',
+  notice:
+    'Adds plain values. After note(), plain numbers do not transpose pitch; use OSC TUNE for pitch modulation.',
+  controls: [
+    {
+      kind: 'text',
+      id: 'value',
+      label: 'VALUE',
+      default: '0',
+      call: { method: 'add', argument: { kind: 'string' } },
+    },
+  ],
+  jacks: [
+    { id: 'in', label: 'IN', direction: 'in', signal: 'any' },
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'any' },
   ],
   strudel: ['add'],
   orderSensitive: true,
@@ -2329,6 +2358,7 @@ export const CATALOG: readonly ModuleSpec[] = [
   DUCK,
   DRUMS,
   QUANT,
+  ADD,
   CLOCK,
   EUCLID,
   RATCHET,

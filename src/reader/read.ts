@@ -57,7 +57,10 @@ function soundOwner(call: Call, next?: Call, source = false): string | undefined
     const control = spec.controls.find(
       (control) => control.id === (spec.id === 'osc' ? 'wave' : spec.soundSource),
     )
-    return control?.kind === 'switch' && control.options.some((option) => option.value === wave)
+    return (
+      control?.kind === 'switch' &&
+      control.options.some((option) => option.value === (control.aliases?.[wave] ?? wave))
+    )
   })
   if (/^wt_[\w-]+(?::\d+)?$/.test(wave)) return 'wavetable'
   if (
@@ -82,7 +85,11 @@ function soundOwner(call: Call, next?: Call, source = false): string | undefined
     if (typeof spec.soundSource === 'object') return spec.soundSource.fixed === wave
     const control = spec.controls.find((c) => c.id === spec.soundSource)
     if (spec.id === 'smpl' && !source && !knownWave && /^[\w-]+(?::\d+)?$/.test(wave)) return true
-    if (control?.kind !== 'switch' || !control.options.some((o) => o.value === wave)) return false
+    if (
+      control?.kind !== 'switch' ||
+      !control.options.some((o) => o.value === (control.aliases?.[wave] ?? wave))
+    )
+      return false
     if (spec.id !== 'harmonic') return true
     const arg = next?.args[0]
     const bars = spec.controls.find((control) => control.kind === 'drawbars')
@@ -116,7 +123,11 @@ function fits(type: string, id: string, value: number | string): boolean {
         (control.step !== 1 || Number.isInteger(value))
       )
     case 'switch':
-      return control.options.some((option) => option.value === value)
+      return control.options.some(
+        (option) =>
+          option.value ===
+          (typeof value === 'string' ? (control.aliases?.[value] ?? value) : value),
+      )
     case 'text':
       return (
         typeof value === 'string' &&
@@ -295,7 +306,11 @@ function project(
     const value = scalar(arg)
     if (call.args.length !== 1 || value === undefined || !arg || !fits(module.type, id, value))
       return false
-    module.values[id] = value
+    const control = getModuleSpec(module.type).controls.find((c) => c.id === id)
+    module.values[id] =
+      control?.kind === 'switch' && typeof value === 'string'
+        ? (control.aliases?.[value] ?? value)
+        : value
     represented.get(module.id)?.add(id)
     bind(module, scope, [index], literalControls(id, arg))
     return true
@@ -685,6 +700,34 @@ function project(
         )[0]
       )
     }
+    function soundAt(call: Call, index: number, source = false) {
+      const wave = getModuleSpec('osc').controls.find((control) => control.id === 'wave')
+      const literal = scalar(call.args[0])
+      const sound =
+        soundOwner(call, calls[index + 1], source) ??
+        (wave?.kind === 'switch' && typeof literal === 'string' && wave.aliases?.[literal]
+          ? 'osc'
+          : undefined)
+      // A newly recognized oscillator alias must not invalidate a saved sampler.
+      // Exact scope/call ownership is still independently checked against its graph.
+      if (
+        sound === 'osc' &&
+        savedScope &&
+        saved?.modules.some(
+          (module) =>
+            module.type === 'smpl' &&
+            module.bindings.some(
+              (binding) =>
+                binding.scope === savedScope.id &&
+                descriptor(binding.loop) === descriptor(scope.loop) &&
+                binding.role === 'module' &&
+                binding.calls.includes(index),
+            ),
+        )
+      )
+        return 'smpl'
+      return sound
+    }
     if (!scope.loop && scope.kind === 'declaration' && !retainedCode(0, true)) {
       const pattern = modPattern(scope.expression, (name) => declarations.has(name))
       if (pattern) {
@@ -789,7 +832,7 @@ function project(
       }
     }
     if (!upstream && initial && initial.start === root.start) {
-      const sound = initial.name === 's' && soundOwner(initial, calls[1], true)
+      const sound = initial.name === 's' && soundAt(initial, 0, true)
       const type = sound || owner(initial.name, true)
       const form = type && getModuleSpec(type).source
       if (
@@ -818,7 +861,12 @@ function project(
       }
       if (sound) {
         const spec = getModuleSpec(sound)
-        const id = typeof spec.soundSource === 'string' ? spec.soundSource : undefined
+        const id =
+          sound === 'osc'
+            ? 'wave'
+            : typeof spec.soundSource === 'string'
+              ? spec.soundSource
+              : undefined
         group = add(sound, {
           ...spec.readDefaults,
           ...(sound === 'splice' ? { mode: calls[1]?.name ?? 'slice' } : {}),
@@ -969,7 +1017,7 @@ function project(
               (group?.type === 'seq' || group?.type === 'drums') &&
               typeof scalar(call.args[0]) === 'string'
             ? group.type
-            : (name === 's' && soundOwner(call, calls[index + 1])) || owner(name, false)
+            : (name === 's' && soundAt(call, index)) || owner(name, false)
       const mixerModulation = (call: Call) =>
         ['lfo', 'env'].includes(call.name) &&
         call.args.length === 1 &&

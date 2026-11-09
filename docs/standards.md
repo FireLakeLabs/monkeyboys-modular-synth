@@ -550,3 +550,12 @@ placement/wiring, exact Undo source and export/reopen identity. The
 hover/focus, reverse wiring, ghost placement, replacement/cancellation, looks
 and zoom, and live SCOPE PCM through connected placement and Undo/Redo. See
 [observed evidence and limits](jack-discovery-verification.md).
+
+The #238 [acid-import regressions](../src/reader/acid.test.ts) separately protect
+exact bytes, reopened rack identity and pinned-engine events for filter aliases,
+resonance 0/25/50, pattern ADD and the saw oscillator alias. A captured pre-change
+file guards saved CODE/sampler ownership; unsupported operands and out-of-range
+resonance stay CODE. The browser regression exercises native RES 50 editing,
+Undo/reopen and live scheduled PCM. Neither event queries nor PCM establishes
+physical listening. The panel's warning preserves the engine's control-pattern
+arithmetic behavior rather than implying a new transposition operation.

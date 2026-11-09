@@ -835,3 +835,27 @@ Undo/Redo and export/reopen rules; no format or catalog changes are required.
 Imported edits use source-preserving plans when supported and visibly warn
 before falling back to the existing rack-style conversion. CODE paths remain
 unverified, and cancellation retains the exact accepted source and graph.
+
+## Acid-patch aliases and arithmetic (#238)
+
+`cutoff`/`resonance` select the same VCF bindings as `lpf`/`lpq`. RES supports
+0–50; unsupported values remain CODE without clamping. The oscillator selector
+accepts the catalog literal alias `saw` → `sawtooth`. Reading uses the canonical
+panel value while retaining the exact original source and literal span. Unrelated
+rack edits leave `s("saw")` intact; editing WAVE writes the selected canonical name.
+Saved samplers retain their proven source ownership, including older `s("saw")`
+files. Switch aliases must target real catalog options and cannot shadow them.
+
+A quoted chained `.add("…")` belongs to ADD, retaining the incoming signal and
+its exact position; nested modulation `a.add(b)` continues to belong to MOD MIX.
+No `.add()` is replaced with `.transpose()`. In the pinned core, plain operands
+on an existing note-control pattern do not transpose its note field, and comma
+notation can still multiply simultaneous events. Preserve both values and timing.
+Scalar, computed and wrapped-parameter ADD operands stay CODE in this increment.
+
+Existing saved CODE remains CODE. The independent ADD block has an explicit
+conversion offer. Filter/CV blocks whose ownership spans several modules/calls
+retain the existing conservative conversion limit: explicitly importing the
+executable body without its old rack metadata projects the complete new rack,
+while preserving the body. This deliberately discards the old layout. No automatic
+conversion of saved patches or new grouped-CODE conversion flow is introduced.

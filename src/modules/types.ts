@@ -91,6 +91,8 @@ export interface SwitchControl extends CallControl {
   /** Printed on a narrow toggle; `label` remains its accessible name. */
   short?: string
   options: readonly SwitchOption[]
+  /** Equivalent imported literals; saved panel values use the canonical option. */
+  aliases?: Readonly<Record<string, string>>
   default: string
   omitAt?: string
 }

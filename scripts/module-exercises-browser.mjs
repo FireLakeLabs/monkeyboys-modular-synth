@@ -35,6 +35,7 @@ const actions = {
   seq: ['mini', 'STEPS', 'd3 e3 g3 b3', 'steps'],
   drums: ['mini', 'GRID', 'bd bd sd hh', 'grid'],
   quant: ['switch', 'SCALE', 'major', 'scale'],
+  add: ['text', 'VALUE', '<0 7>', 'value'],
   clock: ['knob', 'DIV', 1, 'division'],
   euclid: ['knob', 'PULSES', 5, 'pulses'],
   ratchet: ['text', 'REPEATS', '4', 'repeats'],

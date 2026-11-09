@@ -12,6 +12,7 @@ import auxSource from './patches/modules/aux.strudel?raw'
 import duckSource from './patches/modules/duck.strudel?raw'
 import drumsSource from './patches/modules/drums.strudel?raw'
 import quantSource from './patches/modules/quant.strudel?raw'
+import addSource from './patches/modules/add.strudel?raw'
 import clockSource from './patches/modules/clock.strudel?raw'
 import euclidSource from './patches/modules/euclid.strudel?raw'
 import ratchetSource from './patches/modules/ratchet.strudel?raw'
@@ -134,6 +135,13 @@ export const MODULE_EXERCISES: readonly LibraryPatch[] = [
     source: quantSource,
     description: 'Scale degrees through one quantizer.',
     tryThis: 'Switch QUANT SCALE from minor to major and compare the melody.',
+  },
+  {
+    type: 'add',
+    source: addSource,
+    description:
+      'Plain numeric pitches shift before becoming note events; CODE retains the value source and note wrapper.',
+    tryThis: 'Change ADD VALUE from <0 12> to <0 7> and compare the alternating transposition.',
   },
   {
     type: 'clock',
