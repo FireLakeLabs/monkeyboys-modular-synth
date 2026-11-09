@@ -56,9 +56,9 @@ enters evaluation. Setup sentinels and an invalid sample URL are read/saved
 without running or fetching them.
 
 Observed reproduction: `RESULT module-contexts modules=59 comparisons=48
-reader=63 failures=0`. Every module's committed exercise has its actual catalog
+reader=63 fallbacks=59 examples=8 failures=0`. Every module's committed exercise has its actual catalog
 owner, byte-exact document generation and complete saved graph equality after
-save/reopen. The 63 additional reader/document cases separately check exact source
+save/reopen. Each module also has a concrete fallback/source-preservation counterexample; OUT retains opaque tempo setup without inventing a binding. The 63 additional reader/document cases separately check exact source
 and saved identity; 48 comparisons query real pinned event values and whole/part
 times over `[0,4)`. Hashes cover complete event arrays; samples/counts remain
 inspectable. Equality in one four-cycle fixture is a bounded observation, not a
@@ -442,8 +442,9 @@ expanding into one ticket per name:
 ## Verification and review ledger
 
 - `npm ci`: passed on Node 24.22.2; lockfile unchanged; installed source patch verified.
-- Reproduction: 59 exercised modules, 48 pinned event comparisons, 63 reader/document cases; zero failures.
+- Reproduction: 59 exercised modules, 48 pinned event comparisons, 63 reader/document cases, 59 per-module fallback cases and 8 report examples; zero failures.
 - `npm run check`: passed (2,585 unit cases, 53 guardrails, committed reader coverage, formatting/skills/lint/typecheck/build); rerun after inventory adapter.
+- Coverage guard: deliberately removed one annotation; the command rejected it, then passed after byte-exact restoration.
 - Local browser/PCM/listening: not run; application behavior unchanged; no server.
 - Inventory reconciliation, bounded Opus review, PR/hosted checks and protected merge: pending.
 

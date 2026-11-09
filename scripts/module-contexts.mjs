@@ -154,6 +154,27 @@ for (const spec of runtime.CATALOG) {
   }
   if (Object.values(proof).some((value) => value === false))
     failures.push(`Exercise ${spec.id} proof failed`)
+  const counterSource =
+    annotation.counterexampleKind === 'opaque-setup'
+      ? annotation.counterexample + '\n'
+      : `$: ${annotation.counterexample}\n`
+  const counter = runtime.read(counterSource)
+  const counterSaved = runtime.saveLayout(counter)
+  const code = counter.patch.modules.filter((m) => m.type === 'code').map((m) => m.values.text)
+  const fallback = {
+    source: counterSource,
+    code,
+    sourceExact:
+      runtime.generate(counter) === counterSource &&
+      runtime.sourceBody(counterSaved.source) === counterSource,
+    savedIdentity: isDeepStrictEqual(counterSaved.patch, runtime.read(counterSaved.source).patch),
+    fallbackObserved:
+      annotation.counterexampleKind === 'opaque-setup'
+        ? !counter.bindings.some((binding) => Object.hasOwn(binding.controls, 'bpm'))
+        : code.length > 0,
+  }
+  if (Object.values(fallback).some((value) => value === false))
+    failures.push(`Counterexample ${spec.id} proof failed: ${JSON.stringify(fallback)}`)
   matrix.push({
     ...annotation,
     caseIds: annotation.caseIds.split(','),
@@ -167,6 +188,7 @@ for (const spec of runtime.CATALOG) {
     controls: spec.controls,
     jacks: spec.jacks,
     exercise: proof,
+    fallback,
     audioEvidence: 'not measured by this study; see report/backend source',
   })
 }
@@ -242,6 +264,18 @@ const table = [
   '',
   'Names on controls (notably shared s, n, velocity and argument add) may have contextual ownership beyond the explicit strudel list. The JSON includes complete control bindings and the inventory join; this table does not redefine aliases or count missing features.',
   '',
+  '## Per-module boundary fixtures',
+  '',
+  'Every row also checks a concrete fallback separately from its supported exercise. These examples document reader/UI boundaries, not universal engine-invalid inputs. Exact CODE text, source bytes and saved identity are recorded in JSON. OUT preserves opaque setup rather than inventing a tempo binding.',
+  '',
+  '| Module | Counterexample expression / setup | Observed preservation |',
+  '| --- | --- | --- |',
+  ...matrix.map(
+    (row) =>
+      `| ${row.name} | ${'`'}${row.counterexample.replaceAll('\n', ' ')}${'`'} | ${row.counterexampleKind}; source and saved identity pass |`,
+  ),
+  '',
+  '',
 ]
 const prettier = await resolveConfig(`${root}.prettierrc.json`)
 await writeFile(
@@ -253,7 +287,7 @@ await writeFile(
   await format(JSON.stringify(report), { ...prettier, parser: 'json' }),
 )
 process.stdout.write(
-  `RESULT module-contexts modules=${matrix.length} comparisons=${observations.length} reader=${reader.length} examples=${examples.length} failures=${failures.length}\n`,
+  `RESULT module-contexts modules=${matrix.length} comparisons=${observations.length} reader=${reader.length} fallbacks=${matrix.length} examples=${examples.length} failures=${failures.length}\n`,
 )
 for (const failure of failures) console.error(failure)
 if (failures.length) process.exitCode = 1

@@ -45,6 +45,8 @@
       "readerContext": "Literal mini-notation; a voice without a downstream audio boundary may remain whole CODE; adjacent fast is RATE",
       "verdict": "keep",
       "caseIds": ["C01"],
+      "counterexample": "note(patternValue).s(\"sawtooth\")",
+      "counterexampleKind": "CODE",
       "name": "SEQ",
       "hp": 10,
       "functions": ["note", "n", "fast"],
@@ -111,6 +113,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(patternValue).s(\"sawtooth\")\n",
+        "code": ["note(patternValue)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -120,6 +129,8 @@
       "readerContext": "GATES only targets SEQ GATE in graph; standalone struct may be CODE",
       "verdict": "keep",
       "caseIds": ["C19"],
+      "counterexample": "note(\"c2\").struct(gatePattern).s(\"sawtooth\")",
+      "counterexampleKind": "CODE",
       "name": "GATES",
       "hp": 10,
       "functions": ["struct"],
@@ -145,6 +156,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").struct(gatePattern).s(\"sawtooth\")\n",
+        "code": [".struct(gatePattern)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -154,6 +172,8 @@
       "readerContext": "Four reference inputs and numeric selection; other array/inline forms remain CODE",
       "verdict": "keep",
       "caseIds": ["C19"],
+      "counterexample": "\"<0 1>\".pick([note(\"c2\"),note(\"e2\")])",
+      "counterexampleKind": "CODE",
       "name": "SWITCH",
       "hp": 12,
       "functions": ["pick"],
@@ -185,6 +205,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: \"<0 1>\".pick([note(\"c2\"),note(\"e2\")])\n",
+        "code": ["\"<0 1>\"", ".pick([note(\"c2\"),note(\"e2\")])"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -194,6 +221,8 @@
       "readerContext": "Only complete writer-proven saved graph owns allocation; imported integers are CODE",
       "verdict": "keep",
       "caseIds": ["C20"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").bus(7)",
+      "counterexampleKind": "CODE",
       "name": "AUX",
       "hp": 12,
       "functions": ["bus"],
@@ -216,6 +245,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").bus(7)\n",
+        "code": [".bus(7)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -225,6 +261,8 @@
       "readerContext": "Generated side branch; imported orbit identity is not inferred",
       "verdict": "keep",
       "caseIds": ["C20"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").duck(7)",
+      "counterexampleKind": "CODE",
       "name": "DUCK",
       "hp": 12,
       "functions": ["duck", "duckattack", "duckdepth"],
@@ -265,6 +303,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").duck(7)\n",
+        "code": [".duck(7)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -274,6 +319,8 @@
       "readerContext": "Root sample rhythm and most canonical oscillator s literals use DRUMS plus implicit SMPL; saw alias is exceptional OSC",
       "verdict": "keep",
       "caseIds": ["C01"],
+      "counterexample": "s(samplePattern)",
+      "counterexampleKind": "CODE",
       "name": "DRUMS",
       "hp": 14,
       "functions": ["s"],
@@ -321,6 +368,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: s(samplePattern)\n",
+        "code": ["s(samplePattern)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -330,6 +384,8 @@
       "readerContext": "Literal catalog scales and adjacent bounded SHIFT; computed args CODE",
       "verdict": "keep",
       "caseIds": ["C04"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").scale(scaleName)",
+      "counterexampleKind": "CODE",
       "name": "QUANT",
       "hp": 8,
       "functions": ["scale", "scaleTranspose"],
@@ -407,6 +463,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").scale(scaleName)\n",
+        "code": [".scale(scaleName)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -416,6 +479,8 @@
       "readerContext": "Quoted .add only; not implicit pitch transpose; other operands CODE",
       "verdict": "keep",
       "caseIds": ["C03"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").add(12)",
+      "counterexampleKind": "CODE",
       "name": "ADD",
       "hp": 12,
       "functions": ["add"],
@@ -443,6 +508,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").add(12)\n",
+        "code": [".add(12)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -452,6 +524,8 @@
       "readerContext": "Adjacent compatible calls may share CLOCK; literal ranges are UI limits",
       "verdict": "keep",
       "caseIds": ["C10"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").slow(divisor)",
+      "counterexampleKind": "CODE",
       "name": "CLOCK",
       "hp": 12,
       "functions": ["slow", "swingBy", "late"],
@@ -528,6 +602,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").slow(divisor)\n",
+        "code": [".slow(divisor)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -537,6 +618,8 @@
       "readerContext": "Gate/legato modes, bounded pulse/step/rotation; patterns in args CODE",
       "verdict": "keep",
       "caseIds": ["C19"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").euclidRot(pulses,8,0)",
+      "counterexampleKind": "CODE",
       "name": "EUCLID",
       "hp": 12,
       "functions": ["euclidRot", "euclidLegatoRot"],
@@ -606,6 +689,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").euclidRot(pulses,8,0)\n",
+        "code": [".euclidRot(pulses,8,0)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -615,6 +705,8 @@
       "readerContext": "Numeric/string repeat pattern; other expressions CODE",
       "verdict": "keep",
       "caseIds": ["C10"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").ply(count)",
+      "counterexampleKind": "CODE",
       "name": "RATCHET",
       "hp": 10,
       "functions": ["ply"],
@@ -642,6 +734,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").ply(count)\n",
+        "code": [".ply(count)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -651,6 +750,8 @@
       "readerContext": "Adjacent degradeBy+seed grouped; DRUMS unseeded DROP remains contextual",
       "verdict": "keep",
       "caseIds": ["C10"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").degradeBy(chance)",
+      "counterexampleKind": "CODE",
       "name": "CHANCE",
       "hp": 10,
       "functions": ["degradeBy", "seed"],
@@ -707,6 +808,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").degradeBy(chance)\n",
+        "code": [".degradeBy(chance)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -716,6 +824,8 @@
       "readerContext": "Atomic chord literal plus nullary voicing source; other forms CODE",
       "verdict": "keep",
       "caseIds": ["C04"],
+      "counterexample": "chord(\"Cm7\").voicing(\"unsupported\").s(\"sawtooth\")",
+      "counterexampleKind": "CODE",
       "name": "CHORD",
       "hp": 12,
       "functions": ["chord", "voicing"],
@@ -740,6 +850,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: chord(\"Cm7\").voicing(\"unsupported\").s(\"sawtooth\")\n",
+        "code": ["chord(\"Cm7\")", ".voicing(\"unsupported\")"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -749,6 +866,8 @@
       "readerContext": "Literal index pattern; computed index expressions CODE",
       "verdict": "keep",
       "caseIds": ["C04"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").arp(indices)",
+      "counterexampleKind": "CODE",
       "name": "ARP",
       "hp": 10,
       "functions": ["arp"],
@@ -776,6 +895,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").arp(indices)\n",
+        "code": [".arp(indices)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -785,6 +911,8 @@
       "readerContext": "Chained WAVE and compatible adjacent companions; root saw alias is OSC, most canonical root waves use DRUMS/SMPL",
       "verdict": "group",
       "caseIds": ["C01", "C02", "C05"],
+      "counterexample": "note(\"c2\").s(wave)",
+      "counterexampleKind": "CODE",
       "name": "OSC",
       "hp": 9,
       "functions": ["transpose", "pw", "unison", "detune", "spread", "noise", "octave", "freq"],
@@ -939,6 +1067,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(wave)\n",
+        "code": ["note(\"c2\").s(wave)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -948,6 +1083,8 @@
       "readerContext": "Catalog noise wave choices and compatible adjacent density only",
       "verdict": "group",
       "caseIds": ["C02", "C05"],
+      "counterexample": "note(\"c2\").s(\"crackle\").density(2)",
+      "counterexampleKind": "CODE",
       "name": "NOISE",
       "hp": 10,
       "functions": ["density"],
@@ -993,6 +1130,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"crackle\").density(2)\n",
+        "code": [".density(2)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1002,6 +1146,8 @@
       "readerContext": "Reader requires user selector plus bounded literal partials array",
       "verdict": "group",
       "caseIds": ["C05"],
+      "counterexample": "note(\"c2\").s(\"user\").partials([1,2])",
+      "counterexampleKind": "CODE",
       "name": "HARMONIC",
       "hp": 14,
       "functions": ["partials"],
@@ -1041,6 +1187,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"user\").partials([1,2])\n",
+        "code": ["note(\"c2\").s(\"user\").partials([1,2])"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1050,6 +1203,8 @@
       "readerContext": "Bounded adjacent FM settings; indexed operators and matrix are CODE",
       "verdict": "keep",
       "caseIds": ["C05", "C16"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").fm(64)",
+      "counterexampleKind": "CODE",
       "name": "FM OP",
       "hp": 12,
       "functions": ["fm", "fmh", "fmattack", "fmdecay"],
@@ -1139,6 +1294,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").fm(64)\n",
+        "code": [".fm(64)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1148,6 +1310,8 @@
       "readerContext": "Bounded scalar companions, literal sound slot; root sample rhythm splits DRUMS/SMPL",
       "verdict": "group",
       "caseIds": ["C01", "C02", "C06"],
+      "counterexample": "note(\"c2\").s(\"bd\").speed(-1)",
+      "counterexampleKind": "CODE",
       "name": "SMPL",
       "hp": 8,
       "functions": ["bank", "speed", "begin", "end", "loop", "loopBegin", "loopEnd", "cut"],
@@ -1285,6 +1449,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"bd\").speed(-1)\n",
+        "code": [".speed(-1)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1294,6 +1465,8 @@
       "readerContext": "One mode per instance; literal count/order; may start selected-sample voice",
       "verdict": "keep",
       "caseIds": ["C06"],
+      "counterexample": "s(\"bd\").slice(128,\"0\")",
+      "counterexampleKind": "CODE",
       "name": "SPLICE",
       "hp": 12,
       "functions": ["slice", "splice", "chop", "striate"],
@@ -1367,6 +1540,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: s(\"bd\").slice(128,\"0\")\n",
+        "code": [".slice(128,\"0\")"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1376,6 +1556,8 @@
       "readerContext": "wt_ selector plus literal controls; arbitrary tables/configs CODE",
       "verdict": "keep",
       "caseIds": ["C06"],
+      "counterexample": "s(\"wt_piano\").wt(2)",
+      "counterexampleKind": "CODE",
       "name": "WAVETABLE",
       "hp": 12,
       "functions": ["wt", "warp", "warpmode"],
@@ -1462,6 +1644,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: s(\"wt_piano\").wt(2)\n",
+        "code": [".wt(2)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1471,6 +1660,8 @@
       "readerContext": "Fixed sound, bounded preset and pure(single-quoted formula); unsupported formula stays CODE",
       "verdict": "keep",
       "caseIds": ["C07"],
+      "counterexample": "s(\"bytebeat\").bbexpr(\"t\")",
+      "counterexampleKind": "CODE",
       "name": "BYTEBEAT",
       "hp": 16,
       "functions": ["bbexpr", "bbst"],
@@ -1554,6 +1745,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: s(\"bytebeat\").bbexpr(\"t\")\n",
+        "code": [".bbexpr(\"t\")"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1563,6 +1761,8 @@
       "readerContext": "z_ waves and adjacent companions; arrays/computed controls CODE",
       "verdict": "keep",
       "caseIds": ["C07"],
+      "counterexample": "s(\"z_square\").slide(20)",
+      "counterexampleKind": "CODE",
       "name": "CHIP",
       "hp": 16,
       "functions": [
@@ -1707,6 +1907,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: s(\"z_square\").slide(20)\n",
+        "code": [".slide(20)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1716,6 +1923,8 @@
       "readerContext": "Literal lang/voice; word source stays CODE; not a general synth mode",
       "verdict": "keep",
       "caseIds": ["C07"],
+      "counterexample": "\"hello\".speak(language,voice)",
+      "counterexampleKind": "CODE",
       "name": "SPEAK",
       "hp": 16,
       "functions": ["speak"],
@@ -1755,6 +1964,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: \"hello\".speak(language,voice)\n",
+        "code": ["\"hello\"", ".speak(language,voice)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1764,6 +1980,8 @@
       "readerContext": "Compatible mode companions; partial/computed aliases may stay CODE",
       "verdict": "keep",
       "caseIds": ["C08", "C09"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(10)",
+      "counterexampleKind": "CODE",
       "name": "VCF",
       "hp": 10,
       "functions": [
@@ -1921,6 +2139,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").lpf(10)\n",
+        "code": [".lpf(10)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1930,6 +2155,8 @@
       "readerContext": "Bounded gain, numeric-pattern gain as CV SEQ or other supported CV; numeric velocity companion/source accent; computed args CODE",
       "verdict": "keep",
       "caseIds": ["C08"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").gain(3)",
+      "counterexampleKind": "CODE",
       "name": "VCA",
       "hp": 8,
       "functions": ["gain", "velocity"],
@@ -1973,6 +2200,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").gain(3)\n",
+        "code": [".gain(3)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -1982,6 +2216,8 @@
       "readerContext": "Complete ordered native groups or supported generic object; partial groups CODE",
       "verdict": "keep",
       "caseIds": ["C08", "C11"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").attack(.1)",
+      "counterexampleKind": "CODE",
       "name": "ENV",
       "hp": 10,
       "functions": [
@@ -2087,6 +2323,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").attack(.1)\n",
+        "code": [".attack(.1)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2096,6 +2339,8 @@
       "readerContext": "STEP expression versus SMOOTH object; utility path samples explicitly",
       "verdict": "keep",
       "caseIds": ["C11"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(800).lfo({c:\"cutoff\",shape:\"unknown\"})",
+      "counterexampleKind": "CODE",
       "name": "LFO",
       "hp": 8,
       "functions": [
@@ -2180,6 +2425,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").lpf(800).lfo({c:\"cutoff\",shape:\"unknown\"})\n",
+        "code": [".lfo({c:\"cutoff\",shape:\"unknown\"})"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2189,6 +2441,8 @@
       "readerContext": "Utility graph requires numeric modulation; general chain segment can be CODE",
       "verdict": "keep",
       "caseIds": ["C11"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(sine.segment(0).range(400,800))",
+      "counterexampleKind": "CODE",
       "name": "S&H",
       "hp": 8,
       "functions": ["segment"],
@@ -2218,6 +2472,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").lpf(sine.segment(0).range(400,800))\n",
+        "code": [".lpf(sine.segment(0).range(400,800))"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2227,6 +2488,8 @@
       "readerContext": "Utility position, numeric literals; not a general event arithmetic panel",
       "verdict": "keep",
       "caseIds": ["C03", "C11"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(sine.segment(8).rangex(-1,1))",
+      "counterexampleKind": "CODE",
       "name": "ATTENUVERTER",
       "hp": 10,
       "functions": ["mul", "rangex"],
@@ -2284,6 +2547,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").lpf(sine.segment(8).rangex(-1,1))\n",
+        "code": [".lpf(sine.segment(8).rangex(-1,1))"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2293,6 +2563,8 @@
       "readerContext": "Two explicit numeric utility inputs; unsupported receiver shapes CODE",
       "verdict": "keep",
       "caseIds": ["C03", "C11"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(sine.add(note(\"c2\")))",
+      "counterexampleKind": "CODE",
       "name": "MOD MIX",
       "hp": 8,
       "functions": [],
@@ -2313,6 +2585,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").lpf(sine.add(note(\"c2\")))\n",
+        "code": [".lpf(sine.add(note(\"c2\")))"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2322,6 +2601,8 @@
       "readerContext": "Numeric mini-notation only; absolute destination units",
       "verdict": "keep",
       "caseIds": ["C11"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(\"abc\")",
+      "counterexampleKind": "CODE",
       "name": "CV SEQ",
       "hp": 10,
       "functions": ["mini"],
@@ -2347,6 +2628,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").lpf(\"abc\")\n",
+        "code": [".lpf(\"abc\")"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2356,6 +2644,8 @@
       "readerContext": "MIX zero bypasses; source omission uses SYNC; explicit reset needs preservation",
       "verdict": "group",
       "caseIds": ["C09", "C12"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").delay(-1)",
+      "counterexampleKind": "CODE",
       "name": "DELAY",
       "hp": 10,
       "functions": ["delay", "delaytime", "delayfeedback", "delaysync"],
@@ -2449,6 +2739,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").delay(-1)\n",
+        "code": [".delay(-1)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2458,6 +2755,8 @@
       "readerContext": "Compatible room owner for companions; absent defaults have known #239 gap",
       "verdict": "group",
       "caseIds": ["C09", "C12"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").room(2)",
+      "counterexampleKind": "CODE",
       "name": "REVERB",
       "hp": 8,
       "functions": ["room", "roomsize", "roomfade", "roomlp", "roomdim", "ir"],
@@ -2570,6 +2869,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").room(2)\n",
+        "code": [".room(2)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2579,6 +2885,8 @@
       "readerContext": "Algorithm mode/nullary amount forms; omission/reset boundary remains conservative",
       "verdict": "keep",
       "caseIds": ["C09"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").soft(20)",
+      "counterexampleKind": "CODE",
       "name": "DRIVE",
       "hp": 12,
       "functions": ["soft", "hard", "cubic", "diode", "asym", "sinefold", "chebyshev", "shape"],
@@ -2650,6 +2958,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").soft(20)\n",
+        "code": [".soft(20)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2659,6 +2974,8 @@
       "readerContext": "Bounded scalar; may repeat as FX; arbitrary value expressions CODE",
       "verdict": "keep",
       "caseIds": ["C09"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").fold(20)",
+      "counterexampleKind": "CODE",
       "name": "FOLDER",
       "hp": 10,
       "functions": ["fold"],
@@ -2689,6 +3006,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").fold(20)\n",
+        "code": [".fold(20)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2698,6 +3022,8 @@
       "readerContext": "One panel holds both, active stages must be planned independently",
       "verdict": "group",
       "caseIds": ["C09"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").crush(32)",
+      "counterexampleKind": "CODE",
       "name": "LO-FI",
       "hp": 10,
       "functions": ["crush", "coarse"],
@@ -2754,6 +3080,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").crush(32)\n",
+        "code": [".crush(32)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2763,6 +3096,8 @@
       "readerContext": "Literal vowel mini-notation; no mandatory oscillator owner",
       "verdict": "keep",
       "caseIds": ["C09"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").vowel(vowelPattern)",
+      "counterexampleKind": "CODE",
       "name": "FORMANT",
       "hp": 10,
       "functions": ["vowel"],
@@ -2790,6 +3125,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").vowel(vowelPattern)\n",
+        "code": [".vowel(vowelPattern)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2799,6 +3141,8 @@
       "readerContext": "Both stage ranks required; no generic single-stage semantic collapse",
       "verdict": "group",
       "caseIds": ["C09"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").compressor(config)",
+      "counterexampleKind": "CODE",
       "name": "COMP",
       "hp": 12,
       "functions": ["compressor", "transient"],
@@ -2838,6 +3182,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").compressor(config)\n",
+        "code": [".compressor(config)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2847,6 +3198,8 @@
       "readerContext": "Depth-only import stays disabled; pattern args generally CODE",
       "verdict": "keep",
       "caseIds": ["C12"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").phaser(30)",
+      "counterexampleKind": "CODE",
       "name": "PHASER",
       "hp": 10,
       "functions": ["phaser", "phaserdepth"],
@@ -2903,6 +3256,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").phaser(30)\n",
+        "code": [".phaser(30)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2912,6 +3272,8 @@
       "readerContext": "Scalar or supported CV; pan units differ from WebAudio depth",
       "verdict": "keep",
       "caseIds": ["C11", "C20"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").pan(2)",
+      "counterexampleKind": "CODE",
       "name": "PAN",
       "hp": 10,
       "functions": ["pan"],
@@ -2945,6 +3307,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").pan(2)\n",
+        "code": [".pan(2)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2954,6 +3323,8 @@
       "readerContext": "Bounded scalar; ordered FX latency differs from native",
       "verdict": "keep",
       "caseIds": ["C09"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").stretch(-4)",
+      "counterexampleKind": "CODE",
       "name": "SHIFT",
       "hp": 10,
       "functions": ["stretch"],
@@ -2984,6 +3355,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").stretch(-4)\n",
+        "code": [".stretch(-4)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -2993,6 +3371,8 @@
       "readerContext": "Current Voices-only representation has nested-expression limits; #242 approved",
       "verdict": "merge-selected",
       "caseIds": ["C13"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").postgain(levelPattern)",
+      "counterexampleKind": "CODE",
       "name": "MIX",
       "hp": 12,
       "functions": ["postgain", "stack", "channels", "mask"],
@@ -3264,6 +3644,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").postgain(levelPattern)\n",
+        "code": [".postgain(levelPattern)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3273,6 +3660,8 @@
       "readerContext": "Literal tap 1..32; VIEW metadata only; repeated native tap last wins",
       "verdict": "keep",
       "caseIds": ["C20"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").analyze(33)",
+      "counterexampleKind": "CODE",
       "name": "SCOPE",
       "hp": 14,
       "functions": ["analyze"],
@@ -3314,6 +3703,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").analyze(33)\n",
+        "code": [".analyze(33)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3323,6 +3719,8 @@
       "readerContext": "Tempo literal/division mapping; master VOL saved separately",
       "verdict": "keep",
       "caseIds": ["C20"],
+      "counterexample": "setcpm(tempo);\n$: note(\"c2\").s(\"sawtooth\")",
+      "counterexampleKind": "opaque-setup",
       "name": "OUT",
       "hp": 8,
       "functions": ["setcpm", "setCpm", "setcps"],
@@ -3358,6 +3756,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "setcpm(tempo);\n$: note(\"c2\").s(\"sawtooth\")\n",
+        "code": [],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3367,6 +3772,8 @@
       "readerContext": "Bounded scalar steps; patterns/computed operands CODE",
       "verdict": "keep",
       "caseIds": ["C10"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").iter(32)",
+      "counterexampleKind": "CODE",
       "name": "ITER",
       "hp": 10,
       "functions": ["iter"],
@@ -3397,6 +3804,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").iter(32)\n",
+        "code": [".iter(32)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3406,6 +3820,8 @@
       "readerContext": "Presets or single-parameter receiver lambda; branches blocked by UI/reader",
       "verdict": "keep",
       "caseIds": ["C14", "C15"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").jux(transform)",
+      "counterexampleKind": "CODE",
       "name": "JUX",
       "hp": 10,
       "functions": ["jux"],
@@ -3452,6 +3868,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").jux(transform)\n",
+        "code": [".jux(transform)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3459,8 +3882,10 @@
       "role": "callback-local time transform",
       "engineContext": "chunk/fastChunk/chunkBack have differing cycle/reverse behavior",
       "readerContext": "Current chunk only; literal count and single-chain lambda",
-      "verdict": "group",
+      "verdict": "keep",
       "caseIds": ["C14", "C15"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").chunk(64,x=>x.rev())",
+      "counterexampleKind": "CODE",
       "name": "CHUNK",
       "hp": 12,
       "functions": ["chunk"],
@@ -3497,6 +3922,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").chunk(64,x=>x.rev())\n",
+        "code": [".chunk(64,x=>x.rev())"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3504,8 +3936,10 @@
       "role": "callback-local time transform",
       "engineContext": "firstOf/every are aliases; lastOf differs in cycle phase",
       "readerContext": "Panel variants first/last; every alias currently CODE",
-      "verdict": "group",
+      "verdict": "keep",
       "caseIds": ["C14", "C15"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").firstOf(64,x=>x.rev())",
+      "counterexampleKind": "CODE",
       "name": "EVERY",
       "hp": 12,
       "functions": ["firstOf", "lastOf"],
@@ -3552,6 +3986,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").firstOf(64,x=>x.rev())\n",
+        "code": [".firstOf(64,x=>x.rev())"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3561,6 +4002,8 @@
       "readerContext": "Existing variants keep inactive chance saved; general callbacks CODE",
       "verdict": "keep",
       "caseIds": ["C14"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").sometimesBy(2,x=>x.rev())",
+      "counterexampleKind": "CODE",
       "name": "SOMETIMES",
       "hp": 14,
       "functions": ["sometimesBy", "someCyclesBy", "often", "rarely"],
@@ -3619,6 +4062,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").sometimesBy(2,x=>x.rev())\n",
+        "code": [".sometimesBy(2,x=>x.rev())"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3628,6 +4078,8 @@
       "readerContext": "Literal delay and receiver-chain lambda; nested branching needs #243",
       "verdict": "keep",
       "caseIds": ["C14", "C15"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").off(8,x=>x.rev())",
+      "counterexampleKind": "CODE",
       "name": "OFF",
       "hp": 12,
       "functions": ["off"],
@@ -3664,6 +4116,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").off(8,x=>x.rev())\n",
+        "code": [".off(8,x=>x.rev())"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3673,6 +4132,8 @@
       "readerContext": "Panel owns superimpose only; multi-function layer stays CODE",
       "verdict": "keep",
       "caseIds": ["C14", "C15"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").superimpose(transform)",
+      "counterexampleKind": "CODE",
       "name": "LAYER",
       "hp": 12,
       "functions": ["superimpose"],
@@ -3699,6 +4160,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").superimpose(transform)\n",
+        "code": [".superimpose(transform)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3708,6 +4176,8 @@
       "readerContext": "Nullary modes; multiple instances retain sequential composition",
       "verdict": "keep",
       "caseIds": ["C10"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").rev(1)",
+      "counterexampleKind": "CODE",
       "name": "REV / PALINDROME",
       "hp": 14,
       "functions": ["rev", "palindrome"],
@@ -3742,6 +4212,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").rev(1)\n",
+        "code": [".rev(1)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3751,6 +4228,8 @@
       "readerContext": "Existing modes and literal slices; preserve seeds and position",
       "verdict": "keep",
       "caseIds": ["C10"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").shuffle(64)",
+      "counterexampleKind": "CODE",
       "name": "SHUFFLE",
       "hp": 10,
       "functions": ["shuffle", "scramble"],
@@ -3797,6 +4276,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").shuffle(64)\n",
+        "code": [".shuffle(64)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3806,6 +4292,8 @@
       "readerContext": "Literal offset/length; general pattern args CODE",
       "verdict": "keep",
       "caseIds": ["C10"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").rib(-1,2)",
+      "counterexampleKind": "CODE",
       "name": "RIBBON",
       "hp": 10,
       "functions": ["rib"],
@@ -3848,6 +4336,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").rib(-1,2)\n",
+        "code": [".rib(-1,2)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3857,6 +4352,8 @@
       "readerContext": "Existing modes; WINDOW loop active only in that mode",
       "verdict": "keep",
       "caseIds": ["C14"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").zoom(.75,.25)",
+      "counterexampleKind": "CODE",
       "name": "TIME LENS",
       "hp": 12,
       "functions": ["zoom", "linger", "compress", "within"],
@@ -3941,6 +4438,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").zoom(.75,.25)\n",
+        "code": ["note(\"c2\").s(\"sawtooth\").zoom(.75,.25)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -3950,6 +4454,8 @@
       "readerContext": "Existing modes; rate only active in hurry; independent instances allowed",
       "verdict": "keep",
       "caseIds": ["C10"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").hurry(16)",
+      "counterexampleKind": "CODE",
       "name": "WARP",
       "hp": 10,
       "functions": ["brak", "press", "hurry"],
@@ -3997,6 +4503,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").hurry(16)\n",
+        "code": [".hurry(16)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -4006,6 +4519,8 @@
       "readerContext": "Bounded times/time/feedback; computed callback echoWith remains CODE",
       "verdict": "keep",
       "caseIds": ["C12", "C15"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").echo(32,.125,.5)",
+      "counterexampleKind": "CODE",
       "name": "ECHO",
       "hp": 12,
       "functions": ["echo"],
@@ -4057,6 +4572,13 @@
         "sourceExact": true,
         "savedIdentity": true
       },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").echo(32,.125,.5)\n",
+        "code": [".echo(32,.125,.5)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
       "audioEvidence": "not measured by this study; see report/backend source"
     },
     {
@@ -4066,6 +4588,8 @@
       "readerContext": "Exact original bytes, unsupported ownership and prelude retained",
       "verdict": "keep",
       "caseIds": ["C18"],
+      "counterexample": "note(\"c2\").s(\"sawtooth\").unknownResearchCall()",
+      "counterexampleKind": "CODE",
       "name": "CODE",
       "hp": 14,
       "functions": [],
@@ -4086,6 +4610,13 @@
         "ownerPresent": true,
         "sourceExact": true,
         "savedIdentity": true
+      },
+      "fallback": {
+        "source": "$: note(\"c2\").s(\"sawtooth\").unknownResearchCall()\n",
+        "code": [".unknownResearchCall()"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
       },
       "audioEvidence": "not measured by this study; see report/backend source"
     }
