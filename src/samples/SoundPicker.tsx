@@ -29,13 +29,15 @@ const SHOWN = 40
 /** Groups keep each pack's ranked order and appear in order of their best match. */
 function byPack(rows: readonly Row[]): Row[] {
   const groups = new Map<string, Row[]>()
-  for (const row of rows) groups.set(row.group, [...(groups.get(row.group) ?? []), row])
+  for (const row of rows) groups.set(row.groupKey, [...(groups.get(row.groupKey) ?? []), row])
   return [...groups.values()].flat()
 }
 
 interface Row {
   key: string
+  /** The heading; packs that share a label still group by `groupKey`. */
   group: string
+  groupKey: string
   sound: IndexedSound
   n: number
 }
@@ -50,7 +52,8 @@ function homeRows(
       const choice = parseToken(token)
       const sound = choice && findSound(resources, choice.name)
       if (!choice || !sound || (prefix && !sound.name.startsWith(prefix))) return []
-      return [{ key: `${group}:${token}`, group, sound, n: Math.min(choice.n, sound.count - 1) }]
+      const n = Math.min(choice.n, sound.count - 1)
+      return [{ key: `${group}:${token}`, group, groupKey: group, sound, n }]
     }),
   )
 }
@@ -117,12 +120,13 @@ export function SoundPicker({
   useEffect(() => () => audition.cancel(), [audition])
 
   const index = soundIndex(resources).filter((sound) => !prefix || sound.name.startsWith(prefix))
-  const packs = [...new Set(index.map((sound) => sound.pack))]
+  const packs = [...new Map(index.map((sound) => [sound.packKey, sound.pack]))]
   const filtered = !!query.trim() || !!kind || !!pack
   const found = filtered
     ? findSounds(index, { text: query, kind, pack }).map((sound): Row => ({
         key: sound.name,
         group: sound.pack,
+        groupKey: sound.packKey,
         sound,
         n: 0,
       }))
@@ -262,18 +266,18 @@ export function SoundPicker({
       {packs.length > 2 && (
         <fieldset className="sound-picker-chips">
           <legend className="sr-only">Pack</legend>
-          {[null, ...packs].map((option) => (
+          {[[null, 'All packs'] as const, ...packs].map(([key, label]) => (
             <button
-              key={option ?? 'All packs'}
+              key={key ?? label}
               type="button"
-              aria-pressed={pack === option}
+              aria-pressed={pack === key}
               onClick={() => {
-                setPack(pack === option ? null : option)
+                setPack(pack === key ? null : key)
                 setActive(0)
                 refocus()
               }}
             >
-              {option ?? 'All packs'}
+              {label}
             </button>
           ))}
         </fieldset>
@@ -283,7 +287,7 @@ export function SoundPicker({
       <div className="sound-picker-list" role="listbox" id={`${id}-list`} aria-label="Sounds">
         {rows.map((row, position) => {
           const n = variant(row)
-          const first = rows[position - 1]?.group !== row.group
+          const first = rows[position - 1]?.groupKey !== row.groupKey
           return (
             <div key={row.key}>
               {first && (

@@ -75,11 +75,21 @@ describe('sound search', () => {
   })
 
   it('narrows by kind, pack and a target prefix', () => {
-    expect(names({ text: '', kind: 'Kick', pack: 'Drum Machines' })).toEqual([
+    expect(names({ text: '', kind: 'Kick', pack: packKey(MACHINES) })).toEqual([
       'RolandTR808_bd',
       'RolandTR909_bd',
     ])
     expect(names({ text: '', kind: null, pack: null, prefix: 'wt_' })).toEqual([])
+  })
+
+  it('tells apart packs that share a label', () => {
+    const first = resource({ source: 'https://example.test/a/strudel.json' }, { a: 1 })
+    const second = resource({ source: 'https://example.test/b/strudel.json' }, { b: 1 })
+    const index = soundIndex([first, second])
+    expect(index.map((sound) => sound.pack)).toEqual(['example.test', 'example.test'])
+    expect(findSounds(index, { text: '', kind: null, pack: second.key })).toEqual([
+      expect.objectContaining({ name: 'b' }),
+    ])
   })
 
   it('keeps one row per repeated name, the registration Strudel plays', () => {

@@ -267,6 +267,14 @@ test('Browse all hands the search to a pick mode in the Sounds dock', async ({ p
   await expect(crate.getByText('Choosing for reverb1')).toBeVisible()
   await page.locator('[data-module="splice1"] .module-header').click()
   await expect(crate.getByText('Choosing for reverb1')).toBeHidden()
+
+  // Any route that selects another module ends pick mode, including the module menu.
+  await readout(page, 'smpl1').click()
+  await picker(page, 'smpl1').getByRole('button', { name: 'Browse all in Sounds ›' }).click()
+  await expect(crate.getByText('Choosing for smpl1')).toBeVisible()
+  await page.locator('[data-module="reverb1"] .module-header').click({ button: 'right' })
+  await expect(crate.getByText('Choosing for smpl1')).toBeHidden()
+  await expect(crate.getByRole('button', { name: /^Use / })).toHaveCount(0)
 })
 
 test('readouts fit an 8 HP panel for long, missing and empty values', async ({ page }) => {

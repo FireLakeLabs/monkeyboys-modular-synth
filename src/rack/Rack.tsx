@@ -186,7 +186,12 @@ export function Rack({
   // "Browse all in Sounds" makes the dock choose for one slot until Done, Esc or another selection.
   const [pick, setPick] = useState<Omit<SoundPick, 'done'> | null>(null)
   const pickSerial = useRef(0)
-  const activePick = pick && patch.modules.some((m) => m.id === pick.module) ? pick : null
+  const activePick =
+    pick && pick.module === selected && patch.modules.some((m) => m.id === pick.module)
+      ? pick
+      : null
+  // Any route that moves the selection, or removes the module, ends pick mode for good.
+  if (pick && !activePick) setPick(null)
   useEffect(() => {
     if (!pick) return undefined
     const escape = (event: KeyboardEvent) => {
@@ -695,7 +700,6 @@ export function Rack({
   function selectModule(id: string) {
     select(id)
     setSelectedCable(null)
-    if (pick && pick.module !== id) setPick(null)
   }
   function browseSounds(id: string, query: string) {
     selectModule(id)

@@ -73,7 +73,9 @@ export function soundParts(name: string, pack: string): { bank: string; short: s
 
 export interface IndexedSound {
   name: string
+  /** The pack's label. Two packs can share one, so filters use `packKey`. */
   pack: string
+  packKey: string
   bank: string
   short: string
   count: number
@@ -98,6 +100,7 @@ function packIndex(resource: SamplePackResource): PackIndex {
           {
             name: sound.name,
             pack,
+            packKey: resource.key,
             count,
             kind: soundKind(sound.name),
             ...soundParts(sound.name, pack),
@@ -133,6 +136,7 @@ export function soundIndex(resources: readonly SamplePackResource[]): readonly I
 export interface SoundQuery {
   text: string
   kind: SoundKind | null
+  /** A pack resource key. */
   pack: string | null
   prefix?: string | undefined
 }
@@ -157,7 +161,7 @@ export function findSounds(
   index.forEach((sound, order) => {
     if (prefix && !sound.name.startsWith(prefix)) return
     if (kind && sound.kind !== kind) return
-    if (pack && sound.pack !== pack) return
+    if (pack && sound.packKey !== pack) return
     const score = rank(sound, query)
     if (score !== null) found.push({ sound, score, order })
   })
