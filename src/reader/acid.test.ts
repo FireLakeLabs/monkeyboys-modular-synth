@@ -4,6 +4,8 @@ import { setValue } from '../rack/model'
 import { codeConversions } from '../workspace/codeConversion'
 import { editDocument, saveLayout, sourceBody } from '../workspace/document'
 import legacy from './fixtures/pre-238-acid.strudel?raw'
+import legacyOwners from './fixtures/pre-238-owner-compat.strudel?raw'
+import { readLayout } from './layout'
 import { parseSource } from './syntax'
 import { read } from './read'
 
@@ -198,3 +200,15 @@ it.each(['.resonance(25)', '.cutoff(400 + 600).resonance(25)'])(
     expect(events(generate(doc.patch))).toEqual(events(source))
   },
 )
+
+it('retains pre-238 standalone/separated lpq and root saw DRUMS/sampler owners', () => {
+  const stored = readLayout(legacyOwners)
+  if (stored.kind !== 'valid') throw new Error('Invalid baseline fixture')
+  const doc = read(legacyOwners)
+  expect(doc.layout).toBe('restored')
+  expect(doc.patch).toEqual(stored.patch)
+  expect(generate(doc)).toBe(legacyOwners)
+  const saved = saveLayout(doc)
+  expect(read(saved.source).layout).toBe('restored')
+  expect(read(saved.source).patch).toEqual(doc.patch)
+})

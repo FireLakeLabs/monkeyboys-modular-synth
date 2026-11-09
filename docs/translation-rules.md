@@ -844,7 +844,9 @@ accepts the catalog literal alias `saw` → `sawtooth`. Reading uses the canonic
 panel value while retaining the exact original source and literal span. Unrelated
 rack edits leave `s("saw")` intact; editing WAVE writes the selected canonical name.
 Saved samplers retain their proven source ownership, including older `s("saw")`
-files. Switch aliases must target real catalog options and cannot shadow them.
+files whose root owner is DRUMS with an implicit sampler. The new `resonance`
+alias requires a compatible preceding VCF, while canonical `lpq`/`hpq`/`bpq`
+keep their existing merge behavior for saved-file compatibility. Switch aliases must target real catalog options and cannot shadow them.
 
 A quoted chained `.add("…")` belongs to ADD, retaining the incoming signal and
 its exact position; nested modulation `a.add(b)` continues to belong to MOD MIX.

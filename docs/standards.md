@@ -567,3 +567,8 @@ controls. The sounding-token opaque-call fixture uses unsupported `sub` instead
 of newly supported ADD; its unchanged assertion still rejects activity on opaque
 call arguments. Both failures were observed in the first full run before these
 fixture updates.
+
+The #238 pre-change owner fixture additionally guards canonical standalone and
+separated `lpq` panels and root `s("saw")` DRUMS/implicit-sampler layouts. It failed
+before the Opus review fixes and reopens with exact source and complete saved
+identity afterward. Alias-only companion policy preserves canonical ownership.

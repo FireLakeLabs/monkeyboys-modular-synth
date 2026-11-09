@@ -48,8 +48,21 @@ not full-suite acceptance.
 The final pre-review gate passed `npm run check` with 2,584 unit tests plus
 runtime/format/skill/lint, reader coverage, guardrails and production build.
 A second failing-before regression proved that an unowned resonance setter could
-invent a default cutoff; VCF resonance now requires an adjacent compatible filter
-owner. Both standalone resonance and a computed/unreadable cutoff retain CODE
+invent a default cutoff; the new resonance alias requires an adjacent compatible filter
+owner. Canonical lpq keeps its prior saved-file ownership behavior. Both standalone resonance and a computed/unreadable cutoff retain CODE
 and real-engine event equivalence. The final pre-review focused browser run
 (`-g 'acid imports|saw alias|sounding-tokens-check|panels-browser'`) passed all four
 checks, `RESULT passed=4 failed=0 exit=0`.
+
+Opus review round 1 found two saved-identity regressions: canonical standalone or
+separated `lpq` owners, and a voice starting with `s("saw")` whose old source
+owner was DRUMS with an implicit sampler. The captured base-commit fixture
+`pre-238-owner-compat.strudel` reopened as invalid before the fixes and restores
+its complete original graph afterward. Canonical resonance calls retain their
+existing merge rule; only the new alias requires an owner, using catalog policy.
+The saw alias retains both prior chained SMPL and root DRUMS ownership.
+
+After those review fixes, `npm run check` passed with 2,585 unit tests and the
+same remaining gates. The acid browser file passed all three cases
+(`RESULT passed=3 failed=0 exit=0`), including loading/reloading the captured
+pre-change owner fixture with exact source and the complete stored graph.

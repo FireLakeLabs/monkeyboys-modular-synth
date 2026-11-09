@@ -1,4 +1,5 @@
 import { test, expect } from 'playwright/test'
+import { readFile } from 'node:fs/promises'
 import { detailPanel, chooseSwitch } from '../../scripts/panel-controls.mjs'
 
 const offsets = '[0, 0, 12, 0, 3, 0, 5, 0, 0, 12, 0, 7, 0, 3, 0, 12]'
@@ -13,14 +14,14 @@ const body = (page) =>
   )
 const state = (page) =>
   page.evaluate(async () => (await import('/scripts/extras-check.mjs')).state())
-async function load(page) {
+async function load(page, text = acid) {
   await page.goto('/')
   await page.locator('.cm-content').waitFor()
   await page.evaluate(async (text) => {
     const helper = await import('/scripts/extras-check.mjs')
     helper.prepare()
     await (await import('/scripts/rack-feel-check.mjs')).load(text)
-  }, acid)
+  }, text)
   await expect(page.locator('.sync-status')).toContainText('Rack matches code')
 }
 
@@ -109,4 +110,34 @@ test('saw alias and RES 50 schedule live Perlin-filtered PCM through the real en
     }),
     contentType: 'application/json',
   })
+})
+
+test('pre-change lpq and root saw files retain their exact saved rack in the workspace', async ({
+  page,
+}) => {
+  const legacy = await readFile(
+    new URL('../../src/reader/fixtures/pre-238-owner-compat.strudel', import.meta.url),
+    'utf8',
+  )
+  await load(page, legacy)
+  await expect.poll(() => source(page)).toBe(legacy)
+  const inspect = () =>
+    page.evaluate(async () => {
+      const source = (await import('/scripts/editor-browser.mjs')).editorSource()
+      const doc = (await import('/src/reader/index.ts')).read(source)
+      const stored = (await import('/src/reader/layout.ts')).readLayout(source)
+      return {
+        layout: doc.layout,
+        patch: doc.patch,
+        stored: stored.kind === 'valid' ? stored.patch : null,
+      }
+    })
+  const before = await inspect()
+  expect(before.layout).toBe('restored')
+  expect(before.patch).toEqual(before.stored)
+  await page.reload()
+  await page.locator('.cm-content').waitFor()
+  await expect.poll(() => source(page)).toBe(legacy)
+  expect(await inspect()).toEqual(before)
+  await expect(page.getByRole('button', { name: 'Play', exact: true })).toBeVisible()
 })

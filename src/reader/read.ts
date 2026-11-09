@@ -708,14 +708,14 @@ function project(
         (wave?.kind === 'switch' && typeof literal === 'string' && wave.aliases?.[literal]
           ? 'osc'
           : undefined)
-      // A newly recognized oscillator alias must not invalidate a saved sampler.
+      // A new oscillator alias must retain earlier source/chained sampler ownership.
       // Exact scope/call ownership is still independently checked against its graph.
       if (
         sound === 'osc' &&
         savedScope &&
         saved?.modules.some(
           (module) =>
-            module.type === 'smpl' &&
+            (module.type === 'smpl' || (source && module.type === 'drums')) &&
             module.bindings.some(
               (binding) =>
                 binding.scope === savedScope.id &&
@@ -725,7 +725,7 @@ function project(
             ),
         )
       )
-        return 'smpl'
+        return source ? undefined : 'smpl'
       return sound
     }
     if (!scope.loop && scope.kind === 'declaration' && !retainedCode(0, true)) {
@@ -1616,7 +1616,9 @@ function project(
             merge &&
             group?.type === scalarType &&
             !bindings.some((binding) => binding.module === group?.id && id in binding.controls)
-          const needsOwner = matched?.binding.read === 'companion'
+          const needsOwner =
+            matched?.binding.read === 'companion' ||
+            (matched?.binding.aliasRead === 'companion' && name !== call.name)
           const compatibleOwner =
             reuse &&
             group &&
