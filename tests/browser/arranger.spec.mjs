@@ -1,4 +1,6 @@
 import { test, expect } from 'playwright/test'
+import { readFile } from 'node:fs/promises'
+import { fileAction } from '../../scripts/panel-controls.mjs'
 
 // #141: the arranger lane beneath the rack, against the real editor, history,
 // recovery and pinned engine. Physical listening is not claimed.
@@ -59,16 +61,16 @@ test('lane edits write per-voice masks, undo, recover and play only their cycles
   expect(await page.locator('.rack-frame').boundingBox()).toEqual(frame)
   await expect(cells(page, 'osc1')).toHaveCount(16)
 
-  // A shorter song changes only the view while no lane runs past it.
-  const generated = await source(page)
+  // With no masks there is no song length to save; always-on channels write nothing.
+  await expect(lane(page).getByRole('button', { name: 'Shorter song' })).toBeDisabled()
+  await expect(lane(page).getByRole('button', { name: 'Longer song' })).toBeDisabled()
+
+  // Pointer: drag across the lead's first two cycles, then cut its lane to four.
+  await drag(page, 'osc2', 0, 1)
+  await accepted(page)
   for (let i = 0; i < 12; i++)
     await lane(page).getByRole('button', { name: 'Shorter song' }).click()
   await expect(lane(page).locator('output')).toHaveText('4 cycles')
-  expect(await source(page)).toBe(generated)
-
-  // Pointer: drag across the lead's first two cycles to rest them.
-  await drag(page, 'osc2', 0, 1)
-  await accepted(page)
   expect(await pressed(page, 'osc2')).toBe('falsefalsetruetrue')
   expect(await run(page, 'lanes')).toMatchObject({ arr1: '', arr2: '<0!2 1!2>' })
   const afterDrag = await source(page)
@@ -116,9 +118,19 @@ test('lane edits write per-voice masks, undo, recover and play only their cycles
   await run(page, 'installTriggerProbe')
   await page.getByRole('button', { name: 'Play', exact: true }).click()
   await expect(page.locator('.transport-status')).toHaveText('Playing')
-  const pcm = await run(page, 'livePCM', 6_000)
+  await expect(page.locator('.arranger-cell[aria-current="step"]')).toHaveCount(2)
+  await page.getByRole('button', { name: 'Dismiss message', exact: true }).click()
+  await lane(page).screenshot({ path: info.outputPath('arranger-playhead.png') })
+  const { pcm, positions } = await run(page, 'playheadPCM', 6_000)
+  // Away from the 100ms display tick boundary, the highlighted cycle matches the scheduler.
+  const settled = positions.filter(({ cycle }) => cycle % 1 > 0.25 && cycle % 1 < 0.85)
+  expect(settled.length).toBeGreaterThan(20)
+  expect(settled.every(({ cycle, current }) => current === Math.floor(cycle) % 4)).toBe(true)
+  expect(new Set(settled.map(({ current }) => current))).toEqual(new Set([0, 1, 2, 3]))
+  expect(settled.some(({ cycle }) => cycle >= 4)).toBe(true)
   await page.getByRole('button', { name: 'Stop', exact: true }).click()
   await expect(page.locator('.transport-status')).toHaveText('Ready', { timeout: 10_000 })
+  await expect(page.locator('.arranger-cell[aria-current="step"]')).toHaveCount(0)
   const triggers = await page.evaluate(() => window.arrangerProbe.read())
   const whole = (orbit) => [
     ...new Set(triggers.filter((t) => t.orbit === orbit).map((t) => Math.floor(t.cycle) % 4)),
@@ -136,6 +148,7 @@ test('lane edits write per-voice masks, undo, recover and play only their cycles
         triggers: triggers.length,
         cycles: [...new Set(triggers.map((t) => Math.floor(t.cycle)))],
         pcm,
+        positions,
         physicalListening: false,
       },
       null,
@@ -183,4 +196,164 @@ $: note("g4").s("square")
     imported.replace('.mask("<1!2 0!2>")', '').trimEnd(),
   )
   expect(await run(page, 'lanes')).toMatchObject({ arr1: '', arr2: '' })
+})
+
+test('recorded scheduler clock drives the playhead without editing history or saved state', async ({
+  page,
+}) => {
+  await page.route('**/src/strudel/engine.ts*', (route) =>
+    route.fulfill({
+      contentType: 'application/javascript',
+      body: `
+const state = window.clockFixture = { cycle: 0, reads: [], running: false };
+const listeners = new Set();
+export const getClock = () => {
+  state.reads.push(state.cycle);
+  return { cycle: state.cycle, cps: 1, running: state.running };
+};
+export async function play() {
+  state.running = true;
+  if (state.hold) await new Promise(resolve => { state.finish = resolve; });
+}
+export async function stop() {
+  state.running = false;
+  listeners.forEach(listener => listener({ type: 'activity-clear' }));
+}
+export async function setVolume() {}
+export async function loadSamplePacks() {}
+export async function auditionSample() {}
+const samplePacks = [];
+export const getSamplePacks = () => samplePacks;
+export const getSampleWarnings = () => samplePacks;
+export const subscribeSamplePacks = () => () => {};
+export const getResourceStatus = () => 'unknown';
+export const scopeData = () => undefined;
+export const probe = async () => ({ kind: 'unavailable', reason: 'clock fixture' });
+export const subscribe = (listener) => {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+};
+`,
+    }),
+  )
+  await open(page)
+  await replaceSource(page, '$: note("c3").s("sine").mask("<1 0!3>")\n')
+  await accepted(page)
+  await openLane(page)
+  const saved = await source(page)
+  const recovery = await page.evaluate(() => localStorage.getItem('monkeyboy.workspace.v1'))
+  const highlighted = page.locator('.arranger-cell[aria-current="step"]')
+  await expect(highlighted).toHaveCount(0)
+  await page.evaluate(() => {
+    window.clockFixture.hold = true
+  })
+  await page.getByRole('button', { name: 'Play', exact: true }).click()
+  await expect(page.locator('.transport-status')).toHaveText('Starting audio')
+  await expect(highlighted).toHaveAttribute('data-cycle', '0')
+  for (const [cycle, expected] of [
+    [2.5, '2'],
+    [7.75, '3'],
+    [8.25, '0'],
+  ]) {
+    await page.evaluate((value) => {
+      window.clockFixture.cycle = value
+    }, cycle)
+    await expect(highlighted).toHaveAttribute('data-cycle', expected)
+  }
+  await page.evaluate(() => window.clockFixture.finish())
+  await expect(page.locator('.transport-status')).toHaveText('Playing')
+  expect(await page.evaluate(() => window.clockFixture.reads)).toContain(8.25)
+  // Changing the preference cancels the shared clock's polling interval.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(page.locator('.cycle-clock')).toContainText('motion paused')
+  const frozen = await highlighted.getAttribute('data-cycle')
+  const reads = await page.evaluate(() => window.clockFixture.reads.length)
+  await page.evaluate(() => {
+    window.clockFixture.cycle = 11.5
+  })
+  await page.waitForTimeout(350)
+  await expect(highlighted).toHaveAttribute('data-cycle', frozen)
+  expect(await page.evaluate(() => window.clockFixture.reads.length)).toBe(reads)
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await expect(highlighted).toHaveAttribute('data-cycle', '3')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(page.locator('.cycle-clock')).toContainText('motion paused')
+  await page.getByRole('button', { name: 'Stop', exact: true }).click()
+  await expect(highlighted).toHaveCount(0)
+  expect(await source(page)).toBe(saved)
+  expect(await page.evaluate(() => localStorage.getItem('monkeyboy.workspace.v1'))).toBe(recovery)
+  // The next Undo still undoes the code edit, not a playhead update.
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await accepted(page)
+  expect(await source(page)).not.toBe(saved)
+})
+
+test('song length edits align imported lanes, undo/redo, recover and Export/Open', async ({
+  page,
+}, info) => {
+  await open(page)
+  const imported = `// my song\n$: note("c3").s("sine").mask(/* bass */ "<1!2 0!2>") // keep\n$: note("g4").s("square").mask("<0 1>")\n$: note("c5").s("triangle")\n`
+  await replaceSource(page, imported)
+  await accepted(page)
+  await openLane(page)
+  await expect(lane(page).locator('output')).toHaveText('4 cycles')
+  await expect(lane(page).locator('.arranger-hint')).toContainText('drift apart')
+  const before = await source(page)
+  await lane(page).getByRole('button', { name: 'Longer song' }).click()
+  await accepted(page)
+  await expect(lane(page).locator('output')).toHaveText('5 cycles')
+  await expect(lane(page).locator('.arranger-hint')).not.toContainText('drift apart')
+  const longer = await source(page)
+  expect(longer.split('\n// ── @monkeyboy rack v1')[0]).toBe(
+    imported.replace('"<1!2 0!2>"', '"<1!2 0!3>"').replace('"<0 1>"', '"<0 1!4>"').trimEnd(),
+  )
+  expect(await run(page, 'lanes')).toMatchObject({ arr1: '<1!2 0!3>', arr2: '<0 1!4>', arr3: '' })
+  await lane(page).getByRole('button', { name: 'Shorter song' }).click()
+  await accepted(page)
+  await expect(lane(page).locator('output')).toHaveText('4 cycles')
+  const shorter = await source(page)
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await expect(lane(page).locator('output')).toHaveText('5 cycles')
+  expect(await source(page)).toBe(longer)
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await expect(lane(page).locator('output')).toHaveText('4 cycles')
+  expect(await source(page)).toBe(before)
+  await page.getByRole('button', { name: 'Redo', exact: true }).click()
+  expect(await source(page)).toBe(longer)
+  await page.getByRole('button', { name: 'Redo', exact: true }).click()
+  expect(await source(page)).toBe(shorter)
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await expect(lane(page).locator('output')).toHaveText('5 cycles')
+
+  const pending = page.waitForEvent('download')
+  await fileAction(page, 'Export')
+  const download = await pending
+  const exported = await readFile(await download.path(), 'utf8')
+  // Export adds the app's standard factory sample setup; the complete rack stays intact.
+  const patches = await page.evaluate(
+    async ({ longer, exported }) => {
+      const { read } = await import('/src/reader/index.ts')
+      return { before: read(longer).patch, after: read(exported).patch }
+    },
+    { longer, exported },
+  )
+  expect(patches.after).toEqual({ ...patches.before, cartridges: expect.any(Array) })
+  expect(exported).toContain(
+    imported.replace('"<1!2 0!2>"', '"<1!2 0!3>"').replace('"<0 1>"', '"<0 1!4>"').trimEnd(),
+  )
+  await page.reload()
+  await page.locator('.cm-content').waitFor()
+  await accepted(page)
+  await openLane(page)
+  await expect(lane(page).locator('output')).toHaveText('5 cycles')
+  expect(await source(page)).toBe(longer)
+  await page
+    .locator('input[type=file]')
+    .setInputFiles({ name: 'song.strudel', mimeType: 'text/plain', buffer: Buffer.from(exported) })
+  await accepted(page)
+  await openLane(page)
+  await expect(lane(page).locator('output')).toHaveText('5 cycles')
+  expect(await source(page)).toBe(exported)
+  await page.getByRole('button', { name: 'Dismiss message', exact: true }).click()
+  await lane(page).screenshot({ path: info.outputPath('arranger-length.png') })
 })

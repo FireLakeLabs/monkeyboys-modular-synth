@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { getModuleSpec } from '../modules/catalog'
 import { connect, placeModule, renameOutput, setValue, starterPatch } from '../rack/model'
 import { read } from '../reader'
+import { resizeSong } from '../rack/arranger'
 import type { Patch } from '../patch/types'
 import { applyRackEdit, editDocument, saveLayout, sourceBody } from '../workspace/document'
 import { generate } from './generate'
@@ -296,5 +297,35 @@ $: s("hh*8").mask("1 0 1 1")
     expect(cycles(kick)).toEqual([0, 1, 2, 3])
     expect(cycles(hats)).toEqual([1, 3])
     expect(read(document.source).patch).toEqual(document.patch)
+  })
+})
+
+describe('#230 song length edits', () => {
+  it('pads imported literals in place and independently restores complete saved identity', () => {
+    const source = `// keep my song\n$: note("<c2 eb2 g2>").s("sine").mask(/* verse */ '<0!4 1!12>') // bass\n$: note("g4").s("square").mask("<1!2 0!2>")\n$: s("hh*4")\n`
+    const doc = saveLayout(read(source))
+    const patch = resizeSong(doc.patch, 32)
+    const { document, converted } = applyRackEdit(doc, patch)
+    expect(converted).toBe(false)
+    expect(sourceBody(document.source)).toBe(
+      source.replace("'<0!4 1!12>'", '"<0!4 1!28>"').replace('"<1!2 0!2>"', '"<1!2 0!30>"'),
+    )
+    expect(generate(read(document.source))).toBe(document.source)
+    expect(read(document.source).layout).toBe('restored')
+    expect(read(document.source).patch).toEqual(patch)
+  })
+
+  it('extends the final step in pinned-engine events over two new song lengths', () => {
+    const patch = song()
+    const before = onsets(generate(patch), 64)
+    const after = onsets(generate(resizeSong(patch, 32)), 64)
+    expect(after[0]).toEqual(before[0]) // the unmasked drums are unchanged
+    expect(cycles(after[1] ?? [])).toEqual([...range(4, 32), ...range(36, 64)])
+    expect(cycles(after[2] ?? [])).toEqual([...range(8, 32), ...range(40, 64)])
+    // Extending the final step deliberately changes later repeats, per the owner decision.
+    expect(after[1]?.filter((e) => e.cycle < 16)).toEqual(before[1]?.filter((e) => e.cycle < 16))
+    expect(after[1]?.find((e) => e.cycle === 20)?.note).toBe('g2')
+    expect(before[1]?.some((e) => e.cycle === 16)).toBe(false)
+    expect(after[1]?.some((e) => e.cycle === 16)).toBe(true)
   })
 })

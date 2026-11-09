@@ -3,6 +3,7 @@ import { arrangementCells, arrangementLength, MAX_ARRANGEMENT_CYCLES } from '../
 import type { Patch } from '../patch/types'
 import { arrangerRows, paintRow, resizeSong, songCycles, type ArrangerRow } from './arranger'
 import type { RackEdit } from './Rack'
+import { useCycleClock } from './useCycleClock'
 
 interface Paint {
   key: string
@@ -22,15 +23,17 @@ export function ArrangerLane({
   patch,
   edit,
   locked,
+  playing,
 }: {
   patch: Patch
   edit: RackEdit
   locked: boolean
+  playing: boolean
 }) {
   const rows = arrangerRows(patch)
-  const longest = Math.max(0, ...rows.map((row) => arrangementLength(row.lane)))
-  const [chosen, setChosen] = useState<number | null>(null)
-  const length = Math.max(chosen ?? songCycles(rows), longest)
+  const length = songCycles(rows)
+  const { clock } = useCycleClock()
+  const currentCycle = playing ? Math.floor(clock.cycle) % length : null
   const [paint, setPaint] = useState<Paint | null>(null)
   const [focus, setFocus] = useState<Record<string, number>>({})
   const grids = useRef(new Map<string, HTMLFieldSetElement>())
@@ -50,9 +53,7 @@ export function ArrangerLane({
 
   function resize(next: number) {
     const bounded = Math.max(1, Math.min(MAX_ARRANGEMENT_CYCLES, next))
-    // Lanes past a shorter song are cut in one edit; a longer song only repeats them.
-    if (bounded < longest && !edit((current) => resizeSong(current, bounded))) return
-    setChosen(bounded)
+    edit((current) => resizeSong(current, bounded))
   }
 
   function onKey(event: KeyboardEvent, row: ArrangerRow, index: number) {
@@ -85,7 +86,7 @@ export function ArrangerLane({
             <button
               type="button"
               aria-label="Shorter song"
-              disabled={length <= 1}
+              disabled={!arranged || length <= 1}
               onClick={() => resize(length - 1)}
             >
               −
@@ -94,7 +95,7 @@ export function ArrangerLane({
             <button
               type="button"
               aria-label="Longer song"
-              disabled={length >= MAX_ARRANGEMENT_CYCLES}
+              disabled={!arranged || length >= MAX_ARRANGEMENT_CYCLES}
               onClick={() => resize(length + 1)}
             >
               +
@@ -114,7 +115,9 @@ export function ArrangerLane({
               <span />
               <div className="arranger-grid">
                 {Array.from({ length }, (_, i) => (
-                  <span key={i}>{i % 4 === 0 ? i + 1 : ''}</span>
+                  <span key={i} data-current={i === currentCycle}>
+                    {i % 4 === 0 ? i + 1 : ''}
+                  </span>
                 ))}
               </div>
               <span />
@@ -157,6 +160,7 @@ export function ArrangerLane({
                         type="button"
                         key={i}
                         data-cycle={i}
+                        aria-current={i === currentCycle ? 'step' : undefined}
                         className="arranger-cell"
                         aria-pressed={painted(i)}
                         aria-label={`${row.label} cycle ${i + 1}`}

@@ -1,9 +1,9 @@
 import {
-  arrangementCells,
   arrangementLength,
   formatArrangement,
   MAX_ARRANGEMENT_CYCLES,
   paintArrangement,
+  parseArrangement,
 } from '../patch/arrangement'
 import type { Patch } from '../patch/types'
 import { routedModules, setValue } from './model'
@@ -69,22 +69,20 @@ export function paintRow(
 }
 
 /**
- * Sets every lane to `length` cycles. A longer song repeats lanes unchanged; a
- * shorter one cuts lanes that run past it, in one edit.
+ * Growing extends each arranged lane's last step to the full song length.
+ * Shortening cuts only lanes that run past it. Unmasked channels stay unmasked.
  */
 export function resizeSong(patch: Patch, length: number): Patch {
   if (!Number.isSafeInteger(length) || length < 1 || length > MAX_ARRANGEMENT_CYCLES)
     throw new Error(`Song length must be 1 to ${MAX_ARRANGEMENT_CYCLES} cycles`)
-  return arrangerRows(patch)
-    .filter((row) => arrangementLength(row.lane) > length)
-    .reduce(
-      (next, row) =>
-        setValue(
-          next,
-          row.mixer,
-          row.control,
-          formatArrangement(arrangementCells(row.lane, length)),
-        ),
-      patch,
-    )
+  const rows = arrangerRows(patch)
+  const growing = length > songCycles(rows)
+  return rows.reduce((next, row) => {
+    const cells = parseArrangement(row.lane)
+    if (!cells?.length || (!growing && cells.length <= length)) return next
+    const resized = Array.from({ length }, (_, i) => cells[Math.min(i, cells.length - 1)] ?? true)
+    // An explicit all-playing mask still owns song length after a cut removes its rests.
+    const lane = formatArrangement(resized) || `<1${length > 1 ? `!${length}` : ''}>`
+    return lane === row.lane ? next : setValue(next, row.mixer, row.control, lane)
+  }, patch)
 }

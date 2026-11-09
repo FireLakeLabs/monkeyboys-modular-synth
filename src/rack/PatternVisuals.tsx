@@ -2,40 +2,13 @@ import type { PlacedModule } from '../patch/types'
 import { getModuleSpec } from '../modules/catalog'
 import { controlValue } from '../modules/values'
 import { useEffect, useRef, useState } from 'react'
+import { useCycleClock, useReducedMotion } from './useCycleClock'
 import * as engine from '../strudel/engine'
 import type { SourceDocument } from '../reader/types'
 import { patchCredits } from '../workspace/credits'
 
-/** Media changes immediately stop visual motion, including already queued frames. */
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(
-    () => matchMedia('(prefers-reduced-motion: reduce)').matches,
-  )
-  useEffect(() => {
-    const media = matchMedia('(prefers-reduced-motion: reduce)')
-    const change = () => setReduced(media.matches)
-    media.addEventListener('change', change)
-    change()
-    return () => media.removeEventListener('change', change)
-  }, [])
-  return reduced
-}
-
 export function CycleClock() {
-  const reduced = useReducedMotion()
-  const [clock, setClock] = useState(engine.getClock)
-  useEffect(() => {
-    const update = () => setClock(engine.getClock())
-    update()
-    const off = engine.subscribe((event) => {
-      if (event.type === 'activity-clear') update()
-    })
-    const timer = reduced ? undefined : setInterval(update, 100)
-    return () => {
-      off()
-      clearInterval(timer)
-    }
-  }, [reduced])
+  const { clock, reduced } = useCycleClock()
   return (
     <div className="cycle-clock" aria-label="Cycle clock">
       <output>

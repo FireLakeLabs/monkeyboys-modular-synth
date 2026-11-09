@@ -102,6 +102,7 @@ export function Rack({
   panelKey,
   patchLoads,
   patchOpens,
+  playing,
   focusToggle,
   patch,
   cartridgeBay,
@@ -134,6 +135,7 @@ export function Rack({
   patchLoads: number
   /** Counts file and library loads, which open at a readable view. */
   patchOpens: number
+  playing: boolean
   focusToggle: ReactNode
   patch: Patch
   cartridgeBay: ReactNode
@@ -1392,7 +1394,13 @@ export function Rack({
             </details>
           )}
           {/* A loaded patch starts from its own song length. */}
-          <ArrangerLane key={patchLoads} patch={patch} edit={edit} locked={locked} />
+          <ArrangerLane
+            key={patchLoads}
+            patch={patch}
+            edit={edit}
+            locked={locked}
+            playing={playing}
+          />
           <details ref={connections} name="rack-popover" className="connections rack-popover">
             <summary>Connections ({patch.cables.length})</summary>
             <div>

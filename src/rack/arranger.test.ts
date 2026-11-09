@@ -38,12 +38,29 @@ describe('arranger rows', () => {
     expect(songCycles(arrangerRows(next))).toBe(8)
   })
 
+  it('extends the last step of every arranged lane, leaving unmasked channels alone', () => {
+    const patch = setValue(twoVoices(), 'mix1', 'arr3', '<0!4 1!12>')
+    const longer = resizeSong(patch, 32)
+    expect(arrangerRows(longer).map((row) => row.lane)).toEqual(['', '<0!4 1!28>'])
+    expect(songCycles(arrangerRows(longer))).toBe(32)
+  })
+
+  it('retains an explicit all-playing lane when shortening removes its last rest', () => {
+    const patch = setValue(twoVoices(), 'mix1', 'arr3', '<1!3 0>')
+    const shorter = resizeSong(patch, 3)
+    expect(arrangerRows(shorter).map((row) => row.lane)).toEqual(['', '<1!3>'])
+    expect(songCycles(arrangerRows(shorter))).toBe(3)
+    expect(arrangerRows(resizeSong(shorter, 4))[1]?.lane).toBe('<1!4>')
+  })
+
   it('cuts only lanes longer than a shorter song, keeping their opening cycles', () => {
     let patch = setValue(twoVoices(), 'mix1', 'arr1', '<1!2 0!6>')
     patch = setValue(patch, 'mix1', 'arr3', '<0 1>')
     const shorter = resizeSong(patch, 4)
     expect(arrangerRows(shorter).map((row) => row.lane)).toEqual(['<1!2 0!2>', '<0 1>'])
-    expect(resizeSong(patch, 12)).toBe(patch)
+    const longer = resizeSong(patch, 12)
+    expect(arrangerRows(longer).map((row) => row.lane)).toEqual(['<1!2 0!10>', '<0 1!11>'])
+    expect(songCycles(arrangerRows(longer))).toBe(12)
     expect(() => resizeSong(patch, 0)).toThrow(/1 to 256/)
   })
 })

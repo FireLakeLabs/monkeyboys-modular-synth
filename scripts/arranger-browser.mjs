@@ -1,5 +1,6 @@
 // Browser adapter for the #141 arranger lane acceptance. Served by Vite in the page.
 import * as web from '@strudel/web'
+import * as engine from '../src/strudel/engine.ts'
 import { generate } from '../src/codegen/generate.ts'
 import { connect, placeModule, setValue, starterPatch } from '../src/rack/model.ts'
 import { read } from '../src/reader/index.ts'
@@ -84,4 +85,19 @@ export async function livePCM(ms = 1000) {
     controller.output.destinationGain.disconnect(analyser)
   }
   return { peak, rms: Math.sqrt(sum / count) }
+}
+
+/** Sample the displayed playhead beside the real scheduler clock while measuring output. */
+export async function playheadPCM(ms) {
+  const positions = []
+  const timer = setInterval(() => {
+    const clock = engine.getClock()
+    const cell = document.querySelector('.arranger-row .arranger-cell[aria-current="step"]')
+    positions.push({ cycle: clock.cycle, current: cell ? Number(cell.dataset.cycle) : null })
+  }, 25)
+  try {
+    return { pcm: await livePCM(ms), positions }
+  } finally {
+    clearInterval(timer)
+  }
 }

@@ -432,8 +432,14 @@ Lanes are MIX channel values `arr1`…`arr4` in the existing module `values`; an
 absent value plays every cycle. No format version or new field is needed. Lane
 text must be `0`/`1` cycle steps, or graph validation refuses the rack. Executable
 `.mask()` calls are authoritative after a code edit: reconciliation carries the
-lane with its channel, as it does NAME and OUTPUT. Song length shown by the lane
-is view state and is not saved. See the [contract](arranger.md#contract).
+lane with its channel, as it does NAME and OUTPUT. Song length is the longest
+arranged lane, with a 16-cycle default when no lanes exist. Length edits change
+these existing lane values in one accepted-document history step: growing
+extends each arranged lane's final step, shortening cuts lanes past the new end.
+No separate song-length metadata is stored. An explicit all-playing mask keeps
+its length during resizing; a channel with no mask still writes nothing.
+Recovery and Export/Open derive the length from the restored lanes. The scheduler
+playhead is presentation only. See the [contract](arranger.md#contract).
 
 ## Strudel credits and the patch name (#139)
 
