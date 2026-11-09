@@ -268,3 +268,11 @@ variants and auditions through the engine without starting transport. DRUMS,
 SMPL, REVERB IR, SPLICE and WAVETABLE share source-aware drop edits; SMPL tape
 marks edit begin/end/loop points. The catalog owns new controls and fixed-width
 Hardware panels. See the [decisions, independent round trips and browser proof](sound-crate.md).
+
+## Connection discovery (#233)
+
+Hover/focus compatibility and cable-to-empty-rail connected-module placement
+share the source-aware connection assessment. The chooser is catalog-backed,
+works from inputs or outputs and commits placement plus wiring as one history
+step. See [contract](design.md#jack-discovery-and-connected-placement-233) and
+[verification](jack-discovery-verification.md).

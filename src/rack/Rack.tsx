@@ -35,6 +35,14 @@ import type { Control } from '../modules/types'
 import { ControlEditor } from './Controls'
 import { MoreFlyout } from './MoreFlyout'
 import { ArrangerLane } from './ArrangerLane'
+import { ConnectedModuleChooser } from './ConnectedModuleChooser'
+import {
+  addConnectedModule,
+  connectionEnds,
+  discoverModules,
+  jackSpec,
+  type ModuleConnection,
+} from '../workspace/discovery'
 import {
   HP,
   ROW_HEIGHT,
@@ -74,7 +82,7 @@ interface Point {
   y: number
 }
 interface Wiring {
-  from: JackRef
+  anchor: JackRef
   moving?: string
 }
 interface Placement {
@@ -237,6 +245,14 @@ export function Rack({
   const tools = useRef<HTMLDivElement>(null)
   const [toolPoint, setToolPoint] = useState<Point | null>(null)
   const [wire, setWire] = useState<Wiring | null>(null)
+  const [inspected, setInspected] = useState<{ ref: JackRef; point: Point } | null>(null)
+  const [adding, setAdding] = useState<{
+    anchor: JackRef
+    moving?: string
+    point: Point
+    choices: ModuleConnection[]
+  } | null>(null)
+  const [modulePreview, setModulePreview] = useState<ModuleConnection | null>(null)
   const [pointer, setPointer] = useState<Point | null>(null)
   const [target, setTarget] = useState<JackRef | null>(null)
   const [hintPoint, setHintPoint] = useState<Point | null>(null)
@@ -282,8 +298,8 @@ export function Rack({
   const scale = zoom === 'fit' ? fitScale : zoom
   const overview = scale < READABLE_ZOOM
   useEffect(() => {
-    if (overview) clearWire()
-  }, [overview])
+    if (overview || locked) clearWire()
+  }, [overview, locked])
   function zoomToModule(id: string) {
     clearWire()
     selectModule(id)
@@ -295,17 +311,31 @@ export function Rack({
     )
   }
   const outputScale = Math.max(0.1, Math.min(1, viewportSize.height / 430))
+  const discoveryAnchor = wire?.anchor ?? inspected?.ref
   const candidates = useMemo(() => {
     const results = new Map<string, ConnectionAssessment>()
-    if (wire)
+    if (discoveryAnchor && (!overview || wire) && !locked && !adding)
       for (const module of patch.modules)
-        for (const jack of getModuleSpec(module.type).jacks)
-          if (jack.direction === 'in') {
-            const to = { module: module.id, jack: jack.id }
-            results.set(keyOf(to), assess(wire.from, to, wire.moving))
-          }
+        for (const jack of getModuleSpec(module.type).jacks) {
+          const other = { module: module.id, jack: jack.id }
+          const ends = connectionEnds(patch, discoveryAnchor, other)
+          if (ends) results.set(keyOf(other), assess(ends.from, ends.to, wire?.moving))
+        }
     return results
-  }, [patch, wire, assess])
+  }, [patch, wire, discoveryAnchor, assess, overview, locked, adding])
+  const compatible = [...candidates].filter(([, state]) => state.kind !== 'blocked')
+  const discoveryWarning = compatible.find(
+    ([, state]) => state.kind === 'warning' || state.kind === 'unresolved',
+  )?.[1].message
+  const targetAssessment = target && candidates.get(keyOf(target))
+  const provisionalSignal =
+    adding && modulePreview
+      ? modulePreview.assessment.signal
+      : targetAssessment && targetAssessment.kind !== 'blocked'
+        ? targetAssessment.signal
+        : wire
+          ? cableSignal(patch, wire.anchor)
+          : 'any'
   useLayoutEffect(() => {
     const element = surface.current
     if (!element) return
@@ -341,6 +371,12 @@ export function Rack({
             y: (edge ? Math.max(edge.top, Math.min(y, edge.bottom)) : y) - bounds.top,
           }
       }
+      const ghostJack = element.querySelector('[data-ghost-jack]')?.getBoundingClientRect()
+      if (ghostJack)
+        next['pending-module'] = {
+          x: ghostJack.left + ghostJack.width / 2 - bounds.left,
+          y: ghostJack.top + ghostJack.height / 2 - bounds.top,
+        }
       setPoints(next)
       const panel = selected && element.querySelector(`[data-module="${CSS.escape(selected)}"]`)
       if (panel) {
@@ -383,7 +419,7 @@ export function Rack({
       window.removeEventListener('resize', measure)
       element.removeEventListener('scroll', measure, true)
     }
-  }, [patch, rows, locked, select, selected, scale, overview, outputScale, panelKey])
+  }, [patch, rows, locked, select, selected, scale, overview, outputScale, panelKey, modulePreview])
 
   // Gestures and selections belong to the panels they started on.
   const [seenPanels, setSeenPanels] = useState(panelKey)
@@ -400,6 +436,9 @@ export function Rack({
     setSelectedCable(null)
     setProbeCable(null)
     setPinnedProbe(false)
+    setInspected(null)
+    setAdding(null)
+    setModulePreview(null)
   }
   useLayoutEffect(() => {
     viewport.current?.scrollTo(0, 0)
@@ -414,6 +453,9 @@ export function Rack({
     setPointer(null)
     setTarget(null)
     setHintPoint(null)
+    setAdding(null)
+    setModulePreview(null)
+    setInspected(null)
     wireGesture.current = null
   }
   function cancel() {
@@ -424,7 +466,11 @@ export function Rack({
   useEffect(() => {
     const escape = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && !event.defaultPrevented) {
+        const anchor = surface.current?.querySelector<HTMLElement>(
+          '[data-jack][data-wiring-anchor]',
+        )
         cancel()
+        anchor?.focus()
         setMenu(null)
         cancelReplacement()
         setSelectedOutput(null)
@@ -433,8 +479,9 @@ export function Rack({
     }
     const outsideDrop = (event: PointerEvent) => {
       if (
+        !event.defaultPrevented &&
         event.target instanceof Element &&
-        !event.target.closest('[data-jack], [data-cable-destinations]')
+        !event.target.closest('[data-jack], [data-cable-destinations], [data-module-chooser]')
       )
         clearWire()
     }
@@ -494,8 +541,18 @@ export function Rack({
     return candidates.get(keyOf(to)) ?? null
   }
   function inspectJack(to: JackRef, element: HTMLElement) {
-    if (!wire) return
+    if (overview || locked || adding) return
     const bounds = element.getBoundingClientRect()
+    if (!wire) {
+      setInspected({
+        ref: to,
+        point: {
+          x: Math.max(8, Math.min(bounds.left, window.innerWidth - 308)),
+          y: Math.max(8, Math.min(bounds.bottom + 8, window.innerHeight - 320)),
+        },
+      })
+      return
+    }
     setTarget(to)
     setHintPoint({
       x: Math.max(8, Math.min(bounds.left, window.innerWidth - 308)),
@@ -511,17 +568,50 @@ export function Rack({
       cancel()
       return
     }
-    const occupied = patch.cables.some((c) => keyOf(c.to) === keyOf(to) && c.id !== wire.moving)
+    const ends = connectionEnds(patch, wire.anchor, to)
+    if (!ends) return
+    const occupied = patch.cables.some(
+      (c) => keyOf(c.to) === keyOf(ends.to) && c.id !== wire.moving,
+    )
     edit(
-      (p) => connect(p, wire.from, to, occupied, wire.moving),
+      (p) => connect(p, ends.from, ends.to, occupied, wire.moving),
       occupied
         ? {
-            notice: `Replaced the cable into ${to.module} ${to.jack}`,
+            notice: `Replaced the cable into ${ends.to.module} ${ends.to.jack}`,
             undoFocus: `[data-jack="${CSS.escape(keyOf(to))}"]`,
           }
         : undefined,
     )
     cancel()
+  }
+  function cancelAdding() {
+    const anchor = adding?.anchor
+    cancel()
+    if (anchor)
+      surface.current
+        ?.querySelector<HTMLElement>(`[data-jack="${CSS.escape(keyOf(anchor))}"]`)
+        ?.focus()
+  }
+  function chooseModule(choice: ModuleConnection) {
+    if (!adding || !choice.position || locked) return
+    const { anchor, moving } = adding
+    const selected = choice.position
+    if (
+      edit(
+        (p) =>
+          addConnectedModule(
+            p,
+            anchor,
+            { type: choice.type, jack: choice.jack, ...selected },
+            moving,
+          ),
+        {
+          notice: `Added and connected ${getModuleSpec(choice.type).name}`,
+          undoFocus: `[data-jack="${CSS.escape(keyOf(anchor))}"]`,
+        },
+      )
+    )
+      cancelAdding()
   }
   function place(row: number, hp: number) {
     if (!placement) return
@@ -604,6 +694,10 @@ export function Rack({
           data-jacks={LOOK_LAYOUT[m.look].jacks}
           data-module={m.id}
           data-editing={editingModule === m.id}
+          data-compatible={
+            (!wire && inspected && compatible.some(([key]) => key.startsWith(`${m.id}:`))) ||
+            undefined
+          }
           data-sound-target={draggedSound && !overview ? acceptsSound : undefined}
           onDragOver={(event) => {
             if (!overview && spec.sampleTarget && m.type !== 'drums') allowSound(event)
@@ -731,7 +825,9 @@ export function Rack({
           <div className="patch-box" inert={overview}>
             {spec.jacks.map((jack) => {
               const ref = { module: m.id, jack: jack.id }
-              const state = wire && jack.direction === 'in' ? candidate(ref) : null
+              const assessment = candidate(ref)
+              const state = wire || assessment?.kind !== 'blocked' ? assessment : null
+              const isAnchor = !!wire && keyOf(wire.anchor) === keyOf(ref)
               const connected = patch.cables.some(
                 (c) => keyOf(c.from) === keyOf(ref) || keyOf(c.to) === keyOf(ref),
               )
@@ -747,73 +843,75 @@ export function Rack({
                   <button
                     type="button"
                     data-jack={keyOf(ref)}
+                    data-wiring-anchor={isAnchor || undefined}
                     disabled={overview}
                     className={`jack signal-${signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
                     aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}${jack.id === 'send' ? ` · ${loopRole(spec, m)}` : ''}`}
                     aria-describedby={
                       wire && target && keyOf(target) === keyOf(ref)
                         ? 'cable-target-hint'
-                        : undefined
+                        : !wire && inspected && keyOf(inspected.ref) === keyOf(ref)
+                          ? 'jack-discovery-hint'
+                          : undefined
                     }
                     title={
                       state?.message ??
                       ((signal === 'function' ? functionLabel(incoming?.from ?? ref) : '') ||
-                        (wire && jack.direction === 'out'
-                          ? 'Choose an input. Output-to-output is blocked.'
+                        (wire && jackSpec(patch, wire.anchor)?.direction === jack.direction
+                          ? 'Choose an opposite-direction jack.'
                           : `${jack.label} · ${signal === 'any' ? 'unresolved signal' : signal} ${jack.direction}`))
                     }
                     onPointerDown={(event) => {
-                      if (jack.direction === 'in' && event.button === 0) wireGesture.current = null
-                      if (jack.direction === 'out' && event.button === 0) {
-                        if (wire) return
-                        wireGesture.current = {
-                          x: event.clientX,
-                          y: event.clientY,
-                          dragged: false,
-                        }
-                        setSelectedOutput(keyOf(ref))
-                        setWire({ from: ref })
-                        setMessage('Choose an input. Escape cancels.')
-                        setPointer(points[keyOf(ref)] ?? null)
+                      if (event.button !== 0 || adding) return
+                      if (wire) {
+                        wireGesture.current = isAnchor
+                          ? { x: event.clientX, y: event.clientY, dragged: false }
+                          : null
+                        return
+                      }
+                      wireGesture.current = { x: event.clientX, y: event.clientY, dragged: false }
+                      if (jack.direction === 'out') setSelectedOutput(keyOf(ref))
+                      setInspected(null)
+                      setWire({ anchor: ref })
+                      setMessage(
+                        'Choose an opposite-direction jack, or drag onto an empty rail. Escape cancels.',
+                      )
+                      setPointer(points[keyOf(ref)] ?? null)
+                    }}
+                    onFocus={(event) => inspectJack(ref, event.currentTarget)}
+                    onBlur={(event) => {
+                      if (!event.currentTarget.matches(':hover')) {
+                        setTarget(null)
+                        setInspected(null)
                       }
                     }}
-                    onFocus={(event) => {
-                      if (jack.direction === 'in') inspectJack(ref, event.currentTarget)
-                    }}
-                    onBlur={(event) => {
-                      if (!event.currentTarget.matches(':hover')) setTarget(null)
-                    }}
-                    onPointerEnter={(event) => {
-                      if (jack.direction === 'in') inspectJack(ref, event.currentTarget)
-                    }}
+                    onPointerEnter={(event) => inspectJack(ref, event.currentTarget)}
                     onPointerLeave={(event) => {
                       if (event.currentTarget !== document.activeElement) {
                         setTarget(null)
-                        if (wire) setMessage('Choose an input. Escape cancels.')
+                        setInspected(null)
+                        if (wire)
+                          setMessage(
+                            'Choose an opposite-direction jack or an empty rail. Escape cancels.',
+                          )
                       }
                     }}
                     onPointerUp={() => {
-                      // Layout can move an input under a source click's release.
-                      // Only a drag or a fresh input press completes that connection.
-                      if (
-                        wire &&
-                        jack.direction === 'in' &&
-                        (!wireGesture.current || wireGesture.current.dragged)
-                      )
-                        finish(ref)
-                      else if (
-                        wire &&
-                        jack.direction === 'out' &&
-                        (keyOf(ref) !== keyOf(wire.from) || wireGesture.current?.dragged)
-                      ) {
-                        cancel()
-                        setMessage('Choose an input. Output-to-output is blocked.')
+                      if (!wire || adding) return
+                      if (!wireGesture.current || wireGesture.current.dragged) {
+                        if (connectionEnds(patch, wire.anchor, ref)) finish(ref)
+                        else if (!isAnchor || wireGesture.current?.dragged) {
+                          cancel()
+                          setMessage('Choose an opposite-direction jack.')
+                        }
                       }
                     }}
                     onClick={(event) => {
                       if (event.detail === 0) {
-                        if (jack.direction === 'out') setWire({ from: ref })
-                        else finish(ref)
+                        if (!wire) {
+                          setInspected(null)
+                          setWire({ anchor: ref })
+                        } else finish(ref)
                       }
                     }}
                   />
@@ -826,7 +924,7 @@ export function Rack({
                           : state.kind === 'valid'
                             ? '✓'
                             : '△'
-                        : wire && jack.direction === 'out'
+                        : wire && jackSpec(patch, wire.anchor)?.direction === jack.direction
                           ? '×'
                           : ' '}
                     </span>
@@ -1140,8 +1238,45 @@ export function Rack({
             }}
             onPointerLeave={() => setHoveredModule(null)}
             onPointerUp={(event) => {
-              if (wire && event.target instanceof Element && !event.target.closest('[data-jack]'))
-                cancel()
+              if (
+                !wire ||
+                adding ||
+                !(event.target instanceof Element) ||
+                event.target.closest('[data-jack]')
+              )
+                return
+              const bounds = rails.current?.getBoundingClientRect()
+              if (
+                wireGesture.current?.dragged &&
+                !locked &&
+                !overview &&
+                bounds &&
+                event.target.closest('.rack-surface') &&
+                !event.target.closest('[data-module], button, input, select')
+              ) {
+                event.preventDefault()
+                const position = {
+                  row: Math.max(
+                    0,
+                    Math.min(
+                      rows - 1,
+                      Math.floor((event.clientY - bounds.top) / scale / ROW_HEIGHT),
+                    ),
+                  ),
+                  hp: Math.max(0, Math.round((event.clientX - bounds.left) / scale / HP)),
+                }
+                const choices = discoverModules(sourceDocument, wire.anchor, position, wire.moving)
+                setAdding({
+                  anchor: wire.anchor,
+                  ...(wire.moving ? { moving: wire.moving } : {}),
+                  point: { x: event.clientX, y: event.clientY },
+                  choices,
+                })
+                setModulePreview(choices.find((choice) => choice.position) ?? choices[0] ?? null)
+                setTarget(null)
+                setInspected(null)
+                setMessage('Choose a compatible module. Escape cancels.')
+              } else cancel()
             }}
           >
             <div ref={viewport} className="rack-scroll">
@@ -1170,6 +1305,27 @@ export function Rack({
                   </div>
                 ))}
                 {renderModules(patch.modules.filter((m) => m.type !== 'out'))}
+                {adding && modulePreview?.position && (
+                  <div
+                    className="placement-ghost connected-module-ghost"
+                    style={{
+                      left: modulePreview.position.hp * HP,
+                      top: modulePreview.position.row * ROW_HEIGHT + 20,
+                      width: getModuleSpec(modulePreview.type).hp * HP,
+                    }}
+                  >
+                    {getModuleSpec(modulePreview.type).name} ·{' '}
+                    {
+                      getModuleSpec(modulePreview.type).jacks.find(
+                        (jack) => jack.id === modulePreview.jack,
+                      )?.label
+                    }
+                    <span
+                      data-ghost-jack
+                      className={`ghost-jack signal-${modulePreview.assessment.signal}`}
+                    />
+                  </div>
+                )}
                 {placement && ghost && ghost.row < rows && (
                   <div
                     className="placement-ghost"
@@ -1258,12 +1414,14 @@ export function Rack({
                   </g>
                 ) : null
               })}
-              {wire && points[keyOf(wire.from)] && (pointer || target) && (
+              {wire && points[keyOf(wire.anchor)] && (pointer || target) && (
                 <path
-                  className={`provisional signal-${target ? cableKind(patch, { id: 'pending', from: wire.from, to: target }, loopInfo.members) : cableSignal(patch, wire.from, loopInfo.members)}`}
+                  className={`provisional signal-${provisionalSignal}`}
                   d={curve(
-                    points[keyOf(wire.from)] ?? { x: 0, y: 0 },
-                    (target && points[keyOf(target)]) || pointer || { x: 0, y: 0 },
+                    points[keyOf(wire.anchor)] ?? { x: 0, y: 0 },
+                    (adding && points['pending-module']) ||
+                      (target && points[keyOf(target)]) ||
+                      pointer || { x: 0, y: 0 },
                   )}
                 />
               )}
@@ -1318,7 +1476,7 @@ export function Rack({
                 type="button"
                 onClick={() => {
                   if (connections.current) connections.current.open = true
-                  setWire({ from: currentCable.from, moving: currentCable.id })
+                  setWire({ anchor: currentCable.from, moving: currentCable.id })
                   setMessage(
                     'Choose a new input. Original cable stays until accepted. Escape cancels.',
                   )
@@ -1413,10 +1571,16 @@ export function Rack({
             <div>
               {wire && (
                 <fieldset data-cable-destinations>
-                  <legend>New destination</legend>
+                  <legend>
+                    {jackSpec(patch, wire.anchor)?.direction === 'out'
+                      ? 'New destination'
+                      : 'New source'}
+                  </legend>
                   {patch.modules.flatMap((module) =>
                     getModuleSpec(module.type)
-                      .jacks.filter((jack) => jack.direction === 'in')
+                      .jacks.filter((jack) =>
+                        connectionEnds(patch, wire.anchor, { module: module.id, jack: jack.id }),
+                      )
                       .map((jack) => {
                         const to = { module: module.id, jack: jack.id }
                         const state = candidate(to)
@@ -1451,6 +1615,45 @@ export function Rack({
             </div>
           </details>
         </footer>
+        {adding && !locked && !overview && (
+          <ConnectedModuleChooser
+            choices={adding.choices}
+            point={adding.point}
+            preview={setModulePreview}
+            choose={chooseModule}
+            cancel={cancelAdding}
+          />
+        )}
+        {!wire && inspected && !locked && !overview && (
+          <div
+            id="jack-discovery-hint"
+            role="tooltip"
+            className="cable-target-hint jack-discovery-hint"
+            style={{ left: inspected.point.x, top: inspected.point.y }}
+          >
+            <strong>
+              {keyOf(inspected.ref)} · {compatible.length} compatible{' '}
+              {compatible.length === 1 ? 'jack' : 'jacks'}
+            </strong>
+            <ul>
+              {compatible.slice(0, 6).map(([key, state]) => (
+                <li key={key}>
+                  {key}
+                  {state.kind !== 'blocked' && state.replaces
+                    ? ' · replaces cable'
+                    : state.kind === 'warning'
+                      ? ' · △ warning'
+                      : state.kind === 'unresolved'
+                        ? ' · △ unverified'
+                        : ''}
+                </li>
+              ))}
+            </ul>
+            {compatible.length > 6 && <p>+{compatible.length - 6} other jacks highlighted</p>}
+            {discoveryWarning && <p>{discoveryWarning}</p>}
+            <p>Drag onto an empty rail to add a connected module.</p>
+          </div>
+        )}
         {wire && target && hintPoint && (
           <div
             id="cable-target-hint"

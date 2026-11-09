@@ -370,3 +370,14 @@ private sends are independent pre-mixer voices with dry and global wet output
 suppressed. Audio-mod uses the two-tone double/dashed cable and `≋` jack mark.
 The [translation contract](translation-rules.md#multi-input-and-cross-voice-routing-136)
 records native tap/depth semantics, provenance and structural reset behavior.
+
+## Jack discovery and connected placement (#233, decided 8 November 2026)
+
+The owner approved both complementary connection interactions: hover/focus a
+jack to discover compatible modules already in the rack, and drag from either
+end onto empty rail space to choose a new connected module. This explicitly
+adds connection discovery beyond the original v1 no-hints scope. Use the same
+patch-aware validation, catalog definitions and workspace edit boundary for both.
+New-module options use catalog defaults, name the connecting jack, preview the
+actual width and snapped position on the dropped rail, and commit placement
+plus connection as one undoable edit. See [interaction contract](design.md#jack-discovery-and-connected-placement-233).

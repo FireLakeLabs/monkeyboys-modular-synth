@@ -601,3 +601,31 @@ readable 100% detail on 8 November 2026; Trance's 29 modules and 28 cables fit i
 four 104-HP rows at 41% on a 1600×1000 window. Saved layouts retain their exact
 positions and width. No adjacent CODE merging is implemented; see the
 [study](translation-rules.md#adjacent-code-study-187-8-november-2026).
+
+## Jack discovery and connected placement (#233)
+
+Hovering or focusing an input or output lists compatible opposite-direction
+jacks in the current rack and outlines their modules. Valid jacks have a solid
+outline and check; warnings and unverified CODE paths retain dashed outlines
+and a triangle. The compact list names up to six jacks, counts the rest and
+explains a conditional connection. Compatibility uses the same source-aware
+assessment as committing a cable, including modes, special routing and cycles.
+These are connection controls approved by the owner, extending the original
+v1 exclusion of general hints and explainers.
+
+A cable can start at either end. Dropping on a jack connects it; dragging onto
+empty rail space opens **Add a connected module** beside a provisional module.
+The chooser searches catalog names, titles, calls and jack labels and lists
+module/jack pairs that work with the new module's defaults. Search takes focus;
+Up/Down moves through options, Enter selects, and Escape cancels and returns
+to the starting jack. Clicking outside dismisses the chooser.
+
+Hovering or focusing an option previews its catalog width and nearest free HP
+on the dropped rail, without moving neighbors. The provisional cable follows
+the ghost jack through scrolling and zoom. Modules that cannot fit on that rail
+remain listed with **No room on this rail** and cannot be selected. The chooser
+does not silently spill onto another rail. Only selecting commits a module and
+its cable, as one accepted-document history step. An occupied input retains its
+cable until selection; the chooser explains replacement and imported rewrites.
+Cancellation changes neither source nor playback. Draft/locked racks and overview
+jacks remain unavailable; Connections still supports overview repatching.

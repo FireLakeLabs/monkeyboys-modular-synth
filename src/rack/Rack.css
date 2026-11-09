@@ -1398,3 +1398,86 @@ select:focus-visible {
   max-height: 96px;
   overflow: auto;
 }
+
+.module-panel[data-compatible='true'] {
+  outline: 2px solid #8cf5da;
+  outline-offset: -2px;
+}
+.jack-discovery-hint ul {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+.jack-discovery-hint p {
+  margin: 4px 0 0;
+}
+.connected-module-ghost {
+  padding: 8px;
+  color: #ffe0bc;
+  font-weight: 700;
+}
+.connected-module-chooser {
+  position: fixed;
+  z-index: 40;
+  margin: 0;
+  width: min(340px, calc(100vw - 16px));
+  max-height: min(400px, calc(100vh - 16px));
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #737980;
+  border-radius: 6px;
+  background: #15171b;
+  color: #e4e6ea;
+  box-shadow: 0 8px 28px #0009;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+.connected-module-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.connected-module-chooser input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.connected-module-chooser p {
+  margin: 0;
+  color: #b7bdc6;
+}
+.connected-module-options {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.connected-module-options button {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 8px;
+  white-space: normal;
+  text-align: left;
+}
+.connected-module-options button:hover,
+.connected-module-options button:focus-visible {
+  border-color: #f4a462;
+  background: #302319;
+}
+.connected-module-options small {
+  color: #b7bdc6;
+}
+.ghost-jack {
+  position: absolute;
+  bottom: 16px;
+  left: calc(50% - 12px);
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--signal);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
