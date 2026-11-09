@@ -232,13 +232,13 @@ Observed on 8 November 2026 with Node 24.22.2 and Playwright's Chromium.
 - **Lag:** [`scripts/sample-slot-latency.mjs`](../scripts/sample-slot-latency.mjs)
   adds three SMPL, two SPLICE and one REVERB from the palette, loads both pinned
   factory packs, then times a knob step from keydown to the second frame, as
-  `knob-latency-check.mjs` does. It ran against production builds of `3af8609`
+  `knob-latency-check.mjs` does. It ran against production builds of `f831335`
   (main) and this branch, alternating for five rounds of nine steps. The six slots
   held 26,322 `<option>` elements before and none after. The median step fell from
-  **131.8 ms** (range 116.0–139.3) to **33.9 ms** (range 30.7–42.1); all 90 steps
+  **128.2 ms** (range 91.4–141.0) to **33.8 ms** (range 27.3–44.9); all 90 steps
   changed the knob. An unreported profile put the limiter on main-thread JavaScript:
   over nine steps, busy time fell from 1,115 ms to 361 ms, mostly React rendering.
-  Opening the picker took a median 9.1 ms, and typing `808` took 28.2 ms from its
+  Opening the picker took a median 14.5 ms, and typing `808` took 28.5 ms from its
   input event to the second frame, finding 24 sounds. One machine (AMD Ryzen 7 PRO 6850U, 16 logical CPUs), headless; the
   [runs and environment](evidence/sound-picker/latency.json) are recorded.
 - **Behaviour:** [`tests/browser/sound-picker.spec.mjs`](../tests/browser/sound-picker.spec.mjs)
