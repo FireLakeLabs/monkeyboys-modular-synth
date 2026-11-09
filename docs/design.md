@@ -646,3 +646,13 @@ cable until selection; the card names the jack and explains replacement and
 imported rewrites.
 Cancellation changes neither source nor playback. Draft/locked racks and overview
 jacks remain unavailable; Connections still supports overview repatching.
+
+## User-defined-panel research (#247)
+
+The [nonvisual study](research/user-defined-modules/README.md) recommends the
+existing #217 import/configure flow around original helper calls. It renders no
+production panel. Proposed controls separate display suggestions and explicit
+reset mappings from current call expressions; configuration never implies
+clamping or isolated runtime state. Existing fixed-per-definition widths, family
+looks and live cable geometry remain the constraints. A macro/expansion UI is a
+later proposal, outside #217's first increment.

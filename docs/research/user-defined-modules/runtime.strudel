@@ -1,0 +1,50 @@
+// Repository-owned controlled experiment. Evaluated ONLY through engine.play.
+// No imported program is executed by prototype.mjs.
+const events247 = (pattern, cycles = 1) => pattern.queryArc(0, cycles).filter(h => h.hasOnset()).map(h => ({ begin: h.whole.begin.toString(), end: h.whole.end.toString(), value: h.value }))
+const fails247 = (fn) => { try { fn(); return null } catch (e) { return e.message } }
+const report247 = {}
+register('forward247', (amount, pat) => { return pat.gain(amount) })
+report247.forward = events247(s('sine').forward247(0.4))
+report247.pattern = events247(s('sine*2').forward247('0.25 0.75'))
+const base247 = 0.25
+report247.computed = events247(s('sine').forward247(base247 * 2))
+report247.sequenceArguments = events247(s('sine*2').forward247(0.2, 0.8))
+register(['alias247', 'otheralias247'], (amount, pat) => pat.gain(amount))
+report247.aliases = [events247(s('sine').alias247(0.3)), events247(s('sine').otheralias247(0.3))]
+register('defaults247', (amount = 0.5, pat) => pat.gain(amount))
+report247.defaultArityError = fails247(() => s('sine').defaults247(0.5))
+register('twoargs247', (a, b, pat) => pat.gain(a).pan(b))
+report247.arityError = fails247(() => s('sine').twoargs247(1))
+register('raw247', (amount, pat) => { report247.rawInput = { type: typeof amount, pure: amount.__pure }; return pat.gain(amount) }, false)
+report247.raw = events247(s('sine').raw247(0.6))
+let shared247 = 0
+register('shared247helper', (amount, pat) => { shared247++; return pat.gain(shared247 * amount) })
+const sharedA247 = s('sine').shared247helper(1)
+const sharedB247 = s('sine').shared247helper(1)
+report247.shared = [events247(sharedA247), events247(sharedB247), events247(sharedA247)]
+report247.sharedCount = shared247
+let queried247 = 0
+register('queried247helper', (amount, pat) => { queried247++; return pat.gain(queried247 * amount) })
+const queryPattern247 = s('sine*2').queried247helper('1 1')
+report247.queried = [events247(queryPattern247), events247(queryPattern247)]
+report247.queriedCount = queried247
+const oldFunction247 = register('duplicate247', (amount, pat) => pat.gain(amount))
+const before247 = s('sine').duplicate247(0.2)
+register('duplicate247', (amount, pat) => pat.gain(amount * 2))
+report247.redefinition = [events247(before247), events247(s('sine').duplicate247(0.2)), events247(oldFunction247(0.2, s('sine')))]
+register('source247', (amount, ignored) => s('triangle').gain(amount))
+report247.sourceLike = events247(s('sine').source247(0.7))
+report247.callback = events247(s('sine').off(0.25, x => x.forward247(0.5)))
+report247.callbackNative = events247(s('sine').off(0.25, x => x.gain(0.5)))
+// A reusable subpatch function with explicit input/parameter/output bindings.
+const macro247 = (input, level, cutoff) => input.gain(level).lpf(cutoff)
+register('compound247', (level, cutoff, pat) => { return pat.gain(level).lpf(cutoff) })
+report247.macro = events247(macro247(s('sine*2'), 0.4, 800))
+report247.registerCompound = events247(s('sine*2').compound247(0.4, 800))
+// State isolation is a factory contract, not supplied by register().
+const makeMacro247 = () => { let count = 0; return input => input.gain(++count) }
+const macroA247 = makeMacro247()
+const macroB247 = makeMacro247()
+report247.factory = [events247(macroA247(s('sine'))), events247(macroB247(s('sine')))]
+globalThis.__registerResearch247 = report247
+$: silence

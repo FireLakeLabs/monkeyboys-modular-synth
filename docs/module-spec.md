@@ -985,3 +985,11 @@ as CODE. Changing `<0 12>` to `<0 7>` audibly changes that exercise's pitch offs
 
 The existing look rules render this panel. Private canvas boards were unavailable;
 local design exports and real browser screenshots are the presentation references.
+
+## User-defined-module research (#247)
+
+The [register/subpatch study](research/user-defined-modules/README.md) records
+pinned API and event evidence. Registration alone supplies no panel schema, safe
+range/reset, jack type or isolated instance. It recommends original-call wrappers
+for #217; the proposed patch-local descriptors reuse existing control/family/HP
+contracts. No custom module or catalog ownership is added by this research.
