@@ -581,3 +581,14 @@ execution without git metadata. These tests reject the observed scanner/CI
 omissions; they do not establish complete API enumeration or audio support.
 The [inventory report](research/strudel-api-coverage/README.md) records remaining
 factory/backend unknowns and the separate manifest-versus-library denominator.
+
+## Module-context research (#246)
+
+The focused `scripts/module-contexts.test.mts` guard runs with the existing
+`test:guardrails` gate. Real pinned pure events retain bare `n` as a control field;
+`scale` consumes it into `note`. The test rejected the representative mistaken
+pitch assertion before passing with the source-backed context. Oscillator partial
+count consumption/default pitch remains separately documented source evidence,
+not audio proof. The dated whole-catalog report and its hash-based reproduction
+`node scripts/module-contexts.mjs --check` are explicit research checks, not a CI
+requirement to rewrite historical evidence after every application change.

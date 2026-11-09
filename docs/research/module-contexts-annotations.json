@@ -1,0 +1,595 @@
+{
+  "version": 1,
+  "modules": [
+    {
+      "moduleId": "seq",
+      "role": "root constructor",
+      "engineContext": "note wraps pitch; n is scale degree before scale, oscillator partial count without scale, or sampler index; fast changes time",
+      "readerContext": "Literal mini-notation; a voice without a downstream audio boundary may remain whole CODE; adjacent fast is RATE",
+      "verdict": "keep",
+      "caseIds": "C01,C26",
+      "counterexample": "note(patternValue).s(\"sawtooth\")",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "drums",
+      "role": "root sound constructor",
+      "engineContext": "s sets event sound keys; not intrinsically a drum-only operation",
+      "readerContext": "Root sample rhythm and most canonical oscillator s literals use DRUMS plus implicit SMPL; saw alias is exceptional OSC",
+      "verdict": "keep",
+      "caseIds": "C01",
+      "counterexample": "s(samplePattern)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "gates",
+      "role": "argument expression",
+      "engineContext": "struct applies event structure to any compatible pattern",
+      "readerContext": "GATES only targets SEQ GATE in graph; standalone struct may be CODE",
+      "verdict": "keep",
+      "caseIds": "C19",
+      "counterexample": "note(\"c2\").struct(gatePattern).s(\"sawtooth\")",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "switch",
+      "role": "argument expression / selector",
+      "engineContext": "pick selects whole patterns; values and time remain independent",
+      "readerContext": "Four reference inputs and numeric selection; other array/inline forms remain CODE",
+      "verdict": "keep",
+      "caseIds": "C19",
+      "counterexample": "\"<0 1>\".pick([note(\"c2\"),note(\"e2\")])",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "aux",
+      "role": "routing",
+      "engineContext": "bus sends and s(bus) returns are distinct operations, not ordinary sum",
+      "readerContext": "Only complete writer-proven saved graph owns allocation; imported integers are CODE",
+      "verdict": "keep",
+      "caseIds": "C20",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").bus(7)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "duck",
+      "role": "routing",
+      "engineContext": "trigger writes target orbit controls; not an ordinary target gain setter",
+      "readerContext": "Generated side branch; imported orbit identity is not inferred",
+      "verdict": "keep",
+      "caseIds": "C20",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").duck(7)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "quant",
+      "role": "chained event transform",
+      "engineContext": "scale needs degree/note data; scaleTranspose is diatonic and position-sensitive",
+      "readerContext": "Literal catalog scales and adjacent bounded SHIFT; computed args CODE",
+      "verdict": "keep",
+      "caseIds": "C04",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").scale(scaleName)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "add",
+      "role": "numeric/pattern arithmetic",
+      "engineContext": "Plain values versus control objects have different arithmetic semantics",
+      "readerContext": "Quoted .add only; not implicit pitch transpose; other operands CODE",
+      "verdict": "keep",
+      "caseIds": "C03",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").add(12)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "clock",
+      "role": "chained time transform",
+      "engineContext": "slow/swingBy/late may repeat and reorder; do not require SEQ",
+      "readerContext": "Adjacent compatible calls may share CLOCK; literal ranges are UI limits",
+      "verdict": "keep",
+      "caseIds": "C10",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").slow(divisor)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "euclid",
+      "role": "chained structure transform",
+      "engineContext": "Gating and legato change timing differently; not aliases",
+      "readerContext": "Gate/legato modes, bounded pulse/step/rotation; patterns in args CODE",
+      "verdict": "keep",
+      "caseIds": "C19",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").euclidRot(pulses,8,0)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "ratchet",
+      "role": "chained time transform",
+      "engineContext": "ply changes event count, not audio echo tails",
+      "readerContext": "Numeric/string repeat pattern; other expressions CODE",
+      "verdict": "keep",
+      "caseIds": "C10",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").ply(count)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "chance",
+      "role": "chained random/time transform",
+      "engineContext": "seed scopes upstream randomness; repeated seeds can be meaningful",
+      "readerContext": "Adjacent degradeBy+seed grouped; DRUMS unseeded DROP remains contextual",
+      "verdict": "keep",
+      "caseIds": "C10",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").degradeBy(chance)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "chord",
+      "role": "root constructor plus chained voicing",
+      "engineContext": "chord setter alone is legal; voicing computes pitches from chord context",
+      "readerContext": "Atomic chord literal plus nullary voicing source; other forms CODE",
+      "verdict": "keep",
+      "caseIds": "C04",
+      "counterexample": "chord(\"Cm7\").voicing(\"unsupported\").s(\"sawtooth\")",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "arp",
+      "role": "chained event transform",
+      "engineContext": "arp selects indices from simultaneous notes; not a CHORD-only operation",
+      "readerContext": "Literal index pattern; computed index expressions CODE",
+      "verdict": "keep",
+      "caseIds": "C04",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").arp(indices)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "osc",
+      "role": "sound setter / source",
+      "engineContext": "note/freq determine pitch; bare n supplies partial count; s selects backend and sound-specific companions",
+      "readerContext": "Chained WAVE and compatible adjacent companions; root saw alias is OSC, most canonical root waves use DRUMS/SMPL",
+      "verdict": "group",
+      "caseIds": "C01,C02,C05,C26",
+      "counterexample": "note(\"c2\").s(wave)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "noise",
+      "role": "sound setter / source",
+      "engineContext": "density consumed by noise path; a setter can precede the selector",
+      "readerContext": "Catalog noise wave choices and compatible adjacent density only",
+      "verdict": "group",
+      "caseIds": "C02,C05",
+      "counterexample": "note(\"c2\").s(\"crackle\").density(2)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "harmonic",
+      "role": "sound setter / source",
+      "engineContext": "partials or n supply harmonics in the non-sine oscillator path; user without either falls back to triangle",
+      "readerContext": "Reader requires user selector plus bounded literal partials array",
+      "verdict": "group",
+      "caseIds": "C05,C26",
+      "counterexample": "note(\"c2\").s(\"user\").partials([1,2])",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "fmop",
+      "role": "sound-specific setter",
+      "engineContext": "FM is consumed by several oscillator backends; sampler has no applyFM path",
+      "readerContext": "Bounded adjacent FM settings; indexed operators and matrix are CODE",
+      "verdict": "keep",
+      "caseIds": "C05,C16",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").fm(64)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "smpl",
+      "role": "sound setter / source and companions",
+      "engineContext": "sample slicing/loop points consumed by sampler; bank qualifies s names",
+      "readerContext": "Bounded scalar companions, literal sound slot; root sample rhythm splits DRUMS/SMPL",
+      "verdict": "group",
+      "caseIds": "C01,C02,C06",
+      "counterexample": "note(\"c2\").s(\"bd\").speed(-1)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "splice",
+      "role": "chained sample/time transform / source",
+      "engineContext": "slice/splice/chop/striate alter sample parameters and event timing differently",
+      "readerContext": "One mode per instance; literal count/order; may start selected-sample voice",
+      "verdict": "keep",
+      "caseIds": "C06",
+      "counterexample": "s(\"bd\").slice(128,\"0\")",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "wavetable",
+      "role": "sound setter / source",
+      "engineContext": "wt/warp backend separate from ordinary sample playback and time WARP",
+      "readerContext": "wt_ selector plus literal controls; arbitrary tables/configs CODE",
+      "verdict": "keep",
+      "caseIds": "C06",
+      "counterexample": "s(\"wt_piano\").wt(2)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "bytebeat",
+      "role": "sound setter / source",
+      "engineContext": "bbexpr/start/preset consumed by bytebeat worklet; formula syntax is executable",
+      "readerContext": "Fixed sound, bounded preset and pure(single-quoted formula); unsupported formula stays CODE",
+      "verdict": "keep",
+      "caseIds": "C07",
+      "counterexample": "s(\"bytebeat\").bbexpr(\"t\")",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "chip",
+      "role": "sound setter / source",
+      "engineContext": "ZZFX parameters are source-backend-specific; names do not imply normal FX",
+      "readerContext": "z_ waves and adjacent companions; arrays/computed controls CODE",
+      "verdict": "keep",
+      "caseIds": "C07",
+      "counterexample": "s(\"z_square\").slide(20)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "speak",
+      "role": "chained output operation",
+      "engineContext": "Primitive words trigger browser speech and bypass normal audio routing",
+      "readerContext": "Literal lang/voice; word source stays CODE; not a general synth mode",
+      "verdict": "keep",
+      "caseIds": "C07",
+      "counterexample": "\"hello\".speak(language,voice)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "vcf",
+      "role": "chained sound setter",
+      "engineContext": "Native setters configure fixed backend stages; inline FX can repeat/reorder",
+      "readerContext": "Compatible mode companions; partial/computed aliases may stay CODE",
+      "verdict": "keep",
+      "caseIds": "C08,C09",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(10)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "vca",
+      "role": "chained sound setter",
+      "engineContext": "gain and velocity are independent multiplicative fields in backend",
+      "readerContext": "Bounded gain, numeric-pattern gain as CV SEQ or other supported CV; numeric velocity companion/source accent; computed args CODE",
+      "verdict": "keep",
+      "caseIds": "C08",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").gain(3)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "env",
+      "role": "contextual modulation target",
+      "engineContext": "Native ADSR, filter ADSR and generic additive env are different target operations",
+      "readerContext": "Complete ordered native groups or supported generic object; partial groups CODE",
+      "verdict": "keep",
+      "caseIds": "C08,C11",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").attack(.1)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "lfo",
+      "role": "modulation source / target setter",
+      "engineContext": "Sampled signals and continuous per-voice lfo are distinct timing mechanisms",
+      "readerContext": "STEP expression versus SMOOTH object; utility path samples explicitly",
+      "verdict": "keep",
+      "caseIds": "C11",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(800).lfo({c:\"cutoff\",shape:\"unknown\"})",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "samplehold",
+      "role": "argument transform",
+      "engineContext": "segment samples signal as events; no sound-specific requirement",
+      "readerContext": "Utility graph requires numeric modulation; general chain segment can be CODE",
+      "verdict": "keep",
+      "caseIds": "C11",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(sine.segment(0).range(400,800))",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "attenuverter",
+      "role": "argument arithmetic",
+      "engineContext": "mul/range/rangex can operate on plain patterns; exponential positive endpoint restriction",
+      "readerContext": "Utility position, numeric literals; not a general event arithmetic panel",
+      "verdict": "keep",
+      "caseIds": "C03,C11",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(sine.segment(8).rangex(-1,1))",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "modmix",
+      "role": "argument arithmetic",
+      "engineContext": "add combines numeric pattern values; not postgain/stack or note transpose",
+      "readerContext": "Two explicit numeric utility inputs; unsupported receiver shapes CODE",
+      "verdict": "keep",
+      "caseIds": "C03,C11",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(sine.add(note(\"c2\")))",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "cvseq",
+      "role": "argument expression",
+      "engineContext": "Numeric pattern controls may subdivide notes; not audio-rate LFO",
+      "readerContext": "Numeric mini-notation only; absolute destination units",
+      "verdict": "keep",
+      "caseIds": "C11",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").lpf(\"abc\")",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "delay",
+      "role": "sound setter / routing",
+      "engineContext": "Native orbit send versus per-note FX delay have different lifetime/routing",
+      "readerContext": "MIX zero bypasses; source omission uses SYNC; explicit reset needs preservation",
+      "verdict": "group",
+      "caseIds": "C09,C12",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").delay(-1)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "reverb",
+      "role": "sound setter / routing",
+      "engineContext": "Native orbit send or inline convolution; roomsize/ir do not imply a room send",
+      "readerContext": "Compatible room owner for companions; absent defaults have known #239 gap",
+      "verdict": "group",
+      "caseIds": "C09,C12",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").room(2)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "drive",
+      "role": "chained sound setter",
+      "engineContext": "Algorithm setters independent, may repeat inline; not equivalent names",
+      "readerContext": "Algorithm mode/nullary amount forms; omission/reset boundary remains conservative",
+      "verdict": "keep",
+      "caseIds": "C09",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").soft(20)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "folder",
+      "role": "chained sound setter",
+      "engineContext": "fold is a different nonlinear algorithm; can coexist with DRIVE",
+      "readerContext": "Bounded scalar; may repeat as FX; arbitrary value expressions CODE",
+      "verdict": "keep",
+      "caseIds": "C09",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").fold(20)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "lofi",
+      "role": "compound sound setters",
+      "engineContext": "coarse and crush are distinct stages with intervening order implications",
+      "readerContext": "One panel holds both, active stages must be planned independently",
+      "verdict": "group",
+      "caseIds": "C09",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").crush(32)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "formant",
+      "role": "chained sound setter",
+      "engineContext": "vowel is a backend filter stage; unrelated to speech synthesis",
+      "readerContext": "Literal vowel mini-notation; no mandatory oscillator owner",
+      "verdict": "keep",
+      "caseIds": "C09",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").vowel(vowelPattern)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "comp",
+      "role": "compound sound setters",
+      "engineContext": "transient and compressor occupy nonadjacent backend stages",
+      "readerContext": "Both stage ranks required; no generic single-stage semantic collapse",
+      "verdict": "group",
+      "caseIds": "C09",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").compressor(config)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "phaser",
+      "role": "sound setter",
+      "engineContext": "phaserrate and depth activate compatible backend path; position in native text not DSP order",
+      "readerContext": "Depth-only import stays disabled; pattern args generally CODE",
+      "verdict": "keep",
+      "caseIds": "C12",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").phaser(30)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "pan",
+      "role": "sound setter / CV target",
+      "engineContext": "Per-note panning is distinct from jux duplication and channels output routing",
+      "readerContext": "Scalar or supported CV; pan units differ from WebAudio depth",
+      "verdict": "keep",
+      "caseIds": "C11,C20",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").pan(2)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "shift",
+      "role": "sound setter",
+      "engineContext": "stretch is phase-vocoder pitch shift, not negative sample reversal",
+      "readerContext": "Bounded scalar; ordered FX latency differs from native",
+      "verdict": "keep",
+      "caseIds": "C09",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").stretch(-4)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "mix",
+      "role": "structural combinator / routing",
+      "engineContext": "stack combines event patterns before or after voicing; labels/outputs are separate concepts",
+      "readerContext": "Current Voices-only representation has nested-expression limits; #242 approved",
+      "verdict": "merge-selected",
+      "caseIds": "C13",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").postgain(levelPattern)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "scope",
+      "role": "sound/output setter",
+      "engineContext": "analyze is final per-note tap, not intermediate point in native chain",
+      "readerContext": "Literal tap 1..32; VIEW metadata only; repeated native tap last wins",
+      "verdict": "keep",
+      "caseIds": "C20",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").analyze(33)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "out",
+      "role": "setup plus app master",
+      "engineContext": "setcpm/cps controls scheduler; app volume not a Strudel setter",
+      "readerContext": "Tempo literal/division mapping; master VOL saved separately",
+      "verdict": "keep",
+      "caseIds": "C20",
+      "counterexample": "setcpm(tempo);\n$: note(\"c2\").s(\"sawtooth\")",
+      "counterexampleKind": "opaque-setup"
+    },
+    {
+      "moduleId": "iter",
+      "role": "chained time transform",
+      "engineContext": "Cycle rotation distinct from shuffle/rev or chunk; repeatable anywhere",
+      "readerContext": "Bounded scalar steps; patterns/computed operands CODE",
+      "verdict": "keep",
+      "caseIds": "C10",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").iter(32)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "jux",
+      "role": "callback-local combinator",
+      "engineContext": "Copies and pans transformed branch; not simple pan or generic sum",
+      "readerContext": "Presets or single-parameter receiver lambda; branches blocked by UI/reader",
+      "verdict": "keep",
+      "caseIds": "C14,C15",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").jux(transform)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "chunk",
+      "role": "callback-local time transform",
+      "engineContext": "chunk/fastChunk/chunkBack have differing cycle/reverse behavior",
+      "readerContext": "Current chunk only; literal count and single-chain lambda",
+      "verdict": "keep",
+      "caseIds": "C14,C15",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").chunk(64,x=>x.rev())",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "every",
+      "role": "callback-local time transform",
+      "engineContext": "firstOf/every are aliases; lastOf differs in cycle phase",
+      "readerContext": "Panel variants first/last; every alias currently CODE",
+      "verdict": "keep",
+      "caseIds": "C14,C15",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").firstOf(64,x=>x.rev())",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "sometimes",
+      "role": "callback-local probabilistic transform",
+      "engineContext": "Per-event versus per-cycle decisions differ; often/rarely fixed probabilities",
+      "readerContext": "Existing variants keep inactive chance saved; general callbacks CODE",
+      "verdict": "keep",
+      "caseIds": "C14",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").sometimesBy(2,x=>x.rev())",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "off",
+      "role": "callback-local parallel transform",
+      "engineContext": "Delayed transformed copy; not orbit DELAY; timing order matters",
+      "readerContext": "Literal delay and receiver-chain lambda; nested branching needs #243",
+      "verdict": "keep",
+      "caseIds": "C14,C15",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").off(8,x=>x.rev())",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "layer",
+      "role": "callback-local parallel transform",
+      "engineContext": "superimpose retains original; layer does not implicitly retain it",
+      "readerContext": "Panel owns superimpose only; multi-function layer stays CODE",
+      "verdict": "keep",
+      "caseIds": "C14,C15",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").superimpose(transform)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "rev",
+      "role": "chained time transform",
+      "engineContext": "rev and palindrome differ over alternate cycles; modes are choices, not aliases",
+      "readerContext": "Nullary modes; multiple instances retain sequential composition",
+      "verdict": "keep",
+      "caseIds": "C10",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").rev(1)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "shuffle",
+      "role": "chained random/time transform",
+      "engineContext": "shuffle and scramble have different permutation/replacement semantics",
+      "readerContext": "Existing modes and literal slices; preserve seeds and position",
+      "verdict": "keep",
+      "caseIds": "C10",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").shuffle(64)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "ribbon",
+      "role": "chained time transform",
+      "engineContext": "rib/ribbon alias captures deterministic cycle range; not shuffle synonym",
+      "readerContext": "Literal offset/length; general pattern args CODE",
+      "verdict": "keep",
+      "caseIds": "C10",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").rib(-1,2)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "time-lens",
+      "role": "chained time transform / callback-local",
+      "engineContext": "zoom/linger/compress/within differ in selection/time remapping",
+      "readerContext": "Existing modes; WINDOW loop active only in that mode",
+      "verdict": "keep",
+      "caseIds": "C14",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").zoom(.75,.25)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "warp",
+      "role": "chained time transform",
+      "engineContext": "brak/press/hurry distinct transforms; unrelated to wavetable warp setter",
+      "readerContext": "Existing modes; rate only active in hurry; independent instances allowed",
+      "verdict": "keep",
+      "caseIds": "C10",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").hurry(16)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "echo",
+      "role": "chained event transform",
+      "engineContext": "echo creates repeated events/gain, distinct from DELAY's audio buffer",
+      "readerContext": "Bounded times/time/feedback; computed callback echoWith remains CODE",
+      "verdict": "keep",
+      "caseIds": "C12,C15",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").echo(32,.125,.5)",
+      "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "code",
+      "role": "opaque expression / suffix / setup reference",
+      "engineContext": "Any trusted executable program may have side effects; parsing is not execution",
+      "readerContext": "Exact original bytes, unsupported ownership and prelude retained",
+      "verdict": "keep",
+      "caseIds": "C18",
+      "counterexample": "note(\"c2\").s(\"sawtooth\").unknownResearchCall()",
+      "counterexampleKind": "CODE"
+    }
+  ]
+}
