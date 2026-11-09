@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { generate } from '../codegen/generate'
 import { getModuleSpec } from '../modules/catalog'
+import { railWidth } from '../patch/layout'
 import { validateRack } from '../rack/model'
 import { saveLayout, sourceBody } from '../workspace/document'
 import { read } from './read'
@@ -10,14 +11,16 @@ describe('issue #44 long imported voices', () => {
   it('places the complete voice within fixed rails without overlap', () => {
     const document = read(source)
     expect(() => validateRack(document.patch)).not.toThrow()
-    expect(new Set(document.patch.modules.map((module) => module.row)).size).toBeGreaterThan(2)
+    expect(new Set(document.patch.modules.map((module) => module.row)).size).toBe(2)
     expect(document.patch.modules.some((module) => module.type === 'lfo')).toBe(true)
     expect(document.patch.modules.some((module) => module.type === 'delay')).toBe(true)
     expect(document.patch.modules.find((module) => module.type === 'rev')?.values.mode).toBe(
       'palindrome',
     )
     for (const module of document.patch.modules)
-      expect(module.hp + getModuleSpec(module.type).hp).toBeLessThanOrEqual(64)
+      expect(module.hp + getModuleSpec(module.type).hp).toBeLessThanOrEqual(
+        railWidth(document.patch),
+      )
   })
 
   it('preserves the exact executable source separately from placement', () => {

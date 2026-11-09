@@ -1,0 +1,67 @@
+{
+  "browser": "156.0.8078.4",
+  "physicalListening": false,
+  "errors": [],
+  "forms": [
+    {
+      "name": "source",
+      "expression": "K(sine(sFreq).mul(sGate).mul(0.1).out())",
+      "types": ["code", "mix", "out"],
+      "sourceExact": true,
+      "savedIdentity": true,
+      "evaluationMs": 475.2000000178814,
+      "contextState": "running",
+      "contextTime": 4.544,
+      "rejection": null,
+      "failures": [],
+      "rms": 0.05612757233072832,
+      "peak": 0.08000000566244125,
+      "stoppedPeak": 0
+    },
+    {
+      "name": "effect",
+      "expression": "note(\"a3*4\").s(\"sine\").K(audioin().mul(0.1).out())",
+      "types": ["seq", "osc", "code", "mix", "out"],
+      "sourceExact": true,
+      "savedIdentity": true,
+      "evaluationMs": 12.099999994039536,
+      "contextState": "running",
+      "contextTime": 9.301333333333334,
+      "rejection": null,
+      "failures": [],
+      "rms": 0.0112588154838976,
+      "peak": 0.022228002548217773,
+      "stoppedPeak": 0
+    },
+    {
+      "name": "native",
+      "expression": "note(\"a3*4\").s(\"sine\").gain(0.1)",
+      "types": ["seq", "osc", "vca", "mix", "out"],
+      "sourceExact": true,
+      "savedIdentity": true,
+      "evaluationMs": 12.5,
+      "contextState": "running",
+      "contextTime": 14.048,
+      "rejection": null,
+      "failures": [],
+      "rms": 0.01397810016896961,
+      "peak": 0.0277858953922987,
+      "stoppedPeak": 0
+    },
+    {
+      "name": "invalid",
+      "expression": "K(notAKabelNode(2))",
+      "types": ["code", "mix", "out"],
+      "sourceExact": true,
+      "savedIdentity": true,
+      "evaluationMs": 246.30000001192093,
+      "contextState": "running",
+      "contextTime": 19.029333333333334,
+      "rejection": "Error: Audio operation cancelled by Stop",
+      "failures": ["[getTrigger] error: notAKabelNode is not defined"],
+      "rms": 0,
+      "peak": 0,
+      "stoppedPeak": 0
+    }
+  ]
+}

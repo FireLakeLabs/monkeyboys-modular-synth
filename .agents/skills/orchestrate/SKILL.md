@@ -43,9 +43,16 @@ what you proposed, do that part and say what you left out.
 ## Launch a wave
 
 Stay out of wave implementation unless the owner asks you to do one here. First
-confirm the owner said go, `main` is green, including the last wave's post-merge
-browser run, and approved lessons have merged. Waves that need a local browser
-suite run one at a time; see [reading a local run](../../../docs/ci.md#reading-a-local-run).
+confirm the owner said go, `main`'s required checks are green, and approved lessons
+have merged. Check that each of the last wave's PRs completed its hosted browser
+check on the reviewed head whenever it ran, with any failure explained under the
+[browser verification policy](../../../docs/ci.md#browser-verification-policy),
+before merging cleanly. Post-merge main browser runs remain
+monitoring evidence; a pending run does not block the next launch. Inspect results
+already available, investigate failures, and resolve a confirmed product regression
+before continuing. Keep responsibility for pending results after the next launch.
+Waves that need local browser checks, including focused runs, run one at a time;
+see [reading a local run](../../../docs/ci.md#reading-a-local-run).
 
 Use `t3_thread_launch` with a `workspaceStrategy` of `type: "worktree"`,
 `baseRef: "main"`, `startFromOrigin: true` and a named branch. The thread has no
@@ -109,8 +116,9 @@ Do this before calling the wave done. Check each item yourself:
       brief, specs updated, replaced rules gone.
 - [ ] Check each PR's checks and reviews, and that **Full browser suites**
       finished before merge.
-- [ ] Check `main` after the last merge. If a run is still going, say so, and
-      confirm it before the next launch.
+- [ ] Check `main` after the last merge. Record completed browser results and link
+      pending runs. Follow each pending run to its result while later work
+      proceeds; investigate failures under the launch policy above.
 - [ ] Find follow-ups left only in PR text, and unexplained results not tracked.
 - [ ] Find leftovers: servers, held ports, dirty worktrees.
 - [ ] Run the real app on merged `main` from your own checkout, on a spare port,

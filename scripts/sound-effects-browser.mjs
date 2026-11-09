@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { installSampleDiagnostics } from './sample-diagnostics.mjs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
 const output = process.argv[3] ?? '/tmp/monkeyboy-sound-effects'
@@ -8,6 +9,7 @@ const page = await browser.newPage({
   viewport: { width: 1600, height: 1000 },
   ignoreHTTPSErrors: true,
 })
+const diagnostics = await installSampleDiagnostics(page)
 const errors = []
 page.on('pageerror', (e) => errors.push(e.message))
 const results = { browser: browser.version(), looks: [], forms: [], physicalListening: false }
@@ -112,6 +114,7 @@ try {
   await page.screenshot({ path: `${output}/drawbars.png` })
   assert.deepEqual(errors, [])
 } finally {
+  results.diagnostics = await diagnostics()
   results.errors = errors
   await writeFile(`${output}/results.json`, JSON.stringify(results, null, 2))
   await browser.close()

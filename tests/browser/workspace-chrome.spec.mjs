@@ -22,12 +22,10 @@ test.describe('left dock', () => {
     await expect(page.getByLabel('Search sounds')).toBeVisible()
     await expect(page.getByPlaceholder('Name or Strudel call')).toBeHidden()
     await tab(page, 'Packs').click()
-    await expect(page.getByLabel('Add a sample pack')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Add sample pack' })).toBeVisible()
     await expect(page.getByLabel('Search sounds')).toBeHidden()
-    const packs = await page
-      .locator('.cartridge')
-      .evaluateAll((items) => items.map((item) => item.getBoundingClientRect().left))
-    expect(new Set(packs).size).toBe(1)
+    const panel = page.locator('#dock-panel-packs')
+    expect(await panel.evaluate((e) => e.scrollWidth <= e.clientWidth)).toBe(true)
   })
 
   test('chips are compact and two-column, and title and call stay available', async ({ page }) => {

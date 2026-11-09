@@ -1,3 +1,4 @@
+import { packImported } from '../patch/importLayout'
 import { packSetup } from '../samples/packs'
 import { planEffects } from '../codegen/effects'
 import { effectRank } from '../modules/effects'
@@ -28,6 +29,7 @@ import {
 import type { ReadResult, SourceAddress, SourceBinding, SourceDocument, Span } from './types'
 
 import { numericNotation } from '../patch/notation'
+import { isArrangement } from '../patch/arrangement'
 import { modConfig, modPattern, type ModPattern } from './modulation'
 
 type Output = { module: PlacedModule; jack: string }
@@ -162,6 +164,7 @@ function project(
   const gains = new Map<string, { call: Call; index: number; upstream: Output }>()
   const mixerModulations = new Map<string, { index: number; upstream: Output }[]>()
   const outputChannels = new Map<string, { value: string; index: number }>()
+  const arrangements = new Map<string, { index: number }>()
   const depths = new Map<string, { value: number; isDefault: boolean }[]>()
   let row = 0
   let hp = 0
@@ -980,6 +983,24 @@ function project(
         }
       }
       if (
+        call.name === 'mask' &&
+        scope.kind === 'voice' &&
+        call.args.length === 1 &&
+        typeof scalar(call.args[0]) === 'string' &&
+        scalar(call.args[0]) !== '' &&
+        isArrangement(String(scalar(call.args[0]))) &&
+        calls
+          .slice(index + 1)
+          .every(
+            (call) =>
+              ['postgain', 'orbit', 'channels'].includes(call.name) || mixerModulation(call),
+          )
+      ) {
+        // Only a final lane mask is the channel's arranger lane; others stay CODE.
+        arrangements.set(scope.descriptor.id, { index })
+        continue
+      }
+      if (
         name === 'channels' &&
         scope.kind === 'voice' &&
         calls.slice(index + 1).every((call) => call.name === 'orbit')
@@ -1633,6 +1654,7 @@ function project(
       previousDepths.forEach((value, key) => depths.set(key, value))
       gains.delete(scope.descriptor.id)
       mixerModulations.delete(scope.descriptor.id)
+      arrangements.delete(scope.descriptor.id)
       resolved.clear()
       resolvedBefore.forEach((value, key) => {
         const module = patch.modules.find((module) => module.id === value.module.id)
@@ -1720,6 +1742,14 @@ function project(
           literalControls(`channels${channel}`, voice.scope.calls[channels.index]?.args[0]),
           { role: 'mixer' },
         )
+      }
+      const arrangement = arrangements.get(voice.scope.descriptor.id)
+      const lane = arrangement && voice.scope.calls[arrangement.index]?.args[0]
+      if (arrangement && lane) {
+        bus.values[`arr${channel}`] = String(scalar(lane))
+        bind(bus, voice.scope, [arrangement.index], literalControls(`arr${channel}`, lane), {
+          role: 'mixer',
+        })
       }
       const label = voice.scope.label ?? '$'
       const mute = label.startsWith('_') || label.endsWith('_')
@@ -1930,6 +1960,7 @@ export function read(source: string): SourceDocument {
       )
     }
   }
+  if (saved.kind === 'absent') projection.patch = packImported(projection.patch)
   return {
     kind: 'source',
     source,
@@ -2139,7 +2170,7 @@ function restore(
       const before = `ch${cable.to.jack.slice(2)}`
       const after = `ch${jack.slice(2)}`
       values[after] = module.values[before] ?? 1
-      for (const prefix of ['mute', 'solo', 'name', 'channels']) {
+      for (const prefix of ['mute', 'solo', 'name', 'channels', 'arr']) {
         const oldId = `${prefix}${cable.to.jack.slice(2)}`
         const newId = `${prefix}${jack.slice(2)}`
         const control = getModuleSpec('mix').controls.find((control) => control.id === oldId)

@@ -1,0 +1,50 @@
+
+> monkeyboys-modular-synth@0.0.0 test:browser:report
+> node scripts/browser-report.mts tests/browser/stabilization-remaining.spec.mjs tests/browser/suites.spec.mjs tests/browser/stabilization-wave-1.spec.mjs -g overview|Trance|native sound drag|clipped|rack-visuals-check|verifyPanels|verifySoundCrate|verifyCrateReview|verifyConnectionTargets|More Escape|injected fetch
+
+[WebServer] (node:667028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 16 tests using 2 workers
+
+(node:667069) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+
+(node:667070) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/16] tests/browser/stabilization-remaining.spec.mjs:70:1 › overview Connections selects removes and repatches cables without using jacks
+[2/16] tests/browser/stabilization-remaining.spec.mjs:15:1 › overview draws every cable and navigates by pointer and keyboard without changing source
+[3/16] tests/browser/stabilization-remaining.spec.mjs:97:1 › Trance import fits both dimensions and supports readable module navigation
+[4/16] tests/browser/stabilization-remaining.spec.mjs:130:1 › native sound drag highlights panels and selection plus Enter assigns a seated sound
+[5/16] tests/browser/stabilization-remaining.spec.mjs:329:1 › injected fetch and decode failures remain distinguishable from readiness
+[6/16] tests/browser/stabilization-remaining.spec.mjs:383:1 › a clipped off-screen MIX endpoint stays at the rail viewport edge
+[7/16] tests/browser/stabilization-remaining.spec.mjs:419:1 › overview retains pinned OUT volume and tempo controls without enabling jacks
+[8/16] tests/browser/stabilization-remaining.spec.mjs:443:1 › moving an overview canvas cable opens its complete destination chooser
+(node:668359) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[9/16] tests/browser/stabilization-wave-1.spec.mjs:109:1 › More Escape preserves status even after a committed control drops focus
+[10/16] tests/browser/stabilization-wave-1.spec.mjs:304:1 › Packs cards stay inside the dock and retain clipped source URLs
+(node:668564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[11/16] tests/browser/suites.spec.mjs:29:3 › rack-visuals-check
+(node:668903) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[12/16] tests/browser/suites.spec.mjs:97:3 › verifySoundCrate
+[13/16] tests/browser/suites.spec.mjs:97:3 › verifyCrateReview
+[14/16] tests/browser/suites.spec.mjs:97:3 › verifyConnectionTargets
+[15/16] tests/browser/suites.spec.mjs:97:3 › verifyPanels
+[16/16] tests/browser/suites.spec.mjs:209:1 › trance playback, events and export/reopen
+  16 passed (1.4m)
+
+RESULT passed=16 failed=0 exit=0
+Log: /tmp/monkeyboy-browser-666978.log

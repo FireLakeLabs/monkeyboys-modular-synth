@@ -131,10 +131,10 @@ try {
   )
   pass('GATES and SWITCH multi-input probes retain expected prefixes without audio')
   await page.getByRole('button', { name: 'All cables', exact: true }).click()
-  const path = page.locator('.cable.signal-pattern path:not(.cable-shadow)').first()
+  const path = page.locator('.cable.signal-pattern .cable-hit').first()
   const point = await path.evaluate((path) => {
-    // Pattern cables are dotted every 9 px, and only the dots take the pointer.
-    const p = path.getPointAtLength(Math.round((path.getTotalLength() * 0.55) / 9) * 9),
+    // The continuous hit stroke must work without snapping to a painted dot.
+    const p = path.getPointAtLength(path.getTotalLength() * 0.55),
       screen = new DOMPoint(p.x, p.y).matrixTransform(path.getScreenCTM())
     return { x: screen.x, y: screen.y }
   })

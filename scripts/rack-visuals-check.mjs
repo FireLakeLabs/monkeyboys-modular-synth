@@ -242,8 +242,7 @@ try {
         cables.every(
           (cable) =>
             Number(getComputedStyle(cable).opacity) <= 0.1 &&
-            getComputedStyle(cable.querySelector('path:not(.cable-shadow)')).pointerEvents ===
-              'none',
+            getComputedStyle(cable.querySelector('.cable-hit')).pointerEvents === 'none',
         ),
       ),
   )
@@ -269,7 +268,7 @@ try {
 
   const signals = await page.evaluate(() =>
     ['pattern', 'audio', 'mod'].map((signal) => {
-      const cable = document.querySelector(`.cable.signal-${signal} path:not(.cable-shadow)`)
+      const cable = document.querySelector(`.cable.signal-${signal} .cable-paint`)
       const jack = document.querySelector(`.jack.signal-${signal}`)
       const mark = getComputedStyle(jack, '::after')
       return {
@@ -308,6 +307,7 @@ try {
     (await import('/scripts/trance-check.mjs')).loadTrance(),
   )
   const tranceSource = await source()
+  await page.getByLabel('Rack zoom').selectOption('1')
   await button('Dim cables').click()
   await page.setViewportSize({ width: 1600, height: Math.max(1800, trance.rows * 440 + 320) })
   const readable = await page.locator('.module-panel').evaluateAll((panels) =>

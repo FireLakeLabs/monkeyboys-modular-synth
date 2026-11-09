@@ -1,7 +1,7 @@
 import { test, expect } from 'playwright/test'
 import { execFileSync } from 'node:child_process'
 import { readFile, writeFile } from 'node:fs/promises'
-import { chooseSwitch } from '../../scripts/panel-controls.mjs'
+import { chooseSwitch, detailPanel } from '../../scripts/panel-controls.mjs'
 
 const run = (page, method, arg) =>
   page.evaluate(async ({ method, arg }) => (await import('/scripts/doom-check.mjs'))[method](arg), {
@@ -60,6 +60,7 @@ test('Doom instrument: six-cycle identity, budgets, audio, edits and stopped rep
       ['drive1', 'DRIVE', '1'],
       ['mix1', 'CH 1', '0.1'],
     ]) {
+      await detailPanel(page.locator(`[data-module="${id}"]`))
       const control = page
         .locator(`[data-module="${id}"]`)
         .getByRole('button', { name: `Set ${label}`, exact: true })

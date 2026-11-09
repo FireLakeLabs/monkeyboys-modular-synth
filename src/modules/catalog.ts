@@ -208,13 +208,16 @@ export const OSC: ModuleSpec = {
       when: [{ control: 'wave', values: ['pulse'] }],
     }),
     numericCall('voices', 'VOICES', 'unison', 1, 100, 1, 5, {
+      more: true,
       when: [{ control: 'wave', values: ['supersaw'] }],
     }),
     numericCall('detune', 'DETUNE', 'detune', 0, 24, 0.01, 0.18, {
       unit: 'st',
+      more: true,
       when: [{ control: 'wave', values: ['supersaw'] }],
     }),
     numericCall('spread', 'SPREAD', 'spread', 0, 1, 0.01, 0.6, {
+      more: true,
       when: [{ control: 'wave', values: ['supersaw'] }],
     }),
     numericCall('noise', 'NOISE', 'noise', 0, 1, 0.01, 0, {
@@ -857,6 +860,8 @@ export const MIX: ModuleSpec = {
         },
         { kind: 'text', id: `name${n}`, label: `NAME ${n}`, default: '', more: true },
         { kind: 'text', id: `channels${n}`, label: `OUTPUT ${n}`, default: '1:2', more: true },
+        // Arranger lane (#141): one mask step per cycle, edited in the Arrange popover.
+        { kind: 'text', id: `arr${n}`, label: `ARRANGE ${n}`, default: '', more: true },
       ] satisfies Control[]
     ).map((control) => ({ ...control, group: `CH ${n}` })),
   ),
@@ -876,7 +881,7 @@ export const MIX: ModuleSpec = {
     })),
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['postgain', 'stack', 'channels'],
+  strudel: ['postgain', 'stack', 'channels', 'mask'],
   orderSensitive: false,
 }
 

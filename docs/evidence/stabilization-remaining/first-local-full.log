@@ -1,0 +1,1027 @@
+
+> monkeyboys-modular-synth@0.0.0 test:browser:report
+> node scripts/browser-report.mts
+
+[WebServer] (node:607464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 186 tests using 2 workers
+
+(node:607505) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:607506) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/186] tests/browser/auto-apply.spec.mjs:43:3 › while stopped › finished code applies by itself and does not start playback
+[2/186] tests/browser/auto-apply.spec.mjs:50:3 › while stopped › pausing after .l leaves the rack unchanged
+[3/186] tests/browser/auto-apply.spec.mjs:60:3 › while stopped › a complete call the rack cannot model still applies, and ends a step
+[4/186] tests/browser/auto-apply.spec.mjs:69:3 › while stopped › each finished call is one undo step, ending with no pause needed
+[5/186] tests/browser/auto-apply.spec.mjs:84:3 › while stopped › fast typing still ends a step at each finished call
+[6/186] tests/browser/auto-apply.spec.mjs:96:3 › while stopped › deleting a voice ends a step, even when typing resumes at once
+[7/186] tests/browser/auto-apply.spec.mjs:113:3 › while stopped › a paste is finished text, even with a property read in it
+[8/186] tests/browser/auto-apply.spec.mjs:119:3 › while stopped › moving the caret off an edited word lets finished code apply
+[9/186] tests/browser/auto-apply.spec.mjs:130:3 › while stopped › typing in a pattern string is one step per pause
+[10/186] tests/browser/auto-apply.spec.mjs:149:3 › while stopped › undo never lands on unreadable code or a half-typed word
+[11/186] tests/browser/auto-apply.spec.mjs:162:3 › while stopped › leaving the editor ends a step and applies finished code at once
+[12/186] tests/browser/auto-apply.spec.mjs:168:3 › while stopped › Apply and Ctrl+Enter apply readable half-typed code at once
+[13/186] tests/browser/auto-apply.spec.mjs:180:3 › the locked rack › never flickers while typing, then says so with the reason and a way out
+[14/186] tests/browser/auto-apply.spec.mjs:211:3 › the locked rack › unreadable code says how to get out, and covers rack, OUT and module list
+[15/186] tests/browser/auto-apply.spec.mjs:229:3 › the locked rack › showing the lock and reverting keeps the panels
+[16/186] tests/browser/auto-apply.spec.mjs:246:3 › the locked rack › leaving the editor on unfinished code locks at once
+[17/186] tests/browser/auto-apply.spec.mjs:269:3 › while playing › code applies only on Apply, and Unapplied changes stays visible
+[18/186] tests/browser/auto-apply.spec.mjs:280:3 › while playing › the toggle also applies finished code while playing, with the same check
+[19/186] tests/browser/auto-apply.spec.mjs:294:3 › while playing › stopping applies code typed while playing
+[20/186] tests/browser/auto-apply.spec.mjs:311:5 › Play › a unreadable draft never disables Play, which plays the last applied code
+[21/186] tests/browser/auto-apply.spec.mjs:311:5 › Play › a half-typed draft never disables Play, which plays the last applied code
+[22/186] tests/browser/auto-apply.spec.mjs:324:3 › Play › Play ends a step and applies finished code first
+[23/186] tests/browser/auto-apply.spec.mjs:334:1 › a restored readable draft waits for you instead of applying itself
+[24/186] tests/browser/doom.spec.mjs:16:1 › Doom instrument: six-cycle identity, budgets, audio, edits and stopped replacement
+[25/186] tests/browser/dub.spec.mjs:33:1 › Dub afterimage: phrase, sources, native delay PCM, transport and saved identity
+  1) tests/browser/doom.spec.mjs:16:1 › Doom instrument: six-cycle identity, budgets, audio, edits and stopped replacement 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: page.evaluate: Target page, context or browser has been closed
+
+       5 |
+       6 | const run = (page, method, arg) =>
+    >  7 |   page.evaluate(async ({ method, arg }) => (await import('/scripts/doom-check.mjs'))[method](arg), {
+         |        ^
+       8 |     method,
+       9 |     arg,
+      10 |   })
+        at run (/home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/doom.spec.mjs:7:8)
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/doom.spec.mjs:201:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/doom-Doom-instrument-six-c-61259-its-and-stopped-replacement/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/doom-Doom-instrument-six-c-61259-its-and-stopped-replacement/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/doom-Doom-instrument-six-c-61259-its-and-stopped-replacement/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/doom-Doom-instrument-six-c-61259-its-and-stopped-replacement/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:608877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[26/186] tests/browser/dub.spec.mjs:247:1 › Dub native delay: waveform spacing, decay, clamping and bypass
+[27/186] tests/browser/industrial.spec.mjs:33:1 › Industrial triplets: six-cycle identity, budgets, audio, edits and stopped replacement
+  2) tests/browser/dub.spec.mjs:33:1 › Dub afterimage: phrase, sources, native delay PCM, transport and saved identity 
+
+    Test timeout of 240000ms exceeded.
+
+    Error: page.evaluate: Target page, context or browser has been closed
+
+       5 | const check = '/scripts/dub-check.mjs'
+       6 | const run = (page, method, arg) =>
+    >  7 |   page.evaluate(async ({ check, method, arg }) => (await import(check))[method](arg), {
+         |        ^
+       8 |     check,
+       9 |     method,
+      10 |     arg,
+        at run (/home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/dub.spec.mjs:7:8)
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/dub.spec.mjs:242:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/dub-Dub-afterimage-phrase--52dd1-ransport-and-saved-identity/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/dub-Dub-afterimage-phrase--52dd1-ransport-and-saved-identity/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/dub-Dub-afterimage-phrase--52dd1-ransport-and-saved-identity/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/dub-Dub-afterimage-phrase--52dd1-ransport-and-saved-identity/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:609209) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[28/186] tests/browser/my-patches.spec.mjs:28:1 › the first Ctrl+S asks for a name, and later saves update the same entry
+[29/186] tests/browser/my-patches.spec.mjs:50:1 › Escape cancels the first save and writes nothing
+[30/186] tests/browser/my-patches.spec.mjs:58:1 › a saved patch reloads with exact source and rack, from My patches
+[31/186] tests/browser/my-patches.spec.mjs:92:1 › patches can be renamed, exported, deleted and undeleted
+[32/186] tests/browser/my-patches.spec.mjs:121:1 › saved patches survive a reload
+[33/186] tests/browser/my-patches.spec.mjs:132:1 › the File menu saves too
+[34/186] tests/browser/my-patches.spec.mjs:137:1 › an unapplied draft is saved as it is, never dropped
+[35/186] tests/browser/my-patches.spec.mjs:150:1 › a full store says so, and the work stays open
+[36/186] tests/browser/my-patches.spec.mjs:174:1 › an unreadable store is reported and left exactly as it was
+[37/186] tests/browser/my-patches.spec.mjs:186:1 › undoing a load never saves the old patch over the one that was loaded
+[38/186] tests/browser/my-patches.spec.mjs:210:1 › a failed Undo of a delete keeps the entry, so it can be tried again
+[39/186] tests/browser/my-patches.spec.mjs:236:1 › a failed save stays on screen through later edits
+[40/186] tests/browser/my-patches.spec.mjs:268:1 › later saves keep the name you chose
+[41/186] tests/browser/my-patches.spec.mjs:287:1 › a named draft keeps its name on the next save
+[42/186] tests/browser/my-patches.spec.mjs:298:1 › a stale tab cannot overwrite newer work, even by renaming first
+[43/186] tests/browser/my-patches.spec.mjs:338:1 › a library left open in a stale tab cannot overwrite newer work
+[44/186] tests/browser/my-patches.spec.mjs:372:1 › storage use is reported, with a warning when nearly full
+[45/186] tests/browser/my-patches.spec.mjs:399:1 › loading a saved patch over an unapplied draft still asks
+[46/186] tests/browser/panel-controls.spec.mjs:34:1 › toggles and segments write the source and saved rack state the dropdown wrote
+[47/186] tests/browser/panel-controls.spec.mjs:58:1 › segments are radios and off/on switches are pressed buttons, from the keyboard
+[48/186] tests/browser/panel-controls.spec.mjs:85:1 › a cable crossing a panel never takes clicks from its buttons and segments
+[49/186] tests/browser/panel-controls.spec.mjs:116:1 › values read as plain text, stay click-to-edit, and ACCENT opens on demand
+[50/186] tests/browser/panel-controls.spec.mjs:142:1 › headers stay compact and no module scrolls in any look at full size
+[51/186] tests/browser/panel-controls.spec.mjs:160:1 › an open ACCENT editor is never clipped out of reach
+[52/186] tests/browser/panel-controls.spec.mjs:179:1 › More holds rarely used fields beside the panel and writes the same source
+[53/186] tests/browser/panel-controls.spec.mjs:231:1 › Escape in a More field cancels the edit, closes More and writes nothing
+[54/186] tests/browser/panel-controls.spec.mjs:257:1 › More opens on the free side of a panel at the right end of the rail
+[55/186] tests/browser/panel-controls.spec.mjs:270:1 › MIX faders drive the same value by keyboard and pointer, and cables follow
+[56/186] tests/browser/panel-controls.spec.mjs:296:1 › module IDs appear on hover, focus or selection without changing accessible names
+[57/186] tests/browser/rack-layout.spec.mjs:16:1 › packs leave the rack alone while their controls remain available
+[58/186] tests/browser/rack-layout.spec.mjs:25:1 › Fit never draws cables to clipped mixer jacks and keeps source intact
+[59/186] tests/browser/rack-view-state.spec.mjs:32:1 › rack view state survives typing, applying and undoing
+[60/186] tests/browser/rack-view-state.spec.mjs:61:1 › panels still show an externally changed value after a code edit
+[61/186] tests/browser/rack-view-state.spec.mjs:73:1 › Delete and Backspace act on the selected module wherever rack focus is
+[62/186] tests/browser/rack-view-state.spec.mjs:110:1 › Delete removes a selected cable and the menu shows the shortcut
+[63/186] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1440px
+[64/186] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1600px
+[65/186] tests/browser/rack-view-state.spec.mjs:126:3 › a new patch shows MIX at 1920px
+[66/186] tests/browser/rack-view-state.spec.mjs:142:1 › a cable to an off-screen jack ends at the rail edge, not across OUT
+[67/186] tests/browser/rack-view-state.spec.mjs:166:1 › a slow draft does not reset an open sound drawer
+[68/186] tests/browser/suites.spec.mjs:29:3 › workspace-errors
+  3) tests/browser/suites.spec.mjs:29:3 › workspace-errors ─────────────────────────────────────────
+
+    Error: Command failed: /home/aaron/.local/share/node/bin/node scripts/workspace-errors.mjs http://127.0.0.1:5173 /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/test-results/suites-workspace-errors/evidence
+    (node:610516) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    node:internal/modules/run_main:107
+        triggerUncaughtException(
+        ^
+
+    AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+      assert(new Set(longRack.modules.map((module) => module.row)).size > 2)
+
+        at file:///home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/scripts/workspace-errors.mjs:113:3 {
+      generatedMessage: true,
+      code: 'ERR_ASSERTION',
+      actual: false,
+      expected: true,
+      operator: '==',
+      diff: 'simple'
+    }
+
+    Node.js v24.22.2
+
+
+    attachment #1: suite-log (text/plain) ──────────────────────────────────────────────────────────
+    (node:610516) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    node:internal/modules/run_main:107
+        triggerUncaughtException(
+        ^
+    
+    AssertionError [ERR_ASSERTION]: The expression evaluated to a f...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-workspace-errors/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-workspace-errors/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-workspace-errors/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-workspace-errors/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:610628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[69/186] tests/browser/suites.spec.mjs:29:3 › feedback-check
+[WebServer] 2:07:43 PM [vite] (client) [console.error] TypeError: note(...).missingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:83)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[70/186] tests/browser/suites.spec.mjs:29:3 › autosave-check
+[71/186] tests/browser/suites.spec.mjs:29:3 › metadata-check
+[72/186] tests/browser/suites.spec.mjs:29:3 › code-application-check
+[73/186] tests/browser/suites.spec.mjs:29:3 › history-check
+[74/186] tests/browser/suites.spec.mjs:29:3 › sounding-tokens-check
+[WebServer] 2:08:42 PM [vite] (client) [console.error] TypeError: note(...).missingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:83)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[75/186] tests/browser/suites.spec.mjs:29:3 › module-behavior-check
+[WebServer] 2:08:58 PM [vite] (client) [console.error] TypeError: note(...).missingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:76)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[76/186] tests/browser/suites.spec.mjs:29:3 › rack-visuals-check
+  4) tests/browser/suites.spec.mjs:29:3 › rack-visuals-check ───────────────────────────────────────
+
+    Error: Command failed: /home/aaron/.local/share/node/bin/node scripts/rack-visuals-check.mjs http://127.0.0.1:5173 /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/test-results/suites-rack-visuals-check/evidence
+    (node:612040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    node:internal/modules/run_main:107
+        triggerUncaughtException(
+        ^
+
+    page.evaluate: Error: seq1: overflowing controls cannot scroll
+        at assert (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:12:21)
+        at inspectPanels (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:83:5)
+        at Module.verifyPanels (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:176:42)
+        at async <anonymous>:396:30
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/scripts/rack-visuals-check.mjs:27:29 {
+      log: []
+    }
+
+    Node.js v24.22.2
+
+        at assert (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:12:21)
+        at inspectPanels (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:83:5)
+        at Module.verifyPanels (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:176:42)
+        at async <anonymous>:396:30
+
+    attachment #1: suite-log (text/plain) ──────────────────────────────────────────────────────────
+    (node:612040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    node:internal/modules/run_main:107
+        triggerUncaughtException(
+        ^
+    
+    page.evaluate: Error: seq1: overflowing controls cannot scroll
+    ...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-rack-visuals-check/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-rack-visuals-check/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-rack-visuals-check/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-rack-visuals-check/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:612150) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[77/186] tests/browser/suites.spec.mjs:29:3 › output-panel-browser
+  5) tests/browser/industrial.spec.mjs:33:1 › Industrial triplets: six-cycle identity, budgets, audio, edits and stopped replacement 
+
+    Test timeout of 240000ms exceeded.
+
+    Error: page.evaluate: Target page, context or browser has been closed
+
+       6 | const check = '/scripts/industrial-check.mjs'
+       7 | const run = (page, method, arg) =>
+    >  8 |   page.evaluate(async ({ check, method, arg }) => (await import(check))[method](arg), {
+         |        ^
+       9 |     check,
+      10 |     method,
+      11 |     arg,
+        at run (/home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/industrial.spec.mjs:8:8)
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/industrial.spec.mjs:262:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/industrial-Industrial-trip-aa195-its-and-stopped-replacement/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/industrial-Industrial-trip-aa195-its-and-stopped-replacement/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/industrial-Industrial-trip-aa195-its-and-stopped-replacement/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/industrial-Industrial-trip-aa195-its-and-stopped-replacement/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:612524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[78/186] tests/browser/suites.spec.mjs:29:3 › panels-browser
+  6) tests/browser/suites.spec.mjs:29:3 › output-panel-browser ─────────────────────────────────────
+
+    Error: Command failed: /home/aaron/.local/share/node/bin/node scripts/output-panel-browser.mjs http://127.0.0.1:5173 /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/test-results/suites-output-panel-browser/evidence
+    (node:612255) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    node:internal/modules/run_main:107
+        triggerUncaughtException(
+        ^
+
+    locator.click: Timeout 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-jack="mix1:out"]')
+        - locator resolved to <button disabled type="button" data-jack="mix1:out" title="OUT · audio out" class="jack signal-audio   " aria-label="mix1 OUT out · audio"></button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        58 × waiting for element to be visible, enabled and stable
+           - element is not enabled
+         - retrying click action
+           - waiting 500ms
+
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/scripts/output-panel-browser.mjs:129:16 {
+      log: [
+        `  - waiting for locator('[data-jack="mix1:out"]')`,
+        '    - locator resolved to <button disabled type="button" data-jack="mix1:out" title="OUT · audio out" class="jack signal-audio   " aria-label="mix1 OUT out · audio"></button>',
+        '  - attempting click action',
+        '    2 × waiting for element to be visible, enabled and stable',
+        '      - element is not enabled',
+        '    - retrying click action',
+        '    - waiting 20ms',
+        '    2 × waiting for element to be visible, enabled and stable',
+        '      - element is not enabled',
+        '    - retrying click action',
+        '      - waiting 100ms',
+        '    58 × waiting for element to be visible, enabled and stable',
+        '       - element is not enabled',
+        '     - retrying click action',
+        '       - waiting 500ms'
+      ],
+      name: 'TimeoutError'
+    }
+
+    Node.js v24.22.2
+
+
+    attachment #1: suite-log (text/plain) ──────────────────────────────────────────────────────────
+    PASS window-based defaults, fixed saved width on resize, and New patch width selection
+    PASS 1600px: four looks, three source rails, both scroll axes, Fit, focus, width rejection, BPM and VOL
+    PASS 1024px: four looks, three source rails, both scroll axes, Fit, focus, width rejection, BPM and VOL
+    PASS ...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-output-panel-browser/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-output-panel-browser/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-output-panel-browser/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-output-panel-browser/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:612751) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[79/186] tests/browser/suites.spec.mjs:29:3 › sound-effects-browser
+  7) tests/browser/suites.spec.mjs:29:3 › panels-browser ───────────────────────────────────────────
+
+    Error: Command failed: /home/aaron/.local/share/node/bin/node scripts/panels-browser.mjs http://127.0.0.1:5173 /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/test-results/suites-panels-browser/evidence
+    (node:612628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    node:internal/modules/run_main:107
+        triggerUncaughtException(
+        ^
+
+    page.waitForFunction: Timeout 30000ms exceeded.
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/scripts/panels-browser.mjs:103:14 {
+      log: [],
+      name: 'TimeoutError'
+    }
+
+    Node.js v24.22.2
+
+
+    attachment #1: suite-log (text/plain) ──────────────────────────────────────────────────────────
+    (node:612628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    node:internal/modules/run_main:107
+        triggerUncaughtException(
+        ^
+    
+    page.waitForFunction: Timeout 30000ms exceeded.
+        at /ho...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-panels-browser/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-panels-browser/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-panels-browser/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-panels-browser/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:613053) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[80/186] tests/browser/suites.spec.mjs:29:3 › module-exercises-browser
+[81/186] tests/browser/suites.spec.mjs:29:3 › nested-steps-browser
+[82/186] tests/browser/suites.spec.mjs:29:3 › function-loops-browser
+[83/186] tests/browser/suites.spec.mjs:29:3 › pattern-visibility-browser
+[84/186] tests/browser/suites.spec.mjs:68:1 › WAV bounce and live audio recovery
+  8) tests/browser/suites.spec.mjs:29:3 › module-exercises-browser ─────────────────────────────────
+
+    Error: Command failed: /home/aaron/.local/share/node/bin/node scripts/module-exercises-browser.mjs http://127.0.0.1:5173 /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/test-results/suites-module-exercises-browser/evidence
+    (node:613156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    FAIL splice: TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('[data-module="splice1"]').getByRole('button', { name: 'Set SLICES', exact: true })
+        - locator resolved to <button type="button" class="readout" aria-label="Set SLICES">4</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to splice1">SPLICE ↗</button> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to splice1">SPLICE ↗</button> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        9 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to splice1">SPLICE ↗</button> intercepts pointer events
+        - retrying click action
+          - waiting 500ms
+
+    FAIL wavetable: TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('[data-module="wavetable1"]').getByRole('button', { name: 'Set POSITION', exact: true })
+        - locator resolved to <button type="button" class="readout" aria-label="Set POSITION">0.4</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to wavetable1">WAVETABLE ↗</button> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to wavetable1">WAVETABLE ↗</button> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        9 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to wavetable1">WAVETABLE ↗</button> intercepts pointer events
+        - retrying click action
+          - waiting 500ms
+        - waiting for element to be visible, enabled and stable
+
+    FAIL modmix: TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('[data-module="cvseq2"]').getByRole('button', { name: 'Text mode', exact: true })
+        - locator resolved to <button type="button" class="button mini-text-toggle">Text mode</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to cvseq2">CV SEQ ↗</button> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to cvseq2">CV SEQ ↗</button> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        9 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to cvseq2">CV SEQ ↗</button> intercepts pointer events
+        - retrying click action
+          - waiting 500ms
+
+    FAIL mix: TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('[data-module="mix1"]').getByRole('button', { name: 'Set CH 1', exact: true })
+        - locator resolved to <button type="button" class="readout" aria-label="Set CH 1">0.8</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to mix1">MIX ↗</button> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to mix1">MIX ↗</button> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        9 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" class="overview-module" aria-label="Zoom to mix1">MIX ↗</button> intercepts pointer events
+        - retrying click action
+          - waiting 500ms
+
+    node:internal/modules/run_main:107
+        triggerUncaughtException(
+        ^
+
+    AssertionError [ERR_ASSERTION]: Module exercises failed; see results.json for all reproductions
+
+    4 !== 0
+
+        at file:///home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/scripts/module-exercises-browser.mjs:227:10 {
+      generatedMessage: false,
+      code: 'ERR_ASSERTION',
+      actual: 4,
+      expected: 0,
+      operator: 'strictEqual',
+      diff: 'simple'
+    }
+
+    Node.js v24.22.2
+
+
+    attachment #1: suite-log (text/plain) ──────────────────────────────────────────────────────────
+    PASS gates: events 40/64, RMS 0.0014101344994581545
+    PASS switch: events 8/8, RMS 0.0016123620942978033
+    PASS aux: events 72/72, RMS 0.0017771627808494121
+    PASS duck: events 72/72, RMS 0.0015663048824380449
+    PASS seq: events 32/32, RMS 0.0012586572815779424
+    PASS drums: events 24/32, RMS 0.00116527001950...
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-module-exercises-browser/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-module-exercises-browser/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-module-exercises-browser/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-module-exercises-browser/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:614185) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[85/186] tests/browser/suites.spec.mjs:97:3 › verifyCartridges
+[WebServer] 2:13:59 PM [vite] (client) [console.error] TypeError: s(...).missingBounceMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:4:25)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:4:56)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:443:15
+
+[86/186] tests/browser/suites.spec.mjs:97:3 › verifySoundCrate
+[87/186] tests/browser/suites.spec.mjs:97:3 › verifyCrateReview
+[88/186] tests/browser/suites.spec.mjs:97:3 › verifyConnectionTargets
+[89/186] tests/browser/suites.spec.mjs:97:3 › verifyGrids
+[90/186] tests/browser/suites.spec.mjs:97:3 › verifyReplacementConfirmation
+  9) tests/browser/suites.spec.mjs:97:3 › verifySoundCrate ─────────────────────────────────────────
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('.tape-mark[data-mark="begin"]')
+    Expected: "0.5"
+    Received: "0.2"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('.tape-mark[data-mark="begin"]') with timeout 5000ms
+      - waiting for locator('.tape-mark[data-mark="begin"]')
+        14 × locator resolved to <button type="button" role="slider" class="tape-mark" data-mark="begin" aria-valuemin="0" aria-valuemax="1" title="BEGIN 0.2" aria-valuenow="0.2" aria-label="Tape BEGIN" aria-orientation="horizontal">B</button>
+           - unexpected value "0.2"
+
+
+      138 |       )
+      139 |       await page.mouse.up()
+    > 140 |       await expect(mark).toHaveAttribute('aria-valuenow', '0.5')
+          |                          ^
+      141 |       await page.getByRole('button', { name: 'Undo', exact: true }).click()
+      142 |       await expect(mark).toHaveAttribute('aria-valuenow', '0.2')
+      143 |       expect(
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/suites.spec.mjs:140:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-verifySoundCrate/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-verifySoundCrate/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-verifySoundCrate/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-verifySoundCrate/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:614453) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[91/186] tests/browser/suites.spec.mjs:97:3 › verifyLibraryUI
+[92/186] tests/browser/suites.spec.mjs:97:3 › verifyOnRampUI
+[93/186] tests/browser/suites.spec.mjs:97:3 › verifyLiteralIdentity
+[94/186] tests/browser/suites.spec.mjs:97:3 › checkErrorPositions
+[95/186] tests/browser/suites.spec.mjs:97:3 › checkEditorStatus
+[WebServer] 2:14:34 PM [vite] (client) [console.error] TypeError: note(...).statusBarMissingMethod is not a function
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:58)
+[WebServer]     at eval (eval at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:9), <anonymous>:3:92)
+[WebServer]     at j9 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1044:20)
+[WebServer]     at e0 (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:1054:18)
+[WebServer]     at Object.evaluate (http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4:5625:43)
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:383:5
+[WebServer]     at async http://127.0.0.1:5173/src/strudel/engine.ts:390:4
+
+[96/186] tests/browser/suites.spec.mjs:97:3 › verifyCodeConversion
+[97/186] tests/browser/suites.spec.mjs:97:3 › verifyConversionPlayback
+[98/186] tests/browser/suites.spec.mjs:97:3 › verifyPatchNames
+[99/186] tests/browser/suites.spec.mjs:97:3 › verifyPanels
+  10) tests/browser/suites.spec.mjs:97:3 › verifyPanels ────────────────────────────────────────────
+
+    Error: page.evaluate: Error: seq1: overflowing controls cannot scroll
+        at assert (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:12:21)
+        at inspectPanels (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:83:5)
+        at Module.verifyPanels (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:176:42)
+        at async <anonymous>:396:30
+        at assert (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:12:21)
+        at inspectPanels (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:83:5)
+        at Module.verifyPanels (http://127.0.0.1:5173/scripts/rack-feel-check.mjs:176:42)
+        at async <anonymous>:396:30
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/suites.spec.mjs:104:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-verifyPanels/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-verifyPanels/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-verifyPanels/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-verifyPanels/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:614792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[100/186] tests/browser/suites.spec.mjs:155:3 › library rack editing batch 1/3
+[101/186] tests/browser/suites.spec.mjs:155:3 › library rack editing batch 2/3
+  11) tests/browser/suites.spec.mjs:155:3 › library rack editing batch 1/3 ─────────────────────────
+
+    Error: page.evaluate: Error: Timed out waiting for library UI
+        at until (http://127.0.0.1:5173/scripts/library-check.mjs:14:9)
+        at async cable (http://127.0.0.1:5173/scripts/library-check.mjs:441:5)
+        at async Module.verifyLibraryRackEditing (http://127.0.0.1:5173/scripts/library-check.mjs:461:7)
+        at async eval (eval at evaluate (:370:30), <anonymous>:9:23)
+        at async <anonymous>:396:30
+        at until (http://127.0.0.1:5173/scripts/library-check.mjs:14:9)
+        at async cable (http://127.0.0.1:5173/scripts/library-check.mjs:441:5)
+        at async Module.verifyLibraryRackEditing (http://127.0.0.1:5173/scripts/library-check.mjs:461:7)
+        at async eval (eval at evaluate (:370:30), <anonymous>:9:23)
+        at async <anonymous>:396:30
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/suites.spec.mjs:157:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-library-rack-editing-batch-1-3/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-library-rack-editing-batch-1-3/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-library-rack-editing-batch-1-3/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-library-rack-editing-batch-1-3/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:614976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[102/186] tests/browser/suites.spec.mjs:155:3 › library rack editing batch 3/3
+  12) tests/browser/suites.spec.mjs:155:3 › library rack editing batch 2/3 ─────────────────────────
+
+    Error: page.evaluate: Error: Timed out waiting for library UI
+        at until (http://127.0.0.1:5173/scripts/library-check.mjs:14:9)
+        at async cable (http://127.0.0.1:5173/scripts/library-check.mjs:441:5)
+        at async Module.verifyLibraryRackEditing (http://127.0.0.1:5173/scripts/library-check.mjs:461:7)
+        at async eval (eval at evaluate (:370:30), <anonymous>:9:23)
+        at async <anonymous>:396:30
+        at until (http://127.0.0.1:5173/scripts/library-check.mjs:14:9)
+        at async cable (http://127.0.0.1:5173/scripts/library-check.mjs:441:5)
+        at async Module.verifyLibraryRackEditing (http://127.0.0.1:5173/scripts/library-check.mjs:461:7)
+        at async eval (eval at evaluate (:370:30), <anonymous>:9:23)
+        at async <anonymous>:396:30
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/suites.spec.mjs:157:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-library-rack-editing-batch-2-3/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-library-rack-editing-batch-2-3/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-library-rack-editing-batch-2-3/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-library-rack-editing-batch-2-3/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:615090) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[103/186] tests/browser/suites.spec.mjs:177:3 › mid-width workspace at 1024px
+[104/186] tests/browser/suites.spec.mjs:177:3 › mid-width workspace at 900px
+  13) tests/browser/suites.spec.mjs:155:3 › library rack editing batch 3/3 ─────────────────────────
+
+    Error: page.evaluate: Error: Timed out waiting for library UI
+        at until (http://127.0.0.1:5173/scripts/library-check.mjs:14:9)
+        at async cable (http://127.0.0.1:5173/scripts/library-check.mjs:441:5)
+        at async Module.verifyLibraryRackEditing (http://127.0.0.1:5173/scripts/library-check.mjs:461:7)
+        at async eval (eval at evaluate (:370:30), <anonymous>:9:23)
+        at async <anonymous>:396:30
+        at until (http://127.0.0.1:5173/scripts/library-check.mjs:14:9)
+        at async cable (http://127.0.0.1:5173/scripts/library-check.mjs:441:5)
+        at async Module.verifyLibraryRackEditing (http://127.0.0.1:5173/scripts/library-check.mjs:461:7)
+        at async eval (eval at evaluate (:370:30), <anonymous>:9:23)
+        at async <anonymous>:396:30
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/suites.spec.mjs:157:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-library-rack-editing-batch-3-3/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-library-rack-editing-batch-3-3/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-library-rack-editing-batch-3-3/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-library-rack-editing-batch-3-3/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:615227) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[105/186] tests/browser/suites.spec.mjs:188:1 › library audio, replacement Cancel and Stop recovery
+[106/186] tests/browser/suites.spec.mjs:209:1 › trance playback, events and export/reopen
+[107/186] tests/browser/suites.spec.mjs:222:1 › pattern and time module forms, source, rack identity and PCM
+[108/186] tests/browser/suites.spec.mjs:246:1 › pattern module numeric and text controls preserve imported source
+[109/186] tests/browser/suites.spec.mjs:288:1 › imported CHORD branch accepts native deletion and keyboard reconnection
+[110/186] tests/browser/suites.spec.mjs:328:1 › generalized modulation controls and within-note PCM
+[111/186] tests/browser/suites.spec.mjs:388:1 › mixer generalized CV preserves nested gain and within-note PCM
+tests/browser/suites.spec.mjs:388:1 › mixer generalized CV preserves nested gain and within-note PCM
+MIX PCM [{"mode":"SMOOTH","source":"lfo","depth":0.4,"low":0.02223532057185331,"high":0.06241967275159155,"ratio":2.8072306198546917,"sampleRate":48000},{"mode":"SMOOTH","source":"lfo","depth":-0.15,"low":0.00567004772915094,"high":0.020788026829372405,"ratio":3.6662878025693977,"sampleRate":48000},{"mode":"STEP","source":"lfo","depth":0.4,"low":0.04214487086296008,"high":0.04270268286495305,"ratio":1.0132355845580066,"sampleRate":48000},{"mode":"STEP","source":"env","depth":0.4,"low":0.04213263815278037,"high":0.053598562102621365,"ratio":1.2721387611253663,"sampleRate":48000},{"mode":"STEP","source":"cvseq","depth":0.4,"low":0.021070941386702305,"high":0.021351334251686366,"ratio":1.0133070877014074,"sampleRate":48000}]
+
+[112/186] tests/browser/suites.spec.mjs:416:1 › ordered FX chains preserve rack/source and schedule real audio
+[113/186] tests/browser/suites.spec.mjs:430:1 › nested cell deletion retains keyboard focus on the surviving neighbor
+[114/186] tests/browser/suites.spec.mjs:448:1 › simultaneous nested drum rows and chord lanes retain every sounding flash
+[115/186] tests/browser/undo-notices.spec.mjs:50:3 › undo instead of a confirmation › deleting a module acts at once and Undo brings back modules, cables and source
+[116/186] tests/browser/undo-notices.spec.mjs:75:3 › undo instead of a confirmation › the message is announced and its Undo works from the keyboard
+[117/186] tests/browser/undo-notices.spec.mjs:100:3 › undo instead of a confirmation › undo from the code editor leaves the caret there
+[118/186] tests/browser/undo-notices.spec.mjs:111:3 › undo instead of a confirmation › a newer edit retires the message, so Undo can never take back the wrong thing
+[119/186] tests/browser/undo-notices.spec.mjs:123:3 › undo instead of a confirmation › the message stays long enough, and hovering holds it open
+[120/186] tests/browser/undo-notices.spec.mjs:140:3 › undo instead of a confirmation › replacing a cable acts at once and Undo restores the old one
+[121/186] tests/browser/undo-notices.spec.mjs:159:3 › undo instead of a confirmation › loading over changed work acts at once and Undo restores it
+[122/186] tests/browser/undo-notices.spec.mjs:174:3 › undo instead of a confirmation › a load that stops playback says so, and Undo does not restart it
+[123/186] tests/browser/undo-notices.spec.mjs:190:3 › undo instead of a confirmation › opening identical source offers no Undo, which would take back an older edit
+[124/186] tests/browser/undo-notices.spec.mjs:206:3 › undo instead of a confirmation › a clean load has nothing to undo, so it stays quiet
+[125/186] tests/browser/undo-notices.spec.mjs:211:3 › undo instead of a confirmation › an unapplied draft still gets a prompt, because undo cannot restore it
+[126/186] tests/browser/undo-notices.spec.mjs:237:3 › conversion on edit › an edit completes without a dialog, says so every time, and Undo is exact
+  14) tests/browser/undo-notices.spec.mjs:237:3 › conversion on edit › an edit completes without a dialog, says so every time, and Undo is exact 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.workspace-notice')
+    Expected substring: "Code rewritten in rack style"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.workspace-notice') with timeout 5000ms
+      - waiting for locator('.workspace-notice')
+
+
+      243 |     await knob(page).focus()
+      244 |     await page.keyboard.press('ArrowUp')
+    > 245 |     await expect(notice(page)).toContainText(message)
+          |                                ^
+      246 |     await expect(page.getByRole('alertdialog')).toHaveCount(0)
+      247 |     const converted = await source(page)
+      248 |     expect(converted).not.toBe(original)
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/undo-notices.spec.mjs:245:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/undo-notices-conversion-on-ac900-very-time-and-Undo-is-exact/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/undo-notices-conversion-on-ac900-very-time-and-Undo-is-exact/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/undo-notices-conversion-on-ac900-very-time-and-Undo-is-exact/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/undo-notices-conversion-on-ac900-very-time-and-Undo-is-exact/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:616237) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[127/186] tests/browser/undo-notices.spec.mjs:265:3 › conversion on edit › a knob drag keeps its message and takes back the rewrite in one Undo
+  15) tests/browser/undo-notices.spec.mjs:265:3 › conversion on edit › a knob drag keeps its message and takes back the rewrite in one Undo 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.workspace-notice')
+    Expected substring: "Code rewritten in rack style"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.workspace-notice') with timeout 5000ms
+      - waiting for locator('.workspace-notice')
+
+
+      272 |       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2 - step * 6)
+      273 |     await page.mouse.up()
+    > 274 |     await expect(notice(page)).toContainText(message)
+          |                                ^
+      275 |     expect(await source(page)).not.toBe(original)
+      276 |     await undo(page).click()
+      277 |     expect(await source(page)).toBe(original)
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/undo-notices.spec.mjs:274:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/undo-notices-conversion-on-c55e4-ack-the-rewrite-in-one-Undo/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/undo-notices-conversion-on-c55e4-ack-the-rewrite-in-one-Undo/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/undo-notices-conversion-on-c55e4-ack-the-rewrite-in-one-Undo/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/undo-notices-conversion-on-c55e4-ack-the-rewrite-in-one-Undo/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:616354) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[128/186] tests/browser/undo-notices.spec.mjs:280:3 › conversion on edit › deleting a module that needs a rewrite reports both
+  16) tests/browser/undo-notices.spec.mjs:280:3 › conversion on edit › deleting a module that needs a rewrite reports both 
+
+    Test was interrupted.
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/undo-notices-conversion-on-6b0b8-eeds-a-rewrite-reports-both/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/undo-notices-conversion-on-6b0b8-eeds-a-rewrite-reports-both/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/undo-notices-conversion-on-6b0b8-eeds-a-rewrite-reports-both/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  17) tests/browser/suites.spec.mjs:188:1 › library audio, replacement Cancel and Stop recovery ────
+
+    Test was interrupted.
+
+    Error: page.evaluate: Test ended.
+
+      197 |     timeout: 30_000,
+      198 |   })
+    > 199 |   const result = await page.evaluate(async () => {
+          |                             ^
+      200 |     const suite = await import('/scripts/library-check.mjs')
+      201 |     const cancel = await suite.verifyReplacementCancelPlayback(window.measureLibrary)
+      202 |     const signals = await suite.verifyPatchSignals(window.measureLibrary)
+        at /home/aaron/.t3/worktrees/monkeyboys-modular-synth/fix-stabilization-remaining/tests/browser/suites.spec.mjs:199:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/suites-library-audio-replacement-Cancel-and-Stop-recovery/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/suites-library-audio-replacement-Cancel-and-Stop-recovery/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/suites-library-audio-replacement-Cancel-and-Stop-recovery/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/suites-library-audio-replacement-Cancel-and-Stop-recovery/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  15 failed
+    tests/browser/doom.spec.mjs:16:1 › Doom instrument: six-cycle identity, budgets, audio, edits and stopped replacement 
+    tests/browser/dub.spec.mjs:33:1 › Dub afterimage: phrase, sources, native delay PCM, transport and saved identity 
+    tests/browser/industrial.spec.mjs:33:1 › Industrial triplets: six-cycle identity, budgets, audio, edits and stopped replacement 
+    tests/browser/suites.spec.mjs:29:3 › workspace-errors ──────────────────────────────────────────
+    tests/browser/suites.spec.mjs:29:3 › rack-visuals-check ────────────────────────────────────────
+    tests/browser/suites.spec.mjs:29:3 › output-panel-browser ──────────────────────────────────────
+    tests/browser/suites.spec.mjs:29:3 › panels-browser ────────────────────────────────────────────
+    tests/browser/suites.spec.mjs:29:3 › module-exercises-browser ──────────────────────────────────
+    tests/browser/suites.spec.mjs:97:3 › verifySoundCrate ──────────────────────────────────────────
+    tests/browser/suites.spec.mjs:97:3 › verifyPanels ──────────────────────────────────────────────
+    tests/browser/suites.spec.mjs:155:3 › library rack editing batch 1/3 ───────────────────────────
+    tests/browser/suites.spec.mjs:155:3 › library rack editing batch 2/3 ───────────────────────────
+    tests/browser/suites.spec.mjs:155:3 › library rack editing batch 3/3 ───────────────────────────
+    tests/browser/undo-notices.spec.mjs:237:3 › conversion on edit › an edit completes without a dialog, says so every time, and Undo is exact 
+    tests/browser/undo-notices.spec.mjs:265:3 › conversion on edit › a knob drag keeps its message and takes back the rewrite in one Undo 
+  2 interrupted
+    tests/browser/suites.spec.mjs:188:1 › library audio, replacement Cancel and Stop recovery ──────
+    tests/browser/undo-notices.spec.mjs:280:3 › conversion on edit › deleting a module that needs a rewrite reports both 
+  58 did not run
+  111 passed (19.9m)
+
+RESULT passed=111 failed=15 exit=130
+Log: /tmp/monkeyboy-browser-607418.log

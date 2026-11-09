@@ -64,6 +64,8 @@ export interface CodeExpression {
     solo: boolean
     name: string
     channels: string
+    /** Arranger lane mask text; empty plays every cycle. */
+    arrangement: string
   }[]
 }
 

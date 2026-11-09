@@ -60,7 +60,8 @@ packs are added, not seated. Exact engine detail stays behind the ⓘ control, s
 nothing overpromises readiness.
 
 The left dock has **Modules**, **Sounds** and **Packs** tabs (#177), and each tab has
-one vertical scroll. Modules groups compact two-column chips by the six categories,
+one vertical scroll. Modules groups compact chips by the six categories,
+using two columns where whole words fit and a full row for longer names,
 with the catalog-owned Strudel call on each chip, the title in its tooltip and accessible
 description, and a filter on names and calls (#79). Labels wrap without ellipsis; rack
 module widths stay fixed. Sounds opens on search; searching opens every matching bank,
@@ -218,8 +219,10 @@ SPLICE fits with a shorter text box. Rarely used fields move to a More flyout
 beside the panel, dark like the nested editor's tray so it reads the same beside
 every look. The flyout takes focus when it opens and follows its panel as the rack
 scrolls. It opens on the free side and stays full size at any zoom. Escape closes
-it and returns focus to More, and clicking outside closes it. A panel can still
-scroll in a mode that adds controls, such as OSC's supersaw.
+it and returns focus to More without changing rack status; Escape still cancels an
+active cable or placement gesture when no flyout consumes it. Clicking outside
+closes it. OSC keeps its secondary supersaw fields in More and fits in both pitch
+modes in all four Hardware looks.
 
 Panels overlap two rails, each with one hole per HP, and the pinned OUT panel has
 matching rails. Looks that have screws on their boards show two fixing screws.
@@ -230,9 +233,13 @@ state and changes neither source nor saved rack positions. Cable measurements,
 wire pointers and module placement convert viewport coordinates back to rack
 coordinates. Fit leaves an extra 24 screen pixels below the rails for wrapped
 jack targets. Jacks reserve at least 24 screen pixels, growing their layout boxes
-when zoomed out and wrapping into additional rows as needed; [#186](decisions.md#usability-review-188-decided-4-november-2026) limits this to 75% and above. Cables whose jack
-centres are clipped inside a scrolling patch box are hidden until the jacks
-return into view; their connections and saved positions remain intact.
+when zoomed out and wrapping into additional rows as needed; [#186](decisions.md#usability-review-188-decided-4-november-2026) limits this to 75% and above. Every cable stays drawn; clipped live jack endpoints pin to the visible patch-box edge.
+Below 75%, panels are navigation targets: click or focus and Enter/Space zooms to
+100% and centres the module. Rail controls and every jack are inert; the
+independently sized pinned OUT keeps VOL and BPM available. Internal scrolling is
+hidden, and cable visibility is All. Connections still lists every cable and
+supports selection, removal and a complete destination chooser for repatching.
+Moving a cable selected on the canvas opens that chooser automatically.
 
 The rack frame retains at least 430 px of height on desktop; short workspaces scroll
 the rack pane instead of shrinking the rails and pinned OUT into thumbnails. The
@@ -270,8 +277,7 @@ offers Cancel, Export code and the action. While a replacement waits for audio t
 stop, the message offers Cancel.
 
 Double-clicking a library patch, or pressing Enter on it, loads it. A single click
-and Space only select. A file or library load opens at Fit when that is at least
-75%, and otherwise at 75%, scrolled to the first modules. New keeps the current zoom.
+and Space only select. A file or library load opens at Fit, including overview below 75%. New keeps the current zoom.
 
 A reload restores the last work silently, with its draft, and the message offers
 Start new. Start new is itself undoable.
@@ -325,7 +331,9 @@ and [nested acceptance](nested-step-editor-verification.md).
 Cables are drawn over the panels, and selecting on press wakes a module's cables, so
 a cable can appear under the pointer between press and release. Interactive panel
 controls therefore stay above the cable layer, as jacks do. New controls need the
-same treatment. Test them with a real pointer click on a panel that has a cable
+same treatment. Cable paint keeps its signal-specific dots/dashes; a separate
+continuous transparent stroke owns hover and selection. Faded cables pass the
+pointer through both strokes. Test controls with a real pointer click on a panel that has a cable
 crossing it: a synthetic click or a hit-target check passes while real clicks are lost.
 
 ## Rack visual hierarchy (#85, #86, #96, #88)
@@ -483,17 +491,27 @@ SMPL's tape has B/E/LB/LE markers on separate lanes, all measured over the same
 sample strip. Pointer dragging and left/right arrows edit the associated fractions;
 Home/End reach 0/1. A pointer gesture is one accepted undo group. LOOP is explicit.
 The existing numerical controls and applied code update those same marks. SPLICE
-shows one razor mark per division; its count/mode/order controls own the code.
+shows one razor mark per division across the full sample strip, following COUNT
+in every Hardware look; its count/mode/order controls own the code.
 All controls remain inside the existing panel scroller; widths and jack positions
 follow the existing look/zoom rules. See [acceptance and limits](sound-crate.md).
 
 ## Cartridge list (#137)
 
-The dock's Packs tab lists cartridges in one column. Each card shows pack name, source, branch/pin, file count and a textual status
-beside its LED. Counts/status are unknown before registration. Factory and
-source-owned cards have no Eject action. Bay-owned ejection uses an inline
-confirmation with Cancel when sample modules or opaque CODE may depend on it.
-Adding a pack takes a GitHub shortcut or manifest URL through a labeled form. The
+The dock's Packs tab is a bay of cartridge shells (#184): notched shells with grip
+ridges and a pack-colored stripe, laid out as a single column in the 180 px dock
+and as a shelf when the dock spans the window at mid and narrow widths. Each label
+shows the pack name, its branch or pin, a sound count and a worded status (not
+loaded, loading, ready or failed) beside its LED, so status never relies on color.
+Counts/status are unknown before registration. The source URL stays off the shell:
+a readout below the bay shows source, ownership and file count for the cartridge
+under the pointer or with focus, and pressing a label pins it for touch. Screen
+readers get the same detail as the label's description. Failures are listed below
+the bay in words. Factory and source-owned cartridges have no Eject action;
+bay-owned ones carry a keyboard-reachable Eject that uses an inline confirmation
+with Cancel when sample modules or opaque CODE may depend on it.
+The empty slot at the end of the bay is the way to add a pack: it opens a labeled
+form for a GitHub shortcut or manifest URL, and Escape or Cancel closes it. The
 list shares the code/rack draft lock and accepted-document history. It never changes
 module widths or cable geometry. See the [source and engine contract](cartridges.md).
 
@@ -527,3 +545,41 @@ and labels it **Motion paused**, without continued sampling. No existing module
 width or cable geometry changes. The local exported reference boards were
 available; the live private canvas was unavailable. See the
 [observed acceptance record](pattern-visibility-verification.md).
+
+## Arranger lane (#141)
+
+**Arrange** sits in the rack footer beside Connections and opens as one of the
+same one-at-a-time footer popovers, spanning the rack's full width along its
+bottom edge. Like the others it floats over the rack, so the rack frame, Fit zoom
+and pinned OUT keep their size; an inline lane shrank the frame and pushed Fit
+below the 75% overview threshold. Its summary counts arranged channels
+(**Arrange (2)**). The panel has the song length (− / + in cycles) and a one-line
+hint. Each connected MIX channel is a row: its name (channel NAME, else the module
+feeding it), one 18 px cell per cycle with a brighter edge every four cycles, and
+the exact code it writes in code ink (`.mask("<0!2 1!2>")`, or _every cycle_).
+Playing cycles use the audio orange. Rows scroll inside the panel beyond about six
+rows or the width of the song. The panel is inert while the rack is locked. See
+the [interaction contract](arranger.md#contract).
+
+## Sound assignment (#185)
+
+Dragging a seated sound outlines compatible panels and dims other modules. The
+native drag image names the sound and variant. SMPL, SPLICE, REVERB and compatible
+WAVETABLE panels accept a drop anywhere; DRUMS keeps individual row targets.
+WAVETABLE accepts seated `wt_` sounds only. Select a module and double-click a
+sound or press Enter on its card to assign without dragging; single click
+continues to audition. For DRUMS this opens a row chooser showing each row's
+notation. Choose a row with pointer or keyboard to apply; opening or cancelling
+the chooser changes nothing. No row is guessed. Native selectors remain keyboard alternatives. Source-aware
+mutations retain bank/refusal rules. Overview consumes panel clicks for zoom
+and refuses sound assignment until detail view, without initiating wiring.
+
+## Unsaved import placement and readability (#187)
+
+Initial placement for imports without saved layouts packs module order over
+64/84/104 HP rails, selecting fewer rows and narrower rails on ties. Fit includes
+both dimensions. The owner accepted overview plus pointer/keyboard navigation to
+readable 100% detail on 8 November 2026; Trance's 29 modules and 28 cables fit in
+four 104-HP rows at 41% on a 1600×1000 window. Saved layouts retain their exact
+positions and width. No adjacent CODE merging is implemented; see the
+[study](translation-rules.md#adjacent-code-study-187-8-november-2026).

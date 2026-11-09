@@ -2,6 +2,19 @@
 
 Locked on 1 November 2026. Change these deliberately: update this file in the same change.
 
+## PATCHBAY (#142, decided 9 November 2026 UTC)
+
+**Defer a production PATCHBAY module.** The [spike](patchbay-spike.md) proves
+Kabelsalat source/effect PCM, Stop/replacement and exact CODE/source/saved identity
+through the pinned engine. Bounded CPU and digital onset measurements cover 1,
+8 and 32 lanes, without physical listening or a universal voice budget. Worker
+construction failures are not reliably forwarded to #36, and an explicit
+superdough voice limit did not stop an old Kabel source graph. App initialization
+also leaves the installed limit non-finite. Retain these programs as trusted
+CODE; ship no prototype or catalog panel. Reconsider only after failure/lifetime
+boundaries and a source-preserving Cyber editor contract are proven. This is a
+defer recommendation, so no build implementation follow-up is created by #142.
+
 ## Product
 
 - **Name:** MonkeyBoy’s Modular Synth — a Fire Lake Labs project ([firelakelabs.com](https://firelakelabs.com)).
@@ -143,8 +156,34 @@ sketches: their control names and pack counts are illustrative.
   consent step from #55.
 - **Jack targets depend on zoom ([#186](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/186)):** jacks keep 24 px targets at
   75% zoom and above. Below that, the rack is an overview with no live jacks and
-  every cable drawn, and clicking a module zooms in. The Connections list remains
-  the accessible route. This replaces the every-zoom rule from #94.
+  every cable drawn, and clicking a module or activating its keyboard navigation button zooms in.
+  Connections remains complete, with selection, removal and a destination chooser
+  for every cable. File/library loads use Fit, including overview. This replaces the every-zoom rule from #94.
+
+## Unsaved import readability (#187, decided 8 November 2026)
+
+The owner accepted overview plus readable 100% module navigation as satisfying
+large-import readability: Trance fits at 41% in four 104-HP rows at 1600×1000,
+with all 29 modules and 28 cables visible; pointer or Enter opens full-size
+detail. Unsaved imports minimize row count across 64/84/104 HP rails, preferring
+narrower rails on ties. Saved personal and bundled positions never reflow on
+load or resize. Adjacent CODE blocks remain separate under the
+[preservation study](translation-rules.md#adjacent-code-study-187-8-november-2026).
+Explicit Arrange rack and saved-library refresh remain #218's scope.
+
+## Arranger lane (#141, decided 8 November 2026)
+
+The arranger writes **per-voice mask lanes**, not `arrange()` over sections. Each
+connected MIX channel has a lane in the Arrange footer popover along the rack's
+bottom edge, which keeps the rack frame's size; its cycles become
+`.mask("<0!4 1!12>")` on that channel's voice, before gain and routing. The
+[spike](arranger.md#spike-one-song-both-ways) rendered one song both ways:
+masks kept one `$:` line, label and orbit per voice, round-tripped as rack state
+and kept song time. `arrange()` folded voices into one CODE line, needed orbits in
+shared declarations, and restarted section time, changing 24 of 200 onsets. The
+reader reads only a final lane mask; `arrange()` and other masks stay
+source-owned CODE. Lanes are MIX channel values, so no format change is needed.
+See the [contract and evidence](arranger.md).
 
 ## Rack case (#133, decided 3 November 2026)
 

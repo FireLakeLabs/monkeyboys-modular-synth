@@ -1,0 +1,3411 @@
+{
+  "observations": [
+    {
+      "fixture": "soft",
+      "attempt": 1,
+      "pcm": {
+        "rms": 0.006420336422402492,
+        "samples": 165888
+      },
+      "source": "$: s(\"bd*2\").soft().gain(0.1)\n// \u2500\u2500 @monkeyboy rack v1 \u2500\u2500\n// {\n//   \"version\": 1,\n//   \"source\": \"$: s(\\\"bd*2\\\").soft().gain(0.1)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bd*2\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bd*2\\\"}]\"\n//         },\n//         {\n//           \"name\": \"soft\",\n//           \"arguments\": \"[]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"drums1\",\n//       \"type\": \"drums\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"grid\": \"bd*2\",\n//         \"drop\": 0\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"drive1\",\n//       \"type\": \"drive\",\n//       \"row\": 0,\n//       \"hp\": 14,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"type\": \"soft\",\n//         \"arguments\": \"none\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"smpl1\",\n//       \"type\": \"smpl\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bank\": \"\",\n//         \"speed\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 34,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 42,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"drums1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"smpl1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"smpl1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"drive1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable3\",\n//       \"from\": {\n//         \"module\": \"drive1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable6\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+      "diagnostics": {
+        "capturedAt": 1794171111763,
+        "requests": [
+          {
+            "url": "http://127.0.0.1:5173/",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107843,
+            "headersAt": 1794171107845,
+            "finishedAt": 1794171107859
+          },
+          {
+            "url": "http://127.0.0.1:5173/@vite/client",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107858,
+            "headersAt": 1794171107860,
+            "finishedAt": 1794171107860
+          },
+          {
+            "url": "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Big+Shoulders+Display:wght@800&family=Fredoka:wght@600&family=Quicksand:wght@700&family=Syncopate:wght@400&family=VT323&family=Chakra+Petch:wght@700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107858,
+            "headersAt": 1794171107919,
+            "finishedAt": 1794171107919
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/main.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107858,
+            "headersAt": 1794171107859,
+            "finishedAt": 1794171107859
+          },
+          {
+            "url": "http://127.0.0.1:5173/@react-refresh",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107859,
+            "finishedAt": 1794171107859
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107860,
+            "finishedAt": 1794171107860
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/index.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107880,
+            "finishedAt": 1794171107880
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/App.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107882,
+            "finishedAt": 1794171107883
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107881,
+            "finishedAt": 1794171107881
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-DgVJeC5g.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107860,
+            "headersAt": 1794171107883,
+            "finishedAt": 1794171107883
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/vite/dist/client/env.mjs",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107860,
+            "headersAt": 1794171107880,
+            "finishedAt": 1794171107880
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SoundCrate.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107884,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/crate.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107884,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/engine.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/packWarning.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/cartridges.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/PatternVisuals.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107895,
+            "finishedAt": 1794171107895
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/layout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107895,
+            "finishedAt": 1794171107895
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Rack.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107896,
+            "finishedAt": 1794171107896
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/model.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107896,
+            "finishedAt": 1794171107896
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/catalog.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Controls.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/playback.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/index.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/document.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/codeConversion.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/open.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/transport.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/ReplacementPrompt.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/autosave.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/WorkspaceNotice.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/RackLock.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/FileMenu.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/finishedCode.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/history.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/naming.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/PatchLibrary.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/SavePrompt.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/myPatches.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/load.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/connections.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/App.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Rack.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/looks/looks.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/packs.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SoundCrate.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/values.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/mini.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/graph.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/notation.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/acorn.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/manifest.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108018,
+            "finishedAt": 1794171108018
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/activity.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108019,
+            "finishedAt": 1794171108019
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/sourceLocations.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108018,
+            "finishedAt": 1794171108018
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/credits.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108019,
+            "finishedAt": 1794171108019
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SamplePanel.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/drag.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/generate.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/functions.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/looks.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/looks/layout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/activity.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MoreFlyout.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/effects.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107897,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/effects.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107897,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/read.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107908,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/routing.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107908,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/bindings.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107908,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MiniEditor.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/notationLiteral.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/layout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/layout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/syntax.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/structure.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom-CFuoV50Q.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107911,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/catalog.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107919,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/MyPatches.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107919,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/PatchLibrary.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107919,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_mini_krill-parser__js.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108016,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/importLayout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/metadata.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/diagnostics.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/modulation.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/euclidean.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/miniEdits.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/miniLayout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MiniEditor.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/sound-effects.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/module-exercises.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/function-loops.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-hardware.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-alien.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modulation-utilities.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-sounds.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-notes.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-effects.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-effects.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/enveloped-synth.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/quantized-sequence.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/lfo-sweep.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/filter-envelope.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/drum-machine.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/echo-room.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/iter-jux.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/custom-helper.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/layered-sketch.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-dub-afterimage.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108030,
+            "finishedAt": 1794171108030
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/switch-angel-trance-demo.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108030
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-doom-instrument.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108030,
+            "finishedAt": 1794171108030
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-industrial-triplets.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108030,
+            "finishedAt": 1794171108030
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/splice.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108035,
+            "finishedAt": 1794171108035
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/wavetable.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108036,
+            "finishedAt": 1794171108036
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/seq.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108036,
+            "finishedAt": 1794171108036
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/gates.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108036,
+            "finishedAt": 1794171108036
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/switch.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108049,
+            "finishedAt": 1794171108049
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/aux.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108049,
+            "finishedAt": 1794171108049
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/duck.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108049,
+            "finishedAt": 1794171108049
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/drums.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108049,
+            "finishedAt": 1794171108049
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/quant.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108050,
+            "finishedAt": 1794171108050
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/clock.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108050,
+            "finishedAt": 1794171108050
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/euclid.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108051,
+            "finishedAt": 1794171108051
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/ratchet.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chance.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chord.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/arp.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/osc.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/noise.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/harmonic.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/fmop.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/smpl.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/vcf.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/vca.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/env.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108057,
+            "finishedAt": 1794171108057
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/lfo.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108057,
+            "finishedAt": 1794171108057
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/samplehold.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108057,
+            "finishedAt": 1794171108057
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/attenuverter.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108058,
+            "finishedAt": 1794171108058
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/modmix.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108058,
+            "finishedAt": 1794171108058
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/cvseq.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108058,
+            "finishedAt": 1794171108058
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/delay.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108059,
+            "finishedAt": 1794171108059
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/reverb.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108059,
+            "finishedAt": 1794171108059
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/drive.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108059,
+            "finishedAt": 1794171108059
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/folder.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108059,
+            "finishedAt": 1794171108059
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/lofi.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/formant.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/comp.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/phaser.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/pan.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/shift.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/mix.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/scope.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/out.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/iter.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/jux.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chunk.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/every.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/sometimes.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/off.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/layer.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/rev.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/shuffle.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/ribbon.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/time-lens.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/warp.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/echo.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/code.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/SourceEditor.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108222,
+            "headersAt": 1794171108241,
+            "finishedAt": 1794171108241
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7E_DMs5.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108222,
+            "headersAt": 1794171108299,
+            "finishedAt": 1794171108299
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/bigshouldersdisplay/v24/fC1MPZJEZG-e9gHhdI4-NBbfd2ys3SjJCx12wPgf9g-_3F0YdQ88FFkwSA.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108222,
+            "headersAt": 1794171108299,
+            "finishedAt": 1794171108299
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108223,
+            "headersAt": 1794171108307,
+            "finishedAt": 1794171108307
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4-Lwz3bWuQ.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108223,
+            "headersAt": 1794171108303,
+            "finishedAt": 1794171108303
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108223,
+            "headersAt": 1794171108302,
+            "finishedAt": 1794171108302
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E30-8s51os.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108223,
+            "headersAt": 1794171108299,
+            "finishedAt": 1794171108299
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_state.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108259,
+            "finishedAt": 1794171108259
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_view.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108259,
+            "finishedAt": 1794171108259
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_commands.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108259,
+            "finishedAt": 1794171108259
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_lang-javascript.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/highlighting.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/editorChanges.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/metadataFolding.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/soundingTokens.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108256,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/sourceDiagnostics.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108256,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-pFrPsHWw.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108259,
+            "headersAt": 1794171108275,
+            "finishedAt": 1794171108275
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-kZ9knBKX.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108259,
+            "headersAt": 1794171108303,
+            "finishedAt": 1794171108303
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-C_-QiPIc.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108259,
+            "headersAt": 1794171108303,
+            "finishedAt": 1794171108303
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_merge.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108274,
+            "headersAt": 1794171108302,
+            "finishedAt": 1794171108303
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_language.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108274,
+            "headersAt": 1794171108302,
+            "finishedAt": 1794171108302
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/library-check.mjs",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108519,
+            "headersAt": 1794171108526,
+            "finishedAt": 1794171108527
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/editor-browser.mjs",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108527,
+            "headersAt": 1794171108533,
+            "finishedAt": 1794171108533
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/rack-feel-check.mjs",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108538,
+            "headersAt": 1794171108540,
+            "finishedAt": 1794171108540
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/types.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108540,
+            "headersAt": 1794171108543,
+            "finishedAt": 1794171108543
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4873z3bWuQ.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108910,
+            "headersAt": 1794171108944,
+            "finishedAt": 1794171108945
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171109114,
+            "headersAt": 1794171109128,
+            "finishedAt": 1794171109128
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171109203,
+            "headersAt": 1794171109298,
+            "finishedAt": 1794171109298
+          },
+          {
+            "url": "https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171109203,
+            "headersAt": 1794171109298,
+            "finishedAt": 1794171109298
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/bd/BT0A0A7.wav",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171109733,
+            "headersAt": 1794171109739,
+            "finishedAt": 1794171109739
+          }
+        ],
+        "browser": {
+          "clock": {
+            "timeOrigin": 1794171107842.7,
+            "now": 3949
+          },
+          "decodes": [
+            {
+              "at": 1897,
+              "bytes": 25108,
+              "state": "decoded",
+              "duration": 0.2841458333333333,
+              "channels": 1
+            }
+          ],
+          "starts": [
+            {
+              "at": 1966.800000011921,
+              "now": 0.672,
+              "when": 5.672,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            },
+            {
+              "at": 2622.4000000059605,
+              "now": 1.3226666666666667,
+              "when": 1.622,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            },
+            {
+              "at": 3623.5999999940395,
+              "now": 2.3253333333333335,
+              "when": 2.6220000000000003,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            }
+          ],
+          "contexts": [
+            {
+              "state": "running",
+              "currentTime": 2.6453333333333333,
+              "sampleRate": 48000
+            }
+          ],
+          "readiness": "Decode observations are not mapped to sound names; fetched bytes alone do not prove decoded readiness."
+        }
+      }
+    },
+    {
+      "fixture": "exercise-smpl",
+      "attempt": 1,
+      "pcm": {
+        "rms": 0.003849288746781039,
+        "samples": 722944
+      },
+      "source": "setcpm(120/4)\n\n$: s(\"bd hh sd hh\")\n  .bank(\"RolandTR909\")\n  .gain(0.15)\n  .postgain(0.8)\n  .orbit(1)\n\n// \u2500\u2500 @monkeyboy rack v1 \u2500\u2500\n// {\n//   \"version\": 1,\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bd hh sd hh\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bd hh sd hh\\\"}]\"\n//         },\n//         {\n//           \"name\": \"bank\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"RolandTR909\\\"}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.15}]\"\n//         },\n//         {\n//           \"name\": \"postgain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.8}]\"\n//         },\n//         {\n//           \"name\": \"orbit\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1}]\"\n//         }\n//       ],\n//       \"routing\": {\n//         \"call\": 4,\n//         \"orbit\": 1\n//       }\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"drums1\",\n//       \"type\": \"drums\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"grid\": \"bd hh sd hh\",\n//         \"drop\": 0\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"smpl1\",\n//       \"type\": \"smpl\",\n//       \"row\": 0,\n//       \"hp\": 14,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bank\": \"RolandTR909\",\n//         \"speed\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 22,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.15\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 1,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 0.8,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             3\n//           ],\n//           \"role\": \"mixer\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bpm\": 120\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"drums1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"smpl1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"smpl1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {}\n// }\n",
+      "diagnostics": {
+        "capturedAt": 1794171115366,
+        "requests": [
+          {
+            "url": "http://127.0.0.1:5173/",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107843,
+            "headersAt": 1794171107845,
+            "finishedAt": 1794171107859
+          },
+          {
+            "url": "http://127.0.0.1:5173/@vite/client",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107858,
+            "headersAt": 1794171107860,
+            "finishedAt": 1794171107860
+          },
+          {
+            "url": "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Big+Shoulders+Display:wght@800&family=Fredoka:wght@600&family=Quicksand:wght@700&family=Syncopate:wght@400&family=VT323&family=Chakra+Petch:wght@700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107858,
+            "headersAt": 1794171107919,
+            "finishedAt": 1794171107919
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/main.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107858,
+            "headersAt": 1794171107859,
+            "finishedAt": 1794171107859
+          },
+          {
+            "url": "http://127.0.0.1:5173/@react-refresh",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107859,
+            "finishedAt": 1794171107859
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107860,
+            "finishedAt": 1794171107860
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/index.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107880,
+            "finishedAt": 1794171107880
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/App.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107882,
+            "finishedAt": 1794171107883
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107859,
+            "headersAt": 1794171107881,
+            "finishedAt": 1794171107881
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-DgVJeC5g.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107860,
+            "headersAt": 1794171107883,
+            "finishedAt": 1794171107883
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/vite/dist/client/env.mjs",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107860,
+            "headersAt": 1794171107880,
+            "finishedAt": 1794171107880
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SoundCrate.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107884,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/crate.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107884,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/engine.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/packWarning.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/cartridges.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107893,
+            "finishedAt": 1794171107893
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/PatternVisuals.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107895,
+            "finishedAt": 1794171107895
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/layout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107895,
+            "finishedAt": 1794171107895
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Rack.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107896,
+            "finishedAt": 1794171107896
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/model.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107896,
+            "finishedAt": 1794171107896
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/catalog.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Controls.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/playback.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/index.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/document.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107885,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/codeConversion.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107906,
+            "finishedAt": 1794171107906
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/open.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/transport.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/ReplacementPrompt.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/autosave.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/WorkspaceNotice.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107907,
+            "finishedAt": 1794171107907
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/RackLock.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/FileMenu.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/finishedCode.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/history.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/naming.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/PatchLibrary.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107908,
+            "finishedAt": 1794171107908
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/SavePrompt.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/myPatches.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/load.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/connections.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/App.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/Rack.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/looks/looks.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107886,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/packs.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SoundCrate.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107910,
+            "finishedAt": 1794171107910
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/values.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/mini.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/graph.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/notation.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107894,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/CartridgeBay.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171107911,
+            "finishedAt": 1794171107911
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/acorn.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/manifest.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108018,
+            "finishedAt": 1794171108018
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/activity.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108019,
+            "finishedAt": 1794171108019
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/strudel/sourceLocations.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108018,
+            "finishedAt": 1794171108018
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/credits.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107895,
+            "headersAt": 1794171108019,
+            "finishedAt": 1794171108019
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/SamplePanel.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/samples/drag.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/generate.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/functions.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/looks.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/looks/layout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/activity.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MoreFlyout.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107896,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/effects.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107897,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/effects.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107897,
+            "headersAt": 1794171108020,
+            "finishedAt": 1794171108020
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/read.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107908,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/routing.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107908,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/modules/bindings.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107908,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MiniEditor.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/notationLiteral.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108021,
+            "finishedAt": 1794171108021
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/codegen/layout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/layout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/syntax.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/structure.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107910,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom-CFuoV50Q.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107911,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/catalog.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107919,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/MyPatches.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107919,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/PatchLibrary.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171107919,
+            "headersAt": 1794171108022,
+            "finishedAt": 1794171108022
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_mini_krill-parser__js.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108016,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/react-dom.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/importLayout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/metadata.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/diagnostics.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/reader/modulation.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/euclidean.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/miniEdits.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/miniLayout.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/rack/MiniEditor.css",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/sound-effects.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/module-exercises.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/function-loops.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108026,
+            "finishedAt": 1794171108026
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-hardware.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108023,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-alien.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modulation-utilities.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-sounds.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-notes.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108028
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/first-effects.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108028,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/pattern-effects.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/enveloped-synth.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/quantized-sequence.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/lfo-sweep.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/filter-envelope.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/drum-machine.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/echo-room.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/iter-jux.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/custom-helper.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/layered-sketch.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108029
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-dub-afterimage.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108030,
+            "finishedAt": 1794171108030
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/switch-angel-trance-demo.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108029,
+            "finishedAt": 1794171108030
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-doom-instrument.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108030,
+            "finishedAt": 1794171108030
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/war-pigs-industrial-triplets.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108024,
+            "headersAt": 1794171108030,
+            "finishedAt": 1794171108030
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/splice.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108035,
+            "finishedAt": 1794171108035
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/wavetable.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108036,
+            "finishedAt": 1794171108036
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/seq.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108036,
+            "finishedAt": 1794171108036
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/gates.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108036,
+            "finishedAt": 1794171108036
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/switch.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108049,
+            "finishedAt": 1794171108049
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/aux.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108049,
+            "finishedAt": 1794171108049
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/duck.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108049,
+            "finishedAt": 1794171108049
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/drums.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108049,
+            "finishedAt": 1794171108049
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/quant.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108050,
+            "finishedAt": 1794171108050
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/clock.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108050,
+            "finishedAt": 1794171108050
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/euclid.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108051,
+            "finishedAt": 1794171108051
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/ratchet.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chance.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chord.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/arp.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/osc.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/noise.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108031,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/harmonic.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/fmop.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/smpl.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/vcf.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/vca.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108052,
+            "finishedAt": 1794171108052
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/env.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108057,
+            "finishedAt": 1794171108057
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/lfo.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108057,
+            "finishedAt": 1794171108057
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/samplehold.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108057,
+            "finishedAt": 1794171108057
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/attenuverter.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108058,
+            "finishedAt": 1794171108058
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/modmix.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108033,
+            "headersAt": 1794171108058,
+            "finishedAt": 1794171108058
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/cvseq.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108058,
+            "finishedAt": 1794171108058
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/delay.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108059,
+            "finishedAt": 1794171108059
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/reverb.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108059,
+            "finishedAt": 1794171108059
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/drive.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108059,
+            "finishedAt": 1794171108059
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/folder.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108059,
+            "finishedAt": 1794171108059
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/lofi.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/formant.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/comp.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/phaser.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/pan.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108060,
+            "finishedAt": 1794171108060
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/shift.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/mix.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/scope.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/out.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/iter.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108061
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/jux.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108061,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/chunk.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/every.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/sometimes.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/off.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/layer.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/rev.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/shuffle.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/ribbon.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/time-lens.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/warp.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/echo.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/library/patches/modules/code.strudel?import&raw",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108034,
+            "headersAt": 1794171108063,
+            "finishedAt": 1794171108063
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/SourceEditor.tsx",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108222,
+            "headersAt": 1794171108241,
+            "finishedAt": 1794171108241
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7E_DMs5.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108222,
+            "headersAt": 1794171108299,
+            "finishedAt": 1794171108299
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/bigshouldersdisplay/v24/fC1MPZJEZG-e9gHhdI4-NBbfd2ys3SjJCx12wPgf9g-_3F0YdQ88FFkwSA.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108222,
+            "headersAt": 1794171108299,
+            "finishedAt": 1794171108299
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108223,
+            "headersAt": 1794171108307,
+            "finishedAt": 1794171108307
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4-Lwz3bWuQ.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108223,
+            "headersAt": 1794171108303,
+            "finishedAt": 1794171108303
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108223,
+            "headersAt": 1794171108302,
+            "finishedAt": 1794171108302
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E30-8s51os.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108223,
+            "headersAt": 1794171108299,
+            "finishedAt": 1794171108299
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_state.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108259,
+            "finishedAt": 1794171108259
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_view.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108259,
+            "finishedAt": 1794171108259
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_commands.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108259,
+            "finishedAt": 1794171108259
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_lang-javascript.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/highlighting.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/editorChanges.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/metadataFolding.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108255,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/soundingTokens.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108256,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/workspace/sourceDiagnostics.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108256,
+            "headersAt": 1794171108273,
+            "finishedAt": 1794171108273
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-pFrPsHWw.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108259,
+            "headersAt": 1794171108275,
+            "finishedAt": 1794171108275
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-kZ9knBKX.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108259,
+            "headersAt": 1794171108303,
+            "finishedAt": 1794171108303
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/dist-C_-QiPIc.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108259,
+            "headersAt": 1794171108303,
+            "finishedAt": 1794171108303
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_merge.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108274,
+            "headersAt": 1794171108302,
+            "finishedAt": 1794171108303
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@codemirror_language.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108274,
+            "headersAt": 1794171108302,
+            "finishedAt": 1794171108302
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/library-check.mjs",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108519,
+            "headersAt": 1794171108526,
+            "finishedAt": 1794171108527
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/editor-browser.mjs",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108527,
+            "headersAt": 1794171108533,
+            "finishedAt": 1794171108533
+          },
+          {
+            "url": "http://127.0.0.1:5173/scripts/rack-feel-check.mjs",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108538,
+            "headersAt": 1794171108540,
+            "finishedAt": 1794171108540
+          },
+          {
+            "url": "http://127.0.0.1:5173/src/patch/types.ts",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108540,
+            "headersAt": 1794171108543,
+            "finishedAt": 1794171108543
+          },
+          {
+            "url": "https://fonts.gstatic.com/s/barlowcondensed/v13/HTxwL3I-JCGChYJ8VI-L6OO_au7B4873z3bWuQ.woff2",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171108910,
+            "headersAt": 1794171108944,
+            "finishedAt": 1794171108945
+          },
+          {
+            "url": "http://127.0.0.1:5173/node_modules/.vite/deps/@strudel_web.js?v=aae626d4",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171109114,
+            "headersAt": 1794171109128,
+            "finishedAt": 1794171109128
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/strudel.json",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171109203,
+            "headersAt": 1794171109298,
+            "finishedAt": 1794171109298
+          },
+          {
+            "url": "https://raw.githubusercontent.com/felixroos/dough-samples/9eacfc86ec4393e68a463ff52b01c19cfaa77f38/tidal-drum-machines.json",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171109203,
+            "headersAt": 1794171109298,
+            "finishedAt": 1794171109298
+          },
+          {
+            "url": "https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/c74fc80f8db8038f6a33648ffef5ac00a07ad402/bd/BT0A0A7.wav",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171109733,
+            "headersAt": 1794171109739,
+            "finishedAt": 1794171109739
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-bd/Bassdrum-01.wav",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171113346,
+            "headersAt": 1794171113347,
+            "finishedAt": 1794171113347
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-hh/hh01.wav",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171113681,
+            "headersAt": 1794171113748,
+            "finishedAt": 1794171113748
+          },
+          {
+            "url": "https://raw.githubusercontent.com/ritchse/tidal-drum-machines/6577395a4d05031728ced2ec3e5637fa89d8be48/machines/RolandTR909/rolandtr909-sd/naredrum.wav",
+            "state": "finished",
+            "status": 200,
+            "at": 1794171114180,
+            "headersAt": 1794171114262,
+            "finishedAt": 1794171114262
+          }
+        ],
+        "browser": {
+          "clock": {
+            "timeOrigin": 1794171107842.7,
+            "now": 7550.800000011921
+          },
+          "decodes": [
+            {
+              "at": 1897,
+              "bytes": 25108,
+              "state": "decoded",
+              "duration": 0.2841458333333333,
+              "channels": 1
+            },
+            {
+              "at": 5505.200000017881,
+              "bytes": 82232,
+              "state": "decoded",
+              "duration": 0.46591666666666665,
+              "channels": 2
+            },
+            {
+              "at": 5905.0999999940395,
+              "bytes": 21228,
+              "state": "decoded",
+              "duration": 0.1561875,
+              "channels": 1
+            },
+            {
+              "at": 6419.5999999940395,
+              "bytes": 51108,
+              "state": "decoded",
+              "duration": 0.2894583333333333,
+              "channels": 2
+            }
+          ],
+          "starts": [
+            {
+              "at": 1966.800000011921,
+              "now": 0.672,
+              "when": 5.672,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            },
+            {
+              "at": 2622.4000000059605,
+              "now": 1.3226666666666667,
+              "when": 1.622,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            },
+            {
+              "at": 3623.5999999940395,
+              "now": 2.3253333333333335,
+              "when": 2.6220000000000003,
+              "buffer": {
+                "duration": 0.2841458333333333,
+                "channels": 1
+              }
+            },
+            {
+              "at": 5531,
+              "now": 4.234666666666667,
+              "when": 4.2486999999999995,
+              "buffer": {
+                "duration": 0.46591666666666665,
+                "channels": 2
+              }
+            },
+            {
+              "at": 5905.5999999940395,
+              "now": 4.608,
+              "when": 4.7486999999999995,
+              "buffer": {
+                "duration": 0.1561875,
+                "channels": 1
+              }
+            },
+            {
+              "at": 6421.4000000059605,
+              "now": 5.12,
+              "when": 5.2486999999999995,
+              "buffer": {
+                "duration": 0.2894583333333333,
+                "channels": 2
+              }
+            },
+            {
+              "at": 6836.9000000059605,
+              "now": 5.536,
+              "when": 5.7486999999999995,
+              "buffer": {
+                "duration": 0.1561875,
+                "channels": 1
+              }
+            },
+            {
+              "at": 7336.9000000059605,
+              "now": 6.037333333333334,
+              "when": 6.2486999999999995,
+              "buffer": {
+                "duration": 0.46591666666666665,
+                "channels": 2
+              }
+            }
+          ],
+          "contexts": [
+            {
+              "state": "running",
+              "currentTime": 6.250666666666667,
+              "sampleRate": 48000
+            }
+          ],
+          "readiness": "Decode observations are not mapped to sound names; fetched bytes alone do not prove decoded readiness."
+        }
+      }
+    }
+  ],
+  "conditions": "Fresh context per attempt; soft then SMPL; caches not explicitly cleared; no concurrent review or suite."
+}

@@ -569,6 +569,23 @@ other formatting or code retain their exact source snapshot and the existing
 independent projection/ownership validation. Unrepresentable folded pattern gains
 remain CODE in their original call position, including before opaque routing.
 
+## Arranger lanes (#141)
+
+A MIX channel's ARRANGE value writes `.mask("<1!4 0!4>")` on each final voice
+through that channel, after transforms and before the folded `.postgain()`,
+mixer modulation, `.channels()` and routing. Nested buses add one mask per hop,
+inner first; masks only filter events, so their order is not heard. Fan-out
+branches carry their own channel's mask. Orbit allocation, labels and gain are
+unchanged, so a lane edit is a parameter edit, not a structural replacement.
+
+The reader treats a voice's `mask` as the channel's lane only when its single
+argument is lane text (`0`/`1` steps with optional `!n` inside `<…>`, at most 256
+cycles) and only postgain, mixer modulation, `channels` and `orbit` follow it.
+Patterned, mid-chain or repeated masks and `arrange()` stay exact
+CODE. Imported lane literals edit in place, and clearing one removes only its mask call; adding a lane where no mask exists
+converts the code on edit, with Undo. Saved-rack reconciliation carries the lane
+with the channel, like its NAME and OUTPUT. See the [spike and contract](arranger.md).
+
 ## Function loops (#135)
 
 Catalog `functionLoop` owns the method, scalar argument controls, optional method
@@ -763,3 +780,15 @@ ownership stays authoritative. Imported mode/arity changes convert the code on
 edit, with Undo; literal sample, count, order and tape edits
 preserve surrounding source. Source, complete saved rack and engine events have
 independent [acceptance checks](sound-crate.md).
+
+## Adjacent CODE study (#187, 8 November 2026)
+
+Decision before reader changes: retain separate CODE modules. A CODE block owns
+source call spans and its place in a voice's routing chain; apparent adjacency on
+a rail is not source adjacency. Across scopes, setup statements, callback bodies
+and shared references, combining text would require a new ownership/binding
+representation and independent mutation proofs. Concatenating display text does
+not prove executable byte preservation or full saved module identity. Existing
+saved layouts may also name these blocks independently. This bundle changes
+only unsaved placement; it does not merge CODE or invent ownership. Fewer rows
+come from packing catalog widths, with no change to source spans or module IDs.

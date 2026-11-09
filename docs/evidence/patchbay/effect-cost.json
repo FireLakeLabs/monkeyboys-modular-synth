@@ -1,0 +1,501 @@
+{
+  "claim": "Bounded Chromium process CPU and scheduled-target to digital PCM onset for an identity Kabel effect versus its native sine input; no physical latency or universal polyphony claim.",
+  "environment": {
+    "os": "linux",
+    "release": "7.2.15-300.fc45.x86_64",
+    "cpu": "AMD Ryzen 7 PRO 6850U with Radeon Graphics",
+    "cores": 16,
+    "load": [0.7, 0.54, 0.8]
+  },
+  "trials": [
+    {
+      "kind": "native",
+      "voices": 1,
+      "repeat": 0,
+      "elapsedMs": 2202.3300520000003,
+      "cpuMs": 80.00000000000007,
+      "cpuMsPerSecondPerVoice": 36.32516385423236,
+      "rms": 0.004805752401344022,
+      "frames": 96256,
+      "latencyMs": [
+        0.02083333333313675, 0.02083333333313675, 0.02083333333313675, 0.02083333333313675
+      ],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 0
+    },
+    {
+      "kind": "kabel",
+      "voices": 1,
+      "repeat": 0,
+      "elapsedMs": 2202.44106,
+      "cpuMs": 109.99999999999999,
+      "cpuMsPerSecondPerVoice": 49.944582852991296,
+      "rms": 0.00450988465417672,
+      "frames": 108288,
+      "latencyMs": [0.6333333333339297, 1.9666666666671162, 0.6333333333339297, 1.9666666666671162],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 7
+    },
+    {
+      "kind": "native",
+      "voices": 1,
+      "repeat": 1,
+      "elapsedMs": 2202.3762179999994,
+      "cpuMs": 79.99999999999996,
+      "cpuMsPerSecondPerVoice": 36.324402409615914,
+      "rms": 0.004530902391986333,
+      "frames": 108288,
+      "latencyMs": [
+        0.012500000000414957, 0.012500000000414957, 0.012500000000414957, 0.012500000000414957
+      ],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 7
+    },
+    {
+      "kind": "kabel",
+      "voices": 1,
+      "repeat": 1,
+      "elapsedMs": 2201.744962999999,
+      "cpuMs": 130.0000000000001,
+      "cpuMsPerSecondPerVoice": 59.04407739526195,
+      "rms": 0.004509586853127568,
+      "frames": 108288,
+      "latencyMs": [0.6666666666674814, 2.000000000000668, 0.6666666666674814, 2.000000000000668],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 14
+    },
+    {
+      "kind": "native",
+      "voices": 1,
+      "repeat": 2,
+      "elapsedMs": 2202.2965790000017,
+      "cpuMs": 100.00000000000009,
+      "cpuMsPerSecondPerVoice": 45.40714495656491,
+      "rms": 0.0047248409819783625,
+      "frames": 108288,
+      "latencyMs": [
+        0.008333333330057258, 0.008333333330057258, 0.008333333330057258, 0.008333333330057258
+      ],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 14
+    },
+    {
+      "kind": "kabel",
+      "voices": 1,
+      "repeat": 2,
+      "elapsedMs": 2202.318921000002,
+      "cpuMs": 89.99999999999986,
+      "cpuMsPerSecondPerVoice": 40.866015880721655,
+      "rms": 0.004942631160403383,
+      "frames": 108288,
+      "latencyMs": [0.6333333333294888, 1.9666666666644517, 0.6333333333294888, 1.9666666666644517],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 21
+    },
+    {
+      "kind": "native",
+      "voices": 1,
+      "repeat": 3,
+      "elapsedMs": 2203.3245480000005,
+      "cpuMs": 100.00000000000009,
+      "cpuMsPerSecondPerVoice": 45.38596008961639,
+      "rms": 0.004805747720266672,
+      "frames": 96256,
+      "latencyMs": [
+        0.008333333330057258, 0.008333333330057258, 0.008333333330057258, 0.008333333330057258
+      ],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 21
+    },
+    {
+      "kind": "kabel",
+      "voices": 1,
+      "repeat": 3,
+      "elapsedMs": 2202.7769100000005,
+      "cpuMs": 159.9999999999997,
+      "cpuMsPerSecondPerVoice": 72.63558977472651,
+      "rms": 0.004783139166169538,
+      "frames": 96256,
+      "latencyMs": [0.6666666666639287, 1.9999999999988916, 0.6666666666639287, 1.9999999999988916],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 28
+    },
+    {
+      "kind": "native",
+      "voices": 1,
+      "repeat": 4,
+      "elapsedMs": 2201.9842419999986,
+      "cpuMs": 89.99999999999986,
+      "cpuMsPerSecondPerVoice": 40.87222709561966,
+      "rms": 0.0045309024022298075,
+      "frames": 108288,
+      "latencyMs": [
+        0.008333333333609971, 0.008333333333609971, 0.008333333333609971, 0.008333333333609971
+      ],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 28
+    },
+    {
+      "kind": "kabel",
+      "voices": 1,
+      "repeat": 4,
+      "elapsedMs": 2201.5481939999954,
+      "cpuMs": 80.00000000000007,
+      "cpuMsPerSecondPerVoice": 36.33806437580091,
+      "rms": 0.004509586853009931,
+      "frames": 108288,
+      "latencyMs": [0.6666666666674814, 1.9999999999953388, 0.6666666666674814, 1.9999999999953388],
+      "events": 4,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 35
+    },
+    {
+      "kind": "native",
+      "voices": 8,
+      "repeat": 0,
+      "elapsedMs": 2200.072382999999,
+      "cpuMs": 129.9999999999999,
+      "cpuMsPerSecondPerVoice": 7.3861206229231575,
+      "rms": 0.004530906769673393,
+      "frames": 108288,
+      "latencyMs": [
+        0.020833333330472215, 0.020833333330472215, 0.020833333330472215, 0.020833333330472215
+      ],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 35
+    },
+    {
+      "kind": "kabel",
+      "voices": 8,
+      "repeat": 0,
+      "elapsedMs": 2202.2055580000015,
+      "cpuMs": 210.0000000000004,
+      "cpuMsPerSecondPerVoice": 11.91986819969693,
+      "rms": 0.004694605400155982,
+      "frames": 108288,
+      "latencyMs": [0.6666666666674814, 2.0000000000024443, 0.6666666666674814, 2.0000000000024443],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 91
+    },
+    {
+      "kind": "native",
+      "voices": 8,
+      "repeat": 1,
+      "elapsedMs": 2200.450804,
+      "cpuMs": 129.9999999999999,
+      "cpuMsPerSecondPerVoice": 7.384850399954675,
+      "rms": 0.004919577587352492,
+      "frames": 108288,
+      "latencyMs": [
+        0.008333333326504544, 0.008333333326504544, 0.008333333326504544, 0.008333333326504544
+      ],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 91
+    },
+    {
+      "kind": "kabel",
+      "voices": 8,
+      "repeat": 1,
+      "elapsedMs": 2202.322558,
+      "cpuMs": 250.00000000000045,
+      "cpuMsPerSecondPerVoice": 14.18956541424122,
+      "rms": 0.004783454971164744,
+      "frames": 96256,
+      "latencyMs": [0.6333333333330415, 1.9666666666680044, 0.6333333333330415, 1.9666666666680044],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 147
+    },
+    {
+      "kind": "native",
+      "voices": 8,
+      "repeat": 2,
+      "elapsedMs": 2202.326605000002,
+      "cpuMs": 169.99999999999994,
+      "cpuMsPerSecondPerVoice": 9.648886750836837,
+      "rms": 0.004805747659576823,
+      "frames": 96256,
+      "latencyMs": [
+        0.012499999996862243, 0.012499999996862243, 0.012499999996862243, 0.012499999996862243
+      ],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 147
+    },
+    {
+      "kind": "kabel",
+      "voices": 8,
+      "repeat": 2,
+      "elapsedMs": 2202.2951059999978,
+      "cpuMs": 280.0000000000002,
+      "cpuMsPerSecondPerVoice": 15.892511364460193,
+      "rms": 0.0045095868089555895,
+      "frames": 108288,
+      "latencyMs": [0.666666666660376, 1.9999999999953388, 0.666666666660376, 1.9999999999953388],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 203
+    },
+    {
+      "kind": "native",
+      "voices": 8,
+      "repeat": 3,
+      "elapsedMs": 2201.575235000004,
+      "cpuMs": 150.00000000000034,
+      "cpuMsPerSecondPerVoice": 8.516629230706263,
+      "rms": 0.004530902344507362,
+      "frames": 108288,
+      "latencyMs": [
+        0.008333333333609971, 0.008333333333609971, 0.008333333333609971, 0.008333333333609971
+      ],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 203
+    },
+    {
+      "kind": "kabel",
+      "voices": 8,
+      "repeat": 3,
+      "elapsedMs": 2202.301938999997,
+      "cpuMs": 230.00000000000043,
+      "cpuMsPerSecondPerVoice": 13.054522402615971,
+      "rms": 0.004608904295694918,
+      "frames": 108288,
+      "latencyMs": [0.6999999999948159, 2.0333333333297787, 0.6999999999948159, 2.0333333333297787],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 259
+    },
+    {
+      "kind": "native",
+      "voices": 8,
+      "repeat": 4,
+      "elapsedMs": 2200.5411830000085,
+      "cpuMs": 150.00000000000125,
+      "cpuMsPerSecondPerVoice": 8.520631263277787,
+      "rms": 0.004890526880258404,
+      "frames": 108288,
+      "latencyMs": [
+        0.012500000011073098, 0.012500000011073098, 0.012500000011073098, 0.012500000011073098
+      ],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 259
+    },
+    {
+      "kind": "kabel",
+      "voices": 8,
+      "repeat": 4,
+      "elapsedMs": 2202.378312999994,
+      "cpuMs": 240.00000000000023,
+      "cpuMsPerSecondPerVoice": 13.621637946087109,
+      "rms": 0.004782807633198969,
+      "frames": 96256,
+      "latencyMs": [0.7000000000090267, 2.0333333333439896, 0.7000000000090267, 2.0333333333439896],
+      "events": 32,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 315
+    },
+    {
+      "kind": "native",
+      "voices": 32,
+      "repeat": 0,
+      "elapsedMs": 2202.370106999995,
+      "cpuMs": 270.00000000000045,
+      "cpuMsPerSecondPerVoice": 3.831099946908257,
+      "rms": 0.004805752350707845,
+      "frames": 96256,
+      "latencyMs": [
+        0.020833333337577642, 0.020833333337577642, 0.020833333337577642, 0.020833333337577642
+      ],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 315
+    },
+    {
+      "kind": "kabel",
+      "voices": 32,
+      "repeat": 0,
+      "elapsedMs": 2201.3840660000133,
+      "cpuMs": 639.9999999999997,
+      "cpuMsPerSecondPerVoice": 9.085193405774323,
+      "rms": 0.004509884585805916,
+      "frames": 108288,
+      "latencyMs": [0.633333333340147, 1.9666666666751098, 0.633333333340147, 1.9666666666751098],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 539
+    },
+    {
+      "kind": "native",
+      "voices": 32,
+      "repeat": 1,
+      "elapsedMs": 2202.3512420000043,
+      "cpuMs": 290.0000000000009,
+      "cpuMsPerSecondPerVoice": 4.11492037563008,
+      "rms": 0.004530906768856344,
+      "frames": 108288,
+      "latencyMs": [
+        0.020833333337577642, 0.020833333337577642, 0.020833333337577642, 0.020833333337577642
+      ],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 539
+    },
+    {
+      "kind": "kabel",
+      "voices": 32,
+      "repeat": 1,
+      "elapsedMs": 2199.1514949999982,
+      "cpuMs": 649.9999999999994,
+      "cpuMsPerSecondPerVoice": 9.236516923087192,
+      "rms": 0.004522649447200677,
+      "frames": 108288,
+      "latencyMs": [0.6333333333259361, 1.966666666660899, 0.6333333333259361, 1.966666666660899],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 763
+    },
+    {
+      "kind": "native",
+      "voices": 32,
+      "repeat": 2,
+      "elapsedMs": 2202.3204639999894,
+      "cpuMs": 320.0000000000003,
+      "cpuMsPerSecondPerVoice": 4.540665249887111,
+      "rms": 0.004754380310581569,
+      "frames": 108288,
+      "latencyMs": [
+        0.012499999996862243, 0.012499999996862243, 0.012499999996862243, 0.012499999996862243
+      ],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 763
+    },
+    {
+      "kind": "kabel",
+      "voices": 32,
+      "repeat": 2,
+      "elapsedMs": 2199.495941000001,
+      "cpuMs": 629.999999999999,
+      "cpuMsPerSecondPerVoice": 8.950914449539308,
+      "rms": 0.004861351857060645,
+      "frames": 108288,
+      "latencyMs": [0.633333333340147, 1.9666666666751098, 0.633333333340147, 1.9666666666751098],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 987
+    },
+    {
+      "kind": "native",
+      "voices": 32,
+      "repeat": 3,
+      "elapsedMs": 2202.346432999999,
+      "cpuMs": 310.0000000000023,
+      "cpuMsPerSecondPerVoice": 4.398717592674066,
+      "rms": 0.005064862027424588,
+      "frames": 108288,
+      "latencyMs": [
+        0.012500000011073098, 0.012500000011073098, 0.012500000011073098, 0.012500000011073098
+      ],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 987
+    },
+    {
+      "kind": "kabel",
+      "voices": 32,
+      "repeat": 3,
+      "elapsedMs": 2202.309383,
+      "cpuMs": 679.9999999999998,
+      "cpuMsPerSecondPerVoice": 9.6489622048711,
+      "rms": 0.0047831391187078565,
+      "frames": 96256,
+      "latencyMs": [0.6666666666745868, 2.0000000000095497, 0.6666666666745868, 2.0000000000095497],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 1211
+    },
+    {
+      "kind": "native",
+      "voices": 32,
+      "repeat": 4,
+      "elapsedMs": 2202.3427260000026,
+      "cpuMs": 370.000000000001,
+      "cpuMsPerSecondPerVoice": 5.2500911250086775,
+      "rms": 0.004530902349907189,
+      "frames": 108288,
+      "latencyMs": [
+        0.012500000011073098, 0.012500000011073098, 0.012500000011073098, 0.012500000011073098
+      ],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 1211
+    },
+    {
+      "kind": "kabel",
+      "voices": 32,
+      "repeat": 4,
+      "elapsedMs": 2201.911334999997,
+      "cpuMs": 679.9999999999998,
+      "cpuMsPerSecondPerVoice": 9.650706484963901,
+      "rms": 0.004509586808262629,
+      "frames": 108288,
+      "latencyMs": [0.6666666666745868, 2.0000000000095497, 0.6666666666745868, 2.0000000000095497],
+      "events": 128,
+      "processorErrors": 0,
+      "failures": [],
+      "genericNodes": 1435
+    }
+  ],
+  "physicalListening": false,
+  "browser": "156.0.8078.4",
+  "pageErrors": [],
+  "audio": {
+    "sampleRate": 48000,
+    "baseLatency": 0.010666666666666666,
+    "outputLatency": 0.04,
+    "maxPolyphony": null
+  }
+}

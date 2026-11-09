@@ -9,23 +9,142 @@ import {
 import { cartridges } from '../workspace/cartridges'
 import { packKey, packLabel } from './packs'
 import { seatedResources, SOUND_MIME, soundToken, variantCount } from './crate'
+import type { SoundChoice, SoundAssignment } from './crate'
 import type { SampleSound } from './manifest'
 import './SoundCrate.css'
 
-function Card({ sound, report }: { sound: SampleSound; report: (message: string) => void }) {
+function RowChooser({
+  choice,
+  rows,
+  choose,
+  cancel,
+}: {
+  choice: SoundChoice
+  rows: readonly string[]
+  choose: (row: number) => void
+  cancel: () => void
+}) {
+  const dialog = useRef<HTMLDialogElement>(null)
+  const [error, setError] = useState('')
+  useEffect(() => {
+    const element = dialog.current
+    const opener = document.activeElement
+    element?.showModal()
+    return () => {
+      element?.close()
+      if (opener instanceof HTMLElement) opener.focus()
+    }
+  }, [])
+  return (
+    <dialog
+      ref={dialog}
+      className="sound-row-chooser"
+      aria-label="Choose DRUMS row"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') event.stopPropagation()
+      }}
+      onCancel={(event) => {
+        event.preventDefault()
+        cancel()
+      }}
+    >
+      <h2>Assign {soundToken(choice)}</h2>
+      <p>Choose a DRUMS row</p>
+      {rows.map((text, row) => (
+        <button
+          type="button"
+          key={row}
+          onClick={() => {
+            try {
+              choose(row)
+            } catch (error) {
+              setError(String(error))
+            }
+          }}
+        >
+          Row {row + 1}: <span>{text}</span>
+        </button>
+      ))}
+      {error && <p role="alert">{error}</p>}
+      <button type="button" onClick={cancel}>
+        Cancel
+      </button>
+    </dialog>
+  )
+}
+
+function Card({
+  sound,
+  report,
+  assign,
+  dragging,
+}: {
+  sound: SampleSound
+  report: (message: string) => void
+  assign: (choice: SoundChoice, row?: number) => SoundAssignment
+  dragging: (choice: SoundChoice | null) => void
+}) {
   const [n, setN] = useState(0)
+  const [pending, setPending] = useState<{ choice: SoundChoice; rows: readonly string[] } | null>(
+    null,
+  )
   const count = variantCount(sound.bank)
   const index = n % Math.max(1, count)
   const choice = { name: sound.name, n: index }
+  function requestAssignment() {
+    try {
+      const result = assign(choice)
+      if (result.kind === 'choose-row') {
+        setPending({ choice, rows: result.rows })
+        report(`Choose a DRUMS row for ${soundToken(choice)}`)
+      } else report(`Assigned ${soundToken(choice)}`)
+    } catch (error) {
+      report(String(error))
+    }
+  }
   return (
     <div className="sound-stack" data-sound={sound.name}>
+      {pending && (
+        <RowChooser
+          choice={pending.choice}
+          rows={pending.rows}
+          cancel={() => {
+            setPending(null)
+            report('Sound assignment cancelled')
+          }}
+          choose={(row) => {
+            const result = assign(pending.choice, row)
+            if (result.kind !== 'assigned') throw new Error('Choose a DRUMS row')
+            report(`Assigned ${soundToken(pending.choice)} to row ${row + 1}`)
+            setPending(null)
+          }}
+        />
+      )}
+
       <button
         type="button"
         className="button sound-card"
         draggable
         disabled={!count}
         aria-label={`Audition ${soundToken(choice)}`}
-        onDragStart={(event) => event.dataTransfer.setData(SOUND_MIME, JSON.stringify(choice))}
+        onDragStart={(event) => {
+          event.dataTransfer.setData(SOUND_MIME, JSON.stringify(choice))
+          dragging(choice)
+          const label = document.createElement('div')
+          label.textContent = soundToken(choice)
+          label.className = 'sound-drag-label'
+          document.body.append(label)
+          event.dataTransfer.setDragImage(label, 8, 8)
+          setTimeout(() => label.remove(), 0)
+        }}
+        onDragEnd={() => dragging(null)}
+        onDoubleClick={requestAssignment}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault()
+            requestAssignment()
+          }
+        }}
         onClick={() => {
           auditionSample(choice.name, choice.n)
             .then(() => report(`Auditioned ${soundToken(choice)}`))
@@ -62,10 +181,14 @@ export function SoundCrate({
   document,
   locked,
   active,
+  assign,
+  dragging,
 }: {
   document: SourceDocument
   locked: boolean
   active: boolean
+  assign: (choice: SoundChoice, row?: number) => SoundAssignment
+  dragging: (choice: SoundChoice | null) => void
 }) {
   const resources = useSyncExternalStore(subscribeSamplePacks, getSamplePacks)
   const [filter, setFilter] = useState('')
@@ -98,7 +221,10 @@ export function SoundCrate({
           onChange={(event) => setFilter(event.target.value)}
         />
       </label>
-      <p>Click to hear · drag onto a sampler or DRUMS row</p>
+      <p>
+        Click to hear · drag to a lit panel or DRUMS row · select a module, then double-click or
+        Enter to assign
+      </p>
       {entries.map((entry, index) => {
         const pack = entry.pack
         const resource = pack && seated.find((resource) => resource.key === packKey(pack))
@@ -123,7 +249,13 @@ export function SoundCrate({
                   {bank} · {sounds.length} sounds
                 </summary>
                 {sounds.map((sound) => (
-                  <Card key={sound.name} sound={sound} report={setMessage} />
+                  <Card
+                    key={sound.name}
+                    sound={sound}
+                    report={setMessage}
+                    assign={assign}
+                    dragging={dragging}
+                  />
                 ))}
               </details>
             ))}

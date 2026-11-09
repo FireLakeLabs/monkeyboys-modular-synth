@@ -27,6 +27,7 @@ writes. `panelControls` in `src/rack/model.ts` reads this data:
 - `more`: rarely used controls move to a More flyout beside the panel. MIX keeps
   NAME and OUTPUT there. SMPL keeps BANK, LOOP and CUT there with the BEGIN, END,
   LOOP BEGIN and LOOP END knobs, whose positions the tape also draws and moves.
+  OSC keeps VOICES, DETUNE and SPREAD in More when supersaw is selected.
 
 ## Call bindings (#128)
 
@@ -74,7 +75,10 @@ catalog’s optional `paletteCategory` places ITER/JUX in Pattern and CODE in
 Utility, retaining their existing Alien/Cyber colors and family looks. Other
 modules use their existing category. Family is a badge on each chip. Filtering
 matches names, long names, displayed calls and reader function names without case
-sensitivity; chip text wraps instead of truncating. Module widths are unchanged.
+sensitivity; chip text wraps at word boundaries instead of truncating or breaking
+words. Intrinsic word widths allow long names to take a full row within the
+180 px dock; full accessible names remain on the buttons. Module widths and
+new-patch rail sizing are unchanged.
 
 ## Conventions
 
@@ -514,6 +518,8 @@ Hardware · Utility · 12 HP
 | OUT        | out | audio  |
 
 Writes one `$:` line per connected input, in channel order ([rule 2](translation-rules.md#2-each-mixer-input-is-a--line)).
+Each channel's ARRANGE lane (in More, and in the rack footer’s Arrange popover) chooses the
+cycles that voice plays; see [arranger lanes](translation-rules.md#arranger-lanes-141).
 
 ### OUT — Output
 
@@ -679,6 +685,7 @@ retain their previous omission rules and saved-file semantics.
 | MIX SOLO 1–4       | off / on                        | off / no prefix   | `S` label prefix; keeps all orbit slots                                                                                           |
 | MIX NAME 1–4       | text                            | empty / `$`       | channel label; separate from named fan-out outputs                                                                                |
 | MIX OUTPUT 1–4     | text positive integer pair      | `1:2` / `1:2`     | `.channels("3:4")`, before orbit; actual hardware outputs depend on the device                                                    |
+| MIX ARRANGE 1–4    | text lane, `0`/`1` per cycle    | empty / always    | `.mask("<0!4 1!12>")` before gain and routing; edited in the [Arrange](arranger.md) footer popover                                |
 
 OSC adds `pulse` to WAVE. All new controls retain their inactive values in rack
 metadata. Newly imported calls with omitted delay time read as SYNC, matching
@@ -881,3 +888,12 @@ shows a flat baseline when stopped or awaiting a tap. Reduced motion shows a
 static baseline with **Motion paused**, with no sampling/drawing interval. Stop,
 errors, replacement and bounce retain the engine's existing transport boundaries.
 A generator-owned SCOPE exercise is included in the module library.
+
+### Sound target presentation (#185)
+
+The catalog's `sampleTarget` defines panel-wide seated-sound acceptance, including
+WAVETABLE's `wt_` prefix. DRUMS retains per-row targets rather than replacing all
+rows by a panel drop. The crate offers selection followed by double click or Enter. For DRUMS, that
+path requires an explicit choice in the row dialog before applying; it does not
+guess row zero. Native selectors remain available. Presentation never bypasses source-aware
+mutation/refusal or bank semantics. See [sound assignment](design.md#sound-assignment-185).

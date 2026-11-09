@@ -431,6 +431,11 @@ export async function verifyLibraryRackEditing(patchIds) {
     await until(() => patch().modules.length > before)
   }
   async function cable(from, to) {
+    const overview = document.querySelector(`[data-module="${from.module}"] .overview-module`)
+    if (overview) {
+      overview.click()
+      await pause(0)
+    }
     jack(from).scrollIntoView({ block: 'center' })
     jack(from).click()
     await pause(0)

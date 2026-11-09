@@ -38,8 +38,10 @@ interface Patch {
   module positions (at least one row). Placement grows this count; removing the
   last module in a row does not shrink it. Explicit removal of an empty row
   shifts later rows up one, retaining module HP, looks, values and cables.
-- Optional `railHp` is exactly 64, 84 or 104 HP. Missing fields and plain files
-  default to 64 HP. New patches select the widest rail visible at 100% beside the
+- Optional `railHp` is exactly 64, 84 or 104 HP. Missing saved fields default to 64 HP. Plain files without a saved block
+  receive initial compact placement over 64/84/104 HP rails: minimize row count,
+  preferring narrower rails on ties. This never reflows saved personal or bundled
+  positions. New patches select the widest rail visible at 100% beside the
   palette, code and pinned output; the width is then saved,
   never recomputed on resize. The toolbar changes it without moving modules.
   Reductions that strand a module outside the rail are refused. Placement and
@@ -423,6 +425,15 @@ including private send/trigger voices and named SWITCH inputs. Edited or
 unproven cross-voice calls retain source ownership; do not infer their graph
 from integer bus/orbit addresses. Exact source, complete rack identity and engine
 events are checked independently in the [routing matrix](routing-verification.md).
+
+## Arranger lanes (#141)
+
+Lanes are MIX channel values `arr1`…`arr4` in the existing module `values`; an
+absent value plays every cycle. No format version or new field is needed. Lane
+text must be `0`/`1` cycle steps, or graph validation refuses the rack. Executable
+`.mask()` calls are authoritative after a code edit: reconciliation carries the
+lane with its channel, as it does NAME and OUTPUT. Song length shown by the lane
+is view state and is not saved. See the [contract](arranger.md#contract).
 
 ## Strudel credits and the patch name (#139)
 

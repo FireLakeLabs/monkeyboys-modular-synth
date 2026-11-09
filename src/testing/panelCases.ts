@@ -65,6 +65,7 @@ export const panelCases: readonly {
     { type: 'mix', control: `solo${channel}`, value: 'on', call: 'S$: ' },
     { type: 'mix', control: `name${channel}`, value: 'bass', call: 'bass: ' },
     { type: 'mix', control: `channels${channel}`, value: '3:4', call: '.channels("3:4")' },
+    { type: 'mix', control: `arr${channel}`, value: '<1!2 0!2>', call: '.mask("<1!2 0!2>")' },
   ]),
 ]
 

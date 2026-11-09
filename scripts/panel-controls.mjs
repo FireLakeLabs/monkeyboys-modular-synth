@@ -1,3 +1,9 @@
+/** Use the native overview navigation before operating a panel control. */
+export async function detailPanel(panel) {
+  const zoom = panel.getByRole('button', { name: /^Zoom to / })
+  if (await zoom.isVisible()) await zoom.click()
+}
+
 /** File actions live in the File menu, which closes after each one. */
 export async function fileAction(page, name) {
   await page.locator('.file-menu > button').click()
@@ -6,6 +12,7 @@ export async function fileAction(page, name) {
 
 /** Opens a panel's More flyout, which floats outside the panel, and returns it. */
 export async function openMore(panel) {
+  await detailPanel(panel)
   await panel.getByRole('button', { name: /^More / }).click()
   const flyout = panel.page().locator('.module-flyout')
   await flyout.waitFor()
@@ -24,6 +31,7 @@ export async function switchValue(panel, label) {
 
 /** Sets a catalog switch through whichever control the panel currently shows. */
 export async function chooseSwitch(panel, label, value) {
+  await detailPanel(panel)
   const group = panel.getByRole('radiogroup', { name: label, exact: true })
   if (await group.count()) {
     await group.locator(`input[value="${value}"]`).check()

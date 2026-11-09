@@ -89,7 +89,17 @@ describe('per-patch rails and pinned output (#133)', () => {
 
   it.each(RAIL_WIDTHS)('auto-places and reconciles a long import within saved %i HP', (width) => {
     const document = read(longVoice)
-    const saved = editDocument(saveLayout(document), setRailWidth(document.patch, width))
+    // Author a valid saved case at each width; unsaved import may now choose wider rails.
+    const modules: typeof document.patch.modules = []
+    for (const module of document.patch.modules)
+      modules.push({ ...module, ...nextPosition(modules, module.type, 0, 0, width) })
+    const fixture = {
+      ...document.patch,
+      modules,
+      railHp: width,
+      rows: Math.max(...modules.map((module) => module.row)) + 1,
+    }
+    const saved = editDocument(saveLayout(document), fixture)
     const editedSource = saved.source.replace('.room(.6)', '.room(.6).chunk(4,x=>x.rev()).iter(4)')
     const edited = read(editedSource)
     expect(edited.layout).toBe('reconciled')

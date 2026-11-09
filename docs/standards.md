@@ -1,11 +1,21 @@
 # Engineering standards
 
 The [rack layout browser regressions](../tests/browser/rack-layout.spec.mjs) guard
-the Packs tab, usable rack height, and fitted MIX cables: clipped jack
-targets cannot leave cables dangling on other rails. Both checks failed before
-the fixes. Scrolling the output jack back into view restores its cable at the
-measured endpoint, without changing the source. This is part of browser acceptance,
-separate from the deterministic gate; physical listening is not covered.
+the Packs tab, usable rack height and fitted MIX cables. The
+[remaining stabilization checks](../tests/browser/stabilization-remaining.spec.mjs)
+cover complete overview cables, disabled jacks, native zoom navigation and
+Connections repatching. Clipped detail jack endpoints pin to the visible
+patch-box edge; the controlled scroll fixture in `scripts/panels-browser.mjs`
+checks that they follow scrolling without changing source. These are browser
+checks, separate from the deterministic gate; physical listening is not covered.
+
+The [Wave 1 browser regressions](../tests/browser/stabilization-wave-1.spec.mjs)
+cover continuous cable pointer targets, unchanged selected shadows, supersaw and
+SPLICE panel geometry, More Escape, loaded-font whole-word chip names, Packs bounds
+and responsive dock columns. Narrow columns and selected-shadow checks failed
+before the review fixes. These are browser checks, separate from the deterministic
+gate; screenshots and independent source/saved-rack proof are recorded in the
+[wave evidence](stabilization-wave-1.md).
 
 This is the enforcement inventory. Product behavior remains defined by the
 [decisions](decisions.md), [module spec](module-spec.md), [translation rules](translation-rules.md),
@@ -88,7 +98,7 @@ workflow evidence; local branch relationships and CI do not establish membership
 | Performance          | Validate outputs and work counts; interleave repeated runs, disclose environment/noise, and connect microbenchmarks to a user-visible path. No timing gate without a reliable baseline.                                                                                      |
 | UI                   | Use semantic controls, names, focus behavior, keyboard operation, and reduced motion. Advanced keyboard patching may remain outside v1. Rack controls stay above the cable layer and are tested with a real pointer, as in [design](design.md#controls-and-the-cable-layer). |
 | Stored user data     | Review lost work and multiple tabs from round 1: stale tabs, full or unreadable storage, undo, reload. On #205, most Sol findings were two-tab cases, including a blocker that silently overwrote a saved patch; it took 5 rounds.                                           |
-| Browser evidence     | Full suite on the final commit and after every review fix, `RESULT` line read, [**Full browser suites**](ci.md#full-browser-acceptance) waited for. Process rules only: that check is not required, so nothing blocks a merge that skips them.                               |
+| Browser evidence     | Follow the [browser verification policy](ci.md#browser-verification-policy) for local coverage and review fixes; wait for hosted **Full browser suites** whenever it runs on a PR. This is reviewed guidance, not a required GitHub check.                                   |
 | Agent workflow       | tstack supplies PR workflows; [review-loop](../.agents/skills/review-loop/SKILL.md) owns model review under [AGENTS.md](../AGENTS.md). pstack skills alone do not authorize delegation, commits, external messages, or shipping.                                             |
 
 Record narrow exceptions beside the affected code with their reason and removal
@@ -490,3 +500,11 @@ of the edited rack. Noise samples differ between sessions, so noise PCM is held 
 level and envelope bounds, not digests. Module/HP and source/rack invariants run in
 `npm run check`; PCM, lifetimes and scheduling run in the full browser suite.
 Neither path establishes subjective listening acceptance.
+
+The #185 native sound-assignment regression in
+[the stabilization checks](../tests/browser/stabilization-remaining.spec.mjs)
+requires an explicit DRUMS row choice after Enter or double click. It rejects a
+refusal-only path and automatic row-zero assignment: opening and Escape must
+leave source unchanged; keyboard selection of row two must preserve all other
+rack state and the other rows' exact notation. This is a feature acceptance
+guard in the hosted suite, not a new workflow policy.
