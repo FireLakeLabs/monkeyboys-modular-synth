@@ -82,3 +82,54 @@ export function discoverModules(
   }
   return choices
 }
+
+export interface JackOption {
+  /** Button text: the channel number in a numbered family, otherwise the jack label. */
+  text: string
+  /** Accessible name, e.g. `MIX · CV 3`. */
+  name: string
+  choice: ModuleConnection
+}
+
+/** Numbered jacks share a labelled row; unnumbered jacks share one unlabelled row. */
+export interface JackFamily {
+  label: string | null
+  options: JackOption[]
+}
+
+export interface ModuleChoices {
+  type: string
+  families: JackFamily[]
+}
+
+/** A bare number (`1`) or a trailing channel number (`CV 1`) marks a numbered jack. */
+const NUMBERED = /^(?:(.*\S)\s+)?(\d+)$/
+
+function familyOf(jack: Jack): { label: string | null; text: string } {
+  const numbered = NUMBERED.exec(jack.label)
+  if (!numbered) return { label: null, text: jack.label }
+  // Bare-number labels sit under a panel heading; the jack id stem (`in1` → IN) names it here.
+  const label = numbered[1] ?? jack.id.replace(/\d+$/, '').toUpperCase()
+  return { label, text: numbered[2] ?? jack.label }
+}
+
+/** Collapse per-jack choices into one entry per module, keeping catalog jack order. */
+export function groupByModule(choices: readonly ModuleConnection[]): ModuleChoices[] {
+  const modules = new Map<string, Map<string | null, JackFamily>>()
+  for (const choice of choices) {
+    const spec = getModuleSpec(choice.type)
+    const jack = spec.jacks.find((jack) => jack.id === choice.jack)
+    if (!jack) continue
+    const { label, text } = familyOf(jack)
+    const families = modules.get(choice.type) ?? new Map<string | null, JackFamily>()
+    modules.set(choice.type, families)
+    const family = families.get(label) ?? { label, options: [] }
+    families.set(label, family)
+    family.options.push({
+      text,
+      name: `${spec.name} · ${label === null ? text : `${label} ${text}`}`,
+      choice,
+    })
+  }
+  return [...modules].map(([type, families]) => ({ type, families: [...families.values()] }))
+}

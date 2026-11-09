@@ -148,18 +148,55 @@
   top: 402px;
 }
 .row-label {
-  position: absolute;
-  top: -15px;
-  right: 6px;
   font: 11px monospace;
   color: #c2c7cf;
   background: #090a0c;
   padding: 1px 3px;
 }
-.remove-row {
+/* Row tools sit on the rails; they keep a constant on-screen size at every rack zoom. */
+.row-tools {
   position: absolute;
-  top: 40px;
-  left: 10px;
+  top: -8px;
+  right: 6px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: calc(4px / var(--rack-zoom, 1));
+  transform: translateY(-50%);
+}
+.row-button {
+  --size: calc(20px / var(--rack-zoom, 1));
+  width: var(--size);
+  height: var(--size);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: calc(1px / var(--rack-zoom, 1)) solid #5a606a;
+  border-radius: 50%;
+  background: #202328;
+  color: var(--text);
+  font:
+    700 calc(15px / var(--rack-zoom, 1)) / 1 'Barlow',
+    sans-serif;
+  cursor: pointer;
+  box-shadow: 0 1px 3px #0008;
+}
+.row-button:hover:enabled,
+.row-button:focus-visible {
+  border-color: var(--audio);
+  color: var(--audio);
+}
+.row-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* Centered in the empty gap between this row's lower rail and the next row, clear of panels. */
+.insert-row {
+  position: absolute;
+  bottom: -33px;
+  left: 6px;
+  z-index: 5;
+  transform: translateY(50%);
 }
 .module-panel {
   position: absolute;
@@ -755,17 +792,6 @@
   background: #f4a46222;
   pointer-events: none;
   z-index: 4;
-}
-.add-row {
-  width: 100%;
-  padding: 7px;
-  margin: 8px 0;
-  color: var(--muted);
-  background: transparent;
-  border: 1px dashed #414650;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
 }
 /* Panels are tight, so their chrome buttons shrink without changing style. */
 .module-controls button:not([class]),
@@ -1453,19 +1479,66 @@ select:focus-visible {
   flex-direction: column;
   gap: 5px;
 }
-.connected-module-options button {
+.connected-module-card {
   flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-  padding: 8px;
-  white-space: normal;
-  text-align: left;
+  gap: 4px;
+  padding: 6px 8px;
 }
-.connected-module-options button[aria-current='true'] {
+.connected-module-card header {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.connected-module-card header small {
+  margin-left: auto;
+}
+.connected-module-title {
+  font-size: 12px;
+  color: #b7bdc6;
+}
+.jack-family {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.jack-family-label {
+  min-width: 34px;
+  font:
+    700 12px 'Barlow Condensed',
+    sans-serif;
+  letter-spacing: 0.04em;
+  color: #c2c7cf;
+}
+.jack-choice {
+  min-width: 30px;
+  padding: 4px 8px;
+  border: 1px solid #414650;
+  border-bottom: 2px solid var(--signal, #414650);
+  border-radius: 5px;
+  background: #202328;
+  color: var(--text);
+  font:
+    600 12px 'Barlow',
+    sans-serif;
+  cursor: pointer;
+}
+.jack-choice:hover:enabled,
+.jack-choice:focus-visible {
+  border-color: #6b717b;
+  border-bottom-color: var(--signal, #6b717b);
+}
+.jack-choice[aria-current='true'] {
   border-color: #f4a462;
   background: #302319;
+}
+.jack-choice.warning,
+.jack-choice.unresolved {
+  border-style: dashed;
+}
+.jack-choice:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .connected-module-options small {
   color: #b7bdc6;

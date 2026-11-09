@@ -121,7 +121,7 @@ test('selecting a scrolled module never swallows the click', async ({ page }) =>
   await page.locator('.rack-scroll').evaluate((element) => {
     element.scrollTop = 0
   })
-  await page.getByRole('button', { name: '+ Add row' }).click()
+  await page.getByRole('button', { name: 'Insert row below row 1', exact: true }).click()
   await page.getByLabel('Rack zoom').selectOption('1.5')
   await page.locator('.rack-scroll').evaluate((element) => {
     element.scrollTop = 120

@@ -2,7 +2,7 @@ import { parse } from 'acorn'
 import { describe, expect, it } from 'vitest'
 import { read } from '../reader'
 import {
-  addRow,
+  insertRow,
   connect,
   placeModule,
   removeCable,
@@ -28,7 +28,7 @@ const cable = (patch: Patch, module: string) => {
 
 function prepared() {
   let original = saveLayout(read(fixture))
-  original = editDocument(original, addRow(original.patch))
+  original = editDocument(original, insertRow(original.patch, 0))
   original = editDocument(original, placeModule(original.patch, 'iter', 3))
   original = editDocument(
     original,

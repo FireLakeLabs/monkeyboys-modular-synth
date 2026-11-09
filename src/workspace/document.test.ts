@@ -4,7 +4,7 @@ import { generate } from '../codegen/generate'
 import { read, tryRead } from '../reader'
 import {
   connect,
-  addRow,
+  insertRow,
   removeRow,
   removeCable,
   placeModule,
@@ -29,7 +29,7 @@ describe('source-owned workspace', () => {
     const original = saveLayout(
       read("// exact 🐒\r\n$: note('c3').s('sine').chunk(4,x=>x.rev()) /* tail */\r\n"),
     )
-    const changed = editDocument(original, addRow(original.patch))
+    const changed = editDocument(original, insertRow(original.patch, 0))
     expect(sourceBody(changed.source)).toBe(sourceBody(original.source))
     expect(read(changed.source).patch).toEqual(changed.patch)
     expect(changed.patch.rows).toBe(2)

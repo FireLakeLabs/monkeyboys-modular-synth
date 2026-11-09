@@ -90,7 +90,7 @@ try {
     ['vcf', 19],
     ['mix', 92],
   ])
-  await page.getByRole('button', { name: '+ Add row', exact: true }).click()
+  await page.getByRole('button', { name: 'Insert row below row 1', exact: true }).click()
   const chip = page.getByRole('button', { name: 'Add LFO', exact: true })
   await chip.scrollIntoViewIfNeeded()
   const start = await chip.boundingBox()
