@@ -98,3 +98,18 @@ activation, and the previously failing audio-output marking check. Refreshed
 chooser/hover screenshots were inspected after this run. The raw log is
 `/tmp/233-focused-after.log`; its artifacts were copied to
 `/tmp/monkeyboy-233/focused-after` before the next full run.
+
+The fresh complete run on `da20bff` (based on `af7040f`) finished with
+`RESULT passed=205 failed=0 exit=0`. Its log is `/tmp/233-full-rebased.log` and
+its raw artifacts were copied to `/tmp/monkeyboy-233/full-after`. The 5173 test
+server stopped after the run. This green run does not replace the earlier
+`201/2` failed evidence.
+
+A final status-only check then reproduced a stale chooser instruction after
+Escape (`RESULT passed=0 failed=1 exit=1`). Dismissal now reports **Cancelled**;
+successful selection reports **Added and connected …**. The complete feature
+file was rerun after that small change with `RESULT passed=8 failed=0 exit=0`,
+including real playback and Undo/Redo. That focused coverage is appropriate for
+the two status messages; the full hosted suite on the final PR head remains
+the merge gate. The before-fix trace/log and after-fix log are retained under
+`/tmp/monkeyboy-233` and `/tmp/233-final-feature.log` respectively.

@@ -605,6 +605,7 @@ export function Rack({
   function cancelAdding() {
     const anchor = adding?.anchor
     cancel()
+    setMessage('Cancelled')
     if (anchor)
       surface.current
         ?.querySelector<HTMLElement>(`[data-jack="${CSS.escape(keyOf(anchor))}"]`)
@@ -628,8 +629,10 @@ export function Rack({
           undoFocus: `[data-jack="${CSS.escape(keyOf(anchor))}"]`,
         },
       )
-    )
+    ) {
       cancelAdding()
+      setMessage(`Added and connected ${getModuleSpec(choice.type).name}`)
+    }
   }
   function place(row: number, hp: number) {
     if (!placement) return

@@ -91,6 +91,7 @@ test('output rail drop previews catalog geometry, cancels cleanly, and commits p
   await page.screenshot({ path: info.outputPath('chooser.png') })
   await page.keyboard.press('Escape')
   await expect(search).toHaveCount(0)
+  await expect(page.locator('.rack-status')).toHaveText('Cancelled')
   await expect(jack(page, 'osc1:out')).toBeFocused()
   expect(await source(page)).toBe(before)
   await dropOnRail(page, 'osc1:out')
@@ -99,6 +100,7 @@ test('output rail drop previews catalog geometry, cancels cleanly, and commits p
   await expect(page.locator('[data-choice]').first()).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.locator('[data-module="vcf2"]')).toBeVisible()
+  await expect(page.locator('.rack-status')).toHaveText('Added and connected VCF')
   const after = await patch(page)
   expect(after.modules.find((module) => module.id === 'vcf2')).toMatchObject({ row: 0, hp: 38 })
   expect(after.cables).toContainEqual(
