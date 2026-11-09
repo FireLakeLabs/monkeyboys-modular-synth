@@ -46,3 +46,18 @@ behavior. Diff before R1: 85,223 added lines (mostly generated JSON); after R2:
 88,036 added lines before the final documentation record, with no app changes.
 No reviewer usage figures were exposed. The PR/check history and closing issue
 comment retain final hosted-head, browser-gate and protected-merge evidence.
+
+## Documentation reconciliation after PR #253
+
+PR #253 merged at `5b8b86610d95c535072f666b5482a8d0be2a3f1d` after required
+checks and Full browser suites succeeded on `0c8aaf4` (227 passed). The parent
+then supplied the retained preliminary scan's deduplication method. Source/AST
+reconstruction confirmed 401 sites and 256 unowned sites versus 400 distinct
+`kind:firstName` keys and 255 unowned keys; the only duplicated key is
+`register:cpm`, at pattern.mjs:2047 and repl.mjs:206. The previous report's
+`register('all')` citation was incorrect. The README now states both units and
+the exact duplicate, with the historical artifact hash. No scanner, schema,
+artifact, priority or application behavior changes. The owner's explicit
+instruction treats this as a documentation-only nit needing no new model review;
+format/skill checks and source/example verification still apply, as do any
+hosted final-head CI checks. #245 was reopened until this follow-up merges.
