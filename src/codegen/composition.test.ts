@@ -5,7 +5,7 @@ import { beforeAll, expect, it } from 'vitest'
 import { parseSource } from '../reader/syntax'
 import { read } from '../reader/read'
 import { generate } from './generate'
-import { sourceBody } from '../workspace/document'
+import { sourceBody, makeRackEditable } from '../workspace/document'
 
 let runtime: Record<string, unknown>
 let compile: (source: string) => string
@@ -163,4 +163,13 @@ it('reserves literal inner o addresses without granting ownership or overriding 
   expect(generated).toContain('.orbit(4)')
   expect(generated).not.toContain('.orbit(2)')
   expect(generated).not.toContain('.orbit(3)')
+})
+
+it('retains hidden routes in unsupported spread Stack CODE during rack conversion', () => {
+  const source =
+    'const parts = [note("c3").s("sine").orbit(7),note("e3").s("sine").orbit(8)];\n$: stack(...parts)\n'
+  const doc = read(source)
+  expect(doc.patch.modules.some((m) => m.type === 'code')).toBe(true)
+  const converted = makeRackEditable(doc)
+  expect(events(converted.source, false)).toEqual(events(source, false))
 })

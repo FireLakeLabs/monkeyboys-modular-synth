@@ -86,7 +86,10 @@ export function descriptor(value: unknown): string {
   })
 }
 
-export function syntax(text: string): {
+export function syntax(
+  text: string,
+  { opaque = false }: { opaque?: boolean } = {},
+): {
   root: string
   calls: { name: string; arguments: string; start: number; end: number }[]
   hasOrbit: boolean
@@ -127,13 +130,15 @@ export function syntax(text: string): {
     return root
   }
   const root = chain(statement.expression)
+  // An opaque combiner can carry routes through unknown arguments; never overwrite them.
+  const routingNames = ['orbit', 'o', ...(opaque ? ['stack'] : [])]
   function usesOrbit(value: unknown): boolean {
     if (typeof value !== 'object' || value === null) return false
     if (
       'type' in value &&
       value.type === 'Identifier' &&
       'name' in value &&
-      ['orbit', 'o'].includes(String(value.name))
+      routingNames.includes(String(value.name))
     )
       return true
     // Computed ["orbit"] routing also remains source-owned; unrelated string literals do not.
@@ -144,7 +149,7 @@ export function syntax(text: string): {
       typeof value.property === 'object' &&
       value.property !== null &&
       'value' in value.property &&
-      ['orbit', 'o'].includes(String(value.property.value))
+      routingNames.includes(String(value.property.value))
     )
       return true
     return Object.values(value).some(usesOrbit)

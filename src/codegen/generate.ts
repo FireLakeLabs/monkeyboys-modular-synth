@@ -421,7 +421,7 @@ export function generateDocument(
       if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
       // Opaque CODE may end in a line comment; keep separators around it.
       expression = append({ ...expression, inline: false }, text, node)
-      expression.sourceRouting ||= syntax(expression.text).hasOrbit
+      expression.sourceRouting ||= syntax(expression.text, { opaque: true }).hasOrbit
       return expression
     }
     if (node.spec.id === 'duck')
@@ -857,7 +857,12 @@ export function generateDocument(
           if (chainedCode(text)) return []
           syntax(text)
           // Preserve the exact source inside parentheses, including terminal line comments.
-          return [{ ...append(blank(), `(${text}\n)`, node), sourceRouting: syntax(text).hasOrbit }]
+          return [
+            {
+              ...append(blank(), `(${text}\n)`, node),
+              sourceRouting: syntax(text, { opaque: true }).hasOrbit,
+            },
+          ]
         }
         return []
       }

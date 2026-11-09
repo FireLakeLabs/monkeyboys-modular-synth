@@ -42,6 +42,7 @@ test('MIX modes retain source, inactive values, geometry, native Undo and atomic
     expect(changed).not.toBe(before)
     const saved = await run(page, 'state')
     expect(saved.identity && saved.sourceExact).toBe(true)
+    await page.evaluate(async () => (await import('/scripts/rack-feel-check.mjs')).inspectCables())
     expect(saved.patch.modules.find((m) => m.id === 'mix1').values.ch1).toBe(0.8)
     await page.getByRole('button', { name: 'Undo', exact: true }).focus()
     await page.keyboard.press('Control+z')

@@ -1,6 +1,6 @@
 import * as web from '@strudel/web'
 import mixExercise from '../src/library/patches/modules/mix.strudel?raw'
-import { play, stop, getClock } from '../src/strudel/engine.ts'
+import { play, stop, getClock, bounce } from '../src/strudel/engine.ts'
 import { createPlayback } from '../src/strudel/playback.ts'
 import { generate } from '../src/codegen/generate.ts'
 import { read } from '../src/reader/read.ts'
@@ -76,6 +76,104 @@ async function pcm(ms = 800) {
 }
 const voice = (pitch, delay, room) =>
   `note("${pitch}*2").s("sine").gain(.08).delay(.3).delaytime(${delay}).delayfeedback(.25).room(.15).roomsize(${room})`
+/** Controlled seeded IRs let the actual renderer compare PCM, independently of events. */
+async function offlineProof() {
+  // oxlint-disable-next-line typescript/unbound-method -- Restore the original static method exactly after binding its calls.
+  const originalCreate = URL.createObjectURL,
+    create = originalCreate.bind(URL),
+    random = Math.random
+  let wav
+  URL.createObjectURL = (blob) => {
+    if (blob.type === 'audio/wav') wav = blob
+    return create(blob)
+  }
+  // Reverb's impulse generator uses Math.random in this context. A fixed nonzero
+  // seeded sequence removes IR variation while retaining nonzero wet output and unique voice IDs.
+  let seed = 242
+  Math.random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296
+  const shared = `setcpm(240/4)\n$: stack(${voice('a3', 0.125, 0.3)},${voice('e4', 0.25, 0.5)}).orbit(1)\n`
+  const separated = `setcpm(240/4)\n$: ${voice('a3', 0.125, 0.3)}.orbit(1)\n$: ${voice('e4', 0.25, 0.5)}.orbit(2)\n`
+  const spread = `const parts=[${voice('a3', 0.125, 0.3)}.orbit(7),${voice('e4', 0.25, 0.5)}.orbit(8)];\nsetcpm(240/4)\n$: stack(...parts)\n`
+  async function render(source) {
+    wav = undefined
+    seed = 242
+    await bounce(source, { cycles: 2, name: 'mix-242-proof', volume: 0.5 })
+    assert(wav, 'Missing actual rendered WAV')
+    const buffer = await wav.arrayBuffer(),
+      view = new DataView(buffer)
+    assert(
+      new TextDecoder().decode(buffer.slice(0, 4)) === 'RIFF' && view.getUint16(34, true) === 16,
+      'Unexpected WAV encoding',
+    )
+    const samples = new Int16Array(buffer.slice(44)),
+      pcm = Float64Array.from(samples, (n) => n / 32768)
+    const rms = Math.sqrt(pcm.reduce((sum, n) => sum + n * n, 0) / pcm.length)
+    assert(rms > 0.0001, 'Offline renderer silent')
+    return { pcm, rms, rate: view.getUint32(24, true), channels: view.getUint16(22, true) }
+  }
+  const pairs = []
+  const rendered = []
+  function difference(a, b) {
+    assert(a.length === b.length, 'Rendered frame count changed')
+    let energy = 0,
+      max = 0
+    for (let i = 0; i < a.length; i++) {
+      const d = a[i] - b[i]
+      energy += d * d
+      max = Math.max(max, Math.abs(d))
+    }
+    return { rms: Math.sqrt(energy / a.length), max }
+  }
+  try {
+    for (const [name, source] of [
+      ['shared-native', shared],
+      ['separated-native', separated],
+      ['opaque-spread-routing', spread],
+    ]) {
+      const before = await render(source),
+        repeat = await render(source),
+        after = await render(makeRackEditable(read(source)).source)
+      const delta = difference(before.pcm, after.pcm),
+        repeatDelta = difference(before.pcm, repeat.pcm)
+      // Even identical-source renders vary at sample level. Bound conversion by
+      // that measured reference, require matched energy, and retain a send-sharing negative control.
+      assert(
+        delta.rms <= repeatDelta.rms * 1.5 + 2 / 32768 &&
+          Math.abs(after.rms - before.rms) / before.rms < 0.01,
+        `${name}: original/regenerated PCM changed ${JSON.stringify({ delta, repeatDelta, before: before.rms, after: after.rms })}`,
+      )
+      rendered.push(before)
+      pairs.push({
+        name,
+        frames: before.pcm.length / before.channels,
+        rate: before.rate,
+        channels: before.channels,
+        originalRms: before.rms,
+        regeneratedRms: after.rms,
+        repeatRms: repeat.rms,
+        difference: delta,
+        repeatDifference: repeatDelta,
+      })
+    }
+    const sharingDifference = difference(rendered[0].pcm, rendered[1].pcm)
+    assert(
+      sharingDifference.rms / rendered[0].rms > 0.05,
+      'Shared/separate send PCM negative control did not differ',
+    )
+    return {
+      impulseSeed: 242,
+      energyRelativeLimit: 0.01,
+      repeatVariationAllowance: 1.5,
+      quantizationFloor: 2 / 32768,
+      pairs,
+      sharingDifference,
+    }
+  } finally {
+    URL.createObjectURL = originalCreate
+    Math.random = random
+  }
+}
+
 export async function runtimeProof() {
   let captured
   const original = web.Pattern.prototype.onTrigger
@@ -116,6 +214,28 @@ $: stack(${voice('a3', 0.125, 0.3)}.route242(7),${voice('e4', 0.25, 0.5)}.route2
       custom: true,
     },
     {
+      name: 'stack-spread-routing',
+      source: `const parts=[${voice('a3', 0.125, 0.3)}.orbit(7),${voice('e4', 0.25, 0.5)}.orbit(8)];\nsetcpm(240/4)\n$: stack(...parts)\n`,
+      orbits: 2,
+      native: true,
+      inner: true,
+      setup: true,
+    },
+    {
+      name: 'stack-named-fanout',
+      source:
+        'const phrase=stack(note("a3*2").s("sine").gain(.08),note("e4*2").s("sine").gain(.08));\nsetcpm(240/4)\n$: phrase.delay(.3).delaytime(.125).delayfeedback(.25).orbit(1)\n$: phrase.room(.15).roomsize(.5).orbit(2)\n',
+      orbits: 2,
+      split: true,
+    },
+    {
+      name: 'stack-post-setters',
+      source:
+        'setcpm(240/4)\n$: stack(note("a3*2"),note("e4*2")).s("sine").gain(.08).lpf(700).lpq(1).delay(.3).delaytime(.125).delayfeedback(.25).room(.15).roomsize(.3)\n',
+      orbits: 1,
+      native: true,
+    },
+    {
       name: 'stack-inline',
       source:
         'setcpm(240/4)\n$: stack(note("a3*2").s("sine").gain(.08).FX(delay(.3).delaytime(.125).delayfeedback(.25)),note("e4*2").s("sine").gain(.08).FX(room(.2).roomsize(.5)))\n',
@@ -127,7 +247,7 @@ $: stack(${voice('a3', 0.125, 0.3)}.route242(7),${voice('e4', 0.25, 0.5)}.route2
   try {
     for (const item of cases) {
       const doc = read(item.source),
-        regenerated = item.custom ? makeRackEditable(doc).source : generate(doc.patch)
+        regenerated = item.custom || item.setup ? makeRackEditable(doc).source : generate(doc.patch)
       assert(sourceBody(saveLayout(doc).source) === item.source, 'Exact source')
       assert(identity(read(saveLayout(doc).source).patch) === identity(doc.patch), 'Saved identity')
       const samples = []
@@ -147,7 +267,15 @@ $: stack(${voice('a3', 0.125, 0.3)}.route242(7),${voice('e4', 0.25, 0.5)}.route2
           entries.length === item.orbits,
           `${item.name}/${form}: orbit count ${entries.length}`,
         )
-        if (item.native)
+        if (item.split)
+          assert(
+            nodes[1]?.delayNode &&
+              !nodes[1]?.reverbNode &&
+              nodes[2]?.reverbNode &&
+              !nodes[2]?.delayNode,
+            'Fan-out shared native sends',
+          )
+        else if (item.native)
           assert(
             entries.every(([, n]) => n.delayNode && n.reverbNode),
             'Missing native send buses',
@@ -226,6 +354,7 @@ $: stack(${voice('a3', 0.125, 0.3)}.route242(7),${voice('e4', 0.25, 0.5)}.route2
     return {
       results,
       modeReplacement: true,
+      offline: await offlineProof(),
       liveEdit: live,
       stopped,
       replacement,

@@ -192,8 +192,13 @@ try {
   await firstCell.press('Enter')
   await page.getByLabel('Cell value', { exact: true }).waitFor()
   await page.getByLabel('Cell value', { exact: true }).press('Escape')
+  // Escape restores cell focus on the next frame; let that finish before moving to the tray.
+  await page.waitForFunction(() => document.activeElement?.getAttribute('data-mini-start') === '0')
   await page.getByRole('button', { name: 'Repeat (*)', exact: true }).focus()
   await page.getByRole('button', { name: 'Repeat (*)', exact: true }).press('Enter')
+  await page.waitForFunction(async () =>
+    (await import('/scripts/editor-browser.mjs')).editorSource().includes('c3*2'),
+  )
   assert((await body()).includes('c3*2'))
   await load('note("c3 e3 g3 a3 b3 c4 d4 e4").s("sine")\n')
   await cells('seq1').first().focus()

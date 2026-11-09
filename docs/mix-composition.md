@@ -74,7 +74,9 @@ buses; their parameters are event settings, not an audio mixer. Voices final
 branches retain separate orbits. Inline FX remain per-note stages. Fan-out of a
 Stack defines it once and applies each branch's transforms and final routing to
 that reference. Explicit source-owned inner routing remains inside its argument;
-no overriding orbit is appended to a Stack containing opaque CODE. Literal inner
+no overriding orbit is appended to a Stack containing opaque CODE. Unsupported
+CODE that itself contains a combiner also keeps routing authority, because its
+spread or computed arguments can hide inner routes. Literal inner
 orbits reserve their addresses; a matching event field does not grant ownership.
 
 | Case                                             | Representation / result                                  | Independent proof                                                                            |
@@ -103,16 +105,25 @@ Pinned-engine fixtures compare complete onset values/times separately from exact
 source and saved graph identity. Generator-owned orbit allocation is separately
 asserted rather than counted as a music-equivalence field; explicit source-owned
 orbits compare unchanged. The [runtime evidence](evidence/mix-composition-runtime.json) records Chromium
-156.0.8078.4 / Node 24.22.2, five original/regenerated case pairs, eight onset
-events per form, complete event values and PCM windows. Native Stack used orbit
-1; Voices used 1/2; explicit and custom routes used 7/8; inline FX created no
-native delay/reverb buses. Original/regenerated RMS was nonzero in all ten
-windows (0.00496–0.00736). A mode-only replacement removed the old second bus;
-a live level edit retained the new shared bus and RMS 0.01350. Stop ended the
-clock and reached RMS 2.17e-8 after bounded tails; empty replacement reached zero
-PCM and zero orbit objects. The custom helper ran exactly twice per form, not
-once per query/use. This is measured output and routing evidence, not bitwise
-PCM equality, physical listening or an arbitrary-helper purity guarantee.
+156.0.8078.4 / Node 24.22.2 and eight original/regenerated live case pairs. Each
+form has eight onset events, except named fan-out's sixteen. Native Stack and
+post-Stack setters use orbit 1; Voices and named fan-out use 1/2; explicit, custom
+and unsupported-spread routes retain 7/8; inline FX create no native send buses.
+Every live form has nonzero PCM, with live-edit bus retention, mode-only bus
+replacement, stopped scheduling/tail silence and an empty replacement producing
+zero PCM/zero orbit objects. The custom helper runs exactly twice per form.
+
+Three additional pairs use the actual engine Bounce renderer: shared native sends,
+separate native sends and opaque spread routing. Each stereo WAV has 88,200 frames
+at 44,100 Hz. A seeded IR probe renders the identical original twice before the
+regenerated form. Even identical-source renders vary at sample level; conversion
+must stay within 1% RMS energy and 1.5 times that measured waveform variation plus
+a two-LSB floor. The committed sample has original/regenerated RMS differences
+0.0001133 / 0.0000735 / 0.0000162, versus a shared/separate negative control's
+0.002960 difference (about 37% of the shared signal RMS). This proves the tested
+send distinction and bounded rendering agreement; it is not bitwise PCM identity,
+physical listening or an arbitrary-helper purity guarantee. The test restores
+the IR random generator and URL interception afterward.
 
 Focused `npm run test:browser:report -- tests/browser/composition.spec.mjs` passed
 with `RESULT passed=2 failed=0 exit=0`. It uses native radios/Undo/Redo, keyboard
@@ -136,9 +147,21 @@ are unchanged. Trance's generated-projection digest changes because opaque `o`
 is recognized as potential source-owned routing, so generation adds no override;
 its retained original source and projection digest remain unchanged.
 
-The repository gate passed with 2,632 unit cases and 59 guardrails before the
-final literal-`o` reservation regression; final full-gate and full-browser results,
-model review and hosted gates will be recorded before completion. Physical
+The first full local run on `706e616` completed all 229 tests with 227 passed and
+two failures. The library probe chose the new last MIX (pattern Stack) and tried
+to patch note → DELAY; it now selects the independent Voices bus through the
+catalog helper without weakening signal checks. The nested-step modifier probe
+failed its immediate source check in the full run and passed unchanged in an
+isolated rerun; it now waits for Escape's scheduled refocus and source acceptance,
+retaining the same exact modifier assertion. No production step-editor change
+was made. The focused follow-up completed `RESULT passed=11 failed=0 exit=0`.
+
+A separate failing-before pinned-event regression exposed real routing loss when
+converting `stack(...parts)` CODE: final orbit 1 overwrote hidden 7/8 routes. The
+opaque-combiner routing guard fixes that without expanding unsupported syntax.
+Source/save identity and regenerated events now pass, and the live/actual-WAV
+spread cases retain those routes. Final repository/full-browser gates, bounded
+review and hosted results remain to be recorded before completion. Physical
 listening has not been performed.
 
 The coordinator's pinned gain counterexample was inspected in its original
