@@ -40,5 +40,25 @@ The existing Vite chunk-size warning remains. Audit: 88 files, zero errors/failu
 The existing explicit-CODE-orbit generation fixture now also expects default-bus
 reservation; its digest and the Trance generated digest were intentionally updated.
 
-Round 2 will check changed behavior and these findings, with the same base and
-reviewer. Final review and full-suite results are pending.
+## Round 2
+
+Reviewed clean head `e9863c933b37deb33491b85cdb513a239f641459` with the same
+base/provider/model/effort. Verdict: **APPROVE**, S1/S2/S3 resolved, no new bugs or
+nits. N1's duplicate construction is resolved and N2 is documented. The reviewer
+independently passed 107 focused generator/composition/rack tests and probed
+direct/member/computed alias routing versus ordinary callback parameters. It
+confirmed named propagation, both allocator passes, intentional snapshot changes
+and the conservative default-bus rule. No browser or full repository gate was
+run by the reviewer. Usage was not exposed.
+
+Diff after fixes: 67 files, 5,689 insertions, 429 deletions, including this ledger
+and expanded source/runtime evidence. No should or blocker remains open. No push
+occurred during the review loop. The final full local run on that reviewed behavior
+completed `RESULT passed=229 failed=0 exit=0` with no retries.
+
+Subsequent changes are verification records/images and a one-line screenshot
+readiness assertion: wait for the rack to unlock before capturing Voices. Visual
+inspection caught the old captures under the transient lock overlay. This changes
+no production code or behavior contract; the affected native mode/geometry/Undo
+test passed separately: `RESULT passed=1 failed=0 exit=0`, with all eight
+refreshed panel images inspected. Hosted gates remain pending until the PR completes.

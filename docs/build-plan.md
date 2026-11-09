@@ -289,8 +289,9 @@ explicit later proposals.
 
 ## Dual-mode MIX foundation (#242)
 
-MIX Voices/Stack and static nested-expression paths are implemented; verification
-and protected merge are tracked in the [case matrix](mix-composition.md). Voices
+MIX Voices/Stack and static nested-expression paths are implemented and locally
+verified (2,638 tests, 59 guardrails, full 229-test browser suite, bounded review).
+Hosted gates and protected merge are tracked in the [case matrix](mix-composition.md). Voices
 retains independent labelled outputs, Stack combines event patterns at unity, and
 imports preserve static groups, named dependencies/fan-out and exact source.
 The library audit covers all bundled patches and reader fixtures, separately from

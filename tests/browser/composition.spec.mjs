@@ -23,6 +23,7 @@ test('MIX modes retain source, inactive values, geometry, native Undo and atomic
     const voices = page.locator('[data-module="mix1"]'),
       stack = page.locator('[data-module="mix2"]')
     await detailPanel(voices)
+    await expect(page.locator('.rack')).not.toHaveClass(/rack-locked/)
     const strips = await voices
       .locator('.channel-strip')
       .evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().top))

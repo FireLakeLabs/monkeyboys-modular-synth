@@ -1,6 +1,6 @@
 # MIX composition (#242)
 
-Status: implementation and focused proof complete; full local/hosted gates and review pending. This document records the
+Status: implementation, bounded review and full local verification complete; hosted PR gates pending. This document records the
 bounded decisions for #242; the existing shipped rules remain in force until its
 PR merges. #243 owns callback branching, #244 section `arrange()`, #216 larger
 channel geometry, and #217 custom panels. Research proposals #248–251 are not
@@ -161,9 +161,12 @@ A separate failing-before pinned-event regression exposed real routing loss when
 converting `stack(...parts)` CODE: final orbit 1 overwrote hidden 7/8 routes. The
 opaque-combiner routing guard fixes that without expanding unsupported syntax.
 Source/save identity and regenerated events now pass, and the live/actual-WAV
-spread cases retain those routes. Final repository/full-browser gates, bounded
-review and hosted results remain to be recorded before completion. Physical
-listening has not been performed.
+spread cases retain those routes. Final local `npm run check` passed 2,638 tests
+in 64 files, 59 guardrails, format/skills/lint, historical corpus coverage and
+TypeScript/production build. The full local run on reviewed `e9863c9` completed
+`RESULT passed=229 failed=0 exit=0`, with no retries. Opus 5.5 high approved the
+behavior in round 2; see the [review ledger](evidence/mix-review.md). Hosted PR
+results remain pending. Physical listening has not been performed.
 
 The coordinator's pinned gain counterexample was inspected in its original
 `work/mix-stack-gain-counterexample.json` (core 1.2.6, eight events over [0,4),
@@ -198,3 +201,9 @@ The focused actual-engine review regressions passed all three cases (owned Stack
 followed by CODE, opaque Stack with default routing, and callback parameter `o`).
 Each produced two separate controller send buses and nonzero PCM; the runtime
 artifact records their regenerated source, bus addresses and measurements.
+
+Final screenshot inspection caught the Voices capture under the transient rack
+lock overlay. The test now waits for an unlocked rack before capture; this is a
+verification-only readiness change after the full run, with production source
+unchanged. The mode/geometry/Undo rerun completed
+`RESULT passed=1 failed=0 exit=0`; all eight refreshed panel images were inspected.
