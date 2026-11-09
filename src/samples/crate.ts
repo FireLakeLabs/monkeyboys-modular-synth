@@ -67,7 +67,6 @@ export function variantCount(bank: SampleBank): number {
     ? bank.length
     : Math.max(0, ...Object.values(bank).map((paths) => paths.length))
 }
-/** Seated resources in cartridge order: factory packs, then setup order, which is how they register. */
 export function seatedResources(
   document: SourceDocument,
   resources: readonly SamplePackResource[],
@@ -75,7 +74,7 @@ export function seatedResources(
   const keys = new Set(
     cartridges(document).flatMap((entry) => (entry.pack ? [packKey(entry.pack)] : [])),
   )
-  return [...keys].flatMap((key) => resources.filter((resource) => resource.key === key))
+  return resources.filter((resource) => keys.has(resource.key))
 }
 
 /** Replace sounding atoms in one row, retaining rests, nesting and timing modifiers. */

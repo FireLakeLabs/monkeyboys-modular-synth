@@ -165,6 +165,9 @@ it('keeps unseated session inventory out and counts pitched n variants per note'
   }
   const old = { ...resource, key: 'old', pack: { source: 'https://old.test/strudel.json' } }
   expect(seatedResources(read(''), [resource, old])).toEqual([resource])
+  // Registration order decides a name that two packs share, so it is kept.
+  const machines = { ...resource, key: packKey(FACTORY_PACKS[1]), pack: FACTORY_PACKS[1] }
+  expect(seatedResources(read(''), [machines, resource])).toEqual([machines, resource])
   expect(variantCount({ c3: ['a', 'b'], c4: ['c'] })).toBe(2)
 })
 

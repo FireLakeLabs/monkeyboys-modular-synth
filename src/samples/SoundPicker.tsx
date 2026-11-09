@@ -64,6 +64,7 @@ export function SoundPicker({
   prefix,
   value,
   resources,
+  packOrder,
   patchSounds,
   anchor,
   choose,
@@ -76,7 +77,10 @@ export function SoundPicker({
   moduleId: string
   prefix: string | undefined
   value: string
+  /** Registration order, which decides a name that two packs share. */
   resources: readonly SamplePackResource[]
+  /** Seated pack keys in seating order, which is how the list shows packs. */
+  packOrder: readonly string[]
   patchSounds: readonly string[]
   anchor: RefObject<HTMLElement | null>
   /** Returns false when the rack refused the edit and reported why. */
@@ -119,7 +123,10 @@ export function SoundPicker({
   }, [])
   useEffect(() => () => audition.cancel(), [audition])
 
-  const index = soundIndex(resources).filter((sound) => !prefix || sound.name.startsWith(prefix))
+  const seating = (sound: IndexedSound) => packOrder.indexOf(sound.packKey)
+  const index = soundIndex(resources)
+    .filter((sound) => !prefix || sound.name.startsWith(prefix))
+    .sort((a, b) => seating(a) - seating(b))
   const packs = [...new Map(index.map((sound) => [sound.packKey, sound.pack]))]
   const filtered = !!query.trim() || !!kind || !!pack
   // Unfiltered, the list still shows sounds after the patch's and recent ones, so it never looks empty.

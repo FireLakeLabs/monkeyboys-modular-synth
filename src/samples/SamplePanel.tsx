@@ -15,6 +15,7 @@ export function SampleSlot({
   locked,
   picking,
   settled,
+  packOrder,
   drop,
   clear,
   browseAll,
@@ -30,6 +31,8 @@ export function SampleSlot({
   picking: boolean
   /** Every seated pack's inventory is known, so a sound none of them has is missing. */
   settled: boolean
+  /** Seated pack keys in seating order, for listing packs. */
+  packOrder: readonly string[]
   /** Returns false when the rack refused the edit and reported why. */
   drop: (choice: SoundChoice) => boolean
   clear: () => void
@@ -87,6 +90,7 @@ export function SampleSlot({
           prefix={target.prefix}
           value={value}
           resources={resources}
+          packOrder={packOrder}
           patchSounds={patchSounds.filter((token) => token !== value)}
           anchor={readout}
           choose={drop}

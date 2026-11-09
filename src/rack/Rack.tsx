@@ -710,8 +710,10 @@ export function Rack({
   const loadSounds = () =>
     loadSamplePacks(cartridges(sourceDocument).flatMap((entry) => (entry.pack ? [entry.pack] : [])))
   const patchSounds = patch.modules.map(slotValue).filter(Boolean)
+  const seated = cartridges(sourceDocument)
+  const packOrder = seated.flatMap((entry) => (entry.pack ? [packKey(entry.pack)] : []))
   // Unknown inventories, such as computed samples() calls, never settle.
-  const settled = cartridges(sourceDocument).every((entry) => {
+  const settled = seated.every((entry) => {
     const pack = entry.pack
     return (
       !!pack &&
@@ -863,6 +865,7 @@ export function Rack({
               locked={locked}
               picking={activePick?.module === m.id}
               settled={settled}
+              packOrder={packOrder}
               clear={() => {
                 const target = spec.sampleTarget
                 if (target) edit((p) => setValue(p, m.id, target.control, ''))
