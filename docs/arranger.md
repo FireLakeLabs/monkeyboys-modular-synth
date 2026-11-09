@@ -71,15 +71,80 @@ other mask stay source-owned CODE with exact bytes.
   the rack frame keeps its size ([design](design.md#arranger-lane-141)).
 - **Editing.** Drag across cells to play or rest a range; Enter or Space toggles
   the focused cell, and arrow keys, Home and End move along the row. Each gesture
-  is one rack edit and one undo step. Song length changes only the view while
-  lanes fit; shortening below a lane cuts it in one edit. A longer song repeats
-  lanes unchanged. Lanes of different lengths drift apart, and the lane says so.
+  is one rack edit and one undo step. Song length is derived from the longest
+  arranged lane (16 cycles when there are none). **+** extends the final step of
+  every arranged lane to the new length, in one undoable edit; **−** cuts lanes
+  past the new length, also in one edit. Unmasked channels stay unmasked. With no
+  lanes, the length controls are disabled until a channel is arranged. An explicit
+  all-playing mask is retained on resize so cutting away its final rest does not
+  lose the chosen length. Undo/Redo, recovery and Export/Open restore length from
+  the lanes; there is no separate length metadata. Imported lanes of different
+  lengths show a drift warning; growing aligns every arranged lane to the full song.
+- **Padding decision (#230).** On 8 November 2026 the owner explicitly chose
+  extending the final step: `<0!4 1!12>` becomes `<0!4 1!28>` at 32 cycles.
+  This supersedes the issue's conflicting sound-preservation requirement: the
+  opening 16 cycles are unchanged, but later repetitions deliberately change.
+  Padding does not repeat the previous lane inside the larger song.
+- **Playhead (#230).** While transport is starting, playing or applying a live edit,
+  an outline marks
+  `floor(scheduler cycle) modulo song length` in every row, including rested cells;
+  the ruler marks the same column. It uses the header's engine clock and 100 ms
+  display cadence. Stop clears it. Reduced motion freezes the display, matching
+  the header, and leaving reduced motion resumes updates. These visual updates
+  never edit code, saved rack state or history.
 - **Imported code.** A channel with no mask has no literal to change, so adding a
   lane converts the code on edit, with Undo ([#181](decisions.md#usability-review-188-decided-4-november-2026)).
   The same now applies to NAME and OUTPUT edits on an imported mixer: they
   previously failed with a saved-identity error instead of converting.
 
-## Verification
+## Song length and playhead verification (#230)
+
+Observed on 8 November 2026 with Node 24.22.2 and the pinned Playwright Chromium:
+
+- `npm run check` passed, including 2,436 unit cases. Five focused assertions
+  failed before the resize fix: growing was a no-op, and cutting to an all-playing
+  lane lost its length. All 23 arranger model/codegen cases now pass.
+- Imported padding changes only the lane literals, keeping comments and other
+  executable bytes. Exact source save/read and complete saved rack identity are
+  separate assertions. Pinned-engine onsets over 64 cycles verify the chosen
+  16→32 final-step extension: unmasked drums are identical, the original opening
+  stays intact, and the bass/lead deliberately play through the added cycles.
+- The arranger browser spec passed **4/4**. Native +/− edits step through
+  Undo/Redo; imported lanes align and lose the drift warning; reload and
+  Export/Open recover the length. Export's standard factory setup is checked
+  separately from complete module/cable/value identity.
+- A recording engine double drives starting/playing clock values through cycle
+  8 and checks modulo-four highlights, motion-preference changes, Stop, unchanged
+  exact source/recovery state and unchanged next Undo. A held live rack edit also
+  verifies the playhead keeps advancing while code is applying; this assertion
+  failed before using the existing transport playing flag. It performs no audio.
+- Real playback at 240 BPM records the scheduler clock beside the displayed
+  column for six seconds. Away from the 100 ms display-tick boundary, every
+  sample matches the scheduler modulo four, all four columns appear, and the
+  second song pass wraps. The existing per-orbit event and nonzero master PCM
+  assertions pass. Stop removes the outlines.
+- The complete local browser suite passed **197/197**
+  before the review fix (`RESULT passed=197 failed=0 exit=0`), including workspace
+  history, error recovery,
+  playback matrices, pattern visibility, rack geometry and stabilization checks.
+- After the one-line review fix, the full local run passed 196/197; DRUMS had
+  zero PCM despite recorded starts (the [#207](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/207)
+  symptom, with no cause inferred). Its unchanged module matrix passed on an
+  isolated rerun. The first hosted attempt passed 195/197 and also hit the
+  half-typed-code test's Stop cleanup race; the second passed 196/197, including
+  DRUMS, leaving only that race. Waiting for the expected Audio error before the
+  old cleanup reproduced the failure locally. That test now asserts accepted
+  CODE, the settled Audio error and available Play control; application behavior
+  is unchanged. Focused auto-apply and arranger acceptance then passed 27/27.
+- The [playhead](evidence/arranger-230/playhead.png) and
+  [restored length](evidence/arranger-230/length.png) screenshots were inspected.
+  The outline is visible on playing and rested cells without changing rack size.
+- Browser commands use `npm run test:browser:report`. A temporary config changes
+  only the server port to 5185 because another worktree owns 5173. The committed
+  design exports and current app were used as references; no live canvas access
+  was used. Physical listening, touch and other-browser behavior were not verified.
+
+## Original lane verification (#141)
 
 Observed on 8 November 2026 with Node 24.22.2 and the pinned Playwright Chromium,
 on `12d49ca` (rebased onto `3af8609`) unless noted.

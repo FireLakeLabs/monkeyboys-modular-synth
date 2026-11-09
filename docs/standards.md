@@ -508,3 +508,18 @@ refusal-only path and automatic row-zero assignment: opening and Escape must
 leave source unchanged; keyboard selection of row two must preserve all other
 rack state and the other rows' exact notation. This is a feature acceptance
 guard in the hosted suite, not a new workflow policy.
+
+The #230 arranger playhead uses the existing transport playing flag, including
+live code application. The recording-clock case in the [arranger browser spec](../tests/browser/arranger.spec.mjs)
+holds a rack edit in `applying` and requires the highlight to keep advancing;
+it failed before the duplicated status predicate was removed. The same spec
+separately checks unchanged source, recovery state and history during clock updates.
+This browser guard does not establish physical listening or other-browser behavior.
+
+The half-typed-code browser acceptance waits for the expected Audio error and
+available Play control after applying `.l`. That readable property access cannot
+produce a pattern; its evaluation stops scheduling. Waiting for this error before
+the old Stop-button cleanup reproduced both #232 hosted timeouts locally. The
+assertions now cover accepted CODE plus the settled error state, without racing a
+Stop control that disappears. This is test-harness stabilization, not an audio
+engine change.

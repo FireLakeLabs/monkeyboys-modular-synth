@@ -963,6 +963,7 @@ export default function App() {
           panelKey={String(rackGeneration)}
           patchLoads={patchLoads}
           patchOpens={patchOpens}
+          playing={playing}
           focusToggle={
             <button
               type="button"

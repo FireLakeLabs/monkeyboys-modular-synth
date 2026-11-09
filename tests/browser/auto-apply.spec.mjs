@@ -170,7 +170,11 @@ test.describe('while stopped', () => {
     await expect(sync(page)).toHaveText('Unapplied changes')
     await page.keyboard.press('Control+Enter')
     await expect(panels(page).filter({ hasText: 'CODE' })).toHaveCount(1)
-    await page.getByRole('button', { name: 'Stop', exact: true }).click()
+    // The accepted property access is readable but cannot produce a pattern.
+    // Evaluation already stops scheduling, so there is no Stop button to clean up.
+    await expect(status(page)).toHaveText('Audio error')
+    await expect(play(page)).toHaveAccessibleName('Play')
+    await expect(play(page)).toBeEnabled()
   })
 })
 

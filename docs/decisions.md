@@ -183,6 +183,14 @@ and kept song time. `arrange()` folded voices into one CODE line, needed orbits 
 shared declarations, and restarted section time, changing 24 of 200 onsets. The
 reader reads only a final lane mask; `arrange()` and other masks stay
 source-owned CODE. Lanes are MIX channel values, so no format change is needed.
+Song length is derived from the longest lane (#230), and +/− edit lane literals
+in one undoable operation rather than changing view state. Growing aligns all
+arranged lanes to the new length by extending their final step. The owner chose
+this explicitly on 8 November 2026: `<0!4 1!12>` becomes `<0!4 1!28>` at 32 cycles,
+which deliberately changes later repetitions and supersedes the issue's
+conflicting sound-preservation requirement. Unmasked channels write nothing;
+no new metadata is saved. The playhead shares the header's scheduler clock,
+wraps at song length, clears on Stop and freezes under reduced motion.
 See the [contract and evidence](arranger.md).
 
 ## Rack case (#133, decided 3 November 2026)
