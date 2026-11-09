@@ -550,3 +550,25 @@ placement/wiring, exact Undo source and export/reopen identity. The
 hover/focus, reverse wiring, ghost placement, replacement/cancellation, looks
 and zoom, and live SCOPE PCM through connected placement and Undo/Redo. See
 [observed evidence and limits](jack-discovery-verification.md).
+
+The #238 [acid-import regressions](../src/reader/acid.test.ts) separately protect
+exact bytes, reopened rack identity and pinned-engine events for filter aliases,
+resonance 0/25/50, pattern ADD and the saw oscillator alias. A captured pre-change
+file guards saved CODE/sampler ownership; unsupported operands and out-of-range
+resonance stay CODE. The browser regression exercises native RES 50 editing,
+Undo/reopen and live scheduled PCM. Neither event queries nor PCM establishes
+physical listening. The panel's warning preserves the engine's control-pattern
+arithmetic behavior rather than implying a new transposition operation.
+
+Adding the #238 panel case reproduced hard-coded case-index failures in the
+existing browser panel matrix. Its conditional PW/DRIVE/mute checks now select
+cases by module/control identity, so later insertions exercise the intended
+controls. The sounding-token opaque-call fixture uses unsupported `sub` instead
+of newly supported ADD; its unchanged assertion still rejects activity on opaque
+call arguments. Both failures were observed in the first full run before these
+fixture updates.
+
+The #238 pre-change owner fixture additionally guards canonical standalone and
+separated `lpq` panels and root `s("saw")` DRUMS/implicit-sampler layouts. It failed
+before the Opus review fixes and reopens with exact source and complete saved
+identity afterward. Alias-only companion policy preserves canonical ownership.

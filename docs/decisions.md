@@ -396,3 +396,13 @@ patch-aware validation, catalog definitions and workspace edit boundary for both
 New-module options use catalog defaults, name the connecting jack, preview the
 actual width and snapped position on the dropped rail, and commit placement
 plus connection as one undoable edit. See [interaction contract](design.md#jack-discovery-and-connected-placement-233).
+
+## Acid-patch controls (#238, decided 9 November 2026)
+
+The owner chose VCF resonance **0–50**, rather than extending the former 0–20
+range only as far as the example's 25. Common low-pass aliases and the `saw`
+oscillator alias should import as regular controls. Pattern ADD preserves the
+pinned engine's arithmetic operation; it must not turn a no-op on note-control
+values into an invented pitch transposition. Existing saved CODE and sampler
+ownership remain intact. See the [module contract](module-spec.md#acid-patch-imports-238)
+and [translation limits](translation-rules.md#acid-patch-aliases-and-arithmetic-238).

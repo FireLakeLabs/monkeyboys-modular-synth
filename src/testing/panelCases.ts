@@ -13,6 +13,7 @@ export const panelCases: readonly {
   { type: 'seq', control: 'accent', value: '1 .6 .6 .6', call: '.velocity("1 .6 .6 .6")' },
   { type: 'drums', control: 'accent', value: '1 .6 .6 .6', call: '.velocity("1 .6 .6 .6")' },
   { type: 'quant', control: 'shift', value: 2, call: '.scaleTranspose(2)' },
+  { type: 'add', control: 'value', value: '<0 7>', call: '.add("<0 7>")' },
   { type: 'osc', control: 'mode', value: 'freq', call: '.freq(110)' },
   { type: 'osc', control: 'pw', value: 0.3, settings: { wave: 'pulse' }, call: '.pw(0.3)' },
   { type: 'osc', control: 'voices', value: 7, settings: { wave: 'supersaw' }, call: '.unison(7)' },

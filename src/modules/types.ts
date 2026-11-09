@@ -37,6 +37,8 @@ export interface CallBinding {
       }
   /** Merge continues an adjacent owner; companion requires one or remains exact CODE. */
   read?: 'merge' | 'companion'
+  /** New aliases may require an owner while canonical calls retain saved-file behavior. */
+  aliasRead?: 'companion'
   /** Emit only in this mode; reading the call activates that mode. */
   when?: { control: string; value: string }
   /** A recognized call selects a panel mode independently of method variants. */
@@ -91,6 +93,8 @@ export interface SwitchControl extends CallControl {
   /** Printed on a narrow toggle; `label` remains its accessible name. */
   short?: string
   options: readonly SwitchOption[]
+  /** Equivalent imported literals; saved panel values use the canonical option. */
+  aliases?: Readonly<Record<string, string>>
   default: string
   omitAt?: string
 }

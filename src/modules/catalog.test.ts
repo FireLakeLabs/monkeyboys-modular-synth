@@ -30,6 +30,7 @@ describe('module catalog', () => {
     expect(CATALOG.map((m) => m.id).sort()).toEqual(
       [
         ...V1_MODULES,
+        'add',
         'gates',
         'switch',
         'aux',
@@ -252,6 +253,16 @@ describe('module catalog', () => {
     for (const m of CATALOG) {
       for (const c of m.controls) {
         if (c.kind !== 'switch') continue
+        for (const [alias, canonical] of Object.entries(c.aliases ?? {})) {
+          expect(
+            c.options.map((o) => o.value),
+            `${m.id}.${c.id}:${alias}`,
+          ).toContain(canonical)
+          expect(
+            c.options.map((o) => o.value),
+            `${m.id}.${c.id}:${alias}`,
+          ).not.toContain(alias)
+        }
         expect(
           c.options.map((o) => o.value),
           `${m.id}.${c.id}`,

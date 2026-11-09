@@ -127,21 +127,30 @@ try {
     'PASS scrolling mixer jacks retain cable endpoints and exact source at 75% zoom\n',
   )
   await scrollFixture.evaluate((element) => element.remove())
-  await suite('loadCase', 4)
+  await suite(
+    'loadCase',
+    cases.findIndex(({ type, control }) => type === 'osc' && control === 'pw'),
+  )
   await synced()
   assert.equal(await panel('osc1').getByRole('slider', { name: 'PW', exact: true }).count(), 1)
   await chooseSwitch(panel('osc1'), 'WAVE', 'sine')
   await synced()
   assert.equal(await panel('osc1').getByRole('slider', { name: 'PW', exact: true }).count(), 0)
   assert(!(await suite('source')).includes('.pw('))
-  await suite('loadCase', 17)
+  await suite(
+    'loadCase',
+    cases.findIndex(({ type, control }) => type === 'vcf' && control === 'drive'),
+  )
   await synced()
   assert.equal(await panel('vcf1').getByRole('slider', { name: 'DRIVE', exact: true }).count(), 1)
   await chooseSwitch(panel('vcf1'), 'TYPE', '12db')
   await synced()
   assert.equal(await panel('vcf1').getByRole('slider', { name: 'DRIVE', exact: true }).count(), 0)
   assert(!(await suite('source')).includes('.drive('))
-  await suite('loadCase', 26)
+  await suite(
+    'loadCase',
+    cases.findIndex(({ type, control }) => type === 'mix' && control === 'mute1'),
+  )
   await synced()
   const mixerNames = await openMore(panel('mix1'))
   await mixerNames.getByLabel('NAME 1', { exact: true }).fill('bass')

@@ -347,7 +347,7 @@ Hardware · Shape · 10 HP
 | ------- | --------- | -------------- | ------- | --------------------------------------------------------------------- |
 | MODE    | switch    | LP · HP · BP   | LP      | chooses `lpf`/`hpf`/`bpf`, `lpq`/`hpq`/`bpq`, `lpenv`/`hpenv`/`bpenv` |
 | CUTOFF  | knob, log | 20–20000 Hz    | 800     | `.lpf(x)`                                                             |
-| RES     | knob      | 0–20, step 0.5 | 1       | `.lpq(x)`                                                             |
+| RES     | knob      | 0–50, step 0.5 | 1       | `.lpq(x)`                                                             |
 | ENV AMT | knob      | 0–8, step 0.5  | 4       | `.lpenv(x)`, only when an ENV is patched into CV                      |
 
 | Jack | Dir | Signal | CV target |
@@ -957,3 +957,31 @@ path requires an explicit choice in the row dialog before applying; it does not
 guess row zero. Each slot's readout opens a [search picker](sound-crate.md#sound-picker-227).
 Presentation never bypasses source-aware
 mutation/refusal or bank semantics. See [sound assignment](design.md#sound-assignment-185).
+
+## Acid-patch imports (#238)
+
+VCF RES spans **0–50**, step .5, default 1, for LP/HP/BP. The pinned core
+`controls.mjs` documents 0–50 for resonance; the old panel stopped at 20.
+`cutoff` and `resonance` are catalog aliases of `lpf` and `lpq`. A compatible
+adjacent filter owns both calls. `cutoff(perlin.range(200,1500).slow(4))` projects
+as VCF CUTOFF 200 plus STEP LFO SHAPE perlin, DEPTH 1300, RATE 4 cycles.
+
+OSC WAVE has a catalog-owned imported literal alias, `saw` → `sawtooth`, matching
+the installed superdough oscillator registry. It shows the canonical option
+without rewriting the imported spelling. A saved sampler that already owns the
+same unchanged call keeps its identity; a new import uses OSC.
+
+**ADD — Pattern addition:** Hardware · Pattern · 12 HP, fixed across all four
+Hardware looks. VALUE is literal pattern text, default `0`; writes `.add("…")`.
+IN/OUT retain the incoming signal. This is distinct from MOD MIX, which combines
+two modulation sources inside a CV argument. Quoted strings are editable data;
+computed arguments, scalar arguments and parameter-wrapped arguments remain CODE.
+The pinned engine warns and leaves pitches unchanged for
+`note("c2").add("12")`: plain arithmetic after a control wrapper is not pitch
+transposition. The panel states that limitation; it does not invent a transpose
+operation. OSC TUNE supports actual pitch modulation. The bundled ADD exercise
+uses numeric values before `.note()` and retains its unsupported source/wrapper
+as CODE. Changing `<0 12>` to `<0 7>` audibly changes that exercise's pitch offsets.
+
+The existing look rules render this panel. Private canvas boards were unavailable;
+local design exports and real browser screenshots are the presentation references.
