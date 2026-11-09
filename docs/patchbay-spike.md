@@ -91,7 +91,8 @@ logical CPUs. Initial load averages were 0.70/0.54/0.80. No other local suite or
 review ran alongside it. Browser/OS and background scheduling noise remain.
 
 For each comparison, five A/B pairs ran at 1, 8 and 32 simultaneous lanes.
-Each lane sounded 0.2 seconds every 0.5 seconds, with 0.01-second release.
+Each lane had a 0.1-second gate every 0.5 seconds, plus 0.01-second release
+(20% gate duty): `.duration(.2)` is in cycles, divided by 2 cycles per second.
 Measurements covered 2.2 seconds after one second of warmup. Gain divided by lane
 count prevented clipping. The effect was `.K(audioin().out())`. The source was
 `.K(sine(sFreq).mul(sGate.adsr(.001,.05,.6,.01)).mul(.3).out())`, matching the native
