@@ -127,3 +127,15 @@ paths, source/rack identity, cancellation and real playback. This UI selection
 fix has bounded focused coverage; the final hosted full suite remains required.
 Logs/traces are retained under `/tmp/monkeyboy-233/preview-before` and
 `/tmp/monkeyboy-233/preview-after`.
+
+The final rebase includes `457abaa` (#234: BYTEBEAT/CHIP/SPEAK). Its only
+conflict combined independent CSS additions; the module notices/formula styles
+were retained. SPEAK's WebAudio-bypass assertion, other library audio thresholds,
+worklet guards and pinned postinstall script are unchanged from that base.
+The first local gate after rebase exposed older installed postinstall bundles
+(two new bytebeat worklet guards failed); `npm ci` refreshed the locked
+installation, after which `npm run check` passed 2,547 unit cases and all 53
+guardrails, plus formatting, lint, TypeScript and build. The complete feature
+browser file then passed `RESULT passed=10 failed=0 exit=0` on the expanded
+catalog. Logs are `/tmp/233-check-wave5.log` (before refresh),
+`/tmp/233-check-wave5-refreshed.log` and `/tmp/233-feature-wave5.log`.
