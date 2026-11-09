@@ -559,3 +559,11 @@ resonance stay CODE. The browser regression exercises native RES 50 editing,
 Undo/reopen and live scheduled PCM. Neither event queries nor PCM establishes
 physical listening. The panel's warning preserves the engine's control-pattern
 arithmetic behavior rather than implying a new transposition operation.
+
+Adding the #238 panel case reproduced hard-coded case-index failures in the
+existing browser panel matrix. Its conditional PW/DRIVE/mute checks now select
+cases by module/control identity, so later insertions exercise the intended
+controls. The sounding-token opaque-call fixture uses unsupported `sub` instead
+of newly supported ADD; its unchanged assertion still rejects activity on opaque
+call arguments. Both failures were observed in the first full run before these
+fixture updates.

@@ -15,7 +15,7 @@ On 9 November 2026, Node 24.22.2 and locked dependencies:
   bounds independently from pinned-core event equivalence. The original
   `.room(.15)` suffix retains source; regenerated event comparisons isolate the
   changed dry arithmetic/filter path, because the existing reverb adapter writes
-  its own absent-roomsize default. This task does not claim reverb regeneration
+  its own absent-roomsize default ([follow-up #239](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/239)). This task does not claim reverb regeneration
   equivalence.
 - A captured pre-change file retains all three saved CODE blocks and its saved
   sampler. ADD has an explicit independent conversion offer. Grouped filter/CV
@@ -34,3 +34,22 @@ The private canvas boards were not available; existing local design exports and
 catalog-driven Hardware layouts supplied the presentation reference. Chromium
 and the installed engine are covered; physical speakers/headphones and other
 browsers/devices were not tested.
+
+The first complete-suite attempt was stopped after 114 passes and two fixture
+failures (2 interrupted, 108 not run; exit 130). The opaque-token fixture had used
+newly supported ADD, and the panel matrix selected controls by shifted list
+indices. The fixture now uses unsupported `sub`, and panel checks select stable
+module/control identities. Their existing assertions pass unchanged:
+`npm run test:browser:report -- -g 'sounding-tokens-check|panels-browser'`
+reported `RESULT passed=2 failed=0 exit=0`. The acid UI/PCM pair also passed again.
+The final complete run is required independently; this interrupted attempt is
+not full-suite acceptance.
+
+The final pre-review gate passed `npm run check` with 2,584 unit tests plus
+runtime/format/skill/lint, reader coverage, guardrails and production build.
+A second failing-before regression proved that an unowned resonance setter could
+invent a default cutoff; VCF resonance now requires an adjacent compatible filter
+owner. Both standalone resonance and a computed/unreadable cutoff retain CODE
+and real-engine event equivalence. The final pre-review focused browser run
+(`-g 'acid imports|saw alias|sounding-tokens-check|panels-browser'`) passed all four
+checks, `RESULT passed=4 failed=0 exit=0`.

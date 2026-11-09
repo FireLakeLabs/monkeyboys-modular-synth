@@ -10,6 +10,7 @@ import { read } from './read'
 const offsets = '[0, 0, 12, 0, 3, 0, 5, 0, 0, 12, 0, 7, 0, 3, 0, 12]'
 const acid = `$: note("c2*16").add("${offsets}").s("saw")\n  .cutoff(perlin.range(200, 1500).slow(4)).resonance(25).gain(0.6).room(0.15)\n`
 let runtime: Record<string, unknown>
+let compile: (source: string) => string
 beforeAll(async () => {
   runtime = Object.assign(
     {},
@@ -21,6 +22,21 @@ beforeAll(async () => {
   )
   if (typeof runtime.miniAllStrings !== 'function') throw new Error('Missing mini parser')
   runtime.miniAllStrings()
+  const entry = '@strudel/transpiler/transpiler.mjs'
+  const transpiler: Record<string, unknown> = await import(/* @vite-ignore */ entry)
+  if (typeof transpiler.transpiler !== 'function') throw new Error('Missing pinned transpiler')
+  const run = transpiler.transpiler
+  compile = (source) => {
+    const result: unknown = run(source, { emitMiniLocations: false, emitWidgets: false })
+    if (
+      !result ||
+      typeof result !== 'object' ||
+      !('output' in result) ||
+      typeof result.output !== 'string'
+    )
+      throw new Error('Invalid transpiler output')
+    return result.output
+  }
 })
 
 function events(source: string): unknown {
@@ -32,7 +48,9 @@ function events(source: string): unknown {
   // oxlint-disable-next-line typescript/no-implied-eval
   return new Function(
     ...Object.keys(runtime),
-    `return (${expression}).queryArc(0, 4).map(h => ({value:Object.fromEntries(Object.entries(h.value).filter(([k]) => !['postgain','orbit'].includes(k)).map(([k,v]) => [k,k === 's' && v === 'saw' ? 'sawtooth' : v])),begin:h.whole.begin.toString(),end:h.whole.end.toString()}))`,
+    compile(
+      `(${expression}).queryArc(0, 4).map(h => ({value:Object.fromEntries(Object.entries(h.value).filter(([k]) => !['postgain','orbit'].includes(k)).map(([k,v]) => [k,k === 's' && v === 'saw' ? 'sawtooth' : v])),begin:h.whole.begin.toString(),end:h.whole.end.toString()}))`,
+    ),
   )(...Object.values(runtime))
 }
 
@@ -145,3 +163,38 @@ it('keeps saw source spelling through unrelated edits and changes WAVE only on r
   expect(sourceBody(wave.source)).toBe('$: note("c2").s("square").lpf(900)\n')
   expect(read(wave.source).patch).toEqual(wave.patch)
 })
+
+it('edits plain-value addition before the note wrapper as actual numeric pitch offsets', () => {
+  const source = '$: "48".add("<0 12>").note().s("sawtooth")\n'
+  const doc = read(source)
+  const add = doc.patch.modules.find((m) => m.type === 'add')
+  if (!add) throw new Error('Missing ADD')
+  expect(events(generate(doc.patch))).toEqual(events(source))
+  expect(events(source)).toEqual(
+    Array.from({ length: 4 }, (_, i) => ({
+      value: { note: i % 2 ? 60 : 48, s: 'sawtooth' },
+      begin: String(i),
+      end: String(i + 1),
+    })),
+  )
+  const edited = editDocument(doc, setValue(doc.patch, add.id, 'value', '<0 7>'))
+  expect(sourceBody(edited.source)).toBe(source.replace('<0 12>', '<0 7>'))
+  expect(events(edited.source)).toEqual(
+    Array.from({ length: 4 }, (_, i) => ({
+      value: { note: i % 2 ? 55 : 48, s: 'sawtooth' },
+      begin: String(i),
+      end: String(i + 1),
+    })),
+  )
+})
+
+it.each(['.resonance(25)', '.cutoff(400 + 600).resonance(25)'])(
+  'does not invent a default cutoff for an unowned resonance setter: %s',
+  (suffix) => {
+    const source = `$: note("c2").s("sawtooth")${suffix}\n`
+    const doc = read(source)
+    expect(doc.patch.modules.some((m) => m.type === 'vcf')).toBe(false)
+    expect(generate(doc)).toBe(source)
+    expect(events(generate(doc.patch))).toEqual(events(source))
+  },
+)

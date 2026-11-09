@@ -369,7 +369,7 @@ export const VCF: ModuleSpec = {
       call: {
         method: { control: 'mode', names: { lp: 'lpq', hp: 'hpq', bp: 'bpq' } },
         argument: { kind: 'number' },
-        read: 'merge',
+        read: 'companion',
       },
       when: [{ control: 'mode', values: ['lp', 'hp', 'bp'] }],
       label: 'RES',
