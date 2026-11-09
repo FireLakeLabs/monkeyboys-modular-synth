@@ -1,0 +1,660 @@
+{
+  "result": {
+    "cancel": {
+      "before": {
+        "rms": 0.006689054072228386,
+        "samples": 1146880
+      },
+      "after": {
+        "rms": 0.004195524495010279,
+        "samples": 3196928
+      },
+      "sourceAndRackRetained": true,
+      "physicalListening": false
+    },
+    "signals": [
+      {
+        "id": "first-sounds",
+        "output": "webaudio",
+        "rms": 0.004075136457529087,
+        "samples": 5124096,
+        "events": 16,
+        "sounds": ["bd", "hh", "sd"]
+      },
+      {
+        "id": "first-notes",
+        "output": "webaudio",
+        "rms": 0.001937550928464385,
+        "samples": 6316032,
+        "events": 16,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "first-effects",
+        "output": "webaudio",
+        "rms": 0.0015022633092429435,
+        "samples": 7661568,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "pattern-effects",
+        "output": "webaudio",
+        "rms": 0.0010880520506151568,
+        "samples": 10911744,
+        "events": 64,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "exercise-bytebeat",
+        "output": "webaudio",
+        "rms": 0.00043238809562725993,
+        "samples": 14010368,
+        "events": 16,
+        "sounds": ["bytebeat"]
+      },
+      {
+        "id": "exercise-chip",
+        "output": "webaudio",
+        "rms": 0.0011766567450891214,
+        "samples": 15501312,
+        "events": 16,
+        "sounds": ["z_square"]
+      },
+      {
+        "id": "exercise-speak",
+        "output": "native-speech",
+        "rms": 3.1298770522407143e-7,
+        "samples": 16097280,
+        "events": 4,
+        "sounds": [null]
+      },
+      {
+        "id": "exercise-splice",
+        "output": "webaudio",
+        "rms": 0.00018666984275947978,
+        "samples": 16994304,
+        "events": 16,
+        "sounds": ["arpy"]
+      },
+      {
+        "id": "exercise-wavetable",
+        "output": "webaudio",
+        "rms": 0.0005370928273535079,
+        "samples": 18722816,
+        "events": 16,
+        "sounds": ["wt_dbass"]
+      },
+      {
+        "id": "exercise-gates",
+        "output": "webaudio",
+        "rms": 0.0008094142030660172,
+        "samples": 20391936,
+        "events": 20,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-switch",
+        "output": "webaudio",
+        "rms": 0.0009403387599721301,
+        "samples": 21129216,
+        "events": 4,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-aux",
+        "output": "webaudio",
+        "rms": 0.0010646897404787072,
+        "samples": 23175168,
+        "events": 36,
+        "sounds": ["bus", "sine"]
+      },
+      {
+        "id": "exercise-duck",
+        "output": "webaudio",
+        "rms": 0.0009781157012860634,
+        "samples": 26824704,
+        "events": 36,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-seq",
+        "output": "webaudio",
+        "rms": 0.0008267222257575886,
+        "samples": 29038592,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-drums",
+        "output": "webaudio",
+        "rms": 0.0007436662947205349,
+        "samples": 30105600,
+        "events": 12,
+        "sounds": ["bd", "sd", "hh"]
+      },
+      {
+        "id": "exercise-quant",
+        "output": "webaudio",
+        "rms": 0.0006536466728125052,
+        "samples": 31260672,
+        "events": 16,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "exercise-clock",
+        "output": "webaudio",
+        "rms": 0.0007730171295752578,
+        "samples": 32102400,
+        "events": 8,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-euclid",
+        "output": "webaudio",
+        "rms": 0.0004017115373979765,
+        "samples": 33107968,
+        "events": 12,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "exercise-ratchet",
+        "output": "webaudio",
+        "rms": 0.0007927028990100867,
+        "samples": 34936832,
+        "events": 32,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-chance",
+        "output": "webaudio",
+        "rms": 0.00040818823298472605,
+        "samples": 36124672,
+        "events": 10,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-chord",
+        "output": "webaudio",
+        "rms": 0.00130358991101105,
+        "samples": 37109760,
+        "events": 20,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "exercise-arp",
+        "output": "webaudio",
+        "rms": 0.0005865756221096398,
+        "samples": 39122944,
+        "events": 16,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "exercise-osc",
+        "output": "webaudio",
+        "rms": 0.0004889089078232777,
+        "samples": 40359936,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-noise",
+        "output": "webaudio",
+        "rms": 0.00013498477244249765,
+        "samples": 41052160,
+        "events": 4,
+        "sounds": ["white"]
+      },
+      {
+        "id": "exercise-harmonic",
+        "output": "webaudio",
+        "rms": 0.0006427495929861785,
+        "samples": 42082304,
+        "events": 16,
+        "sounds": ["user"]
+      },
+      {
+        "id": "exercise-fmop",
+        "output": "webaudio",
+        "rms": 0.000683145579606688,
+        "samples": 43335680,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-smpl",
+        "output": "webaudio",
+        "rms": 0.0007978910014314765,
+        "samples": 44603392,
+        "events": 16,
+        "sounds": ["bd", "hh", "sd"]
+      },
+      {
+        "id": "exercise-vcf",
+        "output": "webaudio",
+        "rms": 0.00046845362684472047,
+        "samples": 45772800,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-vca",
+        "output": "webaudio",
+        "rms": 0.0006536539793808161,
+        "samples": 47001600,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-env",
+        "output": "webaudio",
+        "rms": 0.0003230273048195278,
+        "samples": 48177152,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-lfo",
+        "output": "webaudio",
+        "rms": 0.0004753299404279883,
+        "samples": 51662848,
+        "events": 64,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-samplehold",
+        "output": "webaudio",
+        "rms": 0.00046109335957284224,
+        "samples": 56219648,
+        "events": 64,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-attenuverter",
+        "output": "webaudio",
+        "rms": 0.00043992702381813524,
+        "samples": 60813312,
+        "events": 64,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-modmix",
+        "output": "webaudio",
+        "rms": 0.0003834957244931866,
+        "samples": 62550016,
+        "events": 4,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-cvseq",
+        "output": "webaudio",
+        "rms": 0.0003850373739419435,
+        "samples": 63043584,
+        "events": 4,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-delay",
+        "output": "webaudio",
+        "rms": 0.0006220641915618377,
+        "samples": 64098304,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-reverb",
+        "output": "webaudio",
+        "rms": 0.0005721997656964801,
+        "samples": 65460224,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-drive",
+        "output": "webaudio",
+        "rms": 0.000627350099041435,
+        "samples": 66682880,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-folder",
+        "output": "webaudio",
+        "rms": 0.0005286153706401959,
+        "samples": 67901440,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-lofi",
+        "output": "webaudio",
+        "rms": 0.0004880436592114482,
+        "samples": 69263360,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-formant",
+        "output": "webaudio",
+        "rms": 0.00016488587499504422,
+        "samples": 70492160,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-comp",
+        "output": "webaudio",
+        "rms": 0.0017713021736694042,
+        "samples": 71741440,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-phaser",
+        "output": "webaudio",
+        "rms": 0.0003152773395884025,
+        "samples": 72507392,
+        "events": 4,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "exercise-pan",
+        "output": "webaudio",
+        "rms": 0.0003417499349620526,
+        "samples": 73566208,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-shift",
+        "output": "webaudio",
+        "rms": 0.0004989657470223728,
+        "samples": 74932224,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-mix",
+        "output": "webaudio",
+        "rms": 0.0005458618312769883,
+        "samples": 76963840,
+        "events": 32,
+        "sounds": ["sine", "triangle"]
+      },
+      {
+        "id": "exercise-scope",
+        "output": "webaudio",
+        "rms": 0.0006315994027323096,
+        "samples": 78848000,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-out",
+        "output": "webaudio",
+        "rms": 0.0005010225648168236,
+        "samples": 80205824,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-iter",
+        "output": "webaudio",
+        "rms": 0.0004951684304689522,
+        "samples": 81563648,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-jux",
+        "output": "webaudio",
+        "rms": 0.0003442909747528562,
+        "samples": 83603456,
+        "events": 32,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-chunk",
+        "output": "webaudio",
+        "rms": 0.00048661708352753727,
+        "samples": 85489664,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-every",
+        "output": "webaudio",
+        "rms": 0.0004794954923024154,
+        "samples": 86849536,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-sometimes",
+        "output": "webaudio",
+        "rms": 0.0004740354616240499,
+        "samples": 88281088,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-off",
+        "output": "webaudio",
+        "rms": 0.0005185143360806958,
+        "samples": 90206208,
+        "events": 32,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-layer",
+        "output": "webaudio",
+        "rms": 0.0006568995339656478,
+        "samples": 92733440,
+        "events": 32,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-rev",
+        "output": "webaudio",
+        "rms": 0.00045955316609713585,
+        "samples": 94609408,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-shuffle",
+        "output": "webaudio",
+        "rms": 0.0004596451681247329,
+        "samples": 95948800,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-ribbon",
+        "output": "webaudio",
+        "rms": 0.00045478565495382753,
+        "samples": 97300480,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-time-lens",
+        "output": "webaudio",
+        "rms": 0.0004439218517930627,
+        "samples": 98267136,
+        "events": 8,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-warp",
+        "output": "webaudio",
+        "rms": 0.0003581817517133281,
+        "samples": 99414016,
+        "events": 16,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-echo",
+        "output": "webaudio",
+        "rms": 0.0007957934160012041,
+        "samples": 102107136,
+        "events": 48,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "exercise-code",
+        "output": "webaudio",
+        "rms": 0.00039444793502305635,
+        "samples": 104241152,
+        "events": 12,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "sound-effects-exercise",
+        "output": "webaudio",
+        "rms": 0.0004706051313074263,
+        "samples": 106092544,
+        "events": 32,
+        "sounds": ["crackle", "user", "sine"]
+      },
+      {
+        "id": "pattern-hardware",
+        "output": "webaudio",
+        "rms": 0.0005709625534092066,
+        "samples": 108421120,
+        "events": 21,
+        "sounds": ["sine", "triangle"]
+      },
+      {
+        "id": "pattern-alien",
+        "output": "webaudio",
+        "rms": 0.0007629136750678437,
+        "samples": 110282752,
+        "events": 30,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "enveloped-synth",
+        "output": "webaudio",
+        "rms": 0.0005783305351458828,
+        "samples": 112543744,
+        "events": 32,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "quantized-sequence",
+        "output": "webaudio",
+        "rms": 0.0006929100142406436,
+        "samples": 116142080,
+        "events": 56,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "modulation-utilities",
+        "output": "webaudio",
+        "rms": 0.00029710430527761104,
+        "samples": 119113728,
+        "events": 32,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "lfo-sweep",
+        "output": "webaudio",
+        "rms": 0.0004558457545773847,
+        "samples": 120774656,
+        "events": 16,
+        "sounds": ["sawtooth"]
+      },
+      {
+        "id": "filter-envelope",
+        "output": "webaudio",
+        "rms": 0.0005798333510528631,
+        "samples": 122376192,
+        "events": 24,
+        "sounds": ["square"]
+      },
+      {
+        "id": "drum-machine",
+        "output": "webaudio",
+        "rms": 0.0016864525530839803,
+        "samples": 124909568,
+        "events": 38,
+        "sounds": ["bd", "sd", "hh"]
+      },
+      {
+        "id": "echo-room",
+        "output": "webaudio",
+        "rms": 0.00036346881370450166,
+        "samples": 127109120,
+        "events": 20,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "function-loops",
+        "output": "webaudio",
+        "rms": 0.0008301657550581296,
+        "samples": 140320768,
+        "events": 257,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "iter-jux",
+        "output": "webaudio",
+        "rms": 0.00040545921286927613,
+        "samples": 151128064,
+        "events": 72,
+        "sounds": ["sine"]
+      },
+      {
+        "id": "custom-helper",
+        "output": "webaudio",
+        "rms": 0.00038937664337200864,
+        "samples": 154120192,
+        "events": 20,
+        "sounds": ["triangle"]
+      },
+      {
+        "id": "war-pigs-doom-instrument",
+        "output": "webaudio",
+        "rms": 0.005279366846133303,
+        "samples": 154828800,
+        "events": 13,
+        "sounds": ["sawtooth", "triangle", "sine"]
+      },
+      {
+        "id": "war-pigs-industrial-triplets",
+        "output": "webaudio",
+        "rms": 0.003880111883334282,
+        "samples": 155512832,
+        "events": 27,
+        "sounds": ["triangle", "white"]
+      },
+      {
+        "id": "war-pigs-dub-afterimage",
+        "output": "webaudio",
+        "rms": 0.0008890386639248258,
+        "samples": 156442624,
+        "events": 15,
+        "sounds": ["square", "triangle"]
+      },
+      {
+        "id": "switch-angel-trance-demo",
+        "output": "webaudio",
+        "rms": 0.004355406082287587,
+        "samples": 186558464,
+        "events": 232,
+        "sounds": ["bd", "supersaw", "pulse"]
+      },
+      {
+        "id": "layered-sketch",
+        "output": "webaudio",
+        "rms": 0.00034394455608107783,
+        "samples": 204689408,
+        "events": 60,
+        "sounds": ["sawtooth", "triangle", "bd", "hh"]
+      }
+    ],
+    "stop": "Injected real-adapter Stop failure retains draft/rack; Close and Stop retry recover"
+  },
+  "physicalListening": false
+}

@@ -1,0 +1,269 @@
+{
+  "revision": "96fc6ce2bde7b1a75820143af81b33ea5cce3d1c",
+  "origin": "Final focused browser run /tmp/extras-final-focused.log",
+  "tone": {
+    "expression": "128+127*sin(t*PI/128) // retained comment",
+    "proof": {
+      "source": "setcpm(60)\n$: freq(220).s(\"bytebeat\").bbexpr(pure('128+127*sin(t*PI/128) // retained comment')).bbst(0).gain(.1)\n// \u2500\u2500 @monkeyboy rack v1 \u2500\u2500\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(60)\\n$: freq(220).s(\\\"bytebeat\\\").bbexpr(pure('128+127*sin(t*PI/128) // retained comment')).bbst(0).gain(.1)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":60}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":60}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"freq\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":220}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"freq\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":220}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bytebeat\\\"}]\"\n//         },\n//         {\n//           \"name\": \"bbexpr\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"pure\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"128+127*sin(t*PI/128) // retained comment\\\"}],\\\"optional\\\":false}]\"\n//         },\n//         {\n//           \"name\": \"bbst\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"code1\",\n//       \"type\": \"code\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \"freq(220)\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"bytebeat1\",\n//       \"type\": \"bytebeat\",\n//       \"row\": 0,\n//       \"hp\": 14,\n//       \"look\": \"crystal\",\n//       \"values\": {\n//         \"timeMode\": \"clock\",\n//         \"presetMode\": \"pattern\",\n//         \"formula\": \"128+127*sin(t*PI/128) // retained comment\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1,\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"code2\",\n//       \"type\": \"code\",\n//       \"row\": 0,\n//       \"hp\": 30,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \".bbst(0)\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             3\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 44,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             4\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 52,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bpm\": 240\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"bytebeat1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"bytebeat1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"code2\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable3\",\n//       \"from\": {\n//         \"module\": \"code2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable6\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+      "sourceExact": true,
+      "savedIdentity": true,
+      "patch": {
+        "version": 1,
+        "modules": [
+          {
+            "id": "code1",
+            "type": "code",
+            "row": 0,
+            "hp": 0,
+            "look": "bare",
+            "values": {
+              "text": "freq(220)"
+            }
+          },
+          {
+            "id": "bytebeat1",
+            "type": "bytebeat",
+            "row": 0,
+            "hp": 14,
+            "look": "crystal",
+            "values": {
+              "timeMode": "clock",
+              "presetMode": "pattern",
+              "formula": "128+127*sin(t*PI/128) // retained comment"
+            }
+          },
+          {
+            "id": "code2",
+            "type": "code",
+            "row": 0,
+            "hp": 30,
+            "look": "bare",
+            "values": {
+              "text": ".bbst(0)"
+            }
+          },
+          {
+            "id": "vca1",
+            "type": "vca",
+            "row": 0,
+            "hp": 44,
+            "look": "instrument",
+            "values": {
+              "level": 0.1
+            }
+          },
+          {
+            "id": "mix1",
+            "type": "mix",
+            "row": 0,
+            "hp": 52,
+            "look": "instrument",
+            "values": {
+              "ch1": 1,
+              "ch2": 1,
+              "ch3": 1,
+              "ch4": 1
+            }
+          },
+          {
+            "id": "out2",
+            "type": "out",
+            "row": 0,
+            "hp": 0,
+            "look": "instrument",
+            "values": {
+              "bpm": 240
+            }
+          }
+        ],
+        "cables": [
+          {
+            "id": "cable1",
+            "from": {
+              "module": "code1",
+              "jack": "out"
+            },
+            "to": {
+              "module": "bytebeat1",
+              "jack": "in"
+            }
+          },
+          {
+            "id": "cable2",
+            "from": {
+              "module": "bytebeat1",
+              "jack": "out"
+            },
+            "to": {
+              "module": "code2",
+              "jack": "in"
+            }
+          },
+          {
+            "id": "cable3",
+            "from": {
+              "module": "code2",
+              "jack": "out"
+            },
+            "to": {
+              "module": "vca1",
+              "jack": "in"
+            }
+          },
+          {
+            "id": "cable5",
+            "from": {
+              "module": "vca1",
+              "jack": "out"
+            },
+            "to": {
+              "module": "mix1",
+              "jack": "in1"
+            }
+          },
+          {
+            "id": "cable6",
+            "from": {
+              "module": "mix1",
+              "jack": "out"
+            },
+            "to": {
+              "module": "out2",
+              "jack": "in"
+            }
+          }
+        ],
+        "names": {},
+        "rows": 1,
+        "railHp": 64
+      },
+      "actualEvents": [
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1
+          },
+          "begin": "0",
+          "end": "1",
+          "dominant": false
+        },
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1
+          },
+          "begin": "1",
+          "end": "2",
+          "dominant": false
+        },
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1
+          },
+          "begin": "2",
+          "end": "3",
+          "dominant": false
+        },
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1
+          },
+          "begin": "3",
+          "end": "4",
+          "dominant": false
+        }
+      ],
+      "generatedEvents": [
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1,
+            "orbit": 1
+          },
+          "begin": "0",
+          "end": "1",
+          "dominant": false
+        },
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1,
+            "orbit": 1
+          },
+          "begin": "1",
+          "end": "2",
+          "dominant": false
+        },
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1,
+            "orbit": 1
+          },
+          "begin": "2",
+          "end": "3",
+          "dominant": false
+        },
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1,
+            "orbit": 1
+          },
+          "begin": "3",
+          "end": "4",
+          "dominant": false
+        }
+      ],
+      "eventEquivalent": true,
+      "triggered": [
+        {
+          "value": {
+            "freq": 220,
+            "s": "bytebeat",
+            "byteBeatExpression": "128+127*sin(t*PI/128) // retained comment",
+            "byteBeatStartTime": 0,
+            "gain": 0.1,
+            "duration": 1
+          },
+          "now": 24.192,
+          "target": 24.2913
+        }
+      ],
+      "failures": []
+    },
+    "pcm": {
+      "rms": 0.006084315943218741,
+      "peak": 0.009600001387298107,
+      "frames": 204800,
+      "sampleRate": 48000,
+      "frequency": 222.65625
+    }
+  }
+}

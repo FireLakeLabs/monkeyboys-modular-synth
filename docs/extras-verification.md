@@ -147,3 +147,68 @@ Raw feature evidence from that original complete run is committed separately:
   [CHIP](evidence/extras/chip-looks.json), [SPEAK](evidence/extras/speak-looks.json).
   Screenshots are retained with the full-run artifacts. The long custom equation
   display scrolls within 96 px so controls and jacks remain reachable.
+
+## Covering fixes and latest-main integration
+
+The first focused library selection used an over-anchored title filter and ran
+no tests (`RESULT passed=0 failed=0 exit=1`); it is not verification. With the
+correct filter, the first library rerun failed its new dominant-trigger assertion
+(`RESULT passed=0 failed=1 exit=1`). The broad existing `onTrigger` observer was
+capturing a lifted speech control's input during `queryArc`, rather than the whole
+pattern installed by the engine. It now captures only the engine's non-dominant
+scheduling tap, as the dedicated extras probe already did. The dominant-event
+assertion remains. That failed rerun's log/captures are retained at
+`/tmp/extras-library-failed1.log` and `/tmp/extras-library-focused1-artifacts`.
+
+Validation also rejected a valid equation ending in a line comment because the
+synthetic function's closing brace was appended inside that comment. A newline
+before the closing brace fixes only that parser boundary. The new source/edit
+regression failed against the original validator (1 failed / 81 passed) and
+passed after the correction (82 passed); logs are `/tmp/extras-comment-red.log`
+and `/tmp/extras-comment-green.log`. It does not execute untrusted code.
+
+On `96fc6ce2bde7b1a75820143af81b33ea5cce3d1c`:
+
+```sh
+npm run test:browser:report -- --config /tmp/extras-playwright.config.mjs tests/browser/extras.spec.mjs tests/browser/suites.spec.mjs -g 'BYTEBEAT|CHIP|bytebeat|chip|speak|SPEAK|library audio, replacement Cancel and Stop recovery' --reporter=line,html,json
+```
+
+**RESULT passed=9 failed=0 exit=0**, 7.5 minutes, two-worker configuration, no
+retries. This reruns all eight feature checks and the entire 80-patch library
+signal/Cancel/Stop test. [Library results](evidence/extras/library.json) retain each
+fixture's original nonzero audio threshold, plus the speech-only near-zero PCM
+and dominant events. [Commented equation](evidence/extras/bytebeat-comment.json)
+is the selected unmodified tone record from this run: actual PCM 222.65625 Hz,
+exact source, full saved identity and matching generated/scheduled events. The
+native speech limitations above remain unchanged. Captures and report:
+`/tmp/extras-final-focused-artifacts`, `/tmp/extras-final-focused-report`; actual
+log `/tmp/extras-final-focused.log`.
+
+The run finished at 03:18:28 UTC. An unexpected clean checkout back to the older
+spike branch occurred at 03:18:39 UTC, after the run; the feature branch was
+restored. No evidence is attributed to that older branch. Before review the
+feature was rebased onto main `af7040f8a9da49fb3ab2a31b0d27aa41c3d89427`
+(PR #232). The auto-apply conflict retains exact CODE/source acceptance, main's
+settled Audio-error/Play assertions, and global Stop-shortcut cleanup. The current
+arranger's undoable length/playhead and footer are preserved.
+
+The rebased `npm run check` passed **2,540 unit tests / 53 guardrail tests**, plus
+all coverage, lint/format/skills and production build checks. The complete local
+run supplied broad subsystem coverage; subsequent changes are the bounded
+line-comment correction and verification fixes. Focused extras/library checks
+cover those changes, with arranger/auto-apply/extras coverage repeated after the
+rebase. The final-head hosted Full browser suites remains required before merge;
+the failed original local run is never presented as a clean full pass.
+
+Rebased browser check on `c19430b34874886a7fba1ea8abb3ac0130027b83`:
+
+```sh
+npm run test:browser:report -- --config /tmp/extras-playwright.config.mjs tests/browser/extras.spec.mjs tests/browser/arranger.spec.mjs tests/browser/auto-apply.spec.mjs --reporter=line,html,json
+```
+
+**RESULT passed=35 failed=0 exit=0**, 1.4 minutes, two workers, no retries.
+Log `/tmp/extras-rebased-browser.log`, report `/tmp/extras-rebased-report`.
+The feature branch/revision stayed unchanged through the run, and 5174 was
+released by the runner. This verifies the merged auto-apply assertions and the
+current arranger alongside all new module checks; it does not change the earlier
+202/1 full-run result or establish a native speech engine.
