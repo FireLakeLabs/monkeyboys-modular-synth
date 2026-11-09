@@ -212,8 +212,18 @@ export function rackRows(patch: Patch): number {
   )
 }
 
-export function addRow(patch: Patch): Patch {
-  return validateRack({ ...patch, rows: rackRows(patch) + 1 })
+/** Opens an empty rail directly below `above`; lower rails keep their modules, HP and wiring. */
+export function insertRow(patch: Patch, above: number): Patch {
+  const rows = rackRows(patch)
+  if (!Number.isInteger(above) || above < 0 || above >= rows)
+    throw new Error('Cannot insert a row here')
+  return validateRack({
+    ...patch,
+    modules: patch.modules.map((m) =>
+      m.type !== 'out' && m.row > above ? { ...m, row: m.row + 1 } : m,
+    ),
+    rows: rows + 1,
+  })
 }
 
 /** Removing an empty rail closes its gap; module HP positions and wiring stay intact. */

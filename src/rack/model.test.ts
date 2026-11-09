@@ -23,7 +23,7 @@ import {
   assessConnection,
   cableWarnings,
   removeRow,
-  addRow,
+  insertRow,
   panelControls,
   routedModules,
   switchStyle,
@@ -143,8 +143,31 @@ describe('rack editing', () => {
     expect(next.cables).toEqual(patch.cables)
     expect(patch.modules.find((m) => m.id === 'vcf1')?.row).toBe(2)
   })
+  it('inserts an empty row below the chosen row and shifts lower rows with their cables', () => {
+    let patch = placeModule(starterPatch(104), 'osc', 0, 0)
+    patch = placeModule(patch, 'vcf', 1, 12)
+    patch = placeModule(patch, 'lfo', 2, 24)
+    patch = connect(patch, { module: 'osc1', jack: 'out' }, { module: 'vcf1', jack: 'in' })
+    patch = connect(patch, { module: 'lfo1', jack: 'out' }, { module: 'vcf1', jack: 'cv' })
+    const next = insertRow(patch, 0)
+    expect(next.rows).toBe(4)
+    expect(next.modules.find((m) => m.id === 'osc1')).toMatchObject({ row: 0, hp: 0 })
+    expect(next.modules.find((m) => m.id === 'vcf1')).toMatchObject({ row: 2, hp: 12 })
+    expect(next.modules.find((m) => m.id === 'lfo1')).toMatchObject({ row: 3, hp: 24 })
+    expect(next.modules.some((m) => m.type !== 'out' && m.row === 1)).toBe(false)
+    expect(next.modules.find((m) => m.type === 'out')).toEqual(
+      patch.modules.find((m) => m.type === 'out'),
+    )
+    expect(next.cables).toEqual(patch.cables)
+    expect(read(generate(next)).patch).toEqual(next)
+    expect(removeRow(next, 1)).toEqual({ ...patch, rows: 3 })
+    expect(insertRow(patch, 2).rows).toBe(4)
+    expect(insertRow(patch, 2).modules).toEqual(patch.modules)
+    expect(() => insertRow(patch, 3)).toThrow('row')
+    expect(() => insertRow(patch, -1)).toThrow('row')
+  })
   it('saves empty rows and retains them after deleting their last module', () => {
-    let patch = addRow(starterPatch())
+    let patch = insertRow(starterPatch(), 0)
     expect(patch.rows).toBe(2)
     patch = placeModule(patch, 'vcf', 1, 0)
     patch = removeModule(patch, 'vcf1')

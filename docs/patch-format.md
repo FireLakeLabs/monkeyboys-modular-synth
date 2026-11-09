@@ -37,7 +37,8 @@ interface Patch {
   every rail module row index (excluding OUT). Older v1 files omit it and derive the rail count from
   module positions (at least one row). Placement grows this count; removing the
   last module in a row does not shrink it. Explicit removal of an empty row
-  shifts later rows up one, retaining module HP, looks, values and cables.
+  shifts later rows up one, and inserting a row below row _n_ shifts later rows
+  down one; both retain module HP, looks, values and cables.
 - Optional `railHp` is exactly 64, 84 or 104 HP. Missing saved fields default to 64 HP. Plain files without a saved block
   receive initial compact placement over 64/84/104 HP rails: minimize row count,
   preferring narrower rails on ties. This never reflows saved personal or bundled

@@ -3,7 +3,7 @@ import { read } from '../reader'
 import { connect, placeModule, setValue, starterPatch } from '../rack/model'
 import { applyRackEdit, editDocument, fromPatch, sourceBody } from './document'
 import { createDocumentHistory } from './history'
-import { addConnectedModule, connectionEnds, discoverModules } from './discovery'
+import { addConnectedModule, connectionEnds, discoverModules, groupByModule } from './discovery'
 
 const position = { row: 1, hp: 12 }
 
@@ -127,5 +127,28 @@ describe('connected module discovery', () => {
       connectionEnds(patch, { module: 'mix1', jack: 'out' }, { module: 'mix1', jack: 'out' }),
     ).toBeNull()
     expect(patch).toEqual(original)
+  })
+
+  it('offers each compatible module once, with numbered jacks grouped under a family label', () => {
+    const document = fromPatch(placeModule(starterPatch(104), 'osc', 0, 0))
+    const choices = discoverModules(document, { module: 'osc1', jack: 'out' }, position)
+    const grouped = groupByModule(choices)
+    expect(grouped.map((entry) => entry.type)).toEqual([...new Set(choices.map((c) => c.type))])
+    const rows = (type: string) =>
+      grouped
+        .find((entry) => entry.type === type)
+        ?.families.map((family) => [family.label, family.options.map((option) => option.text)])
+    expect(rows('mix')).toEqual([
+      ['IN', ['1', '2', '3', '4']],
+      ['CV', ['1', '2', '3', '4']],
+    ])
+    expect(rows('vcf')).toEqual([[null, ['IN', 'CV']]])
+    expect(rows('aux')).toEqual([['SEND', ['1', '2', '3', '4']]])
+    const mix = grouped.find((entry) => entry.type === 'mix')
+    const cv3 = mix?.families[1]?.options[2]
+    expect(cv3).toMatchObject({ name: 'MIX · CV 3', choice: { type: 'mix', jack: 'cv3' } })
+    expect(grouped.flatMap((entry) => entry.families.flatMap((f) => f.options))).toHaveLength(
+      choices.length,
+    )
   })
 })

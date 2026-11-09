@@ -239,6 +239,14 @@ modes in all four Hardware looks.
 Panels overlap two rails, each with one hole per HP, and the pinned OUT panel has
 matching rails. Looks that have screws on their boards show two fixing screws.
 
+Rows are edited in place, like table rows. A round **+** in the gap below each
+row inserts an empty row directly beneath it and shifts lower rows down; a round
+**−** beside an empty row's `Row N` label removes it, except for the last row.
+Both are one undoable edit, keep a 20-pixel on-screen size at every zoom
+including overview, and are disabled while the rack is locked. There is no
+separate Add row bar and no drop-to-new-row target; place a module after
+inserting its row.
+
 The rack toolbar offers Fit rack and manual 75%, 100%, 125% and 150% zoom.
 Fit recalculates when the viewport or row count changes; zoom is local view
 state and changes neither source nor saved rack positions. Cable measurements,
@@ -618,8 +626,14 @@ v1 exclusion of general hints and explainers.
 A cable can start at either end. Dropping on a jack connects it; dragging onto
 empty rail space opens **Add a connected module** beside a provisional module.
 The chooser searches catalog names, titles, calls and jack labels and lists
-module/jack pairs that work with the new module's defaults. Search takes focus;
-Up/Down moves through options, Enter selects, and Escape cancels and returns
+each module whose default jacks work, once, as a card with the palette chip's
+category colour, name, call and HP ([#236](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/236)).
+Numbered jacks share a row: a family label followed by number buttons, such as
+MIX `IN 1 2 3 4` and `CV 1 2 3 4`. A bare-number label takes its family name from
+the jack id. Unnumbered jacks are buttons named for the jack, such as VCF `IN CV`.
+Each button's bottom edge shows its signal; warnings and CODE paths are dashed.
+Search takes focus; Up/Down moves through jack buttons and, away from search,
+Left/Right does too. Enter selects, and Escape cancels and returns
 to the starting jack. Clicking outside dismisses the chooser.
 
 Hovering or focusing an option previews its catalog width and nearest free HP
@@ -628,6 +642,7 @@ the ghost jack through scrolling and zoom. Modules that cannot fit on that rail
 remain listed with **No room on this rail** and cannot be selected. The chooser
 does not silently spill onto another rail. Only selecting commits a module and
 its cable, as one accepted-document history step. An occupied input retains its
-cable until selection; the chooser explains replacement and imported rewrites.
+cable until selection; the card names the jack and explains replacement and
+imported rewrites.
 Cancellation changes neither source nor playback. Draft/locked racks and overview
 jacks remain unavailable; Connections still supports overview repatching.

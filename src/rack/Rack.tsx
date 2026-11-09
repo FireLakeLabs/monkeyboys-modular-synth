@@ -58,7 +58,7 @@ import {
   cableWarnings,
   effectNotes,
   removeRow,
-  addRow,
+  insertRow,
   rackRows,
   panelControls,
   routedModules,
@@ -1368,19 +1368,32 @@ export function Rack({
               >
                 {Array.from({ length: rows }, (_, row) => (
                   <div key={row} className="rack-row" style={{ top: row * ROW_HEIGHT }}>
-                    <span className="row-label">Row {row + 1}</span>
-                    {!patch.modules.some((m) => m.type !== 'out' && m.row === row) && rows > 1 && (
-                      <button
-                        type="button"
-                        className="remove-row"
-                        aria-label={`Remove row ${row + 1}`}
-                        onClick={() => {
-                          edit((p) => removeRow(p, row))
-                        }}
-                      >
-                        Remove row
-                      </button>
-                    )}
+                    <span className="row-tools">
+                      {!patch.modules.some((m) => m.type !== 'out' && m.row === row) &&
+                        rows > 1 && (
+                          <button
+                            type="button"
+                            className="row-button"
+                            aria-label={`Remove row ${row + 1}`}
+                            title={`Remove empty row ${row + 1}`}
+                            disabled={locked}
+                            onClick={() => edit((p) => removeRow(p, row))}
+                          >
+                            −
+                          </button>
+                        )}
+                      <span className="row-label">Row {row + 1}</span>
+                    </span>
+                    <button
+                      type="button"
+                      className="row-button insert-row"
+                      aria-label={`Insert row below row ${row + 1}`}
+                      title={`Insert an empty row below row ${row + 1}`}
+                      disabled={locked}
+                      onClick={() => edit((p) => insertRow(p, row))}
+                    >
+                      +
+                    </button>
                   </div>
                 ))}
                 {renderModules(patch.modules.filter((m) => m.type !== 'out'))}
@@ -1405,7 +1418,7 @@ export function Rack({
                     />
                   </div>
                 )}
-                {placement && ghost && ghost.row < rows && (
+                {placement && ghost && (
                   <div
                     className="placement-ghost"
                     style={{
@@ -1588,27 +1601,6 @@ export function Rack({
             </div>
           )}
         </div>
-        <button
-          type="button"
-          className="add-row"
-          disabled={locked}
-          onClick={() => edit(addRow)}
-          onDragOver={(event) => {
-            if (placement) {
-              event.preventDefault()
-              setGhost({ row: rows, hp: 0 })
-              setMessage(`${getModuleSpec(placement.type).name} · new row`)
-            }
-          }}
-          onDragLeave={() => setGhost(null)}
-          onDrop={(event) => {
-            event.preventDefault()
-            place(rows, 0)
-          }}
-        >
-          + Add row
-          {placement && ghost?.row === rows ? ` · ${getModuleSpec(placement.type).name}` : ''}
-        </button>
         <footer className="rack-footer">
           <div className="rack-status" aria-live="polite">
             {message}

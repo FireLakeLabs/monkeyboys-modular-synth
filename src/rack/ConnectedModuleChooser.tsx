@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { getModuleSpec } from '../modules/catalog'
-import type { ModuleConnection } from '../workspace/discovery'
+import { groupByModule, type ModuleConnection } from '../workspace/discovery'
 
 export function ConnectedModuleChooser({
   choices,
@@ -28,6 +28,7 @@ export function ConnectedModuleChooser({
       .includes(value.trim().toLowerCase())
   }
   const matches = choices.filter((choice) => matchesFilter(choice, filter))
+  const modules = groupByModule(matches)
   useLayoutEffect(() => search.current?.focus(), [])
   useEffect(() => {
     const outside = (event: Event) => {
@@ -72,6 +73,13 @@ export function ConnectedModuleChooser({
         } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
           event.preventDefault()
           focusOption(event.key === 'ArrowDown' ? 1 : -1)
+        } else if (
+          (event.key === 'ArrowRight' || event.key === 'ArrowLeft') &&
+          event.target !== search.current
+        ) {
+          // Search keeps Left/Right for its caret; jack buttons read left to right.
+          event.preventDefault()
+          focusOption(event.key === 'ArrowRight' ? 1 : -1)
         } else if (event.key === 'Enter' && event.target === search.current) {
           event.preventDefault()
           if (activeChoice?.position && matches.includes(activeChoice)) choose(activeChoice)
@@ -99,45 +107,81 @@ export function ConnectedModuleChooser({
       />
       <p>Select to place and connect · Esc cancels</p>
       <div className="connected-module-options">
-        {matches.map((choice) => {
-          const spec = getModuleSpec(choice.type)
-          const jack = spec.jacks.find((jack) => jack.id === choice.jack)
+        {modules.map(({ type, families }) => {
+          const spec = getModuleSpec(type)
+          const options = families.flatMap((family) => family.options)
+          const fits = options.some((option) => option.choice.position)
           return (
-            <button
-              type="button"
-              data-choice
-              key={`${choice.type}:${choice.jack}`}
-              disabled={!choice.position}
-              aria-current={choice === activeChoice ? 'true' : undefined}
-              title={choice.assessment.message}
-              onFocus={() => preview(choice)}
-              onPointerEnter={(event) => {
-                if (!choice.position) return
-                // Align an existing keyboard selection without taking focus from search.
-                if (event.currentTarget.parentElement?.contains(document.activeElement))
-                  event.currentTarget.focus({ preventScroll: true })
-                preview(choice)
-              }}
-              onClick={() => choose(choice)}
+            <section
+              key={type}
+              data-chooser-module={type}
+              aria-label={`${spec.name} ${spec.title}`}
+              className={`chip connected-module-card cat-${spec.category} chip-${spec.family}`}
             >
-              <span>
-                <strong>{spec.name}</strong> · {jack?.label} <small>{spec.hp} HP</small>
-              </span>
-              <span>{spec.title}</span>
-              <small>
-                {!choice.position
-                  ? 'No room on this rail'
-                  : choice.assessment.kind === 'valid'
-                    ? choice.assessment.signal
-                    : choice.assessment.message}
-              </small>
-              {choice.assessment.kind === 'valid' && choice.assessment.replaces && (
-                <small>
-                  Replaces the cable into {choice.assessment.replaces.module}{' '}
-                  {choice.assessment.replaces.jack}
-                </small>
+              <header>
+                <span className="chip-name">{spec.name}</span>
+                <code className="chip-call">{spec.paletteCall}</code>
+                <small>{spec.hp} HP</small>
+              </header>
+              <span className="connected-module-title">{spec.title}</span>
+              {families.map((family) => (
+                <div key={family.label ?? ''} className="jack-family">
+                  {family.label !== null && (
+                    <span className="jack-family-label" aria-hidden="true">
+                      {family.label}
+                    </span>
+                  )}
+                  {family.options.map(({ text, name, choice }) => (
+                    <button
+                      type="button"
+                      data-choice
+                      key={choice.jack}
+                      className={`jack-choice signal-${choice.assessment.signal} ${choice.assessment.kind}`}
+                      disabled={!choice.position}
+                      aria-label={name}
+                      aria-current={choice === activeChoice ? 'true' : undefined}
+                      title={choice.assessment.message}
+                      onFocus={() => preview(choice)}
+                      onPointerEnter={(event) => {
+                        if (!choice.position) return
+                        // Align an existing keyboard selection without taking focus from search.
+                        if (
+                          event.currentTarget
+                            .closest('.connected-module-options')
+                            ?.contains(document.activeElement)
+                        )
+                          event.currentTarget.focus({ preventScroll: true })
+                        preview(choice)
+                      }}
+                      onClick={() => choose(choice)}
+                    >
+                      {text}
+                    </button>
+                  ))}
+                </div>
+              ))}
+              {!fits ? (
+                <small>No room on this rail</small>
+              ) : (
+                <>
+                  {options
+                    .filter(({ choice }) => choice.assessment.kind !== 'valid')
+                    .map(({ name, choice }) => (
+                      <small key={choice.jack}>
+                        {name}: {choice.assessment.message}
+                      </small>
+                    ))}
+                  {options.map(({ name, choice }) =>
+                    choice.assessment.replaces ? (
+                      <small key={`${choice.jack}:replaces`}>
+                        {name} replaces the cable into {choice.assessment.replaces.module}{' '}
+                        {choice.assessment.replaces.jack}
+                      </small>
+                    ) : null,
+                  )}
+                </>
               )}
-            </button>
+            </section>
           )
         })}
         {!matches.length && <p>No compatible modules match.</p>}

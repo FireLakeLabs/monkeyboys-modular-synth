@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { generate } from '../codegen/generate'
 import { demoPatch } from '../patch/demo'
 import { read } from '../reader'
-import { setValue, setLook, addRow } from '../rack/model'
+import { setValue, setLook, insertRow } from '../rack/model'
 import { FACTORY_PACKS, packSetup, packStatement, sampleCalls, userPack } from '../samples/packs'
 import {
   cartridges,
@@ -46,7 +46,7 @@ describe('sample cartridge ownership', () => {
       seated,
       setLook(setValue(seated.patch, 'vcf1', 'cutoff', 1200), 'osc1', 'vintage'),
     )
-    const row = editDocument(edited, addRow(edited.patch))
+    const row = editDocument(edited, insertRow(edited.patch, 0))
     const converted = makeRackEditable(row)
     expect(
       sampleCalls(sourceBody(converted.source)).filter((call) => call.pack?.source === pack.source),

@@ -81,8 +81,9 @@ test('output rail drop previews catalog geometry, cancels cleanly, and commits p
   const search = page.getByRole('searchbox', { name: 'Find compatible modules' })
   await expect(search).toBeFocused()
   await search.fill('vcf')
-  await expect(page.locator('[data-choice]')).toHaveCount(2)
-  const option = page.locator('[data-choice]').filter({ hasText: 'VCF · IN' })
+  await expect(page.locator('[data-chooser-module]')).toHaveCount(1)
+  await expect(page.locator('[data-chooser-module="vcf"] [data-choice]')).toHaveText(['IN', 'CV'])
+  const option = page.getByRole('button', { name: 'VCF · IN', exact: true })
   await option.hover()
   await expect(page.locator('.connected-module-ghost')).toContainText('VCF · IN')
   const preview = await page.locator('.connected-module-ghost').boundingBox()
@@ -123,7 +124,7 @@ test('input rail drop adds a source, preserves occupied cables until selection, 
   await dropOnRail(page, 'vcf1:in')
   await page.getByRole('searchbox', { name: 'Find compatible modules' }).fill('noise')
   await expect(page.locator('[data-choice]')).toHaveCount(1)
-  await expect(page.locator('[data-choice]')).toContainText('Replaces the cable')
+  await expect(page.locator('[data-chooser-module="noise"]')).toContainText('replaces the cable')
   expect(await source(page)).toBe(before)
   await page.locator('[data-choice]').click()
   const changed = await patch(page)
@@ -159,10 +160,7 @@ for (const look of ['powder', 'vintage', 'learner']) {
     await page.mouse.up()
     await expect(page.getByRole('dialog', { name: 'Add a connected module' })).toBeVisible()
     await page.getByRole('searchbox', { name: 'Find compatible modules' }).fill('env')
-    await page
-      .locator('[data-choice]')
-      .filter({ hasText: /^ENV ·/ })
-      .hover()
+    await page.locator('[data-chooser-module="env"] [data-choice]').first().hover()
     const ghost = await page.locator('.connected-module-ghost').boundingBox()
     expect(ghost.width).toBe(10 * 12 * 0.75)
     await page.keyboard.press('Escape')
@@ -282,7 +280,7 @@ for (const keyboardFocus of ['search', 'option']) {
       await page.keyboard.press('ArrowDown')
       await expect(page.locator('[data-choice]').first()).toBeFocused()
     }
-    await page.locator('[data-choice]').filter({ hasText: 'VCF · CV' }).hover()
+    await page.getByRole('button', { name: 'VCF · CV', exact: true }).hover()
     await expect(page.locator('.connected-module-ghost')).toContainText('VCF · CV')
     await page.keyboard.press('Enter')
     await expect(page.locator('[data-module="vcf2"]')).toBeVisible()
@@ -294,3 +292,31 @@ for (const keyboardFocus of ['search', 'option']) {
     )
   })
 }
+
+test('numbered jacks collapse into one card per module with family rows', async ({
+  page,
+}, info) => {
+  await fixture(page)
+  await dropOnRail(page, 'osc1:out')
+  const search = page.getByRole('searchbox', { name: 'Find compatible modules' })
+  await search.fill('mix')
+  const mix = page.locator('[data-chooser-module="mix"]')
+  await expect(mix).toHaveCount(1)
+  await expect(mix.locator('.jack-family')).toHaveText(['IN1234', 'CV1234'])
+  await page.screenshot({ path: info.outputPath('grouped-chooser.png') })
+  await search.fill('')
+  await expect(page.locator('[data-chooser-module="vcf"]')).toHaveCount(1)
+  await page.screenshot({ path: info.outputPath('all-choices.png') })
+  await search.fill('mix')
+  const cv3 = page.getByRole('button', { name: 'MIX · CV 3', exact: true })
+  await cv3.hover()
+  await expect(page.locator('.connected-module-ghost')).toContainText('MIX · CV 3')
+  await cv3.click()
+  await expect(page.locator('[data-module="mix2"]')).toBeVisible()
+  expect((await patch(page)).cables).toContainEqual(
+    expect.objectContaining({
+      from: { module: 'osc1', jack: 'out' },
+      to: { module: 'mix2', jack: 'cv3' },
+    }),
+  )
+})
