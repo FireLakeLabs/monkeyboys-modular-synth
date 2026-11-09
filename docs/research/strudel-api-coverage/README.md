@@ -95,7 +95,11 @@ benchmarks, comments and documentation examples do not count.
 
 The broader inventory has **1,100 candidate families**, **1,017 web exports**,
 **1,013 names in statically discovered initialization namespaces**, and **127 direct
-Pattern class/prototype methods** before generated setters/operators. These are
+Pattern class/prototype entries** before generated setters/operators (methods, accessors, prototype assignments
+and one constructor entry; `_steps` has a getter and a setter). The historical
+JSON count key is `bundleDirectPatternMethods`; it counts entries, not unique
+callable methods. `api:constructor` is retained only as raw class evidence, not
+an independently callable API or rack feature. These are
 intersecting surfaces, never quantities to add. They include utilities,
 constructors and class methods, not just musical transforms. Default `evalScope`
 receives core, mini, tonal and webaudio namespaces plus hush/evaluate;
