@@ -124,8 +124,18 @@ Observed on 8 November 2026 with Node 24.22.2 and the pinned Playwright Chromium
   second song pass wraps. The existing per-orbit event and nonzero master PCM
   assertions pass. Stop removes the outlines.
 - The complete local browser suite passed **197/197**
-  (`RESULT passed=197 failed=0 exit=0`), including workspace history, error recovery,
+  before the review fix (`RESULT passed=197 failed=0 exit=0`), including workspace
+  history, error recovery,
   playback matrices, pattern visibility, rack geometry and stabilization checks.
+- After the one-line review fix, the full local run passed 196/197; DRUMS had
+  zero PCM despite recorded starts (the [#207](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/207)
+  symptom, with no cause inferred). Its unchanged module matrix passed on an
+  isolated rerun. The first hosted attempt passed 195/197 and also hit the
+  half-typed-code test's Stop cleanup race; the second passed 196/197, including
+  DRUMS, leaving only that race. Waiting for the expected Audio error before the
+  old cleanup reproduced the failure locally. That test now asserts accepted
+  CODE, the settled Audio error and available Play control; application behavior
+  is unchanged. Focused auto-apply and arranger acceptance then passed 27/27.
 - The [playhead](evidence/arranger-230/playhead.png) and
   [restored length](evidence/arranger-230/length.png) screenshots were inspected.
   The outline is visible on playing and rested cells without changing rack size.
