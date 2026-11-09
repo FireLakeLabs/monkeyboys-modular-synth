@@ -1,0 +1,233 @@
+[
+  {
+    "id": "note-literal",
+    "names": ["note"],
+    "source": "$: note(\"c2 e2\").s(\"saw\")\n",
+    "expectCode": false,
+    "restriction": "Literal source; OSC normalizes saw control while retaining spelling"
+  },
+  {
+    "id": "note-computed",
+    "names": ["note"],
+    "source": "$: note(notes).s(\"sawtooth\")\n",
+    "expectCode": true,
+    "restriction": "Computed source values remain CODE; notes is not evaluated"
+  },
+  {
+    "id": "filter-alias",
+    "names": ["lpf", "lpq"],
+    "source": "$: note(\"c2\").s(\"sawtooth\").cutoff(800).resonance(25)\n",
+    "expectCode": false,
+    "restriction": "Aliases require compatible owner; resonance 0\u201350"
+  },
+  {
+    "id": "filter-range",
+    "names": ["lpq"],
+    "source": "$: s(\"bd\").cutoff(800).resonance(51)\n",
+    "expectCode": true,
+    "restriction": "Out of panel bounds; not evidence of engine rejection"
+  },
+  {
+    "id": "filter-step-cv",
+    "names": ["lpf", "perlin", "range", "slow"],
+    "source": "$: note(\"c2\").s(\"sawtooth\").cutoff(perlin.range(200,1500).slow(4))\n",
+    "expectCode": false,
+    "restriction": "Recognized STEP CV expression; not audio-rate perlin"
+  },
+  {
+    "id": "filter-arbitrary-function",
+    "names": ["lpf"],
+    "source": "$: s(\"bd\").lpf(() => 800)\n",
+    "expectCode": true,
+    "restriction": "No callback execution to discover a control"
+  },
+  {
+    "id": "gain-literal",
+    "names": ["gain"],
+    "source": "$: s(\"bd\").gain(1.4)\n",
+    "expectCode": false,
+    "restriction": "Scalar 0\u20132 or recognized CV forms; not arbitrary patterns"
+  },
+  {
+    "id": "gain-pattern",
+    "names": ["gain"],
+    "source": "$: s(\"bd\").gain(\"1 .5\")\n",
+    "expectCode": false,
+    "restriction": "Numeric mini-notation projects as CV SEQ feeding VCA, not one scalar knob"
+  },
+  {
+    "id": "envelope-complete",
+    "names": ["attack", "decay", "sustain", "release"],
+    "source": "$: note(\"c2\").s(\"sawtooth\").att(.01).dec(.2).sus(.5).rel(.1).gain(.8)\n",
+    "expectCode": false,
+    "restriction": "Complete ordered ADSR group and compatible VCA target"
+  },
+  {
+    "id": "envelope-partial",
+    "names": ["decay"],
+    "source": "$: s(\"bd\").dec(.1)\n",
+    "expectCode": true,
+    "restriction": "Partial group does not authorize inventing other defaults"
+  },
+  {
+    "id": "add-literal",
+    "names": ["add"],
+    "source": "$: note(\"c2\").add(\"12\").s(\"sawtooth\")\n",
+    "expectCode": false,
+    "restriction": "Readable literal; pinned engine does not transpose note field here; see acid.test.ts"
+  },
+  {
+    "id": "add-number",
+    "names": ["add"],
+    "source": "$: note(\"c2\").add(12).s(\"sawtooth\")\n",
+    "expectCode": true,
+    "restriction": "Scalar ADD operand outside shipped #238 reader increment"
+  },
+  {
+    "id": "top-stack",
+    "names": ["stack"],
+    "source": "$: stack(s(\"bd\"),s(\"hh\"))\n",
+    "expectCode": false,
+    "restriction": "Top-level independent voices only; #242 owns nested shape"
+  },
+  {
+    "id": "nested-stack",
+    "names": ["stack"],
+    "source": "$: stack(note(\"c2\"),note(\"e2\")).s(\"sawtooth\")\n",
+    "expectCode": true,
+    "restriction": "Shared downstream chain needs #242 nested-expression support"
+  },
+  {
+    "id": "arrange-sections",
+    "names": ["arrange"],
+    "source": "$: arrange([2,s(\"bd\")],[2,s(\"hh\")])\n",
+    "expectCode": true,
+    "restriction": "Section-local time differs from mask lanes; #244 owns implementation"
+  },
+  {
+    "id": "loop-chain",
+    "names": ["chunk", "hurry"],
+    "source": "$: s(\"bd\").chunk(4,x=>x.hurry(2))\n",
+    "expectCode": false,
+    "restriction": "One identifier parameter and receiver-chain lambda"
+  },
+  {
+    "id": "loop-branch",
+    "names": ["chunk", "stack"],
+    "source": "$: s(\"bd\").chunk(4,x=>stack(x,x.rev()))\n",
+    "expectCode": true,
+    "restriction": "Callback branch shape requires #243 after #242"
+  },
+  {
+    "id": "harmonic-default",
+    "names": ["chord", "voicing"],
+    "source": "$: chord(\"<Cm7 Fm7>\").voicing().s(\"sawtooth\")\n",
+    "expectCode": false,
+    "restriction": "Atomic literal CHORD plus nullary voicing"
+  },
+  {
+    "id": "harmonic-options",
+    "names": ["chord", "voicing"],
+    "source": "$: chord(\"Cm7\").voicing(\"ireal\").s(\"sawtooth\")\n",
+    "expectCode": true,
+    "restriction": "Nondefault voicing arguments remain CODE"
+  },
+  {
+    "id": "imported-orbit",
+    "names": ["orbit"],
+    "source": "$: s(\"bd\").orbit(2)\n",
+    "expectCode": true,
+    "restriction": "Literal integer does not establish generator routing provenance"
+  },
+  {
+    "id": "generated-routing-controls",
+    "names": ["bus", "bmod", "duck"],
+    "source": "$: s(\"bd\").bus(1).bmod({b:2,c:\"gain\"}).duck(2)\n",
+    "expectCode": true,
+    "restriction": "Generator adapters exist; opaque imported addresses remain CODE"
+  },
+  {
+    "id": "custom-helper",
+    "names": ["register"],
+    "source": "const f = register(\"bright\", (v,p)=>p.lpf(v));\n$: s(\"bd\").bright(800)\n",
+    "expectCode": true,
+    "restriction": "Opaque setup is retained; parser does not execute registration; #217/#247"
+  },
+  {
+    "id": "packed-sound",
+    "names": ["s"],
+    "source": "$: s(\"bd:2:.8\")\n",
+    "expectCode": false,
+    "restriction": "Packed sample/index/gain is notation data, not three API aliases"
+  },
+  {
+    "id": "fx-stage",
+    "names": ["FX"],
+    "source": "$: note(\"c2\").s(\"sawtooth\").FX(lpf(800).lpq(1))\n",
+    "expectCode": false,
+    "restriction": "One bare catalog control chain per inline effect argument"
+  },
+  {
+    "id": "fx-helper",
+    "names": ["FX"],
+    "source": "$: s(\"bd\").FX(customFilter(800))\n",
+    "expectCode": true,
+    "restriction": "Unknown inline helper retains enclosing FX as exact CODE"
+  },
+  {
+    "id": "scale-literal",
+    "names": ["scale"],
+    "source": "$: n(\"0 2 4\").scale(\"C:minor\").s(\"sawtooth\")\n",
+    "expectCode": false,
+    "restriction": "Catalog scale vocabulary; arbitrary engine scale names not assumed"
+  },
+  {
+    "id": "scale-computed",
+    "names": ["scale"],
+    "source": "$: n(\"0 2 4\").scale(scaleName).s(\"sawtooth\")\n",
+    "expectCode": true,
+    "restriction": "Computed scale remains CODE"
+  },
+  {
+    "id": "numbered-fm",
+    "names": ["fmi2"],
+    "source": "$: note(\"c2\").s(\"sine\").fm2(2)\n",
+    "expectCode": true,
+    "restriction": "Dynamic numbered setter exists beyond first FM panel; audio support needs separate backend evidence"
+  },
+  {
+    "id": "gain-computed",
+    "names": ["gain"],
+    "source": "$: s(\"bd\").gain(levels)\n",
+    "expectCode": true,
+    "restriction": "Unresolved identifier is not evaluated to discover a CV pattern"
+  },
+  {
+    "id": "envelope-complete-implicit-sampler",
+    "names": ["attack", "decay", "sustain", "release"],
+    "source": "$: s(\"bd\").att(.01).dec(.2).sus(.5).rel(.1).gain(.8)\n",
+    "expectCode": true,
+    "restriction": "Without explicit sound boundary, this import retains CODE; observed reader restriction, not engine requirement"
+  },
+  {
+    "id": "fx-stage-implicit-sampler",
+    "names": ["FX"],
+    "source": "$: s(\"bd\").FX(lpf(800).lpq(1))\n",
+    "expectCode": true,
+    "restriction": "Without explicit sound boundary, this import retains CODE; observed reader restriction, not engine requirement"
+  },
+  {
+    "id": "sound-source-alias",
+    "names": ["s"],
+    "source": "$: sound(\"bd\")\n",
+    "expectCode": true,
+    "restriction": "Pinned s/sound aliases share function, but root sound literal is not currently projected; follow-up importer story"
+  },
+  {
+    "id": "sound-chain-alias",
+    "names": ["s"],
+    "source": "$: note(\"c2\").sound(\"sawtooth\")\n",
+    "expectCode": true,
+    "restriction": "Pinned sound alias forces whole voice CODE where equivalent s literal has SEQ+OSC"
+  }
+]

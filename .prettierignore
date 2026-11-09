@@ -11,3 +11,6 @@ cdk.out/
 # Generated browser acceptance reports.
 playwright-report/
 test-results/
+
+# Deterministic machine inventory (JSON.stringify output).
+docs/research/strudel-api-coverage/inventory.json

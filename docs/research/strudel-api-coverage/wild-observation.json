@@ -1,0 +1,497 @@
+{
+  "tier": "wild",
+  "manifest": {
+    "path": "corpus/reader/wild.json",
+    "sha256": "ef8c680332af4b7e564c9a6f11e7cc07d8a4344275c3854d636e70058ed50e46"
+  },
+  "fetchFailures": 0,
+  "totals": {
+    "patches": 5,
+    "parseFailures": 0,
+    "calls": 69,
+    "mappedCalls": 19,
+    "voices": 17,
+    "readableVoices": 0,
+    "patchesWithoutCode": 0,
+    "codeBlocks": 46
+  },
+  "shares": {
+    "mappedCalls": 0.2753623188405797,
+    "readableVoices": 0,
+    "patchesWithoutCode": 0
+  },
+  "unmapped": [
+    {
+      "name": "o",
+      "count": 6
+    },
+    {
+      "name": "note",
+      "count": 4
+    },
+    {
+      "name": "color",
+      "count": 3
+    },
+    {
+      "name": "n",
+      "count": 3
+    },
+    {
+      "name": "sound",
+      "count": 3
+    },
+    {
+      "name": "spiral",
+      "count": 3
+    },
+    {
+      "name": "_pianoroll",
+      "count": 2
+    },
+    {
+      "name": "arrange",
+      "count": 2
+    },
+    {
+      "name": "beat",
+      "count": 2
+    },
+    {
+      "name": "dec",
+      "count": 2
+    },
+    {
+      "name": "rlpf",
+      "count": 2
+    },
+    {
+      "name": "_scope",
+      "count": 1
+    },
+    {
+      "name": "acidenv",
+      "count": 1
+    },
+    {
+      "name": "all",
+      "count": 1
+    },
+    {
+      "name": "decay",
+      "count": 1
+    },
+    {
+      "name": "diode",
+      "count": 1
+    },
+    {
+      "name": "duck",
+      "count": 1
+    },
+    {
+      "name": "duckdepth",
+      "count": 1
+    },
+    {
+      "name": "fast",
+      "count": 1
+    },
+    {
+      "name": "fm",
+      "count": 1
+    },
+    {
+      "name": "fmh",
+      "count": 1
+    },
+    {
+      "name": "pan",
+      "count": 1
+    },
+    {
+      "name": "piano",
+      "count": 1
+    },
+    {
+      "name": "scale",
+      "count": 1
+    },
+    {
+      "name": "scope",
+      "count": 1
+    },
+    {
+      "name": "seg",
+      "count": 1
+    },
+    {
+      "name": "sometimesBy",
+      "count": 1
+    },
+    {
+      "name": "struct",
+      "count": 1
+    },
+    {
+      "name": "trancegate",
+      "count": 1
+    }
+  ],
+  "patches": [
+    {
+      "provenance": {
+        "id": "brucelane-cold",
+        "url": "https://raw.githubusercontent.com/brucelane/strudelpatches/2cb52f0263d362d92068fa8810fee5d80469a0a7/cold.js",
+        "license": "No license asserted; report-only, never vendor",
+        "provenance": "https://github.com/brucelane/strudelpatches; public community patches"
+      },
+      "sha256": "6b711e3e46b0f6e84bb038172562a69027624172204e10e68306bf9f1fced7f5",
+      "reader": {
+        "patches": 1,
+        "parseFailures": 0,
+        "calls": 16,
+        "mappedCalls": 4,
+        "voices": 5,
+        "readableVoices": 0,
+        "patchesWithoutCode": 0,
+        "codeBlocks": 12,
+        "id": "brucelane-cold",
+        "unmapped": {
+          "diode": 1,
+          "note": 2,
+          "acidenv": 1,
+          "o": 3,
+          "duck": 1,
+          "duckdepth": 1,
+          "scope": 1,
+          "dec": 1,
+          "all": 1
+        }
+      },
+      "counts": {
+        "acidenv": 1,
+        "add": 1,
+        "all": 1,
+        "dec": 1,
+        "diode": 1,
+        "duck": 1,
+        "duckdepth": 1,
+        "fast": 1,
+        "irand": 1,
+        "lpd": 1,
+        "lpenv": 1,
+        "lpf": 2,
+        "lpq": 1,
+        "lps": 1,
+        "mul": 3,
+        "note": 2,
+        "o": 3,
+        "postgain": 1,
+        "pow": 1,
+        "pure": 1,
+        "register": 2,
+        "s": 4,
+        "samples": 3,
+        "scope": 1,
+        "setcpm": 1,
+        "slider": 2
+      },
+      "customRegistrations": [
+        {
+          "names": ["rlpf"],
+          "line": 5
+        },
+        {
+          "names": ["acidenv"],
+          "line": 6
+        }
+      ]
+    },
+    {
+      "provenance": {
+        "id": "brucelane-dnb2",
+        "url": "https://raw.githubusercontent.com/brucelane/strudelpatches/2cb52f0263d362d92068fa8810fee5d80469a0a7/dnb2.strudel",
+        "license": "No license asserted; report-only, never vendor",
+        "provenance": "https://github.com/brucelane/strudelpatches; public community patches"
+      },
+      "sha256": "403d05396901bc8ae1850782e18dc75486abc4bbe22fe2cfe638b48aef921a13",
+      "reader": {
+        "patches": 1,
+        "parseFailures": 0,
+        "calls": 9,
+        "mappedCalls": 5,
+        "voices": 4,
+        "readableVoices": 0,
+        "patchesWithoutCode": 0,
+        "codeBlocks": 4,
+        "id": "brucelane-dnb2",
+        "unmapped": {
+          "beat": 2,
+          "decay": 1,
+          "struct": 1
+        }
+      },
+      "counts": {
+        "beat": 2,
+        "decay": 1,
+        "fast": 1,
+        "gain": 1,
+        "mul": 1,
+        "range": 1,
+        "rib": 1,
+        "round": 1,
+        "s": 4,
+        "samples": 3,
+        "seg": 1,
+        "setcpm": 1,
+        "struct": 1
+      },
+      "customRegistrations": []
+    },
+    {
+      "provenance": {
+        "id": "brucelane-piano",
+        "url": "https://raw.githubusercontent.com/brucelane/strudelpatches/2cb52f0263d362d92068fa8810fee5d80469a0a7/piano.js",
+        "license": "No license asserted; report-only, never vendor",
+        "provenance": "https://github.com/brucelane/strudelpatches; public community patches"
+      },
+      "sha256": "b2bba2d6d13bb1a6144fb92987ded4d069cd4787c624a995b22f987d837f18be",
+      "reader": {
+        "patches": 1,
+        "parseFailures": 0,
+        "calls": 5,
+        "mappedCalls": 0,
+        "voices": 1,
+        "readableVoices": 0,
+        "patchesWithoutCode": 0,
+        "codeBlocks": 1,
+        "id": "brucelane-piano",
+        "unmapped": {
+          "n": 1,
+          "scale": 1,
+          "sometimesBy": 1,
+          "fast": 1,
+          "piano": 1
+        }
+      },
+      "counts": {
+        "fast": 1,
+        "n": 2,
+        "piano": 1,
+        "scale": 2,
+        "set": 1,
+        "sometimesBy": 1
+      },
+      "customRegistrations": []
+    },
+    {
+      "provenance": {
+        "id": "brucelane-tunnel",
+        "url": "https://raw.githubusercontent.com/brucelane/strudelpatches/2cb52f0263d362d92068fa8810fee5d80469a0a7/tunnel.js",
+        "license": "No license asserted; report-only, never vendor",
+        "provenance": "https://github.com/brucelane/strudelpatches; public community patches"
+      },
+      "sha256": "17ef79d009db3c21c5d59836c8ee840d48c5a2b6509be94418810123661b4c0b",
+      "reader": {
+        "patches": 1,
+        "parseFailures": 0,
+        "calls": 13,
+        "mappedCalls": 0,
+        "voices": 3,
+        "readableVoices": 0,
+        "patchesWithoutCode": 0,
+        "codeBlocks": 13,
+        "id": "brucelane-tunnel",
+        "unmapped": {
+          "sound": 3,
+          "spiral": 3,
+          "color": 3,
+          "arrange": 2,
+          "note": 2
+        }
+      },
+      "counts": {
+        "arrange": 2,
+        "color": 3,
+        "note": 2,
+        "setcpm": 1,
+        "sound": 3,
+        "spiral": 3
+      },
+      "customRegistrations": []
+    },
+    {
+      "provenance": {
+        "id": "cosimo-trance",
+        "url": "https://gist.githubusercontent.com/cosimo/b0843897efb5f23b4594cb5082be1a85/raw/42e2bddb1923b9049f2a44c37fc0de11441978d1/switch-angel-trance-demo.strudel.js",
+        "license": "No license asserted; report-only, never vendor",
+        "provenance": "Switch Angel; cosimo transcription on public gist"
+      },
+      "sha256": "d32496ce75e191d755d0853338af6e2dacc2d3c986e97a0b0d633bc1f2b352f6",
+      "reader": {
+        "patches": 1,
+        "parseFailures": 0,
+        "calls": 26,
+        "mappedCalls": 10,
+        "voices": 4,
+        "readableVoices": 0,
+        "patchesWithoutCode": 0,
+        "codeBlocks": 16,
+        "id": "cosimo-trance",
+        "unmapped": {
+          "_scope": 1,
+          "n": 2,
+          "seg": 1,
+          "o": 3,
+          "rlpf": 2,
+          "_pianoroll": 2,
+          "trancegate": 1,
+          "pan": 1,
+          "dec": 1,
+          "fm": 1,
+          "fmh": 1
+        }
+      },
+      "counts": {
+        "_pianoroll": 2,
+        "_scope": 1,
+        "add": 3,
+        "clip": 1,
+        "dec": 1,
+        "delay": 1,
+        "fill": 1,
+        "fm": 1,
+        "fmh": 1,
+        "gain": 1,
+        "hpf": 1,
+        "log": 1,
+        "lpenv": 2,
+        "lpf": 1,
+        "mul": 3,
+        "n": 2,
+        "o": 3,
+        "orbit": 1,
+        "pan": 1,
+        "pow": 2,
+        "pure": 2,
+        "register": 4,
+        "rib": 1,
+        "rlpf": 2,
+        "round": 1,
+        "s": 4,
+        "scale": 2,
+        "seg": 2,
+        "setCpm": 1,
+        "slider": 2,
+        "struct": 1,
+        "trancegate": 1
+      },
+      "customRegistrations": [
+        {
+          "names": ["rlpf"],
+          "line": 10
+        },
+        {
+          "names": ["rhpf"],
+          "line": 13
+        },
+        {
+          "names": ["o"],
+          "line": 15
+        },
+        {
+          "names": ["trancegate"],
+          "line": 17
+        }
+      ]
+    }
+  ],
+  "observation": {
+    "date": "2026-11-09",
+    "implementationBase": "d9f06ddc12b135221eec247150c23cce0dadf6c3",
+    "node": "v24.22.2",
+    "readerInputs": [
+      {
+        "path": "src/reader/acid.test.ts",
+        "sha256": "6228cdf8bc77bc94bf81dc6f8464db488cb4e438501e78faa8e3d8030badc60e"
+      },
+      {
+        "path": "src/reader/aliases.test.ts",
+        "sha256": "cb55bcedc646dff86693743841807d61ad3b4d238be36d29b0dfaf54ca0c8fb8"
+      },
+      {
+        "path": "src/reader/coverage.test.ts",
+        "sha256": "fb8b083a3458ad1c320be0be410cc2f0b69923473f6159fefbbe10c349fda195"
+      },
+      {
+        "path": "src/reader/coverage.ts",
+        "sha256": "9112aaff7d3459e9bd013a8efaec4019b1964f93c27ff4329b8cc846dbcf9c2a"
+      },
+      {
+        "path": "src/reader/diagnostics.test.ts",
+        "sha256": "ec227414edcc40b379739497ca92b4eb7f2de532e3f4d1fd60d7adfbf0180225"
+      },
+      {
+        "path": "src/reader/diagnostics.ts",
+        "sha256": "81e24dfbe9f856c126c25f23936889813b16e9667cdc9f00fa1b276e14b1008f"
+      },
+      {
+        "path": "src/reader/index.ts",
+        "sha256": "4b4b2e581408bf6e38c989919cac74b2cb6e08cfdeade8468838299e3ddc5c62"
+      },
+      {
+        "path": "src/reader/layout.ts",
+        "sha256": "defca05668670b5aaf1cfeccfc4585190cf6a1baf399f3ef2850d8cdf52b9ed9"
+      },
+      {
+        "path": "src/reader/literal-edits.test.ts",
+        "sha256": "babb9be6d02f736efcb947d6e28c4e8e8814333cc075e1ee6ffba0d2f964cb9e"
+      },
+      {
+        "path": "src/reader/metadata.test.ts",
+        "sha256": "7fa2c3517f3a2f45284cc1e772ce1ee870abd7596e8a4666c8802d0d596ef20d"
+      },
+      {
+        "path": "src/reader/metadata.ts",
+        "sha256": "c590d0c6f6f1d2d9b4b6eeb754c10f35e13fb10bdae7cad5a941141c9af53fd5"
+      },
+      {
+        "path": "src/reader/modulation.test.ts",
+        "sha256": "39ed5c89febcfa9f71b01c22661a7bbfa58d0c454f1ee9a89eed574951a19a82"
+      },
+      {
+        "path": "src/reader/modulation.ts",
+        "sha256": "41ddfa11075aee6853d281cae4de817527a94f2aa2d959bf784586b8580625fc"
+      },
+      {
+        "path": "src/reader/nested-steps.test.ts",
+        "sha256": "a616b64f4737d3d9d40bf4a8806c6aa02ae5c8b20007c696c81c588e711c86b7"
+      },
+      {
+        "path": "src/reader/notationLiteral.ts",
+        "sha256": "3def59ab9b4a1c3ba0b1aab9c5c2d28de7b4c97857c6571e599cd3e4f0178a99"
+      },
+      {
+        "path": "src/reader/placement.test.ts",
+        "sha256": "1b5570fb7e7a8fbb2b4885d71c1b8b89f2155cf055162079dd8bc6926e91a5c2"
+      },
+      {
+        "path": "src/reader/read.test.ts",
+        "sha256": "aebb7f051354339b23593e1e4469afcfdd6f312ec9fc7251e37f48a1af2a5523"
+      },
+      {
+        "path": "src/reader/read.ts",
+        "sha256": "62956f6626797743d9ff52a42a2e346d3049cc86de4c6ef4e9fd31aafca85507"
+      },
+      {
+        "path": "src/reader/syntax.ts",
+        "sha256": "362525d9718086f5560be9ea392117eddc44992fa0bcad038391d537ddd71ae1"
+      },
+      {
+        "path": "src/reader/types.ts",
+        "sha256": "596bbfd4c90914b75b526ceb9bb191f0ecd9b1e6d3296b54896aa6420262b1aa"
+      }
+    ]
+  }
+}

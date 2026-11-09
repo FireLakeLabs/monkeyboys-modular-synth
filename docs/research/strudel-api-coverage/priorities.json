@@ -1,0 +1,100 @@
+[
+  {
+    "rank": 1,
+    "id": "expression-shapes",
+    "names": ["stack", "arrange", "chunk", "sometimesBy", "superimpose", "off", "firstOf"],
+    "recommendation": "Complete the already selected nested-expression foundation, then branch and section increments",
+    "owners": [242, 243, 244],
+    "musicalValue": "Layer pitched patterns before shared processing; reuse and section whole phrases",
+    "effort": "large",
+    "dependencyRisk": "routing/provenance and section-local timing; no callback evaluation",
+    "confidence": "high on reader gaps; low on community prevalence"
+  },
+  {
+    "rank": 2,
+    "id": "sound-alias",
+    "names": ["sound"],
+    "recommendation": "Reuse existing s adapters for supported literal sound alias forms; no new panel",
+    "owners": [251],
+    "musicalValue": "Makes ordinary sound selection editable without inventing new vocabulary",
+    "effort": "small",
+    "dependencyRisk": "source/companion distinction and legacy saved ownership",
+    "confidence": "high: controlled positive/negative reader cases plus three unmapped wild calls"
+  },
+  {
+    "rank": 3,
+    "id": "helper-registrations",
+    "names": ["register", "rlpf", "rhpf", "o", "trancegate", "acidenv", "piano"],
+    "recommendation": "Use #247 representation research to bound #217; retain arbitrary callbacks and collisions as CODE",
+    "owners": [217, 247],
+    "musicalValue": "Reusable musical idioms and user-authored controls",
+    "effort": "large",
+    "dependencyRisk": "collisions, closures, validation, preservation; no imported setup execution",
+    "confidence": "high on occurrence; representation remains proposal"
+  },
+  {
+    "rank": 4,
+    "id": "argument-and-companion-forms",
+    "names": ["note", "n", "gain", "dec", "decay", "pan", "fm", "fmh", "struct", "beat"],
+    "recommendation": "Audit individual forms before expansion. Numeric mini-notation already maps via CV SEQ; partial ADSR/implicit sound boundaries/computed sources need separate proofs",
+    "owners": [245, 246],
+    "musicalValue": "Preserves patterned musical parameters and common phrase controls",
+    "effort": "medium to large per bounded form",
+    "dependencyRisk": "do not invent missing defaults or mistake unknown functions for literal controls; #239 separate",
+    "confidence": "high on demonstrated restrictions; untested forms explicitly unknown"
+  },
+  {
+    "rank": 5,
+    "id": "harmonic-options",
+    "names": ["chord", "voicing", "scale", "scaleTranspose", "transpose"],
+    "recommendation": "Extend CHORD with validated literal controls, retaining unsupported option objects/helpers as CODE",
+    "owners": [249],
+    "musicalValue": "Playable voice leading/range changes without a panel per API name",
+    "effort": "medium",
+    "dependencyRisk": "pinned tonal argument semantics and source atomicity",
+    "confidence": "controlled reader evidence; limited corpus demand for extended voicing"
+  },
+  {
+    "rank": 6,
+    "id": "loop-variants",
+    "names": ["chunk", "chunkBack", "fastChunk", "every", "firstOf"],
+    "recommendation": "Mode/alias expansion on existing function panels after #246 event evidence",
+    "owners": [248],
+    "musicalValue": "Phrase variation and chopping without extra module vocabulary",
+    "effort": "small to medium",
+    "dependencyRisk": "chunk variants have different timing; alias equality must be proven",
+    "confidence": "#246 owns event comparison evidence; corpus sparse"
+  },
+  {
+    "rank": 7,
+    "id": "deep-fm-and-modulation",
+    "names": ["fm2", "fmi2", "fmi00", "fmi88", "fmenv2", "lfo", "env"],
+    "recommendation": "Defer multi-operator/FM matrix UI; audit backend consumption before assuming all emitted fields affect audio",
+    "owners": [],
+    "musicalValue": "Deeper timbre design beyond first FM operator",
+    "effort": "large",
+    "dependencyRisk": "81 generated matrix setters and numbered envelopes are not 81 panel requests",
+    "confidence": "high availability; backend/audio and corpus demand remain unknown"
+  },
+  {
+    "rank": 8,
+    "id": "visual-and-external",
+    "names": [
+      "_scope",
+      "scope",
+      "_pianoroll",
+      "spiral",
+      "color",
+      "midichan",
+      "midiport",
+      "oschost",
+      "oscport"
+    ],
+    "recommendation": "Intentional CODE for imported visualization/setup and deferred external transports. Existing SCOPE uses analyze; these names need not become modules",
+    "owners": [],
+    "musicalValue": "Performance feedback or external hardware rather than default WebAudio voice processing",
+    "effort": "separate feature work",
+    "dependencyRisk": "event fields without configured transport are not audio support",
+    "confidence": "pinned source and current engine output setup; no new browser/listening evidence"
+  }
+]

@@ -4,11 +4,15 @@ Machine output: `docs/research/strudel-api-coverage/inventory.json`.
 Command: `npm run inventory:strudel` (implemented with this research).
 
 The versioned report has `version`, `provenance`, `packages`, `surfaces`,
-`families`, `unresolvedSites`, `examples`, `corpus`, and `counts`.
+`families`, `aliasToFamily`, `aliasCollisions`, `priorities`, `unresolvedSites`,
+`examples`, `corpus`, and `counts`. See [JSON Schema](inventory.schema.json).
 `families[].id` is `api:<canonical spelling>`; canonical spelling is the first
-registered name, otherwise the exported/prototype spelling. Alias spellings are
-in `names`; overlapping factory-generated definitions are merged by name, never
-by musical similarity. A packed setter's extra event fields are not aliases.
+registered name, otherwise the exported/prototype spelling. Exported constructor methods use
+`api:Class.method`. Join ordinary runtime spellings through `aliasToFamily`
+(string values), and check `aliasCollisions` before relying on an ambiguous name. Alias spellings are
+in `names`; explicit registration/export aliases share a family. Overlapping
+factory definitions retain separate families and appear in `aliasCollisions`;
+that index is not proof of effective runtime alias ownership. A packed setter's extra event fields are not aliases.
 
 Each family records discovered `evidence` (package path, line and discovery kind),
 `availability` (bundle export / prototype / source-only / app adapter),
@@ -30,7 +34,7 @@ Dispositions are deliberately multidimensional:
   bounded inventory, not proof that arbitrary JavaScript factories are enumerable.
 
 Stable join keys for the parallel #246 study include `api:s`, `api:note`,
-`api:add`, `api:lpf`, `api:lpq`, `api:gain`, `api:attack`, `api:stack`,
+`api:add`, `api:cutoff` (lpf), `api:resonance` (lpq), `api:gain`, `api:attack`, `api:stack`,
 `api:arrange`, `api:register`, `api:orbit`, `api:FX`, `api:scale` and
 `api:voicing`. Musical prioritization groups multiple families without changing
 these keys. Initial priorities: existing #242–244 nesting/branches/sections;

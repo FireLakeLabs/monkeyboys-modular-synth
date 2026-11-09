@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/main/docs/research/strudel-api-coverage/inventory.schema.json",
+  "title": "Pinned Strudel API coverage inventory v1",
+  "type": "object",
+  "required": [
+    "version",
+    "provenance",
+    "packages",
+    "counts",
+    "surfaces",
+    "families",
+    "aliasToFamily",
+    "aliasCollisions",
+    "unresolvedSites",
+    "examples",
+    "corpus",
+    "priorities"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["implementationBase", "node", "lock", "inputs", "counting", "exclusions"],
+      "properties": {
+        "implementationBase": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hash"
+          }
+        }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "version", "lockVersion", "integrity", "entry", "sources"],
+        "properties": {
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/hash"
+            }
+          }
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "surfaces": {
+      "type": "object"
+    },
+    "aliasToFamily": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^api:"
+      }
+    },
+    "aliasCollisions": {
+      "type": "array"
+    },
+    "families": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/family"
+      }
+    },
+    "unresolvedSites": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "line", "kind", "reason"]
+      }
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "names",
+          "source",
+          "expectCode",
+          "restriction",
+          "moduleTypes",
+          "values",
+          "code",
+          "exactSource",
+          "savedIdentity",
+          "coverage"
+        ],
+        "properties": {
+          "exactSource": {
+            "const": true
+          },
+          "savedIdentity": {
+            "const": true
+          }
+        }
+      }
+    },
+    "corpus": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "tier",
+          "manifest",
+          "fetchFailures",
+          "totals",
+          "shares",
+          "unmapped",
+          "patches"
+        ],
+        "properties": {
+          "tier": {
+            "enum": ["committed", "wild"]
+          },
+          "manifest": {
+            "$ref": "#/$defs/hash"
+          }
+        }
+      }
+    },
+    "priorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rank",
+          "id",
+          "names",
+          "recommendation",
+          "owners",
+          "musicalValue",
+          "effort",
+          "dependencyRisk",
+          "confidence",
+          "corpus"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "hash": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "disposition": {
+      "type": "object",
+      "required": ["state"],
+      "properties": {
+        "state": {
+          "type": "string"
+        }
+      }
+    },
+    "family": {
+      "type": "object",
+      "required": [
+        "id",
+        "canonical",
+        "names",
+        "evidence",
+        "availability",
+        "catalog",
+        "controls",
+        "reader",
+        "generator",
+        "backend",
+        "corpus"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^api:.+"
+        },
+        "canonical": {
+          "type": "string",
+          "minLength": 1
+        },
+        "names": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array"
+        },
+        "availability": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "bundle-export",
+              "initStrudel-evalScope",
+              "bundle-registration-prototype",
+              "bundle-composer-factory",
+              "bundle-class-static",
+              "bundle-class-prototype",
+              "source-only-candidate",
+              "app-adapter"
+            ]
+          }
+        },
+        "catalog": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "module"]
+          }
+        },
+        "controls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["module", "control", "definition"]
+          }
+        },
+        "reader": {
+          "$ref": "#/$defs/disposition"
+        },
+        "generator": {
+          "$ref": "#/$defs/disposition"
+        },
+        "backend": {
+          "$ref": "#/$defs/disposition"
+        },
+        "corpus": {
+          "type": "object",
+          "required": ["committed", "wild"],
+          "additionalProperties": {
+            "type": ["integer", "null"],
+            "minimum": 0
+          }
+        }
+      }
+    }
+  }
+}
