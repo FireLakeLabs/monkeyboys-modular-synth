@@ -1,0 +1,28 @@
+{
+  "rows": [
+    {
+      "look": "crystal",
+      "geometry": {
+        "panels": 1,
+        "scale": 1,
+        "cables": 3
+      }
+    },
+    {
+      "look": "bio",
+      "geometry": {
+        "panels": 1,
+        "scale": 1,
+        "cables": 3
+      }
+    },
+    {
+      "look": "monolith",
+      "geometry": {
+        "panels": 1,
+        "scale": 1,
+        "cables": 3
+      }
+    }
+  ]
+}

@@ -365,11 +365,20 @@ export async function verifyPatchSignals(measure) {
       // Allow lazy sample fetch/decode, then sample multiple events.
       await pause(2000)
       const pcm = await measure()
-      assert(pcm.rms > 0.0001, `${entry.id}: no nonzero output (${pcm.rms})`)
       const events = pattern.queryArc(0, 4).filter((event) => event.hasOnset())
       assert(events.length > 0, `${entry.id}: no Strudel events`)
+      // This committed fixture is native speech only; audio thresholds stay unchanged.
+      const speechOnly = entry.id === 'exercise-speak'
+      if (speechOnly) {
+        assert(pcm.rms < 0.000001, `${entry.id}: speech leaked into WebAudio (${pcm.rms})`)
+        assert(
+          events.every((event) => event.context.dominantTrigger),
+          'Speech lost its native trigger',
+        )
+      } else assert(pcm.rms > 0.0001, `${entry.id}: no nonzero output (${pcm.rms})`)
       results.push({
         id: entry.id,
+        output: speechOnly ? 'native-speech' : 'webaudio',
         ...pcm,
         events: events.length,
         sounds: [...new Set(events.map((event) => event.value.s))],

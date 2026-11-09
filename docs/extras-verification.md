@@ -95,3 +95,55 @@ The existing rack frame and arranger footer remain in place.
   assertions are retained; test cleanup now uses the global Stop shortcut instead
   of depending on a transient Stop button. The PCM threshold is unchanged. No
   #207 cause is inferred from these failures or later success.
+
+## Complete local run and raw feature evidence
+
+On clean feature head `fba3a6ee12037ad2d74e046d966c842ce8b97a4b`, final
+`npm run check` passed: **2,535 unit tests**, **53 guardrail tests**, reader
+coverage, lint/format/skills and production build. The initial final-check attempt
+caught a test stringification warning; narrowing CODE text to a string resolved it.
+
+Exclusive full local run, strict 5174, two workers and zero retries:
+
+```sh
+PLAYWRIGHT_JSON_OUTPUT_FILE=/tmp/extras-full-results.json PLAYWRIGHT_HTML_OUTPUT_DIR=/tmp/extras-full-report npm run test:browser:report -- --config /tmp/extras-playwright.config.mjs --reporter=line,html,json
+```
+
+**RESULT passed=202 failed=1 exit=1**, 15.3 minutes. Source was unchanged throughout;
+all child script drivers received 5174 explicitly. The retained original log is
+`/tmp/extras-full.log`, report `/tmp/extras-full-report`, captures
+`/tmp/extras-full1-artifacts`. The sole failure was the generic library signal
+check asking `exercise-speak` for nonzero WebAudio PCM (measured RMS
+0.0000003227). Its screenshot shows Playing, accepted source, SPEAK and its bypass
+notice. The dedicated native-provider test correctly measured speech bypass.
+The library check now classifies only this known speech-only fixture, requiring
+dominant speech events and RMS < 0.000001. Every audio fixture retains its original
+RMS > 0.0001 assertion. This is a verification correction; no production behavior
+changed after the complete run. The affected complete library audio/Cancel/Stop
+test is rerun separately; the failed original is not counted as a clean pass.
+
+The full module-exercise matrix passed, including a nonzero DRUMS baseline with
+the unchanged threshold. This does not diagnose prior silence or #207.
+
+Raw feature evidence from that original complete run is committed separately:
+
+- [BYTEBEAT](evidence/extras/bytebeat.json): all 15 presets, exact source/full saved
+  identity assertions, actual and generated events, custom equations and PCM.
+  Preset RMS ranges from 0.00338 to 0.01017; custom tones measure 222.65625 and
+  439.453125 Hz at 48 kHz; stopped peak is zero.
+- [CHIP](evidence/extras/chip.json): six waves, all exposed effect controls,
+  independent source/identity/events and PCM; RMS 0.00613–0.01224, stopped peak zero.
+- [Failures](evidence/extras/failures.json): actual syntax and DSP error messages
+  with a simultaneous native voice; stopped PCM is zero in both cases. Repeated
+  messages are from separate scheduled processor instances, each reporting once.
+- [Native speech](evidence/extras/speech-native.json): HeadlessChrome
+  156.0.8078.4/Linux x86_64; zero voices, four actual word requests with unset
+  voices, four native `synthesis-failed` errors, zero starts/ends. WebAudio PCM is
+  zero. No successful native speech or physical listening is claimed.
+- [Controlled speech provider](evidence/extras/speech-controlled.json): explicitly
+  stubbed provider; one in-progress hello request, unset voice, Stop clears its
+  speaking state. This is cancellation/fallback proof, not native speech output.
+- Look geometry: [BYTEBEAT](evidence/extras/bytebeat-looks.json),
+  [CHIP](evidence/extras/chip-looks.json), [SPEAK](evidence/extras/speak-looks.json).
+  Screenshots are retained with the full-run artifacts. The long custom equation
+  display scrolls within 96 px so controls and jacks remain reachable.

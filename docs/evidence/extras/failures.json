@@ -1,0 +1,494 @@
+{
+  "rows": [
+    {
+      "formula": "t +",
+      "state": {
+        "source": "setcpm(120)\n$: note(\"a3*4\").s(\"bytebeat\").bbexpr(pure('t +')).gain(.1)\n$: note(\"a4*4\").s(\"sine\").gain(.05)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: note(\\\"a3*4\\\").s(\\\"bytebeat\\\").bbexpr(pure('t +')).gain(.1)\\n$: note(\\\"a4*4\\\").s(\\\"sine\\\").gain(.05)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bytebeat\\\"}]\"\n//         },\n//         {\n//           \"name\": \"bbexpr\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"pure\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"t +\\\"}],\\\"optional\\\":false}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope3\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a4*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a4*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.05}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a3*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"bytebeat1\",\n//       \"type\": \"bytebeat\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"crystal\",\n//       \"values\": {\n//         \"timeMode\": \"clock\",\n//         \"presetMode\": \"pattern\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"code1\",\n//       \"type\": \"code\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \".bbexpr(pure('t +'))\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 40,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             3\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"seq2\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 48,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a4*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope3\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc1\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 58,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope3\",\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca2\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 67,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.05\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope3\",\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 75,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out3\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"bytebeat1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"bytebeat1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable3\",\n//       \"from\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"seq2\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable6\",\n//       \"from\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca2\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable8\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable9\",\n//       \"from\": {\n//         \"module\": \"vca2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in2\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable10\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out3\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 104\n// }\n",
+        "patch": {
+          "version": 1,
+          "modules": [
+            {
+              "id": "seq1",
+              "type": "seq",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {
+                "steps": "a3*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "bytebeat1",
+              "type": "bytebeat",
+              "row": 0,
+              "hp": 10,
+              "look": "crystal",
+              "values": {
+                "timeMode": "clock",
+                "presetMode": "pattern"
+              }
+            },
+            {
+              "id": "code1",
+              "type": "code",
+              "row": 0,
+              "hp": 26,
+              "look": "bare",
+              "values": {
+                "text": ".bbexpr(pure('t +'))"
+              }
+            },
+            {
+              "id": "vca1",
+              "type": "vca",
+              "row": 0,
+              "hp": 40,
+              "look": "instrument",
+              "values": {
+                "level": 0.1
+              }
+            },
+            {
+              "id": "seq2",
+              "type": "seq",
+              "row": 0,
+              "hp": 48,
+              "look": "instrument",
+              "values": {
+                "steps": "a4*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "osc1",
+              "type": "osc",
+              "row": 0,
+              "hp": 58,
+              "look": "instrument",
+              "values": {
+                "wave": "sine"
+              }
+            },
+            {
+              "id": "vca2",
+              "type": "vca",
+              "row": 0,
+              "hp": 67,
+              "look": "instrument",
+              "values": {
+                "level": 0.05
+              }
+            },
+            {
+              "id": "mix1",
+              "type": "mix",
+              "row": 0,
+              "hp": 75,
+              "look": "instrument",
+              "values": {
+                "ch1": 1,
+                "ch2": 1,
+                "ch3": 1,
+                "ch4": 1
+              }
+            },
+            {
+              "id": "out3",
+              "type": "out",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {}
+            }
+          ],
+          "cables": [
+            {
+              "id": "cable1",
+              "from": {
+                "module": "seq1",
+                "jack": "note"
+              },
+              "to": {
+                "module": "bytebeat1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable2",
+              "from": {
+                "module": "bytebeat1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "code1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable3",
+              "from": {
+                "module": "code1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable5",
+              "from": {
+                "module": "seq2",
+                "jack": "note"
+              },
+              "to": {
+                "module": "osc1",
+                "jack": "note"
+              }
+            },
+            {
+              "id": "cable6",
+              "from": {
+                "module": "osc1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca2",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable8",
+              "from": {
+                "module": "vca1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in1"
+              }
+            },
+            {
+              "id": "cable9",
+              "from": {
+                "module": "vca2",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in2"
+              }
+            },
+            {
+              "id": "cable10",
+              "from": {
+                "module": "mix1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "out3",
+                "jack": "in"
+              }
+            }
+          ],
+          "names": {},
+          "rows": 1,
+          "railHp": 104
+        },
+        "triggered": [
+          {
+            "value": {
+              "note": "a4",
+              "s": "sine",
+              "gain": 0.05,
+              "duration": 0.125
+            },
+            "now": 0.45866666666666667,
+            "target": 0.4727
+          },
+          {
+            "value": {
+              "note": "a4",
+              "s": "sine",
+              "gain": 0.05,
+              "duration": 0.125
+            },
+            "now": 0.45866666666666667,
+            "target": 0.5977
+          }
+        ],
+        "failures": [
+          "[getTrigger] error: Invalid BYTEBEAT formula syntax",
+          "[getTrigger] error: Invalid BYTEBEAT formula syntax"
+        ]
+      },
+      "stopped": {
+        "rms": 0,
+        "peak": 0,
+        "frames": 204800,
+        "sampleRate": 48000,
+        "frequency": 5.859375
+      }
+    },
+    {
+      "formula": "missingBytebeatFunction(t)",
+      "state": {
+        "source": "setcpm(120)\n$: note(\"a3*4\").s(\"bytebeat\").bbexpr(pure('missingBytebeatFunction(t)')).gain(.1)\n$: note(\"a4*4\").s(\"sine\").gain(.05)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: note(\\\"a3*4\\\").s(\\\"bytebeat\\\").bbexpr(pure('missingBytebeatFunction(t)')).gain(.1)\\n$: note(\\\"a4*4\\\").s(\\\"sine\\\").gain(.05)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"bytebeat\\\"}]\"\n//         },\n//         {\n//           \"name\": \"bbexpr\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"pure\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"missingBytebeatFunction(t)\\\"}],\\\"optional\\\":false}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope3\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a4*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a4*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.05}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a3*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"bytebeat1\",\n//       \"type\": \"bytebeat\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"crystal\",\n//       \"values\": {\n//         \"timeMode\": \"clock\",\n//         \"presetMode\": \"pattern\",\n//         \"formula\": \"missingBytebeatFunction(t)\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1,\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             3\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"seq2\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 34,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a4*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope3\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc1\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 44,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope3\",\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca2\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 53,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.05\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope3\",\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 61,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out3\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"bytebeat1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"bytebeat1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"seq2\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca2\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable7\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable8\",\n//       \"from\": {\n//         \"module\": \"vca2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in2\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable9\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out3\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 84\n// }\n",
+        "patch": {
+          "version": 1,
+          "modules": [
+            {
+              "id": "seq1",
+              "type": "seq",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {
+                "steps": "a3*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "bytebeat1",
+              "type": "bytebeat",
+              "row": 0,
+              "hp": 10,
+              "look": "crystal",
+              "values": {
+                "timeMode": "clock",
+                "presetMode": "pattern",
+                "formula": "missingBytebeatFunction(t)"
+              }
+            },
+            {
+              "id": "vca1",
+              "type": "vca",
+              "row": 0,
+              "hp": 26,
+              "look": "instrument",
+              "values": {
+                "level": 0.1
+              }
+            },
+            {
+              "id": "seq2",
+              "type": "seq",
+              "row": 0,
+              "hp": 34,
+              "look": "instrument",
+              "values": {
+                "steps": "a4*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "osc1",
+              "type": "osc",
+              "row": 0,
+              "hp": 44,
+              "look": "instrument",
+              "values": {
+                "wave": "sine"
+              }
+            },
+            {
+              "id": "vca2",
+              "type": "vca",
+              "row": 0,
+              "hp": 53,
+              "look": "instrument",
+              "values": {
+                "level": 0.05
+              }
+            },
+            {
+              "id": "mix1",
+              "type": "mix",
+              "row": 0,
+              "hp": 61,
+              "look": "instrument",
+              "values": {
+                "ch1": 1,
+                "ch2": 1,
+                "ch3": 1,
+                "ch4": 1
+              }
+            },
+            {
+              "id": "out3",
+              "type": "out",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {}
+            }
+          ],
+          "cables": [
+            {
+              "id": "cable1",
+              "from": {
+                "module": "seq1",
+                "jack": "note"
+              },
+              "to": {
+                "module": "bytebeat1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable2",
+              "from": {
+                "module": "bytebeat1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable4",
+              "from": {
+                "module": "seq2",
+                "jack": "note"
+              },
+              "to": {
+                "module": "osc1",
+                "jack": "note"
+              }
+            },
+            {
+              "id": "cable5",
+              "from": {
+                "module": "osc1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca2",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable7",
+              "from": {
+                "module": "vca1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in1"
+              }
+            },
+            {
+              "id": "cable8",
+              "from": {
+                "module": "vca2",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in2"
+              }
+            },
+            {
+              "id": "cable9",
+              "from": {
+                "module": "mix1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "out3",
+                "jack": "in"
+              }
+            }
+          ],
+          "names": {},
+          "rows": 1,
+          "railHp": 84
+        },
+        "triggered": [
+          {
+            "value": {
+              "note": "a4",
+              "s": "sine",
+              "gain": 0.05,
+              "duration": 0.125
+            },
+            "now": 3.3173333333333335,
+            "target": 3.4167
+          },
+          {
+            "value": {
+              "note": "a4",
+              "s": "sine",
+              "gain": 0.05,
+              "duration": 0.125
+            },
+            "now": 3.3173333333333335,
+            "target": 3.5417
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "bytebeat",
+              "byteBeatExpression": "missingBytebeatFunction(t)",
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 3.3173333333333335,
+            "target": 3.4167
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "bytebeat",
+              "byteBeatExpression": "missingBytebeatFunction(t)",
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 3.3173333333333335,
+            "target": 3.5417
+          },
+          {
+            "value": {
+              "note": "a4",
+              "s": "sine",
+              "gain": 0.05,
+              "duration": 0.125
+            },
+            "now": 3.424,
+            "target": 3.6667
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "bytebeat",
+              "byteBeatExpression": "missingBytebeatFunction(t)",
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 3.424,
+            "target": 3.6667
+          }
+        ],
+        "failures": [
+          "BYTEBEAT formula failed: ReferenceError: missingBytebeatFunction is not defined",
+          "BYTEBEAT formula failed: ReferenceError: missingBytebeatFunction is not defined",
+          "BYTEBEAT formula failed: ReferenceError: missingBytebeatFunction is not defined"
+        ]
+      },
+      "stopped": {
+        "rms": 0,
+        "peak": 0,
+        "frames": 204800,
+        "sampleRate": 48000,
+        "frequency": 5.859375
+      }
+    }
+  ]
+}

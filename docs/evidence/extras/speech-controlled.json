@@ -1,0 +1,15 @@
+{
+  "stub": {
+    "speaking": false,
+    "cancels": 4,
+    "requests": [
+      {
+        "text": "hello",
+        "lang": "en",
+        "voice": null
+      }
+    ]
+  },
+  "providerStub": true,
+  "actualSpeechEngine": false
+}
