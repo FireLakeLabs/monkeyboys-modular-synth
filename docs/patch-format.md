@@ -61,6 +61,22 @@ interface Patch {
 - `values` holds one entry per control id from the catalog; missing entries mean the catalog default, except declared `legacyDefaults` (LFO MODE remains STEP in older v1 racks). New modules explicitly store controls whose defaults changed.
 - A cable always runs from an `out` jack to an `in` jack. An `out` jack may have many cables; an `in` jack has at most one.
 
+## Equation and speech state (#143/#144)
+
+BYTEBEAT retains `presetMode` and `timeMode` separately from PRESET and START.
+A new panel selects preset 0 and clock time. Imported source without `.n` or
+`.bbst` selects pattern and clock modes; explicit `.n(0)` or `.bbst(0)` is
+semantically different and must survive. Inactive values, custom formula bytes,
+looks, positions, IDs, names, cables and disconnected modules remain saved state.
+No v1 format version change is needed.
+
+The equation is trusted CODE text. Generated `.bbexpr(pure('…'))` escapes one
+single-quoted literal; the reader owns that literal only when the constructor is
+recognizable and not locally shadowed. Unsupported expressions remain exact
+CODE. SPEAK's words likewise remain a CODE pattern feeding its pattern jack;
+LANG and VOICE are ordinary saved controls. Native installed speech voices are
+browser/OS state and are never serialized as proof of portability.
+
 ## The layout comment block
 
 Decided in the [source-preservation spike](source-preservation-spike.md) (#1/#14).

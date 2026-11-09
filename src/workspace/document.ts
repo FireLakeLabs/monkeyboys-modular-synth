@@ -1,3 +1,4 @@
+import { bytebeatLiteral } from '../modules/bytebeat'
 import { ownedSampleCalls } from '../samples/packs'
 import { notationLiteral } from '../reader/notationLiteral'
 import { creditComments, patchCredits } from './credits'
@@ -294,7 +295,9 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
       let spans = bindings.flatMap((b) => b.controls[control.id] ?? [])
       let text =
         typeof value === 'string'
-          ? JSON.stringify(value)
+          ? control.kind === 'text' && control.syntax === 'bytebeat'
+            ? bytebeatLiteral(value)
+            : JSON.stringify(value)
           : typeof value === 'number'
             ? String(value)
             : JSON.stringify(value)
@@ -319,27 +322,40 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
         }
       }
       // Clearing a lane removes its mask call: an empty mask is not lane text.
-      if (module.type === 'mix' && control.id.startsWith('arr') && value === '' && spans.length) {
+      if (
+        ((module.type === 'mix' && control.id.startsWith('arr')) ||
+          (control.kind === 'text' && control.syntax === 'bytebeat')) &&
+        value === '' &&
+        spans.length
+      ) {
+        const method = module.type === 'mix' ? 'mask' : 'bbexpr'
         const body = sourceBody(document.source)
         for (const span of spans) {
           const scope = parseSource(body).scopes.find((item) =>
-            item.calls.some((call) => call.name === 'mask' && call.args[0]?.start === span.start),
+            item.calls.some(
+              (call) =>
+                call.name === method &&
+                call.args[0] &&
+                call.args[0].start <= span.start &&
+                call.args[0].end >= span.end,
+            ),
           )
           const index =
             scope?.calls.findIndex(
               (call) =>
-                call.name === 'mask' &&
-                call.args[0]?.start === span.start &&
-                call.args[0]?.end === span.end,
+                call.name === method &&
+                call.args[0] &&
+                call.args[0].start <= span.start &&
+                call.args[0].end >= span.end,
             ) ?? -1
           const call = scope?.calls[index]
-          if (!scope || !call) throw new RackEditRefused('Clear this lane in the code')
+          if (!scope || !call) throw new RackEditRefused('Clear this control in the code')
           // Find the `.mask` dot by token, so comments inside the call cannot match.
           const text = body.slice(call.start, call.end)
           const tokens = [...tokenizer(text, { ecmaVersion: 'latest' })]
           const name = tokens.findIndex(
             (token, i) =>
-              text.slice(token.start, token.end) === 'mask' && tokens[i - 1]?.type.label === '.',
+              text.slice(token.start, token.end) === method && tokens[i - 1]?.type.label === '.',
           )
           const dot = call.start + (tokens[name - 1]?.start ?? 0)
           // A call alone on its line goes with its line; otherwise only its tokens,
@@ -389,7 +405,7 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
         if (
           (control.kind === 'steps' ||
             control.kind === 'grid' ||
-            (control.kind === 'text' && control.notation)) &&
+            (control.kind === 'text' && (control.notation || control.syntax === 'bytebeat'))) &&
           nextText !== undefined &&
           oldText !== undefined &&
           literal &&

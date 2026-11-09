@@ -10,7 +10,7 @@ declare module '@strudel/web' {
         cps: number,
         targetAudioTime: number,
       ) => void,
-      dominant: false,
+      dominant?: boolean,
     ): Pattern
     query(state: unknown): unknown[]
     queryArc(begin: number, end: number, controls: { _cps: number }): unknown[]
@@ -32,6 +32,7 @@ declare module '@strudel/web' {
   export function evaluate(code: string, autoplay?: boolean): Promise<Pattern>
   /** Initializes audio worklets; call explicitly after lazy import. */
   export function initAudio(): Promise<void>
+  export function registerZZFXSounds(): void
   export function getAudioContext(): AudioContext
   export function setAudioContext(context: AudioContext): void
   export function setSuperdoughAudioController(
@@ -72,7 +73,19 @@ declare module '@strudel/web' {
     cycle: number,
   ): Promise<unknown>
   /** Registers a sample source, e.g. 'github:tidalcycles/dirt-samples'. */
-  export function evalScope(scope: { samples: typeof samples }): Promise<unknown>
+  export function evalScope(scope: { samples: typeof samples; speak?: unknown }): Promise<unknown>
+  export function register(
+    name: string,
+    implementation: (lang: unknown, voice: unknown, pattern: Pattern) => Pattern,
+  ): unknown
+  export function getSound(
+    name: string,
+  ): { onTrigger: (...args: unknown[]) => unknown; data: Record<string, unknown> } | undefined
+  export function registerSound(
+    name: string,
+    trigger: (...args: unknown[]) => unknown,
+    data: Record<string, unknown>,
+  ): void
   export function samples(
     source: string | Record<string, unknown>,
     baseUrl?: string,

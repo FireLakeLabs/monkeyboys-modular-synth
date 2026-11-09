@@ -1,4 +1,5 @@
 import { packSetup } from '../samples/packs'
+import { bytebeatLiteral } from '../modules/bytebeat'
 import { parse, tokenizer } from 'acorn'
 import { planEffects } from './effects'
 import { routingPlan } from './routing'
@@ -409,6 +410,12 @@ export function generateDocument(
     expression: CodeExpression,
     skipControl?: string,
   ): CodeExpression {
+    if (typeof node.spec.soundSource === 'object')
+      expression = append(
+        expression,
+        `${expression.text ? '.' : ''}s(${quote(node.spec.soundSource.fixed)})`,
+        node,
+      )
     if (node.spec.id === 'code') {
       const text = string(node, 'text')
       if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
@@ -521,7 +528,10 @@ export function generateDocument(
               : numeric(number(node, item.id), binding.argument.precision)
           break
         case 'string':
-          argument = quote(s(item.id))
+          argument =
+            item.kind === 'text' && item.syntax === 'bytebeat'
+              ? `pure(${bytebeatLiteral(s(item.id))})`
+              : quote(s(item.id))
           break
         case 'scale':
           argument = quote(`${s(binding.argument.root)}:${s(item.id).replaceAll(' ', ':')}`)
@@ -565,6 +575,7 @@ export function generateDocument(
   function raw(node: Node): CodeExpression[] {
     if (node.spec.soundSource && !input(node)) {
       const selector = node.spec.soundSource
+      if (typeof selector === 'object') return [transform(node, blank())]
       if (!string(node, selector)) return []
       return [
         transform(node, append(blank(), `s(${quote(string(node, selector))})`, node), selector),

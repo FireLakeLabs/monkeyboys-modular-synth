@@ -6,7 +6,7 @@ const web = vi.hoisted(() => ({
     vi.fn<
       (
         callback: (hap: unknown, now: number, cps: number, target: number) => void,
-        dominant: false,
+        dominant?: boolean,
       ) => void
     >(),
   time: 10,
@@ -32,13 +32,17 @@ const web = vi.hoisted(() => ({
   setValueAtTime: vi.fn(),
   webaudioOutput: vi.fn(),
   superdough: vi.fn(),
+  register: vi.fn<typeof import('@strudel/web').register>(),
+  getSound: vi.fn<typeof import('@strudel/web').getSound>(),
+  registerSound: vi.fn<typeof import('@strudel/web').registerSound>(),
+  registerZZFXSounds: vi.fn(),
 }))
 vi.mock('@strudel/web', () => ({
   ...web,
   Pattern: class {
     onTrigger(
       callback: (hap: unknown, now: number, cps: number, target: number) => void,
-      dominant: false,
+      dominant?: boolean,
     ) {
       web.observe(callback, dominant)
       return this
@@ -108,6 +112,118 @@ beforeEach(() => {
 })
 
 describe('engine boundary', () => {
+  it('cancels in-progress speech on Stop without initializing audio', async () => {
+    const cancel = vi.fn()
+    vi.stubGlobal('speechSynthesis', { cancel })
+    const { stop } = await import('./engine')
+    await stop()
+    expect(cancel).toHaveBeenCalledOnce()
+    expect(web.initAudio).not.toHaveBeenCalled()
+  })
+  it('speaks routed words, chooses an available voice, and falls back when unavailable', async () => {
+    const english = { name: 'English', lang: 'en-US' }
+    const speech = {
+      cancel: vi.fn(),
+      speak: vi.fn<(utterance: SpeechSynthesisUtterance) => void>(),
+      getVoices: vi.fn(() => [english]),
+    }
+    vi.stubGlobal('speechSynthesis', speech)
+    vi.stubGlobal(
+      'SpeechSynthesisUtterance',
+      class {
+        lang = ''
+        voice: unknown = null
+        text: string
+        constructor(text: string) {
+          this.text = text
+        }
+      },
+    )
+    const { play, stop } = await import('./engine')
+    await play('code')
+    const implementation = web.register.mock.calls.find((c) => c[0] === 'speak')?.[1]
+    if (!implementation) throw Error('Missing speech adapter')
+    const { Pattern } = await import('@strudel/web')
+    implementation('en', 0, new Pattern(() => []))
+    const trigger = web.observe.mock.calls.at(-1)?.[0]
+    if (!trigger) throw Error('Missing speech trigger')
+    trigger({ value: { value: 'hello', orbit: 1, postgain: 0 } }, 0, 1, 0)
+    expect(speech.speak.mock.calls[0]?.[0]).toMatchObject({
+      text: 'hello',
+      lang: 'en',
+      voice: english,
+    })
+    speech.getVoices.mockReturnValue([])
+    expect(() => trigger({ value: 'modular' }, 0, 1, 0)).not.toThrow()
+    expect(speech.speak.mock.calls[1]?.[0]).toMatchObject({ text: 'modular', voice: null })
+    await stop()
+    expect(speech.cancel).toHaveBeenCalled()
+    vi.stubGlobal('speechSynthesis', undefined)
+    expect(() => trigger({ value: 'unavailable' }, 0, 1, 0)).not.toThrow()
+  })
+  it('reports BYTEBEAT syntax and worklet processor failures through the audio boundary', async () => {
+    const source = new EventTarget()
+    web.getSound.mockReturnValue({
+      onTrigger: vi.fn(() => ({ source })),
+      data: { type: 'synth', prebake: true },
+    })
+    const { play, subscribe } = await import('./engine')
+    const failures: string[] = []
+    subscribe((event) => {
+      if (event.type === 'failure') failures.push(event.message)
+    })
+    await play('code')
+    const output = web.initStrudel.mock.calls[0]?.[0]?.defaultOutput
+    if (!output) throw Error('Missing output boundary')
+    await expect(
+      output({ value: { s: 'bytebeat', byteBeatExpression: 't +' } }, 0, 1, 1, 0),
+    ).rejects.toThrow(/BYTEBEAT formula syntax/)
+    expect(web.webaudioOutput).not.toHaveBeenCalled()
+    const trigger = web.registerSound.mock.calls.find((c) => c[0] === 'bytebeat')?.[1]
+    if (!trigger) throw Error('Missing bytebeat output')
+    await trigger(0, { s: 'bytebeat' }, () => {}, 1)
+    source.dispatchEvent(new Event('processorerror'))
+    expect(failures).toEqual([
+      'BYTEBEAT formula failed in the audio worklet. Correct the formula, then press Play.',
+    ])
+    expect(web.getSound.mock.results[0]?.value?.onTrigger).toHaveBeenCalled()
+  })
+  it('accepts only BYTEBEAT failure messages on the registered worklet port', async () => {
+    const channel = new MessageChannel()
+    const source = Object.assign(new EventTarget(), { port: channel.port1 })
+    web.getSound.mockReturnValue({ onTrigger: vi.fn(() => ({ source })), data: {} })
+    try {
+      const { play, subscribe } = await import('./engine'),
+        failures: string[] = []
+      subscribe((event) => {
+        if (event.type === 'failure') failures.push(event.message)
+      })
+      await play('code')
+      const trigger = web.registerSound.mock.calls.find((c) => c[0] === 'bytebeat')?.[1]
+      if (!trigger) throw Error('Missing BYTEBEAT handler')
+      await trigger()
+      for (const data of [
+        { type: 'other', message: 'ignore' },
+        { type: 'monkeyboy-bytebeat-error', message: 42 },
+      ])
+        channel.port1.dispatchEvent(new MessageEvent('message', { data }))
+      expect(failures).toEqual([])
+      channel.port1.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: 'monkeyboy-bytebeat-error',
+            message: 'ReferenceError: unknown formula function',
+          },
+        }),
+      )
+      expect(failures).toEqual([
+        'BYTEBEAT formula failed: ReferenceError: unknown formula function',
+      ])
+    } finally {
+      channel.port1.close()
+      channel.port2.close()
+    }
+  })
   it('observes the scheduler clock and voice tap without initializing audio, and clears taps on Stop', async () => {
     const { getClock, scopeData, play, stop } = await import('./engine')
     expect(getClock()).toEqual({ cycle: 0, cps: 0.5, running: false })

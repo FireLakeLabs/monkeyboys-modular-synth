@@ -382,6 +382,10 @@ function pathContains(
 
 export function cableWarnings(patch: Patch, cable: Cable): string[] {
   const warnings: string[] = []
+  if (pathContains(patch, cable.from.module, 'speak', 'upstream'))
+    warnings.push(
+      'Speech bypasses effects, MIX level and OUT volume. This cable carries speech events, not WebAudio.',
+    )
   if (
     cableKind(patch, cable) === 'audio' &&
     patch.cables.filter(

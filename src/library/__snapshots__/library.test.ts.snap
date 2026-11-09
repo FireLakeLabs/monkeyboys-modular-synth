@@ -49,10 +49,24 @@ exports[`built-in patch library > exercise-aux: preserves exact source and indep
 }
 `;
 
+exports[`built-in patch library > exercise-bytebeat: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "f2f1f38572323f0e4b9cdc1b74dfa64f7b8354badb98e4712108ca1917a10224",
+  "projection": "d218a86f0c1d26c1a308d253f7b44e701c109f9e92915fa53eb31edc81c297fd",
+}
+`;
+
 exports[`built-in patch library > exercise-chance: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "18c58b52d2bb6a9d257af3099228cab37f343b8b6a62c754659ce630f8256602",
   "projection": "363f472beb0a4806d2b0ead5bb957a2199641152065b81577864a17077763f50",
+}
+`;
+
+exports[`built-in patch library > exercise-chip: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "7ca0d691ef2dbd4f4dca1435ced8b1d800c470f29e8a792c0584df831ce7f3fc",
+  "projection": "8f555b711d58652bce71efe71dc66a49ce9a5c2b1460e2fcf745a69e30d87040",
 }
 `;
 
@@ -361,6 +375,13 @@ exports[`built-in patch library > exercise-sometimes: preserves exact source and
 {
   "generated": "b1306fc4e2da6b02bb9e1aa9eec3ad645405aa262ec9bb2ff3891a399ae6ceed",
   "projection": "f2282fd5d0b64972a688f62be867ad485867f73c58f9a68b7517f90c1d12e7c9",
+}
+`;
+
+exports[`built-in patch library > exercise-speak: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "3cc9bf1639d381ab1b9cc5326d9873cba370d6964d15852e4fc230d8bf322f69",
+  "projection": "4b9df626962da123382bb669de22ce383d245073aec1f2c2bc201730f496b52b",
 }
 `;
 

@@ -76,6 +76,38 @@ User code can replace logging, invoke engine APIs directly, or launch detached
 work outside the adapter. Neither universal failure detection nor cancellation
 of arbitrary side effects is claimed.
 
+## BYTEBEAT and speech additions (#143/#144)
+
+BYTEBEAT formula syntax is checked without execution at panel mutation and
+again before real WebAudio output, including source-owned CODE. A syntactically
+valid formula can still throw in the DSP worker. The pinned postinstall patch
+forwards that worker exception once through its MessagePort, zeros the failed
+processor output and ends that processor. The adapter validates the message and
+reports it through the same late-failure channel as engine logs. The workspace
+then shows Audio error and explicitly stops the patch, instead of silently
+losing only BYTEBEAT while unrelated voices keep scheduling. No source/module
+location is inferred from the worker message. Arbitrary trusted code can still
+block a worker; this does not make formulas safe or interruptible.
+
+This is a narrow hash-checked exception in
+`scripts/patch-strudel-audio-pools.mjs` and `scripts/bytebeat-worklet-patch.mjs`,
+covering the installed worklet source and both consumed ESM bundles. Remove it
+when the pinned upstream processor reliably reports exceptions through an
+adapter-observable channel. Installed-payload VM tests exercise the actual
+bundled processor; real-browser failure and stopped PCM are separate evidence.
+It does not repair Kabel's different construction/lifetime limits in #142.
+
+The adapter explicitly registers the pinned ZZFX sounds after audio initialization;
+upstream exports that registration but does not run it in its default prebake.
+SPEAK uses a dominant trigger, unwrapping routed primitive words before requesting
+a native utterance. Stop calls `speechSynthesis.cancel()` synchronously, including
+while evaluation is pending; accepted pattern replacement also cancels previous
+speech. Speech bypasses Superdough, effects and all app volume controls.
+A missing requested voice leaves the utterance's voice unset for browser-default
+selection. Missing Web Speech APIs produce no request. An OS with no speech
+engine can still report native `synthesis-failed`: successful fallback selection
+is not proof of native speech output. See [observed browser limits](extras-verification.md).
+
 ## Reproduction and evidence
 
 Use the pinned Node version, `npm ci`, then:

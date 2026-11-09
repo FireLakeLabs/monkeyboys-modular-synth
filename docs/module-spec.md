@@ -80,6 +80,65 @@ words. Intrinsic word widths allow long names to take a full row within the
 180 px dock; full accessible names remain on the buttons. Module widths and
 new-patch rail sizing are unchanged.
 
+## Equation, chip and speech sources (#143/#144)
+
+BYTEBEAT and SPEAK are Alien panels in the Sound palette group; CHIP is Hardware.
+All three use 16 HP in every family look. Their exercises are in Patch library →
+Module exercises. The catalog remains authoritative for controls and jacks.
+
+**BYTEBEAT** has pattern IN and audio OUT. SELECT chooses `preset` (new-panel
+default) or `pattern`: preset writes `.n(PRESET)`, including explicit zero;
+pattern omits that setter so incoming `n` events select formulas, defaulting to
+engine preset zero. PRESET is 0–14, integer, default 0, matching superdough 1.3.0's
+15 built-ins. The small display shows the selected/custom formula. TIME chooses
+`clock` (default, no `.bbst`) or `offset`; START is an integer 0–1,000,000,000,
+default 0, and offset writes `.bbst(START)` even at zero. This distinction matters:
+the engine's absent start uses audio time, while explicit zero resets local `t`.
+The finite upper bound is a panel choice, not an engine clamp.
+
+More holds CUSTOM FORMULA, default empty (use the preset). Formula text has the
+same trusted-code boundary as CODE: syntax is checked without executing it, not
+sandboxed. The pinned engine applies mini notation to bare control strings, so
+custom formulas write `.bbexpr(pure('t*(t>>8)'))`. The single-quoted `pure` wrapper
+retains exact formula bytes instead of parsing the equation as rhythm notation.
+Malformed formulas are refused as rack edits; unsupported source forms remain
+CODE. Native worklet processor failures reach the engine's #36 failure channel.
+
+**CHIP** has pattern IN and audio OUT. Its numeric defaults are the zeros in
+superdough 1.3.0 `zzfx.mjs`; the implementation accepts unrestricted numeric
+arguments, so the finite ranges below are usable panel bounds, not upstream
+clamps. Its default WAVE is `z_square`; the pinned engine also registers `z_sine`,
+`z_sawtooth`, `z_triangle`, `z_tan` and `z_noise`.
+
+| Control             | Panel range / step | Default | Writes              |
+| ------------------- | ------------------ | ------- | ------------------- |
+| SLIDE               | −10–10 / .01       | 0       | `.slide(x)`         |
+| PITCH JUMP          | −2000–2000 Hz / 1  | 0       | `.pitchJump(x)`     |
+| CRUSH               | 0–1 / .01          | 0       | `.zcrush(x)`        |
+| DELAY               | 0–1 s / .01        | 0       | `.zdelay(x)`        |
+| MODULATION (More)   | 0–2000 Hz / 1      | 0       | `.zmod(x)`          |
+| NOISE (More)        | 0–1 / .01          | 0       | `.znoise(x)`        |
+| JUMP TIME (More)    | 0–1 s / .01        | 0       | `.pitchJumpTime(x)` |
+| SLIDE CHANGE (More) | −10–10 / .01       | 0       | `.deltaSlide(x)`    |
+
+Zero numeric settings are omitted. Pitch jump and modulation are hertz, not
+semitones. SLIDE uses the engine's 500-Hz scaling; CRUSH internally quantizes its
+value multiplied by 100. A raw `.zzfx([...])` parameter array remains CODE rather
+than being guessed into controls. No external ZZFX package is added.
+
+**SPEAK** has WORDS pattern IN and SPEECH OUT to MIX. LANG is text, default `en`;
+VOICE is integer 0–127, default 0. It writes `.speak("en", 0)`; no input is silent.
+A CODE source containing `"<hello modular world>"` supplies words. The panel and
+every downstream speech cable plainly say that speech bypasses effects, MIX
+level and OUT volume. Mixer masks still filter speech events. The engine adapter
+keeps speech dominant, unwraps routed primitive words from `{value, ...controls}`,
+refreshes browser voices on each request, leaves the voice unset when none match,
+and cancels speech on Stop and pattern replacement. Voice numbers wrap within the
+language's available list, as in the pinned engine. These bounds do not promise
+128 installed voices. Browsers without the speech API produce no speech and do
+not throw. Native provider availability and asynchronous synthesis failures are
+environmental limits; event/cancel API proof does not establish audible speech.
+
 ## Conventions
 
 - **Width** is in HP. 1 HP = 12 px at 100% zoom. A module is the same width in every look. The catalog may widen a module where that is [worth it](decisions.md#looks).

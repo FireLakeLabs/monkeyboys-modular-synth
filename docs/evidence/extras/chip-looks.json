@@ -1,0 +1,36 @@
+{
+  "rows": [
+    {
+      "look": "powder",
+      "geometry": {
+        "panels": 1,
+        "scale": 1,
+        "cables": 2
+      }
+    },
+    {
+      "look": "instrument",
+      "geometry": {
+        "panels": 3,
+        "scale": 1,
+        "cables": 2
+      }
+    },
+    {
+      "look": "vintage",
+      "geometry": {
+        "panels": 1,
+        "scale": 1,
+        "cables": 2
+      }
+    },
+    {
+      "look": "learner",
+      "geometry": {
+        "panels": 1,
+        "scale": 1,
+        "cables": 2
+      }
+    }
+  ]
+}

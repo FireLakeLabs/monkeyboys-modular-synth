@@ -122,6 +122,8 @@ export interface GridControl {
 /** CODE's editor. */
 export interface TextControl extends CallControl {
   notation?: 'chord'
+  /** Executable formula syntax; parsing is not a sandbox. */
+  syntax?: 'bytebeat'
 
   kind: 'text'
   id: string
@@ -193,7 +195,9 @@ export interface ModuleSpec {
   /** Pinned-engine aliases; source spelling is retained by the reader. */
   strudelAliases?: Readonly<Record<string, string>>
   /** Sound selectors that may also start an unpatched voice. */
-  soundSource?: string
+  soundSource?: string | { fixed: string }
+  /** Persistent explanation for exceptional sound behavior. */
+  notice?: string
   /** Crate drop slot; prefix constrains the offered inventory. */
   sampleTarget?: { control: string; prefix?: string }
   /** Dedicated modulation panel patched to this destination jack. */

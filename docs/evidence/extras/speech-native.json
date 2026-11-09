@@ -1,0 +1,270 @@
+{
+  "data": {
+    "source": "setcpm(120)\n$: \"hello modular\".speak(\"zz-unavailable\", 127)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: \\\"hello modular\\\".speak(\\\"zz-unavailable\\\", 127)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"hello modular\\\"}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"speak\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"zz-unavailable\\\"},{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":127}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"code1\",\n//       \"type\": \"code\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \"\\\"hello modular\\\"\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"speak1\",\n//       \"type\": \"speak\",\n//       \"row\": 0,\n//       \"hp\": 14,\n//       \"look\": \"crystal\",\n//       \"values\": {\n//         \"lang\": \"zz-unavailable\",\n//         \"voice\": 127\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 30,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"speak1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable3\",\n//       \"from\": {\n//         \"module\": \"speak1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+    "sourceExact": true,
+    "savedIdentity": true,
+    "patch": {
+      "version": 1,
+      "modules": [
+        {
+          "id": "code1",
+          "type": "code",
+          "row": 0,
+          "hp": 0,
+          "look": "bare",
+          "values": {
+            "text": "\"hello modular\""
+          }
+        },
+        {
+          "id": "speak1",
+          "type": "speak",
+          "row": 0,
+          "hp": 14,
+          "look": "crystal",
+          "values": {
+            "lang": "zz-unavailable",
+            "voice": 127
+          }
+        },
+        {
+          "id": "mix1",
+          "type": "mix",
+          "row": 0,
+          "hp": 30,
+          "look": "instrument",
+          "values": {
+            "ch1": 1,
+            "ch2": 1,
+            "ch3": 1,
+            "ch4": 1
+          }
+        },
+        {
+          "id": "out2",
+          "type": "out",
+          "row": 0,
+          "hp": 0,
+          "look": "instrument",
+          "values": {}
+        }
+      ],
+      "cables": [
+        {
+          "id": "cable1",
+          "from": {
+            "module": "code1",
+            "jack": "out"
+          },
+          "to": {
+            "module": "speak1",
+            "jack": "in"
+          }
+        },
+        {
+          "id": "cable3",
+          "from": {
+            "module": "speak1",
+            "jack": "out"
+          },
+          "to": {
+            "module": "mix1",
+            "jack": "in1"
+          }
+        },
+        {
+          "id": "cable4",
+          "from": {
+            "module": "mix1",
+            "jack": "out"
+          },
+          "to": {
+            "module": "out2",
+            "jack": "in"
+          }
+        }
+      ],
+      "names": {},
+      "rows": 1,
+      "railHp": 64
+    },
+    "actualEvents": [
+      {
+        "value": "hello",
+        "begin": "0",
+        "end": "0.5",
+        "dominant": true
+      },
+      {
+        "value": "modular",
+        "begin": "0.5",
+        "end": "1",
+        "dominant": true
+      },
+      {
+        "value": "hello",
+        "begin": "1",
+        "end": "1.5",
+        "dominant": true
+      },
+      {
+        "value": "modular",
+        "begin": "1.5",
+        "end": "2",
+        "dominant": true
+      },
+      {
+        "value": "hello",
+        "begin": "2",
+        "end": "2.5",
+        "dominant": true
+      },
+      {
+        "value": "modular",
+        "begin": "2.5",
+        "end": "3",
+        "dominant": true
+      },
+      {
+        "value": "hello",
+        "begin": "3",
+        "end": "3.5",
+        "dominant": true
+      },
+      {
+        "value": "modular",
+        "begin": "3.5",
+        "end": "4",
+        "dominant": true
+      }
+    ],
+    "generatedEvents": [
+      {
+        "value": {
+          "value": "hello",
+          "orbit": 1
+        },
+        "begin": "0",
+        "end": "0.5",
+        "dominant": true
+      },
+      {
+        "value": {
+          "value": "modular",
+          "orbit": 1
+        },
+        "begin": "0.5",
+        "end": "1",
+        "dominant": true
+      },
+      {
+        "value": {
+          "value": "hello",
+          "orbit": 1
+        },
+        "begin": "1",
+        "end": "1.5",
+        "dominant": true
+      },
+      {
+        "value": {
+          "value": "modular",
+          "orbit": 1
+        },
+        "begin": "1.5",
+        "end": "2",
+        "dominant": true
+      },
+      {
+        "value": {
+          "value": "hello",
+          "orbit": 1
+        },
+        "begin": "2",
+        "end": "2.5",
+        "dominant": true
+      },
+      {
+        "value": {
+          "value": "modular",
+          "orbit": 1
+        },
+        "begin": "2.5",
+        "end": "3",
+        "dominant": true
+      },
+      {
+        "value": {
+          "value": "hello",
+          "orbit": 1
+        },
+        "begin": "3",
+        "end": "3.5",
+        "dominant": true
+      },
+      {
+        "value": {
+          "value": "modular",
+          "orbit": 1
+        },
+        "begin": "3.5",
+        "end": "4",
+        "dominant": true
+      }
+    ],
+    "eventEquivalent": true,
+    "triggered": [
+      {
+        "value": "hello",
+        "now": 0.23466666666666666,
+        "target": 0.3447
+      },
+      {
+        "value": "modular",
+        "now": 0.3626666666666667,
+        "target": 0.5947
+      }
+    ],
+    "failures": []
+  },
+  "signal": {
+    "rms": 0,
+    "peak": 0,
+    "frames": 204800,
+    "sampleRate": 48000,
+    "frequency": 5.859375
+  },
+  "native": {
+    "platform": "Linux x86_64",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "voices": [],
+    "requests": [
+      {
+        "text": "hello",
+        "lang": "zz-unavailable",
+        "voice": null
+      },
+      {
+        "text": "modular",
+        "lang": "zz-unavailable",
+        "voice": null
+      },
+      {
+        "text": "hello",
+        "lang": "zz-unavailable",
+        "voice": null
+      },
+      {
+        "text": "modular",
+        "lang": "zz-unavailable",
+        "voice": null
+      }
+    ],
+    "errors": ["synthesis-failed", "synthesis-failed", "synthesis-failed", "synthesis-failed"],
+    "cancels": 6,
+    "starts": 0,
+    "ends": 0
+  },
+  "physicalListening": false,
+  "nativeSpeechStarted": false
+}

@@ -1,0 +1,4716 @@
+{
+  "rows": [
+    {
+      "wave": "z_sine",
+      "proof": {
+        "source": "setcpm(120)\n$: note(\"a3*4\").s(\"z_sine\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: note(\\\"a3*4\\\").s(\\\"z_sine\\\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"z_sine\\\"}]\"\n//         },\n//         {\n//           \"name\": \"slide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}]\"\n//         },\n//         {\n//           \"name\": \"pitchJump\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         },\n//         {\n//           \"name\": \"zcrush\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.2}]\"\n//         },\n//         {\n//           \"name\": \"zdelay\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.05}]\"\n//         },\n//         {\n//           \"name\": \"zmod\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":20}]\"\n//         },\n//         {\n//           \"name\": \"znoise\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         },\n//         {\n//           \"name\": \"pitchJumpTime\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.02}]\"\n//         },\n//         {\n//           \"name\": \"deltaSlide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"UnaryExpression\\\",\\\"operator\\\":\\\"-\\\",\\\"prefix\\\":true,\\\"argument\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a3*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"chip1\",\n//       \"type\": \"chip\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"z_sine\",\n//         \"slide\": 0.5,\n//         \"jump\": 120,\n//         \"crush\": 0.2,\n//         \"delay\": 0.05,\n//         \"mod\": 20,\n//         \"noise\": 0.1,\n//         \"jumpTime\": 0.02,\n//         \"deltaSlide\": -0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1,\n//             2,\n//             3,\n//             4,\n//             5,\n//             6,\n//             7,\n//             8,\n//             9\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             10\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 34,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+        "sourceExact": true,
+        "savedIdentity": true,
+        "patch": {
+          "version": 1,
+          "modules": [
+            {
+              "id": "seq1",
+              "type": "seq",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {
+                "steps": "a3*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "chip1",
+              "type": "chip",
+              "row": 0,
+              "hp": 10,
+              "look": "instrument",
+              "values": {
+                "wave": "z_sine",
+                "slide": 0.5,
+                "jump": 120,
+                "crush": 0.2,
+                "delay": 0.05,
+                "mod": 20,
+                "noise": 0.1,
+                "jumpTime": 0.02,
+                "deltaSlide": -0.1
+              }
+            },
+            {
+              "id": "vca1",
+              "type": "vca",
+              "row": 0,
+              "hp": 26,
+              "look": "instrument",
+              "values": {
+                "level": 0.1
+              }
+            },
+            {
+              "id": "mix1",
+              "type": "mix",
+              "row": 0,
+              "hp": 34,
+              "look": "instrument",
+              "values": {
+                "ch1": 1,
+                "ch2": 1,
+                "ch3": 1,
+                "ch4": 1
+              }
+            },
+            {
+              "id": "out2",
+              "type": "out",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {}
+            }
+          ],
+          "cables": [
+            {
+              "id": "cable1",
+              "from": {
+                "module": "seq1",
+                "jack": "note"
+              },
+              "to": {
+                "module": "chip1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable2",
+              "from": {
+                "module": "chip1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable4",
+              "from": {
+                "module": "vca1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in1"
+              }
+            },
+            {
+              "id": "cable5",
+              "from": {
+                "module": "mix1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "out2",
+                "jack": "in"
+              }
+            }
+          ],
+          "names": {},
+          "rows": 1,
+          "railHp": 64
+        },
+        "actualEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "generatedEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "eventEquivalent": true,
+        "triggered": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 0.2773333333333333,
+            "target": 0.37670000000000003
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 0.2773333333333333,
+            "target": 0.5017
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sine",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 0.384,
+            "target": 0.6266999999999999
+          }
+        ],
+        "failures": []
+      },
+      "pcm": {
+        "rms": 0.007567414842758448,
+        "peak": 0.019923899322748184,
+        "frames": 204800,
+        "sampleRate": 48000,
+        "frequency": 322.265625
+      }
+    },
+    {
+      "wave": "z_sawtooth",
+      "proof": {
+        "source": "setcpm(120)\n$: note(\"a3*4\").s(\"z_sawtooth\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: note(\\\"a3*4\\\").s(\\\"z_sawtooth\\\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"z_sawtooth\\\"}]\"\n//         },\n//         {\n//           \"name\": \"slide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}]\"\n//         },\n//         {\n//           \"name\": \"pitchJump\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         },\n//         {\n//           \"name\": \"zcrush\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.2}]\"\n//         },\n//         {\n//           \"name\": \"zdelay\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.05}]\"\n//         },\n//         {\n//           \"name\": \"zmod\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":20}]\"\n//         },\n//         {\n//           \"name\": \"znoise\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         },\n//         {\n//           \"name\": \"pitchJumpTime\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.02}]\"\n//         },\n//         {\n//           \"name\": \"deltaSlide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"UnaryExpression\\\",\\\"operator\\\":\\\"-\\\",\\\"prefix\\\":true,\\\"argument\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a3*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"chip1\",\n//       \"type\": \"chip\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"z_sawtooth\",\n//         \"slide\": 0.5,\n//         \"jump\": 120,\n//         \"crush\": 0.2,\n//         \"delay\": 0.05,\n//         \"mod\": 20,\n//         \"noise\": 0.1,\n//         \"jumpTime\": 0.02,\n//         \"deltaSlide\": -0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1,\n//             2,\n//             3,\n//             4,\n//             5,\n//             6,\n//             7,\n//             8,\n//             9\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             10\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 34,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+        "sourceExact": true,
+        "savedIdentity": true,
+        "patch": {
+          "version": 1,
+          "modules": [
+            {
+              "id": "seq1",
+              "type": "seq",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {
+                "steps": "a3*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "chip1",
+              "type": "chip",
+              "row": 0,
+              "hp": 10,
+              "look": "instrument",
+              "values": {
+                "wave": "z_sawtooth",
+                "slide": 0.5,
+                "jump": 120,
+                "crush": 0.2,
+                "delay": 0.05,
+                "mod": 20,
+                "noise": 0.1,
+                "jumpTime": 0.02,
+                "deltaSlide": -0.1
+              }
+            },
+            {
+              "id": "vca1",
+              "type": "vca",
+              "row": 0,
+              "hp": 26,
+              "look": "instrument",
+              "values": {
+                "level": 0.1
+              }
+            },
+            {
+              "id": "mix1",
+              "type": "mix",
+              "row": 0,
+              "hp": 34,
+              "look": "instrument",
+              "values": {
+                "ch1": 1,
+                "ch2": 1,
+                "ch3": 1,
+                "ch4": 1
+              }
+            },
+            {
+              "id": "out2",
+              "type": "out",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {}
+            }
+          ],
+          "cables": [
+            {
+              "id": "cable1",
+              "from": {
+                "module": "seq1",
+                "jack": "note"
+              },
+              "to": {
+                "module": "chip1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable2",
+              "from": {
+                "module": "chip1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable4",
+              "from": {
+                "module": "vca1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in1"
+              }
+            },
+            {
+              "id": "cable5",
+              "from": {
+                "module": "mix1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "out2",
+                "jack": "in"
+              }
+            }
+          ],
+          "names": {},
+          "rows": 1,
+          "railHp": 64
+        },
+        "actualEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "generatedEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "eventEquivalent": true,
+        "triggered": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 1.9413333333333334,
+            "target": 2.0513
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 1.9413333333333334,
+            "target": 2.1763
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_sawtooth",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 2.0693333333333332,
+            "target": 2.3013
+          }
+        ],
+        "failures": []
+      },
+      "pcm": {
+        "rms": 0.006125236546233531,
+        "peak": 0.017674624919891357,
+        "frames": 204800,
+        "sampleRate": 48000,
+        "frequency": 322.265625
+      }
+    },
+    {
+      "wave": "z_triangle",
+      "proof": {
+        "source": "setcpm(120)\n$: note(\"a3*4\").s(\"z_triangle\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: note(\\\"a3*4\\\").s(\\\"z_triangle\\\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"z_triangle\\\"}]\"\n//         },\n//         {\n//           \"name\": \"slide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}]\"\n//         },\n//         {\n//           \"name\": \"pitchJump\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         },\n//         {\n//           \"name\": \"zcrush\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.2}]\"\n//         },\n//         {\n//           \"name\": \"zdelay\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.05}]\"\n//         },\n//         {\n//           \"name\": \"zmod\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":20}]\"\n//         },\n//         {\n//           \"name\": \"znoise\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         },\n//         {\n//           \"name\": \"pitchJumpTime\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.02}]\"\n//         },\n//         {\n//           \"name\": \"deltaSlide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"UnaryExpression\\\",\\\"operator\\\":\\\"-\\\",\\\"prefix\\\":true,\\\"argument\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a3*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"chip1\",\n//       \"type\": \"chip\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"z_triangle\",\n//         \"slide\": 0.5,\n//         \"jump\": 120,\n//         \"crush\": 0.2,\n//         \"delay\": 0.05,\n//         \"mod\": 20,\n//         \"noise\": 0.1,\n//         \"jumpTime\": 0.02,\n//         \"deltaSlide\": -0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1,\n//             2,\n//             3,\n//             4,\n//             5,\n//             6,\n//             7,\n//             8,\n//             9\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             10\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 34,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+        "sourceExact": true,
+        "savedIdentity": true,
+        "patch": {
+          "version": 1,
+          "modules": [
+            {
+              "id": "seq1",
+              "type": "seq",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {
+                "steps": "a3*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "chip1",
+              "type": "chip",
+              "row": 0,
+              "hp": 10,
+              "look": "instrument",
+              "values": {
+                "wave": "z_triangle",
+                "slide": 0.5,
+                "jump": 120,
+                "crush": 0.2,
+                "delay": 0.05,
+                "mod": 20,
+                "noise": 0.1,
+                "jumpTime": 0.02,
+                "deltaSlide": -0.1
+              }
+            },
+            {
+              "id": "vca1",
+              "type": "vca",
+              "row": 0,
+              "hp": 26,
+              "look": "instrument",
+              "values": {
+                "level": 0.1
+              }
+            },
+            {
+              "id": "mix1",
+              "type": "mix",
+              "row": 0,
+              "hp": 34,
+              "look": "instrument",
+              "values": {
+                "ch1": 1,
+                "ch2": 1,
+                "ch3": 1,
+                "ch4": 1
+              }
+            },
+            {
+              "id": "out2",
+              "type": "out",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {}
+            }
+          ],
+          "cables": [
+            {
+              "id": "cable1",
+              "from": {
+                "module": "seq1",
+                "jack": "note"
+              },
+              "to": {
+                "module": "chip1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable2",
+              "from": {
+                "module": "chip1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable4",
+              "from": {
+                "module": "vca1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in1"
+              }
+            },
+            {
+              "id": "cable5",
+              "from": {
+                "module": "mix1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "out2",
+                "jack": "in"
+              }
+            }
+          ],
+          "names": {},
+          "rows": 1,
+          "railHp": 64
+        },
+        "actualEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "generatedEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "eventEquivalent": true,
+        "triggered": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 3.477333333333333,
+            "target": 3.5767
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 3.477333333333333,
+            "target": 3.7017
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_triangle",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 3.6053333333333333,
+            "target": 3.8267
+          }
+        ],
+        "failures": []
+      },
+      "pcm": {
+        "rms": 0.007260707070422856,
+        "peak": 0.01961538754403591,
+        "frames": 204800,
+        "sampleRate": 48000,
+        "frequency": 322.265625
+      }
+    },
+    {
+      "wave": "z_square",
+      "proof": {
+        "source": "setcpm(120)\n$: note(\"a3*4\").s(\"z_square\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: note(\\\"a3*4\\\").s(\\\"z_square\\\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"z_square\\\"}]\"\n//         },\n//         {\n//           \"name\": \"slide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}]\"\n//         },\n//         {\n//           \"name\": \"pitchJump\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         },\n//         {\n//           \"name\": \"zcrush\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.2}]\"\n//         },\n//         {\n//           \"name\": \"zdelay\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.05}]\"\n//         },\n//         {\n//           \"name\": \"zmod\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":20}]\"\n//         },\n//         {\n//           \"name\": \"znoise\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         },\n//         {\n//           \"name\": \"pitchJumpTime\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.02}]\"\n//         },\n//         {\n//           \"name\": \"deltaSlide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"UnaryExpression\\\",\\\"operator\\\":\\\"-\\\",\\\"prefix\\\":true,\\\"argument\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a3*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"chip1\",\n//       \"type\": \"chip\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"z_square\",\n//         \"slide\": 0.5,\n//         \"jump\": 120,\n//         \"crush\": 0.2,\n//         \"delay\": 0.05,\n//         \"mod\": 20,\n//         \"noise\": 0.1,\n//         \"jumpTime\": 0.02,\n//         \"deltaSlide\": -0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1,\n//             2,\n//             3,\n//             4,\n//             5,\n//             6,\n//             7,\n//             8,\n//             9\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             10\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 34,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+        "sourceExact": true,
+        "savedIdentity": true,
+        "patch": {
+          "version": 1,
+          "modules": [
+            {
+              "id": "seq1",
+              "type": "seq",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {
+                "steps": "a3*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "chip1",
+              "type": "chip",
+              "row": 0,
+              "hp": 10,
+              "look": "instrument",
+              "values": {
+                "wave": "z_square",
+                "slide": 0.5,
+                "jump": 120,
+                "crush": 0.2,
+                "delay": 0.05,
+                "mod": 20,
+                "noise": 0.1,
+                "jumpTime": 0.02,
+                "deltaSlide": -0.1
+              }
+            },
+            {
+              "id": "vca1",
+              "type": "vca",
+              "row": 0,
+              "hp": 26,
+              "look": "instrument",
+              "values": {
+                "level": 0.1
+              }
+            },
+            {
+              "id": "mix1",
+              "type": "mix",
+              "row": 0,
+              "hp": 34,
+              "look": "instrument",
+              "values": {
+                "ch1": 1,
+                "ch2": 1,
+                "ch3": 1,
+                "ch4": 1
+              }
+            },
+            {
+              "id": "out2",
+              "type": "out",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {}
+            }
+          ],
+          "cables": [
+            {
+              "id": "cable1",
+              "from": {
+                "module": "seq1",
+                "jack": "note"
+              },
+              "to": {
+                "module": "chip1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable2",
+              "from": {
+                "module": "chip1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable4",
+              "from": {
+                "module": "vca1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in1"
+              }
+            },
+            {
+              "id": "cable5",
+              "from": {
+                "module": "mix1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "out2",
+                "jack": "in"
+              }
+            }
+          ],
+          "names": {},
+          "rows": 1,
+          "railHp": 64
+        },
+        "actualEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "generatedEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "eventEquivalent": true,
+        "triggered": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 5.088,
+            "target": 5.1979999999999995
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 5.088,
+            "target": 5.3229999999999995
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_square",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 5.1946666666666665,
+            "target": 5.4479999999999995
+          }
+        ],
+        "failures": []
+      },
+      "pcm": {
+        "rms": 0.012240576237944988,
+        "peak": 0.02368442714214325,
+        "frames": 204800,
+        "sampleRate": 48000,
+        "frequency": 322.265625
+      }
+    },
+    {
+      "wave": "z_tan",
+      "proof": {
+        "source": "setcpm(120)\n$: note(\"a3*4\").s(\"z_tan\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: note(\\\"a3*4\\\").s(\\\"z_tan\\\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"z_tan\\\"}]\"\n//         },\n//         {\n//           \"name\": \"slide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}]\"\n//         },\n//         {\n//           \"name\": \"pitchJump\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         },\n//         {\n//           \"name\": \"zcrush\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.2}]\"\n//         },\n//         {\n//           \"name\": \"zdelay\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.05}]\"\n//         },\n//         {\n//           \"name\": \"zmod\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":20}]\"\n//         },\n//         {\n//           \"name\": \"znoise\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         },\n//         {\n//           \"name\": \"pitchJumpTime\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.02}]\"\n//         },\n//         {\n//           \"name\": \"deltaSlide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"UnaryExpression\\\",\\\"operator\\\":\\\"-\\\",\\\"prefix\\\":true,\\\"argument\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a3*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"chip1\",\n//       \"type\": \"chip\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"z_tan\",\n//         \"slide\": 0.5,\n//         \"jump\": 120,\n//         \"crush\": 0.2,\n//         \"delay\": 0.05,\n//         \"mod\": 20,\n//         \"noise\": 0.1,\n//         \"jumpTime\": 0.02,\n//         \"deltaSlide\": -0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1,\n//             2,\n//             3,\n//             4,\n//             5,\n//             6,\n//             7,\n//             8,\n//             9\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             10\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 34,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+        "sourceExact": true,
+        "savedIdentity": true,
+        "patch": {
+          "version": 1,
+          "modules": [
+            {
+              "id": "seq1",
+              "type": "seq",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {
+                "steps": "a3*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "chip1",
+              "type": "chip",
+              "row": 0,
+              "hp": 10,
+              "look": "instrument",
+              "values": {
+                "wave": "z_tan",
+                "slide": 0.5,
+                "jump": 120,
+                "crush": 0.2,
+                "delay": 0.05,
+                "mod": 20,
+                "noise": 0.1,
+                "jumpTime": 0.02,
+                "deltaSlide": -0.1
+              }
+            },
+            {
+              "id": "vca1",
+              "type": "vca",
+              "row": 0,
+              "hp": 26,
+              "look": "instrument",
+              "values": {
+                "level": 0.1
+              }
+            },
+            {
+              "id": "mix1",
+              "type": "mix",
+              "row": 0,
+              "hp": 34,
+              "look": "instrument",
+              "values": {
+                "ch1": 1,
+                "ch2": 1,
+                "ch3": 1,
+                "ch4": 1
+              }
+            },
+            {
+              "id": "out2",
+              "type": "out",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {}
+            }
+          ],
+          "cables": [
+            {
+              "id": "cable1",
+              "from": {
+                "module": "seq1",
+                "jack": "note"
+              },
+              "to": {
+                "module": "chip1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable2",
+              "from": {
+                "module": "chip1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable4",
+              "from": {
+                "module": "vca1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in1"
+              }
+            },
+            {
+              "id": "cable5",
+              "from": {
+                "module": "mix1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "out2",
+                "jack": "in"
+              }
+            }
+          ],
+          "names": {},
+          "rows": 1,
+          "railHp": 64
+        },
+        "actualEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "generatedEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "eventEquivalent": true,
+        "triggered": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 6.645333333333333,
+            "target": 6.7447
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 6.645333333333333,
+            "target": 6.8697
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_tan",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 6.762666666666667,
+            "target": 6.9947
+          }
+        ],
+        "failures": []
+      },
+      "pcm": {
+        "rms": 0.008959001385340592,
+        "peak": 0.021884752437472343,
+        "frames": 204800,
+        "sampleRate": 48000,
+        "frequency": 679.6875
+      }
+    },
+    {
+      "wave": "z_noise",
+      "proof": {
+        "source": "setcpm(120)\n$: note(\"a3*4\").s(\"z_noise\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120)\\n$: note(\\\"a3*4\\\").s(\\\"z_noise\\\").slide(.5).pitchJump(120).zcrush(.2).zdelay(.05).zmod(20).znoise(.1).pitchJumpTime(.02).deltaSlide(-.1).gain(.1)\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"a3*4\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"z_noise\\\"}]\"\n//         },\n//         {\n//           \"name\": \"slide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}]\"\n//         },\n//         {\n//           \"name\": \"pitchJump\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120}]\"\n//         },\n//         {\n//           \"name\": \"zcrush\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.2}]\"\n//         },\n//         {\n//           \"name\": \"zdelay\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.05}]\"\n//         },\n//         {\n//           \"name\": \"zmod\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":20}]\"\n//         },\n//         {\n//           \"name\": \"znoise\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         },\n//         {\n//           \"name\": \"pitchJumpTime\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.02}]\"\n//         },\n//         {\n//           \"name\": \"deltaSlide\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"UnaryExpression\\\",\\\"operator\\\":\\\"-\\\",\\\"prefix\\\":true,\\\"argument\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.1}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"a3*4\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"chip1\",\n//       \"type\": \"chip\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"z_noise\",\n//         \"slide\": 0.5,\n//         \"jump\": 120,\n//         \"crush\": 0.2,\n//         \"delay\": 0.05,\n//         \"mod\": 20,\n//         \"noise\": 0.1,\n//         \"jumpTime\": 0.02,\n//         \"deltaSlide\": -0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1,\n//             2,\n//             3,\n//             4,\n//             5,\n//             6,\n//             7,\n//             8,\n//             9\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 26,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             10\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 34,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": []\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"chip1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 1,\n//   \"railHp\": 64\n// }\n",
+        "sourceExact": true,
+        "savedIdentity": true,
+        "patch": {
+          "version": 1,
+          "modules": [
+            {
+              "id": "seq1",
+              "type": "seq",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {
+                "steps": "a3*4",
+                "mode": "note",
+                "rate": 1
+              }
+            },
+            {
+              "id": "chip1",
+              "type": "chip",
+              "row": 0,
+              "hp": 10,
+              "look": "instrument",
+              "values": {
+                "wave": "z_noise",
+                "slide": 0.5,
+                "jump": 120,
+                "crush": 0.2,
+                "delay": 0.05,
+                "mod": 20,
+                "noise": 0.1,
+                "jumpTime": 0.02,
+                "deltaSlide": -0.1
+              }
+            },
+            {
+              "id": "vca1",
+              "type": "vca",
+              "row": 0,
+              "hp": 26,
+              "look": "instrument",
+              "values": {
+                "level": 0.1
+              }
+            },
+            {
+              "id": "mix1",
+              "type": "mix",
+              "row": 0,
+              "hp": 34,
+              "look": "instrument",
+              "values": {
+                "ch1": 1,
+                "ch2": 1,
+                "ch3": 1,
+                "ch4": 1
+              }
+            },
+            {
+              "id": "out2",
+              "type": "out",
+              "row": 0,
+              "hp": 0,
+              "look": "instrument",
+              "values": {}
+            }
+          ],
+          "cables": [
+            {
+              "id": "cable1",
+              "from": {
+                "module": "seq1",
+                "jack": "note"
+              },
+              "to": {
+                "module": "chip1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable2",
+              "from": {
+                "module": "chip1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "vca1",
+                "jack": "in"
+              }
+            },
+            {
+              "id": "cable4",
+              "from": {
+                "module": "vca1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "mix1",
+                "jack": "in1"
+              }
+            },
+            {
+              "id": "cable5",
+              "from": {
+                "module": "mix1",
+                "jack": "out"
+              },
+              "to": {
+                "module": "out2",
+                "jack": "in"
+              }
+            }
+          ],
+          "names": {},
+          "rows": 1,
+          "railHp": 64
+        },
+        "actualEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "generatedEvents": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0",
+            "end": "0.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.25",
+            "end": "0.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.5",
+            "end": "0.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "0.75",
+            "end": "1",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1",
+            "end": "1.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.25",
+            "end": "1.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.5",
+            "end": "1.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "1.75",
+            "end": "2",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2",
+            "end": "2.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.25",
+            "end": "2.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.5",
+            "end": "2.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "2.75",
+            "end": "3",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3",
+            "end": "3.25",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.25",
+            "end": "3.5",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.5",
+            "end": "3.75",
+            "dominant": false
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "orbit": 1
+            },
+            "begin": "3.75",
+            "end": "4",
+            "dominant": false
+          }
+        ],
+        "eventEquivalent": true,
+        "triggered": [
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 8.309333333333333,
+            "target": 8.4087
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 8.309333333333333,
+            "target": 8.5337
+          },
+          {
+            "value": {
+              "note": "a3",
+              "s": "z_noise",
+              "slide": 0.5,
+              "pitchJump": 120,
+              "zcrush": 0.2,
+              "zdelay": 0.05,
+              "zmod": 20,
+              "znoise": 0.1,
+              "pitchJumpTime": 0.02,
+              "deltaSlide": -0.1,
+              "gain": 0.1,
+              "duration": 0.125
+            },
+            "now": 8.426666666666666,
+            "target": 8.6587
+          }
+        ],
+        "failures": []
+      },
+      "pcm": {
+        "rms": 0.006305800657262497,
+        "peak": 0.017172042280435562,
+        "frames": 204800,
+        "sampleRate": 48000,
+        "frequency": 638.671875
+      }
+    }
+  ],
+  "stopped": {
+    "rms": 0,
+    "peak": 0,
+    "frames": 204800,
+    "sampleRate": 48000,
+    "frequency": 5.859375
+  },
+  "physicalListening": false
+}

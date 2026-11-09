@@ -28,6 +28,22 @@ The [usability review](usability-review.md) and its [mockups](design/usability-r
 record refinements, tracked in [#188](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/188). The mockups and [owner decisions](decisions.md#usability-review-188-decided-4-november-2026)
 are approved, and each issue builds its part.
 
+## Equation, chip and speech panels (#143/#144)
+
+The three panels keep their catalog width of 16 HP. BYTEBEAT shows a small
+wrapping formula display above PRESET and START controls, with explicit selector
+modes; CUSTOM FORMULA uses the existing More flyout and Apply interaction. CHIP
+keeps WAVE, SLIDE, PITCH JUMP, CRUSH and DELAY on the panel, with modulation,
+noise, jump time and delta slide in More. SPEAK shows LANG, VOICE and a plain
+bypass notice. Both its outgoing cable and the downstream MIX cable explain that
+speech bypasses effects, MIX level and OUT volume. Controls and cable endpoints
+use the existing live geometry in every family look. These additions do not
+change the rack frame or the arranger's footer popover.
+
+The private canvas boards were unavailable during this implementation; the local
+exports above supplied the reference. Actual browser screenshots and interaction
+checks are recorded in [extras verification](extras-verification.md).
+
 ## Boards
 
 | Board                         | What it shows                                                                                                                                                                                                                                        |
