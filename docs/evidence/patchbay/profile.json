@@ -1,0 +1,85 @@
+[
+  {
+    "kind": "idle",
+    "wallMs": 5000,
+    "threads": []
+  },
+  {
+    "kind": "native",
+    "wallMs": 5000,
+    "threads": [
+      {
+        "id": "834040:834144",
+        "name": "Realtime AudioW",
+        "process": "renderer",
+        "ticks": 15
+      },
+      {
+        "id": "834040:834040",
+        "name": "chrome-headless",
+        "process": "renderer",
+        "ticks": 12
+      },
+      {
+        "id": "834040:834043",
+        "name": "ThreadPoolForeg",
+        "process": "renderer",
+        "ticks": 5
+      },
+      {
+        "id": "834122:834132",
+        "name": "threaded-ml",
+        "process": "audio.mojom.AudioService",
+        "ticks": 5
+      },
+      {
+        "id": "834040:834145",
+        "name": "AudioOutputDevi",
+        "process": "renderer",
+        "ticks": 2
+      },
+      {
+        "id": "834122:834122",
+        "name": "chrome-headless",
+        "process": "audio.mojom.AudioService",
+        "ticks": 1
+      }
+    ]
+  },
+  {
+    "kind": "kabel",
+    "wallMs": 5000,
+    "threads": [
+      {
+        "id": "834040:834144",
+        "name": "Realtime AudioW",
+        "process": "renderer",
+        "ticks": 80
+      },
+      {
+        "id": "834040:834040",
+        "name": "chrome-headless",
+        "process": "renderer",
+        "ticks": 14
+      },
+      {
+        "id": "834122:834132",
+        "name": "threaded-ml",
+        "process": "audio.mojom.AudioService",
+        "ticks": 5
+      },
+      {
+        "id": "834040:834043",
+        "name": "ThreadPoolForeg",
+        "process": "renderer",
+        "ticks": 3
+      },
+      {
+        "id": "834040:834145",
+        "name": "AudioOutputDevi",
+        "process": "renderer",
+        "ticks": 1
+      }
+    ]
+  }
+]

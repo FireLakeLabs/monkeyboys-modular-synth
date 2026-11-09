@@ -2,6 +2,19 @@
 
 Locked on 1 November 2026. Change these deliberately: update this file in the same change.
 
+## PATCHBAY (#142, decided 9 November 2026 UTC)
+
+**Defer a production PATCHBAY module.** The [spike](patchbay-spike.md) proves
+Kabelsalat source/effect PCM, Stop/replacement and exact CODE/source/saved identity
+through the pinned engine. Bounded CPU and digital onset measurements cover 1,
+8 and 32 lanes, without physical listening or a universal voice budget. Worker
+construction failures are not reliably forwarded to #36, and an explicit
+superdough voice limit did not stop an old Kabel source graph. App initialization
+also leaves the installed limit non-finite. Retain these programs as trusted
+CODE; ship no prototype or catalog panel. Reconsider only after failure/lifetime
+boundaries and a source-preserving Cyber editor contract are proven. This is a
+defer recommendation, so no build implementation follow-up is created by #142.
+
 ## Product
 
 - **Name:** MonkeyBoy’s Modular Synth — a Fire Lake Labs project ([firelakelabs.com](https://firelakelabs.com)).
