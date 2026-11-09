@@ -212,3 +212,21 @@ The feature branch/revision stayed unchanged through the run, and 5174 was
 released by the runner. This verifies the merged auto-apply assertions and the
 current arranger alongside all new module checks; it does not change the earlier
 202/1 full-run result or establish a native speech engine.
+
+## Review ledger
+
+One completed `review-loop` round used Codex provider **GPT-6.1 Sol**, verified
+`reasoningEffort: high`, under the owner's explicit same-model override. The
+implementation was also GPT-6.1 Sol; no cross-model independence is claimed.
+The reviewer approved clean revision
+`6b185c4bdaa8dd9378598361a019f6ab8b0f0c36`, inspected code, retained evidence and
+screenshots, and ran no suites. Usage was not provided.
+
+| ID  | Severity | Outcome                                                                                                                                                                                                                                                                                   |
+| --- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S1  | nit      | Optional exact-source clearing for imported `.byteBeatExpression(pure('…'))` is deferred. The reader recognizes the alias, while clear uses the existing conversion-with-Undo fallback; generated canonical `.bbexpr` clears in place. No new issue is filed without owner authorization. |
+
+No blocker or should finding remains; no behavior changed after approval.
+The diff at approval was 37 non-raw files (+2,372/−41), or 47 files
+(+17,967/−41) including the ten raw JSON evidence files. Only this ledger is
+added afterward. The optional alias improvement remains an unfiled candidate.
