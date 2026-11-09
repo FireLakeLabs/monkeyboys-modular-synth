@@ -160,26 +160,21 @@ export function ConnectedModuleChooser({
                   ))}
                 </div>
               ))}
-              {!fits ? (
-                <small>No room on this rail</small>
-              ) : (
-                <>
-                  {options
-                    .filter(({ choice }) => choice.assessment.kind !== 'valid')
-                    .map(({ name, choice }) => (
-                      <small key={choice.jack}>
-                        {name}: {choice.assessment.message}
-                      </small>
-                    ))}
-                  {options.map(({ name, choice }) =>
-                    choice.assessment.replaces ? (
-                      <small key={`${choice.jack}:replaces`}>
-                        {name} replaces the cable into {choice.assessment.replaces.module}{' '}
-                        {choice.assessment.replaces.jack}
-                      </small>
-                    ) : null,
-                  )}
-                </>
+              {!fits && <small>No room on this rail</small>}
+              {options
+                .filter(({ choice }) => choice.assessment.kind !== 'valid')
+                .map(({ name, choice }) => (
+                  <small key={choice.jack}>
+                    {name}: {choice.assessment.message}
+                  </small>
+                ))}
+              {options.map(({ name, choice }) =>
+                choice.assessment.replaces ? (
+                  <small key={`${choice.jack}:replaces`}>
+                    {name} replaces the cable into {choice.assessment.replaces.module}{' '}
+                    {choice.assessment.replaces.jack}
+                  </small>
+                ) : null,
               )}
             </section>
           )

@@ -320,3 +320,31 @@ test('numbered jacks collapse into one card per module with family rows', async 
     }),
   )
 })
+
+test('a rail without room keeps replacement notices beside No room on this rail', async ({
+  page,
+}) => {
+  await fixture(page, { playing: true })
+  await page.evaluate(async () => {
+    const m = await import('/src/rack/model.ts')
+    const { generate } = await import('/src/codegen/generate.ts')
+    const { read } = await import('/src/reader/index.ts')
+    const { editorSource } = await import('/scripts/editor-browser.mjs')
+    // Row 2 keeps only a 4 HP gap, narrower than the 10 HP NOISE.
+    let patch = m.insertRow(read(editorSource()).patch, 0)
+    for (let hp = 4; hp + 10 <= 104; hp += 10) patch = m.placeModule(patch, 'vcf', 1, hp)
+    await (await import('/scripts/rack-feel-check.mjs')).load(generate(patch))
+  })
+  const start = await jack(page, 'vcf1:in').boundingBox()
+  const rail = await page.locator('.rack-surface').boundingBox()
+  await page.mouse.move(start.x + start.width / 2, start.y + start.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(rail.x + 2 * 12, rail.y + 440 + 130, { steps: 12 })
+  await page.mouse.up()
+  await expect(page.getByRole('dialog', { name: 'Add a connected module' })).toBeVisible()
+  await page.getByRole('searchbox', { name: 'Find compatible modules' }).fill('noise')
+  const card = page.locator('[data-chooser-module="noise"]')
+  await expect(card).toContainText('No room on this rail')
+  await expect(card).toContainText('replaces the cable into vcf1 in')
+  await expect(card.locator('[data-choice]')).toBeDisabled()
+})
