@@ -351,7 +351,9 @@ export async function verifyPatchSignals(measure) {
   const original = window.Pattern.prototype.onTrigger
   let pattern
   window.Pattern.prototype.onTrigger = function (callback, dominant) {
-    pattern = this
+    // The engine's scheduling tap observes the whole installed pattern. A lifted
+    // speech control may construct its own dominant trigger during queryArc.
+    if (dominant === false) pattern = this
     return original.call(this, callback, dominant)
   }
   try {

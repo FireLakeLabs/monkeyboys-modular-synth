@@ -23,7 +23,7 @@ export const BYTEBEAT_PRESETS = [
 export function bytebeatSyntax(formula: string): boolean {
   if (!formula) return true
   try {
-    parse(`function bytebeat(t) { return 0,\n${formula}; }`, { ecmaVersion: 'latest' })
+    parse(`function bytebeat(t) { return 0,\n${formula};\n}`, { ecmaVersion: 'latest' })
     return true
   } catch {
     return false

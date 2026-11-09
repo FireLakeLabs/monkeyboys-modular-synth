@@ -65,7 +65,7 @@ test('BYTEBEAT: all fifteen presets, custom formula, real events and distinct PC
   }
   const tones = []
   for (const divisor of [128, 64]) {
-    const expression = `128+127*sin(t*PI/${divisor})`
+    const expression = `128+127*sin(t*PI/${divisor})${divisor === 128 ? ' // retained comment' : ''}`
     await load(
       page,
       `setcpm(60)\n$: freq(220).s("bytebeat").bbexpr(pure('${expression}')).bbst(0).gain(.1)\n`,

@@ -75,7 +75,7 @@ it('validates formulas without executing them, and retains every built-in', () =
       ?.values.formula,
   ).toBe('t*(t>>8)')
 })
-it.each([`t + 'a'.length`, String.raw`t + "a\\b".length`, 't +\n 2'])(
+it.each([`t + 'a'.length`, String.raw`t + "a\\b".length`, 't +\n 2', 't // retained comment'])(
   'keeps trusted formula bytes through generation and a source edit: %s',
   (formula) => {
     let patch = placeModule(starterPatch(), 'bytebeat', 1)
