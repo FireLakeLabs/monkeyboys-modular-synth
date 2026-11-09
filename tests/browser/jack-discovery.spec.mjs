@@ -269,3 +269,28 @@ test('connected-module selection updates real playback and Undo/Redo while cance
     contentType: 'application/json',
   })
 })
+
+for (const keyboardFocus of ['search', 'option']) {
+  test(`Enter from ${keyboardFocus} commits the jack shown by the hovered ghost`, async ({
+    page,
+  }) => {
+    await fixture(page)
+    await dropOnRail(page, 'osc1:out')
+    const search = page.getByRole('searchbox', { name: 'Find compatible modules' })
+    await search.fill('vcf')
+    if (keyboardFocus === 'option') {
+      await page.keyboard.press('ArrowDown')
+      await expect(page.locator('[data-choice]').first()).toBeFocused()
+    }
+    await page.locator('[data-choice]').filter({ hasText: 'VCF · CV' }).hover()
+    await expect(page.locator('.connected-module-ghost')).toContainText('VCF · CV')
+    await page.keyboard.press('Enter')
+    await expect(page.locator('[data-module="vcf2"]')).toBeVisible()
+    expect((await patch(page)).cables).toContainEqual(
+      expect.objectContaining({
+        from: { module: 'osc1', jack: 'out' },
+        to: { module: 'vcf2', jack: 'cv' },
+      }),
+    )
+  })
+}

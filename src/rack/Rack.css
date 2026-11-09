@@ -1463,8 +1463,7 @@ select:focus-visible {
   white-space: normal;
   text-align: left;
 }
-.connected-module-options button:hover,
-.connected-module-options button:focus-visible {
+.connected-module-options button[aria-current='true'] {
   border-color: #f4a462;
   background: #302319;
 }

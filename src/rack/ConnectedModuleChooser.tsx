@@ -4,12 +4,14 @@ import type { ModuleConnection } from '../workspace/discovery'
 
 export function ConnectedModuleChooser({
   choices,
+  activeChoice,
   point,
   preview,
   choose,
   cancel,
 }: {
   choices: readonly ModuleConnection[]
+  activeChoice: ModuleConnection | null
   point: { x: number; y: number }
   preview: (choice: ModuleConnection | null) => void
   choose: (choice: ModuleConnection) => void
@@ -72,8 +74,7 @@ export function ConnectedModuleChooser({
           focusOption(event.key === 'ArrowDown' ? 1 : -1)
         } else if (event.key === 'Enter' && event.target === search.current) {
           event.preventDefault()
-          const first = matches.find((choice) => choice.position)
-          if (first) choose(first)
+          if (activeChoice?.position && matches.includes(activeChoice)) choose(activeChoice)
         }
       }}
     >
@@ -107,9 +108,16 @@ export function ConnectedModuleChooser({
               data-choice
               key={`${choice.type}:${choice.jack}`}
               disabled={!choice.position}
+              aria-current={choice === activeChoice ? 'true' : undefined}
               title={choice.assessment.message}
               onFocus={() => preview(choice)}
-              onPointerEnter={() => preview(choice)}
+              onPointerEnter={(event) => {
+                if (!choice.position) return
+                // Align an existing keyboard selection without taking focus from search.
+                if (event.currentTarget.parentElement?.contains(document.activeElement))
+                  event.currentTarget.focus({ preventScroll: true })
+                preview(choice)
+              }}
               onClick={() => choose(choice)}
             >
               <span>

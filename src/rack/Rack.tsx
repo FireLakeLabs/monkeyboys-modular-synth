@@ -1628,6 +1628,7 @@ export function Rack({
         {adding && !locked && !overview && (
           <ConnectedModuleChooser
             choices={adding.choices}
+            activeChoice={modulePreview}
             point={adding.point}
             preview={setModulePreview}
             choose={chooseModule}

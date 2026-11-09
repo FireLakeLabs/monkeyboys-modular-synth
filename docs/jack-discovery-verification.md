@@ -113,3 +113,17 @@ including real playback and Undo/Redo. That focused coverage is appropriate for
 the two status messages; the full hosted suite on the final PR head remains
 the merge gate. The before-fix trace/log and after-fix log are retained under
 `/tmp/monkeyboy-233` and `/tmp/233-final-feature.log` respectively.
+
+## Review regression
+
+Sol round 1 found S1: hovering another option could change the ghost while
+Enter still committed the old focused option or the first search result. Two
+native regressions reproduced that mismatch (`RESULT passed=0 failed=2 exit=1`).
+The ghost and search activation now share one active candidate; hovering a valid
+option keeps existing option focus aligned without taking focus from search.
+The current option has one visible and accessible marker. The complete feature
+file then passed `RESULT passed=10 failed=0 exit=0`, including both new Enter
+paths, source/rack identity, cancellation and real playback. This UI selection
+fix has bounded focused coverage; the final hosted full suite remains required.
+Logs/traces are retained under `/tmp/monkeyboy-233/preview-before` and
+`/tmp/monkeyboy-233/preview-after`.
