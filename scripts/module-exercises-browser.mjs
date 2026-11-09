@@ -25,6 +25,9 @@ const results = {
 }
 page.on('pageerror', (e) => results.errors.push(e.message))
 const actions = {
+  bytebeat: ['knob', 'PRESET', 5, 'preset'],
+  chip: ['knob', 'PITCH JUMP', 120, 'jump'],
+  speak: ['knob', 'VOICE', 1, 'voice'],
   gates: ['mini', 'GATES', 'x*8', 'steps'],
   switch: ['mini', 'SELECT', '<0 1 2 3>', 'steps'],
   aux: ['knob', 'CUTOFF', 3000, 'cutoff', 'vcf'],
@@ -151,6 +154,7 @@ try {
     results.entries.push(result)
     try {
       await load(entry)
+      if (entry.type === 'speak') await page.waitForTimeout(750)
       await page.getByRole('button', { name: 'Play', exact: true }).click()
       await status('Playing')
       const before = await inspect()
@@ -161,7 +165,11 @@ try {
       const pcm = await page.evaluate(() => window.auditMeasure())
       result.pcm = pcm
       result.diagnostics = await diagnostics()
-      assert(pcm.rms > 0.0001, 'silent baseline')
+      if (entry.type === 'speak') {
+        assert(pcm.rms < 0.000001, 'Speech must bypass WebAudio')
+        result.speechProof =
+          'Scheduled events and bypass PCM only; voice availability and utterances have a separate browser check.'
+      } else assert(pcm.rms > 0.0001, 'silent baseline')
       const [kind, label, value, control, target = entry.type, index = 0] = actions[entry.type]
       const module = before.patch.modules.filter((m) => m.type === target)[index]
       assert(module, `missing ${target} ${index}`)

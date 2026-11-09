@@ -1,4 +1,5 @@
 import type { SourceDocument } from '../reader/types'
+import { bytebeatFormula } from '../modules/bytebeat'
 import { CableProbe, PatchCredits, ScopeDisplay } from './PatternVisuals'
 
 import { SampleSlot, Tape, RazorMarks } from '../samples/SamplePanel'
@@ -676,6 +677,12 @@ export function Rack({
             onPointerDown={() => selectModule(m.id)}
           >
             {m.type === 'scope' && <ScopeDisplay module={m} />}
+            {spec.notice && <p className="module-notice">{spec.notice}</p>}
+            {m.type === 'bytebeat' && (
+              <output className="formula-display" aria-label="Bytebeat formula">
+                {bytebeatFormula(m.values)}
+              </output>
+            )}
 
             <SampleSlot
               module={m}

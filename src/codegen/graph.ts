@@ -1,4 +1,5 @@
 import { effectRank } from '../modules/effects'
+import { bytebeatSyntax } from '../modules/bytebeat'
 import { isLoopChain, loopMethod } from '../modules/functions'
 import { parse } from 'acorn'
 import { controlValue } from '../modules/values'
@@ -90,6 +91,7 @@ function validValue(item: Control, candidate: ControlValue, node: Node): boolean
     case 'text':
       return (
         typeof candidate === 'string' &&
+        (item.syntax !== 'bytebeat' || bytebeatSyntax(candidate)) &&
         (!node.spec.sampleTarget?.prefix ||
           item.id !== node.spec.sampleTarget.control ||
           candidate === '' ||

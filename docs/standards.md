@@ -1,5 +1,12 @@
 # Engineering standards
 
+The auto-apply half-typed-code browser regression checks accepted CODE and exact
+executable source independently of playback. Cleanup uses the global Stop
+shortcut because #36 may already have stopped failed evaluation and replaced the
+Stop button with Play. Main runs 42542065710 and 42546562588 exposed the old
+button-cleanup timeout; the latter's separate DRUMS silence remains unexplained
+and does not justify changing PCM thresholds or diagnosing #207.
+
 The [rack layout browser regressions](../tests/browser/rack-layout.spec.mjs) guard
 the Packs tab, usable rack height and fitted MIX cables. The
 [remaining stabilization checks](../tests/browser/stabilization-remaining.spec.mjs)
@@ -54,6 +61,18 @@ temporary directories, including compiling the adapted TypeScript examples. It
 protects against accidentally inert checks; it does not prove every rule or
 combination is covered. The skill lockfile detects drift, not a coordinated change
 to both instructions and hashes; review those changes together.
+
+## BYTEBEAT worker reporting (#143)
+
+A real-browser bad-formula probe initially left the workspace Playing after its
+DSP worker failed. Main-thread syntax validation and native `processorerror`
+alone did not observe that failure. The hash-checked dependency patch now sends
+a narrow failure protocol to the engine adapter; the workspace uses #36 recovery.
+`bytebeat-worklet-errors.test.mts` in `test:guardrails` executes both installed
+bundle payloads, checking one failure message, silent failed output, termination
+and a healthy nonzero control. It failed against the unpatched payload and passed
+after the fix. Browser error/transport/PCM checks remain independent runtime proof.
+The exception and removal condition are in [audio recovery](audio-recovery.md#bytebeat-and-speech-additions-143144).
 
 ## Runtime and TypeScript configuration
 

@@ -1,4 +1,7 @@
 import spliceSource from './patches/modules/splice.strudel?raw'
+import bytebeatSource from './patches/modules/bytebeat.strudel?raw'
+import chipSource from './patches/modules/chip.strudel?raw'
+import speakSource from './patches/modules/speak.strudel?raw'
 import wavetableSource from './patches/modules/wavetable.strudel?raw'
 import { getModuleSpec } from '../modules/catalog'
 import type { LibraryPatch } from './catalog'
@@ -58,6 +61,25 @@ import codeSource from './patches/modules/code.strudel?raw'
 
 /** One small, rack-owned starting point per shipped module. */
 export const MODULE_EXERCISES: readonly LibraryPatch[] = [
+  {
+    type: 'bytebeat',
+    source: bytebeatSource,
+    description: 'A melody played by a built-in equation.',
+    tryThis: 'Change BYTEBEAT PRESET from 3 to 5, then enter a trusted custom formula in More.',
+  },
+  {
+    type: 'chip',
+    source: chipSource,
+    description: 'A compact 8-bit effects voice.',
+    tryThis: 'Turn CHIP PITCH JUMP to 120 Hz and compare the attack.',
+  },
+  {
+    type: 'speak',
+    source: speakSource,
+    description: 'Browser speech, outside the audio mixer.',
+    tryThis:
+      'Change SPEAK VOICE from 0 to 1. Speech bypasses effects, MIX level and OUT volume; Stop cancels it.',
+  },
   {
     type: 'splice',
     source: spliceSource,

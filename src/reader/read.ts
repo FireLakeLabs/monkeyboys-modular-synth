@@ -1,4 +1,5 @@
 import { packImported } from '../patch/importLayout'
+import { bytebeatSyntax } from '../modules/bytebeat'
 import { packSetup } from '../samples/packs'
 import { planEffects } from '../codegen/effects'
 import { effectRank } from '../modules/effects'
@@ -52,6 +53,7 @@ function soundOwner(call: Call, next?: Call, source = false): string | undefined
   const wave = scalar(call.args[0])
   if (call.args.length !== 1 || typeof wave !== 'string') return undefined
   const knownWave = CATALOG.some((spec) => {
+    if (typeof spec.soundSource === 'object') return spec.soundSource.fixed === wave
     const control = spec.controls.find(
       (control) => control.id === (spec.id === 'osc' ? 'wave' : spec.soundSource),
     )
@@ -77,6 +79,7 @@ function soundOwner(call: Call, next?: Call, source = false): string | undefined
   )
     return 'splice'
   return CATALOG.find((spec) => {
+    if (typeof spec.soundSource === 'object') return spec.soundSource.fixed === wave
     const control = spec.controls.find((c) => c.id === spec.soundSource)
     if (spec.id === 'smpl' && !source && !knownWave && /^[\w-]+(?::\d+)?$/.test(wave)) return true
     if (control?.kind !== 'switch' || !control.options.some((o) => o.value === wave)) return false
@@ -115,6 +118,10 @@ function fits(type: string, id: string, value: number | string): boolean {
     case 'switch':
       return control.options.some((option) => option.value === value)
     case 'text':
+      return (
+        typeof value === 'string' &&
+        (control.syntax !== 'bytebeat' || (value !== '' && bytebeatSyntax(value)))
+      )
     case 'steps':
     case 'grid':
       return typeof value === 'string'
@@ -145,10 +152,18 @@ function transformKey(expression: Expression | undefined): string | undefined {
 
 function project(
   source: string,
-  scopes: ParsedScope[],
+  parsed: ReturnType<typeof parseSource>,
   saved?: RackLayout,
   snapshot?: ParsedScope[],
 ): { patch: Patch; bindings: SourceBinding[]; represented: Map<string, Set<string>> } {
+  const { scopes, program } = parsed
+  // A local helper is executable CODE, not the engine's literal-pattern constructor.
+  const pureShadowed = program.body.some((statement) =>
+    statement.type === 'ExpressionStatement'
+      ? statement.expression.type === 'AssignmentExpression' &&
+        usesParameter(statement.expression.left, 'pure')
+      : statement.type !== 'LabeledStatement' && usesParameter(statement, 'pure'),
+  )
   const patch: Patch = { version: 1, modules: [], cables: [], names: {} }
   if (saved?.name !== undefined) patch.name = saved.name
   const cartridges = packSetup(saved?.cartridges ?? [])
@@ -276,8 +291,8 @@ function project(
     scope: ParsedScope,
     index: number,
   ): boolean {
-    const value = scalar(call.args[0])
-    const arg = call.args[0]
+    const arg = literalArgument(module.type, id, call.args[0])
+    const value = scalar(arg)
     if (call.args.length !== 1 || value === undefined || !arg || !fits(module.type, id, value))
       return false
     module.values[id] = value
@@ -299,6 +314,26 @@ function project(
       .filter((scope) => scope.kind === 'declaration')
       .map((scope) => [scope.descriptor.anchor, scope]),
   )
+  function literalArgument(
+    type: string,
+    id: string,
+    arg: Call['args'][number] | undefined,
+  ): Call['args'][number] | undefined {
+    const control = getModuleSpec(type).controls.find((c) => c.id === id)
+    if (control?.kind !== 'text' || control.syntax !== 'bytebeat') return arg
+    if (
+      pureShadowed ||
+      arg?.type !== 'CallExpression' ||
+      arg.callee.type !== 'Identifier' ||
+      arg.callee.name !== 'pure' ||
+      arg.arguments.length !== 1
+    )
+      return undefined
+    const text = arg.arguments[0]
+    return text?.type === 'Literal' && typeof text.value === 'string' && source[text.start] === "'"
+      ? text
+      : undefined
+  }
   const resolved = new Map<string, Output>()
   const resolving = new Set<string>()
   function resolve(name: string): Output | undefined {
@@ -783,12 +818,13 @@ function project(
       }
       if (sound) {
         const spec = getModuleSpec(sound)
-        const id = spec.soundSource ?? ''
+        const id = typeof spec.soundSource === 'string' ? spec.soundSource : undefined
         group = add(sound, {
           ...spec.readDefaults,
           ...(sound === 'splice' ? { mode: calls[1]?.name ?? 'slice' } : {}),
         })
-        literal(group, id, initial, scope, 0)
+        if (id) literal(group, id, initial, scope, 0)
+        else bind(group, scope, [0])
         upstream = output(group)
         start = 1
       }
@@ -926,7 +962,9 @@ function project(
       const name = canonicalCall(call.name)
       const type =
         name === 'n'
-          ? 'smpl'
+          ? group?.type === 'bytebeat'
+            ? 'bytebeat'
+            : 'smpl'
           : name === 'velocity' &&
               (group?.type === 'seq' || group?.type === 'drums') &&
               typeof scalar(call.args[0]) === 'string'
@@ -1303,6 +1341,13 @@ function project(
         continue
       }
       const spec = type ? getModuleSpec(type) : undefined
+      if (name === 's' && type && typeof spec?.soundSource === 'object') {
+        group = add(type, { ...spec.readDefaults })
+        wire(upstream, group)
+        bind(group, scope, [index])
+        upstream = output(group)
+        continue
+      }
       // Preserve DRUMS' existing unseeded drop control; a seeded gate is CHANCE.
       const drumDrop =
         name === 'degradeBy' && group?.type === 'drums' && calls[index + 1]?.name !== 'seed'
@@ -1509,7 +1554,7 @@ function project(
       }
       const scalarType = drumDrop ? 'drums' : type
       if (scalarType && id) {
-        const arg = call.args[0]
+        const arg = literalArgument(scalarType, id, call.args[0])
         const candidate = scalar(arg)
         const numericCV = spec?.jacks.some((jack) => jack.cvTarget === id)
         if (
@@ -1820,7 +1865,7 @@ export function read(source: string): SourceDocument {
   if (saved.kind === 'valid' && saved.layout.source !== undefined) {
     try {
       const snapshot = parseSource(saved.generated)
-      const projected = project(saved.generated, snapshot.scopes, saved.layout, snapshot.scopes)
+      const projected = project(saved.generated, snapshot, saved.layout, snapshot.scopes)
       restore(
         projected.patch,
         projected.bindings,
@@ -1885,7 +1930,7 @@ export function read(source: string): SourceDocument {
   const original = saved.kind === 'valid' ? parseSource(saved.generated) : undefined
   const projection = project(
     source,
-    parsed.scopes,
+    parsed,
     saved.kind === 'valid' ? saved.layout : undefined,
     original?.scopes,
   )

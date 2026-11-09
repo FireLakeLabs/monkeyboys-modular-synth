@@ -1,7 +1,9 @@
-// Pinned upstream fixes for #140 and #136. Remove when Strudel pools enforce context ownership and bus cleanup tolerates reset and DUCK handles silent targets.
+// Pinned upstream fixes for #140/#136 pools, cleanup and DUCK, plus #143 BYTEBEAT DSP failure reporting.
+// Remove each exception when its pinned upstream contract is fixed; see docs/audio-recovery.md.
 // @strudel/web bundles Superdough, so patch its shipped bundle as well as Superdough.
 import { createHash } from 'node:crypto'
 import { readFile, writeFile } from 'node:fs/promises'
+import { patchBytebeatArtifact } from './bytebeat-worklet-patch.mjs'
 
 const fixes = [
   {
@@ -32,13 +34,22 @@ const fixes = [
   },
 
   {
+    path: 'superdough/worklets.mjs',
+    original: 'f3209bda0a789d453c79391d3922d5d3a7dd7e54180ce3ed15417e230c23dd31',
+    patched: 'ca27a05426a5fb43f8f69237c470e7e77f36d370089d030afd77fc50a79b4f21',
+    bytebeat: true,
+    replacements: [],
+  },
+  {
     path: '@strudel/web/dist/index.mjs',
     original: '50beb01abd04589333a10e078dce182c82e2de75b43e9bbe81a34bd069948931',
     previous: [
+      'cb4622f876bcf804b57733334c579ddd29bcd216532d489fc99314d7c89c02a7',
       '7ccf4e104845c6d9d3ccfa507d66b276eb8886ef34515e8b3e37e9e529f0ff65',
       '46d1c75948486b43ce27b7a286b408261e99a27049720cd1b03e099df195cbbc',
     ],
-    patched: 'cb4622f876bcf804b57733334c579ddd29bcd216532d489fc99314d7c89c02a7',
+    patched: '310ef9c1172ad3ecb4f7981a2743164f01cd42015a3207fce541366b7839bef5',
+    bytebeat: true,
     replacements: [
       [
         '      const m = this.nodes[l];\n      if (m == null) {\n        Pi(new Error(`duck target orbit ${l} does not exist`), "superdough");\n        return;\n      }',
@@ -63,10 +74,12 @@ const fixes = [
     path: 'superdough/dist/index.mjs',
     original: '7827b297afe9aa883395573b528fb44a06fbb9130060d8650b5c0308b1531a13',
     previous: [
+      'c56108448ff19d0c88e3cc33f12bf05691966d2e378314bfc46152112368820f',
       'c160c10c158481bc8d38de77a7164497c3024bf12fe5c994afc8fe78266cde8e',
       'd64a139921fd19e25a3f6e29ee9945afcf136781b7764327a4dc1051402c5911',
     ],
-    patched: 'c56108448ff19d0c88e3cc33f12bf05691966d2e378314bfc46152112368820f',
+    patched: '6ce4e2a270f3156f499072129e437233fa6ece7d5e5ff31c8687909d3d776faa',
+    bytebeat: true,
     replacements: [
       [
         '      const h = this.nodes[p];\n      if (h == null) {\n        ct(new Error(`duck target orbit ${p} does not exist`), "superdough");\n        return;\n      }',
@@ -125,6 +138,7 @@ for (const fix of fixes) {
       `Unexpected ${fix.path}; review the pinned audio cleanup fixes before updating Strudel.`,
     )
   for (const [before, after] of fix.replacements) source = source.replace(before, after)
+  if (fix.bytebeat) source = patchBytebeatArtifact(source, fix.path.includes('/dist/'))
   if (digest(source) !== fix.patched) throw new Error(`Could not patch ${fix.path}`)
   await writeFile(file, source)
 }

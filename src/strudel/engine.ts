@@ -1,6 +1,7 @@
 import { FACTORY_PACKS, manifestUrl, packKey, type SamplePack } from '../samples/packs'
 import { sampleInventory, type SampleSound } from '../samples/manifest'
 import { read } from '../reader'
+import { bytebeatSyntax } from '../modules/bytebeat'
 import { activityPlan, type GridStep } from './activity'
 import { sourceLocations } from './sourceLocations'
 import type { Span } from '../reader/types'
@@ -228,15 +229,80 @@ function observeLogs() {
         resourceStatus('failed')
         return
       }
-      clearActivity()
-      resourceStatus('failed')
-      if (bouncing) {
-        bounceFailure = message
-        return
-      }
-      listeners.forEach((listener) => listener({ type: 'failure', message }))
+      reportFailure(message)
     }
   })
+}
+
+function reportFailure(message: string) {
+  clearActivity()
+  resourceStatus('failed')
+  if (bouncing) {
+    bounceFailure = message
+    return
+  }
+  listeners.forEach((listener) => listener({ type: 'failure', message }))
+}
+
+/** Pinned bytebeat handles expose their worklet as source, unlike oscillator nodes. */
+function observeBytebeat(strudel: StrudelWeb) {
+  const original = strudel.getSound('bytebeat')
+  if (!original) return
+  strudel.registerSound(
+    'bytebeat',
+    async (...args) => {
+      const handle: unknown = await original.onTrigger(...args)
+      if (
+        handle &&
+        typeof handle === 'object' &&
+        'source' in handle &&
+        handle.source instanceof EventTarget
+      ) {
+        handle.source.addEventListener('processorerror', () =>
+          reportFailure(
+            'BYTEBEAT formula failed in the audio worklet. Correct the formula, then press Play.',
+          ),
+        )
+        const source = handle.source
+        if ('port' in source && source.port instanceof MessagePort) {
+          source.port.addEventListener('message', (event: MessageEvent<unknown>) => {
+            const data = event.data
+            if (
+              data &&
+              typeof data === 'object' &&
+              'type' in data &&
+              data.type === 'monkeyboy-bytebeat-error' &&
+              'message' in data &&
+              typeof data.message === 'string'
+            )
+              reportFailure(`BYTEBEAT formula failed: ${data.message}`)
+          })
+          source.port.start()
+        }
+      }
+      return handle
+    },
+    original.data,
+  )
+}
+
+function triggerSpeech(hap: unknown, lang: unknown, voice: unknown) {
+  const synth = globalThis.speechSynthesis
+  if (!synth || typeof globalThis.SpeechSynthesisUtterance !== 'function') return
+  if (!hap || typeof hap !== 'object' || !('value' in hap)) return
+  // Routing/effect controls wrap primitive pattern words in {value, ...controls}.
+  const value: unknown = hap.value
+  const words = value && typeof value === 'object' && 'value' in value ? value.value : value
+  const utterance = new SpeechSynthesisUtterance(String(words))
+  const language = typeof lang === 'string' ? lang : 'en'
+  utterance.lang = language
+  const voices = synth.getVoices().filter((v) => v.lang.includes(language))
+  const selected =
+    typeof voice === 'number' ? voices[voice % voices.length] : voices.find((v) => v.name === voice)
+  // Leave voice unset when unavailable: the browser chooses its default.
+  if (selected) utterance.voice = selected
+  synth.cancel()
+  synth.speak(utterance)
 }
 
 function load(): Promise<StrudelWeb> {
@@ -247,6 +313,19 @@ function load(): Promise<StrudelWeb> {
       .then(async (strudel) => {
         await strudel.initStrudel({
           defaultOutput: async (...args) => {
+            const hap = args[0]
+            if (
+              hap &&
+              typeof hap === 'object' &&
+              'value' in hap &&
+              hap.value &&
+              typeof hap.value === 'object' &&
+              'byteBeatExpression' in hap.value
+            ) {
+              const formula: unknown = hap.value.byteBeatExpression
+              if (typeof formula !== 'string' || !bytebeatSyntax(formula))
+                throw new Error('Invalid BYTEBEAT formula syntax')
+            }
             const work = strudel.webaudioOutput(...args)
             outputWork.add(work)
             try {
@@ -266,6 +345,7 @@ function load(): Promise<StrudelWeb> {
           editPattern: (pattern) => {
             if (!evaluating || evaluating.epoch !== epoch) throw cancelled()
             if (!evaluating.offline && !allowed) throw cancelled()
+            globalThis.speechSynthesis?.cancel()
             // The previous pattern keeps scheduling while setup awaits a manifest.
             // Adopt its replacement's resource policy only at scheduler installation.
             failedManifest = evaluating.failedManifest
@@ -294,10 +374,18 @@ function load(): Promise<StrudelWeb> {
             if (started && !allowed) strudel.hush()
           },
         })
-        await strudel.evalScope({ samples: (source, base) => registerPack(strudel, source, base) })
+        const speak = strudel.register('speak', (lang, voice, pattern) =>
+          pattern.onTrigger((hap) => triggerSpeech(hap, lang, voice)),
+        )
+        await strudel.evalScope({
+          samples: (source, base) => registerPack(strudel, source, base),
+          speak,
+        })
         initialized = strudel
         // Lazy import misses initStrudel's first-mousedown listener.
         await strudel.initAudio()
+        strudel.registerZZFXSounds()
+        observeBytebeat(strudel)
         resourceStatus(
           samplePacks.some((pack) => pack.status === 'failed') ? 'failed' : 'registered',
         )
@@ -503,7 +591,11 @@ export async function stop(): Promise<void> {
   clearActivity()
   allowed = false
   cancelActive?.()
-  initialized?.hush()
+  try {
+    globalThis.speechSynthesis?.cancel()
+  } finally {
+    initialized?.hush()
+  }
 }
 
 /** Render accepted source, never its activity-decorated variant. Leaves live scheduling stopped. */

@@ -1,5 +1,36 @@
 # Translation rules
 
+## Equation, chip and speech sources (#143/#144)
+
+Catalog `soundSource` can name a selector control or a fixed sound literal.
+BYTEBEAT uses fixed `s("bytebeat")`; CHIP binds WAVE to `s("z_…")`. Chained `n`
+belongs to an adjacent BYTEBEAT's preset setter, otherwise retaining its existing
+SEQ-source/SMPL-companion rules. Missing `n` and `.bbst` remain absent through
+source-only selector defaults; explicit zeros must not disappear. Hidden selector
+values remain saved independently of executable source.
+
+BYTEBEAT formula literals are read only as `.bbexpr(pure('…'))` (including the
+pinned long control alias), with a single quoted string and unshadowed `pure`.
+The literal's inner range owns edits; escaping preserves code bytes. Empty custom
+formula removes its setter while retaining surrounding source, returning to
+presets. Bare strings, computed expressions, unsupported formulas and ZZFX arrays
+stay exact CODE. Parsing checks worklet-body syntax but does not execute or
+sandbox the formula. Deferred/opaque ownership is still saved CODE, including
+files created before these reader additions.
+
+SPEAK owns `.speak(lang, voice)` as a tuple of scalar controls; primitive words
+remain a source-owned CODE pattern. The generated audio routing fields are inert
+for dominant speech triggers. The engine adapter extracts the primitive `value`
+when those fields wrap a word, so it requests words rather than speaking an object.
+Effects, MIX level and OUT volume do not control speech; its cable warning is
+part of the routing contract. Per-voice `.mask` still gates scheduling. Stop and
+replacement cancel pending native speech behind `src/strudel/engine.ts`.
+
+Exact imported bytes, complete saved rack identity, pinned events, and WebAudio
+PCM remain separate acceptance claims. Speech's native voice enumeration,
+utterance callbacks, and controlled provider tests are also recorded separately;
+none alone proves physical speech output.
+
 How a patch becomes Strudel, and how Strudel becomes a patch. These rules apply in both directions.
 
 ## The five kinds of cable
