@@ -24,12 +24,29 @@ provider `claudeAgent`, model `claude-opus-5-5` (Claude Opus 5.5); use advertise
 
 ## Review rounds
 
-Pending first review. Findings will record stable IDs, severity, evidence,
-outcome, actual reviewed head/working tree, diff size and usage when returned.
+Round 1: Claude Opus 5.5, high effort, reviewed clean head
+`3a52a31d36fa4c2cb430683691ae60aa48f5b078` against
+`d9f06ddc12b135221eec247150c23cce0dadf6c3`. Verdict CHANGES, no blockers.
+Usage was not available. Initial diff: 12 files, 5578 insertions (including 4677
+lines of full event evidence).
+
+| ID  | Severity | Outcome and evidence                                                                                                                                                                                                                                                     |
+| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| S1  | should   | Fixed argument escape. Require one enclosing ParenthesizedExpression spanning the entire input. The new optional-chain escape regression failed before the fix with “Missing expected exception”; all six research tests pass afterward.                                 |
+| S2  | should   | Report now identifies the built-in `o` alias collision from pinned controls.mjs:2047 and alias installation at lines 64–72. Orbit fields establish retained values, not implementation identity; fixture `.o` remains CODE under the proposed production collision rule. |
+| S3  | nit      | Fixed within the existing binding operation: rederive the call/ranges from current source instead of trusting caller ranges. The forged-range regression first replaced `register`, then passed after rederivation.                                                      |
+| S4  | nit      | Documented prototype boundary: negative literals are unary expressions requiring text mode; a number edit to a negative value returns to text editing. No broad scalar parser added.                                                                                     |
+| S5  | nit      | Named #245's sibling branch and inspected commit cb5f370; schema is not claimed to be on this branch/main. Final reconciliation updates links when available.                                                                                                            |
+
+The controlled runtime experiment was rerun after the behavior fixes and passed
+again, including the source/complete existing-rack/edited-event checks. Evidence
+hashes were refreshed. Own port 5187 server was stopped after this run.
+Round 2 is limited to these fixes, changed behavior and remaining findings.
 
 ## Coordination and issue disposition
 
-#245 communicated committed schema path
+#245 communicated schema committed on sibling branch
+`t3/241-strudel-api-inventory` (`cb5f370`), which was inspected with git show; path
 `docs/research/strudel-api-coverage/schema.md`, inventory schema v1 and
 `api:register`, preserving export/prototype/source-only/app-override distinctions.
 #246 was notified of the source-context and nested-binding constraints. Final

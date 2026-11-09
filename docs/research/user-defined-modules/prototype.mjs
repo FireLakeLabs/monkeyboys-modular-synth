@@ -131,7 +131,7 @@ export function editArgument(
   mode = 'expression',
 ) {
   if (currentSource !== snapshot.source) throw new Error('Stale source revision')
-  const call = snapshot.calls.find((c) => c.id === callId)
+  const call = discover(currentSource).calls.find((c) => c.id === callId)
   const arg = call?.arguments[index]
   if (!call || call.status !== 'candidate' || !arg) throw new Error('Unproven argument binding')
   if (mode === 'number' && (arg.kind !== 'number' || !Number.isFinite(Number(replacement))))
@@ -140,7 +140,12 @@ export function editArgument(
   // the argument boundary. No evaluation or numeric range inference occurs.
   const wrapped = `(${replacement})`
   const expression = parseExpressionAt(wrapped, 0, { ecmaVersion: 'latest', preserveParens: true })
-  if (expression.end !== wrapped.length || expression.expression.type === 'SequenceExpression')
+  if (
+    expression.type !== 'ParenthesizedExpression' ||
+    expression.start !== 0 ||
+    expression.end !== wrapped.length ||
+    expression.expression.type === 'SequenceExpression'
+  )
     throw new Error('Expected one argument expression')
   const source = currentSource.slice(0, arg.start) + replacement + currentSource.slice(arg.end)
   return discover(source)

@@ -60,6 +60,8 @@ await test('explicit edits preserve every byte except one argument and never cla
   }
   assert.throws(() => editArgument(forwarding, found, found.calls[0].id, 0, '1, 2'))
   assert.throws(() => editArgument(forwarding, found, found.calls[0].id, 0, '1) /*'))
+  for (const escape of ['1)?.(2', '0.5)?.hpf(9000', '1) + (2'])
+    assert.throws(() => editArgument(forwarding, found, found.calls[0].id, 0, escape))
 })
 
 await test('duplicate definitions, defaults, aliases, options and nested/shadowed registrations stay unresolved', () => {
@@ -90,6 +92,12 @@ await test('signature/body/source edits reject stale bindings rather than attach
   const forged = structuredClone(found)
   forged.calls[0].arguments[0].start++
   assert.throws(() => reopen(JSON.stringify(forged)), /invalid/)
+  forged.calls[0].arguments[0].start = 0
+  forged.calls[0].arguments[0].end = 8
+  assert.equal(
+    editArgument(forwarding, forged, found.calls[0].id, 0, '0.6').source,
+    forwarding.replace('forward247(0.4)', 'forward247(0.6)'),
+  )
   assert.throws(() => reopen('{"version":2,"source":""}'), /Unsupported/)
 })
 
