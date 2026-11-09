@@ -129,6 +129,7 @@ describe('module catalog', () => {
           expect(
             [
               ...spec.strudel,
+              ...(spec.id === 'clock' ? ['fast'] : []),
               ...(spec.id === 'osc' || spec.soundSource
                 ? ['s', ...(['smpl', 'bytebeat'].includes(spec.id) ? ['n'] : [])]
                 : spec.id === 'smpl'
@@ -159,7 +160,9 @@ describe('module catalog', () => {
                 .sort(),
             )
           for (const name of Object.values(binding.method.names))
-            expect(spec.strudel, where).toContain(name)
+            expect([...spec.strudel, ...(spec.id === 'clock' ? ['fast'] : [])], where).toContain(
+              name,
+            )
         }
         if (binding.argument.kind !== 'tuple')
           expect(binding.argument.kind === 'number', where).toBe(item.kind === 'knob')

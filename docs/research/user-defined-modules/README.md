@@ -331,3 +331,12 @@ production UX/browser acceptance. The existing module/translation/patch/design
 specs link this research boundary without treating the proposal as shipped.
 Scoped issue linkage and final verification/review/merge references are in the
 [ledger](review-ledger.md).
+
+## Adopted expression foundation (#242)
+
+The built-in reader/writer now supports independently validated static
+`Binding.path` steps for call arguments, receivers and supported callback bodies,
+composed with existing `loop`/`fx` addresses. #217 should use this production
+foundation rather than copying the research prototype's range IDs. See
+[the current composition/source contract](../../mix-composition.md). No helper
+panel, definition schema or arbitrary-JavaScript expansion is adopted by #242.

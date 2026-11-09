@@ -1,3 +1,4 @@
+import { isStack } from '../modules/composition'
 import {
   arrangementLength,
   formatArrangement,
@@ -27,7 +28,7 @@ export const DEFAULT_SONG_CYCLES = 16
 /** Rows for every connected MIX channel, in rack order. */
 export function arrangerRows(patch: Patch): ArrangerRow[] {
   const routed = routedModules(patch)
-  const mixers = patch.modules.filter((module) => module.type === 'mix')
+  const mixers = patch.modules.filter((module) => module.type === 'mix' && !isStack(module))
   return mixers.flatMap((mixer) =>
     [1, 2, 3, 4].flatMap((channel) => {
       const cable = patch.cables.find(

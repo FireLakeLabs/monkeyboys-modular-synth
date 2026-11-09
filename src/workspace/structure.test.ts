@@ -181,7 +181,9 @@ describe('planned imported structure', () => {
   it('refuses stack argument removal and root replacement rather than changing unrelated interpretation', () => {
     const stacked = saveLayout(read("stack(note('c3').s('sine'),note('e3').s('square'))\n"))
     const input = cable(stacked.patch, id(stacked.patch, 'mix'))
-    expect(() => editDocument(stacked, removeCable(stacked.patch, input.id))).toThrow(/independent/)
+    expect(() => editDocument(stacked, removeCable(stacked.patch, input.id))).toThrow(
+      /nested expression/,
+    )
     let original = saveLayout(read("$: note('c3').s('sine')\n"))
     original = editDocument(original, placeModule(original.patch, 'seq', 3))
     const replacement = original.patch.modules.find(

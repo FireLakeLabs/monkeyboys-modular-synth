@@ -1,3 +1,4 @@
+import { isStack } from '../src/modules/composition.ts'
 import { expectedExport } from './editor-browser.mjs'
 import { editorSource as source, replaceSource, enableAutoApply } from './editor-browser.mjs'
 // Browser verification: import this module from the Vite dev server in a browser.
@@ -433,7 +434,7 @@ export async function verifyLibraryRackEditing(patchIds) {
   const patch = () => read(source()).patch
   const id = (type) =>
     patch()
-      .modules.filter((module) => module.type === type)
+      .modules.filter((module) => module.type === type && (type !== 'mix' || !isStack(module)))
       .at(-1).id
   const jack = (ref) => document.querySelector(`[data-jack="${ref.module}:${ref.jack}"]`)
   async function add(name) {

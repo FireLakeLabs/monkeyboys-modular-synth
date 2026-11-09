@@ -272,21 +272,20 @@ it.each([
   (label, mute, solo, name) => {
     const source = `${label}: stack(note("c3").s("sine"),note("e3").s("sine"))\n`
     const doc = read(source)
-    const mixer = doc.patch.modules.find((module) => module.type === 'mix')
+    const mixer = doc.patch.modules.find(
+      (module) => module.type === 'mix' && module.values.mode !== 'Stack',
+    )
     expect(mixer?.values).toMatchObject({
       mute1: mute,
-      mute2: mute,
       solo1: solo,
-      solo2: solo,
       name1: name,
-      name2: name,
     })
     const regenerated = sourceBody(generate(doc.patch))
     if (label === 'bass') {
       expect(regenerated).toContain('bass: ')
-      expect(regenerated).toContain('bass2: ')
+      expect(regenerated).not.toContain('bass2: ')
     } else
-      expect(regenerated.match(new RegExp(`^${label.replace('$', '\\$')}: `, 'gm'))).toHaveLength(2)
+      expect(regenerated.match(new RegExp(`^${label.replace('$', '\\$')}: `, 'gm'))).toHaveLength(1)
     expect(generate(doc)).toBe(source)
     const saved = saveLayout(doc)
     expect(read(saved.source).patch).toEqual(doc.patch)

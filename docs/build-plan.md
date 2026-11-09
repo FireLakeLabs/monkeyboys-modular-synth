@@ -286,3 +286,15 @@ production increment. No custom-panel implementation, MIX change, consolidation
 or format extension ships in this research; #217 retains its implementation and
 browser acceptance, while macro authoring/encapsulation/portability remain
 explicit later proposals.
+
+## Dual-mode MIX foundation (#242)
+
+MIX Voices/Stack and static nested-expression paths are implemented and locally
+verified (2,638 tests, 59 guardrails, full 229-test browser suite, bounded review).
+Hosted gates and protected merge are tracked in the [case matrix](mix-composition.md). Voices
+retains independent labelled outputs, Stack combines event patterns at unity, and
+imports preserve static groups, named dependencies/fan-out and exact source.
+The library audit covers all bundled patches and reader fixtures, separately from
+the historical 22-file corpus. #243 callback branching and #244 section sequencing
+build on these expression paths; neither ships here. #216 owns expanded geometry,
+#217 custom panels, and #248–251 remain outside this increment.

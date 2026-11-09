@@ -1,10 +1,11 @@
 import { parse, type CallExpression, type Expression } from 'acorn'
-import { descriptor, type Scope, type Binding } from '../codegen/layout'
+import { descriptor, type Scope, type Binding, type ExpressionStep } from '../codegen/layout'
 import { OUT } from '../modules/catalog'
 import type { Span } from './types'
 
 export interface Call extends Span {
   name: string
+  receiver?: Expression
   args: CallExpression['arguments']
 }
 
@@ -16,6 +17,7 @@ export interface ParsedScope extends Span {
   kind: 'voice' | 'declaration' | 'tempo'
   label?: string
   loop?: number[]
+  path?: ExpressionStep[]
 }
 
 export function chain(expression: Expression): { root: Expression; calls: Call[] } {
@@ -48,6 +50,7 @@ export function chain(expression: Expression): { root: Expression; calls: Call[]
     calls: [
       ...prefix.calls,
       {
+        receiver: callee.object,
         name: callee.property.name,
         start: callee.object.end,
         end: expression.end,
@@ -72,16 +75,6 @@ export function parseSource(
     anchor?: string,
     label?: string,
   ): void {
-    if (
-      kind === 'voice' &&
-      expression.type === 'CallExpression' &&
-      expression.callee.type === 'Identifier' &&
-      expression.callee.name === 'stack' &&
-      expression.arguments.every((arg) => arg.type !== 'SpreadElement')
-    ) {
-      for (const arg of expression.arguments) add(arg, kind, anchor, label)
-      return
-    }
     const parsed = chain(expression)
     scopes.push({
       expression,
@@ -214,15 +207,57 @@ export function nestedScope(parent: ParsedScope, index: number): ParsedScope | u
       calls: parsed.calls.map((c) => ({ name: c.name, arguments: descriptor(c.args) })),
     },
     kind: 'declaration',
-    loop: [...(parent.loop ?? []), index],
+    ...(parent.path
+      ? { path: [...parent.path, { call: index, argument: 'body' as const }] }
+      : { loop: [...(parent.loop ?? []), index] }),
   }
 }
 
 export function bindingScope(
   scopes: readonly ParsedScope[],
-  binding: Pick<Binding, 'scope' | 'loop'>,
+  binding: Pick<Binding, 'scope' | 'loop' | 'path'>,
 ): ParsedScope | undefined {
   let scope = scopes.find((item) => item.descriptor.id === binding.scope)
+  for (const step of binding.path ?? []) scope = scope && expressionScope(scope, step)
   for (const index of binding.loop ?? []) scope = scope && nestedScope(scope, index)
   return scope
+}
+
+/** A static argument/receiver retains its exact lexical location and expression boundary. */
+export function expressionScope(
+  parent: ParsedScope,
+  step: ExpressionStep,
+): ParsedScope | undefined {
+  if (step.argument === 'body') return nestedScope(parent, step.call)
+  const call = parent.calls[step.call]
+  const expression = step.argument === 'receiver' ? call?.receiver : call?.args[step.argument]
+  if (!expression || expression.type === 'SpreadElement') return undefined
+  const parsed = chain(expression)
+  return {
+    ...parsed,
+    expression,
+    start: expression.start,
+    end: expression.end,
+    kind: 'declaration',
+    descriptor: {
+      id: parent.descriptor.id,
+      root: descriptor(parsed.root),
+      calls: parsed.calls.map((c) => ({ name: c.name, arguments: descriptor(c.args) })),
+    },
+    path: [
+      ...(parent.path ?? (parent.loop ?? []).map((call) => ({ call, argument: 'body' as const }))),
+      step,
+    ],
+  }
+}
+
+/** Descend only through the supported static combiner; never evaluate arguments. */
+export function expressionChildren(parent: ParsedScope): ParsedScope[] {
+  return parent.calls.flatMap((call, index) => {
+    if (call.name !== 'stack') return []
+    return [
+      ...(call.receiver ? [{ call: index, argument: 'receiver' as const }] : []),
+      ...call.args.map((_, argument) => ({ call: index, argument })),
+    ].flatMap((step) => expressionScope(parent, step) ?? [])
+  })
 }

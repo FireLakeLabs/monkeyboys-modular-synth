@@ -322,8 +322,9 @@ export const MODULE_EXERCISES: readonly LibraryPatch[] = [
   {
     type: 'mix',
     source: mixSource,
-    description: 'Two distinguishable voices on separate mixer channels.',
-    tryThis: 'Set MIX channel 1 to 0, restore it, then set channel 2 to 0.',
+    description: 'A Stack phrase feeding one of two independent Voices channels.',
+    tryThis:
+      'Compare MIX modes: mix2 stacks two note patterns before OSC; mix1 levels each voice. Switch mix1 to Stack for unity, then Undo.',
   },
   {
     type: 'scope',

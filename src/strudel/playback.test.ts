@@ -519,3 +519,21 @@ it('replaces audio buses on allocation changes but retains them for knob edits',
   )
   await playback.stop()
 })
+
+it('replaces orbit effects when MIX mode changes even when every cable is unchanged', async () => {
+  let patch = routingFixture('audio-mod')
+  const playback = createPlayback(patch)
+  await playback.play()
+  patch = setValue(patch, 'mix1', 'mode', 'Stack')
+  await playback.update(patch)
+  expect(engine.play).toHaveBeenLastCalledWith(
+    expect.any(String),
+    expect.objectContaining({ resetEffects: true }),
+  )
+  await playback.update(setValue(patch, 'out1', 'vol', 0.5))
+  expect(engine.play).toHaveBeenLastCalledWith(
+    expect.any(String),
+    expect.objectContaining({ resetEffects: true }),
+  )
+  await playback.stop()
+})

@@ -195,8 +195,8 @@ const signature = (scope: OwnedScope, emitted: Set<string>): string =>
 
 /** A plan never mutates the accepted document. Its result still needs semantic reader validation. */
 export function planStructure(document: SourceDocument, next: Patch, body: string): StructurePlan {
-  if (document.bindings.some((binding) => binding.loop))
-    refuse('function-loop wiring remains source-owned; make the rack editable to repatch it')
+  if (document.bindings.some((binding) => binding.loop || binding.path))
+    refuse('nested expression wiring remains source-owned; make the rack editable to repatch it')
   const before = generated(document.patch)
   const emitted = new Set(
     [...before.values()].flatMap((scope) =>

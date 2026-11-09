@@ -58,10 +58,16 @@ export function measurePatch(id: string, source: string): PatchCoverage {
   const opaque = new Set<string>()
   for (const scope of scopes) {
     if (scope.kind === 'tempo') continue
-    const owners = bindings.filter((binding) => binding.scope === scope.descriptor.id)
+    const owners = bindings.filter(
+      (binding) => binding.scope === scope.descriptor.id && !binding.path && !binding.loop,
+    )
     // Unused declarations and setup helpers have no rack projection.
     if (scope.kind === 'declaration' && owners.length === 0) continue
-    if (owners.some((binding) => types.get(binding.module) === 'code'))
+    if (
+      bindings.some(
+        (binding) => binding.scope === scope.descriptor.id && types.get(binding.module) === 'code',
+      )
+    )
       opaque.add(scope.descriptor.id)
     for (const [index, call] of scope.calls.entries()) {
       // Proven generator routing is infrastructure, not a module or an unmapped call.

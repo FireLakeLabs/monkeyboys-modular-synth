@@ -315,7 +315,10 @@
 .module-controls:has(> .channel-strip) {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.module-controls:has(> .channel-strip) > .switch-control {
+  grid-column: 1 / -1;
 }
 .module-controls > .more-toggle {
   width: 100%;

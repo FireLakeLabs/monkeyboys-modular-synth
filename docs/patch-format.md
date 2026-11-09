@@ -499,3 +499,26 @@ version or field. No production format changes here. Exact source, existing save
 CODE-rack identity and pinned events are proven separately; complete custom-panel
 settings/history/reopen remain #217 acceptance. Live closure state is never a
 saved definition or instance value.
+
+## Static expression addresses and MIX modes (#242)
+
+The v1 marker/envelope and Patch version remain 1. MIX `values.mode` is `Voices`
+(default when absent) or `Stack`; there is no legacy interpretation in which a
+source `stack` means flattened Voices. Every inactive strip value, socket, cable,
+OUT volume, disconnected module and opaque source remains complete saved state.
+Changed/old metadata that cannot independently prove the new interpretation is
+reported invalid and retained exactly until explicit replacement; browser storage
+is never cleared. The bundled audit and deliberate MIX exercise rebuild are
+recorded in [MIX composition](mix-composition.md).
+
+Bindings can add `path: {call, argument}[]`. Each step identifies an outer call
+and its numeric argument, `receiver`, or supported callback `body`; a nested path
+resolves relative to the prior expression. Existing `loop`/`fx` fields retain their
+meaning. Source-owned continuation panels additionally use nonnegative `part`,
+the index of their first original input. These are addresses, not identity hashes.
+Every path and call must resolve against the accepted AST; independent projection
+then proves semantic ownership and saved graph agreement. Generated envelopes
+are checked against the writer. Forged paths and mismatched saved CODE cannot
+acquire native module ownership. Scalar edits use the nested literal span.
+External changes inside a containing call conservatively forfeit ambiguous nested
+identities rather than guessing from position; exact save/reopen restores all IDs.

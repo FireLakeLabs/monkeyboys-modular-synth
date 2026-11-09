@@ -7,7 +7,7 @@ import { numericNotation } from '../patch/notation'
 import { isRailHp } from '../patch/layout'
 import { isArrangement } from '../patch/arrangement'
 import { getModuleSpec } from '../modules/catalog'
-import { callMethod, tupleControls } from '../modules/bindings'
+import { callMethod, tupleControls, controlEnabled } from '../modules/bindings'
 import { looksFor } from '../modules/looks'
 import type { Control, GridRow, JackSignal, ModuleSpec } from '../modules/types'
 import type { Cable, ControlValue, Patch, PlacedModule } from '../patch/types'
@@ -215,6 +215,11 @@ export function graph(patch: Patch): Map<string, Node> {
     const input = to?.spec.jacks.find((jack) => jack.id === cable.to.jack)
     if (!from || !to || output?.direction !== 'out' || input?.direction !== 'in')
       throw new Error(`Invalid cable endpoints: ${cable.id}`)
+    if (
+      !controlEnabled(to.spec, to.module.values, input) ||
+      !controlEnabled(from.spec, from.module.values, output)
+    )
+      throw new Error('Disconnect Voices CV before switching MIX to Stack')
     if (to.inputs.has(input.id)) throw new Error(`Occupied input: ${to.module.id}:${input.id}`)
     if (
       from.spec.id === 'lfo' &&
@@ -271,6 +276,15 @@ export function graph(patch: Patch): Map<string, Node> {
     for (const [id, cable] of node.inputs) {
       const input = node.spec.jacks.find((jack) => jack.id === id)
       const actual = signal(requireNode(nodes, cable.from.module), cable.from.jack)
+      if (node.spec.composition && node.spec.composition.inputs.includes(id)) {
+        const stack = value(node, node.spec.composition.mode) === node.spec.composition.stack
+        if (actual === 'function' || actual === 'mod' || (!stack && actual === 'pattern'))
+          throw new Error(
+            stack
+              ? 'Stack combines pattern or voiced events'
+              : 'Voices requires voiced inputs; select Stack for note patterns',
+          )
+      }
       if (actual === 'function' && id === 'in' && loops.has(node.module.id)) continue
       if (actual === 'audio' && input?.cvTarget) continue
       if (actual !== 'any' && input?.signal !== 'any' && input?.signal !== actual)
@@ -363,6 +377,17 @@ export function outputSignal(
   const output =
     node.spec.jacks.find((j) => j.id === jack && j.direction === 'out') ??
     node.spec.jacks.find((j) => j.direction === 'out')
+  if (node.spec.composition) {
+    const inputs = node.spec.composition.inputs.flatMap((id) => {
+      const cable = node.inputs.get(id)
+      return cable
+        ? [outputSignal(nodes, requireNode(nodes, cable.from.module), cable.from.jack, loops)]
+        : []
+    })
+    if (value(node, node.spec.composition.mode) === node.spec.composition.voices) return 'audio'
+    if (!inputs.length) return 'any'
+    return inputs.every((signal) => signal === inputs[0]) ? (inputs[0] ?? 'any') : 'any'
+  }
   if (output?.signal !== 'any') return output?.signal ?? 'any'
   const input = node.inputs.get('in')
   return input

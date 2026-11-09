@@ -58,10 +58,10 @@ describe('production reader corpus measurement', () => {
     })
   })
 
-  it('expands stack voices, counts zero-call CODE, and never executes setup', () => {
+  it('counts Stack as one first-class voice, retains zero-call CODE, and never executes setup', () => {
     expect(
       measurePatch('stack', 'throw new Error("must not run"); stack(s("bd"), s("hh").unknown())'),
-    ).toMatchObject({ voices: 2, readableVoices: 1, calls: 3, mappedCalls: 2 })
+    ).toMatchObject({ voices: 1, readableVoices: 0, calls: 1, mappedCalls: 1 })
     expect(measurePatch('opaque', '$: things["pattern"]()')).toMatchObject({
       calls: 0,
       voices: 1,

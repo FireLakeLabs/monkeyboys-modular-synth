@@ -421,7 +421,8 @@ export function generateDocument(
       if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
       // Opaque CODE may end in a line comment; keep separators around it.
       expression = append({ ...expression, inline: false }, text, node)
-      expression.sourceRouting ||= syntax(expression.text).hasOrbit
+      expression.sourceRouting ||=
+        syntax(expression.text).hasOrbit || syntax(`silence${text}\n`, { opaque: true }).hasOrbit
       return expression
     }
     if (node.spec.id === 'duck')
@@ -469,6 +470,7 @@ export function generateDocument(
             end: offset + o.end,
           })),
         )
+        expression.nodes.push(...transformed.nodes)
         expression.sourceRouting ||= transformed.sourceRouting
       }
       return expression
@@ -570,6 +572,77 @@ export function generateDocument(
     const operator = node.inputs.get('fm')
     if (operator) expression = transform(requireNode(nodes, operator.from.module), expression)
     return expression
+  }
+
+  /** A Voices path ends at a first-class Stack; its setters cannot cross that boundary. */
+  function finishMixers(original: CodeExpression): CodeExpression {
+    const factors = original.mixers.map((mixer) => mixer.gain)
+    const gain = product(factors, numeric)
+    let voice = original
+    // Arranger lanes filter events by cycle, so each mixer hop on the path applies
+    // its own mask; masks commute and keep this voice's orbit, labels and gain.
+    for (const mixer of original.mixers.filter((mixer) => mixer.arrangement)) {
+      voice = append(voice, `.mask(${quote(mixer.arrangement)})`)
+      voice.owners.push({
+        module: mixer.module,
+        role: 'mixer',
+        start: voice.text.lastIndexOf('.mask('),
+        end: voice.text.length,
+      })
+    }
+    if (
+      gain !== '1' ||
+      original.mixers.some((mixer) => {
+        const node = requireNode(nodes, mixer.module)
+        const jack = node.spec.jacks.find((j) => j.cvTarget === mixer.control)
+        return jack && node.inputs.has(jack.id)
+      })
+    ) {
+      voice = append(voice, `.postgain(${gain})`)
+      const start = voice.text.lastIndexOf('.postgain(')
+      for (const mixer of original.mixers) {
+        voice.owners.push({ module: mixer.module, role: 'mixer', start, end: voice.text.length })
+        const jack = getModuleSpec('mix').jacks.find((jack) => jack.cvTarget === mixer.control)
+        for (const module of mixer.cvModules) {
+          if (!jack) throw new Error('Missing mixer CV jack')
+          voice.owners.push({
+            module,
+            role: 'cv',
+            target: {
+              module: mixer.module,
+              jack: jack.id,
+              control: mixer.control,
+              ...(mixer.cvPaths.get(module) ? { path: mixer.cvPaths.get(module) ?? '' } : {}),
+            },
+            start,
+            end: voice.text.length,
+          })
+        }
+      }
+    }
+    for (const [index, mixer] of original.mixers.entries())
+      voice = audioModulation(
+        voice,
+        requireNode(nodes, mixer.module),
+        mixer.control,
+        product(
+          factors.filter((_factor, i) => i !== index),
+          numeric,
+        ),
+      )
+    const channels = original.mixers.findLast((mixer) => mixer.channels !== '1:2')?.channels
+    if (channels) {
+      voice = append(voice, `.channels(${quote(channels)})`)
+      const mixer = original.mixers.findLast((mixer) => mixer.channels !== '1:2')
+      if (mixer)
+        voice.owners.push({
+          module: mixer.module,
+          role: 'mixer',
+          start: voice.text.lastIndexOf('.channels('),
+          end: voice.text.length,
+        })
+    }
+    return { ...voice, mixers: [] }
   }
 
   function raw(node: Node): CodeExpression[] {
@@ -710,7 +783,41 @@ export function generateDocument(
           expression = append(expression, `.degradeBy(${numeric(number(node, 'drop'))})`, node)
         return [transform(node, expression)]
       }
-      case 'mix':
+      case 'mix': {
+        const composition = node.spec.composition
+        if (composition && string(node, composition.mode) === composition.stack) {
+          let expression = blank(true)
+          expression.text = 'stack('
+          const arms = composition.inputs.flatMap((id) => {
+            const cable = node.inputs.get(id)
+            return cable ? emit(requireNode(nodes, cable.from.module)) : []
+          })
+          for (const [index, original] of arms.entries()) {
+            if (original.mixers.some((m) => m.mute || m.solo || m.name))
+              throw new Error(
+                'Stack cannot contain labelled, muted or soloed Voices; clear those flags or keep Voices outside Stack',
+              )
+            const arm = finishMixers(original)
+            if (index) expression.text += ', '
+            const offset = expression.text.length
+            expression.text += arm.text
+            expression.owners.push(
+              ...arm.owners.map((o) => ({ ...o, start: o.start + offset, end: o.end + offset })),
+            )
+            expression.nodes.push(...arm.nodes)
+            expression.sourceRouting ||=
+              arm.sourceRouting || arm.nodes.some((id) => nodes.get(id)?.spec.id === 'code')
+          }
+          expression.text += ')'
+          expression.owners.push({
+            module: node.module.id,
+            role: 'module',
+            start: 0,
+            end: expression.text.length,
+          })
+          expression.nodes.push(node.module.id)
+          return [expression]
+        }
         return node.spec.jacks.flatMap((jack) => {
           if (jack.direction !== 'in' || jack.cvTarget) return []
           const cable = node.inputs.get(jack.id)
@@ -737,6 +844,7 @@ export function generateDocument(
             ],
           }))
         })
+      }
       default: {
         if (node.spec.id === 'osc' && string(node, 'mode') === 'freq' && !input(node)) {
           const expression = append(blank(), `freq(${numeric(number(node, 'freq'))})`, node)
@@ -750,7 +858,12 @@ export function generateDocument(
           if (chainedCode(text)) return []
           syntax(text)
           // Preserve the exact source inside parentheses, including terminal line comments.
-          return [{ ...append(blank(), `(${text}\n)`, node), sourceRouting: syntax(text).hasOrbit }]
+          return [
+            {
+              ...append(blank(), `(${text}\n)`, node),
+              sourceRouting: syntax(text, { opaque: true }).hasOrbit,
+            },
+          ]
         }
         return []
       }
@@ -816,6 +929,14 @@ export function generateDocument(
       ...[...definitions.values()].flatMap((d) => d.expressions),
     ].flatMap((e) => syntax(e.text).orbitNumbers),
   )
+  // Unrouted source-owned events may use the engine's default orbit, even when
+  // sibling events have explicit routes. Keep generated voices off that bus.
+  if (
+    [...audible, ...sends, ...sides.flatMap((s) => s.expressions)].some(
+      (e) => e.sourceRouting || syntax(e.text).hasOrbit,
+    )
+  )
+    reserved.add(1)
   let nextAllocated = 1
   const orbits = audible.map((e) => {
     if (e.sourceRouting || syntax(e.text).hasOrbit) return undefined
@@ -884,6 +1005,7 @@ export function generateDocument(
       ...[...definitions.values()].flatMap((definition) => definition.expressions),
     ].flatMap((expression) => syntax(expression.text).orbitNumbers),
   )
+  if (voices.some((e) => e.sourceRouting || syntax(e.text).hasOrbit)) reservedOrbits.add(1)
   let nextOrbit = 1
   const labels = new Set<string>()
   function allocateLabel(wanted: string): string {
@@ -898,72 +1020,7 @@ export function generateDocument(
       !voice.mixers.some((mixer) => mixer.mute) && voice.mixers.some((mixer) => mixer.solo),
   )
   voices.forEach((original, index) => {
-    const factors = original.mixers.map((mixer) => mixer.gain)
-    const gain = product(factors, numeric)
-    let voice = original
-    // Arranger lanes filter events by cycle, so each mixer hop on the path applies
-    // its own mask; masks commute and keep this voice's orbit, labels and gain.
-    for (const mixer of original.mixers.filter((mixer) => mixer.arrangement)) {
-      voice = append(voice, `.mask(${quote(mixer.arrangement)})`)
-      voice.owners.push({
-        module: mixer.module,
-        role: 'mixer',
-        start: voice.text.lastIndexOf('.mask('),
-        end: voice.text.length,
-      })
-    }
-    if (
-      gain !== '1' ||
-      original.mixers.some((mixer) => {
-        const node = requireNode(nodes, mixer.module)
-        const jack = node.spec.jacks.find((j) => j.cvTarget === mixer.control)
-        return jack && node.inputs.has(jack.id)
-      })
-    ) {
-      voice = append(voice, `.postgain(${gain})`)
-      const start = voice.text.lastIndexOf('.postgain(')
-      for (const mixer of original.mixers) {
-        voice.owners.push({ module: mixer.module, role: 'mixer', start, end: voice.text.length })
-        const jack = getModuleSpec('mix').jacks.find((jack) => jack.cvTarget === mixer.control)
-        for (const module of mixer.cvModules) {
-          if (!jack) throw new Error('Missing mixer CV jack')
-          voice.owners.push({
-            module,
-            role: 'cv',
-            target: {
-              module: mixer.module,
-              jack: jack.id,
-              control: mixer.control,
-              ...(mixer.cvPaths.get(module) ? { path: mixer.cvPaths.get(module) ?? '' } : {}),
-            },
-            start,
-            end: voice.text.length,
-          })
-        }
-      }
-    }
-    for (const [index, mixer] of original.mixers.entries())
-      voice = audioModulation(
-        voice,
-        requireNode(nodes, mixer.module),
-        mixer.control,
-        product(
-          factors.filter((_factor, i) => i !== index),
-          numeric,
-        ),
-      )
-    const channels = original.mixers.findLast((mixer) => mixer.channels !== '1:2')?.channels
-    if (channels) {
-      voice = append(voice, `.channels(${quote(channels)})`)
-      const mixer = original.mixers.findLast((mixer) => mixer.channels !== '1:2')
-      if (mixer)
-        voice.owners.push({
-          module: mixer.module,
-          role: 'mixer',
-          start: voice.text.lastIndexOf('.channels('),
-          end: voice.text.length,
-        })
-    }
+    const voice = finishMixers(original)
     // Opaque routing is source-owned even when its argument happens to be an integer.
     const importedRouting = voice.sourceRouting || syntax(voice.text).hasOrbit
     while (reservedOrbits.has(nextOrbit)) nextOrbit++

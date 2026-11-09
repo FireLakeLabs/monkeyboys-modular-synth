@@ -335,6 +335,9 @@ it('accounts for every catalog module/control without silently skipping new cont
       ...FUNCTION_CONTROLS,
       // Multi-input adapters have separate source/rack/event proofs in routing.test.ts.
       'gates.steps',
+      // Structural composition and CLOCK direction are covered in composition.test.ts.
+      'mix.mode',
+      'clock.speed',
       'switch.steps',
       'duck.attack',
       'duck.depth',

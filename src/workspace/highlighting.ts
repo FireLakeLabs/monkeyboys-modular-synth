@@ -1,5 +1,11 @@
 import { getModuleSpec } from '../modules/catalog'
-import { parseSource, bindingScope, type Call } from '../reader/syntax'
+import {
+  parseSource,
+  bindingScope,
+  expressionChildren,
+  type ParsedScope,
+  type Call,
+} from '../reader/syntax'
 import type { SourceDocument, Span } from '../reader/types'
 
 export interface SourceTreatment extends Span {
@@ -68,8 +74,11 @@ export function sourceTreatments(document: SourceDocument): SourceTreatment[] {
       for (const declaration of statement.declarations)
         if (declaration.id.type === 'Identifier' && names.has(declaration.id.name))
           named(declaration.id)
-  for (const scope of scopes)
+  function references(scope: ParsedScope) {
     if (scope.root.type === 'Identifier' && names.has(scope.root.name)) named(scope.root)
+    for (const child of expressionChildren(scope)) references(child)
+  }
+  for (const scope of scopes) references(scope)
   return treatments
 }
 

@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      :root{font-family:var(--font-sans)}.modes{display:flex;gap:24px;flex-wrap:wrap}.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;width:144px;box-sizing:border-box}.panel strong{display:block;border-bottom:4px solid var(--chart-4);padding-bottom:8px}.mode{display:flex;gap:3px;margin:12px -10px;font-size:12px}.mode span{padding:5px;background:var(--secondary);border-radius:4px}.mode .on{background:var(--primary);color:var(--primary-foreground)}.strips{display:flex;justify-content:space-between;font-size:11px;text-align:center}.track{height:70px;border-left:3px solid var(--border);margin:8px auto;width:0;position:relative}.track:after{content:"";position:absolute;left:-7px;top:22px;width:12px;height:6px;background:var(--foreground)}.jacks{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;font-size:11px;text-align:center;margin-top:16px}.jack{display:block;border:2px solid var(--foreground);border-radius:50%;width:13px;height:13px;margin:5px auto}.note{font-size:12px;line-height:1.5;margin:14px 0;color:var(--muted-foreground)}code{font-size:12px}.out{margin-top:16px;font-size:11px;text-align:right}
+    </style>
+  </head>
+  <body>
+    <div class="modes">
+      <section>
+        <div class="panel">
+          <strong>MIX</strong>
+          <div class="mode"><span class="on">Voices</span><span>Stack</span></div>
+          <div class="strips">
+            <div>
+              CH 1
+              <div class="track"></div>
+              .8<br />M S
+            </div>
+            <div>
+              CH 2
+              <div class="track"></div>
+              .8<br />M S
+            </div>
+            <div>
+              CH 3
+              <div class="track"></div>
+              .8<br />M S
+            </div>
+            <div>
+              CH 4
+              <div class="track"></div>
+              .8<br />M S
+            </div>
+          </div>
+          <div class="jacks">
+            <div>IN 1<i class="jack"></i>CV 1<i class="jack"></i></div>
+            <div>IN 2<i class="jack"></i>CV 2<i class="jack"></i></div>
+            <div>IN 3<i class="jack"></i>CV 3<i class="jack"></i></div>
+            <div>IN 4<i class="jack"></i>CV 4<i class="jack"></i></div>
+          </div>
+          <div class="out">OUT ◉</div>
+        </div>
+        <p class="note">Independent labelled voices.<br />Level, CV, mute, solo and lanes.</p>
+        <code>$: a.postgain(.8)<br />$: b.postgain(.8)</code>
+      </section>
+      <section>
+        <div class="panel">
+          <strong>MIX</strong>
+          <div class="mode"><span>Voices</span><span class="on">Stack</span></div>
+          <p class="note">One event pattern<br />Unity combination</p>
+          <div class="jacks">
+            <div>IN 1<i class="jack"></i></div>
+            <div>IN 2<i class="jack"></i></div>
+            <div>IN 3<i class="jack"></i></div>
+            <div>IN 4<i class="jack"></i></div>
+          </div>
+          <div class="out">OUT ◉</div>
+        </div>
+        <p class="note">Strip settings retained.<br />CV must be disconnected to switch.</p>
+        <code>$: stack(a, b).fast(2)</code>
+      </section>
+    </div>
+  </body>
+</html>
