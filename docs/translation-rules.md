@@ -1,5 +1,7 @@
 # Translation rules
 
+How a patch becomes Strudel, and how Strudel becomes a patch. These rules apply in both directions.
+
 ## Equation, chip and speech sources (#143/#144)
 
 Catalog `soundSource` can name a selector control or a fixed sound literal.
@@ -30,8 +32,6 @@ Exact imported bytes, complete saved rack identity, pinned events, and WebAudio
 PCM remain separate acceptance claims. Speech's native voice enumeration,
 utterance callbacks, and controlled provider tests are also recorded separately;
 none alone proves physical speech output.
-
-How a patch becomes Strudel, and how Strudel becomes a patch. These rules apply in both directions.
 
 ## The five kinds of cable
 

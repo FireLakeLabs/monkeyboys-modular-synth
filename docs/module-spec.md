@@ -80,9 +80,7 @@ words. Intrinsic word widths allow long names to take a full row within the
 180 px dock; full accessible names remain on the buttons. Module widths and
 new-patch rail sizing are unchanged.
 
-## Conventions
-
-### Equation, chip and speech sources (#143/#144)
+## Equation, chip and speech sources (#143/#144)
 
 BYTEBEAT and SPEAK are Alien panels in the Sound palette group; CHIP is Hardware.
 All three use 16 HP in every family look. Their exercises are in Patch library →
@@ -140,6 +138,8 @@ language's available list, as in the pinned engine. These bounds do not promise
 128 installed voices. Browsers without the speech API produce no speech and do
 not throw. Native provider availability and asynchronous synthesis failures are
 environmental limits; event/cancel API proof does not establish audible speech.
+
+## Conventions
 
 - **Width** is in HP. 1 HP = 12 px at 100% zoom. A module is the same width in every look. The catalog may widen a module where that is [worth it](decisions.md#looks).
 - **Jacks:** `in` / `out`, with signal type `pattern`, `audio`, `mod`, or `any` (Alien and Cyber jacks pass through whatever enters).
