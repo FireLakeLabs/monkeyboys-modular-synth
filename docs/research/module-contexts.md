@@ -42,6 +42,7 @@ The earlier 58-module/name scan was preliminary; ADD makes the current count 59.
 ```sh
 npm ci
 node scripts/module-contexts.mjs
+node scripts/module-contexts.mjs --check
 npm run check
 ```
 
@@ -56,9 +57,9 @@ enters evaluation. Setup sentinels and an invalid sample URL are read/saved
 without running or fetching them.
 
 Observed reproduction: `RESULT module-contexts modules=59 comparisons=48
-reader=63 fallbacks=59 examples=8 failures=0`. Every module's committed exercise has its actual catalog
+reader=64 fallbacks=59 examples=8 failures=0`. Every module's committed exercise has its actual catalog
 owner, byte-exact document generation and complete saved graph equality after
-save/reopen. Each module also has a concrete fallback/source-preservation counterexample; OUT retains opaque tempo setup without inventing a binding. The 63 additional reader/document cases separately check exact source
+save/reopen. Each module also has a concrete fallback/source-preservation counterexample; OUT retains opaque tempo setup without inventing a binding. The 64 additional reader/document cases separately check exact source
 and saved identity; 48 comparisons query real pinned event values and whole/part
 times over `[0,4)`. Hashes cover complete event arrays; samples/counts remain
 inspectable. Equality in one four-cycle fixture is a bounded observation, not a
@@ -116,11 +117,13 @@ Retaining an inert PW field on sine does not prove audible pulse-width behavior.
 S4 similarly supports supersaw unison/detune/spread and crackle density. HARMONIC's
 current `s("user").partials([...])` adjacency is a reader convention: stock
 non-sine waves can also enter the custom-wave path with partials. `s("user")`
-without partials falls back to triangle, while sine bypasses that custom path.
+without partials or `n` falls back to triangle, while sine bypasses that custom path.
 FM is consumed by stock/pulse/supersaw oscillator paths, with up to eight indexed
 operators in S5; its event field on a sample does not make the sampler FM-capable.
 Do not fuse FM OP exclusively to OSC or confuse CHIP's `zdelay` with DELAY.
 BYTEBEAT's formulas, CHIP and SPEAK remain separate backend/UI domains.
+
+Bare `n` is not universally pitch: S4's oscillator reads `partials = value.partials ?? value.n`, while S5's frequency helper reads `note`/`freq` (default MIDI note 36). Before QUANT, `n` can supply scale degrees; `scale` consumes it into `note`. With a sampler it selects a sample index; without scale on a stock oscillator it supplies a partial count. C26 records that `n("0 2").s("sawtooth")` imports as SEQ in degree mode plus OSC without proving pitch or sound from that panel label.
 
 **Voice recognition depends on an audio boundary in today's graph.** C01 proves
 root `s("saw")` is OSC via #238's alias, but `s("sine")` still projects as
@@ -215,7 +218,7 @@ $: a.s("square")
 C01/C02/C05/C17 and S1/S4/S5 reject mandatory SEQ+OSC, OSC+FM or SMPL+DRUMS merges.
 A one-panel source mode may remain useful as a **creation shortcut** only if its
 expanded nodes/ports remain accessible. New source presets must not reset hidden
-controls, imported fields or source aliases. Grouping should never hide which
+controls, imported fields or source aliases. In particular, a group must not imply that bare SEQ degree mode supplies OSC pitch without scale. Grouping should never hide which
 branch owns the selector. Tradeoff: a clearer palette against larger panels and
 source-dependent controls. Effort medium/high: grouping metadata, focus and
 layout; no DSP dependency. Proposal, not permission to change widths or sources.
@@ -223,16 +226,18 @@ layout; no DSP dependency. Proposal, not permission to change widths or sources.
 ### P2 — Keep ENV/LFO/utilities independent; optionally group a target and modulator
 
 ```text
-Before: ENV e → VCF.CV       e → VCA.CV
-After:  { ENV e → VCF.CV }   e → VCA.CV  (external cable still visible)
+Before: ENV filter → VCF.CV      ENV amp → VCA.CV
+After:  { ENV filter → VCF.CV }   ENV amp → VCA.CV
 ```
 
 ```js
-// Before and after: per-target rendering; sharing the ENV node is saved identity.
+// Before and after: two independently imported native ENV groups.
 $: note("c2").s("sine").lpf(800).lpq(1).lpenv(4)
    .lpattack(.01).lpdecay(.2).lpsustain(.5).lprelease(.1)
    .attack(.01).decay(.2).sustain(.5).release(.1).gain(.5)
 ```
+
+This plain code imports two ENV nodes. A shared ENV fan-out can exist in a saved rack, but this code example and its reproduction do not prove restoration of that shared identity. A future group must preserve such existing external cables.
 
 A native envelope is event-triggered, not a standalone free-running pattern.
 LFO STEP, SMOOTH, CV SEQ and S&H differ in timing and units. Shared LFO/ENV nodes
@@ -246,10 +251,10 @@ math expansion until receiver/target shape and within-note behavior are proven.
 ### P3 — Group related effect controls visually; retain stage nodes and execution
 
 ```text
-Before: OSC → DELAY → REVERB → MIX
-After:  OSC → { DELAY → REVERB } → MIX
-Before: OSC → VCF 400 → VCF 1200 → DRIVE → MIX
-After:  OSC → { VCF 400 → VCF 1200 → DRIVE } → MIX
+Before: SEQ → OSC → DELAY → REVERB → CODE orbit(0) → MIX
+After:  SEQ → OSC → { DELAY → REVERB } → CODE orbit(0) → MIX
+Before: SEQ → OSC → VCF 400 → VCF 1200 → DRIVE → CODE orbit(1) → MIX
+After:  SEQ → OSC → { VCF 400 → VCF 1200 → DRIVE } → CODE orbit(1) → MIX
 ```
 
 ```js
@@ -350,8 +355,8 @@ choice; source support alone is not sound proof.
 ### P7 — Keep routing/setup/CODE as separate domains
 
 ```text
-Before: OSC → DUCK(target), trigger → DUCK.SIDE → MIX → OUT
-After:  same distinct nodes; optional route grouping exposes SIDE and final outputs
+Before: SEQ → OSC → CODE orbit(7) → MIX[channels 3:4] → OUT
+After:  SEQ → { OSC → CODE orbit(7) } → MIX[channels 3:4] → OUT
 ```
 
 ```js
@@ -364,7 +369,7 @@ setup calls and app volume do not collapse to one sound/effect mode. Existing
 routing provenance checks must remain authoritative. CODE must remain available
 as a complete expression, suffix and callback-local fragment. #217 owns custom
 helpers; #247 recommends wrappers preserving original calls/context rather than
-inferring wiring from helper names. #247 also demonstrates that a user registration can overwrite built-in `o`/orbit globally; event field names alone cannot identify the executing implementation. Effort small for clearer discovery, high for
+inferring wiring from helper names. #247 also demonstrates that a user registration can overwrite the built-in `o` alias in the global registration/prototype scope; event field names alone cannot identify the executing implementation. Effort small for clearer discovery, high for
 new semantics; no routing rewrite or new generic setup panel is recommended.
 
 ## Cross-cutting cost and preservation contract
@@ -403,39 +408,39 @@ refresh; this research does not regenerate its racks.
 
 ## Inventory reconciliation and prioritized stories
 
-Reconciled with #245's committed report and schema-v1 inventory at
-`a4760f136779e214a057faebaf2530d182c7f300`, artifact SHA-256
-`d6b7740209c27a9ba02bdeca828d6fbdd9c14f660229cbd9fc138666f28596f6`.
-See [inventory report](https://github.com/FireLakeLabs/monkeyboys-modular-synth/blob/a4760f136779e214a057faebaf2530d182c7f300/docs/research/strudel-api-coverage/README.md).
-The final merged artifact must be refreshed before closure: #245 confirmed scanner
-omissions for Pattern.layer and REPL-injected tempo helpers, currently explicit
-`unresolved-no-inventory-family` entries in this overlay. These are inventory
-coverage bugs, not missing engine behavior. No family IDs are invented locally.
+Reconciled with #245's corrected schema-v1 inventory at
+`1d11db5bf9b42dc5a1fd17ea85779423e7022395`, artifact SHA-256
+`8e94f04921bf9530a4ad6981aad4edb4ebded6c81212a268494afd843d7d0221`.
+Its Pattern class-binding and REPL-injection corrections provide `api:layer`,
+`api:setcpm` and `api:setcps`; they were inventory omissions, not engine gaps.
+The final merged artifact and fresh-clone reproduction still need verification
+before closure. Historical preparation used `a4760f136779e214a057faebaf2530d182c7f300`
+(hash `d6b7740209c27a9ba02bdeca828d6fbdd9c14f660229cbd9fc138666f28596f6`),
+which had those explicit unresolved entries. Historical object IDs are not needed
+by the final default command and are not assumed reachable in a main-only clone.
 
 The adapter uses `aliasToFamily`, with runtime spellings `lpf` → `api:cutoff`,
 `lpq` → `api:resonance`, `sound` → `api:s`, `every` → `api:firstOf`, and `dict` →
 `api:dictionary`. It checks `aliasCollisions` **before** lookup: overlapping
-`fmi1`/`fmh1` definitions stay unresolved rather than gaining false ownership.
+`fmi1`/`fmh1` and `density` definitions stay unresolved rather than gaining false ownership. The latter can name a fast alias or crackle control, despite the index selecting `api:density`; context evidence is separate from an unqualified name join.
 Catalog input hashes are compared with the inventory's recorded inputs. The
-inventory's 1,040 candidate families include utility/classes, generated operators
+inventory's 1,100 candidate families (including 127 raw direct Pattern class entries, with constructors/accessors, and nine REPL-evaluation helper names) include utility/classes, generated operators
 and 81 FM matrix setters; that is not a panel count or unsupported-feature count.
 
 The context artifact's schema v1 is an overlay: `matrix[]` is keyed by `moduleId`,
 with catalog data, judgment annotations, positive `exercise`, concrete `fallback`
 and `inventoryFamilies[]` containing `{name,familyId,state}` joins.
-`inventory` records the exact source artifact hash/revision and selected candidate
-joins; `comparisons`, `reader` and `examples` keep proof kinds separate. Null
+`inventory` records the exact source artifact hash and selected candidate
+joins; `comparisons`, `reader`, `nContext` and `examples` keep proof kinds separate. Null
 family IDs retain a reason. This does not replace #245's authoritative inventory
 schema or rediscover its exports/registrations.
 
-At this preparation revision, reproduce the cross-branch join using the committed
-artifact, without copying its API inventory into this branch:
-
-```sh
-node scripts/module-contexts.mjs --inventory-ref a4760f136779e214a057faebaf2530d182c7f300
-```
-
-After #245 lands, the ordinary command reads that checked-in artifact. Its report
+The final command reads the committed inventory from the checkout. No Git history
+is consulted unless an explicit preparation-only `--inventory-ref` is supplied.
+Evidence provenance uses input hashes, so shallow clones and source archives do
+not require an unpublished research commit. `--check` verifies the committed
+matrix/evidence without rewriting files; the final fresh-clone result will be
+recorded below after #245 merges. Its report
 has 22 **root manifest** committed entries (excluding the 59 focused module
 exercises used here), and five pinned report-only wild files. Those observations
 retain source hashes, attribution and no redistribution claim; this study does
@@ -492,12 +497,28 @@ expanding into one ticket per name:
 ## Verification and review ledger
 
 - `npm ci`: passed on Node 24.22.2; lockfile unchanged; installed source patch verified.
-- Reproduction: 59 exercised modules, 48 pinned event comparisons, 63 reader/document cases, 59 per-module fallback cases and 8 report examples; zero failures.
-- `npm run check`: passed (2,585 unit cases, 53 guardrails, committed reader coverage, formatting/skills/lint/typecheck/build); rerun after inventory adapter.
+- Reproduction: 59 exercised modules, 48 pinned event comparisons, 64 reader/document cases, 59 per-module fallback cases and 8 report examples; zero failures.
+- `npm run check`: passed (2,585 unit cases, 54 guardrails, committed reader coverage, formatting/skills/lint/typecheck/build) after review fixes and corrected-inventory join; final rebase gate remains.
 - Coverage guard: deliberately removed one annotation; the command rejected it, then passed after byte-exact restoration.
+- `node --test scripts/module-contexts.test.mts`: the mistaken bare-n-as-note assertion failed, then the correct bare-n/scale-to-note case passed; this focused behavior guard runs in the existing CI guardrail gate. Whole historical report snapshots remain explicit research checks.
+- C26 negative guard: intentionally asserted note mode instead of degree for bare n; reproduction rejected the wrong context, then passed after byte-exact fixture restoration.
 - Local browser/PCM/listening: not run; application behavior unchanged; no server.
-- Initial inventory reconciliation complete; refreshing its confirmed scanner omissions, bounded Opus review, PR/hosted checks and protected merge remain pending.
+- Corrected inventory reconciled; final reachable artifact/fresh-clone proof, Opus recheck, PR/hosted checks and protected merge remain pending.
 
 Implementation provenance: GPT-6.1 Sol in T3 Code through the Codex harness.
-Review policy therefore selects the latest advertised Opus; actual provider,
-model, reviewed commit, findings and usage will be recorded after it runs.
+Review policy selects latest advertised Opus. Round 1 used provider
+`claudeAgent`, model `claude-opus-5-5` (Claude Opus 5.5), verified `effort: high`.
+It reviewed clean `855db5ceadbc44798569c1356a96b08536af3eba` against
+`77dc91be42f4a408f94745a628fc2cad86b4f5e0`; verdict **CHANGES**. Initial diff:
+six files, 9,195 insertions (chiefly machine catalog/evidence). Usage not exposed.
+
+| ID  | Severity | Disposition                                                                                                                                                                                                                                                                                |
+| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| S1  | should   | Fixed SEQ/OSC/HARMONIC n contexts and the user-without-partials fallback wording. C26 asserts degree-mode reader projection; nContext separately asserts bare n remains n and scale consumes it into note. Source anchors S4/S5 establish partial count/default pitch; no new audio claim. |
+| S2  | nit      | Final default command uses checked-in inventory; removed dependence on mutable Git history from evidence. Reachable merged artifact/fresh-clone proof remains pending #245 merge. Historical prepared hashes remain historical only.                                                       |
+| S3  | nit      | ENV sketch now shows two independent imported ENV nodes; prose explicitly says shared saved-ENV fan-out is not proven by this code example.                                                                                                                                                |
+| S4  | nit      | Effect sketches now include their exact source-owned CODE orbit nodes, plus the SEQ source.                                                                                                                                                                                                |
+| S5  | nit      | Route sketch now matches SEQ → OSC → CODE orbit(7) → MIX channels 3:4; no unrelated DUCK sketch.                                                                                                                                                                                           |
+
+No finding was declined. Recheck will cover the corrected evidence/tooling and
+final inventory integration; the three-round budget has two rounds remaining.

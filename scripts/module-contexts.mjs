@@ -7,7 +7,9 @@ import { execFileSync } from 'node:child_process'
 import { isDeepStrictEqual, parseArgs } from 'node:util'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
-const { values } = parseArgs({ options: { 'inventory-ref': { type: 'string' } } })
+const { values } = parseArgs({
+  options: { 'inventory-ref': { type: 'string' }, check: { type: 'boolean', default: false } },
+})
 const inventoryRef = values['inventory-ref']
 if (inventoryRef && !/^[a-f0-9]{40}$/.test(inventoryRef))
   throw new Error('inventory-ref must be a full commit SHA')
@@ -104,7 +106,14 @@ for (const [id, label, left, right, equal] of runtime.comparisons) {
   }
 }
 const reader = []
-for (const [id, label, expression, required, codeFragments] of runtime.readerCases) {
+for (const [
+  id,
+  label,
+  expression,
+  required,
+  codeFragments,
+  expectedValues = {},
+] of runtime.readerCases) {
   const source = `$: ${expression}\n`
   try {
     const document = runtime.read(source)
@@ -115,6 +124,18 @@ for (const [id, label, expression, required, codeFragments] of runtime.readerCas
     for (const fragment of codeFragments)
       if (!code.some((text) => text.includes(fragment)))
         failures.push(`${id} ${label}: missing CODE ${fragment}; got ${JSON.stringify(code)}`)
+    const contextValues = {}
+    for (const [type, expected] of Object.entries(expectedValues)) {
+      const owner = document.patch.modules.find((module) => module.type === type)
+      contextValues[type] = owner?.values ?? null
+      if (
+        !owner ||
+        !Object.entries(expected).every(([key, value]) =>
+          isDeepStrictEqual(owner.values[key], value),
+        )
+      )
+        failures.push(`${id} ${label}: context values do not match for ${type}`)
+    }
     const exact = runtime.generate(document) === source
     const saved = runtime.saveLayout(document)
     const reopened = runtime.read(saved.source)
@@ -128,6 +149,7 @@ for (const [id, label, expression, required, codeFragments] of runtime.readerCas
       source,
       modules,
       code,
+      contextValues,
       sourceExact: exact,
       savedSourceExact,
       savedIdentity: identity,
@@ -284,13 +306,24 @@ for (const input of inventory.provenance.inputs) {
   if (hashes[input.path] && hashes[input.path] !== input.sha256)
     throw new Error(`Inventory input drift: ${input.path}`)
 }
+const bareN = runtime.events('n("0 2").s("sawtooth")')
+const scaledN = runtime.events('n("0 2").scale("C:major").s("sawtooth")')
+const nContext = {
+  bareValues: bareN.map((event) => event.value),
+  scaledValues: scaledN.map((event) => event.value),
+  bareHasNWithoutNote:
+    bareN.length > 0 &&
+    bareN.every((event) => Object.hasOwn(event.value, 'n') && !Object.hasOwn(event.value, 'note')),
+  scaleConsumesNIntoNote:
+    scaledN.length > 0 &&
+    scaledN.every(
+      (event) => Object.hasOwn(event.value, 'note') && !Object.hasOwn(event.value, 'n'),
+    ),
+}
+if (!nContext.bareHasNWithoutNote || !nContext.scaleConsumesNIntoNote)
+  failures.push('C26: bare/scale n event context changed')
 const report = {
   version: 1,
-  applicationRevision: execFileSync(
-    'git',
-    ['log', '-1', '--format=%H', '--', 'src', 'package-lock.json'],
-    { cwd: root, encoding: 'utf8' },
-  ).trim(),
   node: process.version,
   packages,
   hashes,
@@ -301,12 +334,6 @@ const report = {
   },
   inventory: {
     path: inventoryPath,
-    sourceRevision:
-      inventoryRef ??
-      execFileSync('git', ['log', '-1', '--format=%H', '--', inventoryPath], {
-        cwd: root,
-        encoding: 'utf8',
-      }).trim(),
     sha256: hash(inventoryText),
     schemaVersion: inventory.version,
     candidateCount: inventory.counts.families,
@@ -350,6 +377,7 @@ const report = {
   comparisons: observations,
   reader,
   examples,
+  nContext,
 }
 const table = [
   '# Current module context matrix',
@@ -379,14 +407,22 @@ const table = [
   '',
 ]
 const prettier = await resolveConfig(`${root}.prettierrc.json`)
-await writeFile(
-  `${root}docs/research/module-contexts-matrix.md`,
-  await format(table.join('\n'), { ...prettier, parser: 'markdown' }),
-)
-await writeFile(
-  `${root}docs/research/module-contexts-evidence.json`,
-  await format(JSON.stringify(report), { ...prettier, parser: 'json' }),
-)
+const outputs = [
+  [
+    'docs/research/module-contexts-matrix.md',
+    await format(table.join('\n'), { ...prettier, parser: 'markdown' }),
+  ],
+  [
+    'docs/research/module-contexts-evidence.json',
+    await format(JSON.stringify(report), { ...prettier, parser: 'json' }),
+  ],
+]
+for (const [path, content] of outputs) {
+  if (values.check) {
+    if ((await readFile(`${root}${path}`, 'utf8')) !== content)
+      failures.push(`Stale ${path}; run node scripts/module-contexts.mjs`)
+  } else await writeFile(`${root}${path}`, content)
+}
 process.stdout.write(
   `RESULT module-contexts modules=${matrix.length} comparisons=${observations.length} reader=${reader.length} fallbacks=${matrix.length} examples=${examples.length} failures=${failures.length}\n`,
 )

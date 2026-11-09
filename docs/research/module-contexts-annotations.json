@@ -4,10 +4,10 @@
     {
       "moduleId": "seq",
       "role": "root constructor",
-      "engineContext": "note/n wrap events; fast changes time, not sound selection",
+      "engineContext": "note wraps pitch; n is scale degree before scale, oscillator partial count without scale, or sampler index; fast changes time",
       "readerContext": "Literal mini-notation; a voice without a downstream audio boundary may remain whole CODE; adjacent fast is RATE",
       "verdict": "keep",
-      "caseIds": "C01",
+      "caseIds": "C01,C26",
       "counterexample": "note(patternValue).s(\"sawtooth\")",
       "counterexampleKind": "CODE"
     },
@@ -144,10 +144,10 @@
     {
       "moduleId": "osc",
       "role": "sound setter / source",
-      "engineContext": "s selects backend; pw/unison/etc consumption depends on selected synth",
+      "engineContext": "note/freq determine pitch; bare n supplies partial count; s selects backend and sound-specific companions",
       "readerContext": "Chained WAVE and compatible adjacent companions; root saw alias is OSC, most canonical root waves use DRUMS/SMPL",
       "verdict": "group",
-      "caseIds": "C01,C02,C05",
+      "caseIds": "C01,C02,C05,C26",
       "counterexample": "note(\"c2\").s(wave)",
       "counterexampleKind": "CODE"
     },
@@ -164,10 +164,10 @@
     {
       "moduleId": "harmonic",
       "role": "sound setter / source",
-      "engineContext": "partials is also consumed by non-sine stock oscillator path, not only user",
+      "engineContext": "partials or n supply harmonics in the non-sine oscillator path; user without either falls back to triangle",
       "readerContext": "Reader requires user selector plus bounded literal partials array",
       "verdict": "group",
-      "caseIds": "C05",
+      "caseIds": "C05,C26",
       "counterexample": "note(\"c2\").s(\"user\").partials([1,2])",
       "counterexampleKind": "CODE"
     },

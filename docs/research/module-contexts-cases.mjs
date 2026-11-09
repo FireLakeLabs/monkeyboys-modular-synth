@@ -308,6 +308,14 @@ export const comparisons = [
 
 export const readerCases = [
   [
+    'C26',
+    'bare n imports degree SEQ but remains oscillator partial count',
+    'n("0 2").s("sawtooth")',
+    ['seq', 'osc'],
+    [],
+    { seq: { mode: 'degree' } },
+  ],
+  [
     'C21',
     'bipolar signal argument',
     'note("c2").s("sine").lpf(sine2.range(400,800))',
