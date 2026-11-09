@@ -311,6 +311,45 @@ $: stack(${voice('a3', 0.125, 0.3)}.route242(7),${voice('e4', 0.25, 0.5)}.route2
       )
       results.push({ name: item.name, samples })
     }
+    const isolation = []
+    for (const [name, input] of [
+      [
+        'code-after-owned-stack',
+        `register('identity242',(v,p)=>p);\nsetcpm(240/4)\n$: stack(note("a3*2"),note("e4*2")).s("sine").gain(.08).identity242(1).room(.15).roomsize(.3)\n$: note("c4*2").s("sine").gain(.08).delay(.3).delaytime(.125).delayfeedback(.25)\n`,
+      ],
+      [
+        'opaque-stack-default',
+        'setcpm(240/4)\n$: stack(note("a3*2").s("sine").gain(.08).postgain(.5),note("e4*2").s("sine").gain(.08)).room(.15).roomsize(.3)\n$: note("c4*2").s("sine").gain(.08).delay(.3).delaytime(.125).delayfeedback(.25)\n',
+      ],
+      [
+        'callback-parameter-o',
+        'setcpm(240/4)\n$: note("a3*2").superimpose(o=>o.fast(2)).s("sine").gain(.08).room(.15).roomsize(.3)\n$: note("c4*2").s("sine").gain(.08).delay(.3).delaytime(.125).delayfeedback(.25)\n',
+      ],
+    ]) {
+      const source = makeRackEditable(read(input)).source
+      await play(source, { volume: 0.5, resetEffects: true })
+      await pause(800)
+      const controller = web.getSuperdoughAudioController(),
+        nodes = controller.nodes
+      assert(
+        Object.keys(nodes).length === 2 &&
+          nodes[1]?.reverbNode &&
+          !nodes[1]?.delayNode &&
+          nodes[2]?.delayNode &&
+          !nodes[2]?.reverbNode,
+        `${name}: default/native sends collided`,
+      )
+      const signal = await pcm(500)
+      assert(signal.rms > 0.0001, `${name}: silent PCM`)
+      isolation.push({
+        name,
+        source: sourceBody(source),
+        orbits: Object.keys(nodes),
+        separateSends: true,
+        pcm: signal,
+      })
+      await stop()
+    }
     // Mode-only structural replacement must remove the former independent send buses.
     let patch = read(cases[1].source.replaceAll('.orbit(1)', '').replaceAll('.orbit(2)', '')).patch
     const playback = createPlayback(patch)
@@ -354,6 +393,7 @@ $: stack(${voice('a3', 0.125, 0.3)}.route242(7),${voice('e4', 0.25, 0.5)}.route2
     return {
       results,
       modeReplacement: true,
+      isolation,
       offline: await offlineProof(),
       liveEdit: live,
       stopped,

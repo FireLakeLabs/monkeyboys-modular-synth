@@ -541,7 +541,7 @@ exports[`built-in patch library > sound-effects-exercise: preserves exact source
 
 exports[`built-in patch library > switch-angel-trance-demo: preserves exact source and independently restores saved rack state 1`] = `
 {
-  "generated": "fdc18015421961d80c9948fb0870391345bcc3d64c09aea02d68034204be7865",
+  "generated": "9ac0dfefd75c005eb793ca1a91e76ac984d779dae6705a73ef056fc0505f6a3d",
   "projection": "e69909a28c4de4ac39e06306212a54a0aead24a939c1591db6cef612e8d89365",
 }
 `;

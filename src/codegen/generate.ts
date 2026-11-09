@@ -421,7 +421,8 @@ export function generateDocument(
       if (!chainedCode(text)) throw new Error('Chained CODE must start with a dot')
       // Opaque CODE may end in a line comment; keep separators around it.
       expression = append({ ...expression, inline: false }, text, node)
-      expression.sourceRouting ||= syntax(expression.text, { opaque: true }).hasOrbit
+      expression.sourceRouting ||=
+        syntax(expression.text).hasOrbit || syntax(`silence${text}\n`, { opaque: true }).hasOrbit
       return expression
     }
     if (node.spec.id === 'duck')
@@ -928,6 +929,14 @@ export function generateDocument(
       ...[...definitions.values()].flatMap((d) => d.expressions),
     ].flatMap((e) => syntax(e.text).orbitNumbers),
   )
+  // Unrouted source-owned events may use the engine's default orbit, even when
+  // sibling events have explicit routes. Keep generated voices off that bus.
+  if (
+    [...audible, ...sends, ...sides.flatMap((s) => s.expressions)].some(
+      (e) => e.sourceRouting || syntax(e.text).hasOrbit,
+    )
+  )
+    reserved.add(1)
   let nextAllocated = 1
   const orbits = audible.map((e) => {
     if (e.sourceRouting || syntax(e.text).hasOrbit) return undefined
@@ -996,6 +1005,7 @@ export function generateDocument(
       ...[...definitions.values()].flatMap((definition) => definition.expressions),
     ].flatMap((expression) => syntax(expression.text).orbitNumbers),
   )
+  if (voices.some((e) => e.sourceRouting || syntax(e.text).hasOrbit)) reservedOrbits.add(1)
   let nextOrbit = 1
   const labels = new Set<string>()
   function allocateLabel(wanted: string): string {

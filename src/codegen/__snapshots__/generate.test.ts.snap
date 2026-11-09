@@ -50,7 +50,7 @@ exports[`mixing and fan-out > preserves source-owned orbit routing through multi
 
 exports[`mixing and fan-out > reserves CODE-owned orbit 1 before routing ordinary voices 1`] = `"a5a5ec5cb77127f9f7e2a819f6da3b5ce270d86f105c257a2f06e84c5fb77c24"`;
 
-exports[`mixing and fan-out > reserves CODE-owned orbit 2 before routing ordinary voices 1`] = `"25f756122a872d783ad89a66994c3fdeb5716a3bd74ce85f2a942d6dd277a203"`;
+exports[`mixing and fan-out > reserves CODE-owned orbit 2 before routing ordinary voices 1`] = `"0192da91c1db44b96889a2e06427cd3c4d624bb9cfc52694230c836b619a3d55"`;
 
 exports[`patch → Strudel > compresses repeating drum rows, omits empty rows and writes a sample bank 1`] = `"b762c770e25deb5e29317478eeb29ab5d489c6516a04357674c68b8e8db11b62"`;
 

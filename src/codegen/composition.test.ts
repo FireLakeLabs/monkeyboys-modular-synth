@@ -159,8 +159,8 @@ it('reserves literal inner o addresses without granting ownership or overriding 
     '$: stack(note("c3").s("sine").o(2),note("e3").s("sine").o(3))\n$: note("g3").s("sine")\n$: note("b3").s("sine")\n'
   const generated = sourceBody(generate(read(source).patch))
   expect(generated.match(/\.o\([23]\)/g)).toHaveLength(2)
-  expect(generated).toContain('.orbit(1)')
   expect(generated).toContain('.orbit(4)')
+  expect(generated).toContain('.orbit(5)')
   expect(generated).not.toContain('.orbit(2)')
   expect(generated).not.toContain('.orbit(3)')
 })
@@ -172,4 +172,31 @@ it('retains hidden routes in unsupported spread Stack CODE during rack conversio
   expect(doc.patch.modules.some((m) => m.type === 'code')).toBe(true)
   const converted = makeRackEditable(doc)
   expect(events(converted.source, false)).toEqual(events(source, false))
+})
+
+it('retains owned Stack routing when only the following CODE suffix is opaque', () => {
+  const source = '$: stack(s("bd"),s("hh")).foo(1).room(.5)\n$: note("c3").s("sine").delay(.3)\n'
+  const generated = sourceBody(generate(read(source).patch))
+  expect(generated.match(/\.orbit\(/g)).toHaveLength(2)
+  expect(generated).toContain('.orbit(1)')
+  expect(generated).toContain('.orbit(2)')
+})
+it.each([
+  '$: stack(s("bd"),s("hh").foo(2)).room(.5)\n$: note("c3").s("sine").delay(.3)\n',
+  '$: stack(s("bd").orbit(7),s("hh").postgain(.5)).room(.5)\n$: note("c3").s("sine").delay(.3)\n',
+])('reserves the default route of an opaque Stack before allocating another voice', (source) => {
+  const generated = sourceBody(generate(read(source).patch))
+  expect(generated).toContain('.orbit(2)')
+  expect(generated).not.toContain('.orbit(1)')
+})
+it('does not mistake a native callback parameter named o for routing', () => {
+  const source =
+    '$: note("c3").superimpose(o=>o.fast(2)).s("sine").room(.4)\n$: s("bd").delay(.3)\n'
+  const doc = read(source)
+  expect(doc.patch.modules.some((m) => m.type === 'code')).toBe(false)
+  const generated = sourceBody(generate(doc.patch))
+  expect(generated).toContain('o => o.fast(2)')
+  expect(generated.match(/\.orbit\(/g)).toHaveLength(2)
+  expect(generated).toContain('.orbit(1)')
+  expect(generated).toContain('.orbit(2)')
 })

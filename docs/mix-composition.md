@@ -77,7 +77,8 @@ that reference. Explicit source-owned inner routing remains inside its argument;
 no overriding orbit is appended to a Stack containing opaque CODE. Unsupported
 CODE that itself contains a combiner also keeps routing authority, because its
 spread or computed arguments can hide inner routes. Literal inner
-orbits reserve their addresses; a matching event field does not grant ownership.
+orbits reserve their addresses, and any source-owned final expression also reserves
+default orbit 1; a matching event field does not grant ownership.
 
 | Case                                             | Representation / result                                  | Independent proof                                                                            |
 | ------------------------------------------------ | -------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -119,8 +120,8 @@ at 44,100 Hz. A seeded IR probe renders the identical original twice before the
 regenerated form. Even identical-source renders vary at sample level; conversion
 must stay within 1% RMS energy and 1.5 times that measured waveform variation plus
 a two-LSB floor. The committed sample has original/regenerated RMS differences
-0.0001133 / 0.0000735 / 0.0000162, versus a shared/separate negative control's
-0.002960 difference (about 37% of the shared signal RMS). This proves the tested
+0.0002290 / 0.0000391 / 0.0000628, versus a shared/separate negative control's
+0.002956 difference (about 37% of the shared signal RMS). This proves the tested
 send distinction and bounded rendering agreement; it is not bitwise PCM identity,
 physical listening or an arbitrary-helper purity guarantee. The test restores
 the IR random generator and URL interception afterward.
@@ -168,3 +169,32 @@ The coordinator's pinned gain counterexample was inspected in its original
 `work/mix-stack-gain-counterexample.json` (core 1.2.6, eight events over [0,4),
 outer postgain .5 versus incorrect .15/.35 leaves). The production regression
 reproduces that distinction without inferring PCM from the event values.
+
+## Review fixes and bounded choices
+
+The first Opus round found three routing defects, each reproduced by failing
+regressions. CODE suffix routing now examines the suffix itself for an opaque
+combiner, so an unrelated suffix cannot take routing authority away from its
+native Stack receiver. Any final source-owned expression conservatively reserves
+Strudel's default orbit 1 before owned allocation, including mixed explicit/default
+inner routes. Opaque fan-out still retains source routing and may share its source's
+default send bus; the allocator does not append an override to separate it. Native
+owned fan-out retains distinct final routes. `o` is recognized as a routing call or
+property, while a callback parameter named `o` keeps normal owned routing.
+
+CLOCK Multiply is a deliberate #242 support choice: the issue's `.fast(2)` after
+a combined receiver needs a transform owner independent of source SEQ RATE. The
+existing CLOCK panel supplies Divide/Multiply through catalog call bindings;
+SEQ/LFO keep their existing adjacent-rate adapters. General non-SEQ `.fast()`
+therefore maps to CLOCK within its catalog bounds. This does not adopt #248.
+The catalog's one primary `fast` ownership remains SEQ; the contextual reader and
+integrity exception are explicit, like existing contextual source setters.
+
+The duplicate default graph construction in `cableSignal` was removed. A broader
+per-render graph/cache API is deferred as an out-of-scope performance nit; no
+measured speedup is claimed. No follow-up issue or process change is filed.
+
+The focused actual-engine review regressions passed all three cases (owned Stack
+followed by CODE, opaque Stack with default routing, and callback parameter `o`).
+Each produced two separate controller send buses and nonzero PCM; the runtime
+artifact records their regenerated source, bus addresses and measurements.

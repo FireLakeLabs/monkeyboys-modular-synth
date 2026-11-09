@@ -425,7 +425,11 @@ CODE-owned orbit references (including computed `["orbit"]` and opaque callbacks
 propagate through named outputs; the generator adds no overriding routing to
 those voices. Positive integer literal orbits in active CODE (including shared
 named expressions) are reserved before allocating generated voices from the
-remaining positive integers. This avoids overwriting an imported bus. Dynamic
+remaining positive integers. Source-owned final expressions also reserve the engine's
+default orbit 1, since some inner events may have no explicit route. This avoids
+sharing a default source bus with a generated voice without appending an override.
+The `o` alias counts as routing when called or accessed as a property; an ordinary
+callback parameter named `o` does not. Dynamic
 routing hidden behind arbitrary code cannot be inferred. The reader verifies
 complete generator provenance before treating routing as owned; otherwise it
 retains routing in source/CODE. See [reader projection](reader-verification.md#projection-and-preservation).

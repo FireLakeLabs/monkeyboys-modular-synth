@@ -347,18 +347,19 @@ export function connect(
 export function cableSignal(
   patch: Patch,
   from: JackRef,
-  members: ReadonlyMap<string, string> = functionMembers(graph(patch)),
+  members?: ReadonlyMap<string, string>,
 ): JackSignal {
   const nodes = graph(patch)
+  const loops = members ?? functionMembers(nodes)
   const node = nodes.get(from.module)
   if (!node) return 'any'
   const jack = node.spec.jacks.find((j) => j.id === from.jack)
   if (jack?.direction === 'in') {
     if (node.spec.composition?.inputs.includes(from.jack) && !isStack(node.module)) return 'audio'
     const cable = patch.cables.find((c) => c.to.module === from.module && c.to.jack === from.jack)
-    return cable ? cableSignal(patch, cable.from, members) : jack.signal
+    return cable ? cableSignal(patch, cable.from, loops) : jack.signal
   }
-  return outputSignal(nodes, node, from.jack, new Map(members))
+  return outputSignal(nodes, node, from.jack, new Map(loops))
 }
 
 export function cableKind(

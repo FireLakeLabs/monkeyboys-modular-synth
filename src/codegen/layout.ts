@@ -134,24 +134,40 @@ export function syntax(
   const routingNames = ['orbit', 'o', ...(opaque ? ['stack'] : [])]
   function usesOrbit(value: unknown): boolean {
     if (typeof value !== 'object' || value === null) return false
+    // Retain the existing conservative orbit binding rule. The short alias and
+    // opaque stack are calls/properties, not ordinary local parameter names.
+    if ('type' in value && value.type === 'Identifier' && 'name' in value && value.name === 'orbit')
+      return true
     if (
       'type' in value &&
-      value.type === 'Identifier' &&
-      'name' in value &&
-      routingNames.includes(String(value.name))
-    )
-      return true
-    // Computed ["orbit"] routing also remains source-owned; unrelated string literals do not.
+      value.type === 'CallExpression' &&
+      'callee' in value &&
+      value.callee &&
+      typeof value.callee === 'object'
+    ) {
+      const callee = value.callee
+      if (
+        'type' in callee &&
+        callee.type === 'Identifier' &&
+        'name' in callee &&
+        routingNames.includes(String(callee.name))
+      )
+        return true
+    }
     if (
       'type' in value &&
       value.type === 'MemberExpression' &&
       'property' in value &&
-      typeof value.property === 'object' &&
-      value.property !== null &&
-      'value' in value.property &&
-      routingNames.includes(String(value.property.value))
-    )
-      return true
+      value.property &&
+      typeof value.property === 'object'
+    ) {
+      const property = value.property
+      if (
+        ('name' in property && routingNames.includes(String(property.name))) ||
+        ('value' in property && routingNames.includes(String(property.value)))
+      )
+        return true
+    }
     return Object.values(value).some(usesOrbit)
   }
   const orbitNumbers = new Set<number>()

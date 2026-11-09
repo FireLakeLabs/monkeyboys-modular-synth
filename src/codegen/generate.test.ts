@@ -490,7 +490,9 @@ $: lead
         wire(mix, output),
       ],
     }
-    const generated = owned === 1 ? 2 : 1
+    // CODE reserves the default bus as well as its literal address; other
+    // source-owned expressions may contain a mixture of routed/default events.
+    const generated = owned === 1 ? 2 : 3
     expect(sound(patch).match(/\.orbit\(\d\)/g)).toEqual([
       `.orbit(${owned})`,
       `.orbit(${generated})`,
