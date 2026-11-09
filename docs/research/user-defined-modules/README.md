@@ -311,10 +311,15 @@ this report does not launch their implementation or require their adoption.
 `api:register`. Its export/prototype/source-only/app-override distinctions agree
 with the source/runtime split above. This study adds helper-specific semantics;
 a literal registration count or catalog match is not proof of a sound backend.
-#246 owns whole-catalog context/consolidation; this study preserves current
-context and order and proposes no consolidation. Final links/reconciliation are
-recorded in the review ledger after those commits are available. Neither study
-is a blanket prerequisite for #217 or #242.
+#245 also separates custom registrations from pinned-family corpus counts,
+including the fixture's `o` override. #246 owns whole-catalog
+context/consolidation; its prepared `docs/research/module-contexts.md` at sibling
+commit `357f9fa` was inspected and agrees on preserving semantic nodes, context,
+order and routing provenance. Its grouping/CHUNK/voicing follow-ups remain
+proposals. This study proposes no consolidation and found no actual schema
+conflict. The [review ledger](review-ledger.md) records exact sibling revisions;
+these reports were not yet merged at that inspection. Neither study is a blanket
+prerequisite for #217 or #242.
 
 All #247 research deliverables are represented here: bounded executable
 prototype; pinned API and syntax dispositions; three-model comparison; exact

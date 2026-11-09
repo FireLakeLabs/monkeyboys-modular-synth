@@ -41,7 +41,21 @@ lines of full event evidence).
 The controlled runtime experiment was rerun after the behavior fixes and passed
 again, including the source/complete existing-rack/edited-event checks. Evidence
 hashes were refreshed. Own port 5187 server was stopped after this run.
-Round 2 is limited to these fixes, changed behavior and remaining findings.
+Round 2: Claude Opus 5.5, high effort, **APPROVE** on clean head
+`5bfb3a86bdcbbb871e1ff6dcdec2707f78ee58a8`. Reviewed delta from 3a52a31:
+5 files, +64/−25. All S1–S5 resolved; no new in-scope findings. Reviewer ran all
+six research tests, exercised additional argument escape forms, inspected pinned
+alias source and verified input/result hashes. It did not rerun the full gate or
+runtime browser experiment. Usage was not available. Final diff before this
+ledger-only update: 12 files, 5617 insertions. No findings were declined.
+
+`npm run check` passed again after the fixes: 2585 unit tests, 53 guardrails and
+all other gate steps. Research tests: six passed. Runtime command: RESULT
+passed=1 failed=0, onsets 16/76/76/64. Final changes after approval are only this
+ledger, coordination prose and issue/PR links; behavior remains reviewed.
+Normal protected PR checks, bot/human review and up-to-date branch status remain
+the merge gate. Full browser suites must finish if GitHub runs it; these docs
+paths do not request that workflow by themselves.
 
 ## Coordination and issue disposition
 
@@ -49,9 +63,18 @@ Round 2 is limited to these fixes, changed behavior and remaining findings.
 `t3/241-strudel-api-inventory` (`cb5f370`), which was inspected with git show; path
 `docs/research/strudel-api-coverage/schema.md`, inventory schema v1 and
 `api:register`, preserving export/prototype/source-only/app-override distinctions.
-#246 was notified of the source-context and nested-binding constraints. Final
-reconciliation will record available research commits; these studies are not
-blanket blockers.
+#245 additionally confirmed custom registrations are excluded from pinned-family
+corpus counts, so fixture `.o` overrides do not establish built-in semantics.
+
+#246's prepared report at sibling commit
+`357f9fa470d55f1bfcbee18127f68399c6ba73f7` was inspected using git show:
+`docs/research/module-contexts.md`, with its matrix and evidence JSON. It keeps
+semantic nodes, treats visual grouping as a proposal, and explicitly preserves
+helper/routing provenance under #217/#247. No actual schema conflict was found.
+It independently records the built-in `o` collision caveat. #248–250 are its
+bounded follow-ups, not this study's implementation scope. These sibling studies
+were not yet merged at this inspection; their issue links remain authoritative
+for final status. They are not blanket blockers.
 
 #217 remains the sole production custom-panel owner. Research conclusions will
 be appended/linked without replacing its acceptance or adding excluded scope.
