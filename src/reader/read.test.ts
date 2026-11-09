@@ -176,7 +176,8 @@ describe('handwritten catalog projection', () => {
         .filter((module) => module.type === 'drums')
         .map((module) => module.values['grid']),
     ).toEqual(['bd', 'hh', 'sd', 'cp', 'rim', 'lt'])
-    expect(doc.patch.modules.filter((module) => module.type === 'mix')).toHaveLength(2)
+    expect(doc.patch.modules.filter((module) => module.type === 'mix')).toHaveLength(3)
+    expect(doc.patch.modules.filter((m) => m.values.mode === 'Stack')).toHaveLength(1)
     expect(() => graph(doc.patch)).not.toThrow()
   })
   it('resolves const dependencies once and names outputs used at least twice', () => {
@@ -185,7 +186,7 @@ describe('handwritten catalog projection', () => {
     const doc = read(source)
     expect(doc.patch.modules.filter((module) => module.type === 'seq')).toHaveLength(1)
     expect(doc.patch.modules.filter((module) => module.type === 'osc')).toHaveLength(1)
-    expect(Object.values(doc.patch.names)).toEqual(['lead'])
+    expect(Object.values(doc.patch.names)).toEqual(['notes', 'lead'])
     expect(generate(doc)).toBe(source)
   })
   it('retains computed settings, unsupported sources and imported routing as CODE', () => {
@@ -279,7 +280,7 @@ describe('handwritten catalog projection', () => {
     )
     expect(doc.patch.modules.map((module) => module.type)).toEqual([
       'drums',
-      'code',
+      'clock',
       'smpl',
       'vcf',
       'mix',
@@ -288,9 +289,10 @@ describe('handwritten catalog projection', () => {
     expect(doc.patch.modules.find((module) => module.type === 'drums')?.values['grid']).toBe(
       'bd(3,8)',
     )
-    expect(doc.patch.modules.find((module) => module.type === 'code')?.values['text']).toBe(
-      '.fast(2)',
-    )
+    expect(doc.patch.modules.find((module) => module.type === 'clock')?.values).toMatchObject({
+      speed: 'Multiply',
+      division: 2,
+    })
   })
   it.each(['setcpm(30)', 'setcpm(120/4)', 'setCpm(30)', 'setCpm(120/4)', 'setcps(.5)'])(
     'reads tempo %s',

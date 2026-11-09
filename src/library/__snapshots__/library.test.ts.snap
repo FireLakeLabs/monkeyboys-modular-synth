@@ -247,8 +247,8 @@ exports[`built-in patch library > exercise-lofi: preserves exact source and inde
 
 exports[`built-in patch library > exercise-mix: preserves exact source and independently restores saved rack state 1`] = `
 {
-  "generated": "272ea26fc34d23e26ed2dd44e0d6e74326db71bc796406b016a4cbc215954b0a",
-  "projection": "6c0c7cafcd92315d56159be077124bf07a53159863504df0d12ab8c4ce46b8b8",
+  "generated": "e80770c4afe6694fb2198f542762b095bebb08b8cca6e0c3c02eee4582f6d9f1",
+  "projection": "aa08283d005735852f14c2558c16692aba110b795db4a601e1300d620a992862",
 }
 `;
 
@@ -541,7 +541,7 @@ exports[`built-in patch library > sound-effects-exercise: preserves exact source
 
 exports[`built-in patch library > switch-angel-trance-demo: preserves exact source and independently restores saved rack state 1`] = `
 {
-  "generated": "b10024069a1157dd571579bffd47dcf1b6d760e4ac60d442850a11f5ad1fd9d3",
+  "generated": "fdc18015421961d80c9948fb0870391345bcc3d64c09aea02d68034204be7865",
   "projection": "e69909a28c4de4ac39e06306212a54a0aead24a939c1591db6cef612e8d89365",
 }
 `;

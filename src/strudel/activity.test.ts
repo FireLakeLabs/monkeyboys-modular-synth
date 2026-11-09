@@ -179,3 +179,18 @@ it('preserves sounding events through nested function loops and attributes their
     expect.arrayContaining(['chunk1', 'off1', 'ratchet1', 'rev1']),
   )
 })
+
+it('attributes named Stack inputs and their grid cells without lighting their sibling', () => {
+  const source = 'const phrase = stack(note("c3"),note("e3"));\nphrase.s("sine")'
+  const doc = read(source),
+    plan = activityPlan(doc)
+  const haps = query(plan.code)
+  expect(haps.length).toBeGreaterThan(0)
+  expect(plan.modules(haps[0])).toContain('seq1')
+  expect(plan.modules(haps[0])).not.toContain('seq2')
+  expect(plan.modules(haps[1])).toContain('seq2')
+  expect(plan.modules(haps[1])).not.toContain('seq1')
+  expect(plan.steps(haps[0]).map((s) => s.module)).toEqual(['seq1'])
+  expect(plan.steps(haps[1]).map((s) => s.module)).toEqual(['seq2'])
+  expect(doc.source).toBe(source)
+})

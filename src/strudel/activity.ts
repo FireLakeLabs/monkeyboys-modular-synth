@@ -7,7 +7,7 @@ import { drumText } from '../patch/notation'
 import { miniView, walkCells, type Cell } from '../patch/mini'
 import { sequenceText } from '../rack/model'
 import { sourceLocations } from './sourceLocations'
-import { parseSource, type ParsedScope } from '../reader/syntax'
+import { parseSource, bindingScope, expressionChildren, type ParsedScope } from '../reader/syntax'
 import type { SourceDocument } from '../reader/types'
 
 const ACTIVITY = '__monkeyboyActivity'
@@ -62,7 +62,15 @@ export function activityPlan(document: SourceDocument) {
     if (visited.has(scope.descriptor.id)) return null
     visited.add(scope.descriptor.id)
     const own = document.bindings
-      .filter((binding) => binding.scope === scope.descriptor.id)
+      .filter(
+        (binding) =>
+          binding.scope === scope.descriptor.id &&
+          JSON.stringify(binding.path?.slice(0, scope.path?.length ?? 0) ?? []) ===
+            JSON.stringify(scope.path ?? []) &&
+          (binding.path?.slice(scope.path?.length ?? 0) ?? []).every(
+            (step) => step.argument === 'body',
+          ),
+      )
       .map((binding) => binding.module)
     if (own.some((id) => modules.get(id)?.type === 'code')) return null
     if (scope.root.type === 'Identifier') {
@@ -93,18 +101,35 @@ export function activityPlan(document: SourceDocument) {
     cells: Cell[]
   }[] = []
   let code = document.source
-  if (safe)
-    for (const scope of scopes.filter((scope) => scope.kind === 'voice').reverse()) {
-      const own = owners(scope)
-      if (!own) continue
-      // Numbers stay literal through Strudel's double-quote-to-mini transformation.
-      const key = scopes.indexOf(scope) + 1
-      mapping.set(key, own)
-      // Reader-owned voices are call/identifier chains. Append context without a
-      // leading parenthesis, which could join semicolon-free top-level statements.
-      const inserted = `.withContext(context => ({...context, ${ACTIVITY}: ${key}}))`
-      insertions.push({ at: scope.end, text: inserted })
+  function attribute(scope: ParsedScope, inherited: string[] = [], wanted = 1) {
+    const own = owners(scope)
+    if (!own) return
+    const children = expressionChildren(scope).filter(
+      (child) => child.path?.at(-1)?.call === scope.calls.findLastIndex((c) => c.name === 'stack'),
+    )
+    if (children.length) {
+      for (const child of children) attribute(child, [...inherited, ...own], wanted)
+      return
     }
+    let key = wanted
+    while (mapping.has(key)) key++
+    mapping.set(key, [...new Set([...own, ...inherited])])
+    insertions.push({
+      at: scope.end,
+      text:
+        scope.root.type === 'Identifier'
+          ? `.withContext(context => ({...context, ${ACTIVITY}: [...(Array.isArray(context.${ACTIVITY}) ? context.${ACTIVITY} : typeof context.${ACTIVITY} === 'number' ? [context.${ACTIVITY}] : []), ${key}]}))`
+          : `.withContext(context => ({...context, ${ACTIVITY}: ${key}}))`,
+    })
+  }
+  if (safe)
+    for (const scope of scopes.filter(
+      (s) => s.kind === 'declaration' && expressionChildren(s).length,
+    ))
+      attribute(scope)
+  if (safe)
+    for (const scope of scopes.filter((scope) => scope.kind === 'voice'))
+      attribute(scope, [], scopes.indexOf(scope) + 1)
   // Capture the cell at the source, before rate/reverse/iteration can move its event.
   // Only sources reaching a fully attributed voice receive grid feedback.
   for (const binding of document.bindings) {
@@ -153,7 +178,7 @@ export function activityPlan(document: SourceDocument) {
         { at: expression.end, text: `)${callback}` },
       )
     } else {
-      const scope = scopes.find((s) => s.descriptor.id === binding.scope)
+      const scope = bindingScope(scopes, binding)
       const call = scope?.calls[binding.calls[0] ?? -1]
       if (call) insertions.push({ at: call.end, text: callback })
     }
@@ -252,7 +277,10 @@ export function activityPlan(document: SourceDocument) {
         context && typeof context === 'object' && ACTIVITY in context
           ? context[ACTIVITY]
           : undefined
-      return typeof id === 'number' ? (mapping.get(id) ?? []) : []
+      const ids: unknown[] = Array.isArray(id) ? id : [id]
+      return [
+        ...new Set(ids.flatMap((key) => (typeof key === 'number' ? (mapping.get(key) ?? []) : []))),
+      ]
     },
   }
 }

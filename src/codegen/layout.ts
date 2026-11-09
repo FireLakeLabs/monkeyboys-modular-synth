@@ -1,15 +1,24 @@
 import type { SamplePack } from '../samples/packs'
 import { parse, type Expression } from 'acorn'
-import { chain, nestedScope, type ParsedScope } from '../reader/syntax'
+import { chain, nestedScope, expressionChildren, type ParsedScope } from '../reader/syntax'
 import type { RailHp } from '../patch/layout'
 import type { Cable, PlacedModule } from '../patch/types'
 
 export const RACK_MARKER = '// ── @monkeyboy rack v1 ──'
 
+export interface ExpressionStep {
+  call: number
+  argument: number | 'receiver' | 'body'
+}
+
 export interface Binding {
   scope: string
   /** Outer call indices leading into nested final-argument lambdas. */
   loop?: number[]
+  /** Static expression descent, distinct from CV's target path. */
+  path?: ExpressionStep[]
+  /** First source input represented by a continuation panel. */
+  part?: number
   calls: number[]
   /** Argument in an outer FX call. */
   fx?: number
@@ -120,7 +129,12 @@ export function syntax(text: string): {
   const root = chain(statement.expression)
   function usesOrbit(value: unknown): boolean {
     if (typeof value !== 'object' || value === null) return false
-    if ('type' in value && value.type === 'Identifier' && 'name' in value && value.name === 'orbit')
+    if (
+      'type' in value &&
+      value.type === 'Identifier' &&
+      'name' in value &&
+      ['orbit', 'o'].includes(String(value.name))
+    )
       return true
     // Computed ["orbit"] routing also remains source-owned; unrelated string literals do not.
     if (
@@ -130,7 +144,7 @@ export function syntax(text: string): {
       typeof value.property === 'object' &&
       value.property !== null &&
       'value' in value.property &&
-      value.property.value === 'orbit'
+      ['orbit', 'o'].includes(String(value.property.value))
     )
       return true
     return Object.values(value).some(usesOrbit)
@@ -149,8 +163,10 @@ export function syntax(text: string): {
       'property' in value.callee &&
       typeof value.callee.property === 'object' &&
       value.callee.property !== null &&
-      (('name' in value.callee.property && value.callee.property.name === 'orbit') ||
-        ('value' in value.callee.property && value.callee.property.value === 'orbit')) &&
+      (('name' in value.callee.property &&
+        ['orbit', 'o'].includes(String(value.callee.property.name))) ||
+        ('value' in value.callee.property &&
+          ['orbit', 'o'].includes(String(value.callee.property.value)))) &&
       'arguments' in value &&
       Array.isArray(value.arguments)
     ) {
@@ -202,6 +218,10 @@ export function bindScope(
   }
   const scopes = [top]
   function descend(current: ParsedScope) {
+    for (const child of expressionChildren(current)) {
+      scopes.push(child)
+      descend(child)
+    }
     current.calls.forEach((_call, i) => {
       const child = nestedScope(current, i)
       if (child) {
@@ -231,6 +251,7 @@ export function bindScope(
     module.bindings.push({
       scope: id,
       ...(local.loop ? { loop: local.loop } : {}),
+      ...(local.path ? { path: local.path } : {}),
       calls,
       role: owner.role,
       ...(owner.fx === undefined ? {} : { fx: owner.fx }),

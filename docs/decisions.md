@@ -74,7 +74,7 @@ A module’s category colour is used for its dot on the panel and for the code i
 - **Layout is saved in the code:** rack positions, looks and output names live in a comment block at the end of the Strudel code, so a patch is a plain Strudel file you can paste into the Strudel REPL, and pasting it back restores the rack. See [`patch-format.md`](patch-format.md). Stable module IDs and conservative syntax matching preserve layout across unambiguous edits; ambiguous matches auto-place (decided 2 November 2026, #14).
 - **Cables:** while dragging, valid jacks light up. Odd-but-possible patches are allowed with a plain explanation. Impossible ones are blocked.
 - **Fan-out:** several cables can leave one output. That output gets an editable name, which becomes a named pattern (`const lead = …`) reused in each voice.
-- **Mixer:** each mixer input becomes its own `$:` line. `stack()` is read on import but not generated.
+- **Mixer:** MIX has explicit Voices and Stack modes. Voices emits independent labelled expressions; Stack emits one combined event pattern. See [MIX composition](mix-composition.md).
 
 ## Interaction policy
 
@@ -406,3 +406,21 @@ pinned engine's arithmetic operation; it must not turn a no-op on note-control
 values into an invented pitch transposition. Existing saved CODE and sampler
 ownership remain intact. See the [module contract](module-spec.md#acid-patch-imports-238)
 and [translation limits](translation-rules.md#acid-patch-aliases-and-arithmetic-238).
+
+## MIX Voices/Stack (#242, decided 9 November 2026)
+
+One catalog-owned MIX vocabulary retains the four-channel, 12-HP panel. Voices
+keeps independent labelled expressions and virtual-bus controls. Stack is a unity
+event combiner before or after sound selection, with inactive strip settings
+retained. Connected Voices CV or incompatible graph/signal/label boundaries refuse
+a mode switch atomically; a valid switch is one Undo step and a structural audio
+replacement. Stack's native sends share its final orbit; inline FX remain per-note.
+Opaque inner routing is never overridden. See the [case matrix and evidence](mix-composition.md).
+
+Static expression source paths preserve direct/chained/nested groups, named reuse
+and fan-out. Inputs beyond one panel use explicit continuation Stack panels. The
+v1 envelope remains, with independently validated expression paths; old metadata
+never overrides a changed source interpretation. No personal storage is cleared.
+The MIX exercise is rebuilt from its complete patch, preserving its music through
+an event-equivalent melody split. #216 owns larger panels; #243/#244 and #217 keep
+their separate feature scopes.

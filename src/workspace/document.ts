@@ -188,9 +188,11 @@ function stampLayout(
       ...module,
       bindings: bindings
         .filter((b) => b.module === module.id)
-        .map(({ scope, loop, calls, role, target, fx }) => ({
+        .map(({ scope, loop, path, part, calls, role, target, fx }) => ({
           scope,
           ...(loop ? { loop } : {}),
+          ...(path ? { path } : {}),
+          ...(part === undefined ? {} : { part }),
           calls,
           role,
           ...(target ? { target } : {}),
@@ -468,7 +470,9 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
   // Removed calls leave their owners, and later calls in that scope move up one.
   const bindings = removed.length
     ? document.bindings.flatMap((binding) => {
-        const gone = removed.filter((item) => item.scope === binding.scope && !binding.loop)
+        const gone = removed.filter(
+          (item) => item.scope === binding.scope && !binding.loop && !binding.path,
+        )
         if (!gone.length) return [binding]
         const calls = binding.calls
           .filter((index) => !gone.some((item) => item.index === index))

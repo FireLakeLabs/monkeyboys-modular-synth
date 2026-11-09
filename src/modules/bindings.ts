@@ -44,7 +44,9 @@ export function patternNumber(value: number): string {
 export function controlEnabled(
   spec: ModuleSpec,
   values: Readonly<Record<string, unknown>>,
-  control: ModuleSpec['controls'][number],
+  control:
+    | ModuleSpec['controls'][number]
+    | { when?: readonly { control: string; values: readonly string[] }[] },
 ): boolean {
   if (!('when' in control) || !control.when) return true
   return control.when.every((condition) => {

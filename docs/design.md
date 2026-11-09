@@ -656,3 +656,17 @@ reset mappings from current call expressions; configuration never implies
 clamping or isolated runtime state. Existing fixed-per-definition widths, family
 looks and live cable geometry remain the constraints. A macro/expansion UI is a
 later proposal, outside #217's first increment.
+
+## MIX modes (#242)
+
+MIX keeps one 12-HP width in all four Hardware looks. A catalog MODE selector above
+the strips shows Voices or Stack. Voices keeps its faders, mute/solo and More
+settings. Stack hides those inactive controls and CV sockets, retaining their
+values. A connected CV refuses the switch, so no live cable loses its geometry.
+The four numbered inputs and OUT remain visible and use the existing live cable
+positions. Mode switches use the accepted-document mutation boundary and one Undo
+step. The [case matrix and observed verification](mix-composition.md) define
+signal refusal, labels, nesting and routing; #216 retains larger panel geometry.
+The private boards were unavailable; the implementation uses the existing catalog
+and look layouts, following a simple mode mockup shown in the implementation
+thread. That mockup did not prescribe new jack geometry.

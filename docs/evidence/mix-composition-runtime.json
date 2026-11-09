@@ -1,0 +1,1136 @@
+{
+  "browser": "156.0.8078.4",
+  "node": "v24.22.2",
+  "results": [
+    {
+      "name": "stack-native",
+      "samples": [
+        {
+          "form": "original",
+          "source": "setcpm(240/4)\n$: stack(note(\"a3*2\").s(\"sine\").gain(.08).delay(.3).delaytime(0.125).delayfeedback(.25).room(.15).roomsize(0.3),note(\"e4*2\").s(\"sine\").gain(.08).delay(.3).delaytime(0.25).delayfeedback(.25).room(.15).roomsize(0.5))\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5
+            }
+          ],
+          "orbits": ["1"],
+          "pcm": {
+            "rms": 0.007355751990838242,
+            "peak": 0.03388462960720062,
+            "samples": 131072
+          }
+        },
+        {
+          "form": "regenerated",
+          "source": "setcpm(240/4)\n\n$: stack(note(\"a3*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .delay(0.3)\n  .delaytime(0.125)\n  .delayfeedback(0.25)\n  .room(0.15)\n  .roomsize(0.3), note(\"e4*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .delay(0.3)\n  .delaytime(0.25)\n  .delayfeedback(0.25)\n  .room(0.15)\n  .roomsize(0.5)).orbit(1)\n\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 1
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 1
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 1
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 1
+            }
+          ],
+          "orbits": ["1"],
+          "pcm": {
+            "rms": 0.007239358522785345,
+            "peak": 0.03373688831925392,
+            "samples": 131072
+          }
+        }
+      ]
+    },
+    {
+      "name": "voices-separated",
+      "samples": [
+        {
+          "form": "original",
+          "source": "setcpm(240/4)\n$: note(\"a3*2\").s(\"sine\").gain(.08).delay(.3).delaytime(0.125).delayfeedback(.25).room(.15).roomsize(0.3).orbit(1)\n$: note(\"e4*2\").s(\"sine\").gain(.08).delay(.3).delaytime(0.25).delayfeedback(.25).room(.15).roomsize(0.5).orbit(2)\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 2
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 2
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 2
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 2
+            }
+          ],
+          "orbits": ["1", "2"],
+          "pcm": {
+            "rms": 0.005188826375785121,
+            "peak": 0.029342278838157654,
+            "samples": 131072
+          }
+        },
+        {
+          "form": "regenerated",
+          "source": "setcpm(240/4)\n\n$: note(\"a3*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .delay(0.3)\n  .delaytime(0.125)\n  .delayfeedback(0.25)\n  .room(0.15)\n  .roomsize(0.3)\n  .orbit(1)\n\n$: note(\"e4*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .delay(0.3)\n  .delaytime(0.25)\n  .delayfeedback(0.25)\n  .room(0.15)\n  .roomsize(0.5)\n  .orbit(2)\n\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 1
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 2
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 2
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 2
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 2
+            }
+          ],
+          "orbits": ["1", "2"],
+          "pcm": {
+            "rms": 0.00515332274866283,
+            "peak": 0.029409317299723625,
+            "samples": 131072
+          }
+        }
+      ]
+    },
+    {
+      "name": "stack-inner-orbits",
+      "samples": [
+        {
+          "form": "original",
+          "source": "setcpm(240/4)\n$: stack(note(\"a3*2\").s(\"sine\").gain(.08).delay(.3).delaytime(0.125).delayfeedback(.25).room(.15).roomsize(0.3).orbit(7),note(\"e4*2\").s(\"sine\").gain(.08).delay(.3).delaytime(0.25).delayfeedback(.25).room(.15).roomsize(0.5).orbit(8))\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            }
+          ],
+          "orbits": ["7", "8"],
+          "pcm": {
+            "rms": 0.005427563975590611,
+            "peak": 0.029768673703074455,
+            "samples": 131072
+          }
+        },
+        {
+          "form": "regenerated",
+          "source": "setcpm(240/4)\n\n$: stack(note(\"a3*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .delay(0.3)\n  .delaytime(0.125)\n  .delayfeedback(0.25)\n  .room(0.15)\n  .roomsize(0.3)\n  .orbit(7), note(\"e4*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .delay(0.3)\n  .delaytime(0.25)\n  .delayfeedback(0.25)\n  .room(0.15)\n  .roomsize(0.5)\n  .orbit(8))\n\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            }
+          ],
+          "orbits": ["7", "8"],
+          "pcm": {
+            "rms": 0.005281613369216009,
+            "peak": 0.02963329292833805,
+            "samples": 131072
+          }
+        }
+      ]
+    },
+    {
+      "name": "stack-custom-routing",
+      "samples": [
+        {
+          "form": "original",
+          "source": "globalThis.__mix242calls = 0;\nregister('route242',(n,p)=>{globalThis.__mix242calls++;return p.orbit(n)});\nsetcpm(240/4)\n$: stack(note(\"a3*2\").s(\"sine\").gain(.08).delay(.3).delaytime(0.125).delayfeedback(.25).room(.15).roomsize(0.3).route242(7),note(\"e4*2\").s(\"sine\").gain(.08).delay(.3).delaytime(0.25).delayfeedback(.25).room(.15).roomsize(0.5).route242(8))\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            }
+          ],
+          "orbits": ["7", "8"],
+          "pcm": {
+            "rms": 0.005309512595731159,
+            "peak": 0.029676493257284164,
+            "samples": 131072
+          }
+        },
+        {
+          "form": "regenerated",
+          "source": "globalThis.__mix242calls = 0;\nregister('route242',(n,p)=>{globalThis.__mix242calls++;return p.orbit(n)});\n\nsetcpm(240/4)\n\n$: stack(note(\"a3*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .delay(0.3)\n  .delaytime(0.125)\n  .delayfeedback(0.25)\n  .room(0.15)\n  .roomsize(0.3)\n  .route242(7), note(\"e4*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .delay(0.3)\n  .delaytime(0.25)\n  .delayfeedback(0.25)\n  .room(0.15)\n  .roomsize(0.5)\n  .route242(8))\n\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.125,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.3,
+              "orbit": 7
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "delay": 0.3,
+              "delaytime": 0.25,
+              "delayfeedback": 0.25,
+              "room": 0.15,
+              "roomsize": 0.5,
+              "orbit": 8
+            }
+          ],
+          "orbits": ["7", "8"],
+          "pcm": {
+            "rms": 0.0052794026920423365,
+            "peak": 0.029485099017620087,
+            "samples": 131072
+          }
+        }
+      ]
+    },
+    {
+      "name": "stack-inline",
+      "samples": [
+        {
+          "form": "original",
+          "source": "setcpm(240/4)\n$: stack(note(\"a3*2\").s(\"sine\").gain(.08).FX(delay(.3).delaytime(.125).delayfeedback(.25)),note(\"e4*2\").s(\"sine\").gain(.08).FX(room(.2).roomsize(.5)))\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "delay": 0.3,
+                  "delaytime": 0.125,
+                  "delayfeedback": 0.25
+                }
+              ]
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "delay": 0.3,
+                  "delaytime": 0.125,
+                  "delayfeedback": 0.25
+                }
+              ]
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "delay": 0.3,
+                  "delaytime": 0.125,
+                  "delayfeedback": 0.25
+                }
+              ]
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "delay": 0.3,
+                  "delaytime": 0.125,
+                  "delayfeedback": 0.25
+                }
+              ]
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "room": 0.2,
+                  "roomsize": 0.5
+                }
+              ]
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "room": 0.2,
+                  "roomsize": 0.5
+                }
+              ]
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "room": 0.2,
+                  "roomsize": 0.5
+                }
+              ]
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "room": 0.2,
+                  "roomsize": 0.5
+                }
+              ]
+            }
+          ],
+          "orbits": ["1"],
+          "pcm": {
+            "rms": 0.005048892091866305,
+            "peak": 0.02500089257955551,
+            "samples": 131072
+          }
+        },
+        {
+          "form": "regenerated",
+          "source": "setcpm(240/4)\n\n$: stack(note(\"a3*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .FX(delay(0.3).delaytime(0.125).delayfeedback(0.25)), note(\"e4*2\")\n  .s(\"sine\")\n  .gain(0.08)\n  .FX(room(0.2).roomsize(0.5))).orbit(1)\n\n",
+          "events": [
+            {
+              "begin": 0,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "delay": 0.3,
+                  "delaytime": 0.125,
+                  "delayfeedback": 0.25
+                }
+              ],
+              "orbit": 1
+            },
+            {
+              "begin": 0.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "delay": 0.3,
+                  "delaytime": 0.125,
+                  "delayfeedback": 0.25
+                }
+              ],
+              "orbit": 1
+            },
+            {
+              "begin": 1,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "delay": 0.3,
+                  "delaytime": 0.125,
+                  "delayfeedback": 0.25
+                }
+              ],
+              "orbit": 1
+            },
+            {
+              "begin": 1.5,
+              "note": "a3",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "delay": 0.3,
+                  "delaytime": 0.125,
+                  "delayfeedback": 0.25
+                }
+              ],
+              "orbit": 1
+            },
+            {
+              "begin": 0,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "room": 0.2,
+                  "roomsize": 0.5
+                }
+              ],
+              "orbit": 1
+            },
+            {
+              "begin": 0.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "room": 0.2,
+                  "roomsize": 0.5
+                }
+              ],
+              "orbit": 1
+            },
+            {
+              "begin": 1,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "room": 0.2,
+                  "roomsize": 0.5
+                }
+              ],
+              "orbit": 1
+            },
+            {
+              "begin": 1.5,
+              "note": "e4",
+              "s": "sine",
+              "gain": 0.08,
+              "FX": [
+                {
+                  "room": 0.2,
+                  "roomsize": 0.5
+                }
+              ],
+              "orbit": 1
+            }
+          ],
+          "orbits": ["1"],
+          "pcm": {
+            "rms": 0.0049632309814598196,
+            "peak": 0.024826589971780777,
+            "samples": 131072
+          }
+        }
+      ]
+    }
+  ],
+  "modeReplacement": true,
+  "liveEdit": {
+    "rms": 0.013498013856472339,
+    "peak": 0.06226474046707153,
+    "samples": 131072
+  },
+  "stopped": {
+    "rms": 2.1710454664793252e-8,
+    "peak": 1.48526581256192e-7,
+    "samples": 65536
+  },
+  "replacement": {
+    "rms": 0,
+    "peak": 0,
+    "samples": 49152
+  },
+  "physicalListening": false
+}

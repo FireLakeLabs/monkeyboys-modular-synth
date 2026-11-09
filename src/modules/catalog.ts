@@ -856,51 +856,70 @@ export const MIX: ModuleSpec = {
   family: 'hardware',
   category: 'util',
   hp: 12,
-  paletteCall: '.postgain()',
-  controls: [1, 2, 3, 4].flatMap((n): Control[] =>
-    (
-      [
-        {
-          kind: 'knob',
-          id: `ch${n}`,
-          label: `CH ${n}`,
-          min: 0,
-          max: 1,
-          step: 0.05,
-          default: 0.8,
-          omitAt: 1,
-          call: { method: 'postgain', argument: { kind: 'number' } },
-          modulation: { min: -1, max: 1, default: -0.5 },
-        },
-        {
-          kind: 'switch',
-          id: `mute${n}`,
-          label: `MUTE ${n}`,
-          short: 'M',
-          options: opts('off', 'on'),
-          default: 'off',
-        },
-        {
-          kind: 'switch',
-          id: `solo${n}`,
-          label: `SOLO ${n}`,
-          short: 'S',
-          options: opts('off', 'on'),
-          default: 'off',
-        },
-        { kind: 'text', id: `name${n}`, label: `NAME ${n}`, default: '', more: true },
-        { kind: 'text', id: `channels${n}`, label: `OUTPUT ${n}`, default: '1:2', more: true },
-        // Arranger lane (#141): one mask step per cycle, edited in the Arrange popover.
-        { kind: 'text', id: `arr${n}`, label: `ARRANGE ${n}`, default: '', more: true },
-      ] satisfies Control[]
-    ).map((control) => ({ ...control, group: `CH ${n}` })),
-  ),
+  paletteCall: 'stack(…) / .postgain()',
+  composition: {
+    mode: 'mode',
+    voices: 'Voices',
+    stack: 'Stack',
+    inputs: ['in1', 'in2', 'in3', 'in4'],
+  },
+  controls: [
+    {
+      kind: 'switch',
+      id: 'mode',
+      label: 'MODE',
+      options: opts('Voices', 'Stack'),
+      default: 'Voices',
+    },
+    ...[1, 2, 3, 4].flatMap((n): Control[] =>
+      (
+        [
+          {
+            kind: 'knob',
+            id: `ch${n}`,
+            label: `CH ${n}`,
+            min: 0,
+            max: 1,
+            step: 0.05,
+            default: 0.8,
+            omitAt: 1,
+            call: { method: 'postgain', argument: { kind: 'number' } },
+            modulation: { min: -1, max: 1, default: -0.5 },
+          },
+          {
+            kind: 'switch',
+            id: `mute${n}`,
+            label: `MUTE ${n}`,
+            short: 'M',
+            options: opts('off', 'on'),
+            default: 'off',
+          },
+          {
+            kind: 'switch',
+            id: `solo${n}`,
+            label: `SOLO ${n}`,
+            short: 'S',
+            options: opts('off', 'on'),
+            default: 'off',
+          },
+          { kind: 'text', id: `name${n}`, label: `NAME ${n}`, default: '', more: true },
+          { kind: 'text', id: `channels${n}`, label: `OUTPUT ${n}`, default: '1:2', more: true },
+          // Arranger lane (#141): one mask step per cycle, edited in the Arrange popover.
+          { kind: 'text', id: `arr${n}`, label: `ARRANGE ${n}`, default: '', more: true },
+        ] satisfies Control[]
+      ).map((control) => ({
+        ...control,
+        group: `CH ${n}`,
+        when: [{ control: 'mode', values: ['Voices'] }],
+      })),
+    ),
+  ],
   jacks: [
     ...[1, 2, 3, 4].map((n) => ({
       id: `in${n}`,
       label: String(n),
       direction: 'in' as const,
-      signal: 'audio' as const,
+      signal: 'any' as const,
     })),
     ...[1, 2, 3, 4].map((n) => ({
       id: `cv${n}`,
@@ -908,8 +927,9 @@ export const MIX: ModuleSpec = {
       direction: 'in' as const,
       signal: 'mod' as const,
       cvTarget: `ch${n}`,
+      when: [{ control: 'mode', values: ['Voices'] }],
     })),
-    { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'any' },
   ],
   strudel: ['postgain', 'stack', 'channels', 'mask'],
   orderSensitive: false,
@@ -1048,6 +1068,13 @@ export const CLOCK: ModuleSpec = {
   paletteCall: '.slow()',
   readDefaults: { division: 1, swing: 0, swingMode: 'off', offset: 0 },
   controls: [
+    {
+      kind: 'switch',
+      id: 'speed',
+      label: 'RATE',
+      options: opts('Divide', 'Multiply'),
+      default: 'Divide',
+    },
     { kind: 'switch', id: 'swingMode', label: 'GROOVE', options: opts('off', 'on'), default: 'on' },
     {
       kind: 'knob',
@@ -1058,7 +1085,10 @@ export const CLOCK: ModuleSpec = {
       step: 0.25,
       default: 2,
       omitAt: 1,
-      call: { method: 'slow', argument: { kind: 'number' } },
+      call: {
+        method: { control: 'speed', names: { Divide: 'slow', Multiply: 'fast' } },
+        argument: { kind: 'number' },
+      },
     },
     {
       kind: 'knob',

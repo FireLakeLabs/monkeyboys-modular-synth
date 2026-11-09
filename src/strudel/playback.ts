@@ -1,3 +1,4 @@
+import { compositionMode } from '../modules/composition'
 import { graph } from '../codegen/graph'
 import { routingPlan } from '../codegen/routing'
 import { generate } from '../codegen/generate'
@@ -37,6 +38,7 @@ function prepare(input: Patch | SourceDocument) {
         module.id,
         module.type,
         module.type === 'code' ? module.values : undefined,
+        compositionMode(module),
       ]),
       cables: patch.cables.map(({ from, to }) => ({ from, to })),
     }),

@@ -1,7 +1,9 @@
+import { isStack } from '../modules/composition'
+import { controlEnabled } from '../modules/bindings'
 import { effectRank } from '../modules/effects'
 import { activeEffectRanks, planEffects } from '../codegen/effects'
 import { generate } from '../codegen/generate'
-import { graph, functionMembers, isSteps, requireNode } from '../codegen/graph'
+import { graph, outputSignal, functionMembers, isSteps, requireNode } from '../codegen/graph'
 import { getModuleSpec, VOICE_EFFECT_ORDER } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { Control, JackSignal, KnobControl, ModuleSpec, SwitchControl } from '../modules/types'
@@ -26,8 +28,9 @@ export interface PanelControls {
 }
 
 /** Where a module's controls appear. Placement never changes a value or its call. */
-export function panelControls(spec: ModuleSpec): PanelControls {
+export function panelControls(spec: ModuleSpec, module?: PlacedModule): PanelControls {
   const shown = spec.controls
+    .filter((control) => !module || controlEnabled(spec, module.values, control))
     .filter((control) => control.id !== spec.sampleTarget?.control)
     .toSorted((a, b) =>
       'group' in a || 'group' in b ? 0 : Number(a.kind === 'knob') - Number(b.kind === 'knob'),
@@ -346,17 +349,16 @@ export function cableSignal(
   from: JackRef,
   members: ReadonlyMap<string, string> = functionMembers(graph(patch)),
 ): JackSignal {
-  const module = patch.modules.find((m) => m.id === from.module)
-  const jack = module && getModuleSpec(module.type).jacks.find((j) => j.id === from.jack)
-  if (jack?.cvTarget) return jack.signal
-  if (
-    jack?.signal === 'function' ||
-    (members.has(from.module) && ['in', 'out'].includes(from.jack))
-  )
-    return 'function'
-  if (jack?.signal !== 'any') return jack?.signal ?? 'any'
-  const input = patch.cables.find((c) => c.to.module === from.module && c.to.jack === 'in')
-  return input ? cableSignal(patch, input.from, members) : 'any'
+  const nodes = graph(patch)
+  const node = nodes.get(from.module)
+  if (!node) return 'any'
+  const jack = node.spec.jacks.find((j) => j.id === from.jack)
+  if (jack?.direction === 'in') {
+    if (node.spec.composition?.inputs.includes(from.jack) && !isStack(node.module)) return 'audio'
+    const cable = patch.cables.find((c) => c.to.module === from.module && c.to.jack === from.jack)
+    return cable ? cableSignal(patch, cable.from, members) : jack.signal
+  }
+  return outputSignal(nodes, node, from.jack, new Map(members))
 }
 
 export function cableKind(

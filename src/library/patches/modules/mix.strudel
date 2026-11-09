@@ -1,10 +1,6 @@
 setcpm(120/4)
 
-$: note("c3 e3 g3 b3")
-  .s("sine")
-  .gain(0.15)
-  .postgain(0.8)
-  .orbit(1)
+$: stack(note("c3 ~ g3 ~"), note("~ e3 ~ b3")).s("sine").gain(0.15).postgain(0.8).orbit(1)
 
 $: note("c2*4")
   .s("triangle")
@@ -28,11 +24,11 @@ $: note("c2*4")
 //     },
 //     {
 //       "id": "scope2",
-//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"c3 e3 g3 b3\"}],\"optional\":false}",
+//       "root": "{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"stack\"},\"arguments\":[{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"c3 ~ g3 ~\"}],\"optional\":false},{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"~ e3 ~ b3\"}],\"optional\":false}],\"optional\":false}",
 //       "calls": [
 //         {
-//           "name": "note",
-//           "arguments": "[{\"type\":\"Literal\",\"value\":\"c3 e3 g3 b3\"}]"
+//           "name": "stack",
+//           "arguments": "[{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"c3 ~ g3 ~\"}],\"optional\":false},{\"type\":\"CallExpression\",\"callee\":{\"type\":\"Identifier\",\"name\":\"note\"},\"arguments\":[{\"type\":\"Literal\",\"value\":\"~ e3 ~ b3\"}],\"optional\":false}]"
 //         },
 //         {
 //           "name": "s",
@@ -95,13 +91,19 @@ $: note("c2*4")
 //       "hp": 0,
 //       "look": "instrument",
 //       "values": {
-//         "steps": "c3 e3 g3 b3",
+//         "steps": "c3 ~ g3 ~",
 //         "mode": "note",
 //         "rate": 1
 //       },
 //       "bindings": [
 //         {
 //           "scope": "scope2",
+//           "path": [
+//             {
+//               "call": 0,
+//               "argument": 0
+//             }
+//           ],
 //           "calls": [
 //             0
 //           ],
@@ -251,14 +253,60 @@ $: note("c2*4")
 //           "role": "tempo"
 //         }
 //       ]
+//     },
+//     {
+//       "id": "mix2",
+//       "type": "mix",
+//       "row": 3,
+//       "hp": 0,
+//       "look": "instrument",
+//       "values": {
+//         "mode": "Stack"
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
+//     },
+//     {
+//       "id": "seq3",
+//       "type": "seq",
+//       "row": 3,
+//       "hp": 12,
+//       "look": "instrument",
+//       "values": {
+//         "steps": "~ e3 ~ b3",
+//         "mode": "note",
+//         "rate": 1
+//       },
+//       "bindings": [
+//         {
+//           "scope": "scope2",
+//           "path": [
+//             {
+//               "call": 0,
+//               "argument": 1
+//             }
+//           ],
+//           "calls": [
+//             0
+//           ],
+//           "role": "module"
+//         }
+//       ]
 //     }
 //   ],
 //   "cables": [
 //     {
 //       "id": "cable1",
 //       "from": {
-//         "module": "seq1",
-//         "jack": "note"
+//         "module": "mix2",
+//         "jack": "out"
 //       },
 //       "to": {
 //         "module": "osc1",
@@ -329,6 +377,28 @@ $: note("c2*4")
 //       "to": {
 //         "module": "out3",
 //         "jack": "in"
+//       }
+//     },
+//     {
+//       "id": "mix-stack-input1",
+//       "from": {
+//         "module": "seq1",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "mix2",
+//         "jack": "in1"
+//       }
+//     },
+//     {
+//       "id": "mix-stack-input2",
+//       "from": {
+//         "module": "seq3",
+//         "jack": "note"
+//       },
+//       "to": {
+//         "module": "mix2",
+//         "jack": "in3"
 //       }
 //     }
 //   ],

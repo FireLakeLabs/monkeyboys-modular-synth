@@ -569,16 +569,25 @@ Hardware · Utility · 12 HP
 
 | Control | Kind     | Range          | Default | Writes                                               |
 | ------- | -------- | -------------- | ------- | ---------------------------------------------------- |
+| MODE    | switch   | Voices · Stack | Voices  | selects independent outputs or one event expression  |
 | CH 1–4  | fader ×4 | 0–1, step 0.05 | 0.8     | `.postgain(x)` on that channel’s voice, omitted at 1 |
 
-| Jack       | Dir | Signal |
-| ---------- | --- | ------ |
-| 1, 2, 3, 4 | in  | audio  |
-| OUT        | out | audio  |
+| Jack       | Dir | Signal                                                        |
+| ---------- | --- | ------------------------------------------------------------- |
+| 1, 2, 3, 4 | in  | audio in Voices; pattern/audio/unknown in Stack               |
+| OUT        | out | audio in Voices; homogeneous input signal or unknown in Stack |
 
-Writes one `$:` line per connected input, in channel order ([rule 2](translation-rules.md#2-each-mixer-input-is-a--line)).
+**Voices** writes one `$:` line per connected input, in channel order ([rule 2](translation-rules.md#2-each-mixer-input-is-a--line)).
 Each channel's ARRANGE lane (in More, and in the rack footer’s Arrange popover) chooses the
 cycles that voice plays; see [arranger lanes](translation-rules.md#arranger-lanes-141).
+
+**Stack** writes one `stack(...)` expression in catalog input order, including
+empty/single/sparse inputs. Strip levels/CV/mute/solo/name/output/arrangement are
+inactive and retain their saved values. CV jacks are hidden only after a valid
+switch proves none is connected. MODE is visible above the strips in every look.
+See [composition cases and routing](mix-composition.md). CLOCK's RATE direction
+selects Divide (`slow`) or Multiply (`fast`); this allows native rate changes after
+a combined pattern without stealing a source SEQ's RATE ownership.
 
 ### OUT — Output
 

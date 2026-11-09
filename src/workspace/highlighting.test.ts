@@ -65,3 +65,22 @@ it('uses teal lambda ink while preserving the CODE fallback treatment inside a l
   expect(segments.find((s) => s.text.includes('.iter(3)'))?.className).toContain('source-function')
   expect(segments.find((s) => s.text.includes('.color('))?.className).toContain('source-cyber')
 })
+
+it('selects the second identical nested input independently and marks named inputs', () => {
+  const source =
+    'const phrase = note("c3");\n$: stack(phrase, stack(note("e3").fast(2),note("e3").fast(2))).s("sine")\n'
+  const doc = read(source)
+  const last = doc.patch.modules.filter((m) => m.type === 'seq').at(-1)
+  const segments = sourceSegments(source, sourceTreatments(doc), last?.id ?? null)
+  expect(
+    segments
+      .filter((s) => s.className.includes('source-selected'))
+      .map((s) => s.text)
+      .join(''),
+  ).toBe('note("e3").fast(2)')
+  expect(segments.filter((s) => s.className.includes('source-named')).map((s) => s.text)).toEqual([
+    'phrase',
+    'phrase',
+  ])
+  expect(segments.map((s) => s.text).join('')).toBe(source)
+})

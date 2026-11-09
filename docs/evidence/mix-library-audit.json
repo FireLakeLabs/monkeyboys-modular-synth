@@ -1,0 +1,794 @@
+[
+  {
+    "file": "src/library/patches/custom-helper.strudel",
+    "sha256": "5a6aae6667f46d9c701d70aeab35fa73a3a579761d02b391978cd035c8c1a899",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/drum-machine.strudel",
+    "sha256": "6c6ac50af60364abf6e991ebf3d88fd17d75a635c8088a9ce347550ceda485f6",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/echo-room.strudel",
+    "sha256": "d0aabc3e63dc3a245d22fe6c52ac3e1546200e6d827ce2c16015a345e5f71cbb",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/enveloped-synth.strudel",
+    "sha256": "f7968e7db33a3becb4c6b521bb46801a10f33198ccf65359c00d45a93782cf8a",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/filter-envelope.strudel",
+    "sha256": "acaa27f612432956ab6d6fb030621b0369039012abccedb13eed358b410b0bd5",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/first-effects.strudel",
+    "sha256": "c1278be05aa632c7029495a8976241590a7da6db698f0046eee78fa7b6f8b4a0",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/first-notes.strudel",
+    "sha256": "e1666b22643da54212fa8c6ca8e0bef38aea4f0c7051eab1bd2ae3f0f141bb25",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/first-sounds.strudel",
+    "sha256": "760ccca15f127523aff7889e4ea238dc4f231cfc7a180f47c049bb85838f2d8a",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/function-loops.strudel",
+    "sha256": "6d8ab4188496b2ece98c7ca13c12f273d839e41a9177abba1f0372b94b5194e4",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/iter-jux.strudel",
+    "sha256": "77ee596de42ae8b5c2295276927e27bdc1555288c5904c66dd86d586a16a68f3",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/layered-sketch.strudel",
+    "sha256": "c93c3f9d8e890878a1074e57f64b400218e74fd39b7f0f6184a3f8c96494815d",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/lfo-sweep.strudel",
+    "sha256": "e4d87bea25854c7144920b2e07b9910ff8da2a6fcb9a592c7466d934ca409d48",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modulation-utilities.strudel",
+    "sha256": "cc4be441d9c8db66df2b58c5bf799239072d695966247ba3a4a73cb0ec4e926a",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/add.strudel",
+    "sha256": "78b0c609c640f732c65a0aa8973477101b6390c5b54e233d273c9f6e9e72acda",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/arp.strudel",
+    "sha256": "914f6c655b151940290af914b17ac802a41bbc956bc09f53084546135ad8f05e",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/attenuverter.strudel",
+    "sha256": "0192d8a618011f5185d65778d606d634d6174313d9b4dac3819b9d7a36003768",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/aux.strudel",
+    "sha256": "c742b759ac8e755e3b3cda35a450548279d6f22660dff6270edfc76c0df9e16b",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/bytebeat.strudel",
+    "sha256": "f2f1f38572323f0e4b9cdc1b74dfa64f7b8354badb98e4712108ca1917a10224",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/chance.strudel",
+    "sha256": "18c58b52d2bb6a9d257af3099228cab37f343b8b6a62c754659ce630f8256602",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/chip.strudel",
+    "sha256": "7ca0d691ef2dbd4f4dca1435ced8b1d800c470f29e8a792c0584df831ce7f3fc",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/chord.strudel",
+    "sha256": "c85c6886f3b59532a51192b0b2b80fbcbd419601da70a1017809bd54f8116d13",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/chunk.strudel",
+    "sha256": "08598b1e6ea405f48deec4c16a724a1b1a7bc8d290e3868bedb66af8d322209a",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/clock.strudel",
+    "sha256": "c0538d3f1143698c7f016d7e18bc9fe4273c7065d73e459309f32f57c451f567",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/code.strudel",
+    "sha256": "3c619f7eda3271e1caf8a9d8529630a28f70191ae2ffaf08f53b83e7b109bb97",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/comp.strudel",
+    "sha256": "e59e9ace945a22c5c7281d198afa8bb2825265e28d621b8ce3ba70ba2fca2227",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/cvseq.strudel",
+    "sha256": "6572a3d7f716a45a49a035b8d6f1041cfea67d46fd38dd74bf5da83f88b23d1d",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/delay.strudel",
+    "sha256": "729a518df5c0d77c4073c2103b3d9449adfd9ec387768edc78ef98347ad71250",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/drive.strudel",
+    "sha256": "ffe689eb2b7e4573d2a0ec5330de2e506cff4edaa09d8e2ec1ddb51216056c9e",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/drums.strudel",
+    "sha256": "550f213540ec82a2e7139e455618b818ac01faaf9676ce61e764af1621c76ba4",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/duck.strudel",
+    "sha256": "afe63d6344ef53e7d641bb580057d603f8401cce7c65f35fa5ba98c4fd7d3cb7",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/echo.strudel",
+    "sha256": "18410a25f1ddd6ad18d6e014aee86c607fb870bad189065a6ca50146df8aae6e",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/env.strudel",
+    "sha256": "36aa1e72deb3a98125fb707e26f16a3a3001007631c1ace3b9c95c2c42d1200c",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/euclid.strudel",
+    "sha256": "31bb41a3265d4ed263125b240bd064cc86b0b07283d1f82b91729f072beab7e7",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/every.strudel",
+    "sha256": "1891f7d74cdd1cf75505a1a8c051aa2314bf964e0a18824eb8ee3d9b4a1474f2",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/fmop.strudel",
+    "sha256": "aac8a772963228946b7307967ddde2bcebed7a07d291f4405828b0d8d33d6ebe",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/folder.strudel",
+    "sha256": "5af1fcaaf25d4eeb5b4c6825db559c5d3fa9c581d261a63befaa018256a8973f",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/formant.strudel",
+    "sha256": "a62aef675f4fac3132ba7f844879f91c28cb35bb3d3e2f6db86fc84c5fd1dc4f",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/gates.strudel",
+    "sha256": "8483cbf8d7623c9bb0040fd604c540d78dbd5c279be99182af5edbb1b14ce954",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/harmonic.strudel",
+    "sha256": "d1acb429a17961d67a14bf5e6152528d73a35aeb20243b71d4bbc2b836fefbf2",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/iter.strudel",
+    "sha256": "0719e4d1dd352ae17e7af399219b850da70547a2777af3caab8721301620c9dd",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/jux.strudel",
+    "sha256": "af743dca763b36d6a738add5cb35d3f0740911edc4f62bfc3a7845d20296e73f",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/layer.strudel",
+    "sha256": "e64c6b71d91645cc04a74ee5cf2a4883772163c5cdcfddc34e36fd1204d5995a",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/lfo.strudel",
+    "sha256": "bd92e2d0cb6ad19b5f8388263d06f90900d50d7bcb477d4de2e9bdce93bb3405",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/lofi.strudel",
+    "sha256": "a57790ad6435aae7790848937f5b6ae6462a34636f6144acdda89a77283ddd2f",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/mix.strudel",
+    "sha256": "e80770c4afe6694fb2198f542762b095bebb08b8cca6e0c3c02eee4582f6d9f1",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 1
+  },
+  {
+    "file": "src/library/patches/modules/modmix.strudel",
+    "sha256": "aca4c668ed3ca08f1850ab1aa75de00a66896d5a5af30de9df2802b809a16861",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/noise.strudel",
+    "sha256": "1a914b7549f6a4e8315ac18a3af49615b419c14041160fb34bb6b658b9d200e6",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/off.strudel",
+    "sha256": "28bd2684debcec823939357ca055c43acf83512b564e516b87c41625a0b341f9",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/osc.strudel",
+    "sha256": "8648f28eff2ce6b0e0f515ac4a3556dc476ce49e313165fa75e7e51624008ffe",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/out.strudel",
+    "sha256": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/pan.strudel",
+    "sha256": "9adda02dfbdd569756c906534831cdf9e0158016aed17f44d94bc7aca2dd77ab",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/phaser.strudel",
+    "sha256": "91ef7c3ae004370194ff912c8635b847504657ce7d69f8de9d8a16373fb3d084",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/quant.strudel",
+    "sha256": "e82bdd7afc8835609760ea81ecb7cab602ce8896f946af86621ae39f06815882",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/ratchet.strudel",
+    "sha256": "47dc8132ed86c07583ce94f8ba3edf40bf9bdac9c84560a9b531d4596c0db82c",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/rev.strudel",
+    "sha256": "b45b06f25251aa6190937ca7f8c5deab4c9a85a1acf9917c81e0498bbe2927fa",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/reverb.strudel",
+    "sha256": "2ab23c84301305045359a525e8a1860ae6673ef862562cc4eb8f8e2eef734373",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/ribbon.strudel",
+    "sha256": "57b33bd480853c1f802357922304118f6ff8fcf010ee0e3967954ed6f319c252",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/samplehold.strudel",
+    "sha256": "035a05f7082fc7c8433945d18e8ef639be8674a270e2788ac5a2f3a5159fd284",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/scope.strudel",
+    "sha256": "53e6fe5e5c74d780fcdf29b438757ef00c3bd6fdf5307bdfc50d246e9e320d0e",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/seq.strudel",
+    "sha256": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/shift.strudel",
+    "sha256": "19f82cd2e22636738804bec83eca945cbb9a352c7fa224a58ec4ad36ec98e3a2",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/shuffle.strudel",
+    "sha256": "2a3bcbea5378c1e117d5a08892242df6e67319de6bd02ca78c5b8e1c6214ff8b",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/smpl.strudel",
+    "sha256": "7b1d798f17c2a6a2ae0e10abd7fb306951a5ae645fe932591e388cd0fdf0f023",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/sometimes.strudel",
+    "sha256": "b1306fc4e2da6b02bb9e1aa9eec3ad645405aa262ec9bb2ff3891a399ae6ceed",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/speak.strudel",
+    "sha256": "3cc9bf1639d381ab1b9cc5326d9873cba370d6964d15852e4fc230d8bf322f69",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/splice.strudel",
+    "sha256": "b47fd35e24267ab1088a94b0159d5d944d91471050578663d7d20535d0beb552",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/switch.strudel",
+    "sha256": "3bf9839d1612b14461a32b560b0223a98be040247d36c019c66c7dba6904dce5",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/time-lens.strudel",
+    "sha256": "7c9dc2f66534a8d0537226fd1fa259b79613817686d18be413e5ec72b9c445aa",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/vca.strudel",
+    "sha256": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/vcf.strudel",
+    "sha256": "61f2553173dc17b3ceef1fd6348c71d71da023c161e8409d398b5ce8b9854e3f",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/warp.strudel",
+    "sha256": "a2c9a7b601ce014c787c4194545895d774d5b0acbcb687b7cf931a3dc952af0a",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/modules/wavetable.strudel",
+    "sha256": "e6e0b0b672177cc060d88a570d758f82c558e725696de48ff6e24282651537b7",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/pattern-alien.strudel",
+    "sha256": "9c7ec33ac2d9cdef17fcbe80ac1fcd9a75db67c000e946804a53398918c46155",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/pattern-effects.strudel",
+    "sha256": "f0a9e6923971cd5deb629d9c348044dc22a663b576f20737a64632a93d688da2",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/pattern-hardware.strudel",
+    "sha256": "9ee4ab5754038c408de9e90668a34f046e2058681dc8c865ba8702853f54d298",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/quantized-sequence.strudel",
+    "sha256": "73c6cd59074b27f76dafea21c5240351a932391cd5d2e187c239da3e3b0f5cad",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/sound-effects.strudel",
+    "sha256": "9113c96f0c122e2eaa0bd7fb864956c120ca8b751a55bc8dd3ac145ab0514ca2",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/switch-angel-trance-demo.strudel",
+    "sha256": "4c619da7a683db3f67b544b1ac01d2c53fa6c8b2681cfcfe875395e6d58bb997",
+    "layout": "absent",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/war-pigs-doom-instrument.strudel",
+    "sha256": "11a7d27facca579bc6c1521edb2c13d345e6c3db2a188a16547fd1f5678ce1d8",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/war-pigs-dub-afterimage.strudel",
+    "sha256": "36f7763c4556b20c5060d139a57bf71004fa93089e6be5f870b6df1ff214fd1d",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/library/patches/war-pigs-industrial-triplets.strudel",
+    "sha256": "afd4c3d739cbe0e92c236404274f671c93a1bfa5acae27f96f78843471c595da",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/reader/fixtures/issue-44.strudel",
+    "sha256": "488f527588efefecb9fb36a33e7512b0d0acbd7fccc5c5d22a138b0b32306d43",
+    "layout": "absent",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/reader/fixtures/pre-133-output.strudel",
+    "sha256": "1f55706a0e57399db284ba60e813a196fe1f14c3e0b69364c927962a7b573de8",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/reader/fixtures/pre-238-acid.strudel",
+    "sha256": "a221d4acbd39179956e9bc3449b586449b8550ff691bd04a86249d33c31da80e",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/reader/fixtures/pre-238-owner-compat.strudel",
+    "sha256": "249893f34668dbc797a7da7987b1919320857f02e04b7a44d0228a2e40f7efb0",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/reader/fixtures/pre-242-mix.strudel",
+    "sha256": "272ea26fc34d23e26ed2dd44e0d6e74326db71bc796406b016a4cbc215954b0a",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/reader/fixtures/pre-77-aliases.strudel",
+    "sha256": "4eb1fcf3879c5f8fd83bcdfb831f21b98f61ccf94bfc1c134058367c42f2d18c",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
+    "file": "src/reader/fixtures/pre-77-whole-voice.strudel",
+    "sha256": "b1977bbdfb9ca45ef216516e666c2fcc7d359cdff04e5d88c71724c63faf1fd8",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  }
+]

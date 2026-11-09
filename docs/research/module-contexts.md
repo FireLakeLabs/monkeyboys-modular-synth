@@ -15,6 +15,15 @@ control, range, omission, conditional mode, call binding, jack and alias directl
 from the catalog, alongside per-module judgments and observations. This is a
 catalog context overlay, not a competing full Strudel API inventory.
 
+## Production update after this research (#242)
+
+This remains the dated #246 research snapshot. #242 adopts the selected MIX
+exception: explicit Voices/Stack, static expression paths, conservative routing
+and one combined downstream pattern. Its [current contract and proof](../mix-composition.md)
+supersede the snapshot's reader-boundary observations for Stack. Other group/mode
+recommendations remain proposals; historical event/context evidence is not a new
+production coverage or PCM claim.
+
 ## Authority and reproducibility
 
 The owner explicitly authorized on tracker [#241](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/241):

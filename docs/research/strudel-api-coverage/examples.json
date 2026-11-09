@@ -18,7 +18,7 @@
     "names": ["lpf", "lpq"],
     "source": "$: note(\"c2\").s(\"sawtooth\").cutoff(800).resonance(25)\n",
     "expectCode": false,
-    "restriction": "Aliases require compatible owner; resonance 0\u201350"
+    "restriction": "Aliases require compatible owner; resonance 0–50"
   },
   {
     "id": "filter-range",
@@ -46,7 +46,7 @@
     "names": ["gain"],
     "source": "$: s(\"bd\").gain(1.4)\n",
     "expectCode": false,
-    "restriction": "Scalar 0\u20132 or recognized CV forms; not arbitrary patterns"
+    "restriction": "Scalar 0–2 or recognized CV forms; not arbitrary patterns"
   },
   {
     "id": "gain-pattern",
@@ -88,14 +88,14 @@
     "names": ["stack"],
     "source": "$: stack(s(\"bd\"),s(\"hh\"))\n",
     "expectCode": false,
-    "restriction": "Top-level independent voices only; #242 owns nested shape"
+    "restriction": "One first-class Stack expression with static voiced inputs (#242), not independent Voices channels"
   },
   {
     "id": "nested-stack",
     "names": ["stack"],
     "source": "$: stack(note(\"c2\"),note(\"e2\")).s(\"sawtooth\")\n",
-    "expectCode": true,
-    "restriction": "Shared downstream chain needs #242 nested-expression support"
+    "expectCode": false,
+    "restriction": "Static Stack arguments and shared downstream sound use #242 expression paths; events/source/save proof in composition.test.ts"
   },
   {
     "id": "arrange-sections",

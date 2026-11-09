@@ -64,12 +64,16 @@ note("c2 eb2 g2")
 
 ### 2. Each mixer input is a `$:` line
 
-Every cable into MIX becomes its own `$:` line, playing alongside the others. `stack()` means the same thing; the reader accepts either, the generator writes `$:`.
+In **Voices** mode, every cable into MIX becomes its own labelled expression. In
+**Stack** mode, connected inputs form one `stack(...)` event pattern for downstream
+transforms, including sound selection. Grouping does not sum rendered audio.
+Direct/chained imported stacks retain their nesting and exact source. See the
+[composition contract](mix-composition.md).
 
 ```js
 $: bass
 $: drums
-// same as stack(bass, drums)
+// Voices: independent labels and final routing; Stack is one combined expression.
 ```
 
 ### 3. A cable into CV modulates a control
@@ -170,6 +174,12 @@ $: lead.jux(rev)
 Splitting an _audio_ output means the voice plays twice in Strudel, so levels add up — the same as sending one signal into two mixer channels.
 
 ## Effect orbits
+
+A final Stack is one event expression and receives one orbit per final branch.
+Native delay/reverb sends inside it share that orbit, unlike independent Voices.
+Explicit inner orbits and opaque CODE remain source-owned; Stack containing CODE
+receives no overriding final orbit. Inline FX retain per-note processing.
+[Browser and PCM cases](mix-composition.md) distinguish these claims.
 
 Each final audible voice gets a dedicated positive integer `.orbit(n)`, including
 voices with no active send effects. Allocate `1, 2, …` in the same deterministic
@@ -274,7 +284,7 @@ See [reader evidence](reader-verification.md) and the implemented
 [workspace editing contract and limits](workspace-verification.md).
 
 - Parse with a JavaScript parser (Strudel itself uses `acorn`) and walk method chains.
-- `$:` labels and `stack(…)` arguments become mixer channels. `const` declarations used more than once become named outputs.
+- Separate labels become Voices channels; static `stack(…)` and receiver `.stack(…)` become Stack groups. Resolved `const` declarations retain one named output, including single uses.
 - Each recognised call maps to a module and control values via the module catalog (`src/modules/catalog.ts`).
 - Unrecognised calls in a chain become a CODE block holding that call’s exact source text, in place.
 - A voice that cannot be read at all becomes a single CODE block acting as its source.
@@ -384,12 +394,14 @@ layout, jack references, cardinality, signal compatibility (including through
 Alien/CODE passthroughs) and rejects cycles. Incomplete/disconnected chains are
 silent. No OUT means no voices; an empty rack uses the catalog tempo. ENV connects directly to any catalog CV target; mod utilities accept pattern signals as specified above.
 
-MIX is a virtual bus: recursively visit connected channels in catalog channel
+MIX **Voices** is a virtual bus: recursively visit connected channels in catalog channel
 order. Nested mixer levels multiply into one final `.postgain(product)`; repeated
 Strudel `postgain` settings would overwrite rather than multiply. Transforms
 after MIX apply to each leaf voice. Final gain is written after transforms and
 before routing. MIX fan-out names each leaf expression with a numbered suffix,
-rather than generating `stack()`. The levels remain on final branches, including
+rather than generating `stack()`. Stack ends that bus path: its incoming Voices
+levels/CV/masks/output setters are emitted inside the group, never folded across
+a post-Stack setter. Active nested Voices labels are refused. The levels remain on final branches, including
 when an intermediate bus has a named output.
 
 Shared declarations follow rack-array order except that dependencies are emitted
@@ -549,7 +561,7 @@ Source bytes, saved rack identity and actual onset events have independent
 
 ## Mixer channel labels and routing (#129)
 
-Each connected MIX channel still emits a final labelled expression. Default is
+Each connected MIX **Voices** channel emits a final labelled expression. Default is
 `$:`, MUTE is `_$:`, SOLO is `S$:`, and NAME `bass` is `bass:`. Prefixes compose:
 `Sbass:` solos bass and `_Sbass:` retains both saved flags while muted. The pinned
 REPL ignores labels starting or ending in `_`, then solos remaining labels

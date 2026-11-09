@@ -19,6 +19,7 @@ import { codeEnd } from './metadata'
 import { unclosedBracket } from './diagnostics'
 import {
   chain,
+  expressionScope,
   parseSource,
   scalar,
   nestedScope,
@@ -169,6 +170,70 @@ function project(
 ): { patch: Patch; bindings: SourceBinding[]; represented: Map<string, Set<string>> } {
   const { scopes, program } = parsed
   // A local helper is executable CODE, not the engine's literal-pattern constructor.
+  function mayShadowStack(value: unknown): boolean {
+    if (!value || typeof value !== 'object') return false
+    const node = Object.fromEntries(Object.entries(value))
+    if (
+      (node.type === 'VariableDeclarator' ||
+        node.type === 'FunctionDeclaration' ||
+        node.type === 'ClassDeclaration') &&
+      usesParameter(node.id, 'stack')
+    )
+      return true
+    if (
+      (node.type === 'ArrowFunctionExpression' || node.type === 'FunctionExpression') &&
+      usesParameter(node.params, 'stack')
+    )
+      return true
+    if (node.type === 'AssignmentExpression') {
+      const left = node.left
+      if (usesParameter(left, 'stack')) return true
+      if (left && typeof left === 'object' && 'property' in left) {
+        const property = left.property
+        if (
+          property &&
+          typeof property === 'object' &&
+          (('name' in property && property.name === 'stack') ||
+            ('value' in property && property.value === 'stack'))
+        )
+          return true
+      }
+    }
+    const callee = node.callee
+    if (
+      node.type === 'CallExpression' &&
+      callee &&
+      typeof callee === 'object' &&
+      'name' in callee &&
+      callee.name === 'register' &&
+      Array.isArray(node.arguments)
+    ) {
+      const name: unknown = node.arguments[0]
+      const knownOtherName = (item: unknown): boolean =>
+        !!item &&
+        typeof item === 'object' &&
+        'type' in item &&
+        item.type === 'Literal' &&
+        'value' in item &&
+        typeof item.value === 'string' &&
+        item.value !== 'stack'
+      if (
+        !knownOtherName(name) &&
+        !(
+          name &&
+          typeof name === 'object' &&
+          'type' in name &&
+          name.type === 'ArrayExpression' &&
+          'elements' in name &&
+          Array.isArray(name.elements) &&
+          name.elements.every(knownOtherName)
+        )
+      )
+        return true
+    }
+    return Object.values(value).some(mayShadowStack)
+  }
+  const stackShadowed = mayShadowStack(program)
   const pureShadowed = program.body.some((statement) =>
     statement.type === 'ExpressionStatement'
       ? statement.expression.type === 'AssignmentExpression' &&
@@ -266,7 +331,7 @@ function project(
     scope: ParsedScope,
     indices: number[],
     controls: Record<string, Span> = {},
-    semantic: Pick<SourceAddress, 'role' | 'target'> = { role: 'module' },
+    semantic: Pick<SourceAddress, 'role' | 'target' | 'part'> = { role: 'module' },
   ): void {
     const calls = indices.flatMap((index) => scope.calls[index] ?? [])
     const start = calls[0]?.start ?? scope.start
@@ -275,8 +340,9 @@ function project(
       (binding) =>
         binding.module === module.id &&
         binding.scope === scope.descriptor.id &&
-        descriptor(binding.loop) === descriptor(scope.loop) &&
+        descriptor([binding.loop, binding.path]) === descriptor([scope.loop, scope.path]) &&
         binding.role === semantic.role &&
+        binding.part === semantic.part &&
         descriptor(binding.target) === descriptor(semantic.target),
     )
     if (previous) {
@@ -288,6 +354,7 @@ function project(
         module: module.id,
         scope: scope.descriptor.id,
         ...(scope.loop ? { loop: scope.loop } : {}),
+        ...(scope.path ? { path: scope.path } : {}),
         calls: indices,
         ...semantic,
         start,
@@ -392,7 +459,7 @@ function project(
             (binding) =>
               binding.module === cable.to.module &&
               binding.scope === scope.descriptor.id &&
-              descriptor(binding.loop) === descriptor(scope.loop) &&
+              descriptor([binding.loop, binding.path]) === descriptor([scope.loop, scope.path]) &&
               binding.calls.some((later) => later > index),
           )),
     )
@@ -663,6 +730,7 @@ function project(
       bindingScope(snapshot, {
         scope: scope.descriptor.id,
         ...(scope.loop ? { loop: scope.loop } : {}),
+        ...(scope.path ? { path: scope.path } : {}),
       })
     const savedScope =
       previous &&
@@ -685,7 +753,8 @@ function project(
                   calls[indices.at(-1) ?? -1]?.end ??
                   (receiver && !calls.length ? scope.end : undefined)
                 return binding.scope === savedScope.id &&
-                  descriptor(binding.loop) === descriptor(scope.loop) &&
+                  descriptor([binding.loop, binding.path]) ===
+                    descriptor([scope.loop, scope.path]) &&
                   binding.role === 'module' &&
                   (indices[0] === index || (receiver && !calls.length && !indices.length)) &&
                   indices.every((value, offset) => value === index + offset) &&
@@ -719,7 +788,7 @@ function project(
             module.bindings.some(
               (binding) =>
                 binding.scope === savedScope.id &&
-                descriptor(binding.loop) === descriptor(scope.loop) &&
+                descriptor([binding.loop, binding.path]) === descriptor([scope.loop, scope.path]) &&
                 binding.role === 'module' &&
                 binding.calls.includes(index),
             ),
@@ -728,7 +797,7 @@ function project(
         return source ? undefined : 'smpl'
       return sound
     }
-    if (!scope.loop && scope.kind === 'declaration' && !retainedCode(0, true)) {
+    if (!scope.loop && !scope.path && scope.kind === 'declaration' && !retainedCode(0, true)) {
       const pattern = modPattern(scope.expression, (name) => declarations.has(name))
       if (pattern) {
         function insert(item: ModPattern): Output {
@@ -779,8 +848,55 @@ function project(
     let upstream: Output | undefined = receiverOutput
     let start = 0
     let group: PlacedModule | undefined
+    const stackIndex = calls.findLastIndex((call) => call.name === 'stack')
+    if (
+      !receiverOutput &&
+      stackIndex >= 0 &&
+      !scope.loop &&
+      !stackShadowed &&
+      !retainedCode(0, true)
+    ) {
+      const call = calls[stackIndex]
+      if (call && call.args.every((arg) => arg.type !== 'SpreadElement')) {
+        const parts = [
+          ...(call.receiver ? [{ call: stackIndex, argument: 'receiver' as const }] : []),
+          ...call.args.map((_, argument) => ({ call: stackIndex, argument })),
+        ]
+        const inputs = parts.map((step) => {
+          const child = expressionScope(scope, step)
+          if (!child) throw new Error('Invalid static input')
+          const value = expression(child)
+          if (step.argument === 'receiver' && hasOpaqueInput(value))
+            throw new Error('Ambiguous receiver stack method stays CODE')
+          return needsSampler(value) ? soundInput(value, 'vca') : value
+        })
+        const spec = getModuleSpec('mix')
+        const sockets = spec.composition?.inputs ?? []
+        function combine(offset: number): Output {
+          const bus = add('mix', { mode: 'Stack' })
+          const remaining = inputs.length - offset
+          const count = remaining > sockets.length ? sockets.length - 1 : remaining
+          for (let i = 0; i < count; i++) {
+            const input = inputs[offset + i],
+              socket = sockets[i]
+            if (input && socket) wire(input, bus, socket)
+          }
+          if (remaining > sockets.length) wire(combine(offset + count), bus, sockets.at(-1))
+          bind(
+            bus,
+            scope,
+            [stackIndex],
+            {},
+            { role: 'module', ...(inputs.length > sockets.length ? { part: offset } : {}) },
+          )
+          return output(bus)
+        }
+        upstream = combine(0)
+        start = stackIndex + 1
+      }
+    }
     const receiver = !receiverOutput && retainedCode(0, true)
-    if (receiver) {
+    if (receiver && !upstream) {
       upstream = code(scope, receiver.indices, receiver.text)
       start = (receiver.indices.at(-1) ?? -1) + 1
     }
@@ -831,7 +947,7 @@ function project(
         start = 1
       }
     }
-    if (!upstream && initial && initial.start === root.start) {
+    if (!upstream && initial && initial.start === root.start && initial.name !== 'stack') {
       const sound = initial.name === 's' && soundAt(initial, 0, true)
       const type = sound || owner(initial.name, true)
       const form = type && getModuleSpec(type).source
@@ -901,7 +1017,7 @@ function project(
     for (let index = start; index < calls.length; index++) {
       const call = calls[index]
       if (!call) continue
-      if (!scope.loop && routing?.get(scope.descriptor.id)?.call === index) continue
+      if (!scope.loop && !scope.path && routing?.get(scope.descriptor.id)?.call === index) continue
       const opaque = retainedCode(index)
       if (opaque) {
         upstream = code(scope, opaque.indices, opaque.text, upstream)
@@ -1017,7 +1133,9 @@ function project(
               (group?.type === 'seq' || group?.type === 'drums') &&
               typeof scalar(call.args[0]) === 'string'
             ? group.type
-            : (name === 's' && soundAt(call, index)) || owner(name, false)
+            : name === 'fast' && group?.type !== 'seq'
+              ? 'clock'
+              : (name === 's' && soundAt(call, index)) || owner(name, false)
       const mixerModulation = (call: Call) =>
         ['lfo', 'env'].includes(call.name) &&
         call.args.length === 1 &&
@@ -1361,7 +1479,7 @@ function project(
                       (b) =>
                         b.module === m.id &&
                         b.role === 'module' &&
-                        descriptor(b.loop) === descriptor(child.loop),
+                        descriptor([b.loop, b.path]) === descriptor([child.loop, child.path]),
                     ) &&
                     (!isLoopChain(getModuleSpec(m.type)) || m.type === 'code'),
                 )
@@ -1438,7 +1556,7 @@ function project(
             (binding) =>
               binding.module === group?.id &&
               binding.scope === scope.descriptor.id &&
-              descriptor(binding.loop) === descriptor(scope.loop) &&
+              descriptor([binding.loop, binding.path]) === descriptor([scope.loop, scope.path]) &&
               binding.calls.some((index) => {
                 const previous = calls[index]
                 const owned = previous && matchControlCall(spec, canonicalCall(previous.name))
@@ -1684,7 +1802,7 @@ function project(
     for (const binding of bindings.filter(
       (binding) =>
         binding.scope === scope.descriptor.id &&
-        descriptor(binding.loop) === descriptor(scope.loop),
+        descriptor([binding.loop, binding.path]) === descriptor([scope.loop, scope.path]),
     )) {
       // A pre-129 source snapshot owns its historical projection, including absent MODE.
       // Only exact saved syntax and call ownership justify retaining that saved state.
@@ -1884,22 +2002,10 @@ function project(
       }
     }
   }
-  for (const [name, signal] of resolved) {
-    if (
-      patch.cables.filter(
-        (cable) => cable.from.module === signal.module.id && cable.from.jack === signal.jack,
-      ).length >=
-      (Object.values(saved?.names ?? {}).includes(name) ||
-      patch.cables.some(
-        (c) =>
-          c.from.module === signal.module.id &&
-          patch.modules.find((m) => m.id === c.to.module)?.type === 'switch',
-      )
-        ? 1
-        : 2)
-    )
+  // A declaration is an explicit evaluation boundary even with a single use.
+  for (const [name, signal] of resolved)
+    if (patch.cables.some((c) => c.from.module === signal.module.id && c.from.jack === signal.jack))
       patch.names[`${signal.module.id}:${signal.jack}`] = name
-  }
   // Native setters retain the fixed engine order on import. Only a rack-owned
   // repatch may opt into inline processing; preserving text alone cannot prove sound.
   const { inline } = planEffects(graph(patch))
@@ -1960,7 +2066,7 @@ export function read(source: string): SourceDocument {
       // Every sounding binding must also be justified by the reader, not just valid indices.
       const actual = (bindings: SourceBinding[]) =>
         bindings
-          .map((b) => [b.module, b.scope, b.loop, b.role, b.calls, b.target, b.fx])
+          .map((b) => [b.module, b.scope, b.loop, b.path, b.part, b.role, b.calls, b.target, b.fx])
           .sort((a, b) => descriptor(a).localeCompare(descriptor(b)))
       const expected = saved.layout.modules.flatMap((m) =>
         m.bindings.map((b) => ({ ...b, module: m.id, start: 0, end: 0, controls: {} })),
@@ -2021,13 +2127,15 @@ export function read(source: string): SourceDocument {
               (item) =>
                 item.module === module.id &&
                 item.scope === scope.descriptor.id &&
-                descriptor(item.loop) === descriptor(binding.loop),
+                descriptor([item.loop, item.path]) === descriptor([binding.loop, binding.path]),
             )?.controls ?? {}
           return [
             {
               module: module.id,
               scope: scope.descriptor.id,
               ...(binding.loop ? { loop: binding.loop } : {}),
+              ...(binding.path ? { path: binding.path } : {}),
+              ...(binding.part === undefined ? {} : { part: binding.part }),
               calls: binding.calls,
               role: binding.role,
               ...(binding.fx === undefined ? {} : { fx: binding.fx }),
@@ -2094,6 +2202,27 @@ function restore(
         own.some((binding) => {
           const match = matches.get(binding.scope)
           if (!match) return false
+          if (binding.path) {
+            const first = binding.path[0]
+            const mapped = first && match.calls.get(first.call)
+            if (
+              !first ||
+              mapped === undefined ||
+              descriptor(match.current.calls[first.call]) !== descriptor(match.saved.calls[mapped])
+            )
+              return false
+            const oldPath = [{ ...first, call: mapped }, ...binding.path.slice(1)]
+            return old.bindings.some(
+              (b) =>
+                b.scope === match.saved.id &&
+                b.role === binding.role &&
+                descriptor(b.path) === descriptor(oldPath) &&
+                descriptor(b.loop) === descriptor(binding.loop) &&
+                b.fx === binding.fx &&
+                b.part === binding.part &&
+                binding.calls.every((c) => b.calls.includes(c)),
+            )
+          }
           const path = binding.loop
           const first = path?.[0]
           const mapped = first === undefined ? undefined : match.calls.get(first)
@@ -2109,6 +2238,7 @@ function restore(
             (oldBinding) =>
               oldBinding.scope === match.saved.id &&
               oldBinding.role === binding.role &&
+              oldBinding.part === binding.part &&
               descriptor(oldBinding.loop) === descriptor(loop) &&
               (binding.fx === undefined
                 ? oldBinding.fx === undefined

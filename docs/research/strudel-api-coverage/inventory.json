@@ -13,7 +13,7 @@
       },
       {
         "path": "docs/research/strudel-api-coverage/examples.json",
-        "sha256": "7816864aaefdc0a57fbb6062642c0f4853e0da72a0912c70e76069f40eb6c29b"
+        "sha256": "6a92d75e61f39a638a815edd7209ae894c2e92ff728fba24c33184c7309c14d2"
       },
       {
         "path": "docs/research/strudel-api-coverage/priorities.json",
@@ -44,6 +44,10 @@
         "sha256": "883d46cedd528ecd6a5260926de41eb10679ef3d99b8e8e0cc0ae586de12a215"
       },
       {
+        "path": "src/codegen/composition.test.ts",
+        "sha256": "eb0740799389ff4ffae6e6f96f0fb45d407ca835ffda406accc74fd3d6286fc6"
+      },
+      {
         "path": "src/codegen/effects.test.ts",
         "sha256": "47b179fc21c98864f2f98e36defdae159b98d0b548558fe7ed3769aa577c5556"
       },
@@ -57,19 +61,19 @@
       },
       {
         "path": "src/codegen/generate.ts",
-        "sha256": "dd5f2db08edc68d98e3ff7d02c11ad0eb13be9322805307279c9ffeb0879671c"
+        "sha256": "7ee9b6f8afe08a6461b1d046f957afaeaa775d632d98cc1ac1d544a54e408a40"
       },
       {
         "path": "src/codegen/graph.ts",
-        "sha256": "d07fd4b7ee5df974992b83ab142af50c8b1354bfca5643e6ec2ff1c64b91e951"
+        "sha256": "9894e2ff6a8a24ac7b872d3d680967657effa12086067a76dde5e026102e2613"
       },
       {
         "path": "src/codegen/layout.ts",
-        "sha256": "6230d2032ed78e2cdb6acd8dcccb38cd55283394e3a26deaefa6160981f5e888"
+        "sha256": "983ecddda400f99a31d85da227d516f0c58f417e156e292bf231b52a523f254f"
       },
       {
         "path": "src/codegen/panels.test.ts",
-        "sha256": "82901aeb860802190b1d6b7f3981e735346088de59351493a6a36d5e0eb36be3"
+        "sha256": "49893976992a5aa3be34144edde08db36bfe04425781bc202b7c5e115f7a0081"
       },
       {
         "path": "src/codegen/routing.test.ts",
@@ -81,7 +85,7 @@
       },
       {
         "path": "src/modules/catalog.ts",
-        "sha256": "9f2080bdd9bd2fe889c929920b5bca6e8751d459912d7609f7c3e8c6427df4b4"
+        "sha256": "175189bc51153c2bb1d329a4fd832702476644aa913ae86893d55148e5b9a83e"
       },
       {
         "path": "src/patch/types.ts",
@@ -96,12 +100,16 @@
         "sha256": "cb55bcedc646dff86693743841807d61ad3b4d238be36d29b0dfaf54ca0c8fb8"
       },
       {
+        "path": "src/reader/composition.test.ts",
+        "sha256": "ec9ee801f241d61446427118b485522bb1f00fff1cfe539ed83ef01d22fc0b3e"
+      },
+      {
         "path": "src/reader/coverage.test.ts",
-        "sha256": "fb8b083a3458ad1c320be0be410cc2f0b69923473f6159fefbbe10c349fda195"
+        "sha256": "87ec043bc3c80e08b6ba8d2d838e91eed0a9d677af7421d214c70c111afb9c96"
       },
       {
         "path": "src/reader/coverage.ts",
-        "sha256": "9112aaff7d3459e9bd013a8efaec4019b1964f93c27ff4329b8cc846dbcf9c2a"
+        "sha256": "c7609cfbfffdec2f72fd2884f25003b975b58173d63fab287f9583edc1700a3e"
       },
       {
         "path": "src/reader/diagnostics.test.ts",
@@ -117,11 +125,11 @@
       },
       {
         "path": "src/reader/layout.ts",
-        "sha256": "defca05668670b5aaf1cfeccfc4585190cf6a1baf399f3ef2850d8cdf52b9ed9"
+        "sha256": "657566fdc1269a0d28b9f861e2013a25e11fb20b451a56777f2d006e8c143a3c"
       },
       {
         "path": "src/reader/literal-edits.test.ts",
-        "sha256": "babb9be6d02f736efcb947d6e28c4e8e8814333cc075e1ee6ffba0d2f964cb9e"
+        "sha256": "a9b48ca3fe32172f195f3abb291ad518c47bcd3b63ffb00de80dfe203c4e3a97"
       },
       {
         "path": "src/reader/metadata.test.ts",
@@ -153,15 +161,15 @@
       },
       {
         "path": "src/reader/read.test.ts",
-        "sha256": "aebb7f051354339b23593e1e4469afcfdd6f312ec9fc7251e37f48a1af2a5523"
+        "sha256": "c9fb91db3a68bc228e801466d3c77e0d8bad8a5e053c88267f2386270e260974"
       },
       {
         "path": "src/reader/read.ts",
-        "sha256": "62956f6626797743d9ff52a42a2e346d3049cc86de4c6ef4e9fd31aafca85507"
+        "sha256": "659e8f58c3cdf5e36f1780364860ae6f776e74f45ac0752cdc2b273e33f91c11"
       },
       {
         "path": "src/reader/syntax.ts",
-        "sha256": "362525d9718086f5560be9ea392117eddc44992fa0bcad038391d537ddd71ae1"
+        "sha256": "94bf30ca73635109ac07d5f07b560039bd6b37a927977c41dec5c6c7a624d91e"
       },
       {
         "path": "src/reader/types.ts",
@@ -173,7 +181,7 @@
       },
       {
         "path": "src/workspace/document.ts",
-        "sha256": "61f2bb91e61f86386fdc869fcfdc2b222d68133daf75573df21c611263492237"
+        "sha256": "150a4bf4fe6fbb26881e66422d17232d3e2cf28cb066c31fd5f135f8b86a6cc4"
       }
     ],
     "counting": "Registration aliases grouped; packed fields excluded; numbered controls expanded; source candidates retained with unknown availability. Corpus calls count all syntactic CallExpressions, separately from production-reader metrics.",
@@ -35659,7 +35667,34 @@
           "module": "seq"
         }
       ],
-      "controls": [],
+      "controls": [
+        {
+          "module": "clock",
+          "control": "division",
+          "definition": {
+            "kind": "knob",
+            "id": "division",
+            "label": "DIV",
+            "min": 0.25,
+            "max": 16,
+            "step": 0.25,
+            "default": 2,
+            "omitAt": 1,
+            "call": {
+              "method": {
+                "control": "speed",
+                "names": {
+                  "Divide": "slow",
+                  "Multiply": "fast"
+                }
+              },
+              "argument": {
+                "kind": "number"
+              }
+            }
+          }
+        }
+      ],
       "reader": {
         "state": "unknown",
         "reason": "No curated reader observation; metadata does not prove supported forms",
@@ -62428,7 +62463,15 @@
               "max": 1,
               "default": -0.5
             },
-            "group": "CH 1"
+            "group": "CH 1",
+            "when": [
+              {
+                "control": "mode",
+                "values": [
+                  "Voices"
+                ]
+              }
+            ]
           }
         },
         {
@@ -62454,7 +62497,15 @@
               "max": 1,
               "default": -0.5
             },
-            "group": "CH 2"
+            "group": "CH 2",
+            "when": [
+              {
+                "control": "mode",
+                "values": [
+                  "Voices"
+                ]
+              }
+            ]
           }
         },
         {
@@ -62480,7 +62531,15 @@
               "max": 1,
               "default": -0.5
             },
-            "group": "CH 3"
+            "group": "CH 3",
+            "when": [
+              {
+                "control": "mode",
+                "values": [
+                  "Voices"
+                ]
+              }
+            ]
           }
         },
         {
@@ -62506,7 +62565,15 @@
               "max": 1,
               "default": -0.5
             },
-            "group": "CH 4"
+            "group": "CH 4",
+            "when": [
+              {
+                "control": "mode",
+                "values": [
+                  "Voices"
+                ]
+              }
+            ]
           }
         }
       ],
@@ -69657,7 +69724,13 @@
             "default": 2,
             "omitAt": 1,
             "call": {
-              "method": "slow",
+              "method": {
+                "control": "speed",
+                "names": {
+                  "Divide": "slow",
+                  "Multiply": "fast"
+                }
+              },
               "argument": {
                 "kind": "number"
               }
@@ -82368,12 +82441,13 @@
       ],
       "source": "$: stack(s(\"bd\"),s(\"hh\"))\n",
       "expectCode": false,
-      "restriction": "Top-level independent voices only; #242 owns nested shape",
+      "restriction": "One first-class Stack expression with static voiced inputs (#242), not independent Voices channels",
       "moduleTypes": [
         "drums",
         "smpl",
         "drums",
         "smpl",
+        "mix",
         "mix",
         "out"
       ],
@@ -82413,10 +82487,10 @@
       "coverage": {
         "patches": 1,
         "parseFailures": 0,
-        "calls": 2,
-        "mappedCalls": 2,
-        "voices": 2,
-        "readableVoices": 2,
+        "calls": 1,
+        "mappedCalls": 1,
+        "voices": 1,
+        "readableVoices": 1,
         "patchesWithoutCode": 1,
         "codeBlocks": 0,
         "id": "top-stack",
@@ -82429,19 +82503,31 @@
         "stack"
       ],
       "source": "$: stack(note(\"c2\"),note(\"e2\")).s(\"sawtooth\")\n",
-      "expectCode": true,
-      "restriction": "Shared downstream chain needs #242 nested-expression support",
+      "expectCode": false,
+      "restriction": "Static Stack arguments and shared downstream sound use #242 expression paths; events/source/save proof in composition.test.ts",
       "moduleTypes": [
-        "code",
+        "seq",
+        "seq",
+        "mix",
         "osc",
         "mix",
         "out"
       ],
       "values": [
         {
-          "type": "code",
+          "type": "seq",
           "values": {
-            "text": "stack(note(\"c2\"),note(\"e2\"))"
+            "steps": "c2",
+            "mode": "note",
+            "rate": 1
+          }
+        },
+        {
+          "type": "seq",
+          "values": {
+            "steps": "e2",
+            "mode": "note",
+            "rate": 1
           }
         },
         {
@@ -82451,24 +82537,20 @@
           }
         }
       ],
-      "code": [
-        "stack(note(\"c2\"),note(\"e2\"))"
-      ],
+      "code": [],
       "exactSource": true,
       "savedIdentity": true,
       "coverage": {
         "patches": 1,
         "parseFailures": 0,
         "calls": 2,
-        "mappedCalls": 1,
+        "mappedCalls": 2,
         "voices": 1,
-        "readableVoices": 0,
-        "patchesWithoutCode": 0,
-        "codeBlocks": 1,
+        "readableVoices": 1,
+        "patchesWithoutCode": 1,
+        "codeBlocks": 0,
         "id": "nested-stack",
-        "unmapped": {
-          "stack": 1
-        }
+        "unmapped": {}
       }
     },
     {

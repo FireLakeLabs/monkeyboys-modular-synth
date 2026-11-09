@@ -151,6 +151,8 @@ export type Control =
   DrawbarControl | KnobControl | SwitchControl | StepsControl | GridControl | TextControl
 
 export interface Jack {
+  /** Inactive jacks cannot be connected; their geometry may be hidden. */
+  when?: readonly { control: string; values: readonly string[] }[]
   id: string
   label: string
   direction: 'in' | 'out'
@@ -189,6 +191,8 @@ export interface ModuleSpec {
     role: string
     when?: { control: string; value: string }
   }
+  /** Event composition and physical input ordering; independent of panel geometry. */
+  composition?: { mode: string; voices: string; stack: string; inputs: readonly string[] }
   controls: readonly Control[]
   jacks: readonly Jack[]
   /**

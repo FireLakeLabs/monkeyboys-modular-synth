@@ -256,9 +256,39 @@ export function readLayout(source: string): SavedLayout {
           const loop = Array.isArray(binding.loop)
             ? binding.loop.filter((i: unknown): i is number => typeof i === 'number')
             : undefined
+          if (
+            binding.part !== undefined &&
+            (typeof binding.part !== 'number' ||
+              !Number.isSafeInteger(binding.part) ||
+              binding.part < 0)
+          )
+            throw new Error('Invalid continuation address')
+          let path: Binding['path']
+          if (binding.path !== undefined) {
+            if (!Array.isArray(binding.path) || !binding.path.length)
+              throw new Error('Invalid expression path')
+            path = binding.path.map((step: unknown) => {
+              if (
+                !record(step) ||
+                typeof step.call !== 'number' ||
+                !Number.isSafeInteger(step.call) ||
+                step.call < 0 ||
+                !(
+                  step.argument === 'receiver' ||
+                  step.argument === 'body' ||
+                  (typeof step.argument === 'number' &&
+                    Number.isSafeInteger(step.argument) &&
+                    step.argument >= 0)
+                )
+              )
+                throw new Error('Invalid expression step')
+              return { call: step.call, argument: step.argument }
+            })
+          }
           const scope = bindingScope(snapshot.scopes, {
             scope: binding.scope,
             ...(loop ? { loop } : {}),
+            ...(path ? { path } : {}),
           })
           const calls = binding.calls.map((call: unknown) => {
             if (
@@ -297,8 +327,10 @@ export function readLayout(source: string): SavedLayout {
           return {
             scope: binding.scope,
             ...(loop ? { loop } : {}),
+            ...(path ? { path } : {}),
             calls,
             role: binding.role,
+            ...(typeof binding.part === 'number' ? { part: binding.part } : {}),
             ...(typeof binding.fx === 'number' ? { fx: binding.fx } : {}),
             ...(target ? { target } : {}),
           }

@@ -1,3 +1,4 @@
+import { controlEnabled } from '../modules/bindings'
 import type { SourceDocument } from '../reader/types'
 import { bytebeatFormula } from '../modules/bytebeat'
 import { CableProbe, PatchCredits, ScopeDisplay } from './PatternVisuals'
@@ -728,7 +729,7 @@ export function Rack({
   const renderModules = (modules: Patch['modules']) =>
     modules.map((m) => {
       const spec = getModuleSpec(m.type)
-      const layout = panelControls(spec)
+      const layout = panelControls(spec, m)
       const moduleOverview = overview && m.type !== 'out'
       const acceptsSound =
         !!draggedSound &&
@@ -911,129 +912,131 @@ export function Rack({
               ))}
           </div>
           <div className="patch-box" inert={overview}>
-            {spec.jacks.map((jack) => {
-              const ref = { module: m.id, jack: jack.id }
-              const assessment = candidate(ref)
-              const state = wire || assessment?.kind !== 'blocked' ? assessment : null
-              const isAnchor = !!wire && keyOf(wire.anchor) === keyOf(ref)
-              const connected = patch.cables.some(
-                (c) => keyOf(c.from) === keyOf(ref) || keyOf(c.to) === keyOf(ref),
-              )
-              const incoming = patch.cables.find((c) => keyOf(c.to) === keyOf(ref))
-              const signal =
-                state && state.kind !== 'blocked' && jack.direction === 'in'
-                  ? state.signal
-                  : incoming
-                    ? cableKind(patch, incoming, loopInfo.members)
-                    : cableSignal(patch, ref, loopInfo.members)
-              return (
-                <div key={jack.id} className={`jack-label jack-${jack.direction}`}>
-                  <button
-                    type="button"
-                    data-jack={keyOf(ref)}
-                    data-wiring-anchor={isAnchor || undefined}
-                    disabled={overview}
-                    className={`jack signal-${signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
-                    aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}${jack.id === 'send' ? ` · ${loopRole(spec, m)}` : ''}`}
-                    aria-describedby={
-                      wire && target && keyOf(target) === keyOf(ref)
-                        ? 'cable-target-hint'
-                        : !wire && inspected && keyOf(inspected.ref) === keyOf(ref)
-                          ? 'jack-discovery-hint'
-                          : undefined
-                    }
-                    title={
-                      state?.message ??
-                      ((signal === 'function' ? functionLabel(incoming?.from ?? ref) : '') ||
-                        (wire && jackSpec(patch, wire.anchor)?.direction === jack.direction
-                          ? 'Choose an opposite-direction jack.'
-                          : `${jack.label} · ${signal === 'any' ? 'unresolved signal' : signal} ${jack.direction}`))
-                    }
-                    onPointerDown={(event) => {
-                      if (event.button !== 0 || adding) return
-                      if (wire) {
-                        wireGesture.current = isAnchor
-                          ? { x: event.clientX, y: event.clientY, dragged: false }
-                          : null
-                        return
+            {spec.jacks
+              .filter((jack) => controlEnabled(spec, m.values, jack))
+              .map((jack) => {
+                const ref = { module: m.id, jack: jack.id }
+                const assessment = candidate(ref)
+                const state = wire || assessment?.kind !== 'blocked' ? assessment : null
+                const isAnchor = !!wire && keyOf(wire.anchor) === keyOf(ref)
+                const connected = patch.cables.some(
+                  (c) => keyOf(c.from) === keyOf(ref) || keyOf(c.to) === keyOf(ref),
+                )
+                const incoming = patch.cables.find((c) => keyOf(c.to) === keyOf(ref))
+                const signal =
+                  state && state.kind !== 'blocked' && jack.direction === 'in'
+                    ? state.signal
+                    : incoming
+                      ? cableKind(patch, incoming, loopInfo.members)
+                      : cableSignal(patch, ref, loopInfo.members)
+                return (
+                  <div key={jack.id} className={`jack-label jack-${jack.direction}`}>
+                    <button
+                      type="button"
+                      data-jack={keyOf(ref)}
+                      data-wiring-anchor={isAnchor || undefined}
+                      disabled={overview}
+                      className={`jack signal-${signal} ${connected ? 'connected' : ''} ${emptyOutput && m.type === 'out' && jack.id === 'in' ? 'needs-source' : ''} ${state ? (state.kind === 'blocked' ? 'blocked' : `valid ${state.kind}`) : ''}`}
+                      aria-label={`${m.id} ${jack.label} ${jack.direction} · ${signal === 'any' ? 'unresolved signal' : signal}${jack.id === 'send' ? ` · ${loopRole(spec, m)}` : ''}`}
+                      aria-describedby={
+                        wire && target && keyOf(target) === keyOf(ref)
+                          ? 'cable-target-hint'
+                          : !wire && inspected && keyOf(inspected.ref) === keyOf(ref)
+                            ? 'jack-discovery-hint'
+                            : undefined
                       }
-                      wireGesture.current = { x: event.clientX, y: event.clientY, dragged: false }
-                      startWire(ref)
-                    }}
-                    onFocus={(event) => inspectJack(ref, event.currentTarget)}
-                    onBlur={(event) => {
-                      if (!event.currentTarget.matches(':hover')) {
-                        setTarget(null)
-                        setInspected(null)
+                      title={
+                        state?.message ??
+                        ((signal === 'function' ? functionLabel(incoming?.from ?? ref) : '') ||
+                          (wire && jackSpec(patch, wire.anchor)?.direction === jack.direction
+                            ? 'Choose an opposite-direction jack.'
+                            : `${jack.label} · ${signal === 'any' ? 'unresolved signal' : signal} ${jack.direction}`))
                       }
-                    }}
-                    onPointerEnter={(event) => inspectJack(ref, event.currentTarget)}
-                    onPointerLeave={(event) => {
-                      if (event.currentTarget !== document.activeElement) {
-                        setTarget(null)
-                        setInspected(null)
-                        if (wire) setMessage(wiringMessage(wire.anchor))
-                      }
-                    }}
-                    onPointerUp={() => {
-                      if (!wire || adding) return
-                      if (!wireGesture.current || wireGesture.current.dragged) {
-                        if (connectionEnds(patch, wire.anchor, ref)) finish(ref)
-                        else if (!isAnchor || wireGesture.current?.dragged) {
-                          cancel()
-                          setMessage('Choose an opposite-direction jack.')
+                      onPointerDown={(event) => {
+                        if (event.button !== 0 || adding) return
+                        if (wire) {
+                          wireGesture.current = isAnchor
+                            ? { x: event.clientX, y: event.clientY, dragged: false }
+                            : null
+                          return
                         }
-                      }
-                    }}
-                    onClick={(event) => {
-                      if (event.detail === 0) {
-                        if (!wire) startWire(ref)
-                        else finish(ref)
-                      }
-                    }}
-                  />
-                  <span>
-                    {jack.label}
-                    <span className="jack-state-mark" aria-hidden="true">
-                      {state
-                        ? state.kind === 'blocked'
-                          ? '×'
-                          : state.kind === 'valid'
-                            ? '✓'
-                            : '△'
-                        : wire && jackSpec(patch, wire.anchor)?.direction === jack.direction
-                          ? '×'
-                          : ' '}
-                    </span>
-                    {jack.id === 'send' && (
-                      <small className="function-role">{loopRole(spec, m)}</small>
-                    )}
-                  </span>
-                  {jack.direction === 'out' &&
-                    (patch.cables.filter((c) => keyOf(c.from) === keyOf(ref)).length > 1 ||
-                      patch.names[keyOf(ref)]) && (
-                      <input
-                        key={`${m.id}:${jack.id}:${patch.names[keyOf(ref)]}`}
-                        className="output-name"
-                        aria-label={`Name ${m.id} ${jack.label}`}
-                        defaultValue={patch.names[keyOf(ref)] ?? ''}
-                        onPointerDown={(event) => event.stopPropagation()}
-                        onBlur={(event) => {
-                          if (event.target.value !== patch.names[keyOf(ref)])
-                            edit((p) => renameOutput(p, keyOf(ref), event.target.value))
-                        }}
-                        onKeyDown={(event) => {
-                          if (event.key === 'Enter') event.currentTarget.blur()
-                          if (event.key === 'Escape') {
-                            event.currentTarget.value = patch.names[keyOf(ref)] ?? ''
-                            event.currentTarget.blur()
+                        wireGesture.current = { x: event.clientX, y: event.clientY, dragged: false }
+                        startWire(ref)
+                      }}
+                      onFocus={(event) => inspectJack(ref, event.currentTarget)}
+                      onBlur={(event) => {
+                        if (!event.currentTarget.matches(':hover')) {
+                          setTarget(null)
+                          setInspected(null)
+                        }
+                      }}
+                      onPointerEnter={(event) => inspectJack(ref, event.currentTarget)}
+                      onPointerLeave={(event) => {
+                        if (event.currentTarget !== document.activeElement) {
+                          setTarget(null)
+                          setInspected(null)
+                          if (wire) setMessage(wiringMessage(wire.anchor))
+                        }
+                      }}
+                      onPointerUp={() => {
+                        if (!wire || adding) return
+                        if (!wireGesture.current || wireGesture.current.dragged) {
+                          if (connectionEnds(patch, wire.anchor, ref)) finish(ref)
+                          else if (!isAnchor || wireGesture.current?.dragged) {
+                            cancel()
+                            setMessage('Choose an opposite-direction jack.')
                           }
-                        }}
-                      />
-                    )}
-                </div>
-              )
-            })}
+                        }
+                      }}
+                      onClick={(event) => {
+                        if (event.detail === 0) {
+                          if (!wire) startWire(ref)
+                          else finish(ref)
+                        }
+                      }}
+                    />
+                    <span>
+                      {jack.label}
+                      <span className="jack-state-mark" aria-hidden="true">
+                        {state
+                          ? state.kind === 'blocked'
+                            ? '×'
+                            : state.kind === 'valid'
+                              ? '✓'
+                              : '△'
+                          : wire && jackSpec(patch, wire.anchor)?.direction === jack.direction
+                            ? '×'
+                            : ' '}
+                      </span>
+                      {jack.id === 'send' && (
+                        <small className="function-role">{loopRole(spec, m)}</small>
+                      )}
+                    </span>
+                    {jack.direction === 'out' &&
+                      (patch.cables.filter((c) => keyOf(c.from) === keyOf(ref)).length > 1 ||
+                        patch.names[keyOf(ref)]) && (
+                        <input
+                          key={`${m.id}:${jack.id}:${patch.names[keyOf(ref)]}`}
+                          className="output-name"
+                          aria-label={`Name ${m.id} ${jack.label}`}
+                          defaultValue={patch.names[keyOf(ref)] ?? ''}
+                          onPointerDown={(event) => event.stopPropagation()}
+                          onBlur={(event) => {
+                            if (event.target.value !== patch.names[keyOf(ref)])
+                              edit((p) => renameOutput(p, keyOf(ref), event.target.value))
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter') event.currentTarget.blur()
+                            if (event.key === 'Escape') {
+                              event.currentTarget.value = patch.names[keyOf(ref)] ?? ''
+                              event.currentTarget.blur()
+                            }
+                          }}
+                        />
+                      )}
+                  </div>
+                )
+              })}
           </div>
           <span className="module-id">{m.id}</span>
         </section>
