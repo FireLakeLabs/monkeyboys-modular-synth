@@ -426,6 +426,15 @@ unproven cross-voice calls retain source ownership; do not infer their graph
 from integer bus/orbit addresses. Exact source, complete rack identity and engine
 events are checked independently in the [routing matrix](routing-verification.md).
 
+## Arranger lanes (#141)
+
+Lanes are MIX channel values `arr1`…`arr4` in the existing module `values`; an
+absent value plays every cycle. No format version or new field is needed. Lane
+text must be `0`/`1` cycle steps, or graph validation refuses the rack. Executable
+`.mask()` calls are authoritative after a code edit: reconciliation carries the
+lane with its channel, as it does NAME and OUTPUT. Song length shown by the lane
+is view state and is not saved. See the [contract](arranger.md#contract).
+
 ## Strudel credits and the patch name (#139)
 
 Real line comments of the form `// @title …`, `// @by …`, `// @license …`,

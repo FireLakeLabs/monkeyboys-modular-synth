@@ -158,6 +158,20 @@ load or resize. Adjacent CODE blocks remain separate under the
 [preservation study](translation-rules.md#adjacent-code-study-187-8-november-2026).
 Explicit Arrange rack and saved-library refresh remain #218's scope.
 
+## Arranger lane (#141, decided 8 November 2026)
+
+The arranger writes **per-voice mask lanes**, not `arrange()` over sections. Each
+connected MIX channel has a lane in the Arrange footer popover along the rack's
+bottom edge, which keeps the rack frame's size; its cycles become
+`.mask("<0!4 1!12>")` on that channel's voice, before gain and routing. The
+[spike](arranger.md#spike-one-song-both-ways) rendered one song both ways:
+masks kept one `$:` line, label and orbit per voice, round-tripped as rack state
+and kept song time. `arrange()` folded voices into one CODE line, needed orbits in
+shared declarations, and restarted section time, changing 24 of 200 onsets. The
+reader reads only a final lane mask; `arrange()` and other masks stay
+source-owned CODE. Lanes are MIX channel values, so no format change is needed.
+See the [contract and evidence](arranger.md).
+
 ## Rack case (#133, decided 3 November 2026)
 
 - OUT is pinned at the right edge of the rack frame, outside the rails, retaining

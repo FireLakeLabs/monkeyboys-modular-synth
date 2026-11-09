@@ -860,6 +860,8 @@ export const MIX: ModuleSpec = {
         },
         { kind: 'text', id: `name${n}`, label: `NAME ${n}`, default: '', more: true },
         { kind: 'text', id: `channels${n}`, label: `OUTPUT ${n}`, default: '1:2', more: true },
+        // Arranger lane (#141): one mask step per cycle, edited in the Arrange popover.
+        { kind: 'text', id: `arr${n}`, label: `ARRANGE ${n}`, default: '', more: true },
       ] satisfies Control[]
     ).map((control) => ({ ...control, group: `CH ${n}` })),
   ),
@@ -879,7 +881,7 @@ export const MIX: ModuleSpec = {
     })),
     { id: 'out', label: 'OUT', direction: 'out', signal: 'audio' },
   ],
-  strudel: ['postgain', 'stack', 'channels'],
+  strudel: ['postgain', 'stack', 'channels', 'mask'],
   orderSensitive: false,
 }
 

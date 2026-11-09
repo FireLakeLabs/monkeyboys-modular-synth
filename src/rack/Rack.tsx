@@ -33,6 +33,7 @@ import { observeActivity } from './activity'
 import type { Control } from '../modules/types'
 import { ControlEditor } from './Controls'
 import { MoreFlyout } from './MoreFlyout'
+import { ArrangerLane } from './ArrangerLane'
 import {
   HP,
   ROW_HEIGHT,
@@ -1390,6 +1391,8 @@ export function Rack({
               </div>
             </details>
           )}
+          {/* A loaded patch starts from its own song length. */}
+          <ArrangerLane key={patchLoads} patch={patch} edit={edit} locked={locked} />
           <details ref={connections} name="rack-popover" className="connections rack-popover">
             <summary>Connections ({patch.cables.length})</summary>
             <div>

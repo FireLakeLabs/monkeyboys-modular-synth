@@ -721,6 +721,7 @@ export function generateDocument(
                 solo: string(node, `solo${channel}`) === 'on',
                 name: string(node, `name${channel}`),
                 channels: string(node, `channels${channel}`),
+                arrangement: string(node, `arr${channel}`),
               },
             ],
           }))
@@ -889,6 +890,17 @@ export function generateDocument(
     const factors = original.mixers.map((mixer) => mixer.gain)
     const gain = product(factors, numeric)
     let voice = original
+    // Arranger lanes filter events by cycle, so each mixer hop on the path applies
+    // its own mask; masks commute and keep this voice's orbit, labels and gain.
+    for (const mixer of original.mixers.filter((mixer) => mixer.arrangement)) {
+      voice = append(voice, `.mask(${quote(mixer.arrangement)})`)
+      voice.owners.push({
+        module: mixer.module,
+        role: 'mixer',
+        start: voice.text.lastIndexOf('.mask('),
+        end: voice.text.length,
+      })
+    }
     if (
       gain !== '1' ||
       original.mixers.some((mixer) => {
