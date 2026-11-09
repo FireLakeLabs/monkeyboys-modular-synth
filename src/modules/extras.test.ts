@@ -157,7 +157,10 @@ it.each([
   const doc = read(source)
   expect(doc.patch.modules.find((m) => m.type === 'bytebeat')?.values.formula).toBeUndefined()
   expect(
-    doc.patch.modules.some((m) => m.type === 'code' && String(m.values.text).includes('bbexpr')),
+    doc.patch.modules.some(
+      (m) =>
+        m.type === 'code' && typeof m.values.text === 'string' && m.values.text.includes('bbexpr'),
+    ),
   ).toBe(true)
   expect(generate(doc)).toBe(source)
   const saved = saveLayout(doc)
