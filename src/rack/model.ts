@@ -5,7 +5,14 @@ import { controlEnabled } from '../modules/bindings'
 import { effectRank } from '../modules/effects'
 import { activeEffectRanks, planEffects } from '../codegen/effects'
 import { generate } from '../codegen/generate'
-import { graph, outputSignal, functionMembers, isSteps, requireNode } from '../codegen/graph'
+import {
+  graph,
+  outputSignal,
+  functionMembers,
+  closedFunction,
+  isSteps,
+  requireNode,
+} from '../codegen/graph'
 import { getModuleSpec, VOICE_EFFECT_ORDER } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { Control, JackSignal, KnobControl, ModuleSpec, SwitchControl } from '../modules/types'
@@ -187,9 +194,38 @@ export function placeModule(
 /** A callback name cannot become a global declaration when its owner is unplugged/deleted. */
 function withoutExitedLocalNames(before: Patch, next: Patch): Patch {
   const nodes = graph(next)
-  if (!Object.keys(next.names).length) return next
+  if (!Object.keys(before.names).length) return next
   const previous = functionMembers(graph(before))
   const current = functionMembers(nodes)
+  for (const [key, name] of Object.entries(before.names)) {
+    const id = key.split(':')[0] ?? ''
+    const owner = previous.get(id)
+    const callback = owner ? nodes.get(owner) : undefined
+    if (!callback) continue
+    const complete = closedFunction(nodes, callback)
+    const body = new Set<string>()
+    const visit = (cable: Cable | undefined): void => {
+      if (!cable || cable.from.jack === 'send' || body.has(cable.from.module)) return
+      const node = requireNode(nodes, cable.from.module)
+      body.add(node.module.id)
+      for (const [jack, input] of node.inputs)
+        if (jack === 'in' || jack === 'return' || node.spec.composition?.inputs.includes(jack))
+          visit(input)
+    }
+    visit(callback.inputs.get('return'))
+    const retained = current.get(id) === owner && next.names[key] === name
+    if (retained && (!complete || body.has(id))) continue
+    for (const member of body) {
+      const module = requireNode(nodes, member).module
+      if (module.type !== 'code' || typeof module.values['text'] !== 'string') continue
+      const text = module.values['text'].trimStart()
+      const ast = parse(text.startsWith('.') ? `silence${text}\n` : `(${text}\n)`, {
+        ecmaVersion: 'latest',
+      })
+      if (usesParameter(ast, name))
+        throw new Error('Edit the CODE reference before disconnecting its local binding')
+    }
+  }
   return {
     ...next,
     names: Object.fromEntries(

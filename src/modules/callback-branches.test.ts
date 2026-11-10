@@ -331,3 +331,15 @@ it('keeps explicit local names distinct from later generated shared names', asyn
   )
   expect(read(generate(p)).patch).toEqual(p)
 })
+it('refuses deletion that would strand an opaque reference to a local binding', () => {
+  const source = `$: ${base}.jux(x=>(a=>stack(a.rev(),x.add(a)))(x.fast(2)))\n`
+  const doc = saveLayout(read(source))
+  const before = structuredClone(doc.patch)
+  expect(() => removeModule(doc.patch, 'rev1')).toThrow(/CODE/)
+  expect(() => removeModule(doc.patch, 'clock1')).toThrow(/CODE/)
+  expect(doc.patch).toEqual(before)
+  const code = doc.patch.modules.find((m) => m.type === 'code')
+  if (!code) throw new Error('Missing opaque reference')
+  const safe = setValue(doc.patch, code.id, 'text', '.add(1)')
+  expect(read(generate(removeModule(safe, 'rev1'))).patch).toEqual(removeModule(safe, 'rev1'))
+})

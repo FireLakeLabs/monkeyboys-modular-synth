@@ -133,6 +133,23 @@ test('callback branches support native local patching, nested selection, edits, 
   expect(Object.values(deleted.patch.names).filter((n) => n === 'shared')).toHaveLength(1)
   await page.getByRole('button', { name: 'Undo', exact: true }).click()
   await expect.poll(() => run(page, 'state')).toEqual(named)
+  await page.evaluate(async () => {
+    const { read } = await import('/src/reader/read.ts')
+    const { generate } = await import('/src/codegen/generate.ts')
+    await (
+      await import('/scripts/rack-feel-check.mjs')
+    ).load(
+      generate(
+        read('$: note("c3 e3").s("sine").jux(x=>(a=>stack(a.rev(),x.add(a)))(x.fast(2)))\n').patch,
+      ),
+    )
+  })
+  await synced(page)
+  const opaque = await run(page, 'state')
+  await detailPanel(page.locator('[data-module="rev1"]'))
+  await page.getByRole('button', { name: 'Select rev1', exact: true }).click()
+  await page.keyboard.press('Delete')
+  expect(await run(page, 'state')).toEqual(opaque)
 })
 
 test('local Stack retains function cable geometry in all Hardware looks', async ({

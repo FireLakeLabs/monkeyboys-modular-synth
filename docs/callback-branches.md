@@ -188,3 +188,9 @@ colliding global/local name, prior #135 runtime checks, all six original/regener
 PCM/event pairs and current screenshots. [Review ledger](evidence/callback-review.md)
 records the decisions and pending bounded re-check. No unrelated feature or
 process change was adopted.
+
+A structural edit that would strand a CODE reference to a former local
+binding without its emitted value is refused atomically. Edit the CODE reference
+first. This checks known callback names and the closed RETURN dependency graph;
+it neither executes CODE nor infers arbitrary global dependencies. Incomplete
+preset-only bodies remain savable when their known binding state is retained.

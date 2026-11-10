@@ -898,3 +898,9 @@ delete/unplug/repatch is cleared instead of promoted to a global declaration.
 Names on still-local incomplete graphs remain; Undo restores the complete former
 named graph. Automatic local names reserve all explicit names in that owner before
 traversal, preventing a later explicit name from shadowing an earlier shared value.
+
+A structural edit that would strand a CODE reference to a former local
+binding without its emitted value is refused atomically. Edit the CODE reference
+first. This checks known callback names and the closed RETURN dependency graph;
+it neither executes CODE nor infers arbitrary global dependencies. Incomplete
+preset-only bodies remain savable when their known binding state is retained.
