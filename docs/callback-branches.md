@@ -1,7 +1,8 @@
 # Local callback branches (#243)
 
-Status: implementation, focused proof and repository gate complete; bounded
-review, final full local browser suite and hosted/protected merge remain pending. This contract deliberately
+Status: implemented, bounded review approved, repository gate and complete local
+browser verification passed. Hosted acceptance and protected merge history are
+recorded on [#243](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/243). This contract deliberately
 replaces #135's chain-only rule, using the actual merged #242 Stack model. #244
 sections, #217 custom panels, #216 larger geometry and #248–251 remain separate.
 
@@ -203,3 +204,21 @@ can cause later structural edits to refuse until CODE is corrected. The guard
 checks the current RETURN dependency graph and known retained local bindings;
 arbitrary CODE/global dependency validation is not adopted. Final full local and
 hosted gates remain pending.
+
+## Final local acceptance
+
+Frozen approved production `fec8dfa0e26afff310c3f9a82b1d1b7d204963d2`, with only
+approval/limit prose added at `a81737ab441ddd133f202fe4f2cbe109aa7c77df`, completed
+`npm run test:browser:report`: **RESULT passed=232 failed=0 exit=0**, zero retries.
+The actual footer was **232 passed (20.4m)**. Every new callback case, prior
+function-loop script, both MIX cases, complete module/library/control matrix,
+workspace histories/source edits, real event/PCM groups, crate audition/review,
+Stop/replacement and Export/Open completed. The refreshed runtime JSON and panel
+captures above come from this full run and were inspected. Physical listening
+remains unperformed. Two earlier interrupted runs remain explicitly excluded.
+
+The separate baseline-main crate failure passed on its unchanged-head hosted
+rerun, and the crate cases passed here; no crate/audio/probe/threshold change was
+made and no MIX regression is claimed. Hosted final-head required checks and
+Full browser suites remain the protected merge gate; their actual results and
+merge SHA are recorded on #243 and the PR rather than predicted here.

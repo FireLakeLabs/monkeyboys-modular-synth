@@ -310,3 +310,11 @@ See [contract, acceptance matrix and verification](callback-branches.md).
 Repository/browser/PCM evidence, bounded review and hosted/protected merge status
 are recorded there as they complete; #244 section sequencing, #217 custom panels and
 #248–251 remain separate. No new module or process-lesson increment is included.
+
+#243 local acceptance is complete: 2,677 unit cases/65 files, 59 guardrails,
+88-file source/save audit, and full **232/0** browser coverage. Opus 5.5/high
+approved production `fec8dfa` in three bounded rounds, with explicit CODE limits
+in the contract. No bundled music/attribution or personal storage was cleared or
+rebuilt. Final hosted gates and protected merge history are recorded on
+[#243](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/243); #244
+remains the separate next section-sequencing increment.
