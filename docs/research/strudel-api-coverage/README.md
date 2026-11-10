@@ -14,8 +14,9 @@ meaning. #242 intentionally changes the live production-reader examples: both
 argument bindings. Independent exact-source, full saved-identity and pinned-event
 proof lives in `src/reader/composition.test.ts` and
 `src/codegen/composition.test.ts`; browser send/PCM evidence is recorded in
-[MIX composition](../../mix-composition.md). Callback branching and section arrange
-remain CODE; their negative assertions are unchanged. The current machine artifact
+[MIX composition](../../mix-composition.md). #243 subsequently projects bounded local callback branches, including the
+`loop-branch` example. Section arrange and unsupported callback/capture shapes
+retain CODE. See [callback contract/evidence](../../callback-branches.md). The current machine artifact
 was refreshed against the changed application inputs without weakening unrelated
 fallbacks. The historical 294/309 observation is not a current whole-library claim.
 

@@ -1,5 +1,9 @@
 # Function-loop acceptance (#135)
 
+Historical #135 acceptance: #243 deliberately replaces the single-chain and
+branch-rejection rules below; see [current callback contract/evidence](callback-branches.md).
+The dated measurements remain unchanged.
+
 Verified 4 November 2026 on Node 24.22.2 and Chromium 156.0.8078.4.
 The [contract](translation-rules.md#function-loops-135),
 [catalog](../src/modules/catalog.ts) and [format](patch-format.md#function-loop-ownership-135)

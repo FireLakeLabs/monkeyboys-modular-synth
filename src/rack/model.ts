@@ -1,9 +1,18 @@
+import { parse } from 'acorn'
+import { usesParameter } from '../reader/syntax'
 import { isStack } from '../modules/composition'
 import { controlEnabled } from '../modules/bindings'
 import { effectRank } from '../modules/effects'
 import { activeEffectRanks, planEffects } from '../codegen/effects'
 import { generate } from '../codegen/generate'
-import { graph, outputSignal, functionMembers, isSteps, requireNode } from '../codegen/graph'
+import {
+  graph,
+  outputSignal,
+  functionMembers,
+  closedFunction,
+  isSteps,
+  requireNode,
+} from '../codegen/graph'
 import { getModuleSpec, VOICE_EFFECT_ORDER } from '../modules/catalog'
 import { DEFAULT_LOOK, looksFor, type LookId } from '../modules/looks'
 import type { Control, JackSignal, KnobControl, ModuleSpec, SwitchControl } from '../modules/types'
@@ -182,18 +191,67 @@ export function placeModule(
   })
 }
 
+/** A callback name cannot become a global declaration when its owner is unplugged/deleted. */
+function withoutExitedLocalNames(before: Patch, next: Patch): Patch {
+  const nodes = graph(next)
+  if (!Object.keys(before.names).length) return next
+  const previous = functionMembers(graph(before))
+  const current = functionMembers(nodes)
+  for (const [key, name] of Object.entries(before.names)) {
+    const id = key.split(':')[0] ?? ''
+    const owner = previous.get(id)
+    const callback = owner ? nodes.get(owner) : undefined
+    if (!callback) continue
+    const complete = closedFunction(nodes, callback)
+    const body = new Set<string>()
+    const visit = (cable: Cable | undefined): void => {
+      if (!cable || cable.from.jack === 'send' || body.has(cable.from.module)) return
+      const node = requireNode(nodes, cable.from.module)
+      body.add(node.module.id)
+      for (const [jack, input] of node.inputs)
+        if (jack === 'in' || jack === 'return' || node.spec.composition?.inputs.includes(jack))
+          visit(input)
+    }
+    visit(callback.inputs.get('return'))
+    const retained = current.get(id) === owner && next.names[key] === name
+    if (retained && (!complete || body.has(id))) continue
+    for (const member of body) {
+      const module = requireNode(nodes, member).module
+      if (module.type !== 'code' || typeof module.values['text'] !== 'string') continue
+      const text = module.values['text'].trimStart()
+      const ast = parse(text.startsWith('.') ? `silence${text}\n` : `(${text}\n)`, {
+        ecmaVersion: 'latest',
+      })
+      if (usesParameter(ast, name))
+        throw new Error('Edit the CODE reference before disconnecting its local binding')
+    }
+  }
+  return {
+    ...next,
+    names: Object.fromEntries(
+      Object.entries(next.names).filter(([key]) => {
+        const id = key.split(':')[0] ?? ''
+        const owner = previous.get(id)
+        return !owner || current.get(id) === owner
+      }),
+    ),
+  }
+}
+
 export function removeModule(patch: Patch, id: string): Patch {
   if (patch.modules.find((m) => m.id === id)?.type === 'out')
     throw new Error('OUT cannot be deleted while the rack is open')
-  return validateRack({
-    ...patch,
-    modules: patch.modules.filter((m) => m.id !== id),
-    cables: patch.cables.filter((c) => c.from.module !== id && c.to.module !== id),
-    names: Object.fromEntries(
-      Object.entries(patch.names).filter(([key]) => !key.startsWith(`${id}:`)),
-    ),
-    rows: rackRows(patch),
-  })
+  return validateRack(
+    withoutExitedLocalNames(patch, {
+      ...patch,
+      modules: patch.modules.filter((m) => m.id !== id),
+      cables: patch.cables.filter((c) => c.from.module !== id && c.to.module !== id),
+      names: Object.fromEntries(
+        Object.entries(patch.names).filter(([key]) => !key.startsWith(`${id}:`)),
+      ),
+      rows: rackRows(patch),
+    }),
+  )
 }
 
 /** Routing activity is independent of whether omitted controls own any source bytes. */
@@ -290,7 +348,9 @@ export function sequenceText(module: PlacedModule, steps: readonly string[]): st
 }
 
 export function removeCable(patch: Patch, id: string): Patch {
-  return validateRack({ ...patch, cables: patch.cables.filter((c) => c.id !== id) })
+  return validateRack(
+    withoutExitedLocalNames(patch, { ...patch, cables: patch.cables.filter((c) => c.id !== id) }),
+  )
 }
 
 export function connect(
@@ -329,7 +389,7 @@ export function connect(
     const c = next.cables.find((item) => item.to.module === id && item.to.jack === 'in')
     return c ? upstream(c.from.module) : undefined
   }
-  graph(next) // Reject cycles before walking passthroughs.
+  next = withoutExitedLocalNames(patch, next) // Reject cycles before walking passthroughs.
   const lfo = upstream(from.module)
   if (lfo)
     next = {
@@ -628,6 +688,23 @@ export function duplicateModule(patch: Patch, id: string): Patch {
 }
 
 export function renameOutput(patch: Patch, key: string, name: string): Patch {
+  const members = functionMembers(graph(patch))
+  const owner = members.get(key.split(':')[0] ?? '')
+  const previous = patch.names[key]
+  if (owner && previous !== name) {
+    for (const module of patch.modules) {
+      if (module.type !== 'code' || typeof module.values['text'] !== 'string') continue
+      let scope = members.get(module.id)
+      while (scope && scope !== owner) scope = members.get(scope)
+      if (scope !== owner) continue
+      const text = module.values['text'].trimStart()
+      const ast = parse(text.startsWith('.') ? `silence${text}\n` : `(${text}\n)`, {
+        ecmaVersion: 'latest',
+      })
+      if ((previous && usesParameter(ast, previous)) || usesParameter(ast, name))
+        throw new Error('Rename identifiers in CODE explicitly before renaming this local output')
+    }
+  }
   return validateRack({ ...patch, names: { ...patch.names, [key]: name } })
 }
 

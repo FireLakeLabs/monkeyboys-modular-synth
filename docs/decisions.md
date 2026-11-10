@@ -342,25 +342,28 @@ SOMETIMES, OFF, LAYER, JUX and TIME LENS WINDOW. Function cables use Alien teal
 (for example, “1 of 4 chunks” or “right ear”); cable and jack hover show the
 lambda. The lambda has matching teal code ink.
 
-Loops nest and accept chain transforms, including effects, CODE and CV on their
-controls. Sources (including OSC/SMPL), modulation utilities, MIX and OUT cannot
-be loop members. Each loop is one local chain: no branching, named function
-outputs, shared members, cross-loop RETURN or recursive containment. Incomplete
-chains are savable; until SEND reaches RETURN, generation uses the preset.
-Empty loops use `rev`, except JUX, which retains its four existing presets.
-New modules use fixed catalog widths and Alien looks; existing widths stay fixed.
+#243 deliberately supersedes the original chain-only restriction: SEND may fan
+out through an owner-local DAG of transforms, nested loops and MIX Stack, whose
+result feeds the owning RETURN. Voices, OUT, sources/OSC/SMPL and modulation
+utilities remain excluded locally; CV attachments keep their existing roles.
+Cross-scope pattern edges, wrong returns, cycles and recursive containment remain
+invalid. Incomplete graphs retain all saved state and use the preset. JUX presets
+and empty loops remain unchanged.
 
-The reader accepts synchronous single-identifier arrow functions rooted in that
-identifier. Readable calls become loop modules; an unsupported call keeps the
-entire corresponding lambda suffix in one CODE inside that loop, preserving
-its parameter and references. Blocks, async callbacks, non-receiver expressions,
-unknown function identifiers and unsupported arguments remain whole-call CODE.
-Existing JUX preset forms and explicit saved CODE owners remain unchanged.
-Nested source addresses extend v1 with an optional `loop` path; untouched source,
-saved rack identity and engine events have independent checks. Imported loop
-literal/layout edits preserve source; imported loop rewiring converts the
-code on edit, with Undo. See [the contract](translation-rules.md#function-loops-135)
-and [verification](function-loops-verification.md).
+The reader maps synchronous single-identifier expression callbacks with chains,
+static direct/chained Stack and nested callbacks. Shared transforms use bounded
+expression-local bindings `(shared => body)(value)`, constructed once per callback
+without global hoisting. Names are owner-local. Global/immutable pattern captures
+stay exact CODE, as do computed, shadowed or unsupported callback forms. Suffix
+CODE retains original identifiers; saved CODE never silently converts. Blocks,
+async, multiple parameters and arbitrary callbacks are not adopted.
+
+Existing `loop`/`path` source addresses compose with local binding value/body
+steps in the same v1 envelope. Source edits, full saved identity, events and audio
+are independent proof claims. Imported rewiring converts with Undo. See
+[translation](translation-rules.md#function-loops-135) and the
+[bounded #243 contract/evidence](callback-branches.md); the earlier
+[#135 verification](function-loops-verification.md) is historical evidence.
 
 ## Sample cartridge bay (#137, decided 3 November 2026)
 

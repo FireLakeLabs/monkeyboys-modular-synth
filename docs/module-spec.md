@@ -899,15 +899,25 @@ forms were checked against `@strudel/core` 1.2.6; often and rarely mean per-even
 probabilities .75 and .25 respectively. Arbitrary function identifiers are not
 mapped to invented rack transforms.
 
-A loop accepts catalog chain transforms (including audio settings and CODE),
-with CV sources connected to their CV jacks, and may contain another loop module.
-Sources, OSC/SMPL, pattern-modulation utilities, MIX and OUT stay outside loops.
-Branches, cross-returns and recursive containment are rejected. Incomplete chains
-are silent saved state until closed and generation uses the preset. A custom
-readable lambda becomes loop modules; an unsupported receiver-chain suffix is
-one CODE inside the loop, with the original callback identifier retained. Other
-callback shapes remain whole-call CODE. Existing saved CODE is never silently
-converted. See [translation and persistence](translation-rules.md#function-loops-135).
+#243 extends the loop to an owner-local DAG: SEND fans out through catalog
+transforms (including audio settings, CODE and nested loops), then MIX **Stack**
+recombines branches into its owning RETURN. MIX's existing catalog composition
+mode/input ordering remains authoritative; there is no new module or panel width.
+Voices MIX, OUT, sources, OSC/SMPL and modulation utilities remain excluded as
+local pattern members. CV sources may still attach to transform CV jacks.
+Cross-owner pattern edges, wrong returns, cycles and recursive containment fail
+atomically. Local shared outputs may be named and are constructed once within
+the callback; SEND has no naming field. Incomplete connected arms use the preset
+without deleting saved state.
+
+The reader maps synchronous single-identifier expression callbacks containing
+supported chains, direct/chained Stack and nested loops. Only expression-local
+single-value lambda applications represent shared bindings. Global/immutable
+pattern captures stay exact CODE; unsupported suffixes keep original identifiers.
+No block, async, multi-parameter or arbitrary callback support is claimed. Saved
+CODE remains CODE until explicit conversion. See the bounded grammar and separate
+source/save/event/browser claims in [#243](callback-branches.md) and
+[translation](translation-rules.md#function-loops-135).
 
 A closed nonempty chain whose controls all bypass their calls writes `x => x`,
 preserving identity instead of selecting the empty-loop preset.

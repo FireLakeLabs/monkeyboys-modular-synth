@@ -545,3 +545,13 @@ N1 (nit): fixed the frequency-helper citation to name `getFrequencyFromValue`
 and its source location directly. This citation/ledger-only update requires no
 new model round under review-loop policy. No behavior changed after approval.
 The dependency merge and fresh-clone proof above are complete. The rebased behavior matches the reviewed implementation; only citation, ledger and reconciliation prose changed afterward. PR gates remain at report publication.
+
+## Subsequent callback implementation (#243)
+
+The historical module/context observations above remain dated research evidence.
+#243 supersedes their chain-only callback reader boundaries with the bounded
+owner-local DAG in [the production contract](../callback-branches.md): direct and
+chained Stack, nested loops, local sharing and conservative CODE capture rules.
+It does not adopt multi-callback `layer`, CHUNK variants/aliases, custom panels or
+other recommendations. The original C14 layer/superimpose and CHUNK timing
+comparisons keep their meaning; no historical event evidence is rewritten.

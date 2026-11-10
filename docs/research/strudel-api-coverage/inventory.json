@@ -13,7 +13,7 @@
       },
       {
         "path": "docs/research/strudel-api-coverage/examples.json",
-        "sha256": "6a92d75e61f39a638a815edd7209ae894c2e92ff728fba24c33184c7309c14d2"
+        "sha256": "835606e8fd8a0ae401424c8725b96b147c487533014b1da0f75e99628bbbf00e"
       },
       {
         "path": "docs/research/strudel-api-coverage/priorities.json",
@@ -53,7 +53,7 @@
       },
       {
         "path": "src/codegen/effects.ts",
-        "sha256": "459d66503c000af6c555589855eb82c460226f0ea1d6aa96e829b4136d5c4f5b"
+        "sha256": "525fbd961ae8b955506b6f60852449996c9cb86e20958a0b5325846ad3012b6d"
       },
       {
         "path": "src/codegen/generate.test.ts",
@@ -61,15 +61,15 @@
       },
       {
         "path": "src/codegen/generate.ts",
-        "sha256": "1b9d26b82bb09e1457815c17043700af55a99f934da61359a58829a83afa8a6b"
+        "sha256": "5ff16ec0b3ed81e6b3636fe5461be1586c03e3ae0a329ada43aaf24b166658c3"
       },
       {
         "path": "src/codegen/graph.ts",
-        "sha256": "9894e2ff6a8a24ac7b872d3d680967657effa12086067a76dde5e026102e2613"
+        "sha256": "c66d80346ead0fb93da12f456e558ffaecab8d83f41e8eb930135bd6de0155ac"
       },
       {
         "path": "src/codegen/layout.ts",
-        "sha256": "20086d5b3045e14654b0b885445b748ea34d1e3b213bffaf06dd4d8ff03f8444"
+        "sha256": "738807a0b5eb9edbd94c470d9d8acaa441fbab34154a95475e20f1ddf86c8d28"
       },
       {
         "path": "src/codegen/panels.test.ts",
@@ -89,7 +89,7 @@
       },
       {
         "path": "src/patch/types.ts",
-        "sha256": "3b7e2a92b7054d4ce2b3a55999cc62d9580f5db51569733f99797bb059441542"
+        "sha256": "7be848f62575e5b9ed397273ffc37d5623185bac14fd6743317ce5305e00d395"
       },
       {
         "path": "src/reader/acid.test.ts",
@@ -125,7 +125,7 @@
       },
       {
         "path": "src/reader/layout.ts",
-        "sha256": "657566fdc1269a0d28b9f861e2013a25e11fb20b451a56777f2d006e8c143a3c"
+        "sha256": "f06fa31e85484509b6b99907a62a610485ddc1add8f1b9a6369c2ec6e78be26a"
       },
       {
         "path": "src/reader/literal-edits.test.ts",
@@ -165,11 +165,11 @@
       },
       {
         "path": "src/reader/read.ts",
-        "sha256": "659e8f58c3cdf5e36f1780364860ae6f776e74f45ac0752cdc2b273e33f91c11"
+        "sha256": "6aaafaade4082291a5adb882aa4cf7bad5e9c5cb5ba49c62dbe9091500e821b6"
       },
       {
         "path": "src/reader/syntax.ts",
-        "sha256": "94bf30ca73635109ac07d5f07b560039bd6b37a927977c41dec5c6c7a624d91e"
+        "sha256": "b4fe6eea819cb6d68142449e61ea2fbd1b3645b3ee3ec8e088f1831d91ebae13"
       },
       {
         "path": "src/reader/types.ts",
@@ -82663,11 +82663,13 @@
         "stack"
       ],
       "source": "$: s(\"bd\").chunk(4,x=>stack(x,x.rev()))\n",
-      "expectCode": true,
-      "restriction": "Callback branch shape requires #243 after #242",
+      "expectCode": false,
+      "restriction": "#243 owner-local callback DAG with MIX Stack; unsupported captures remain CODE",
       "moduleTypes": [
         "drums",
-        "code",
+        "chunk",
+        "rev",
+        "mix",
         "smpl",
         "mix",
         "out"
@@ -82681,9 +82683,15 @@
           }
         },
         {
-          "type": "code",
+          "type": "chunk",
           "values": {
-            "text": ".chunk(4,x=>stack(x,x.rev()))"
+            "chunks": 4
+          }
+        },
+        {
+          "type": "rev",
+          "values": {
+            "mode": "rev"
           }
         },
         {
@@ -82694,24 +82702,20 @@
           }
         }
       ],
-      "code": [
-        ".chunk(4,x=>stack(x,x.rev()))"
-      ],
+      "code": [],
       "exactSource": true,
       "savedIdentity": true,
       "coverage": {
         "patches": 1,
         "parseFailures": 0,
         "calls": 2,
-        "mappedCalls": 1,
+        "mappedCalls": 2,
         "voices": 1,
-        "readableVoices": 0,
-        "patchesWithoutCode": 0,
-        "codeBlocks": 1,
+        "readableVoices": 1,
+        "patchesWithoutCode": 1,
+        "codeBlocks": 0,
         "id": "loop-branch",
-        "unmapped": {
-          "chunk": 1
-        }
+        "unmapped": {}
       }
     },
     {

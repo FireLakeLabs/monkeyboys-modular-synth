@@ -276,6 +276,8 @@ export function readLayout(source: string): SavedLayout {
                 !(
                   step.argument === 'receiver' ||
                   step.argument === 'body' ||
+                  step.argument === 'binding' ||
+                  step.argument === 'value' ||
                   (typeof step.argument === 'number' &&
                     Number.isSafeInteger(step.argument) &&
                     step.argument >= 0)

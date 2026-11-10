@@ -390,7 +390,7 @@ kind is derived from endpoints and loop membership. Optional per-module
 use `x`). Graph validation requires a valid identifier on a loop owner.
 
 A binding may carry `loop: number[]`: each index identifies a call whose final
-argument is the next single-parameter receiver-chain lambda. `calls` then indexes
+argument is the next supported single-parameter expression lambda. `calls` then indexes
 that innermost chain. Absent `loop` keeps the original top-level address format,
 including old JUX presets and saved CODE. Scope descriptors still contain the
 entire nested AST. Readers validate every path against the source snapshot and
@@ -522,3 +522,40 @@ are checked against the writer. Forged paths and mismatched saved CODE cannot
 acquire native module ownership. Scalar edits use the nested literal span.
 External changes inside a containing call conservatively forfeit ambiguous nested
 identities rather than guessing from position; exact save/reopen restores all IDs.
+
+## Callback DAG ownership (#243)
+
+The v1 envelope/marker and cable shape remain. Function-local Stack uses the
+existing catalog `mode: "Stack"`; Voices settings remain inactive saved state.
+Scope is derived from SEND/RETURN and pattern edges, validated in both directions,
+including incomplete graphs. Names in `Patch.names` for local outputs resolve
+within their owning callback, never as global declarations; SEND cannot be named.
+Distinct owners may reuse the same local name. `functionParameter` retains the
+original callback identifier, including opaque suffix references.
+
+Expression-only local sharing uses `(name => body)(value)`. Its source paths add
+`{call:0, argument:"binding"}` and `{call:0, argument:"value"}` relative to the
+containing expression's root. The exact root must prove that synchronous,
+single-identifier, one-value application before either path resolves. Source
+snapshot validation, independently projected bindings and regenerated semantics
+still gate restoration; unknown/forged paths never authorize saved wiring.
+
+Complete save/reopen identity includes OUT settings, every inactive control,
+disconnected module/cable, name, look and position. Unsupported saved CODE retains
+its owner across this reader expansion. No storage clearing, migration or format
+version bump is needed. [#243 proof](callback-branches.md) separates this claim
+from exact source, real engine events, browser PCM and listening.
+
+Local bindings used only through opaque CODE, nested captures, or not used by the
+result stay whole-call CODE so conversion cannot discard their construction or
+leave an unbound identifier. A name whose output leaves its owning callback after
+delete/unplug/repatch is cleared instead of promoted to a global declaration.
+Names on still-local incomplete graphs remain; Undo restores the complete former
+named graph. Automatic local names reserve all explicit names in that owner before
+traversal, preventing a later explicit name from shadowing an earlier shared value.
+
+A structural edit that would strand a CODE reference to a former local
+binding without its emitted value is refused atomically. Edit the CODE reference
+first. This checks known callback names and the closed RETURN dependency graph;
+it neither executes CODE nor infers arbitrary global dependencies. Incomplete
+preset-only bodies remain savable when their known binding state is retained.
