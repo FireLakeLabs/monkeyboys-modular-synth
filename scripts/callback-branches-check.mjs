@@ -46,14 +46,14 @@ export function restore() {
   if (original) web.Pattern.prototype.onTrigger = original
   original = undefined
 }
-function events(routes = false) {
+function events() {
   return captured
     .queryArc(0, 8)
     .filter((h) => h.hasOnset())
     .map((h) => {
       const { orbit: _ownedOrbit, ...value } = h.value
       return {
-        value: routes ? { ...value, orbit: _ownedOrbit ?? 1 } : value,
+        value: { ...value, orbit: _ownedOrbit ?? 1 },
         begin: String(h.whole.begin),
         end: String(h.whole.end),
       }
@@ -129,7 +129,7 @@ export async function runtimeProof() {
       ]) {
         await play(code, { volume: 0.5, resetEffects: true })
         await pause(600)
-        const queried = events(!!setup),
+        const queried = events(),
           measured = await pcm()
         assert(queried.length > 0 && measured.rms > 0.0001, `${name}/${form}: silent`)
         const orbits = Object.keys(web.getSuperdoughAudioController().nodes)

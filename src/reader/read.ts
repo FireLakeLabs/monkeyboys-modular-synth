@@ -3,7 +3,7 @@ import { bytebeatSyntax } from '../modules/bytebeat'
 import { packSetup } from '../samples/packs'
 import { planEffects } from '../codegen/effects'
 import { effectRank } from '../modules/effects'
-import { isLoopChain, loopControls } from '../modules/functions'
+import { isLoopChain, loopControls, patternRuntimeNames } from '../modules/functions'
 import { controlValue } from '../modules/values'
 import { parseExpressionAt, tokenizer, type Expression, type Node } from 'acorn'
 import { graph } from '../codegen/graph'
@@ -235,6 +235,7 @@ function project(
     return Object.values(value).some(mayShadowStack)
   }
   const stackShadowed = mayShadowStack(program)
+  const localRuntimeNames = new Set([...patternRuntimeNames(), 'silence'])
   const pureShadowed = program.body.some((statement) =>
     statement.type === 'ExpressionStatement'
       ? statement.expression.type === 'AssignmentExpression' &&
@@ -859,7 +860,8 @@ function project(
       stackIndex >= 0 &&
       !stackShadowed &&
       !locals?.has('stack') &&
-      !retainedCode(0, true)
+      !retainedCode(0, true) &&
+      !calls.some((_, index) => retainedCode(index)?.indices.includes(stackIndex))
     ) {
       const call = calls[stackIndex]
       if (call && call.args.every((arg) => arg.type !== 'SpreadElement')) {
@@ -909,9 +911,9 @@ function project(
     const local = localBinding(root)
     if (!upstream && local && locals) {
       if (
+        !/^[A-Za-z_$][\w$]*$/.test(local.parameter) ||
         locals.has(local.parameter) ||
-        CATALOG.some((spec) => spec.strudel.includes(local.parameter)) ||
-        ['rev', 'press', 'orbit', 'FX', 'silence'].includes(local.parameter)
+        localRuntimeNames.has(local.parameter)
       )
         throw new Error('Ambiguous local binding shadow')
       const argument = expressionScope(scope, { call: 0, argument: 'value' })
@@ -1046,6 +1048,14 @@ function project(
     for (let index = start; index < calls.length; index++) {
       const call = calls[index]
       if (!call) continue
+      if (!scope.loop && !scope.path && routing?.get(scope.descriptor.id)?.call === index) continue
+      const opaque = retainedCode(index)
+      if (opaque) {
+        upstream = code(scope, opaque.indices, opaque.text, upstream)
+        group = undefined
+        index = opaque.indices.at(-1) ?? index
+        continue
+      }
       // A local Pattern used as an argument is not a global CV source or preset.
       if (
         locals &&
@@ -1057,14 +1067,6 @@ function project(
           source.slice(call.start, scope.end),
           upstream,
         )
-      if (!scope.loop && !scope.path && routing?.get(scope.descriptor.id)?.call === index) continue
-      const opaque = retainedCode(index)
-      if (opaque) {
-        upstream = code(scope, opaque.indices, opaque.text, upstream)
-        group = undefined
-        index = opaque.indices.at(-1) ?? index
-        continue
-      }
       if (
         call.name === 'struct' &&
         call.args.length === 1 &&

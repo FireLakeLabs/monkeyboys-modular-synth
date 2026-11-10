@@ -98,6 +98,7 @@ it.each([
   '.jux(x => stack())',
   '.jux(x => stack(x,stack()))',
   '.jux(p => (a => (b => stack(a,b))(a))(p.fast(2)))',
+  '.jux(p => (π => stack(π,π.rev()))(p.fast(2)))',
   '.jux(x => x.off(.25, y => stack(x,y)))',
   '.jux(async x => stack(x,x.rev()))',
   '.jux((x,y) => stack(x,y))',
@@ -234,3 +235,53 @@ it('keeps an original local binding that shadows an unrelated global pattern nam
   expect(sourceBody(doc.source)).toBe(source)
   expect(read(doc.source).patch).toEqual(doc.patch)
 })
+it('retains a saved local CODE Stack suffix after an unrelated outer source edit', () => {
+  let p = read(`$: ${base}.jux(x=>x.rev())\n`).patch
+  p = removeModule(p, 'rev1')
+  p = placeModule(p, 'code', 3)
+  p = setValue(p, 'code1', 'text', '.stack(x.rev())')
+  p = wire(p, 'jux1', 'send', 'code1', 'in')
+  p = wire(p, 'code1', 'out', 'jux1', 'return')
+  const source = generate(p).replace('.s("sine")', '.s("triangle")')
+  const doc = read(source)
+  expect(
+    doc.patch.modules
+      .filter((m) => m.type === 'code')
+      .map((m) => (typeof m.values.text === 'string' ? m.values.text.trimStart() : m.values.text)),
+  ).toEqual(['.stack(x.rev())'])
+  expect(doc.patch.modules.some((m) => m.type === 'mix' && m.values.mode === 'Stack')).toBe(false)
+  const saved = saveLayout(doc)
+  expect(sourceBody(saved.source)).toBe(sourceBody(source))
+  expect(read(saved.source).patch).toEqual(saved.patch)
+})
+it.each([
+  ['jux', 's("bd")', '.jux(x => stack(x, x.rev()))'],
+  ['layer', base, '.superimpose(x => stack(x.fast(2), x.rev()))'],
+])(
+  'builds %s branches through normal placement and individual cable operations',
+  (type, input, tail) => {
+    let p = read(`$: ${input}\n`).patch
+    const bus = p.modules.find((m) => m.type === 'mix')
+    const upstream = p.cables.find((c) => c.to.module === bus?.id && c.to.jack === 'in1')?.from
+    if (!bus || !upstream) throw new Error('Missing initial voice')
+    for (const [i, kind] of [type, 'rev', 'mix', ...(type === 'layer' ? ['clock'] : [])].entries())
+      p = placeModule(p, kind, i + 1)
+    p = setValue(p, 'mix2', 'mode', 'Stack')
+    p = connect(p, upstream, { module: `${type}1`, jack: 'in' })
+    p = connect(p, { module: `${type}1`, jack: 'out' }, { module: bus.id, jack: 'in1' }, true)
+    const send = { module: `${type}1`, jack: 'send' }
+    if (type === 'layer') {
+      p = setValue(p, 'clock1', 'speed', 'Multiply')
+      p = setValue(p, 'clock1', 'swingMode', 'off')
+      p = setValue(p, 'clock1', 'offset', 0)
+      p = connect(p, send, { module: 'clock1', jack: 'in' })
+      p = wire(p, 'clock1', 'out', 'mix2', 'in1')
+    } else p = connect(p, send, { module: 'mix2', jack: 'in1' })
+    p = connect(p, send, { module: 'rev1', jack: 'in' })
+    p = wire(p, 'rev1', 'out', 'mix2', 'in2')
+    p = wire(p, 'mix2', 'out', `${type}1`, 'return')
+    const generated = generate(p)
+    expect(read(generated).patch).toEqual(p)
+    expect(events(sourceBody(generated))).toEqual(events(`$: ${input}${tail}`))
+  },
+)

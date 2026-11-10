@@ -3,9 +3,9 @@ import { bytebeatLiteral } from '../modules/bytebeat'
 import { parse, tokenizer } from 'acorn'
 import { planEffects } from './effects'
 import { routingPlan } from './routing'
-import { CATALOG, getModuleSpec } from '../modules/catalog'
+import { getModuleSpec } from '../modules/catalog'
 import { callMethod, tupleControls, patternNumber, controlEnabled } from '../modules/bindings'
-import { loopMethod, loopControls } from '../modules/functions'
+import { loopMethod, loopControls, patternRuntimeNames } from '../modules/functions'
 import { drumText } from '../patch/notation'
 import type { Patch } from '../patch/types'
 import type { SourceDocument } from '../reader/types'
@@ -157,17 +157,9 @@ export function generateDocument(
   bindScope(layout, tempoExpression)
 
   // Reserving runtime names prevents a const from shadowing Strudel's functions/signals.
-  const used = new Set([
-    ...CATALOG.filter((spec) => !['aux', 'duck', 'gates', 'switch'].includes(spec.id)).flatMap(
-      (spec) => spec.strudel,
-    ),
-    'rev',
-    'press',
-    'orbit',
-    'FX',
-    'silence',
-  ])
-  const runtimeNames = new Set(used)
+  const used = patternRuntimeNames()
+  const runtimeNames = new Set([...used, 'silence'])
+  if (patch.modules.some((m) => m.type === 'switch')) used.add('silence')
   for (const token of tokenizer(prelude, { ecmaVersion: 'latest' }))
     if (token.type.label === 'name') used.add(prelude.slice(token.start, token.end))
   const scopeNames = new Map<string, Set<string>>()

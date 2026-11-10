@@ -1,3 +1,4 @@
+import { CATALOG } from './catalog'
 import type { ModuleSpec } from './types'
 import type { PlacedModule } from '../patch/types'
 import { controlValue } from './values'
@@ -37,4 +38,17 @@ export function isLoopChain(spec: ModuleSpec): boolean {
       !['seq', 'drums', 'osc', 'smpl', 'mix', 'out', 'lfo', 'env'].includes(spec.id) &&
       spec.controls.some((control) => 'call' in control && control.call))
   )
+}
+
+/** Names emitted as runtime identifiers, excluding rack-only routing adapters. */
+export function patternRuntimeNames(): Set<string> {
+  return new Set([
+    ...CATALOG.filter((spec) => !['aux', 'duck', 'gates', 'switch'].includes(spec.id)).flatMap(
+      (spec) => spec.strudel,
+    ),
+    'rev',
+    'press',
+    'orbit',
+    'FX',
+  ])
 }

@@ -1,7 +1,7 @@
 # Local callback branches (#243)
 
-Status: implementation and focused proof in progress; final full checks, bounded
-review and hosted/protected merge remain pending. This contract deliberately
+Status: implementation, focused proof and repository gate complete; bounded
+review, final full local browser suite and hosted/protected merge remain pending. This contract deliberately
 replaces #135's chain-only rule, using the actual merged #242 Stack model. #244
 sections, #217 custom panels, #216 larger geometry and #248–251 remain separate.
 
@@ -119,3 +119,52 @@ argument initially became an invented global LFO; the per-call local-reference
 guard now retains that suffix as CODE. The initial full browser run was stopped
 intentionally at about 40/232, exit 130, before applying that fix; it is not passing
 evidence. The full suite is restarted on the corrected frozen revision.
+
+A second targeted preservation probe found that exact saved CODE reopened safely,
+but an unchanged local `.stack(x.rev())` CODE suffix expanded after an unrelated
+outer sound edit. The focused regression failed with no CODE remaining. Static
+Stack projection now respects any saved CODE span containing that call, and saved
+CODE ownership is checked before the local-argument fallback. The same regression
+passes with exact executable bytes and complete subsequent save/reopen identity.
+The second local full run was stopped intentionally at 122+/232, exit 130; it is
+also not passing evidence. Bounded review precedes the final restarted full run.
+
+## Current focused verification
+
+- `npm run check`: 2,670 unit cases / 65 files and 59 guardrails passed before the
+  two additional direct rack-build fixtures; the final gate is refreshed below.
+- `npx vitest run src/modules/callback-branches.test.ts`: 34/34 pass. Both issue
+  examples are built with individual placement/control/cable operations as well
+  as imported and edited. CLOCK is explicitly Multiply, groove off and offset 0
+  for the unshifted `fast(2)` example; its normal .125 offset is not changed.
+- `npm run test:browser:report -- tests/browser/callback-branches.spec.mjs tests/browser/suites.spec.mjs -g 'callback branches|local Stack|original and regenerated callbacks|function-loops-browser'`:
+  `RESULT passed=4 failed=0 exit=0`, including the entire earlier #135 runtime
+  script. Native capture readiness then dismissed the output-destinations popover;
+  the affected native case passed 1/1 without production changes.
+- Final focused rerun with `--output /tmp/callback-focused-results`:
+  `RESULT passed=3 failed=0 exit=0`. [Runtime evidence](evidence/callback-branches/runtime.json)
+  records all eight-cycle values/counts/begin/end times for both forms. Default
+  orbit absence is normalized to the engine's orbit 1 in these comparisons;
+  explicit/custom orbit 7 remains a compared event field. All six original and
+  regenerated forms have nonzero PCM. Custom helper construction is exactly once,
+  JUX has both orbit 1 and 7, and Stop/replacement RMS and peak are zero.
+- [Panel captures](evidence/callback-branches/) were inspected for all four
+  Hardware looks, full-width mode rows and retained jack geometry, plus a clear
+  shared-transform naming capture and native nested selection. A transient
+  destinations popover was dismissed before the refreshed captures.
+- `node scripts/mix-library-audit.mjs --check`: 88 files, zero errors/failures.
+  No bundled body/attribution or saved library rack needed rebuilding. The
+  inventory's bounded callback example and current application hashes were
+  refreshed; historical context research keeps its dated evidence with an
+  explicit pointer to this replacement contract. 295 relative Markdown links in
+  changed documents resolve to existing files.
+
+Physical listening remains unperformed. Live PCM windows establish output and
+cleanup, not waveform equality, subjective continuity or other-device coverage.
+
+The refreshed complete repository gate passed **2,672 unit cases in 65 files and
+59 guardrails**, plus format/skills/lint, reader coverage, TypeScript and production
+build. The existing Vite chunk-size warning remains. The 34-case branch suite
+includes both direct rack builds; no production behavior changed for the screenshot
+readiness or explicit CLOCK fixture setup. Bounded review and the final complete
+local/hosted browser gates remain pending.
