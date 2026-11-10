@@ -525,6 +525,8 @@ identities rather than guessing from position; exact save/reopen restores all ID
 
 ## Callback DAG ownership (#243)
 
+For the subsequent tuple extension, see [section addresses](#section-tuple-addresses-244).
+
 The v1 envelope/marker and cable shape remain. Function-local Stack uses the
 existing catalog `mode: "Stack"`; Voices settings remain inactive saved state.
 Scope is derived from SEND/RETURN and pattern edges, validated in both directions,
@@ -559,3 +561,20 @@ binding without its emitted value is refused atomically. Edit the CODE reference
 first. This checks known callback names and the closed RETURN dependency graph;
 it neither executes CODE nor infers arbitrary global dependencies. Incomplete
 preset-only bodies remain savable when their known binding state is retained.
+
+## Section tuple addresses (#244)
+
+The v1 marker, cable shape and Patch version stay unchanged. Catalog type
+`sections` saves `order` and `cycles1`…`cycles4` as strings in ordinary values;
+durations retain the exact JavaScript numeric value without knob rounding.
+Disconnected sockets, complete OUT state, layout, looks, names, inactive values
+and NEXT wiring remain complete saved state.
+
+An expression path can add `element: 1` to a numeric call-argument step. It must
+resolve to element 1 of an exact two-element array argument of direct `arrange`;
+it grants no ownership for arbitrary arrays, computed tuples, helper calls or
+callbacks. Other element values invalidate metadata. Continuation bindings use
+the existing `part` index of their first original tuple, including root 0.
+Snapshot validation, independent projection and generated-program equality still
+gate restoration. Stale/forged paths do not authorize wiring; saved CODE stays
+CODE until explicit conversion. No migration or storage clearing is needed.

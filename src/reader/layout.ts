@@ -284,7 +284,13 @@ export function readLayout(source: string): SavedLayout {
                 )
               )
                 throw new Error('Invalid expression step')
-              return { call: step.call, argument: step.argument }
+              if (step.element !== undefined && step.element !== 1)
+                throw new Error('Invalid tuple element')
+              return {
+                call: step.call,
+                argument: step.argument,
+                ...(step.element === 1 ? { element: 1 as const } : {}),
+              }
             })
           }
           const scope = bindingScope(snapshot.scopes, {

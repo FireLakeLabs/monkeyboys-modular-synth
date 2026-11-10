@@ -1,4 +1,5 @@
 import spliceSource from './patches/modules/splice.strudel?raw'
+import sectionsSource from './patches/modules/sections.strudel?raw'
 import bytebeatSource from './patches/modules/bytebeat.strudel?raw'
 import chipSource from './patches/modules/chip.strudel?raw'
 import speakSource from './patches/modules/speak.strudel?raw'
@@ -62,6 +63,12 @@ import codeSource from './patches/modules/code.strudel?raw'
 
 /** One small, rack-owned starting point per shipped module. */
 export const MODULE_EXERCISES: readonly LibraryPatch[] = [
+  {
+    type: 'sections',
+    source: sectionsSource,
+    description: 'Two note sections before a shared triangle oscillator.',
+    tryThis: 'Change SECTIONS CYCLES 1 from 2 to 4, then change ORDER to 2 1 3 4.',
+  },
   {
     type: 'bytebeat',
     source: bytebeatSource,

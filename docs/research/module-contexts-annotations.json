@@ -590,6 +590,16 @@
       "caseIds": "C18",
       "counterexample": "note(\"c2\").s(\"sawtooth\").unknownResearchCall()",
       "counterexampleKind": "CODE"
+    },
+    {
+      "moduleId": "sections",
+      "role": "ordered pattern composition",
+      "engineContext": "Native arrange applies section-local phase; later full arrangements can retain section-length-dependent phase. NEXT appends tuples to the same call.",
+      "readerContext": "Literal finite positive durations and static tuple expressions; four physical slots plus exclusive unnamed NEXT continuation. Ordinary output supports named fan-out.",
+      "verdict": "keep",
+      "caseIds": "C27",
+      "counterexample": "arrange([duration,note(\"c3\")],[2,note(\"d3\")]).s(\"sine\")",
+      "counterexampleKind": "CODE"
     }
   ]
 }

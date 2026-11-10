@@ -4,6 +4,15 @@ Patches were loops. The arranger lane, opened from **Arrange** in the rack
 footer, places each mixer channel over cycles, so a patch can play a song with sections. The [decision](decisions.md#arranger-lane-141-decided-8-november-2026)
 records the code form chosen by the spike below.
 
+## Static sections added separately (#244)
+
+[SECTIONS](section-sequencing.md) now owns the bounded static native arrange
+representation. It does not replace this footer or its song-time masks. The
+following #141 comparison and 24/200 count are **historical pre-244 evidence**;
+its source-boundary rows describe the old reader. #244 independently proves
+native local phase, two full arrangements, routing/PCM and saved identity before
+replacing only that static CODE boundary. Unsupported forms remain exact CODE.
+
 ## Spike: one song both ways
 
 The same 16-cycle song was written in each candidate form and checked with the
@@ -39,8 +48,8 @@ $: arrange([4, drums], [4, stack(drums, bass)], [8, stack(drums, bass, lead)])
 | Saved identity       | Lanes are MIX channel values, saved and restored with the rest of the rack.                                                                                         | The rack has nothing to save: the voices exist only inside CODE.                                                                                                                                                                                                  |
 | Orbits and the mixer | Unchanged: one `$:` line and one orbit per voice; mute, solo, names and channel outputs stay per voice.                                                             | One `$:` line holds every voice, so per-voice labels are lost. Orbits must move into shared declarations, which the [orbit rule](translation-rules.md#effect-orbits) forbids, and a new allocation rule would be needed.                                          |
 
-The mask form wins on every check, so the lane writes it. `arrange()` and any
-other mask stay source-owned CODE with exact bytes.
+The mask form was selected for the lane. #244 separately adds static section
+editing; unsupported arrange forms and other masks remain exact CODE.
 
 ## Contract
 

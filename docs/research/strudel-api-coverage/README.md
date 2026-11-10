@@ -15,10 +15,31 @@ argument bindings. Independent exact-source, full saved-identity and pinned-even
 proof lives in `src/reader/composition.test.ts` and
 `src/codegen/composition.test.ts`; browser send/PCM evidence is recorded in
 [MIX composition](../../mix-composition.md). #243 subsequently projects bounded local callback branches, including the
-`loop-branch` example. Section arrange and unsupported callback/capture shapes
-retain CODE. See [callback contract/evidence](../../callback-branches.md). The current machine artifact
+`loop-branch` example. Static section arrange is separately adopted by #244; unsupported
+section/callback/capture shapes retain CODE. See [callback contract/evidence](../../callback-branches.md). The current machine artifact
 was refreshed against the changed application inputs without weakening unrelated
 fallbacks. The historical 294/309 observation is not a current whole-library claim.
+
+## Current-input section update (#244)
+
+The machine inventory was regenerated after adding SECTIONS: **60 catalog
+modules / 206 owned spellings**, retaining 401 literal registration sites and
+1,100 candidate families. Arrange is an exported combinator, so its new ownership
+does not change the count of unowned literal registration sites. The existing
+`arrange-sections` controlled example now expects an editable section group only
+after independent source/save/pinned-event tests. Its computed counterpart and
+all unrelated CODE expectations remain conservative. No new alias or callback
+family was adopted.
+
+The new original Changing rooms patch adds one root-manifest member: current
+committed coverage is **303/318 mapped calls, 33/37 readable voices, 21/23 CODE-free
+patches**, with the same 15 unmapped calls and no parse/fetch failure. The earlier
+294/309, 32/36, 20/22 and 59-module figures below are historical #245 evidence.
+Bundled exercises now number 60; the separate complete source/save audit has
+**83 bundled patches + 7 reader fixtures = 90 files**, zero errors/failures. New
+module/library attribution is repository-owned MIT; existing bodies and credits
+were not rebuilt. Current provenance hashes describe the actual application and
+corpus inputs, not the historical research revision.
 
 ## Direction and revision
 

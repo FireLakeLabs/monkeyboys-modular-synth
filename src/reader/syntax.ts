@@ -254,7 +254,7 @@ export function expressionScope(
   if (step.argument === 'body') return nestedScope(parent, step.call)
   const call = parent.calls[step.call]
   const binding = localBinding(parent.root)
-  const expression =
+  let expression =
     step.argument === 'binding'
       ? step.call === 0
         ? binding?.body
@@ -266,6 +266,17 @@ export function expressionScope(
         : step.argument === 'receiver'
           ? call?.receiver
           : call?.args[step.argument]
+  if (step.element !== undefined) {
+    if (
+      step.element !== 1 ||
+      call?.name !== 'arrange' ||
+      call.receiver ||
+      expression?.type !== 'ArrayExpression' ||
+      expression.elements.length !== 2
+    )
+      return undefined
+    expression = expression.elements[1] ?? undefined
+  }
   if (!expression || expression.type === 'SpreadElement') return undefined
   const parsed = chain(expression)
   return {
@@ -295,6 +306,10 @@ export function expressionChildren(parent: ParsedScope): ParsedScope[] {
         )
       : []),
     ...parent.calls.flatMap((call, index) => {
+      if (call.name === 'arrange' && !call.receiver)
+        return call.args.flatMap(
+          (_, argument) => expressionScope(parent, { call: index, argument, element: 1 }) ?? [],
+        )
       if (call.name !== 'stack') return []
       return [
         ...(call.receiver ? [{ call: index, argument: 'receiver' as const }] : []),

@@ -5,6 +5,7 @@ import { planEffects } from '../codegen/effects'
 import { effectRank } from '../modules/effects'
 import { isLoopChain, loopControls, patternRuntimeNames } from '../modules/functions'
 import { controlValue } from '../modules/values'
+import { sectionOrder } from '../modules/sections'
 import { parseExpressionAt, tokenizer, type Expression, type Node } from 'acorn'
 import { graph } from '../codegen/graph'
 import { generate, generateDocument } from '../codegen/generate'
@@ -171,31 +172,31 @@ function project(
 ): { patch: Patch; bindings: SourceBinding[]; represented: Map<string, Set<string>> } {
   const { scopes, program } = parsed
   // A local helper is executable CODE, not the engine's literal-pattern constructor.
-  function mayShadowStack(value: unknown): boolean {
+  function mayShadowCombiner(value: unknown, name = 'stack'): boolean {
     if (!value || typeof value !== 'object') return false
     const node = Object.fromEntries(Object.entries(value))
     if (
       (node.type === 'VariableDeclarator' ||
         node.type === 'FunctionDeclaration' ||
         node.type === 'ClassDeclaration') &&
-      usesParameter(node.id, 'stack')
+      usesParameter(node.id, name)
     )
       return true
     if (
       (node.type === 'ArrowFunctionExpression' || node.type === 'FunctionExpression') &&
-      usesParameter(node.params, 'stack')
+      usesParameter(node.params, name)
     )
       return true
     if (node.type === 'AssignmentExpression') {
       const left = node.left
-      if (usesParameter(left, 'stack')) return true
+      if (usesParameter(left, name)) return true
       if (left && typeof left === 'object' && 'property' in left) {
         const property = left.property
         if (
           property &&
           typeof property === 'object' &&
-          (('name' in property && property.name === 'stack') ||
-            ('value' in property && property.value === 'stack'))
+          (('name' in property && property.name === name) ||
+            ('value' in property && property.value === name))
         )
           return true
       }
@@ -209,7 +210,7 @@ function project(
       callee.name === 'register' &&
       Array.isArray(node.arguments)
     ) {
-      const name: unknown = node.arguments[0]
+      const registration: unknown = node.arguments[0]
       const knownOtherName = (item: unknown): boolean =>
         !!item &&
         typeof item === 'object' &&
@@ -217,24 +218,25 @@ function project(
         item.type === 'Literal' &&
         'value' in item &&
         typeof item.value === 'string' &&
-        item.value !== 'stack'
+        item.value !== name
       if (
-        !knownOtherName(name) &&
+        !knownOtherName(registration) &&
         !(
-          name &&
-          typeof name === 'object' &&
-          'type' in name &&
-          name.type === 'ArrayExpression' &&
-          'elements' in name &&
-          Array.isArray(name.elements) &&
-          name.elements.every(knownOtherName)
+          registration &&
+          typeof registration === 'object' &&
+          'type' in registration &&
+          registration.type === 'ArrayExpression' &&
+          'elements' in registration &&
+          Array.isArray(registration.elements) &&
+          registration.elements.every(knownOtherName)
         )
       )
         return true
     }
-    return Object.values(value).some(mayShadowStack)
+    return Object.values(value).some((child) => mayShadowCombiner(child, name))
   }
-  const stackShadowed = mayShadowStack(program)
+  const stackShadowed = mayShadowCombiner(program)
+  const arrangeShadowed = mayShadowCombiner(program, 'arrange')
   const localRuntimeNames = new Set([...patternRuntimeNames(), 'silence'])
   const pureShadowed = program.body.some((statement) =>
     statement.type === 'ExpressionStatement'
@@ -431,15 +433,21 @@ function project(
     resolved.set(name, result)
     return result
   }
-  function code(scope: ParsedScope, indices: number[], text: string, upstream?: Output): Output {
+  function code(
+    scope: ParsedScope,
+    indices: number[],
+    text: string,
+    upstream?: Output,
+    span?: Span,
+  ): Output {
     const module = add('code', { text })
     if (upstream) wire(upstream, module)
     bind(module, scope, indices)
-    if (!upstream && indices.length === scope.calls.length) {
+    if (span || (!upstream && indices.length === scope.calls.length)) {
       const binding = bindings.at(-1)
       if (binding) {
-        binding.start = scope.start
-        binding.end = scope.end
+        binding.start = span?.start ?? scope.start
+        binding.end = span?.end ?? scope.end
       }
     }
     return output(module)
@@ -758,7 +766,8 @@ function project(
                 const end =
                   calls[indices.at(-1) ?? -1]?.end ??
                   (receiver && !calls.length ? scope.end : undefined)
-                return binding.scope === savedScope.id &&
+                if (!(
+                  binding.scope === savedScope.id &&
                   descriptor([binding.loop, binding.path]) ===
                     descriptor([scope.loop, scope.path]) &&
                   binding.role === 'module' &&
@@ -766,10 +775,61 @@ function project(
                   indices.every((value, offset) => value === index + offset) &&
                   begin !== undefined &&
                   end !== undefined &&
-                  typeof module.values['text'] === 'string' &&
-                  source.slice(begin, end).trimStart() === module.values['text'].trimStart()
-                  ? [{ indices, text: source.slice(begin, end) }]
-                  : []
+                  typeof module.values['text'] === 'string'
+                ))
+                  return []
+                const text = module.values['text'],
+                  callText = source.slice(begin, end),
+                  matchesCall = callText.trimStart() === text.trimStart(),
+                  chained = tokenizer(text, { ecmaVersion: 'latest' }).getToken().type.label === '.'
+                if (!receiver && chained && !matchesCall) {
+                  try {
+                    const prefix = 'silence'
+                    const ast = parseExpressionAt(`${prefix}${text}\n`, 0, {
+                      ecmaVersion: 'latest',
+                    })
+                    const start = end - (ast.end - prefix.length),
+                      stop = start + text.length
+                    const comments: Span[] = []
+                    const next = tokenizer(source.slice(end), {
+                      ecmaVersion: 'latest',
+                      onComment: (_block, _text, start, stop) => {
+                        comments.push({ start: end + start, end: end + stop })
+                      },
+                    }).getToken()
+                    if (
+                      start >= begin &&
+                      stop >= end &&
+                      [...tokenizer(source.slice(begin, start), { ecmaVersion: 'latest' })]
+                        .length === 0 &&
+                      source.slice(start, stop) === text &&
+                      // Own whole trivia only: a saved comment prefix is not its boundary.
+                      end + next.start >= stop &&
+                      !comments.some((comment) => comment.start < stop && stop < comment.end)
+                    )
+                      return [{ indices, text, span: { start, end: stop } }]
+                  } catch {
+                    /* Unsupported stored syntax cannot acquire ownership. */
+                  }
+                }
+                if (receiver && !chained) {
+                  try {
+                    // The stored CODE expression proves trivia offsets inside its wrapper.
+                    // Require its entire current byte range, including comments, to match.
+                    const ast = parseExpressionAt(`(${text}\n)`, 0, { ecmaVersion: 'latest' })
+                    const start = begin - (ast.start - 1),
+                      stop = start + text.length
+                    if (
+                      start >= 0 &&
+                      start + ast.end - 1 === end &&
+                      source.slice(start, stop) === text
+                    )
+                      return [{ indices, text, span: { start, end: stop } }]
+                  } catch {
+                    /* Unsupported stored syntax cannot acquire ownership. */
+                  }
+                }
+                return matchesCall ? [{ indices, text: callText, span: { start: begin, end } }] : []
               })
             : [],
         )[0]
@@ -854,8 +914,67 @@ function project(
     let upstream: Output | undefined = receiverOutput
     let start = 0
     let group: PlacedModule | undefined
+    const arrangeIndex = calls.findLastIndex((call) => call.name === 'arrange' && !call.receiver)
+    if (
+      !receiverOutput &&
+      !locals &&
+      arrangeIndex >= 0 &&
+      !arrangeShadowed &&
+      !retainedCode(0, true) &&
+      !calls.some((_, index) => retainedCode(index)?.indices.includes(arrangeIndex))
+    ) {
+      const call = calls[arrangeIndex]
+      const tuples = call?.args
+      if (
+        tuples?.length &&
+        tuples.every(
+          (tuple) =>
+            tuple.type === 'ArrayExpression' &&
+            tuple.elements.length === 2 &&
+            tuple.elements[0]?.type === 'Literal' &&
+            typeof tuple.elements[0].value === 'number' &&
+            Number.isFinite(tuple.elements[0].value) &&
+            tuple.elements[0].value > 0 &&
+            tuple.elements[1] &&
+            tuple.elements[1].type !== 'SpreadElement',
+        )
+      ) {
+        const inputs = tuples.map((tuple, argument) => {
+          if (tuple.type !== 'ArrayExpression') throw new Error('Invalid section tuple')
+          const duration = tuple.elements[0]
+          if (duration?.type !== 'Literal' || typeof duration.value !== 'number')
+            throw new Error('Invalid section cycles')
+          const child = expressionScope(scope, { call: arrangeIndex, argument, element: 1 })
+          if (!child) throw new Error('Invalid section expression')
+          const from = expression(child)
+          return { from: needsSampler(from) ? soundInput(from, 'vca') : from, duration }
+        })
+        const sections = getModuleSpec('sections').sections
+        if (!sections) throw new Error('Missing section catalog')
+        const { inputs: sockets, next: nextJack } = sections
+        function combine(offset: number): Output {
+          const bus = add('sections')
+          const controls: Record<string, Span> = {}
+          for (const [index, slot] of sockets.entries()) {
+            const input = inputs[offset + index]
+            if (!input) continue
+            bus.values[slot.cycles] = String(input.duration.value)
+            represented.get(bus.id)?.add(slot.cycles)
+            Object.assign(controls, literalControls(slot.cycles, input.duration))
+            wire(input.from, bus, slot.jack)
+          }
+          if (offset + sockets.length < inputs.length)
+            wire(combine(offset + sockets.length), bus, nextJack)
+          bind(bus, scope, [arrangeIndex], controls, { role: 'module', part: offset })
+          return output(bus)
+        }
+        upstream = combine(0)
+        start = arrangeIndex + 1
+      }
+    }
     const stackIndex = calls.findLastIndex((call) => call.name === 'stack')
     if (
+      !upstream &&
       !receiverOutput &&
       stackIndex >= 0 &&
       !stackShadowed &&
@@ -905,7 +1024,7 @@ function project(
     }
     const receiver = !receiverOutput && retainedCode(0, true)
     if (receiver && !upstream) {
-      upstream = code(scope, receiver.indices, receiver.text)
+      upstream = code(scope, receiver.indices, receiver.text, undefined, receiver.span)
       start = (receiver.indices.at(-1) ?? -1) + 1
     }
     const local = localBinding(root)
@@ -1056,7 +1175,7 @@ function project(
       if (!scope.loop && !scope.path && routing?.get(scope.descriptor.id)?.call === index) continue
       const opaque = retainedCode(index)
       if (opaque) {
-        upstream = code(scope, opaque.indices, opaque.text, upstream)
+        upstream = code(scope, opaque.indices, opaque.text, upstream, opaque.span)
         group = undefined
         index = opaque.indices.at(-1) ?? index
         continue
@@ -2208,13 +2327,13 @@ export function read(source: string): SourceDocument {
           )
             return []
           const calls = binding.calls.flatMap((index) => scope.calls[index] ?? [])
-          const editable =
-            controls.find(
-              (item) =>
-                item.module === module.id &&
-                item.scope === scope.descriptor.id &&
-                descriptor([item.loop, item.path]) === descriptor([binding.loop, binding.path]),
-            )?.controls ?? {}
+          const projected = controls.find(
+            (item) =>
+              item.module === module.id &&
+              item.scope === scope.descriptor.id &&
+              descriptor([item.loop, item.path]) === descriptor([binding.loop, binding.path]),
+          )
+          const editable = projected?.controls ?? {}
           return [
             {
               module: module.id,
@@ -2226,8 +2345,14 @@ export function read(source: string): SourceDocument {
               role: binding.role,
               ...(binding.fx === undefined ? {} : { fx: binding.fx }),
               ...(binding.target === undefined ? {} : { target: binding.target }),
-              start: calls[0]?.start ?? scope.start,
-              end: calls.at(-1)?.end ?? scope.end,
+              start:
+                module.type === 'code'
+                  ? (projected?.start ?? calls[0]?.start ?? scope.start)
+                  : (calls[0]?.start ?? scope.start),
+              end:
+                module.type === 'code'
+                  ? (projected?.end ?? calls.at(-1)?.end ?? scope.end)
+                  : (calls.at(-1)?.end ?? scope.end),
               controls: editable,
             },
           ]
@@ -2270,6 +2395,12 @@ function restore(
   currentScopes: ParsedScope[],
 ): void {
   if (saved.railHp !== undefined) patch.railHp = saved.railHp
+  const sectionSpec = getModuleSpec('sections'),
+    sections = sectionSpec.sections
+  if (!sections) throw new Error('Missing section catalog')
+  const nextJack = sections.next
+  const continuation = (rack: Pick<Patch, 'cables'>, id: string) =>
+    rack.cables.some((c) => c.from.module === id && c.to.jack === nextJack)
   const rename = new Map<string, string>()
   const claimed = new Set<string>()
   // CV identity is constrained by the already matched target, including shared ENV.
@@ -2282,12 +2413,27 @@ function restore(
     const candidates = saved.modules.filter(
       (old) =>
         old.type === module.type &&
+        (module.type !== 'sections' ||
+          continuation(patch, module.id) === continuation(saved, old.id)) &&
         (!claimed.has(old.id) ||
           ['env', 'lfo'].includes(module.type) ||
           getModuleSpec(module.type).operatorTarget !== undefined) &&
         own.some((binding) => {
           const match = matches.get(binding.scope)
           if (!match) return false
+          // A changed tuple list cannot inherit an old socket order by ordinal.
+          if (
+            getModuleSpec(module.type).sections &&
+            !binding.path &&
+            !binding.calls.every((call) => {
+              const previous = match.calls.get(call)
+              return (
+                previous !== undefined &&
+                descriptor(match.current.calls[call]) === descriptor(match.saved.calls[previous])
+              )
+            })
+          )
+            return false
           if (binding.path) {
             const first = binding.path[0]
             const mapped = first && match.calls.get(first.call)
@@ -2453,6 +2599,99 @@ function restore(
       return [`${rename.get(id ?? '') ?? id}:${jack}`, name]
     }),
   )
+  // One arrange call owns the entire NEXT chain, regardless of panel boundaries.
+  // Only an exactly matched head may redistribute its proven tuples and spans.
+  function sectionChain(rack: Pick<Patch, 'modules' | 'cables'>, head: PlacedModule) {
+    const panels: PlacedModule[] = []
+    let panel: PlacedModule | undefined = head
+    while (panel) {
+      if (panels.includes(panel)) throw new Error('Cyclic section continuation')
+      panels.push(panel)
+      const next = rack.cables.find((c) => c.to.module === panel?.id && c.to.jack === nextJack)
+      panel = next && rack.modules.find((m) => m.id === next.from.module)
+      if (panel && panel.type !== 'sections') throw new Error('Invalid section continuation')
+    }
+    return panels
+  }
+  const heads = patch.modules.filter(
+    (m) => m.type === 'sections' && claimed.has(m.id) && !continuation(patch, m.id),
+  )
+  for (const head of heads) {
+    const old = saved.modules.find((m) => m.id === head.id)
+    const owner = bindings.find((b) => b.module === head.id && b.part === 0)
+    if (!old || !owner) continue
+    const current = sectionChain(patch, head),
+      previous = sectionChain(saved, old),
+      ids = new Set(current.map((m) => m.id))
+    const tuples = current.flatMap((panel) =>
+      sectionOrder(sectionSpec, panel).flatMap((slot) => {
+        const cable = patch.cables.find((c) => c.to.module === panel.id && c.to.jack === slot.jack)
+        const control = sectionSpec.controls.find((c) => c.id === slot.cycles)
+        const span = bindings.find((b) => b.module === panel.id)?.controls[slot.cycles]
+        return cable && control ? [{ cable, value: controlValue(panel, control), span }] : []
+      }),
+    )
+    let offset = 0
+    const restored = previous.map((panel) => {
+      const slots = sectionOrder(sectionSpec, panel).filter((slot) =>
+        saved.cables.some((c) => c.to.module === panel.id && c.to.jack === slot.jack),
+      )
+      const binding = saved.modules
+        .find((m) => m.id === panel.id)
+        ?.bindings.find(
+          (b) =>
+            b.part === offset &&
+            b.role === owner.role &&
+            b.scope === matches.get(owner.scope)?.saved.id &&
+            descriptor([b.loop, b.path, b.calls]) ===
+              descriptor([owner.loop, owner.path, owner.calls]),
+        )
+      const start = offset
+      offset += slots.length
+      return { panel, slots, start, binding }
+    })
+    if (
+      offset !== tuples.length ||
+      restored.some(
+        ({ panel, binding }) =>
+          !binding || patch.modules.some((m) => m.id === panel.id && !ids.has(m.id)),
+      )
+    )
+      continue
+    patch.modules = patch.modules.filter((m) => !ids.has(m.id))
+    patch.cables = patch.cables.filter(
+      (c) => !(ids.has(c.to.module) && c.to.jack === sections.next),
+    )
+    const kept = bindings.filter((b) => !ids.has(b.module))
+    bindings.splice(0, bindings.length, ...kept)
+    for (const { panel, slots, start } of restored) {
+      const values = { ...panel.values },
+        controls: Record<string, Span> = {}
+      slots.forEach((slot, index) => {
+        const tuple = tuples[start + index]
+        if (!tuple) throw new Error('Missing proven section tuple')
+        values[slot.cycles] = tuple.value
+        tuple.cable.to = { module: panel.id, jack: slot.jack }
+        if (tuple.span) controls[slot.cycles] = tuple.span
+      })
+      patch.modules.push({
+        id: panel.id,
+        type: panel.type,
+        row: panel.row,
+        hp: panel.hp,
+        look: panel.look,
+        values,
+      })
+      bindings.push({ ...owner, module: panel.id, part: start, controls })
+    }
+    for (const cable of saved.cables.filter(
+      (c) => previous.some((m) => m.id === c.to.module) && c.to.jack === sections.next,
+    )) {
+      let id = `section-next-${cable.to.module}`
+      while (patch.cables.some((c) => c.id === id)) id += '-'
+      patch.cables.push({ id, from: { ...cable.from }, to: { ...cable.to } })
+    }
+  }
   for (const module of patch.modules.filter((module) => module.type === 'mix')) {
     const old = saved.modules.find((item) => item.id === module.id)
     if (!old) continue

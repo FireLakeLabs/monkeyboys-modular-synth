@@ -74,6 +74,26 @@ and a healthy nonzero control. It failed against the unpatched payload and passe
 after the fix. Browser error/transport/PCM checks remain independent runtime proof.
 The exception and removal condition are in [audio recovery](audio-recovery.md#bytebeat-and-speech-additions-143144).
 
+## Section source boundaries (#244)
+
+The section [generator](../src/codegen/sections.test.ts) and
+[reader](../src/reader/sections.test.ts) regressions independently check musical
+events, complete saved identity and exact source edits. Terminal CODE comments
+must end before combiner punctuation; saved identity alone failed to detect a
+swallowed tuple/Stack arm. Seven event/source cases failed before the lexical
+separator fix. Sparse NEXT duration edits use whole-chain proven socket/span
+mapping, with three failing-before regressions and invalid forged offsets retained.
+Suffix CODE ownership also proves whole comment boundaries and permits only
+lexical trivia in outside margins. Three extended-comment CODE edits and seven
+combined trivia/duration cases failed before those guards.
+Nine plain/owned-comment suffix cases with outside comments and source edits
+also guard against silently
+changing persisted CODE ownership to VCA; existing comment/CRLF explicit-conversion
+checks still pass with only lexical-trivia span margins. Writer and reader use
+the same first-token classification for comment-prefixed suffixes. `npm run check` runs
+these guards. Browser PCM and native-control proof remain
+separate from the pure checks, and physical listening is not automated.
+
 ## Runtime and TypeScript configuration
 
 `.node-version` pins the runtime used locally and in CI. The root package's engine

@@ -13,7 +13,7 @@
       },
       {
         "path": "docs/research/strudel-api-coverage/examples.json",
-        "sha256": "835606e8fd8a0ae401424c8725b96b147c487533014b1da0f75e99628bbbf00e"
+        "sha256": "dc878c3f9240e5a4ae40721e6fe64e7b271e193f7d69309f37f4f90697fe12f3"
       },
       {
         "path": "docs/research/strudel-api-coverage/priorities.json",
@@ -37,7 +37,7 @@
       },
       {
         "path": "src/codegen/arranger.test.ts",
-        "sha256": "f27bf90cf6a699c8d7e92b66f82a85da2b1c41f55a5920039f6230dd88c85621"
+        "sha256": "976a15c1fc6ece4ffdb1d672df8ec87d9b1b16496d9b30bc2ccde0d0d54acf05"
       },
       {
         "path": "src/codegen/bindings.test.ts",
@@ -61,15 +61,15 @@
       },
       {
         "path": "src/codegen/generate.ts",
-        "sha256": "5ff16ec0b3ed81e6b3636fe5461be1586c03e3ae0a329ada43aaf24b166658c3"
+        "sha256": "e13e486139c6e67d51b1b303d1001c972e9c79ec59b557c0193fa116c0f16086"
       },
       {
         "path": "src/codegen/graph.ts",
-        "sha256": "c66d80346ead0fb93da12f456e558ffaecab8d83f41e8eb930135bd6de0155ac"
+        "sha256": "8c6494b1a5a7eda6872d3ea92351c9ea3e8552a2f9fe0ad04aa631fcfc010f9d"
       },
       {
         "path": "src/codegen/layout.ts",
-        "sha256": "738807a0b5eb9edbd94c470d9d8acaa441fbab34154a95475e20f1ddf86c8d28"
+        "sha256": "8a67d47bf2caa32f7342552c7638090a67d91c2ed194b54fb07cfed6a12b4c2c"
       },
       {
         "path": "src/codegen/panels.test.ts",
@@ -84,8 +84,12 @@
         "sha256": "cb911724af734f2f4aec257bfbe618fcf2a3621ff56a276eaedf9d5174d52f30"
       },
       {
+        "path": "src/codegen/sections.test.ts",
+        "sha256": "bddadbde251928e75518618f92e168d3ecc3ab4032619d5603f16e5ba697edbc"
+      },
+      {
         "path": "src/modules/catalog.ts",
-        "sha256": "175189bc51153c2bb1d329a4fd832702476644aa913ae86893d55148e5b9a83e"
+        "sha256": "0293e56b6bf3107a08eeb439844efb6d143eded4669ddf6108c0863d492c7a49"
       },
       {
         "path": "src/patch/types.ts",
@@ -125,11 +129,11 @@
       },
       {
         "path": "src/reader/layout.ts",
-        "sha256": "f06fa31e85484509b6b99907a62a610485ddc1add8f1b9a6369c2ec6e78be26a"
+        "sha256": "b324b54523802383d2c8ee9e5a6f8f1d9e23defd824f83e86fa21c5647fa541c"
       },
       {
         "path": "src/reader/literal-edits.test.ts",
-        "sha256": "a9b48ca3fe32172f195f3abb291ad518c47bcd3b63ffb00de80dfe203c4e3a97"
+        "sha256": "01bee565d484b41831054d8d0c35ab2dc50d9a3da869e88ee510d7df0c2f49bd"
       },
       {
         "path": "src/reader/metadata.test.ts",
@@ -165,11 +169,15 @@
       },
       {
         "path": "src/reader/read.ts",
-        "sha256": "6aaafaade4082291a5adb882aa4cf7bad5e9c5cb5ba49c62dbe9091500e821b6"
+        "sha256": "ce3ef4227d7fb4761e0844e09799f71876ba0c4930ecd62add44a23825ab4f3d"
+      },
+      {
+        "path": "src/reader/sections.test.ts",
+        "sha256": "56471ae29f3559380bc4f289b1c3c4d3d2921a2a92ea8dc7bb1df9ae53138aef"
       },
       {
         "path": "src/reader/syntax.ts",
-        "sha256": "b4fe6eea819cb6d68142449e61ea2fbd1b3645b3ee3ec8e088f1831d91ebae13"
+        "sha256": "a6ea2102e6d32083c575804ad77be5b50bf69755a26cfe982fffc5a44183b84c"
       },
       {
         "path": "src/reader/types.ts",
@@ -181,7 +189,7 @@
       },
       {
         "path": "src/workspace/document.ts",
-        "sha256": "150a4bf4fe6fbb26881e66422d17232d3e2cf28cb066c31fd5f135f8b86a6cc4"
+        "sha256": "a20f86c1fcd8d42702c28d8ed480c35faf0232047d285a2366feb2ddc39ba98a"
       }
     ],
     "counting": "Registration aliases grouped; packed fields excluded; numbered controls expanded; source candidates retained with unknown availability. Corpus calls count all syntactic CallExpressions, separately from production-reader metrics.",
@@ -600,9 +608,9 @@
     }
   ],
   "counts": {
-    "catalogModules": 59,
-    "catalogOwnedNames": 205,
-    "catalogStrudelNames": 176,
+    "catalogModules": 60,
+    "catalogOwnedNames": 206,
+    "catalogStrudelNames": 177,
     "coreLiteralRegistrationGroups": 401,
     "coreLiteralGroupsWithoutOwnership": 256,
     "families": 1100,
@@ -24454,7 +24462,12 @@
         "bundle-export",
         "initStrudel-evalScope"
       ],
-      "catalog": [],
+      "catalog": [
+        {
+          "name": "arrange",
+          "module": "sections"
+        }
+      ],
       "controls": [],
       "reader": {
         "state": "observed-contexts-only",
@@ -24473,7 +24486,7 @@
         "reason": "No event/PCM/audio claim established for this family"
       },
       "corpus": {
-        "committed": 0,
+        "committed": 1,
         "wild": 2
       }
     },
@@ -47243,7 +47256,7 @@
         "restriction": "Scalar/CV reader forms narrower than setter; event fields alone do not prove PCM"
       },
       "corpus": {
-        "committed": 34,
+        "committed": 36,
         "wild": 2
       }
     },
@@ -57858,7 +57871,7 @@
         "reason": "No event/PCM/audio claim established for this family"
       },
       "corpus": {
-        "committed": 26,
+        "committed": 28,
         "wild": 4
       }
     },
@@ -59082,7 +59095,7 @@
         "restriction": "One delay/reverb bus per orbit; no new PCM or listening claim"
       },
       "corpus": {
-        "committed": 33,
+        "committed": 34,
         "wild": 4
       }
     },
@@ -65571,7 +65584,7 @@
         "reason": "No event/PCM/audio claim established for this family"
       },
       "corpus": {
-        "committed": 6,
+        "committed": 7,
         "wild": 0
       }
     },
@@ -65993,7 +66006,7 @@
         "reason": "No event/PCM/audio claim established for this family"
       },
       "corpus": {
-        "committed": 2,
+        "committed": 3,
         "wild": 0
       }
     },
@@ -66373,7 +66386,7 @@
         "reason": "No event/PCM/audio claim established for this family"
       },
       "corpus": {
-        "committed": 2,
+        "committed": 3,
         "wild": 0
       }
     },
@@ -66821,7 +66834,7 @@
         "reason": "No event/PCM/audio claim established for this family"
       },
       "corpus": {
-        "committed": 36,
+        "committed": 38,
         "wild": 15
       }
     },
@@ -68071,7 +68084,7 @@
         "reason": "No event/PCM/audio claim established for this family"
       },
       "corpus": {
-        "committed": 22,
+        "committed": 23,
         "wild": 4
       }
     },
@@ -71357,7 +71370,7 @@
         "reason": "No event/PCM/audio claim established for this family"
       },
       "corpus": {
-        "committed": 0,
+        "committed": 2,
         "wild": 0
       }
     },
@@ -80119,7 +80132,7 @@
       "confidence": "high on reader gaps; low on community prevalence",
       "corpus": {
         "committed": {
-          "syntacticCalls": 6,
+          "syntacticCalls": 9,
           "unmappedOuterCalls": 1
         },
         "wild": {
@@ -80211,7 +80224,7 @@
       "confidence": "high on demonstrated restrictions; untested forms explicitly unknown",
       "corpus": {
         "committed": {
-          "syntacticCalls": 84,
+          "syntacticCalls": 88,
           "unmappedOuterCalls": 6
         },
         "wild": {
@@ -82559,39 +82572,68 @@
         "arrange"
       ],
       "source": "$: arrange([2,s(\"bd\")],[2,s(\"hh\")])\n",
-      "expectCode": true,
-      "restriction": "Section-local time differs from mask lanes; #244 owns implementation",
+      "expectCode": false,
+      "restriction": "Static literal tuples project SECTIONS under #244; independently proven native local phase, exact source and saved identity in sections tests. Computed sections remain CODE.",
       "moduleTypes": [
-        "code",
+        "drums",
+        "smpl",
+        "drums",
+        "smpl",
+        "sections",
         "mix",
         "out"
       ],
       "values": [
         {
-          "type": "code",
+          "type": "drums",
           "values": {
-            "text": "arrange([2,s(\"bd\")],[2,s(\"hh\")])"
+            "grid": "bd",
+            "drop": 0
+          }
+        },
+        {
+          "type": "smpl",
+          "values": {
+            "bank": "",
+            "speed": 1
+          }
+        },
+        {
+          "type": "drums",
+          "values": {
+            "grid": "hh",
+            "drop": 0
+          }
+        },
+        {
+          "type": "smpl",
+          "values": {
+            "bank": "",
+            "speed": 1
+          }
+        },
+        {
+          "type": "sections",
+          "values": {
+            "cycles1": "2",
+            "cycles2": "2"
           }
         }
       ],
-      "code": [
-        "arrange([2,s(\"bd\")],[2,s(\"hh\")])"
-      ],
+      "code": [],
       "exactSource": true,
       "savedIdentity": true,
       "coverage": {
         "patches": 1,
         "parseFailures": 0,
         "calls": 1,
-        "mappedCalls": 0,
+        "mappedCalls": 1,
         "voices": 1,
-        "readableVoices": 0,
-        "patchesWithoutCode": 0,
-        "codeBlocks": 1,
+        "readableVoices": 1,
+        "patchesWithoutCode": 1,
+        "codeBlocks": 0,
         "id": "arrange-sections",
-        "unmapped": {
-          "arrange": 1
-        }
+        "unmapped": {}
       }
     },
     {
@@ -83590,23 +83632,23 @@
       "tier": "committed",
       "manifest": {
         "path": "corpus/reader/committed.json",
-        "sha256": "9a6a4bf216574df94b68f6e6ffc3548a4b0f1a380945323cbb77519b689110d4"
+        "sha256": "7f1d775096243ad86396ffd4b222337a274752b2b2c228222a75380c9f4c857e"
       },
       "fetchFailures": 0,
       "totals": {
-        "patches": 22,
+        "patches": 23,
         "parseFailures": 0,
-        "calls": 309,
-        "mappedCalls": 294,
-        "voices": 36,
-        "readableVoices": 32,
-        "patchesWithoutCode": 20,
+        "calls": 318,
+        "mappedCalls": 303,
+        "voices": 37,
+        "readableVoices": 33,
+        "patchesWithoutCode": 21,
         "codeBlocks": 15
       },
       "shares": {
-        "mappedCalls": 0.9514563106796117,
-        "readableVoices": 0.8888888888888888,
-        "patchesWithoutCode": 0.9090909090909091
+        "mappedCalls": 0.9528301886792453,
+        "readableVoices": 0.8918918918918919,
+        "patchesWithoutCode": 0.9130434782608695
       },
       "unmapped": [
         {
@@ -84441,6 +84483,52 @@
             "scale": "pinned-name-syntax-only",
             "setcpm": "pinned-name-syntax-only",
             "transpose": "pinned-name-syntax-only"
+          }
+        },
+        {
+          "provenance": {
+            "id": "section-study",
+            "path": "src/library/patches/section-study.strudel",
+            "license": "MIT",
+            "provenance": "Repository-owned original #244; LICENSE; src/library/catalog.ts attribution"
+          },
+          "sha256": "6bc6255a1088846f31d24404a7b27f878faf001c2fdada807a01b04dd2d84120",
+          "reader": {
+            "patches": 1,
+            "parseFailures": 0,
+            "calls": 9,
+            "mappedCalls": 9,
+            "voices": 1,
+            "readableVoices": 1,
+            "patchesWithoutCode": 1,
+            "codeBlocks": 0,
+            "id": "section-study",
+            "unmapped": {}
+          },
+          "counts": {
+            "arrange": 1,
+            "gain": 2,
+            "note": 2,
+            "orbit": 1,
+            "rev": 1,
+            "room": 1,
+            "roomsize": 1,
+            "s": 2,
+            "setcpm": 1,
+            "stack": 2
+          },
+          "customRegistrations": [],
+          "callDispositions": {
+            "arrange": "pinned-name-syntax-only",
+            "gain": "pinned-name-syntax-only",
+            "note": "pinned-name-syntax-only",
+            "orbit": "pinned-name-syntax-only",
+            "rev": "pinned-name-syntax-only",
+            "room": "pinned-name-syntax-only",
+            "roomsize": "pinned-name-syntax-only",
+            "s": "pinned-name-syntax-only",
+            "setcpm": "pinned-name-syntax-only",
+            "stack": "pinned-name-syntax-only"
           }
         },
         {

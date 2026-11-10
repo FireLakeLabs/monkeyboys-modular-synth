@@ -152,6 +152,28 @@ environmental limits; event/cancel API proof does not establish audible speech.
 
 ## Pattern sources
 
+### SECTIONS — Section sequencer (#244)
+
+Hardware · Pattern · 16 HP in all four looks. Writes native
+`arrange([cycles, pattern], ...)`, with section-local timing, distinct from the
+footer's per-voice mask lanes. See the [sketch, case matrix and proof](section-sequencing.md).
+
+| Control    | Kind                | Values/default                                                                                       |
+| ---------- | ------------------- | ---------------------------------------------------------------------------------------------------- |
+| ORDER      | field               | permutation of 1 2 3 4; default `1 2 3 4`                                                            |
+| CYCLES 1–4 | numeric text fields | finite positive decimal/scientific literal; default `4` cycles; no maximum or three-decimal rounding |
+
+Numbered inputs accept pattern/voiced/unknown events; homogeneous input signals
+flow to OUT, otherwise OUT is unresolved. A known note sequence needs OSC before
+an audio-only consumer. Empty sockets are skipped with their values saved. NEXT
+accepts an unnamed, exclusively consumed SECTIONS OUT and appends its tuples to
+this same arrange call. A named/shared continuation refuses atomically; use a
+numbered input for reusable nested sections. Additional imported tuples use NEXT
+panels without truncation. Independent nested sequences use numbered inputs.
+Mod/function inputs and callback-local SECTIONS are excluded; #243 stays scoped.
+ORDER uses conversion/Undo; proven literal fields splice only their own spans.
+Incomplete/disconnected graphs remain saved.
+
 ### SEQ — Sequencer
 
 Hardware · Pattern · 10 HP

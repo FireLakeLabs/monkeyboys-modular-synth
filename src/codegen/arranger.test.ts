@@ -151,15 +151,19 @@ describe('#141 spike: per-voice mask lanes against arrange() sections', () => {
     ).toBe(true)
   })
 
-  it('keeps the arrange() form as source-owned CODE with exact bytes', () => {
+  it('now projects static sections (#244), retaining exact bytes and inner orbit CODE', () => {
     const doc = read(ARRANGE_FORM)
     expect(generate(doc)).toBe(ARRANGE_FORM)
-    expect(doc.patch.modules.filter((module) => module.type === 'code')).toEqual([
-      expect.objectContaining({
-        values: { text: expect.stringContaining('arrange([4, drums]') },
-      }),
-    ])
-    expect(doc.patch.modules.some((module) => module.type === 'seq')).toBe(false)
+    expect(doc.patch.modules.some((module) => module.type === 'sections')).toBe(true)
+    expect(doc.patch.modules.some((module) => module.type === 'seq')).toBe(true)
+    expect(doc.patch.modules.filter((module) => module.type === 'code')).toHaveLength(3)
+    expect(
+      doc.patch.modules
+        .filter((module) => module.type === 'code')
+        .every(
+          (m) => typeof m.values.text === 'string' && /^\.orbit\(\d\)$/.test(m.values.text.trim()),
+        ),
+    ).toBe(true)
     const saved = saveLayout(doc)
     expect(sourceBody(saved.source)).toBe(ARRANGE_FORM)
   })

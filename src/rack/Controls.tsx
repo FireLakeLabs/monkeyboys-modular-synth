@@ -314,9 +314,12 @@ export function ControlEditor({
             </button>
           </div>
         )
-      if (module.type === 'mix')
+      if (module.type === 'mix' || getModuleSpec(module.type).sections)
         return (
           <StringEditor
+            key={
+              getModuleSpec(module.type).sections && typeof value === 'string' ? value : undefined
+            }
             label={control.label}
             value={typeof value === 'string' ? value : control.default}
             commit={commit}

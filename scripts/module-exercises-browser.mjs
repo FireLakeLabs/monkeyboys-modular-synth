@@ -72,6 +72,7 @@ const actions = {
   out: ['knob', 'BPM', 90, 'bpm'],
   iter: ['knob', 'STEPS', 1, 'steps'],
   jux: ['switch', 'RIGHT', 'fast2', 'right'],
+  sections: ['field', 'CYCLES 1', '4', 'cycles1'],
   chunk: ['knob', 'CHUNKS', 2, 'chunks'],
   every: ['knob', 'CYCLES', 2, 'cycles'],
   sometimes: ['knob', 'CHANCE', 1, 'probability'],
@@ -202,6 +203,11 @@ try {
       if (kind === 'text') {
         await panel.getByRole('textbox', { name: label, exact: true }).fill(value)
         await panel.getByRole('button', { name: 'Apply', exact: true }).click()
+      }
+      if (kind === 'field') {
+        const field = panel.getByRole('textbox', { name: label, exact: true })
+        await field.fill(value)
+        await field.press('Enter')
       }
       await page.waitForFunction(
         async (original) =>

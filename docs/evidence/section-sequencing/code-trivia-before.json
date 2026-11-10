@@ -1,0 +1,42 @@
+{
+  "head": "f83edbec8726840e9d99139bd99b931800a9e801",
+  "finding": "P4 should: stored suffix CODE expands after outside prefix comment plus unrelated duration source edit",
+  "results": [
+    {
+      "name": "unchanged",
+      "layout": "restored",
+      "codes": [".gain(.5) // tail"],
+      "vcaCount": 0,
+      "diagnostics": [],
+      "exactSource": true
+    },
+    {
+      "name": "prefix-comment-only",
+      "layout": "restored",
+      "codes": [".gain(.5) // tail"],
+      "vcaCount": 0,
+      "diagnostics": [],
+      "exactSource": true
+    },
+    {
+      "name": "duration-only",
+      "layout": "reconciled",
+      "codes": [".gain(.5) // tail"],
+      "vcaCount": 0,
+      "diagnostics": [
+        "Code changed: restored only unambiguous sounding module identities; saved disconnected state was not applied."
+      ],
+      "exactSource": true
+    },
+    {
+      "name": "prefix-comment-and-duration",
+      "layout": "reconciled",
+      "codes": [],
+      "vcaCount": 1,
+      "diagnostics": [
+        "Code changed: restored only unambiguous sounding module identities; saved disconnected state was not applied."
+      ],
+      "exactSource": true
+    }
+  ]
+}
