@@ -25,6 +25,32 @@ it('retains legacy opaque sections and all file bytes without claiming obsolete 
   expect(legacyCode).toContain('"cutoff": 1450')
 })
 
+it.each([
+  { name: 'plain', source: '$: note("c3").s("sine")\n' },
+  { name: 'Stack', source: '$: stack(note("c3").s("sine"),note("e3").s("sine"))\n' },
+  { name: 'arrange', source: '$: arrange([1,note("c3").s("sine")],[1,note("e3").s("sine")])\n' },
+])('edits $name CODE without owning only the prefix of an extended comment', (item) => {
+  let patch = read(item.source).patch
+  const target = patch.modules.find((m) =>
+      item.name === 'arrange'
+        ? m.type === 'sections'
+        : m.type === 'mix' && (item.name !== 'Stack' || m.values.mode === 'Stack'),
+    ),
+    edge = patch.cables.find((c) => c.to.module === target?.id && c.to.jack === 'in1')
+  if (!target || !edge) throw new Error('Missing controlled fixture arm')
+  patch = placeModule(patch, 'code', 7)
+  patch = setValue(patch, 'code1', 'text', '.gain(.5) // tail')
+  patch = connect(patch, edge.from, { module: 'code1', jack: 'in' })
+  patch = connect(patch, { module: 'code1', jack: 'out' }, { module: target.id, jack: 'in1' }, true)
+  const source = generate(patch).replace('// tail', '// tail and more'),
+    doc = read(source)
+  expect(doc.layout).toBe('restored')
+  expect(generate(doc)).toBe(source)
+  const edited = editDocument(doc, setValue(doc.patch, 'code1', 'text', '.gain(.7)'))
+  expect(sourceBody(edited.source)).toBe(sourceBody(source).replace('\n  .gain(.5)', '.gain(.7)'))
+  expect(read(edited.source).patch).toEqual(edited.patch)
+})
+
 it.each([1, 2, 3, 4])('edits the exact duration of socket %s without rounding', (slot) => {
   const source =
     '$: arrange([1,note("c3")],[2,note("d3")],[3,note("e3")],[4,note("f3")]).s("sine")\n'

@@ -92,3 +92,35 @@ threshold after natural decay, while replacement has zero PCM/zero buses. The
 sparse native exact-edit/history case also passed alone after adding a source/state
 artifact. The complete local suite and protected
 hosted gates remain outstanding; no push or PR has occurred.
+
+## Round 2 — CHANGES, `f83edbe`
+
+The same Claude Opus 5.5 / high independently passed all 2,759 unit cases / 67
+files and 70 focused section cases. It explicitly closed S1 and P3 separator,
+including an additional reconciled sparse-chain/tempo edit that failed at R1 and
+passed at R2. Its tokenizer probes included string //, block comments, template
+literals and division expressions. The reviewer did not repeat browser/PCM,
+audit/inventory or the full check command; those remain supplied evidence. Usage
+figures were unavailable.
+
+| ID          | Severity | Finding and outcome                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| S2          | should   | The new suffix retention matched only the prefix of an extended line comment. Editing CODE then left raw `and more`, causing SyntaxError in plain, Stack and arrange sources. Three new regressions reproduced those syntax failures. Current retention requires a trivia-only suffix ending outside every actual comment and before the next token. A longer comment cannot be partially owned. Native-call fallback keeps the complete extended comment when CODE is replaced.                 |
+| P4 (parent) | should   | An outside prefix comment plus an unrelated duration edit left unchanged saved CODE bytes but expanded the owner to VCA. The exact frozen reproduction is [recorded](section-sequencing/code-trivia-before.json). Seven existing musical fixtures reproduced the ownership failure. Prefix margins now require lexical trivia, allowing complete block/line comments without owning or deleting them. All seven fixtures also edit the retained CODE and save/reopen with those comments intact. |
+| N1          | nit      | Loop Stack added two newlines for a terminal-comment non-inline arm. Its existing newline is now reused; inline arms still receive the lexical separator. No product decision or new callback grammar is involved.                                                                                                                                                                                                                                                                               |
+
+The ten failing-before cases pass after the bounded fixes. Focused section tests
+now pass 73/73; sections plus explicit CODE conversion and callback guards pass
+125/125. `npm run check` passes 2,762 tests / 67 files, 59 guardrails, format,
+skills, lint, reader coverage, TypeScript and build. Existing library hashes and
+corpus denominators remain unchanged. The native CODE source-edit/history case passes 1/0 across four fixtures; its
+[exact source/state artifact](section-sequencing/code-trivia-edits.json) and screenshot
+were inspected. The new harness initially assumed a TEXT textbox, omitted Stop
+between Apply-started fixtures, and assumed a stable code1 after reconciliation.
+Those three [attempts and corrections](section-sequencing/review-browser-attempts.json)
+are retained; no product semantics, source assertions or PCM thresholds were relaxed.
+The final affected browser command completed **RESULT passed=10 failed=0 exit=0**
+with all four actual look screenshots inspected again. The nine original/regenerated
+event/PCM pairs, live bus identity, natural Stop decay and zero-bus replacement
+were refreshed in runtime.json. Bounded round 3 is pending; the complete local suite and protected hosted
+merge gates have not run yet. No push/PR or merge has occurred.

@@ -212,3 +212,32 @@ refreshed section/MIX/callback browser run completed **RESULT passed=9 failed=0
 exit=0**. All four actual look captures plus native create/source/order captures
 were inspected. The sparse NEXT native case also passed alone with its exact
 before/after source and saved state recorded in [sparse-next-edits.json](evidence/section-sequencing/sparse-next-edits.json).
+
+Round 2 independently closed sparse NEXT restoration and separator safety, but
+found that an extended terminal comment could be owned only up to its old saved
+prefix. Three plain/Stack/arrange CODE edits then produced syntax errors. Parent
+review also combined an outside prefix comment with a duration edit and observed
+unchanged CODE auto-expand. Seven musical fixtures reproduced that separate
+ownership failure. Retention now proves complete trivia boundaries on both sides:
+outside block/line comments stay outside CODE, and an extended comment cannot be
+partially claimed. All ten failing-before cases pass, including CODE replacement,
+comment preservation and save/reopen. The ordinary CODE conversion contract and
+callback grammar remain unchanged. Current focused section coverage is 73/73;
+the full deterministic gate is 2,762/67 plus 59 guardrails. Final browser/review
+and protected merge gates are tracked in the review ledger.
+
+The actual native CODE edit path is “Edit in source”, followed by Apply code.
+Four extended/outside-comment fixtures pass with native Undo/Redo and complete
+source/save identity; [before/after records](evidence/section-sequencing/code-trivia-edits.json)
+retain the literal source and patch fields. The source edit is explicit: a new
+supported gain expression may project as VCA; unrelated duration/trivia edits
+retain the unchanged CODE. The pure rack CODE replacement tests prove the separate
+explicit CODE ownership path. New harness failures and their bounded corrections
+are [recorded separately](evidence/section-sequencing/review-browser-attempts.json),
+without changing product behavior or PCM thresholds.
+
+The final affected section/MIX/callback command completed **RESULT passed=10
+failed=0 exit=0** after the R2 corrections. Actual four-look captures were inspected
+again; native CODE/sparse-source/history artifacts and all nine runtime event/PCM
+pairs were refreshed. No silence threshold or Stop semantics changed. Bounded
+round 3, the full local suite and protected hosted gates remain pending.

@@ -8,6 +8,7 @@ import {
   saveLayout,
   fromPatch,
   makeRackEditable,
+  editDocument,
 } from '../workspace/document'
 import { connect, placeModule, setValue, starterPatch, renameOutput } from '../rack/model'
 import { createDocumentHistory } from '../workspace/history'
@@ -167,11 +168,26 @@ it.each([
       ['3', 'e3'],
     ])
   }
-  const edited = read(source.replace('arrange([1,', 'arrange([2,'))
-  expect(
-    edited.patch.modules.some((m) => m.type === 'code' && m.values.text === '.gain(.5) // tail'),
-  ).toBe(true)
-  expect(read(saveLayout(edited).source).patch).toEqual(edited.patch)
+  for (const margin of ['', '/* outside CODE */ ', '// outside CODE\n']) {
+    const changed = source
+        .replace('.gain(.5) // tail', `${margin}.gain(.5) // tail`)
+        .replace('arrange([1,', 'arrange([2,'),
+      edited = read(changed)
+    expect(generate(edited)).toBe(changed)
+    const retained = edited.patch.modules.find(
+      (m) => m.type === 'code' && m.values.text === '.gain(.5) // tail',
+    )
+    expect(retained).toBeDefined()
+    if (!retained) throw new Error('Missing retained CODE')
+    expect(read(saveLayout(edited).source).patch).toEqual(edited.patch)
+    const controlEdit = editDocument(
+      edited,
+      setValue(edited.patch, retained.id, 'text', '.gain(.7) // tail'),
+    )
+    expect(sourceBody(controlEdit.source)).toBe(
+      sourceBody(changed).replace('.gain(.5)', '.gain(.7)'),
+    )
+  }
 })
 
 it.each([

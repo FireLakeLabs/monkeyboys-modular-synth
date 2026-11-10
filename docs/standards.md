@@ -83,7 +83,10 @@ must end before combiner punctuation; saved identity alone failed to detect a
 swallowed tuple/Stack arm. Seven event/source cases failed before the lexical
 separator fix. Sparse NEXT duration edits use whole-chain proven socket/span
 mapping, with three failing-before regressions and invalid forged offsets retained.
-These checks run in `npm run check`. Browser PCM and native-control proof remain
+Suffix CODE ownership also proves whole comment boundaries and permits only
+lexical trivia in outside margins. Three extended-comment CODE edits and seven
+combined trivia/duration cases failed before those guards. These checks run in
+`npm run check`. Browser PCM and native-control proof remain
 separate from the pure checks, and physical listening is not automated.
 
 ## Runtime and TypeScript configuration

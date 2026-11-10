@@ -61,7 +61,7 @@
       },
       {
         "path": "src/codegen/generate.ts",
-        "sha256": "b61e3b43b8d7a906223839d22a85ec79acad0847f17ac2d2e4ce31218aaa1a4c"
+        "sha256": "e13e486139c6e67d51b1b303d1001c972e9c79ec59b557c0193fa116c0f16086"
       },
       {
         "path": "src/codegen/graph.ts",
@@ -85,7 +85,7 @@
       },
       {
         "path": "src/codegen/sections.test.ts",
-        "sha256": "22b60f35ca09dba8c2e822f8145d737c24422ad53e957240ddf971def4f03efb"
+        "sha256": "bddadbde251928e75518618f92e168d3ecc3ab4032619d5603f16e5ba697edbc"
       },
       {
         "path": "src/modules/catalog.ts",
@@ -169,11 +169,11 @@
       },
       {
         "path": "src/reader/read.ts",
-        "sha256": "5af7a6de35c5cd7c769792930e21a1b62a47e99c5029bf708311b1f48f59c084"
+        "sha256": "6f9c19641c969db41b5aa12bbaa4dac583ceb50a63e3686ecaad64b8434a22b5"
       },
       {
         "path": "src/reader/sections.test.ts",
-        "sha256": "64233f69bd87f89d712b553b99d6c4c79fbe3756787285bd59533a292951b21b"
+        "sha256": "9ce9b92b07263d54acb08c482a1e53b3c193a3c752ee7c6d5e35231828892586"
       },
       {
         "path": "src/reader/syntax.ts",

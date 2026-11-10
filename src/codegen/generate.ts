@@ -482,7 +482,7 @@ export function generateDocument(
             if (!arm) return undefined
             if (i) result.text += ', '
             const offset = result.text.length
-            result.text += combinerArmText(arm.text) + (arm.inline ? '' : '\n')
+            result.text += arm.inline ? combinerArmText(arm.text) : arm.text + '\n'
             result.owners.push(
               ...arm.owners.map((o) => ({ ...o, start: o.start + offset, end: o.end + offset })),
             )

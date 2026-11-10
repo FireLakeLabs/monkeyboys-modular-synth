@@ -787,11 +787,22 @@ function project(
                     })
                     const start = end - (ast.end - prefix.length),
                       stop = start + text.length
+                    const comments: Span[] = []
+                    const next = tokenizer(source.slice(end), {
+                      ecmaVersion: 'latest',
+                      onComment: (_block, _text, start, stop) => {
+                        comments.push({ start: end + start, end: end + stop })
+                      },
+                    }).getToken()
                     if (
                       start >= begin &&
                       stop > end &&
-                      source.slice(begin, start).trim() === '' &&
-                      source.slice(start, stop) === text
+                      [...tokenizer(source.slice(begin, start), { ecmaVersion: 'latest' })]
+                        .length === 0 &&
+                      source.slice(start, stop) === text &&
+                      // Own whole trivia only: a saved comment prefix is not its boundary.
+                      end + next.start >= stop &&
+                      !comments.some((comment) => comment.start < stop && stop < comment.end)
                     )
                       return [{ indices, text, span: { start, end: stop } }]
                   } catch {
