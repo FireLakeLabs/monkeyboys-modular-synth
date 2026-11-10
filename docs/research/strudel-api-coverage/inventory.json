@@ -61,7 +61,7 @@
       },
       {
         "path": "src/codegen/generate.ts",
-        "sha256": "9331089fffefec75b3471db57314c31ea71e562c3d03a8acf1b4cf11581324cb"
+        "sha256": "43af98a94ae174cae85e4bd9f4308a7b2df436eed7c2b87e4a021ff4ea88d2cf"
       },
       {
         "path": "src/codegen/graph.ts",
@@ -165,7 +165,7 @@
       },
       {
         "path": "src/reader/read.ts",
-        "sha256": "4a4a53718e94d3ae2f03557f50367693ea77cf6bc946f038ed1f6b9594191f90"
+        "sha256": "22ef8504a2862572cad73e67c97bc117b5ccdcfe25d5484acf83e34cdfe2d7eb"
       },
       {
         "path": "src/reader/syntax.ts",

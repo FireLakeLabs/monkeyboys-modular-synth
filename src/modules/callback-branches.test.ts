@@ -211,3 +211,26 @@ it('rolls back captured CV resolution before falling back an unsupported branch'
   expect(lfo).toBeDefined()
   expect(doc.patch.cables.some((c) => c.from.module === lfo?.id && c.to.jack === 'cv')).toBe(true)
 })
+it('keeps callback-local CV arguments opaque even when their name is a built-in signal', () => {
+  const source = `$: ${base}.jux(sine => stack(sine.gain(sine.range(.2,.5)),sine.rev()))\n`
+  const doc = saveLayout(read(source))
+  expect(doc.patch.modules.filter((m) => m.type === 'lfo')).toEqual([])
+  expect(
+    doc.patch.modules.some(
+      (m) =>
+        m.type === 'code' &&
+        typeof m.values.text === 'string' &&
+        m.values.text.includes('sine.range'),
+    ),
+  ).toBe(true)
+  expect(sourceBody(doc.source)).toBe(source)
+  expect(read(doc.source).patch).toEqual(doc.patch)
+})
+it('keeps an original local binding that shadows an unrelated global pattern name', () => {
+  const source = `const shared=note("c4");\n$: shared.s("sine")\n$: ${base}.jux(p=>(shared=>stack(shared,shared.rev()))(p.fast(2)))\n`
+  const doc = saveLayout(read(source))
+  expect(doc.patch.modules.filter((m) => m.type === 'code')).toEqual([])
+  expect(Object.values(doc.patch.names).filter((name) => name === 'shared')).toHaveLength(2)
+  expect(sourceBody(doc.source)).toBe(source)
+  expect(read(doc.source).patch).toEqual(doc.patch)
+})

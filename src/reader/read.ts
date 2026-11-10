@@ -908,7 +908,12 @@ function project(
     }
     const local = localBinding(root)
     if (!upstream && local && locals) {
-      if (locals.has(local.parameter)) throw new Error('Ambiguous local binding shadow')
+      if (
+        locals.has(local.parameter) ||
+        CATALOG.some((spec) => spec.strudel.includes(local.parameter)) ||
+        ['rev', 'press', 'orbit', 'FX', 'silence'].includes(local.parameter)
+      )
+        throw new Error('Ambiguous local binding shadow')
       const argument = expressionScope(scope, { call: 0, argument: 'value' })
       const body = expressionScope(scope, { call: 0, argument: 'binding' })
       if (!argument || !body) throw new Error('Invalid local binding')
@@ -1041,6 +1046,17 @@ function project(
     for (let index = start; index < calls.length; index++) {
       const call = calls[index]
       if (!call) continue
+      // A local Pattern used as an argument is not a global CV source or preset.
+      if (
+        locals &&
+        call.args.some((arg) => [...locals.keys()].some((name) => usesParameter(arg, name)))
+      )
+        return code(
+          scope,
+          calls.flatMap((_, i) => (i >= index ? [i] : [])),
+          source.slice(call.start, scope.end),
+          upstream,
+        )
       if (!scope.loop && !scope.path && routing?.get(scope.descriptor.id)?.call === index) continue
       const opaque = retainedCode(index)
       if (opaque) {

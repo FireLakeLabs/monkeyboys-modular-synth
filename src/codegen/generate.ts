@@ -165,8 +165,9 @@ export function generateDocument(
     'press',
     'orbit',
     'FX',
+    'silence',
   ])
-  if (patch.modules.some((m) => m.type === 'switch')) used.add('silence')
+  const runtimeNames = new Set(used)
   for (const token of tokenizer(prelude, { ecmaVersion: 'latest' }))
     if (token.type.label === 'name') used.add(prelude.slice(token.start, token.end))
   const scopeNames = new Map<string, Set<string>>()
@@ -179,7 +180,7 @@ export function generateDocument(
     )
       throw new Error(`Invalid named output: ${key}`)
     const owner = moduleId && localMembers.get(moduleId)
-    const reserved = owner ? (scopeNames.get(owner) ?? new Set(used)) : used
+    const reserved = owner ? (scopeNames.get(owner) ?? new Set(runtimeNames)) : used
     if (!/^[A-Za-z_$][\w$]*$/.test(name) || reserved.has(name))
       throw new Error(`Invalid or colliding output name: ${name}`)
     parse(`const ${name} = 0`, { ecmaVersion: 'latest', sourceType: 'module' })

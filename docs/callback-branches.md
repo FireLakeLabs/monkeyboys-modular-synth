@@ -41,7 +41,8 @@ references. Other-owner captures, computed/spread/shadowed forms, source creatio
 inside the callback, async/block/multiple/default/rest/destructured parameters and
 arbitrary callbacks also retain CODE. An unreadable receiver suffix remains exact
 with its original identifiers. An unsupported branched body falls back as a whole
-call. Saved CODE stays CODE until explicit conversion. Discovery never executes
+call. Empty local Stack and aliases of an existing local reference also remain
+CODE; lexical value bindings require a fresh supported transform output/name. Saved CODE stays CODE until explicit conversion. Discovery never executes
 source or attempts to infer runtime wiring.
 
 Local output names use existing `Patch.names`, scoped to their owning callback;
@@ -109,3 +110,12 @@ Final commands/results, runtime artifact, screenshots, library reconciliation,
 reviewed heads and hosted merge evidence will be recorded after completion.
 Physical listening has not been performed. PCM establishes tested output and
 cleanup, not subjective sound quality or universal audible equivalence.
+
+Self-review additionally reproduced stale opaque-name references after rename,
+accidental capture by an introduced name in a nested CODE suffix, and a discarded
+CV resolution after unsupported-branch rollback. Focused regressions failed before
+their fixes and pass afterward. A local parameter named `sine` in a branch CV
+argument initially became an invented global LFO; the per-call local-reference
+guard now retains that suffix as CODE. The initial full browser run was stopped
+intentionally at about 40/232, exit 130, before applying that fix; it is not passing
+evidence. The full suite is restarted on the corrected frozen revision.
