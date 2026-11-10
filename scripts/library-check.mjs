@@ -583,7 +583,7 @@ export async function verifyOnRampUI() {
     }
   }
   for (const [query, names] of [
-    ['  seQ  ', ['Add SEQ', 'Add GATES', 'Add DRUMS', 'Add CHORD', 'Add CV SEQ']],
+    ['  seQ  ', ['Add SEQ', 'Add SECTIONS', 'Add GATES', 'Add DRUMS', 'Add CHORD', 'Add CV SEQ']],
     ['.LPF()', ['Add VCF']],
     ['no-such-module', []],
   ]) {

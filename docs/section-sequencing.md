@@ -270,3 +270,11 @@ The literal no-tail outside-comment/duration source and full saved state are in
 [the refreshed artifact](evidence/section-sequencing/code-trivia-edits.json).
 The interrupted full run remains non-acceptance; bounded R4 and a fresh complete
 237-test local run remain required.
+
+R4 approved production `dd268a0`, closing P4-plain. A full run then completed
+236/1: the on-ramp harness still expected the old five `seQ` search matches,
+while SECTIONS correctly adds a sixth. The exact list now explicitly includes
+SECTIONS in catalog order, with every previous name and all other assertions
+retained. The original case passes 1/0 after this test-only correction. The full
+237-test rerun and hosted protected gates remain pending. This is not a sample,
+PCM or application failure, and no thresholds or product behavior were changed.

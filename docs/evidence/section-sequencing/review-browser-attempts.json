@@ -48,6 +48,37 @@
       "command": "npm run test:browser:report -- tests/browser/sections.spec.mjs tests/browser/composition.spec.mjs tests/browser/callback-branches.spec.mjs --output=/tmp/sections-r4-final-browser-results",
       "result": "RESULT passed=10 failed=0 exit=0",
       "observations": "Final plain/owned-comment suffix classifier and explicit conversion span fix. Native CODE includes fifth plain no-tail plus outside-comment/duration fixture, full source/state/history retained. Nine runtime pairs and PCM/bus/Stop/replacement guards pass."
+    },
+    {
+      "head": "dd268a0f651ed59b18c4cb51bc5df7ad4b683a70",
+      "command": "detached launch of npm run test:browser:report",
+      "result": null,
+      "acceptance": false,
+      "observations": "Initial detached launch had a zero-byte log, no remaining PID and no listener. It produced no test evidence; cause was not attributed. The same command was restarted in a managed execution session."
+    },
+    {
+      "head": "dd268a0f651ed59b18c4cb51bc5df7ad4b683a70",
+      "log": "/tmp/sections-full-dd268a0.log",
+      "command": "npm run test:browser:report -- --output=/tmp/sections-full-dd268a0-results",
+      "result": "RESULT passed=236 failed=1 exit=1",
+      "duration": "21.3m",
+      "acceptance": false,
+      "failure": "tests/browser/suites.spec.mjs:97 verifyOnRampUI",
+      "error": "Timed out waiting for library UI at scripts/library-check.mjs:591",
+      "cause": "The exact seQ search expected the previous five names; the actual correct six-name result also includes Add SECTIONS after Add SEQ. Screenshot and DOM confirmed the new match. This was catalog harness reconciliation, not a PCM/sample failure. No application code, thresholds or old expected matches were changed."
+    },
+    {
+      "log": "/tmp/sections-onramp-fixed.log",
+      "command": "npm run test:browser:report -- tests/browser/suites.spec.mjs -g '^verifyOnRampUI$' --output=/tmp/sections-onramp-fixed-results",
+      "result": "RESULT passed=0 failed=0 exit=1",
+      "acceptance": false,
+      "cause": "Anchored grep matched no fully qualified test name; no tests ran. Reselected by the unanchored unique test name."
+    },
+    {
+      "log": "/tmp/sections-onramp-fixed-pass.log",
+      "command": "npm run test:browser:report -- tests/browser/suites.spec.mjs -g verifyOnRampUI --output=/tmp/sections-onramp-fixed-results",
+      "result": "RESULT passed=1 failed=0 exit=0",
+      "observations": "Exact six-name search retains all five original names plus SECTIONS; the rest of the original on-ramp/source/lesson/Undo checks pass unchanged."
     }
   ]
 }

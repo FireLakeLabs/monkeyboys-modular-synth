@@ -178,3 +178,35 @@ exit=0**. Five native CODE fixtures now include the no-tail outside-comment/dura
 case; exact source/state/history and all nine runtime/PCM pairs pass. Actual look
 and CODE captures were inspected. Bounded round 4 is pending. The complete frozen 237-test run will
 restart only after agreement on the fixed behavior. No push/PR or merge exists.
+
+## Round 4 — APPROVE, production `dd268a0`
+
+The same Opus 5.5 / high closed P4-plain with no new blocker or should; S1, S2
+and N1 remain guarded. It independently passed 55 reader/conversion cases and
+probed the exact parent counterexample plus a three-shape/five-CODE/four-margin
+grid, including explicit conversion, source/save identity and malformed metadata.
+The grid reported 59/61: the two remaining probe assertions incorrectly expected
+the writer's now-unneeded terminal-comment newline to remain after replacing that
+comment. They were probe expectation mistakes, not product defects. No tracked
+source was changed and the checkout was clean. Usage was unavailable.
+
+Optional N2 (wrap the conversion prefix lexer in try) is declined: the reader
+already proves that exact prefix slice contains no code tokens, and the reviewer
+found no throwing input. Existing independent candidate/graph/reread boundaries
+remain. No speculative wrapper or unrelated process lesson is adopted.
+
+The fresh full run on reviewed `dd268a0` completed **236 passed / 1 failed,
+exit1 (21.3m)**. The single failure is the exact on-ramp search expectation at
+`library-check.mjs:591`: `seQ` now correctly finds SECTIONS because of “Section
+sequencer”. The old list expected five matches; the [actual screenshot](section-sequencing/onramp-search-before.png)
+and DOM show six. The test-only correction adds `Add SECTIONS` in catalog order
+and retains every original match and the case/whitespace normalization check.
+Its focused command passes **RESULT passed=1 failed=0 exit=0**; no application
+code or threshold changed. The first fully anchored grep selected no tests and
+is recorded as non-acceptance. The detached launch that produced no process/log
+is also recorded separately, without an attributed cause.
+
+The application approval remains `dd268a0`; this subsequent exact-catalog harness
+reconciliation and evidence do not change its TypeScript/TSX or engine behavior.
+The complete 237-test suite must pass again on the frozen reconciled revision
+before PR/hosted/protected merge. No PR or push has occurred.
