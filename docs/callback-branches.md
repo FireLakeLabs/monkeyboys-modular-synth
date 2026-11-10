@@ -194,3 +194,12 @@ binding without its emitted value is refused atomically. Edit the CODE reference
 first. This checks known callback names and the closed RETURN dependency graph;
 it neither executes CODE nor infers arbitrary global dependencies. Incomplete
 preset-only bodies remain savable when their known binding state is retained.
+
+Bounded review is **APPROVED in three rounds** on production
+`fec8dfa0e26afff310c3f9a82b1d1b7d204963d2`; see the review ledger. Remaining rare
+CODE limits: detached fragments do not retain former closure provenance through
+arbitrary detach/delete/reattach sequences, and an explicitly typed unbound name
+can cause later structural edits to refuse until CODE is corrected. The guard
+checks the current RETURN dependency graph and known retained local bindings;
+arbitrary CODE/global dependency validation is not adopted. Final full local and
+hosted gates remain pending.

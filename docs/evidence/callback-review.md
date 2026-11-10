@@ -67,3 +67,26 @@ permanently discard a referenced binding; incomplete graphs retaining their
 binding/name state remain savable. Editing the CODE reference first permits the
 consumer deletion. The 88-file audit has zero errors/failures. Round 3 remains
 pending; no push or full local pass is claimed.
+
+## Round 3
+
+Claude Opus 5.5/high **APPROVED** clean
+`fec8dfa0e26afff310c3f9a82b1d1b7d204963d2`: S4 resolved, S1–S3 approvals retained,
+no blocker/should remaining. It independently passed 373 cases in 21 affected
+files, `tsc -b`, and about 20 mutation probes. It checked nested CODE references,
+partial unplugs/reconnects, lexical shadowing, remaining consumers, owner deletion
+and incomplete bodies. No browser, listening, full gate or performance measurement
+was run by the reviewer; usage was not exposed.
+
+Two rare nits are declined for this increment: detached CODE can lose a former
+binding across several deliberate edits before reattachment; and typing an
+already-unbound opaque name can cause a later unrelated edit to refuse. The guard
+covers CODE in the new RETURN dependency graph and retained incomplete binding
+state, not arbitrary detached closure provenance or global free-variable checking.
+These limits are explicit; no new issue, process change or broader dependency
+model is adopted. A candidate note will be retained on #241, outside PR scope.
+
+Three rounds total, one reviewer per round, same provider/model/effort. Findings
+S1–S4 are fixed, neither nit blocks. Production is frozen at `fec8dfa`; subsequent
+changes record evidence/limits only. The complete local suite and hosted PR gates
+must still pass before protected merge. Nothing has been pushed.
