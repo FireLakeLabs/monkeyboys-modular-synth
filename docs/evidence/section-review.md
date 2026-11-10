@@ -124,3 +124,57 @@ with all four actual look screenshots inspected again. The nine original/regener
 event/PCM pairs, live bus identity, natural Stop decay and zero-bus replacement
 were refreshed in runtime.json. Bounded round 3 is pending; the complete local suite and protected hosted
 merge gates have not run yet. No push/PR or merge has occurred.
+
+## Round 3 — APPROVE, `3a7a5e6`; P4 plain variant reopened afterward
+
+The same Opus 5.5 / high closed S2, the tested P4 tail-comment variants and N1,
+with no new findings. It independently passed 2,762/67 full unit cases and
+125 focused cases, temporarily restored R2 reader code to reproduce all 10/73
+failures, and passed 21 additional plain/Stack/arrange comment/multiline probes.
+It did not repeat browsers/PCM, the full check command or inventory/audit. Usage
+was unavailable; its temporary probes were removed and the checkout was clean.
+
+Parent then independently reproduced a basic untested P4 variant: saved CODE
+`.gain(.5)` **without a tail comment**, with an outside prefix comment plus an
+unrelated duration edit, became VCA while preserving source bytes. This loses
+persisted CODE ownership state and blocks acceptance despite the R3 approval.
+The full 237-test run was stopped before source changes: **RESULT passed=36
+failed=0 exit=130**, two interrupted and 199 not run. This is explicitly not a
+full-suite pass; its [attempt record](section-sequencing/review-browser-attempts.json)
+retains the actual result.
+
+The existing [review-loop budget](../../.agents/skills/review-loop/SKILL.md#budget)
+permits: “Extend to 5 only for security, permissions, auth, data loss, or
+state/concurrency, while a blocker or should stays open with evidence.” The
+persisted ownership-state loss justifies that bounded exception for a fresh
+focused round 4 with the same single reviewer provider/model/effort. No new
+workflow, feature or unbounded review is adopted.
+
+Three new plain, arrange and nested-Stack regressions failed before the fix,
+with no CODE and one VCA. They exercise both block and line outside comments,
+source-only tempo/duration edits, exact unchanged CODE text, source preservation,
+explicit CODE edits and save/reopen. The suffix proof now permits end equality,
+while exact call matches retain their existing fallback spans. Existing S2 whole
+comment/token boundary guards remain intact. An existing CRLF/comment conversion
+guard caught the shifted start span; explicit conversion now accepts only a
+lexical-trivia prefix with the same scope, calls, role and end, followed by its
+existing independent graph/save validation. No old expected output was weakened.
+
+A same-invariant check also exposed six leading-owned-comment variants: the
+writer recognized a chained CODE by its first token, while retention used the
+first character. Retention now uses that same lexical first-token classification;
+no expression grammar or execution is added. Nine plain/owned-block/owned-line
+CODE cases across plain/arrange/nested Stack, each with two outside margins,
+now retain the exact CODE, source and save identity and preserve outside comments
+during explicit edits. The six owned-comment variants failed before this last
+classifier correction.
+
+Current focused source/library/conversion/callback coverage passes 556/556,
+including the unchanged 422 library tests; section cases pass 82/82. The complete
+deterministic gate passes 2,771/67 plus 59 guardrails. The first affected native
+refresh completed 10/0, including the added fifth plain-CODE browser fixture;
+the final lexical-classifier refresh also completed **RESULT passed=10 failed=0
+exit=0**. Five native CODE fixtures now include the no-tail outside-comment/duration
+case; exact source/state/history and all nine runtime/PCM pairs pass. Actual look
+and CODE captures were inspected. Bounded round 4 is pending. The complete frozen 237-test run will
+restart only after agreement on the fixed behavior. No push/PR or merge exists.

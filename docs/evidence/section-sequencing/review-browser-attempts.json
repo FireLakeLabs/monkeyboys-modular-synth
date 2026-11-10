@@ -31,6 +31,23 @@
       "command": "npm run test:browser:report -- tests/browser/sections.spec.mjs tests/browser/composition.spec.mjs tests/browser/callback-branches.spec.mjs --output=/tmp/sections-r3-final-browser-results",
       "result": "RESULT passed=10 failed=0 exit=0",
       "observations": "All affected native source/state/history, four-look geometry/selection, nine exact event pairs, nonzero PCM, Stop decay, live native-bus identity and reset cleanup passed. Screenshots inspected."
+    },
+    {
+      "head": "3a7a5e6b1c2b558a0a27f9be9535c264a41fab0b",
+      "log": "/tmp/sections-full-browser.log",
+      "command": "npm run test:browser:report -- --output=/tmp/sections-full-browser-results",
+      "result": "RESULT passed=36 failed=0 exit=130",
+      "interrupted": 2,
+      "didNotRun": 199,
+      "totalDiscovered": 237,
+      "acceptance": false,
+      "cause": "Owner stopped the just-started full run after parent reproduced unchanged plain suffix CODE becoming VCA under outside-comment plus unrelated source edit. No source was edited until this interrupted footer completed. This run is not full-suite proof."
+    },
+    {
+      "log": "/tmp/sections-r4-final-browser.log",
+      "command": "npm run test:browser:report -- tests/browser/sections.spec.mjs tests/browser/composition.spec.mjs tests/browser/callback-branches.spec.mjs --output=/tmp/sections-r4-final-browser-results",
+      "result": "RESULT passed=10 failed=0 exit=0",
+      "observations": "Final plain/owned-comment suffix classifier and explicit conversion span fix. Native CODE includes fifth plain no-tail plus outside-comment/duration fixture, full source/state/history retained. Nine runtime pairs and PCM/bus/Stop/replacement guards pass."
     }
   ]
 }

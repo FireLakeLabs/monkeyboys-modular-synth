@@ -207,22 +207,23 @@ test('CODE comment boundaries preserve native text edits, source trivia and hist
   await page.goto('/')
   await page.locator('.cm-content').waitFor()
   const edits = []
-  for (const [shape, margin] of [
+  for (const [shape, margin, plain = false] of [
     ['plain', false],
     ['Stack', false],
     ['arrange', false],
     ['arrange', true],
+    ['arrange', true, true],
   ]) {
-    await run(page, 'loadComment', { shape, margin })
+    await run(page, 'loadComment', { shape, margin, plain })
     await synced(page)
     const before = await run(page, 'state'),
       code = before.patch.modules.filter((m) => m.type === 'code')
     expect(code).toHaveLength(1)
-    expect(code[0].values.text).toBe('.gain(.5) // tail')
+    expect(code[0].values.text).toBe(plain ? '.gain(.5)' : '.gain(.5) // tail')
     const panel = page.locator(`[data-module="${code[0].id}"]`)
     await detailPanel(panel)
     await panel.getByRole('button', { name: 'Edit in source', exact: true }).click()
-    await page.keyboard.insertText(margin ? '.gain(.7) // tail' : '.gain(.7)')
+    await page.keyboard.insertText(margin && !plain ? '.gain(.7) // tail' : '.gain(.7)')
     await page.getByRole('button', { name: 'Apply code', exact: true }).click()
     await synced(page)
     const after = await run(page, 'state')
@@ -232,7 +233,7 @@ test('CODE comment boundaries preserve native text edits, source trivia and hist
         : before.body.replace('\n  .gain(.5)', '.gain(.7)'),
     )
     expect(after.identity && after.sourceExact).toBe(true)
-    edits.push({ shape, margin, before, after })
+    edits.push({ shape, margin, plain, before, after })
     await page.getByRole('button', { name: 'Undo', exact: true }).click()
     await expect.poll(() => run(page, 'state')).toEqual(before)
     await page.getByRole('button', { name: 'Redo', exact: true }).click()

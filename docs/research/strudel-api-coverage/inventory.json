@@ -169,11 +169,11 @@
       },
       {
         "path": "src/reader/read.ts",
-        "sha256": "6f9c19641c969db41b5aa12bbaa4dac583ceb50a63e3686ecaad64b8434a22b5"
+        "sha256": "ce3ef4227d7fb4761e0844e09799f71876ba0c4930ecd62add44a23825ab4f3d"
       },
       {
         "path": "src/reader/sections.test.ts",
-        "sha256": "9ce9b92b07263d54acb08c482a1e53b3c193a3c752ee7c6d5e35231828892586"
+        "sha256": "56471ae29f3559380bc4f289b1c3c4d3d2921a2a92ea8dc7bb1df9ae53138aef"
       },
       {
         "path": "src/reader/syntax.ts",

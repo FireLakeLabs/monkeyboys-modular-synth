@@ -51,6 +51,60 @@ it.each([
   expect(read(edited.source).patch).toEqual(edited.patch)
 })
 
+it.each(
+  [
+    { name: 'plain', source: '$: note("c3").s("sine")\n' },
+    { name: 'arrange', source: '$: arrange([1,note("c3").s("sine")],[1,note("e3").s("sine")])\n' },
+    {
+      name: 'nested Stack',
+      source:
+        '$: arrange([1,stack(note("c3").s("sine"),note("e3").s("sine"))],[1,note("g3").s("sine")])\n',
+    },
+  ].flatMap((item) =>
+    ['.gain(.5)', '/* owned */ .gain(.5)', '// owned\n.gain(.5)'].map((text) => ({
+      ...item,
+      text,
+    })),
+  ),
+)(
+  'retains plain suffix CODE in $name ($text) across outside trivia and an unrelated source edit',
+  (item) => {
+    let patch = read(item.source).patch
+    const target = patch.modules.find((m) =>
+        item.name === 'arrange'
+          ? m.type === 'sections'
+          : m.type === 'mix' && (item.name !== 'nested Stack' || m.values.mode === 'Stack'),
+      ),
+      edge = patch.cables.find((c) => c.to.module === target?.id && c.to.jack === 'in1')
+    if (!target || !edge) throw new Error('Missing controlled fixture arm')
+    patch = placeModule(patch, 'code', 7)
+    patch = setValue(patch, 'code1', 'text', item.text)
+    patch = connect(patch, edge.from, { module: 'code1', jack: 'in' })
+    patch = connect(
+      patch,
+      { module: 'code1', jack: 'out' },
+      { module: target.id, jack: 'in1' },
+      true,
+    )
+    for (const margin of ['/* outside CODE */ ', '// outside CODE\n']) {
+      const source = generate(patch)
+          .replace(item.text, `${margin}${item.text}`)
+          .replace('arrange([1,', 'arrange([2,')
+          .replace('setcpm(120/4)', 'setcpm(124/4)'),
+        doc = read(source),
+        code = doc.patch.modules.find((m) => m.type === 'code')
+      expect(code?.values.text).toBe(item.text)
+      expect(doc.patch.modules.filter((m) => m.type === 'vca')).toHaveLength(0)
+      expect(generate(doc)).toBe(source)
+      expect(read(saveLayout(doc).source).patch).toEqual(doc.patch)
+      if (!code) throw new Error('Missing retained CODE')
+      const edited = editDocument(doc, setValue(doc.patch, code.id, 'text', '.gain(.7)'))
+      expect(sourceBody(edited.source)).toBe(sourceBody(source).replace(item.text, '.gain(.7)'))
+      expect(read(edited.source).patch).toEqual(edited.patch)
+    }
+  },
+)
+
 it.each([1, 2, 3, 4])('edits the exact duration of socket %s without rounding', (slot) => {
   const source =
     '$: arrange([1,note("c3")],[2,note("d3")],[3,note("e3")],[4,note("f3")]).s("sine")\n'

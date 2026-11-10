@@ -82,7 +82,7 @@ export async function loadSparse() {
   await load(generate(patch).replace('arrange(', 'arrange(/* sparse NEXT */ '))
   return state()
 }
-export async function loadComment({ shape, margin = false }) {
+export async function loadComment({ shape, margin = false, plain = false }) {
   const sources = {
     plain: '$: note("c3").s("sine")\n',
     Stack: '$: stack(note("c3").s("sine"),note("e3").s("sine"))\n',
@@ -97,14 +97,13 @@ export async function loadComment({ shape, margin = false }) {
     edge = patch.cables.find((c) => c.to.module === target?.id && c.to.jack === 'in1')
   assert(target && edge, 'Missing comment fixture arm')
   patch = placeModule(patch, 'code', 2)
-  patch = setValue(patch, 'code1', 'text', '.gain(.5) // tail')
+  const text = plain ? '.gain(.5)' : '.gain(.5) // tail'
+  patch = setValue(patch, 'code1', 'text', text)
   patch = connect(patch, edge.from, { module: 'code1', jack: 'in' })
   patch = connect(patch, { module: 'code1', jack: 'out' }, { module: target.id, jack: 'in1' }, true)
   const generated = generate(patch)
   const source = margin
-    ? generated
-        .replace('.gain(.5) // tail', '/* outside CODE */ .gain(.5) // tail')
-        .replace('arrange([1,', 'arrange([2,')
+    ? generated.replace(text, `/* outside CODE */ ${text}`).replace('arrange([1,', 'arrange([2,')
     : generated.replace('// tail', '// tail and more')
   await load(source)
   return state()

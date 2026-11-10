@@ -241,3 +241,32 @@ failed=0 exit=0** after the R2 corrections. Actual four-look captures were inspe
 again; native CODE/sparse-source/history artifacts and all nine runtime event/PCM
 pairs were refreshed. No silence threshold or Stop semantics changed. Bounded
 round 3, the full local suite and protected hosted gates remain pending.
+
+R3 approved the tested comment cases, but parent then demonstrated the same P4
+state loss for ordinary `.gain(.5)` CODE with no terminal comment. The just-started
+237-test run was stopped (36 passed, two interrupted, 199 not run, exit130), so it
+is not full-suite evidence. Three new plain/arrange/nested-Stack regressions fail
+before the bounded correction. End equality now admits that unchanged plain
+suffix while retaining exact-call fallback spans and the complete-comment/token
+guards. Explicit conversion accepts an outside trivia margin without changing
+source bytes or dropping its independent identity validation. Source/save state
+and musical events remain distinct claims. Round 4 uses the existing review-loop
+state-loss budget exception; a complete frozen local rerun remains required.
+
+The P4 correction also aligns CODE suffix classification with the writer's first
+token rather than the first character. Six owned-leading-comment variants exposed
+that discrepancy before the fix. Nine plain/owned-block/owned-line cases, each
+with outside block and line margins, now retain exact CODE and source/save identity.
+Current sections pass 82/82; source/library/conversion/callback guards pass
+556/556, with all 422 existing library cases unchanged. The full deterministic
+gate passes 2,771/67 plus 59 guardrails. No corpus denominator or CODE fallback
+expectation was weakened. The actual native CODE case additionally exercises the
+plain no-tail variant; the complete local 237-test run still requires a restart.
+
+Final R4 affected browser coverage completed **RESULT passed=10 failed=0 exit=0**,
+including five actual native CODE edits/history fixtures, all four looks, nine
+original/regenerated event pairs and separate PCM/bus/tail/Stop/replacement proof.
+The literal no-tail outside-comment/duration source and full saved state are in
+[the refreshed artifact](evidence/section-sequencing/code-trivia-edits.json).
+The interrupted full run remains non-acceptance; bounded R4 and a fresh complete
+237-test local run remain required.

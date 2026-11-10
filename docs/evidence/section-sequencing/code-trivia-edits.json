@@ -2,6 +2,7 @@
   {
     "shape": "plain",
     "margin": false,
+    "plain": false,
     "before": {
       "source": "setcpm(120/4)\n\n$: note(\"c3\")\n  .s(\"sine\")\n  .gain(.5) // tail and more\n  .orbit(1)\n\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"note\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}]\"\n//         },\n//         {\n//           \"name\": \"s\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}]\"\n//         },\n//         {\n//           \"name\": \"gain\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}]\"\n//         },\n//         {\n//           \"name\": \"orbit\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1}]\"\n//         }\n//       ],\n//       \"routing\": {\n//         \"call\": 3,\n//         \"orbit\": 1\n//       }\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"c3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc1\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 19,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"code1\",\n//       \"type\": \"code\",\n//       \"row\": 2,\n//       \"hp\": 0,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \".gain(.5) // tail\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"c1\",\n//       \"from\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"c2\",\n//       \"from\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 3,\n//   \"railHp\": 64\n// }\n",
       "body": "setcpm(120/4)\n\n$: note(\"c3\")\n  .s(\"sine\")\n  .gain(.5) // tail and more\n  .orbit(1)\n\n",
@@ -235,6 +236,7 @@
   {
     "shape": "Stack",
     "margin": false,
+    "plain": false,
     "before": {
       "source": "setcpm(120/4)\n\n$: stack(note(\"c3\")\n  .s(\"sine\")\n  .gain(.5) // tail and more\n, note(\"e3\")\n  .s(\"sine\"))\n\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"stack\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}],\\\"optional\\\":false},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"stack\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}],\\\"optional\\\":false},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"c3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc1\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"seq2\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 19,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"e3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc2\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 29,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 38,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"mode\": \"Stack\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix2\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 50,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"code1\",\n//       \"type\": \"code\",\n//       \"row\": 2,\n//       \"hp\": 0,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \".gain(.5) // tail\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0\n//             }\n//           ],\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"seq2\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc2\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"osc2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in2\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable6\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix2\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable7\",\n//       \"from\": {\n//         \"module\": \"mix2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"c1\",\n//       \"from\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"c2\",\n//       \"from\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 3,\n//   \"railHp\": 64\n// }\n",
       "body": "setcpm(120/4)\n\n$: stack(note(\"c3\")\n  .s(\"sine\")\n  .gain(.5) // tail and more\n, note(\"e3\")\n  .s(\"sine\"))\n\n",
@@ -598,6 +600,7 @@
   {
     "shape": "arrange",
     "margin": false,
+    "plain": false,
     "before": {
       "source": "setcpm(120/4)\n\n$: arrange([1, note(\"c3\")\n  .s(\"sine\")\n  .gain(.5) // tail and more\n], [1, note(\"e3\")\n  .s(\"sine\")])\n\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"arrange\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"arrange\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"c3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc1\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"seq2\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 19,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"e3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc2\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 29,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"sections1\",\n//       \"type\": \"sections\",\n//       \"row\": 0,\n//       \"hp\": 38,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"cycles1\": \"1\",\n//         \"cycles2\": \"1\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"part\": 0,\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 0,\n//       \"hp\": 54,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {},\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"code1\",\n//       \"type\": \"code\",\n//       \"row\": 2,\n//       \"hp\": 0,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \".gain(.5) // tail\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"seq2\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc2\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"osc2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"in2\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable6\",\n//       \"from\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable7\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"c1\",\n//       \"from\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"c2\",\n//       \"from\": {\n//         \"module\": \"code1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"in1\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"rows\": 3,\n//   \"railHp\": 84\n// }\n",
       "body": "setcpm(120/4)\n\n$: arrange([1, note(\"c3\")\n  .s(\"sine\")\n  .gain(.5) // tail and more\n], [1, note(\"e3\")\n  .s(\"sine\")])\n\n",
@@ -963,6 +966,7 @@
   {
     "shape": "arrange",
     "margin": true,
+    "plain": false,
     "before": {
       "source": "setcpm(120/4)\n\n$: arrange([2, note(\"c3\")\n  .s(\"sine\")\n  /* outside CODE */ .gain(.5) // tail\n], [1, note(\"e3\")\n  .s(\"sine\")])\n\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"arrange\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":2},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"arrange\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":2},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq3\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"c3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc3\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"code2\",\n//       \"type\": \"code\",\n//       \"row\": 0,\n//       \"hp\": 19,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \".gain(.5) // tail\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"seq4\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 33,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"e3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc4\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 43,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"sections2\",\n//       \"type\": \"sections\",\n//       \"row\": 0,\n//       \"hp\": 52,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"cycles1\": \"2\",\n//         \"cycles2\": \"1\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"part\": 0,\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix2\",\n//       \"type\": \"mix\",\n//       \"row\": 1,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bpm\": 120\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq3\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc3\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"osc3\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"code2\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable3\",\n//       \"from\": {\n//         \"module\": \"seq4\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc4\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"code2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections2\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"osc4\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections2\",\n//         \"jack\": \"in2\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable7\",\n//       \"from\": {\n//         \"module\": \"sections2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix2\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable8\",\n//       \"from\": {\n//         \"module\": \"mix2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"railHp\": 84\n// }\n",
       "body": "setcpm(120/4)\n\n$: arrange([2, note(\"c3\")\n  .s(\"sine\")\n  /* outside CODE */ .gain(.5) // tail\n], [1, note(\"e3\")\n  .s(\"sine\")])\n\n",
@@ -1147,6 +1151,373 @@
     "after": {
       "source": "setcpm(120/4)\n\n$: arrange([2, note(\"c3\")\n  .s(\"sine\")\n  /* outside CODE */ .gain(.7) // tail\n], [1, note(\"e3\")\n  .s(\"sine\")])\n\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120/4)\\n\\n$: arrange([2, note(\\\"c3\\\")\\n  .s(\\\"sine\\\")\\n  /* outside CODE */ .gain(.7) // tail\\n], [1, note(\\\"e3\\\")\\n  .s(\\\"sine\\\")])\\n\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"arrange\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":2},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.7}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"arrange\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":2},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.7}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"c3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc1\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 19,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.7\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"seq2\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 27,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"e3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc2\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 37,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"sections1\",\n//       \"type\": \"sections\",\n//       \"row\": 0,\n//       \"hp\": 46,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"cycles1\": \"2\",\n//         \"cycles2\": \"1\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"part\": 0,\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 1,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bpm\": 120\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable3\",\n//       \"from\": {\n//         \"module\": \"seq2\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc2\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"osc2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"in2\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable7\",\n//       \"from\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable8\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"railHp\": 84\n// }\n",
       "body": "setcpm(120/4)\n\n$: arrange([2, note(\"c3\")\n  .s(\"sine\")\n  /* outside CODE */ .gain(.7) // tail\n], [1, note(\"e3\")\n  .s(\"sine\")])\n\n",
+      "patch": {
+        "version": 1,
+        "modules": [
+          {
+            "id": "seq1",
+            "type": "seq",
+            "row": 0,
+            "hp": 0,
+            "look": "instrument",
+            "values": {
+              "steps": "c3",
+              "mode": "note",
+              "rate": 1
+            }
+          },
+          {
+            "id": "osc1",
+            "type": "osc",
+            "row": 0,
+            "hp": 10,
+            "look": "instrument",
+            "values": {
+              "wave": "sine"
+            }
+          },
+          {
+            "id": "vca1",
+            "type": "vca",
+            "row": 0,
+            "hp": 19,
+            "look": "instrument",
+            "values": {
+              "level": 0.7
+            }
+          },
+          {
+            "id": "seq2",
+            "type": "seq",
+            "row": 0,
+            "hp": 27,
+            "look": "instrument",
+            "values": {
+              "steps": "e3",
+              "mode": "note",
+              "rate": 1
+            }
+          },
+          {
+            "id": "osc2",
+            "type": "osc",
+            "row": 0,
+            "hp": 37,
+            "look": "instrument",
+            "values": {
+              "wave": "sine"
+            }
+          },
+          {
+            "id": "sections1",
+            "type": "sections",
+            "row": 0,
+            "hp": 46,
+            "look": "instrument",
+            "values": {
+              "cycles1": "2",
+              "cycles2": "1"
+            }
+          },
+          {
+            "id": "mix1",
+            "type": "mix",
+            "row": 1,
+            "hp": 0,
+            "look": "instrument",
+            "values": {
+              "ch1": 1,
+              "ch2": 1,
+              "ch3": 1,
+              "ch4": 1
+            }
+          },
+          {
+            "id": "out2",
+            "type": "out",
+            "row": 0,
+            "hp": 0,
+            "look": "instrument",
+            "values": {
+              "bpm": 120
+            }
+          }
+        ],
+        "cables": [
+          {
+            "id": "cable1",
+            "from": {
+              "module": "seq1",
+              "jack": "note"
+            },
+            "to": {
+              "module": "osc1",
+              "jack": "note"
+            }
+          },
+          {
+            "id": "cable2",
+            "from": {
+              "module": "osc1",
+              "jack": "out"
+            },
+            "to": {
+              "module": "vca1",
+              "jack": "in"
+            }
+          },
+          {
+            "id": "cable3",
+            "from": {
+              "module": "seq2",
+              "jack": "note"
+            },
+            "to": {
+              "module": "osc2",
+              "jack": "note"
+            }
+          },
+          {
+            "id": "cable4",
+            "from": {
+              "module": "vca1",
+              "jack": "out"
+            },
+            "to": {
+              "module": "sections1",
+              "jack": "in1"
+            }
+          },
+          {
+            "id": "cable5",
+            "from": {
+              "module": "osc2",
+              "jack": "out"
+            },
+            "to": {
+              "module": "sections1",
+              "jack": "in2"
+            }
+          },
+          {
+            "id": "cable7",
+            "from": {
+              "module": "sections1",
+              "jack": "out"
+            },
+            "to": {
+              "module": "mix1",
+              "jack": "in1"
+            }
+          },
+          {
+            "id": "cable8",
+            "from": {
+              "module": "mix1",
+              "jack": "out"
+            },
+            "to": {
+              "module": "out2",
+              "jack": "in"
+            }
+          }
+        ],
+        "names": {},
+        "railHp": 84
+      },
+      "layout": "restored",
+      "sourceExact": true,
+      "identity": true
+    }
+  },
+  {
+    "shape": "arrange",
+    "margin": true,
+    "plain": true,
+    "before": {
+      "source": "setcpm(120/4)\n\n$: arrange([2, note(\"c3\")\n  .s(\"sine\")\n  /* outside CODE */ .gain(.5)], [1, note(\"e3\")\n  .s(\"sine\")])\n\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"arrange\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":2},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"arrange\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":2},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.5}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq3\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"c3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc3\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"code2\",\n//       \"type\": \"code\",\n//       \"row\": 0,\n//       \"hp\": 19,\n//       \"look\": \"bare\",\n//       \"values\": {\n//         \"text\": \".gain(.5)\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"seq4\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 33,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"e3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc4\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 43,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"sections2\",\n//       \"type\": \"sections\",\n//       \"row\": 0,\n//       \"hp\": 52,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"cycles1\": \"2\",\n//         \"cycles2\": \"1\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"part\": 0,\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix2\",\n//       \"type\": \"mix\",\n//       \"row\": 1,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bpm\": 120\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq3\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc3\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"osc3\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"code2\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable3\",\n//       \"from\": {\n//         \"module\": \"seq4\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc4\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"code2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections2\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"osc4\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections2\",\n//         \"jack\": \"in2\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable7\",\n//       \"from\": {\n//         \"module\": \"sections2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix2\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable8\",\n//       \"from\": {\n//         \"module\": \"mix2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"railHp\": 84\n// }\n",
+      "body": "setcpm(120/4)\n\n$: arrange([2, note(\"c3\")\n  .s(\"sine\")\n  /* outside CODE */ .gain(.5)], [1, note(\"e3\")\n  .s(\"sine\")])\n\n",
+      "patch": {
+        "version": 1,
+        "modules": [
+          {
+            "id": "seq3",
+            "type": "seq",
+            "row": 0,
+            "hp": 0,
+            "look": "instrument",
+            "values": {
+              "steps": "c3",
+              "mode": "note",
+              "rate": 1
+            }
+          },
+          {
+            "id": "osc3",
+            "type": "osc",
+            "row": 0,
+            "hp": 10,
+            "look": "instrument",
+            "values": {
+              "wave": "sine"
+            }
+          },
+          {
+            "id": "code2",
+            "type": "code",
+            "row": 0,
+            "hp": 19,
+            "look": "bare",
+            "values": {
+              "text": ".gain(.5)"
+            }
+          },
+          {
+            "id": "seq4",
+            "type": "seq",
+            "row": 0,
+            "hp": 33,
+            "look": "instrument",
+            "values": {
+              "steps": "e3",
+              "mode": "note",
+              "rate": 1
+            }
+          },
+          {
+            "id": "osc4",
+            "type": "osc",
+            "row": 0,
+            "hp": 43,
+            "look": "instrument",
+            "values": {
+              "wave": "sine"
+            }
+          },
+          {
+            "id": "sections2",
+            "type": "sections",
+            "row": 0,
+            "hp": 52,
+            "look": "instrument",
+            "values": {
+              "cycles1": "2",
+              "cycles2": "1"
+            }
+          },
+          {
+            "id": "mix2",
+            "type": "mix",
+            "row": 1,
+            "hp": 0,
+            "look": "instrument",
+            "values": {
+              "ch1": 1,
+              "ch2": 1,
+              "ch3": 1,
+              "ch4": 1
+            }
+          },
+          {
+            "id": "out2",
+            "type": "out",
+            "row": 0,
+            "hp": 0,
+            "look": "instrument",
+            "values": {
+              "bpm": 120
+            }
+          }
+        ],
+        "cables": [
+          {
+            "id": "cable1",
+            "from": {
+              "module": "seq3",
+              "jack": "note"
+            },
+            "to": {
+              "module": "osc3",
+              "jack": "note"
+            }
+          },
+          {
+            "id": "cable2",
+            "from": {
+              "module": "osc3",
+              "jack": "out"
+            },
+            "to": {
+              "module": "code2",
+              "jack": "in"
+            }
+          },
+          {
+            "id": "cable3",
+            "from": {
+              "module": "seq4",
+              "jack": "note"
+            },
+            "to": {
+              "module": "osc4",
+              "jack": "note"
+            }
+          },
+          {
+            "id": "cable4",
+            "from": {
+              "module": "code2",
+              "jack": "out"
+            },
+            "to": {
+              "module": "sections2",
+              "jack": "in1"
+            }
+          },
+          {
+            "id": "cable5",
+            "from": {
+              "module": "osc4",
+              "jack": "out"
+            },
+            "to": {
+              "module": "sections2",
+              "jack": "in2"
+            }
+          },
+          {
+            "id": "cable7",
+            "from": {
+              "module": "sections2",
+              "jack": "out"
+            },
+            "to": {
+              "module": "mix2",
+              "jack": "in1"
+            }
+          },
+          {
+            "id": "cable8",
+            "from": {
+              "module": "mix2",
+              "jack": "out"
+            },
+            "to": {
+              "module": "out2",
+              "jack": "in"
+            }
+          }
+        ],
+        "names": {},
+        "railHp": 84
+      },
+      "layout": "restored",
+      "sourceExact": true,
+      "identity": true
+    },
+    "after": {
+      "source": "setcpm(120/4)\n\n$: arrange([2, note(\"c3\")\n  .s(\"sine\")\n  /* outside CODE */ .gain(.7)], [1, note(\"e3\")\n  .s(\"sine\")])\n\n// ── @monkeyboy rack v1 ──\n// {\n//   \"version\": 1,\n//   \"source\": \"setcpm(120/4)\\n\\n$: arrange([2, note(\\\"c3\\\")\\n  .s(\\\"sine\\\")\\n  /* outside CODE */ .gain(.7)], [1, note(\\\"e3\\\")\\n  .s(\\\"sine\\\")])\\n\\n\",\n//   \"scopes\": [\n//     {\n//       \"id\": \"scope1\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"setcpm\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"setcpm\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"BinaryExpression\\\",\\\"left\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":120},\\\"operator\\\":\\\"/\\\",\\\"right\\\":{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":4}}]\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"scope2\",\n//       \"root\": \"{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"arrange\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":2},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.7}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}],\\\"optional\\\":false}\",\n//       \"calls\": [\n//         {\n//           \"name\": \"arrange\",\n//           \"arguments\": \"[{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":2},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"c3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"gain\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":0.7}],\\\"optional\\\":false}]},{\\\"type\\\":\\\"ArrayExpression\\\",\\\"elements\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":1},{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"MemberExpression\\\",\\\"object\\\":{\\\"type\\\":\\\"CallExpression\\\",\\\"callee\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"note\\\"},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"e3\\\"}],\\\"optional\\\":false},\\\"property\\\":{\\\"type\\\":\\\"Identifier\\\",\\\"name\\\":\\\"s\\\"},\\\"computed\\\":false,\\\"optional\\\":false},\\\"arguments\\\":[{\\\"type\\\":\\\"Literal\\\",\\\"value\\\":\\\"sine\\\"}],\\\"optional\\\":false}]}]\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"modules\": [\n//     {\n//       \"id\": \"seq1\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"c3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc1\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 10,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"vca1\",\n//       \"type\": \"vca\",\n//       \"row\": 0,\n//       \"hp\": 19,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"level\": 0.7\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 0,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             2\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"seq2\",\n//       \"type\": \"seq\",\n//       \"row\": 0,\n//       \"hp\": 27,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"steps\": \"e3\",\n//         \"mode\": \"note\",\n//         \"rate\": 1\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"osc2\",\n//       \"type\": \"osc\",\n//       \"row\": 0,\n//       \"hp\": 37,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"wave\": \"sine\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"path\": [\n//             {\n//               \"call\": 0,\n//               \"argument\": 1,\n//               \"element\": 1\n//             }\n//           ],\n//           \"calls\": [\n//             1\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"sections1\",\n//       \"type\": \"sections\",\n//       \"row\": 0,\n//       \"hp\": 46,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"cycles1\": \"2\",\n//         \"cycles2\": \"1\"\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope2\",\n//           \"part\": 0,\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"module\"\n//         }\n//       ]\n//     },\n//     {\n//       \"id\": \"mix1\",\n//       \"type\": \"mix\",\n//       \"row\": 1,\n//       \"hp\": 0,\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"ch1\": 1,\n//         \"ch2\": 1,\n//         \"ch3\": 1,\n//         \"ch4\": 1\n//       },\n//       \"bindings\": []\n//     },\n//     {\n//       \"id\": \"out2\",\n//       \"type\": \"out\",\n//       \"look\": \"instrument\",\n//       \"values\": {\n//         \"bpm\": 120\n//       },\n//       \"bindings\": [\n//         {\n//           \"scope\": \"scope1\",\n//           \"calls\": [\n//             0\n//           ],\n//           \"role\": \"tempo\"\n//         }\n//       ]\n//     }\n//   ],\n//   \"cables\": [\n//     {\n//       \"id\": \"cable1\",\n//       \"from\": {\n//         \"module\": \"seq1\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable2\",\n//       \"from\": {\n//         \"module\": \"osc1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"in\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable3\",\n//       \"from\": {\n//         \"module\": \"seq2\",\n//         \"jack\": \"note\"\n//       },\n//       \"to\": {\n//         \"module\": \"osc2\",\n//         \"jack\": \"note\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable4\",\n//       \"from\": {\n//         \"module\": \"vca1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable5\",\n//       \"from\": {\n//         \"module\": \"osc2\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"in2\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable7\",\n//       \"from\": {\n//         \"module\": \"sections1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"in1\"\n//       }\n//     },\n//     {\n//       \"id\": \"cable8\",\n//       \"from\": {\n//         \"module\": \"mix1\",\n//         \"jack\": \"out\"\n//       },\n//       \"to\": {\n//         \"module\": \"out2\",\n//         \"jack\": \"in\"\n//       }\n//     }\n//   ],\n//   \"names\": {},\n//   \"railHp\": 84\n// }\n",
+      "body": "setcpm(120/4)\n\n$: arrange([2, note(\"c3\")\n  .s(\"sine\")\n  /* outside CODE */ .gain(.7)], [1, note(\"e3\")\n  .s(\"sine\")])\n\n",
       "patch": {
         "version": 1,
         "modules": [

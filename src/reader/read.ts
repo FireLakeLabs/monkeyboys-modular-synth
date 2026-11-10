@@ -778,8 +778,11 @@ function project(
                   typeof module.values['text'] === 'string'
                 ))
                   return []
-                const text = module.values['text']
-                if (!receiver && text.trimStart().startsWith('.')) {
+                const text = module.values['text'],
+                  callText = source.slice(begin, end),
+                  matchesCall = callText.trimStart() === text.trimStart(),
+                  chained = tokenizer(text, { ecmaVersion: 'latest' }).getToken().type.label === '.'
+                if (!receiver && chained && !matchesCall) {
                   try {
                     const prefix = 'silence'
                     const ast = parseExpressionAt(`${prefix}${text}\n`, 0, {
@@ -796,7 +799,7 @@ function project(
                     }).getToken()
                     if (
                       start >= begin &&
-                      stop > end &&
+                      stop >= end &&
                       [...tokenizer(source.slice(begin, start), { ecmaVersion: 'latest' })]
                         .length === 0 &&
                       source.slice(start, stop) === text &&
@@ -809,7 +812,7 @@ function project(
                     /* Unsupported stored syntax cannot acquire ownership. */
                   }
                 }
-                if (receiver && !text.trimStart().startsWith('.')) {
+                if (receiver && !chained) {
                   try {
                     // The stored CODE expression proves trivia offsets inside its wrapper.
                     // Require its entire current byte range, including comments, to match.
@@ -826,9 +829,7 @@ function project(
                     /* Unsupported stored syntax cannot acquire ownership. */
                   }
                 }
-                return source.slice(begin, end).trimStart() === text.trimStart()
-                  ? [{ indices, text: source.slice(begin, end), span: { start: begin, end } }]
-                  : []
+                return matchesCall ? [{ indices, text: callText, span: { start: begin, end } }] : []
               })
             : [],
         )[0]

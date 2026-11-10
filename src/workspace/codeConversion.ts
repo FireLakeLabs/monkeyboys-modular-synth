@@ -1,4 +1,5 @@
 import { getModuleSpec } from '../modules/catalog'
+import { tokenizer } from 'acorn'
 import { DEFAULT_LOOK } from '../modules/looks'
 import { placementPosition, validateRack } from '../rack/model'
 import { read } from '../reader'
@@ -27,10 +28,12 @@ export function codeConversions(document: SourceDocument): CodeConversion[] {
     const matches = projected.bindings.filter(
       (binding) =>
         binding.scope === span.scope &&
-        binding.start === span.start &&
         binding.end === span.end &&
         binding.role === 'module' &&
-        JSON.stringify(binding.calls) === JSON.stringify(span.calls),
+        JSON.stringify(binding.calls) === JSON.stringify(span.calls) &&
+        binding.start <= span.start &&
+        [...tokenizer(document.source.slice(binding.start, span.start), { ecmaVersion: 'latest' })]
+          .length === 0,
     )
     if (matches.length !== 1) continue
     const binding = matches[0]

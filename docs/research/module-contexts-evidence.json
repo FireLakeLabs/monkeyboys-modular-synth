@@ -12,7 +12,7 @@
   "hashes": {
     "package-lock.json": "655b6afecb8b5e2087cafc1dd40cbe223b1cceef4df86509c6fcb4e03567d92d",
     "src/modules/catalog.ts": "0293e56b6bf3107a08eeb439844efb6d143eded4669ddf6108c0863d492c7a49",
-    "src/reader/read.ts": "6f9c19641c969db41b5aa12bbaa4dac583ceb50a63e3686ecaad64b8434a22b5",
+    "src/reader/read.ts": "ce3ef4227d7fb4761e0844e09799f71876ba0c4930ecd62add44a23825ab4f3d",
     "src/codegen/graph.ts": "8c6494b1a5a7eda6872d3ea92351c9ea3e8552a2f9fe0ad04aa631fcfc010f9d",
     "src/codegen/generate.ts": "e13e486139c6e67d51b1b303d1001c972e9c79ec59b557c0193fa116c0f16086",
     "src/codegen/effects.ts": "525fbd961ae8b955506b6f60852449996c9cb86e20958a0b5325846ad3012b6d",
@@ -35,7 +35,7 @@
   },
   "inventory": {
     "path": "docs/research/strudel-api-coverage/inventory.json",
-    "sha256": "ddd28778ddfdc4f8920ec594dd15dc0692333694734366db293f22d92a9ba6fb",
+    "sha256": "74ba4b5a3b55fe0d8a1b0faa3775ccd159afc36d3261d8b67705084f3769f231",
     "schemaVersion": 1,
     "candidateCount": 1100,
     "aliasCollisions": [
