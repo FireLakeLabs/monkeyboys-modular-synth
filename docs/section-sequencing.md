@@ -1,7 +1,7 @@
 # Section sequencing (#244)
 
-Status: implemented with focused proof; bounded review, the complete frozen local
-browser suite and hosted protected merge gates remain pending.
+Status: implemented with bounded Opus approval and complete local verification.
+Hosted checks and protected merge results are tracked on #244 and its pull request.
 
 ## Panel sketch and representation
 
@@ -278,3 +278,23 @@ SECTIONS in catalog order, with every previous name and all other assertions
 retained. The original case passes 1/0 after this test-only correction. The full
 237-test rerun and hosted protected gates remain pending. This is not a sample,
 PCM or application failure, and no thresholds or product behavior were changed.
+
+## Final local acceptance
+
+Application production `dd268a0` was approved in R4. The subsequent strict catalog
+expectation reconciliation changes no application source. Frozen `12a282a`
+completed **RESULT passed=237 failed=0 exit=0** (21.2m, two workers), including all
+60 catalog/module exercises and the entire reader/rack/playback/arranger/library
+suite. The [full result record](evidence/section-sequencing/full-browser.json)
+separates that passing run from the earlier interrupted, unstarted and 236/1 runs.
+Four actual section looks, native creation/source/ORDER/CODE/sparse edits and
+MIX selector/channel geometry captures were inspected. Current exact source,
+complete saved state, engine events, PCM and bus identity remain separate proofs.
+
+`npm run check` passes 2,771 tests / 67 files and 59 guardrails, with the inherited
+bundle-size warning. The 90-file audit has zero errors/failures; inventory is
+independently byte-identical and current context checks pass without changing
+corpus denominators or unrelated CODE fallbacks. Physical listening and general
+PCM waveform identity remain unclaimed. The owner-accepted synthesized legacy
+saved-layout limit above remains explicit. Hosted protected-merge status is
+reported on #244; local acceptance does not substitute for hosted Full browser suites.

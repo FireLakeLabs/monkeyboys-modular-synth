@@ -62,8 +62,9 @@ The reader/engine spikes and feature dependency order remain unchanged.
 #244 builds on the merged #242 expression/routing foundation and #243 lexical
 guards. [Section sequencing](section-sequencing.md) adds native static arrange
 tuples, four-input SECTIONS panels and exclusive NEXT continuation without
-changing mask lanes. Implementation and focused proof are in progress; bounded
-review, the complete local suite and hosted protected merge gates remain pending.
+changing mask lanes. Implementation, bounded Opus review and complete local
+verification (237/0 browser, 2,771 unit cases and 59 guardrails) are complete.
+Hosted protected-merge results are tracked on #244.
 
 1. **Module catalog.** `src/modules/catalog.ts` holds every v1 module as data (controls, ranges, defaults, jacks, Strudel functions). _Started in the initial commit, with integrity tests._
 2. **Patch → code generator (#3, implemented).** Pure `generate(patch) → string` in `src/codegen/generate.ts`, following [`translation rules`](translation-rules.md#rack-generator-contract-3). Tests cover every v1 module, CV routing (LFO and ENV into VCF and VCA), fan-out/dependency naming, nested mixer channels, omitted defaults, CODE preservation, per-voice routing and the source-bound layout block. Imported-document reading/editing and playback are integrated in the later steps below.
@@ -323,4 +324,23 @@ approved production `fec8dfa` in three bounded rounds, with explicit CODE limits
 in the contract. No bundled music/attribution or personal storage was cleared or
 rebuilt. Final hosted gates and protected merge history are recorded on
 [#243](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/243); #244
-remains the separate next section-sequencing increment.
+is the separate section-sequencing increment recorded below.
+
+## Static section sequencing (#244)
+
+SECTIONS is implemented on the merged #242/#243 foundation: four exact finite
+positive cycle fields, ORDER, and exclusive unnamed NEXT flattening; numbered
+inputs retain true nesting and ordinary output supports named reuse/fan-out.
+Static combined/named sections preserve native phase and routing; computed or
+unresolved forms and callback-local arrangements remain CODE. Footer masks retain
+song time. Opaque inner routes are not overridden, native sends share one final
+branch bus, and Stop allows existing tails to decay.
+
+R4 Opus 5.5/high approved application `dd268a0`; the strict catalogue browser
+expectation was then reconciled for the added SECTIONS match. Complete local
+acceptance on frozen `12a282a` is 237/0 browser cases, all 60 module exercises,
+2,771 unit cases / 67 files, 59 guardrails and audit90/0. Source, saved state,
+events, PCM and physical listening limits are separate in the
+[contract/evidence](section-sequencing.md). No unrelated research consolidation or
+process lesson was adopted; #217 and #248–251 remain separate. Hosted checks and
+protected merge history are tracked on [#244](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/244).

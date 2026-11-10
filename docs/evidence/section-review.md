@@ -210,3 +210,20 @@ The application approval remains `dd268a0`; this subsequent exact-catalog harnes
 reconciliation and evidence do not change its TypeScript/TSX or engine behavior.
 The complete 237-test suite must pass again on the frozen reconciled revision
 before PR/hosted/protected merge. No PR or push has occurred.
+
+## Final local gate
+
+On frozen `12a282a` (application source byte-identical to R4-approved `dd268a0`),
+`npm run test:browser:report -- --output=/tmp/sections-full-12a282a-results`
+completed **RESULT passed=237 failed=0 exit=0**, 21.2m, two workers. All 60 module
+exercises and all five SECTIONS tests are included. Actual section four-look and
+MIX selector/channel screenshots were inspected. [The full record](section-sequencing/full-browser.json)
+retains the tested/reviewed heads and separates event/PCM claims. Prior failed and
+interrupted attempts remain unchanged in their attempt record; no PCM threshold,
+signal rejection, source fixture or application behavior was changed for the pass.
+
+All blocker/should findings are closed. Optional N2 is declined with the reason
+above; no additional process/feature work was adopted. The final deterministic
+gate is 2,771/67 plus 59 guards. Audit90/0, inventory/context current-input proof
+and exact catalogue assertions remain intact. The following proof updates are
+evidence-only. PR/hosted checks and protected merge are reported on #244.

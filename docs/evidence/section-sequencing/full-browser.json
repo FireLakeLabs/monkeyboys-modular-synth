@@ -1,0 +1,130 @@
+{
+  "reviewedProductionHead": "dd268a0f651ed59b18c4cb51bc5df7ad4b683a70",
+  "testedHead": "12a282a1489f6e15fe6c60fe54f8b0fb817f8624",
+  "applicationSourceUnchangedFromReviewedHead": true,
+  "node": "v24.22.2",
+  "browser": "156.0.8078.4",
+  "command": "npm run test:browser:report -- --output=/tmp/sections-full-12a282a-results",
+  "result": "RESULT passed=237 failed=0 exit=0",
+  "passed": 237,
+  "failed": 0,
+  "exit": 0,
+  "workers": 2,
+  "reportedDuration": "21.2m",
+  "runtimeEventPairs": [
+    {
+      "name": "terminal-comment-section",
+      "onsets": [32, 32],
+      "pcmRms": [0.04608246989183354, 0.0465677582357357]
+    },
+    {
+      "name": "terminal-comment-nested-Stack",
+      "onsets": [48, 48],
+      "pcmRms": [0.047059152413226744, 0.047058676311313934]
+    },
+    {
+      "name": "local-phase-nested-next",
+      "onsets": [43, 43],
+      "pcmRms": [0.005053863672466005, 0.005098335726832492]
+    },
+    {
+      "name": "native-section-sharing",
+      "onsets": [128, 128],
+      "pcmRms": [0.004224581613441784, 0.004248049849853065]
+    },
+    {
+      "name": "inline-section-effects",
+      "onsets": [128, 128],
+      "pcmRms": [0.0040551609874485495, 0.004125576762075275]
+    },
+    {
+      "name": "inner-custom-routes",
+      "onsets": [128, 128],
+      "pcmRms": [0.0042283399378545946, 0.00422507618339781]
+    },
+    {
+      "name": "named-fanout",
+      "onsets": [256, 256],
+      "pcmRms": [0.008502607909319579, 0.008464368310126882]
+    },
+    {
+      "name": "opaque-named-reuse",
+      "onsets": [192, 192],
+      "pcmRms": [0.004547133373787767, 0.0045408073728917375]
+    },
+    {
+      "name": "outer-Voices-mask",
+      "onsets": [64, 64],
+      "pcmRms": [0.004975716625397232, 0.005034270132669058]
+    }
+  ],
+  "moduleExercises": {
+    "count": 60,
+    "types": [
+      "sections",
+      "bytebeat",
+      "chip",
+      "speak",
+      "splice",
+      "wavetable",
+      "gates",
+      "switch",
+      "aux",
+      "duck",
+      "seq",
+      "drums",
+      "quant",
+      "add",
+      "clock",
+      "euclid",
+      "ratchet",
+      "chance",
+      "chord",
+      "arp",
+      "osc",
+      "noise",
+      "harmonic",
+      "fmop",
+      "smpl",
+      "vcf",
+      "vca",
+      "env",
+      "lfo",
+      "samplehold",
+      "attenuverter",
+      "modmix",
+      "cvseq",
+      "delay",
+      "reverb",
+      "drive",
+      "folder",
+      "lofi",
+      "formant",
+      "comp",
+      "phaser",
+      "pan",
+      "shift",
+      "mix",
+      "scope",
+      "out",
+      "iter",
+      "jux",
+      "chunk",
+      "every",
+      "sometimes",
+      "off",
+      "layer",
+      "rev",
+      "shuffle",
+      "ribbon",
+      "time-lens",
+      "warp",
+      "echo",
+      "code"
+    ]
+  },
+  "nativeCODEFixtures": 5,
+  "physicalListening": false,
+  "performanceClaim": false,
+  "priorNonAcceptance": "See review-browser-attempts.json; interrupted, unstarted and failed full runs remain distinct."
+}

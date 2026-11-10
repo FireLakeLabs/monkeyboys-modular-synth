@@ -79,6 +79,16 @@
       "command": "npm run test:browser:report -- tests/browser/suites.spec.mjs -g verifyOnRampUI --output=/tmp/sections-onramp-fixed-results",
       "result": "RESULT passed=1 failed=0 exit=0",
       "observations": "Exact six-name search retains all five original names plus SECTIONS; the rest of the original on-ramp/source/lesson/Undo checks pass unchanged."
+    },
+    {
+      "head": "12a282a1489f6e15fe6c60fe54f8b0fb817f8624",
+      "reviewedProductionHead": "dd268a0f651ed59b18c4cb51bc5df7ad4b683a70",
+      "log": "/tmp/sections-full-12a282a.log",
+      "command": "npm run test:browser:report -- --output=/tmp/sections-full-12a282a-results",
+      "result": "RESULT passed=237 failed=0 exit=0",
+      "duration": "21.2m",
+      "acceptance": true,
+      "observations": "Complete237tests, includingall60moduleexercises,exactonrampcatalogsearch,section/MIX/callback/nativehistory/PCM/Stopandreplacement.Allapplicationandscriptsourcefrozen;onlyincidentalhistoricalscreenshotoutputsweregeneratedandrestoredaftercompletion."
     }
   ]
 }
