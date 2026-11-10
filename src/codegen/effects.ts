@@ -1,5 +1,5 @@
 import { effectRanks } from '../modules/effects'
-import { outputSignal, requireNode, type Node } from './graph'
+import { outputSignal, requireNode, closedFunction, type Node } from './graph'
 
 export function activeEffectRanks(node: Node) {
   return effectRanks(node.module, {
@@ -26,11 +26,7 @@ export function planEffects(nodes: Map<string, Node>) {
     const returned = node.inputs.get('return')
     if (returned && returned.from.jack !== 'send' && !loops.has(node.module.id)) {
       loops.add(node.module.id)
-      let upstream: typeof returned | undefined = returned
-      while (upstream && upstream.from.jack !== 'send')
-        upstream = requireNode(nodes, upstream.from.module).inputs.get('in')
-      if (upstream?.from.module === node.module.id)
-        stagePaths(requireNode(nodes, returned.from.module))
+      if (closedFunction(nodes, node)) stagePaths(requireNode(nodes, returned.from.module))
     }
     // Bus senders and sidechain/CV sources are independent voice paths. Return
     // processing never moves into a sender's chain across that boundary.

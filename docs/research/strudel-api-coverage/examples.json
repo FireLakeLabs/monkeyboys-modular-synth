@@ -115,8 +115,8 @@
     "id": "loop-branch",
     "names": ["chunk", "stack"],
     "source": "$: s(\"bd\").chunk(4,x=>stack(x,x.rev()))\n",
-    "expectCode": true,
-    "restriction": "Callback branch shape requires #243 after #242"
+    "expectCode": false,
+    "restriction": "#243 owner-local callback DAG with MIX Stack; unsupported captures remain CODE"
   },
   {
     "id": "harmonic-default",

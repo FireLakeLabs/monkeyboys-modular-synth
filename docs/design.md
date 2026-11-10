@@ -491,7 +491,16 @@ Their hover text names the loop role and generated lambda; jack hover does the
 same. Lambda source receives teal ink while CODE retains its dashed underline.
 Widths stay catalog-owned and cable endpoints follow measured live jacks.
 Connections list entries include “function λ”, keeping their selection/removal
-path available when cables are faded. See [acceptance evidence](function-loops-verification.md).
+path available when cables are faded. #243 uses the same cables for SEND fan-out,
+local transforms and Stack recombination. The local Stack panel retains its
+four-input width, mode selector and live jack geometry in all Hardware looks.
+Its Voices switch refuses atomically while local. Shared transform naming fields
+refer only to that callback; SEND itself has no naming field. Nested module
+selection uses the exact expression paths in source. Pointer/keyboard patching,
+Undo/Redo and export/reopen use existing accepted-document operations. The private
+canvas boards were unavailable; existing local exports and production looks are
+the reference. See [#243 evidence](callback-branches.md) and historical
+[#135 acceptance](function-loops-verification.md).
 
 ## Sound crate and tape (#138)
 

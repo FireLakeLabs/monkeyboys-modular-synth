@@ -94,7 +94,7 @@ default orbit 1; a matching event field does not grant ownership.
 | Direct/chained/static nested + named fan-out     | Exact lexical paths, one shared definition               | reader/source/save; pinned events                                                            |
 | Inner gain/mask/channels + outer setters         | Preserve scope/order/repeats; never fold across Stack    | pinned events including postgain .3/.7 → outer .5                                            |
 | Native sends / inline FX / explicit inner orbits | Sharing and isolation follow above routing contract      | pinned events; Chromium send objects + nonzero PCM                                           |
-| Computed/spread/shadowed or callback branching   | Exact CODE; no execution to infer wiring                 | reader/source/save; registration/receiver/prototype shadow negatives                         |
+| Computed/spread/shadowed composition forms       | Exact CODE; no execution to infer wiring                 | reader/source/save; registration/receiver/prototype shadow negatives                         |
 | Forged paths / old source metadata / saved CODE  | Conservative refusal/preservation                        | forged-path and saved-CODE regressions                                                       |
 
 ## Verification record
@@ -207,3 +207,11 @@ lock overlay. The test now waits for an unlocked rack before capture; this is a
 verification-only readiness change after the full run, with production source
 unchanged. The mode/geometry/Undo rerun completed
 `RESULT passed=1 failed=0 exit=0`; all eight refreshed panel images were inspected.
+
+## Subsequent callback DAG increment (#243)
+
+The merged #242 foundation's former callback-branch CODE boundary is deliberately
+replaced by [#243's bounded local grammar](callback-branches.md). Static paths,
+Stack unity/inactive state and conservative opaque routing rules are reused.
+Global captures and unsupported callbacks remain exact CODE; no additional MIX
+mode, larger panel, section module or custom-panel behavior is adopted.

@@ -13,6 +13,7 @@ import { parseSource } from '../reader/syntax'
 import {
   control,
   graph,
+  functionMembers,
   isSteps,
   isGrid,
   number,
@@ -126,6 +127,7 @@ export function generateDocument(
   const numeric = (value: number, precision = 3): string =>
     prefix ? String(value) : roundedNumber(value, precision)
   const nodes = graph(patch)
+  const localMembers = functionMembers(nodes)
   const { inline: inlineEffects } = planEffects(nodes)
   const routing = routingPlan(nodes, patch)
   const functions: GeneratedDocument['functions'] = {}
@@ -167,6 +169,7 @@ export function generateDocument(
   if (patch.modules.some((m) => m.type === 'switch')) used.add('silence')
   for (const token of tokenizer(prelude, { ecmaVersion: 'latest' }))
     if (token.type.label === 'name') used.add(prelude.slice(token.start, token.end))
+  const scopeNames = new Map<string, Set<string>>()
   for (const [key, name] of Object.entries(patch.names)) {
     const [moduleId, jackId, extra] = key.split(':')
     const node = moduleId ? nodes.get(moduleId) : undefined
@@ -175,10 +178,13 @@ export function generateDocument(
       !node?.spec.jacks.some((jack) => jack.id === jackId && jack.direction === 'out')
     )
       throw new Error(`Invalid named output: ${key}`)
-    if (!/^[A-Za-z_$][\w$]*$/.test(name) || used.has(name))
+    const owner = moduleId && localMembers.get(moduleId)
+    const reserved = owner ? (scopeNames.get(owner) ?? new Set(used)) : used
+    if (!/^[A-Za-z_$][\w$]*$/.test(name) || reserved.has(name))
       throw new Error(`Invalid or colliding output name: ${name}`)
     parse(`const ${name} = 0`, { ecmaVersion: 'latest', sourceType: 'module' })
-    used.add(name)
+    reserved.add(name)
+    if (owner) scopeNames.set(owner, reserved)
   }
   const definitions = new Map<
     string,
@@ -235,7 +241,7 @@ export function generateDocument(
   }
 
   function namedOutput(node: Node): boolean {
-    if (prefix) return false
+    if (prefix || localMembers.has(node.module.id)) return false
     const output = node.spec.jacks.find((j) => j.direction === 'out')
     return (
       output !== undefined &&
@@ -435,14 +441,105 @@ export function generateDocument(
       let body = blank(true)
       const parameter = node.module.functionParameter ?? 'x'
       body.text = parameter
+      const definitions: { name: string; expression: CodeExpression }[] = []
+      const references = new Map<string, CodeExpression>()
+      // Avoid capturing opaque suffix identifiers when introducing local names.
+      const localUsed = new Set([parameter, ...used])
+      for (const child of nodes.values()) {
+        if (child.spec.id === 'code')
+          for (const token of tokenizer(string(child, 'text'), { ecmaVersion: 'latest' }))
+            if (token.type.label === 'name')
+              localUsed.add(string(child, 'text').slice(token.start, token.end))
+      }
       function walk(cable: typeof returned): CodeExpression | undefined {
         if (!cable) return undefined
-        if (cable.from.module === node.module.id && cable.from.jack === 'send') return body
+        if (cable.from.module === node.module.id && cable.from.jack === 'send') return { ...body }
         const child = requireNode(nodes, cable.from.module)
-        const upstream = walk(child.inputs.get('in'))
-        return upstream && transform(child, upstream)
+        const key = `${child.module.id}:out`
+        const previous = references.get(key)
+        if (previous) return { ...previous }
+        const shared = (child.outputs.get('out')?.length ?? 0) > 1 || patch.names[key] !== undefined
+        let result: CodeExpression | undefined
+        if (child.spec.composition) {
+          const arms = child.spec.composition.inputs.flatMap((id) => {
+            const input = child.inputs.get(id)
+            return input ? [walk(input)] : []
+          })
+          if (!arms.length || arms.some((a) => !a)) return undefined
+          result = { ...blank(true), text: 'stack(' }
+          for (const [i, arm] of arms.entries()) {
+            if (!arm) return undefined
+            if (i) result.text += ', '
+            const offset = result.text.length
+            result.text += arm.text + (arm.inline ? '' : '\n')
+            result.owners.push(
+              ...arm.owners.map((o) => ({ ...o, start: o.start + offset, end: o.end + offset })),
+            )
+            result.nodes.push(...arm.nodes)
+            result.sourceRouting ||=
+              arm.sourceRouting || arm.nodes.some((id) => nodes.get(id)?.spec.id === 'code')
+          }
+          result.text += ')'
+          result.owners.push({
+            module: child.module.id,
+            role: 'module',
+            start: 0,
+            end: result.text.length,
+          })
+          result.nodes.push(child.module.id)
+        } else {
+          const upstream = walk(child.inputs.get('in'))
+          result = upstream && transform(child, upstream)
+        }
+        if (!result || !shared) return result
+        let name = patch.names[key] ?? `mb_${child.module.id}`
+        if (patch.names[key] === undefined) {
+          const base = name
+          let suffix = 2
+          while (localUsed.has(name)) name = `${base}_${suffix++}`
+        } else if (name === parameter)
+          throw new Error('Local output name collides with callback parameter')
+        localUsed.add(name)
+        references.set(key, {
+          ...blank(true),
+          text: name,
+          nodes: result.nodes,
+          sourceRouting: result.sourceRouting,
+        })
+        definitions.push({ name, expression: result })
+        return {
+          ...blank(true),
+          text: name,
+          nodes: result.nodes,
+          sourceRouting: result.sourceRouting,
+        }
       }
-      const transformed = returned ? walk(returned) : undefined
+      let transformed = returned ? walk(returned) : undefined
+      if (transformed)
+        for (const definition of definitions.toReversed()) {
+          const prefix = `(${definition.name} => `
+          const middle = `)(`
+          const offset: number =
+            prefix.length + transformed.text.length + (transformed.inline ? 0 : 1) + middle.length
+          transformed = {
+            ...blank(true),
+            text: `${prefix}${transformed.text}${transformed.inline ? '' : '\n'}${middle}${definition.expression.text}${definition.expression.inline ? '' : '\n'})`,
+            owners: [
+              ...transformed.owners.map((o) => ({
+                ...o,
+                start: o.start + prefix.length,
+                end: o.end + prefix.length,
+              })),
+              ...definition.expression.owners.map((o) => ({
+                ...o,
+                start: o.start + offset,
+                end: o.end + offset,
+              })),
+            ],
+            nodes: [...transformed.nodes, ...definition.expression.nodes],
+            sourceRouting: transformed.sourceRouting || definition.expression.sourceRouting,
+          }
+        }
       const preset =
         node.spec.id === 'jux'
           ? node.spec.controls.flatMap((c) =>
@@ -451,9 +548,10 @@ export function generateDocument(
                 : [],
             )[0]
           : node.spec.functionLoop?.preset
-      const hasBody = transformed && returned && returned.from.jack !== 'send'
+      const completed = transformed
+      const hasBody = completed && returned && returned.from.jack !== 'send'
       const callback = hasBody
-        ? `${parameter} => ${transformed.text}${transformed.inline ? '' : '\n'}`
+        ? `${parameter} => ${completed.text}${completed.inline ? '' : '\n'}`
         : preset
       if (!callback) throw new Error('Missing function preset')
       functions[node.module.id] = callback
@@ -464,14 +562,14 @@ export function generateDocument(
         if (!owner) throw new Error('Missing function owner')
         const offset = owner.start + prefix.length + parameter.length + 4
         expression.owners.push(
-          ...transformed.owners.map((o) => ({
+          ...completed.owners.map((o) => ({
             ...o,
             start: offset + o.start,
             end: offset + o.end,
           })),
         )
-        expression.nodes.push(...transformed.nodes)
-        expression.sourceRouting ||= transformed.sourceRouting
+        expression.nodes.push(...completed.nodes)
+        expression.sourceRouting ||= completed.sourceRouting
       }
       return expression
     }

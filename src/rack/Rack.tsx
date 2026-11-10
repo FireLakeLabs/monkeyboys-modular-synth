@@ -1013,6 +1013,7 @@ export function Rack({
                       )}
                     </span>
                     {jack.direction === 'out' &&
+                      jack.id !== 'send' &&
                       (patch.cables.filter((c) => keyOf(c.from) === keyOf(ref)).length > 1 ||
                         patch.names[keyOf(ref)]) && (
                         <input

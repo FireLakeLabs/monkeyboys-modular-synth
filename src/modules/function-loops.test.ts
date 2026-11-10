@@ -153,11 +153,12 @@ it.each(['seq', 'osc', 'mix', 'out', 'lfo', 'cvseq', 'chord'])(
     ).toThrow()
   },
 )
-it('rejects cross-loop returns, branches, and recursive containment', () => {
+it('rejects cross-loop returns and recursive containment while retaining incomplete fan-out', () => {
   let patch = wire(rack(), 'chunk1', 'send', 'rev1', 'in')
   expect(() => wire(patch, 'rev1', 'out', 'off1', 'return')).toThrow('own SEND')
   patch = wire(patch, 'rev1', 'out', 'chunk1', 'return')
-  expect(() => wire(patch, 'rev1', 'out', 'iter1', 'in')).toThrow('single chain')
+  const branched = wire(patch, 'rev1', 'out', 'iter1', 'in')
+  expect(read(generate(branched)).patch).toEqual(branched)
   patch = wire(rack(), 'chunk1', 'send', 'off1', 'in')
   expect(() => wire(patch, 'off1', 'send', 'chunk1', 'in')).toThrow()
 })

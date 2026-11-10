@@ -8,7 +8,7 @@ export const RACK_MARKER = '// ── @monkeyboy rack v1 ──'
 
 export interface ExpressionStep {
   call: number
-  argument: number | 'receiver' | 'body'
+  argument: number | 'receiver' | 'body' | 'binding' | 'value'
 }
 
 export interface Binding {

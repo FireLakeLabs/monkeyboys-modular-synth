@@ -23,6 +23,7 @@ import {
   parseSource,
   scalar,
   nestedScope,
+  localBinding,
   usesParameter,
   bindingScope,
   type Call,
@@ -722,7 +723,11 @@ function project(
     return false
   }
 
-  function expression(scope: ParsedScope, receiverOutput?: Output): Output {
+  function expression(
+    scope: ParsedScope,
+    receiverOutput?: Output,
+    locals?: ReadonlyMap<string, Output>,
+  ): Output {
     const { root, calls } = scope
     const previous =
       saved &&
@@ -852,8 +857,8 @@ function project(
     if (
       !receiverOutput &&
       stackIndex >= 0 &&
-      !scope.loop &&
       !stackShadowed &&
+      !locals?.has('stack') &&
       !retainedCode(0, true)
     ) {
       const call = calls[stackIndex]
@@ -862,10 +867,11 @@ function project(
           ...(call.receiver ? [{ call: stackIndex, argument: 'receiver' as const }] : []),
           ...call.args.map((_, argument) => ({ call: stackIndex, argument })),
         ]
+        if (locals && !parts.length) throw new Error('Empty local Stack stays CODE')
         const inputs = parts.map((step) => {
           const child = expressionScope(scope, step)
           if (!child) throw new Error('Invalid static input')
-          const value = expression(child)
+          const value = expression(child, undefined, locals)
           if (step.argument === 'receiver' && hasOpaqueInput(value))
             throw new Error('Ambiguous receiver stack method stays CODE')
           return needsSampler(value) ? soundInput(value, 'vca') : value
@@ -900,14 +906,32 @@ function project(
       upstream = code(scope, receiver.indices, receiver.text)
       start = (receiver.indices.at(-1) ?? -1) + 1
     }
+    const local = localBinding(root)
+    if (!upstream && local && locals) {
+      if (locals.has(local.parameter)) throw new Error('Ambiguous local binding shadow')
+      const argument = expressionScope(scope, { call: 0, argument: 'value' })
+      const body = expressionScope(scope, { call: 0, argument: 'binding' })
+      if (!argument || !body) throw new Error('Invalid local binding')
+      const bound = expression(argument, undefined, locals)
+      if (
+        [...locals.values()].some(
+          (value) => value.module.id === bound.module.id && value.jack === bound.jack,
+        )
+      )
+        throw new Error('Local reference aliases stay CODE')
+      patch.names[`${bound.module.id}:${bound.jack}`] = local.parameter
+      upstream = expression(body, undefined, new Map([...locals, [local.parameter, bound]]))
+    }
     if (!upstream && root.type === 'Identifier') {
-      upstream = resolve(root.name)
+      upstream = locals?.get(root.name) ?? (!locals ? resolve(root.name) : undefined)
+      if (locals && !upstream) throw new Error('Captured patterns stay CODE')
       if (!upstream && fits('lfo', 'shape', root.name)) {
         group = add('lfo', { shape: root.name, rate: 1 })
         bind(group, scope, [])
         upstream = output(group)
       }
     }
+    if (locals && !upstream) throw new Error('Unsupported local expression')
     const initial = calls[0]
     if (
       !upstream &&
@@ -1440,7 +1464,19 @@ function project(
           ids.every((id, i) => args[i] !== undefined && fits(loopSpec.id, id, args[i])) &&
           (name !== 'within' ||
             (typeof args[0] === 'number' && typeof args[1] === 'number' && args[0] < args[1]))
-        if (valid && (preset || (child && child.calls.length > 0))) {
+        if (valid && (preset || (child && (child.calls.length > 0 || localBinding(child.root))))) {
+          const loopCheckpoint = {
+            modules: patch.modules.length,
+            cables: patch.cables.length,
+            bindings: bindings.length,
+            names: { ...patch.names },
+            resolved: new Map(resolved),
+            depths: new Map(depths),
+            values: new Map(patch.modules.map((m) => [m.id, { ...m.values }])),
+            represented: new Map([...represented].map(([id, controls]) => [id, new Set(controls)])),
+            row,
+            hp,
+          }
           const module = add(loopSpec.id, {
             ...loopValues,
             ...(loop.when ? { [loop.when.control]: loop.when.value } : {}),
@@ -1464,34 +1500,61 @@ function project(
               modules: patch.modules.length,
               cables: patch.cables.length,
               bindings: bindings.length,
+              row,
+              hp,
             }
-            const refersToParameter = child.calls.some((call) =>
-              call.args.some((arg) => usesParameter(arg, parameter)),
-            )
-            let result = refersToParameter ? undefined : expression(child, { module, jack: 'send' })
-            if (
-              !result ||
-              patch.modules
-                .slice(checkpoint.modules)
-                .some(
-                  (m) =>
-                    bindings.some(
-                      (b) =>
-                        b.module === m.id &&
-                        b.role === 'module' &&
-                        descriptor([b.loop, b.path]) === descriptor([child.loop, child.path]),
+            const send = { module, jack: 'send' }
+            const localScope = new Map([[parameter, send]])
+            const branched =
+              child.calls.some((c) => c.name === 'stack') || !!localBinding(child.root)
+            let result: Output | undefined
+            try {
+              const refersToParameter =
+                !branched &&
+                child.calls.some((call) => call.args.some((arg) => usesParameter(arg, parameter)))
+              result = refersToParameter ? undefined : expression(child, undefined, localScope)
+              if (
+                patch.modules.slice(checkpoint.modules).some((m) => {
+                  const spec = getModuleSpec(m.type)
+                  return (
+                    !spec.modSource &&
+                    !['lfo', 'env'].includes(spec.id) &&
+                    !(
+                      spec.composition && m.values[spec.composition.mode] === spec.composition.stack
                     ) &&
-                    (!isLoopChain(getModuleSpec(m.type)) || m.type === 'code'),
-                )
-            ) {
-              patch.modules.splice(checkpoint.modules)
-              patch.cables.splice(checkpoint.cables)
-              bindings.splice(checkpoint.bindings)
+                    !isLoopChain(spec)
+                  )
+                })
+              )
+                result = undefined
+              if (!result) throw new Error('Unsupported callback')
+            } catch {
+              patch.modules.splice(branched ? loopCheckpoint.modules : checkpoint.modules)
+              patch.cables.splice(branched ? loopCheckpoint.cables : checkpoint.cables)
+              bindings.splice(branched ? loopCheckpoint.bindings : checkpoint.bindings)
+              patch.names = loopCheckpoint.names
+              resolved.clear()
+              loopCheckpoint.resolved.forEach((value, key) => resolved.set(key, value))
+              depths.clear()
+              loopCheckpoint.depths.forEach((value, key) => depths.set(key, value))
+              represented.clear()
+              loopCheckpoint.represented.forEach((value, key) => represented.set(key, value))
+              for (const m of patch.modules) {
+                const values = loopCheckpoint.values.get(m.id)
+                if (values) m.values = values
+              }
+              row = branched ? loopCheckpoint.row : checkpoint.row
+              hp = branched ? loopCheckpoint.hp : checkpoint.hp
+              if (branched) {
+                upstream = code(scope, [index], source.slice(call.start, call.end), upstream)
+                group = undefined
+                continue
+              }
               result = code(
                 child,
                 child.calls.map((_, i) => i),
                 source.slice(child.root.end, child.end),
-                { module, jack: 'send' },
+                send,
               )
             }
             wire(result, module, 'return')

@@ -51,7 +51,7 @@ export interface Patch {
   name?: string
   modules: PlacedModule[]
   cables: Cable[]
-  /** Fan-out names, retained after reducing to one branch; keyed "moduleId:jackId". */
+  /** Fan-out names (callback-local for function members), retained after reducing to one branch; keyed "moduleId:jackId". */
   names: Record<string, string>
   /** Opaque setup statements retained by an explicit rack conversion. */
   prelude?: string

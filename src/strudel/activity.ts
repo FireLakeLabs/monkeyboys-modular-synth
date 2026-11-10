@@ -67,9 +67,8 @@ export function activityPlan(document: SourceDocument) {
           binding.scope === scope.descriptor.id &&
           JSON.stringify(binding.path?.slice(0, scope.path?.length ?? 0) ?? []) ===
             JSON.stringify(scope.path ?? []) &&
-          (binding.path?.slice(scope.path?.length ?? 0) ?? []).every(
-            (step) => step.argument === 'body',
-          ),
+          (!binding.path?.slice(scope.path?.length ?? 0).length ||
+            binding.path?.[scope.path?.length ?? 0]?.argument === 'body'),
       )
       .map((binding) => binding.module)
     if (own.some((id) => modules.get(id)?.type === 'code')) return null

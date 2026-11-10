@@ -254,8 +254,8 @@ export function graph(patch: Patch): Map<string, Node> {
   }
   const loops = functionMembers(nodes)
   for (const key of Object.keys(patch.names)) {
-    const [id, jack] = key.split(':')
-    if (jack === 'send' || (id && loops.has(id)))
+    const [, jack] = key.split(':')
+    if (jack === 'send')
       throw new Error('Function outputs are local to their loop and cannot be named')
   }
   const visited = new Set<string>()
@@ -278,14 +278,23 @@ export function graph(patch: Patch): Map<string, Node> {
       const actual = signal(requireNode(nodes, cable.from.module), cable.from.jack)
       if (node.spec.composition && node.spec.composition.inputs.includes(id)) {
         const stack = value(node, node.spec.composition.mode) === node.spec.composition.stack
-        if (actual === 'function' || actual === 'mod' || (!stack && actual === 'pattern'))
+        if (
+          (actual === 'function' && !loops.has(node.module.id)) ||
+          actual === 'mod' ||
+          (!stack && actual === 'pattern')
+        )
           throw new Error(
             stack
               ? 'Stack combines pattern or voiced events'
               : 'Voices requires voiced inputs; select Stack for note patterns',
           )
       }
-      if (actual === 'function' && id === 'in' && loops.has(node.module.id)) continue
+      if (
+        actual === 'function' &&
+        loops.has(node.module.id) &&
+        (id === 'in' || node.spec.composition?.inputs.includes(id))
+      )
+        continue
       if (actual === 'audio' && input?.cvTarget) continue
       if (actual !== 'any' && input?.signal !== 'any' && input?.signal !== actual)
         throw new Error(`Incompatible cable signal: ${cable.id}`)
@@ -294,58 +303,63 @@ export function graph(patch: Patch): Map<string, Node> {
   return nodes
 }
 
-/** Incomplete SEND chains are saved but do not replace the preset until RETURN is connected. */
+/** Scope follows pattern edges in either direction, including incomplete local DAGs. */
 export function functionMembers(nodes: Map<string, Node>): Map<string, string> {
   const members = new Map<string, string>()
+  const localInput = (node: Node, jack: string) =>
+    node.spec.composition?.inputs.includes(jack) || jack === 'in'
   for (const owner of nodes.values()) {
     if (!owner.spec.functionLoop) continue
     const sends = owner.outputs.get('send') ?? []
-    if (sends.length > 1) throw new Error('Function loops require a single chain')
-    if (sends.length && !loopMethod(owner.spec, owner.module))
-      throw new Error('Select the function mode before connecting SEND')
-    let cable = sends[0]
-    const seen = new Set<string>([owner.module.id])
-    while (cable) {
-      const node = requireNode(nodes, cable.to.module)
-      if (cable.to.jack === 'return') {
-        if (node !== owner) throw new Error('Function RETURN must close its own SEND')
-        break
-      }
-      if (cable.to.jack !== 'in' || !isLoopChain(node.spec))
-        throw new Error('Function loops accept chain modules, excluding sources, MIX and OUT')
-      if (seen.has(node.module.id)) throw new Error('Function loop cycle')
-      if (members.has(node.module.id) && members.get(node.module.id) !== owner.module.id)
-        throw new Error('A module cannot belong to two function loops')
-      seen.add(node.module.id)
-      members.set(node.module.id, owner.module.id)
-      const next = node.outputs.get('out') ?? []
-      if (next.length > 1) throw new Error('Function loops require a single chain')
-      cable = next[0]
-    }
-  }
-  for (const owner of nodes.values()) {
-    let cable = owner.inputs.get('return')
-    if (cable && !loopMethod(owner.spec, owner.module))
-      throw new Error('Select the function mode before connecting RETURN')
+    const returned = owner.inputs.get('return')
+    if ((sends.length || returned) && !loopMethod(owner.spec, owner.module))
+      throw new Error('Select the function mode before connecting SEND/RETURN')
     const seen = new Set<string>()
-    while (cable) {
+    function visit(node: Node): void {
+      if (node === owner) throw new Error('Function loop cycle')
+      if (seen.has(node.module.id)) return
+      const composition = node.spec.composition
+      if (
+        !(composition && value(node, composition.mode) === composition.stack) &&
+        !isLoopChain(node.spec)
+      )
+        throw new Error(
+          'Function loops accept transforms and MIX Stack, excluding sources, Voices and OUT',
+        )
+      const previous = members.get(node.module.id)
+      if (previous && previous !== owner.module.id)
+        throw new Error('Function RETURN must close its own SEND; no cross-scope edges')
+      members.set(node.module.id, owner.module.id)
+      seen.add(node.module.id)
+      for (const [jack, cable] of node.inputs) {
+        if (!localInput(node, jack)) continue
+        upstream(cable)
+      }
+      for (const cable of node.outputs.get('out') ?? []) downstream(cable)
+    }
+    function upstream(cable: Cable): void {
       if (cable.from.jack === 'send') {
         if (cable.from.module !== owner.module.id)
-          throw new Error('Function RETURN must close its own SEND')
-        break
+          throw new Error('Function RETURN must close its own SEND; no cross-scope captures')
+      } else {
+        if (cable.from.jack !== 'out')
+          throw new Error('Function inputs must be local to their SEND')
+        visit(requireNode(nodes, cable.from.module))
       }
-      const node = requireNode(nodes, cable.from.module)
-      if (cable.from.jack !== 'out' || !isLoopChain(node.spec))
-        throw new Error('Function loops accept chain modules, excluding sources, MIX and OUT')
-      if (seen.has(node.module.id) || node === owner) throw new Error('Function loop cycle')
-      seen.add(node.module.id)
-      if (members.has(node.module.id) && members.get(node.module.id) !== owner.module.id)
-        throw new Error('Function RETURN must close its own SEND')
-      members.set(node.module.id, owner.module.id)
-      if ((node.outputs.get('out')?.length ?? 0) > 1)
-        throw new Error('Function loops require a single chain')
-      cable = node.inputs.get('in')
     }
+    function downstream(cable: Cable): void {
+      if (cable.to.jack === 'return') {
+        if (cable.to.module !== owner.module.id)
+          throw new Error('Function RETURN must close its own SEND')
+      } else {
+        const target = requireNode(nodes, cable.to.module)
+        if (!localInput(target, cable.to.jack))
+          throw new Error('Function output cannot escape its local scope')
+        visit(target)
+      }
+    }
+    sends.forEach(downstream)
+    if (returned) upstream(returned)
   }
   // Nesting is ownership, not signal feedback. Reject recursive containment.
   for (const id of members.keys()) {
@@ -358,6 +372,25 @@ export function functionMembers(nodes: Map<string, Node>): Map<string, string> {
     }
   }
   return members
+}
+
+/** Every connected body arm must trace back to this SEND before it can sound. */
+export function closedFunction(nodes: Map<string, Node>, owner: Node): boolean {
+  const seen = new Map<string, boolean>()
+  function complete(cable: Cable | undefined): boolean {
+    if (!cable) return false
+    if (cable.from.jack === 'send') return cable.from.module === owner.module.id
+    const node = requireNode(nodes, cable.from.module)
+    const previous = seen.get(node.module.id)
+    if (previous !== undefined) return previous
+    const inputs = node.spec.composition
+      ? node.spec.composition.inputs.flatMap((id) => node.inputs.get(id) ?? [])
+      : [node.inputs.get('in')]
+    const result = inputs.length > 0 && inputs.every(complete)
+    seen.set(node.module.id, result)
+    return result
+  }
+  return complete(owner.inputs.get('return'))
 }
 
 export function requireNode(nodes: Map<string, Node>, id: string): Node {

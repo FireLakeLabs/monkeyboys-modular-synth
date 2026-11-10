@@ -177,7 +177,30 @@ export function usesParameter(value: unknown, name: string): boolean {
   })
 }
 
-/** Only a synchronous single-parameter receiver chain can become a rack function. */
+/** The only local binding form: a synchronous single-identifier expression lambda, applied once. */
+export function localBinding(expression: Expression) {
+  if (
+    expression.type !== 'CallExpression' ||
+    expression.optional ||
+    expression.arguments.length !== 1
+  )
+    return undefined
+  const lambda = expression.callee,
+    value = expression.arguments[0]
+  if (
+    lambda.type !== 'ArrowFunctionExpression' ||
+    lambda.async ||
+    lambda.params.length !== 1 ||
+    lambda.params[0]?.type !== 'Identifier' ||
+    lambda.body.type === 'BlockStatement' ||
+    !value ||
+    value.type === 'SpreadElement'
+  )
+    return undefined
+  return { parameter: lambda.params[0].name, body: lambda.body, value }
+}
+
+/** Shape only: projection separately proves all roots and ownership without evaluation. */
 export function nestedScope(parent: ParsedScope, index: number): ParsedScope | undefined {
   const call = parent.calls[index]
   const lambda = call?.args.at(-1)
@@ -190,12 +213,12 @@ export function nestedScope(parent: ParsedScope, index: number): ParsedScope | u
   )
     return undefined
   const parsed = chain(lambda.body)
-  if (
-    parsed.root.type !== 'Identifier' ||
-    parsed.root.name !== lambda.params[0].name ||
-    lambda.body.start !== parsed.root.start
-  )
-    return undefined
+  const receiver =
+    parsed.root.type === 'Identifier' &&
+    parsed.root.name === lambda.params[0].name &&
+    lambda.body.start === parsed.root.start
+  const stack = parsed.calls.some((c) => c.name === 'stack')
+  if (!receiver && !stack && !localBinding(parsed.root)) return undefined
   return {
     ...parsed,
     expression: lambda.body,
@@ -230,7 +253,19 @@ export function expressionScope(
 ): ParsedScope | undefined {
   if (step.argument === 'body') return nestedScope(parent, step.call)
   const call = parent.calls[step.call]
-  const expression = step.argument === 'receiver' ? call?.receiver : call?.args[step.argument]
+  const binding = localBinding(parent.root)
+  const expression =
+    step.argument === 'binding'
+      ? step.call === 0
+        ? binding?.body
+        : undefined
+      : step.argument === 'value'
+        ? step.call === 0
+          ? binding?.value
+          : undefined
+        : step.argument === 'receiver'
+          ? call?.receiver
+          : call?.args[step.argument]
   if (!expression || expression.type === 'SpreadElement') return undefined
   const parsed = chain(expression)
   return {
@@ -253,11 +288,18 @@ export function expressionScope(
 
 /** Descend only through the supported static combiner; never evaluate arguments. */
 export function expressionChildren(parent: ParsedScope): ParsedScope[] {
-  return parent.calls.flatMap((call, index) => {
-    if (call.name !== 'stack') return []
-    return [
-      ...(call.receiver ? [{ call: index, argument: 'receiver' as const }] : []),
-      ...call.args.map((_, argument) => ({ call: index, argument })),
-    ].flatMap((step) => expressionScope(parent, step) ?? [])
-  })
+  return [
+    ...(localBinding(parent.root)
+      ? (['value', 'binding'] as const).flatMap(
+          (argument) => expressionScope(parent, { call: 0, argument }) ?? [],
+        )
+      : []),
+    ...parent.calls.flatMap((call, index) => {
+      if (call.name !== 'stack') return []
+      return [
+        ...(call.receiver ? [{ call: index, argument: 'receiver' as const }] : []),
+        ...call.args.map((_, argument) => ({ call: index, argument })),
+      ].flatMap((step) => expressionScope(parent, step) ?? [])
+    }),
+  ]
 }

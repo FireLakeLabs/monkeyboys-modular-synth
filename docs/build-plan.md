@@ -298,3 +298,15 @@ The library audit covers all bundled patches and reader fixtures, separately fro
 the historical 22-file corpus. #243 callback branching and #244 section sequencing
 build on these expression paths; neither ships here. #216 owns expanded geometry,
 #217 custom panels, and #248–251 remain outside this increment.
+
+## Local callback branches (#243)
+
+Implementation extends #242's actual Stack/binding foundation with owner-local
+DAG validation, SEND fan-out, nested callback branches and expression-local shared
+transforms. Existing #135 chains/presets remain. The former chain-only rule is
+replaced in owning specs; global captures, block/async/multi-parameter callbacks,
+Voices/OUT/cycles and unrelated source/modulation restrictions remain conservative.
+See [contract, acceptance matrix and verification](callback-branches.md).
+Repository/browser/PCM evidence, bounded review and hosted/protected merge status
+are recorded there as they complete; #244 section sequencing, #217 custom panels and
+#248–251 remain separate. No new module or process-lesson increment is included.

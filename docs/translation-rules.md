@@ -40,7 +40,7 @@ none alone proves physical speech output.
 | **Pattern**  | yellow `#E6D35F`                  | Events in time: which note, and when. Hardware usually splits this into pitch and gate cables; a Strudel event carries both, so here it is one cable. | Mini-notation strings: `note("c e g")`, `s("bd hh")`              |
 | **Audio**    | orange `#F4A462`                  | The sound itself, from a source through filter, amp and effects to the mixer.                                                                         | One chain of methods on a pattern: `.s() .lpf() .gain() .delay()` |
 | **Mod**      | blue `#7DB9F6`                    | A value that moves on its own. Into a CV jack, it turns that knob for you.                                                                            | Signals scaled with `.range()`: `sine`, `saw`, `perlin`, `rand`   |
-| **Function** | teal `#8CF5DA`, long/short dashed | A local chain between SEND and RETURN, with λ jack centers.                                                                                           | `x => x.a().b()`                                                  |
+| **Function** | teal `#8CF5DA`, long/short dashed | An owner-local DAG between SEND and RETURN, with λ jack centers.                                                                                      | `x => x.a().b()`                                                  |
 
 Audio outputs entering CV use the fifth kind, **audio-mod**: an orange double
 stroke with a blue dashed center and a `≋` jack mark. They write `.bus(n)` on the
@@ -635,54 +635,57 @@ with the channel, like its NAME and OUTPUT. See the [spike and contract](arrange
 
 ## Function loops (#135)
 
-Catalog `functionLoop` owns the method, scalar argument controls, optional method
-variants/arity, default function, SEND role and optional active mode. Generation
-walks the closed RETURN chain back to SEND, emitting its transforms in cable order
-as the final argument: `.chunk(4, x => x.ply("2").rev())`. Nested loop modules
-recursively emit their own callbacks. Incomplete/empty loops use the preset;
-JUX still uses RIGHT. Function outputs stay local, without fan-out declarations.
-CODE separators protect line comments from swallowing following calls or closers.
-No app-only playback adapter is introduced.
+Catalog `functionLoop` owns method, scalar controls, preset, SEND role and active
+mode. #243 replaces #135's chain-only restriction with an owner-local acyclic
+pattern graph. SEND may fan out through catalog transforms, nested function loops
+and MIX **Stack**; the single owning RETURN receives its result. Generation walks
+all connected inputs in catalog order. `superimpose` keeps the original itself;
+`x => stack(x.fast(2), x.rev())` adds both body branches without deduplication.
 
-The reader never evaluates callbacks. A synchronous arrow with one identifier
-parameter and a receiver chain on that identifier can project into SEND/RETURN.
-All readable calls become modules. If a call is unsupported, the whole suffix of
-that lambda becomes one exact CODE in that loop; an independently readable outer
-loop stays visible around an inner CODE fallback. The original parameter is
-saved as optional `functionParameter` so opaque references keep their meaning.
-An identity lambda, a block/async callback, or a body not rooted in its parameter
-stays whole-call CODE. Unknown function identifiers and unsupported arity/ranges
-also stay whole-call CODE. `rev` is the new modules' empty preset; the four existing
-JUX forms still read as RIGHT presets without loop members. Numeric `.ply(2)`
-reads as RATCHET's text value `2`; new generation quotes its mini-notation.
+The bounded reader grammar is synchronous, one identifier parameter, one
+expression body. Its pattern roots are that parameter or an expression-local
+binding. Bodies combine supported receiver transforms, `stack(a,b)` / `a.stack(b)`
+and nested supported callbacks. Sharing uses only a single-argument expression
+application `(shared => stack(shared, shared.rev()))(x.fast(2))`: evaluate the
+bound value once per callback, then reference it locally. It is not an arbitrary
+JavaScript evaluator or support for block callbacks. Scalar control arguments and
+existing CV adapters retain their earlier restrictions.
 
-Bindings keep the top-level scope, plus optional `loop: number[]` locating each
-containing call's final lambda, and local `calls` inside that body. Exact source
-snapshots independently verify these addresses, controls and graph semantics.
-External changes restore nested identities only when the complete enclosing
-lambda matches; ambiguous changes auto-place. Source-aware scalar edits carry
-fresh descriptors while retaining IDs, comments and lambda identifiers. Source
-owned loop wiring changes convert the code on edit, with Undo; generated racks support normal connection, replacement, deletion and undo.
+Global/immutable pattern captures and other-owner parameter captures are not
+projected as pattern wiring. New source constructors, OSC/SMPL, modulation
+utilities, Voices MIX, OUT, wrong-owner RETURN, pattern edges crossing scopes and
+cycles remain invalid locally. Existing CV attachments remain distinct inputs.
+Unresolved captures/computed/spread/shadowed forms stay exact CODE, without
+execution to discover wiring. An unsupported receiver suffix stays exact CODE
+with its original identifiers; an unprojectable branched body stays whole-call
+CODE. Existing saved CODE stays CODE until explicit conversion. Async, blocks,
+multiple/default/rest/destructured parameters and arbitrary function identifiers
+are not adopted. Existing JUX presets and empty-loop presets remain unchanged.
 
-Graph validation permits one chain per loop, nested loops and attached CV. It
-rejects sources, modulation utilities, MIX, OUT, branches, shared members, named
-function outputs, wrong-owner RETURN and recursive containment. Broken chains
-remain saved and do not sound in place of the preset. TIME LENS must be in WINDOW
-before its loop can be connected; a connected loop prevents an incompatible mode
-switch. This does not change ordinary audio/modulation cycle rejection.
+A shared local transform is emitted once with an expression-local identifier;
+never as a top-level `const`. Names are unique within their owner. SEND itself
+cannot be named. Nested owners retain independent parameters and sharing. An
+incomplete RETURN or any connected arm that does not trace to SEND uses the
+preset, while all disconnected modules/cables/inactive controls remain saved.
+Unconnected Stack sockets are omitted, not invented branches. A complete
+nonempty bypassed chain still writes `x => x`.
 
-The [acceptance record](function-loops-verification.md) separates exact-source,
-saved-state, event, browser and PCM evidence.
+Bindings retain `loop` and static `path` addresses. Local binding descent uses
+`{call:0, argument:"value"}` / `"binding"` for the applied value/body; other steps
+retain numeric arguments, `receiver` and callback `body`. Source-aware scalar
+edits splice only their proven literals and keep comments/parameters. Parameter
+renames in source reparse in their lexical scope. Imported local rewiring uses
+the existing explicit code-conversion/Undo boundary. Source snapshots and full
+independent projection still validate every saved path; an ordinal is not proof
+of identity after an ambiguous callback edit.
 
-A closed nonempty chain whose controls all bypass their calls writes `x => x`,
-preserving identity instead of selecting the empty-loop preset.
-
-Effect order is planned independently for the main voice and each closed function
-body. SEND is the local receiver boundary, not an audio feedback connection;
-RETURN paths are not merged with the outer effect path. An inner `.FX(...)`
-keeps both its lambda `loop` path and argument `fx` address. Native imported
-setters retain their execution choice. Incomplete function chains contribute no
-sounding effect stages or audible-chain note.
+Effect order is planned separately for each complete callback graph, across all
+branches. SEND is a receiver boundary; its effects do not merge into the outer
+voice path. Native setters and explicit FX retain their ownership. Local Stack
+uses the same conservative opaque-CODE routing boundary as global Stack, so a
+hidden route is never overwritten. Playback/evaluation stays behind the engine
+adapter. See [#243 contract and proof](callback-branches.md); the historical
+[#135 acceptance](function-loops-verification.md) remains dated chain evidence.
 
 ## Multi-input and cross-voice routing (#136)
 

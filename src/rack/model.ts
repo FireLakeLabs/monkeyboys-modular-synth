@@ -1,3 +1,5 @@
+import { parse } from 'acorn'
+import { usesParameter } from '../reader/syntax'
 import { isStack } from '../modules/composition'
 import { controlEnabled } from '../modules/bindings'
 import { effectRank } from '../modules/effects'
@@ -628,6 +630,23 @@ export function duplicateModule(patch: Patch, id: string): Patch {
 }
 
 export function renameOutput(patch: Patch, key: string, name: string): Patch {
+  const members = functionMembers(graph(patch))
+  const owner = members.get(key.split(':')[0] ?? '')
+  const previous = patch.names[key]
+  if (owner && previous !== name) {
+    for (const module of patch.modules) {
+      if (module.type !== 'code' || typeof module.values['text'] !== 'string') continue
+      let scope = members.get(module.id)
+      while (scope && scope !== owner) scope = members.get(scope)
+      if (scope !== owner) continue
+      const text = module.values['text'].trimStart()
+      const ast = parse(text.startsWith('.') ? `silence${text}\n` : `(${text}\n)`, {
+        ecmaVersion: 'latest',
+      })
+      if ((previous && usesParameter(ast, previous)) || usesParameter(ast, name))
+        throw new Error('Rename identifiers in CODE explicitly before renaming this local output')
+    }
+  }
   return validateRack({ ...patch, names: { ...patch.names, [key]: name } })
 }
 
