@@ -928,6 +928,11 @@ function project(
         throw new Error('Local reference aliases stay CODE')
       patch.names[`${bound.module.id}:${bound.jack}`] = local.parameter
       upstream = expression(body, undefined, new Map([...locals, [local.parameter, bound]]))
+      if (
+        (upstream.module !== bound.module || upstream.jack !== bound.jack) &&
+        !patch.cables.some((c) => c.from.module === bound.module.id && c.from.jack === bound.jack)
+      )
+        throw new Error('Opaque-only or unused local bindings stay CODE')
     }
     if (!upstream && root.type === 'Identifier') {
       upstream = locals?.get(root.name) ?? (!locals ? resolve(root.name) : undefined)

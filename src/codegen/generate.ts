@@ -438,6 +438,8 @@ export function generateDocument(
       const references = new Map<string, CodeExpression>()
       // Avoid capturing opaque suffix identifiers when introducing local names.
       const localUsed = new Set([parameter, ...used])
+      for (const [key, name] of Object.entries(patch.names))
+        if (localMembers.get(key.split(':')[0] ?? '') === node.module.id) localUsed.add(name)
       for (const child of nodes.values()) {
         if (child.spec.id === 'code')
           for (const token of tokenizer(string(child, 'text'), { ecmaVersion: 'latest' }))

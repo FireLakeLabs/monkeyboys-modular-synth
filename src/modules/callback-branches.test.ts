@@ -285,3 +285,49 @@ it.each([
     expect(events(sourceBody(generated))).toEqual(events(`$: ${input}${tail}`))
   },
 )
+it.each([
+  '.jux(x => (a => x.off(.25, y => stack(y, a)))(x.fast(2)))',
+  '.jux(x => (a => x.add(a))(x.fast(2)))',
+])('retains an opaque-only local binding through explicit conversion: %s', async (tail) => {
+  const { makeRackEditable } = await import('../workspace/document')
+  const source = `$: ${base}${tail}\n`
+  const doc = saveLayout(read(source))
+  const converted = makeRackEditable(doc)
+  expect(sourceBody(converted.source)).toContain(tail)
+  expect(events(sourceBody(converted.source))).toEqual(events(source))
+  expect(read(converted.source).patch).toEqual(converted.patch)
+})
+it('clears exited local names on owner deletion/unplug and restores them with Undo', async () => {
+  const { createDocumentHistory } = await import('../workspace/history')
+  const source = `const shared=note("c4").s("sine");\n$: shared\n$: ${base}.jux(p=>(shared=>stack(shared,shared.rev()))(p.fast(2)))\n`
+  const before = saveLayout(read(source))
+  const local = Object.keys(before.patch.names).find((key) => key.startsWith('clock'))
+  if (!local) throw new Error('Missing local binding')
+  const deleted = removeModule(before.patch, 'jux1')
+  expect(deleted.names[local]).toBeUndefined()
+  expect(read(generate(deleted)).patch).toEqual(deleted)
+  let unplugged = before.patch
+  for (const c of before.patch.cables.filter(
+    (c) =>
+      (c.from.module === 'jux1' && c.from.jack === 'send') ||
+      (c.to.module === 'jux1' && c.to.jack === 'return'),
+  ))
+    unplugged = removeCable(unplugged, c.id)
+  expect(unplugged.names[local]).toBeUndefined()
+  expect(read(generate(unplugged)).patch).toEqual(unplugged)
+  const history = createDocumentHistory(before)
+  history.accept(fromPatch(deleted))
+  expect(history.step('undo')).toEqual(before)
+})
+it('keeps explicit local names distinct from later generated shared names', async () => {
+  const { renameOutput } = await import('../rack/model')
+  let p = read(`$: ${base}.jux(x=>stack(x.fast(2),x.rev(),x.iter(3)))\n`).patch
+  p = connect(p, { module: 'clock1', jack: 'out' }, { module: 'rev1', jack: 'in' }, true)
+  p = connect(p, { module: 'rev1', jack: 'out' }, { module: 'iter1', jack: 'in' }, true)
+  p = renameOutput(p, 'rev1:out', 'mb_clock1')
+  const source = sourceBody(generate(p))
+  expect(events(source)).toEqual(
+    events(`$: ${base}.jux(x=>(fast=>stack(fast,fast.rev(),fast.rev().iter(3)))(x.fast(2)))`),
+  )
+  expect(read(generate(p)).patch).toEqual(p)
+})

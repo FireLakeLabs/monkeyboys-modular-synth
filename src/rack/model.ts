@@ -184,18 +184,38 @@ export function placeModule(
   })
 }
 
+/** A callback name cannot become a global declaration when its owner is unplugged/deleted. */
+function withoutExitedLocalNames(before: Patch, next: Patch): Patch {
+  const nodes = graph(next)
+  if (!Object.keys(next.names).length) return next
+  const previous = functionMembers(graph(before))
+  const current = functionMembers(nodes)
+  return {
+    ...next,
+    names: Object.fromEntries(
+      Object.entries(next.names).filter(([key]) => {
+        const id = key.split(':')[0] ?? ''
+        const owner = previous.get(id)
+        return !owner || current.get(id) === owner
+      }),
+    ),
+  }
+}
+
 export function removeModule(patch: Patch, id: string): Patch {
   if (patch.modules.find((m) => m.id === id)?.type === 'out')
     throw new Error('OUT cannot be deleted while the rack is open')
-  return validateRack({
-    ...patch,
-    modules: patch.modules.filter((m) => m.id !== id),
-    cables: patch.cables.filter((c) => c.from.module !== id && c.to.module !== id),
-    names: Object.fromEntries(
-      Object.entries(patch.names).filter(([key]) => !key.startsWith(`${id}:`)),
-    ),
-    rows: rackRows(patch),
-  })
+  return validateRack(
+    withoutExitedLocalNames(patch, {
+      ...patch,
+      modules: patch.modules.filter((m) => m.id !== id),
+      cables: patch.cables.filter((c) => c.from.module !== id && c.to.module !== id),
+      names: Object.fromEntries(
+        Object.entries(patch.names).filter(([key]) => !key.startsWith(`${id}:`)),
+      ),
+      rows: rackRows(patch),
+    }),
+  )
 }
 
 /** Routing activity is independent of whether omitted controls own any source bytes. */
@@ -292,7 +312,9 @@ export function sequenceText(module: PlacedModule, steps: readonly string[]): st
 }
 
 export function removeCable(patch: Patch, id: string): Patch {
-  return validateRack({ ...patch, cables: patch.cables.filter((c) => c.id !== id) })
+  return validateRack(
+    withoutExitedLocalNames(patch, { ...patch, cables: patch.cables.filter((c) => c.id !== id) }),
+  )
 }
 
 export function connect(
@@ -331,7 +353,7 @@ export function connect(
     const c = next.cables.find((item) => item.to.module === id && item.to.jack === 'in')
     return c ? upstream(c.from.module) : undefined
   }
-  graph(next) // Reject cycles before walking passthroughs.
+  next = withoutExitedLocalNames(patch, next) // Reject cycles before walking passthroughs.
   const lfo = upstream(from.module)
   if (lfo)
     next = {

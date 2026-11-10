@@ -890,3 +890,11 @@ setup/body/order and bind only proven call arguments; recognizing custom `.o`
 never grants generated routing ownership. Pattern/computed arguments remain
 expressions, and saved CODE retains the explicit-conversion contract. Proposed
 discovery/identity extensions are research, not a new production adapter.
+
+Local bindings used only through opaque CODE, nested captures, or not used by the
+result stay whole-call CODE so conversion cannot discard their construction or
+leave an unbound identifier. A name whose output leaves its owning callback after
+delete/unplug/repatch is cleared instead of promoted to a global declaration.
+Names on still-local incomplete graphs remain; Undo restores the complete former
+named graph. Automatic local names reserve all explicit names in that owner before
+traversal, preventing a later explicit name from shadowing an earlier shared value.

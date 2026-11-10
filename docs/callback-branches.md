@@ -168,3 +168,23 @@ build. The existing Vite chunk-size warning remains. The 34-case branch suite
 includes both direct rack builds; no production behavior changed for the screenshot
 readiness or explicit CLOCK fixture setup. Bounded review and the final complete
 local/hosted browser gates remain pending.
+
+Local bindings used only through opaque CODE, nested captures, or not used by the
+result stay whole-call CODE so conversion cannot discard their construction or
+leave an unbound identifier. A name whose output leaves its owning callback after
+delete/unplug/repatch is cleared instead of promoted to a global declaration.
+Names on still-local incomplete graphs remain; Undo restores the complete former
+named graph. Automatic local names reserve all explicit names in that owner before
+traversal, preventing a later explicit name from shadowing an earlier shared value.
+
+## Review-fix verification
+
+Opus round 1 found two ownership defects and a name-shadowing sound defect. All
+four supplied cases failed before scoped fixes; 38 branch cases and 151 affected
+module/rack/document cases then passed. `npm run check` passed **2,676 cases / 65
+files and 59 guardrails**. The refreshed browser command completed
+`RESULT passed=4 failed=0 exit=0`, including native owner Delete/Undo against a
+colliding global/local name, prior #135 runtime checks, all six original/regenerated
+PCM/event pairs and current screenshots. [Review ledger](evidence/callback-review.md)
+records the decisions and pending bounded re-check. No unrelated feature or
+process change was adopted.

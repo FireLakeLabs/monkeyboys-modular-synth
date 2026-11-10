@@ -108,6 +108,31 @@ test('callback branches support native local patching, nested selection, edits, 
     { cartridges: _b, ...old } = accepted.patch
   expect(rack).toEqual(old)
   await page.evaluate(async () => (await import('/scripts/rack-feel-check.mjs')).inspectCables())
+  // Deleting an owner cannot promote its local name into a colliding global declaration.
+  await page.evaluate(async () => {
+    const { read } = await import('/src/reader/read.ts')
+    const { generate } = await import('/src/codegen/generate.ts')
+    await (
+      await import('/scripts/rack-feel-check.mjs')
+    ).load(
+      generate(
+        read(
+          'const shared=note("c4").s("sine");\n$: shared\n$: note("c3 e3").s("sine").jux(p=>(shared=>stack(shared,shared.rev()))(p.fast(2)))\n',
+        ).patch,
+      ),
+    )
+  })
+  await synced(page)
+  const named = await run(page, 'state')
+  await detailPanel(page.locator('[data-module="jux1"]'))
+  await page.getByRole('button', { name: 'Select jux1', exact: true }).click()
+  await page.keyboard.press('Delete')
+  await synced(page)
+  const deleted = await run(page, 'state')
+  expect(deleted.patch.modules.some((m) => m.id === 'jux1')).toBe(false)
+  expect(Object.values(deleted.patch.names).filter((n) => n === 'shared')).toHaveLength(1)
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await expect.poll(() => run(page, 'state')).toEqual(named)
 })
 
 test('local Stack retains function cable geometry in all Hardware looks', async ({

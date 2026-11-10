@@ -545,3 +545,11 @@ disconnected module/cable, name, look and position. Unsupported saved CODE retai
 its owner across this reader expansion. No storage clearing, migration or format
 version bump is needed. [#243 proof](callback-branches.md) separates this claim
 from exact source, real engine events, browser PCM and listening.
+
+Local bindings used only through opaque CODE, nested captures, or not used by the
+result stay whole-call CODE so conversion cannot discard their construction or
+leave an unbound identifier. A name whose output leaves its owning callback after
+delete/unplug/repatch is cleared instead of promoted to a global declaration.
+Names on still-local incomplete graphs remain; Undo restores the complete former
+named graph. Automatic local names reserve all explicit names in that owner before
+traversal, preventing a later explicit name from shadowing an earlier shared value.
