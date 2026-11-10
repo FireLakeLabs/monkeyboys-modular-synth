@@ -1,5 +1,5 @@
 import { beforeAll, expect, it } from 'vitest'
-import { parseSource } from '../reader/syntax'
+import { parseSource, chain } from '../reader/syntax'
 import { read } from '../reader/read'
 import { generate } from './generate'
 import {
@@ -45,6 +45,134 @@ function events(source: string, cycles = 64, routes = false): Event[] {
     `${declarations}\nreturn [${voices.join(',')}].flatMap(p=>p.queryArc(0,${cycles}).filter(h=>h.hasOnset()).map(h=>({begin:h.whole.begin.toFraction(),end:h.whole.end.toFraction(),value:Object.fromEntries(Object.entries(h.value).filter(([k])=>${routes ? 'true' : "k !== 'orbit'"}))}))).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)))`,
   )(...Object.values(runtime))
 }
+
+const twoSections = '$: arrange([1,note("c3").s("sine")],[1,note("e3").s("sine")])\n'
+const stackedSection =
+  '$: arrange([1,stack(note("c3").s("sine"),note("e3").s("sine"))],[1,note("g3").s("sine")])\n'
+it.each([
+  {
+    name: 'first tuple',
+    source: twoSections,
+    pitch: 'c3',
+    target: 'sections',
+    socket: 'in1',
+    cycles: 4,
+    tuples: 2,
+  },
+  {
+    name: 'last tuple',
+    source: twoSections,
+    pitch: 'e3',
+    target: 'sections',
+    socket: 'in2',
+    cycles: 4,
+    tuples: 2,
+  },
+  {
+    name: 'first nested Stack arm',
+    source: stackedSection,
+    pitch: 'c3',
+    target: 'stack',
+    socket: 'in1',
+    cycles: 4,
+    tuples: 2,
+  },
+  {
+    name: 'last nested Stack arm',
+    source: stackedSection,
+    pitch: 'e3',
+    target: 'stack',
+    socket: 'in2',
+    cycles: 4,
+    tuples: 2,
+  },
+  {
+    name: 'nested Voices arms',
+    source: stackedSection,
+    pitch: 'c3',
+    target: 'voices',
+    socket: 'in1',
+    cycles: 4,
+    tuples: 2,
+  },
+  {
+    name: 'inline FX arm',
+    source: '$: arrange([1,note("c3").s("sine").FX(lpf(800).lpq(1))],[1,note("e3").s("sine")])\n',
+    pitch: 'c3',
+    target: 'sections',
+    socket: 'in1',
+    cycles: 4,
+    tuples: 2,
+  },
+  {
+    name: 'NEXT last tuple',
+    source:
+      '$: arrange([1,note("c3").s("sine")],[1,note("d3").s("sine")],[1,note("e3").s("sine")],[1,note("f3").s("sine")],[1,note("g3").s("sine")])\n',
+    pitch: 'g3',
+    target: 'next',
+    socket: 'in1',
+    cycles: 10,
+    tuples: 5,
+  },
+])('terminal CODE comment retains music and source arguments in $name', (item) => {
+  let patch = read(item.source).patch
+  const candidates = patch.modules.filter((m) =>
+    item.target === 'stack' || item.target === 'voices'
+      ? m.type === 'mix' && m.values.mode === 'Stack'
+      : m.type === 'sections',
+  )
+  const target = item.target === 'next' ? candidates[1] : candidates[0]
+  if (!target) throw new Error('Missing intended combiner')
+  if (item.target === 'voices') {
+    patch = setValue(patch, target.id, 'mode', 'Voices')
+    patch = setValue(patch, target.id, 'ch1', 1)
+    patch = setValue(patch, target.id, 'ch2', 1)
+  }
+  const input = patch.cables.find((c) => c.to.module === target.id && c.to.jack === item.socket)
+  if (!input) throw new Error('Missing intended arm')
+  patch = placeModule(patch, 'code', 7)
+  patch = setValue(patch, 'code1', 'text', '.gain(.5) // tail')
+  patch = connect(patch, input.from, { module: 'code1', jack: 'in' })
+  patch = connect(
+    patch,
+    { module: 'code1', jack: 'out' },
+    { module: target.id, jack: item.socket },
+    true,
+  )
+  const source = generate(patch),
+    body = sourceBody(source)
+  let expected = item.source
+  const needle = `note("${item.pitch}").s("sine")`
+  if (item.name === 'inline FX arm')
+    expected = expected.replace('.FX(lpf(800).lpq(1))', '.FX(lpf(800).lpq(1)).gain(.5)')
+  else expected = expected.replace(needle, `${needle}.gain(.5)`)
+  // Full saved identity alone passed even while a comment swallowed a section.
+  expect(read(source).patch).toEqual(patch)
+  expect(events(source, item.cycles)).toEqual(events(expected, item.cycles))
+  const voice = parseSource(body).scopes.find((s) => s.kind === 'voice')
+  const arrange = voice?.calls.find((c) => c.name === 'arrange')
+  expect(arrange?.args).toHaveLength(item.tuples)
+  if (item.target === 'stack' || item.target === 'voices') {
+    const tuple = arrange?.args[0]
+    const expression = tuple?.type === 'ArrayExpression' ? tuple.elements[1] : undefined
+    if (!expression || expression.type === 'SpreadElement')
+      throw new Error('Missing first section expression')
+    expect(chain(expression).calls.find((c) => c.name === 'stack')?.args).toHaveLength(2)
+  }
+  if (item.name === 'first tuple') {
+    expect(events(source, 4).map((e) => [e.begin, e.value.note])).toEqual([
+      ['0', 'c3'],
+      ['1', 'e3'],
+      ['2', 'c3'],
+      ['3', 'e3'],
+    ])
+  }
+  const edited = read(source.replace('arrange([1,', 'arrange([2,'))
+  expect(
+    edited.patch.modules.some((m) => m.type === 'code' && m.values.text === '.gain(.5) // tail'),
+  ).toBe(true)
+  expect(read(saveLayout(edited).source).patch).toEqual(edited.patch)
+})
 
 it.each([
   '$: arrange([4,note("<c2 eb2 g2>")],[2,note("<d3 f3 a3>")]).s("sine")\n',

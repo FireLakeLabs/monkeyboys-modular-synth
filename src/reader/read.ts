@@ -779,6 +779,25 @@ function project(
                 ))
                   return []
                 const text = module.values['text']
+                if (!receiver && text.trimStart().startsWith('.')) {
+                  try {
+                    const prefix = 'silence'
+                    const ast = parseExpressionAt(`${prefix}${text}\n`, 0, {
+                      ecmaVersion: 'latest',
+                    })
+                    const start = end - (ast.end - prefix.length),
+                      stop = start + text.length
+                    if (
+                      start >= begin &&
+                      stop > end &&
+                      source.slice(begin, start).trim() === '' &&
+                      source.slice(start, stop) === text
+                    )
+                      return [{ indices, text, span: { start, end: stop } }]
+                  } catch {
+                    /* Unsupported stored syntax cannot acquire ownership. */
+                  }
+                }
                 if (receiver && !text.trimStart().startsWith('.')) {
                   try {
                     // The stored CODE expression proves trivia offsets inside its wrapper.
@@ -2364,6 +2383,12 @@ function restore(
   currentScopes: ParsedScope[],
 ): void {
   if (saved.railHp !== undefined) patch.railHp = saved.railHp
+  const sectionSpec = getModuleSpec('sections'),
+    sections = sectionSpec.sections
+  if (!sections) throw new Error('Missing section catalog')
+  const nextJack = sections.next
+  const continuation = (rack: Pick<Patch, 'cables'>, id: string) =>
+    rack.cables.some((c) => c.from.module === id && c.to.jack === nextJack)
   const rename = new Map<string, string>()
   const claimed = new Set<string>()
   // CV identity is constrained by the already matched target, including shared ENV.
@@ -2376,6 +2401,8 @@ function restore(
     const candidates = saved.modules.filter(
       (old) =>
         old.type === module.type &&
+        (module.type !== 'sections' ||
+          continuation(patch, module.id) === continuation(saved, old.id)) &&
         (!claimed.has(old.id) ||
           ['env', 'lfo'].includes(module.type) ||
           getModuleSpec(module.type).operatorTarget !== undefined) &&
@@ -2560,38 +2587,98 @@ function restore(
       return [`${rename.get(id ?? '') ?? id}:${jack}`, name]
     }),
   )
-  // An exactly matched native tuple list proves logical order. Map its dense
-  // projected sockets back to the saved physical order, including repeated refs.
-  for (const module of patch.modules) {
-    const spec = getModuleSpec(module.type),
-      sections = spec.sections
-    if (!sections) continue
-    const old = saved.modules.find((m) => m.id === module.id)
-    if (!old) continue
-    const slots = sectionOrder(spec, old).filter((slot) =>
-      saved.cables.some((c) => c.to.module === old.id && c.to.jack === slot.jack),
+  // One arrange call owns the entire NEXT chain, regardless of panel boundaries.
+  // Only an exactly matched head may redistribute its proven tuples and spans.
+  function sectionChain(rack: Pick<Patch, 'modules' | 'cables'>, head: PlacedModule) {
+    const panels: PlacedModule[] = []
+    let panel: PlacedModule | undefined = head
+    while (panel) {
+      if (panels.includes(panel)) throw new Error('Cyclic section continuation')
+      panels.push(panel)
+      const next = rack.cables.find((c) => c.to.module === panel?.id && c.to.jack === nextJack)
+      panel = next && rack.modules.find((m) => m.id === next.from.module)
+      if (panel && panel.type !== 'sections') throw new Error('Invalid section continuation')
+    }
+    return panels
+  }
+  const heads = patch.modules.filter(
+    (m) => m.type === 'sections' && claimed.has(m.id) && !continuation(patch, m.id),
+  )
+  for (const head of heads) {
+    const old = saved.modules.find((m) => m.id === head.id)
+    const owner = bindings.find((b) => b.module === head.id && b.part === 0)
+    if (!old || !owner) continue
+    const current = sectionChain(patch, head),
+      previous = sectionChain(saved, old),
+      ids = new Set(current.map((m) => m.id))
+    const tuples = current.flatMap((panel) =>
+      sectionOrder(sectionSpec, panel).flatMap((slot) => {
+        const cable = patch.cables.find((c) => c.to.module === panel.id && c.to.jack === slot.jack)
+        const control = sectionSpec.controls.find((c) => c.id === slot.cycles)
+        const span = bindings.find((b) => b.module === panel.id)?.controls[slot.cycles]
+        return cable && control ? [{ cable, value: controlValue(panel, control), span }] : []
+      }),
     )
-    const incoming = sections.inputs.flatMap((slot) =>
-      patch.cables.filter((c) => c.to.module === module.id && c.to.jack === slot.jack),
-    )
-    if (incoming.length !== slots.length) continue
-    const values = { ...old.values },
-      controls = new Map<string, string>()
-    incoming.forEach((cable, index) => {
-      const before = sections.inputs.find((slot) => slot.jack === cable.to.jack),
-        after = slots[index]
-      if (!before || !after) return
-      const duration = spec.controls.find((c) => c.id === before.cycles)
-      if (!duration) throw new Error('Missing section duration control')
-      values[after.cycles] = controlValue(module, duration)
-      controls.set(before.cycles, after.cycles)
-      cable.to.jack = after.jack
-    })
-    module.values = values
-    for (const binding of bindings.filter((b) => b.module === module.id))
-      binding.controls = Object.fromEntries(
-        Object.entries(binding.controls).map(([id, span]) => [controls.get(id) ?? id, span]),
+    let offset = 0
+    const restored = previous.map((panel) => {
+      const slots = sectionOrder(sectionSpec, panel).filter((slot) =>
+        saved.cables.some((c) => c.to.module === panel.id && c.to.jack === slot.jack),
       )
+      const binding = saved.modules
+        .find((m) => m.id === panel.id)
+        ?.bindings.find(
+          (b) =>
+            b.part === offset &&
+            b.role === owner.role &&
+            b.scope === matches.get(owner.scope)?.saved.id &&
+            descriptor([b.loop, b.path, b.calls]) ===
+              descriptor([owner.loop, owner.path, owner.calls]),
+        )
+      const start = offset
+      offset += slots.length
+      return { panel, slots, start, binding }
+    })
+    if (
+      offset !== tuples.length ||
+      restored.some(
+        ({ panel, binding }) =>
+          !binding || patch.modules.some((m) => m.id === panel.id && !ids.has(m.id)),
+      )
+    )
+      continue
+    patch.modules = patch.modules.filter((m) => !ids.has(m.id))
+    patch.cables = patch.cables.filter(
+      (c) => !(ids.has(c.to.module) && c.to.jack === sections.next),
+    )
+    const kept = bindings.filter((b) => !ids.has(b.module))
+    bindings.splice(0, bindings.length, ...kept)
+    for (const { panel, slots, start } of restored) {
+      const values = { ...panel.values },
+        controls: Record<string, Span> = {}
+      slots.forEach((slot, index) => {
+        const tuple = tuples[start + index]
+        if (!tuple) throw new Error('Missing proven section tuple')
+        values[slot.cycles] = tuple.value
+        tuple.cable.to = { module: panel.id, jack: slot.jack }
+        if (tuple.span) controls[slot.cycles] = tuple.span
+      })
+      patch.modules.push({
+        id: panel.id,
+        type: panel.type,
+        row: panel.row,
+        hp: panel.hp,
+        look: panel.look,
+        values,
+      })
+      bindings.push({ ...owner, module: panel.id, part: start, controls })
+    }
+    for (const cable of saved.cables.filter(
+      (c) => previous.some((m) => m.id === c.to.module) && c.to.jack === sections.next,
+    )) {
+      let id = `section-next-${cable.to.module}`
+      while (patch.cables.some((c) => c.id === id)) id += '-'
+      patch.cables.push({ id, from: { ...cable.from }, to: { ...cable.to } })
+    }
   }
   for (const module of patch.modules.filter((module) => module.type === 'mix')) {
     const old = saved.modules.find((item) => item.id === module.id)

@@ -56,6 +56,85 @@ it('splices the physical socket duration after saved ORDER and source trivia edi
 })
 
 it.each([
+  { module: 'sections1', control: 'cycles3', before: '1.125' },
+  { module: 'sections2', control: 'cycles4', before: '0.75' },
+  { module: 'sections2', control: 'cycles2', before: '2.25' },
+])('splices $module / $control across a sparse saved NEXT chain after trivia edits', (item) => {
+  let patch = placeModule(starterPatch(104), 'sections', 1)
+  patch = placeModule(patch, 'sections', 2)
+  for (let i = 1; i <= 3; i++) patch = placeModule(patch, 'seq', i + 2)
+  patch = placeModule(patch, 'osc', 6)
+  patch = setValue(patch, 'sections1', 'cycles3', '1.125')
+  patch = setValue(patch, 'sections2', 'cycles4', '0.75')
+  patch = setValue(patch, 'sections2', 'cycles2', '2.25')
+  patch = setValue(patch, 'sections2', 'order', '4 3 2 1')
+  patch = connect(patch, { module: 'seq1', jack: 'note' }, { module: 'sections1', jack: 'in3' })
+  patch = connect(patch, { module: 'seq2', jack: 'note' }, { module: 'sections2', jack: 'in2' })
+  patch = connect(patch, { module: 'seq3', jack: 'note' }, { module: 'sections2', jack: 'in4' })
+  patch = connect(
+    patch,
+    { module: 'sections2', jack: 'out' },
+    { module: 'sections1', jack: 'next' },
+  )
+  patch = connect(patch, { module: 'sections1', jack: 'out' }, { module: 'osc1', jack: 'note' })
+  patch = connect(patch, { module: 'osc1', jack: 'out' }, { module: 'mix1', jack: 'in1' })
+  const source = generate(patch).replace('arrange(', 'arrange(/*x*/ '),
+    doc = read(source)
+  expect(doc.layout).toBe('restored')
+  expect(doc.patch).toEqual(patch)
+  const next = setValue(doc.patch, item.module, item.control, '3.875'),
+    edited = editDocument(doc, next)
+  expect(sourceBody(edited.source)).toBe(sourceBody(source).replace(`[${item.before},`, '[3.875,'))
+  expect(read(edited.source).patch).toEqual(next)
+  const applied = applyRackEdit(doc, next)
+  expect(applied.converted).toBe(false)
+  expect(applied.document).toEqual(edited)
+  if (item.module === 'sections1') {
+    const saved = saveLayout(doc).source,
+      forged = saved.replace('"part": 1', '"part": 0')
+    expect(forged).not.toBe(saved)
+    expect(read(forged).layout).toBe('invalid')
+    expect(generate(read(forged))).toBe(forged)
+  }
+})
+
+it.each(['empty-head', 'empty-middle'])(
+  'splices across a saved NEXT chain with %s after trivia edits',
+  (kind) => {
+    let patch = starterPatch(104)
+    for (let i = 1; i <= 3; i++) patch = placeModule(patch, 'sections', i)
+    patch = placeModule(patch, 'seq', 4)
+    patch = placeModule(patch, 'osc', 5)
+    for (let i = 2; i <= 3; i++)
+      patch = connect(
+        patch,
+        { module: `sections${i}`, jack: 'out' },
+        { module: `sections${i - 1}`, jack: 'next' },
+      )
+    patch = connect(patch, { module: 'seq1', jack: 'note' }, { module: 'sections3', jack: 'in4' })
+    if (kind === 'empty-middle')
+      patch = connect(patch, { module: 'seq1', jack: 'note' }, { module: 'sections1', jack: 'in2' })
+    if (kind === 'empty-middle') patch.names['seq1:note'] = 'shared'
+    patch = connect(patch, { module: 'sections1', jack: 'out' }, { module: 'osc1', jack: 'note' })
+    patch = connect(patch, { module: 'osc1', jack: 'out' }, { module: 'mix1', jack: 'in1' })
+    const source = generate(patch).replace('arrange(', 'arrange(/*empty panel retained*/ '),
+      doc = read(source)
+    expect(doc.layout).toBe('restored')
+    expect(doc.patch).toEqual(patch)
+    const edited = editDocument(
+      doc,
+      setValue(doc.patch, 'sections3', 'cycles4', '0.987654321098765'),
+    )
+    const before = sourceBody(source),
+      last = before.lastIndexOf('[4,')
+    expect(sourceBody(edited.source)).toBe(
+      before.slice(0, last) + before.slice(last).replace('[4,', '[0.987654321098765,'),
+    )
+    expect(read(edited.source).patch).toEqual(edited.patch)
+  },
+)
+
+it.each([
   '$: arrange([4,note("<c2 eb2 g2>")],[2,note("d3")]).s("sine")\n',
   'const drums=s("bd hh"); const bass=note("<c2 eb2 g2>").s("sawtooth");\n$: arrange([4,drums],[4,stack(drums,bass)],[8,bass])\n',
   'const a=arrange([.5,note("c3")],[1.25,note("d3")]);\n$: stack(a,a.rev()).s("sine")\n',

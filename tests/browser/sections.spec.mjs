@@ -169,6 +169,37 @@ test('SECTIONS creates through native connected placement, patches before OSC an
   await page.screenshot({ path: info.outputPath('nested-source-and-order.png') })
 })
 
+test('SECTIONS sparse NEXT duration edits retain source trivia and native history', async ({
+  page,
+}, info) => {
+  await page.goto('/')
+  await page.locator('.cm-content').waitFor()
+  await run(page, 'loadSparse')
+  await synced(page)
+  const edits = []
+  for (const [id, control, before, after] of [
+    ['sections1', 'CYCLES 3', '1.125', '3.875'],
+    ['sections2', 'CYCLES 4', '0.75', '0.123456789012345'],
+    ['sections2', 'CYCLES 2', '2.25', '0.987654321098765'],
+  ]) {
+    const state = await run(page, 'state'),
+      panel = page.locator(`[data-module="${id}"]`)
+    await detailPanel(panel)
+    await field(panel, control, after)
+    await synced(page)
+    const edited = await run(page, 'state')
+    edits.push({ id, control, before: state, after: edited })
+    expect(edited.body).toBe(state.body.replace(`[${before},`, `[${after},`))
+    expect(edited.identity && edited.sourceExact).toBe(true)
+    await page.getByRole('button', { name: 'Undo', exact: true }).click()
+    await expect.poll(() => run(page, 'state')).toEqual(state)
+    await page.getByRole('button', { name: 'Redo', exact: true }).click()
+    await expect.poll(() => run(page, 'state')).toEqual(edited)
+  }
+  await page.screenshot({ path: info.outputPath('sparse-next.png') })
+  await writeFile(info.outputPath('sparse-next-edits.json'), JSON.stringify(edits, null, 2) + '\n')
+})
+
 test('SECTIONS original and regenerated events, native tails, sharing, custom routes, live edits and bus cleanup', async ({
   page,
 }, info) => {

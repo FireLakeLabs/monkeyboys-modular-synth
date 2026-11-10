@@ -6,7 +6,7 @@ import { generate } from '../src/codegen/generate.ts'
 import { sourceBody, saveLayout, makeRackEditable } from '../src/workspace/document.ts'
 import { load } from './rack-feel-check.mjs'
 import { editorSource } from './editor-browser.mjs'
-import { starterPatch, placeModule, connect } from '../src/rack/model.ts'
+import { starterPatch, placeModule, connect, setValue } from '../src/rack/model.ts'
 import { pcm } from './callback-branches-check.mjs'
 export { pcm }
 const pause = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -52,6 +52,34 @@ export async function loadStarter() {
   patch = connect(patch, { module: 'seq1', jack: 'note' }, { module: 'osc1', jack: 'note' })
   patch = connect(patch, { module: 'osc1', jack: 'out' }, { module: 'mix1', jack: 'in1' })
   await load(generate(patch))
+  return state()
+}
+export async function loadSparse() {
+  let patch = starterPatch(104)
+  for (let i = 1; i <= 2; i++) patch = placeModule(patch, 'sections', i)
+  for (let i = 1; i <= 3; i++) patch = placeModule(patch, 'seq', i + 2)
+  patch = placeModule(patch, 'osc', 6)
+  for (const [id, control, value] of [
+    ['sections1', 'cycles3', '1.125'],
+    ['sections2', 'cycles4', '0.75'],
+    ['sections2', 'cycles2', '2.25'],
+    ['sections2', 'order', '4 3 2 1'],
+  ])
+    patch = setValue(patch, id, control, value)
+  for (const [seq, section, jack] of [
+    ['seq1', 'sections1', 'in3'],
+    ['seq2', 'sections2', 'in2'],
+    ['seq3', 'sections2', 'in4'],
+  ])
+    patch = connect(patch, { module: seq, jack: 'note' }, { module: section, jack })
+  patch = connect(
+    patch,
+    { module: 'sections2', jack: 'out' },
+    { module: 'sections1', jack: 'next' },
+  )
+  patch = connect(patch, { module: 'sections1', jack: 'out' }, { module: 'osc1', jack: 'note' })
+  patch = connect(patch, { module: 'osc1', jack: 'out' }, { module: 'mix1', jack: 'in1' })
+  await load(generate(patch).replace('arrange(', 'arrange(/* sparse NEXT */ '))
   return state()
 }
 export function state() {
@@ -123,6 +151,18 @@ export async function runtimeProof() {
   capture()
   const cases = [
     {
+      name: 'terminal-comment-section',
+      expression: `arrange([1,${voice('c3')}.gain(.5) // tail\n],[1,${voice('e3')}])`,
+      comment: true,
+      wait: 650,
+    },
+    {
+      name: 'terminal-comment-nested-Stack',
+      expression: `arrange([1,stack(${voice('c3')}.gain(.5) // tail\n,${voice('e3')})],[1,${voice('g3')}])`,
+      comment: true,
+      wait: 650,
+    },
+    {
       name: 'local-phase-nested-next',
       expression:
         'arrange([.5,note("<c3 e3 g3>")],[1.25,stack(note("d3"),note("f3"))],[1,note("e3")],[.75,note("f3")],[1.5,arrange([.5,note("<g3 a3 b3>")],[1,note("c4")])]).s("sine").gain(.05)',
@@ -180,8 +220,19 @@ export async function runtimeProof() {
         saved = saveLayout(doc)
       assert(sourceBody(saved.source) === source, 'Exact source')
       assert(equal(read(saved.source).patch, doc.patch), 'Full saved identity')
-      const generated = item.custom ? makeRackEditable(doc).source : generate(doc.patch),
+      const patch = item.comment
+        ? {
+            ...doc.patch,
+            modules: doc.patch.modules.map((m) =>
+              m.type === 'vca' && m.values.level === 0.5
+                ? { ...m, type: 'code', look: 'bare', values: { text: '.gain(.5) // tail' } }
+                : m,
+            ),
+          }
+        : doc.patch
+      const generated = item.custom ? makeRackEditable(doc).source : generate(patch),
         samples = []
+      if (item.comment) assert(equal(read(generated).patch, patch), 'Saved comment CODE identity')
       for (const [form, code] of [
         ['original', source],
         ['regenerated', generated],

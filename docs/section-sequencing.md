@@ -110,9 +110,10 @@ against current inputs; their original research counts remain explicitly dated.
 ## Current evidence and bounded limits
 
 The refreshed focused runtime proof is [runtime.json](evidence/section-sequencing/runtime.json).
-Seven original/regenerated 32-cycle event pairs retain every value and begin/end:
-43, 128, 128, 128, 256, 192 and 64 onsets respectively. All fourteen PCM windows
-are nonzero. Named opaque reuse constructs its helper once and retains orbit 7;
+Nine original/regenerated 32-cycle event pairs retain every value and begin/end:
+32 and 48 terminal-comment section/Stack onsets, followed by 43, 128, 128, 128,
+256, 192 and 64 onsets respectively. All eighteen PCM windows are nonzero. The
+two added pairs extend runtime coverage; library/corpus denominators are unchanged. Named opaque reuse constructs its helper once and retains orbit 7;
 custom separate branches retain 7/8; native fan-out uses 1/2. The outer Voices
 mask only schedules events in its playing song cycles. Actual native delay/reverb
 objects and orbit count 1 persist across .75/1/.5 live duration edits, with nonzero
@@ -120,7 +121,7 @@ PCM; they do not accumulate.
 
 [Paired Stop diagnostics](evidence/section-sequencing/runtime.json) record original
 and regenerated source independently. At 700ms after Stop, 600ms windows have RMS
-about .00021; at 3s they are about 3.4e-7 (49,152 samples per window). The silence
+about .00020–.00021; at 3s they are about 3.2e-7–3.4e-7 (49,152 samples per window). The silence
 threshold stays .0001. Scheduler running is false immediately after Stop, trigger
 counts stay unchanged, and the same single bus remains during natural decay.
 A reset replacement has zero RMS and zero orbit entries. This follows existing
@@ -182,3 +183,32 @@ inventory was independently regenerated to a second path with byte-identical
 output, the context default check and 90-file audit passed, and 308 relative links
 in changed documents resolved. Main predecessor checks/browser have now succeeded
 per parent verification; no predecessor main result remains pending.
+
+## Review corrections
+
+Round 1 found a sparse NEXT source-edit refusal: a saved three-tuple sequence
+could span two sparsely populated panels while the reader projected one dense
+panel. Exact-call restoration now maps the entire ordered NEXT chain, including
+empty panels, instead of requiring equal per-panel tuple counts. Three exact
+physical-socket edits failed before the fix. Five sparse/empty-panel cases now
+pass with comments and long decimals retained; forged continuation offsets remain
+invalid. Native panel editing and history passed separately in the browser, retaining
+each exact literal and source comment without conversion.
+
+Parent review also demonstrated silent musical loss from a terminal CODE line
+comment at a section or nested Stack boundary. Saved identity alone passed while
+the second musical input was swallowed. Seven regressions failed before a shared
+lexical separator fix: first/last section and Stack inputs, nested Voices, inline
+FX and NEXT. The minimal native-control fixture now emits c3,e3,c3,e3 at cycles
+0,1,2,3. Its CODE suffix retains ownership across an external duration edit, with
+ordinary explicit conversion offers preserved. The guard checks actual terminal
+comments rather than the spelling // inside strings. Normal generated formatting
+and existing bundled projections remain unchanged.
+
+Current focused section coverage is 70/70 and the complete deterministic gate
+passes 2,759/67 plus 59 guardrails. See the [bounded review ledger](evidence/section-review.md)
+for independent versus supplied evidence and the outstanding round/gates. The
+refreshed section/MIX/callback browser run completed **RESULT passed=9 failed=0
+exit=0**. All four actual look captures plus native create/source/order captures
+were inspected. The sparse NEXT native case also passed alone with its exact
+before/after source and saved state recorded in [sparse-next-edits.json](evidence/section-sequencing/sparse-next-edits.json).

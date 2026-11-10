@@ -61,7 +61,7 @@
       },
       {
         "path": "src/codegen/generate.ts",
-        "sha256": "54863bb450c8afa66a21bb3aef5e586f377f7a75478517c8ba9a423cdea3c63a"
+        "sha256": "b61e3b43b8d7a906223839d22a85ec79acad0847f17ac2d2e4ce31218aaa1a4c"
       },
       {
         "path": "src/codegen/graph.ts",
@@ -69,7 +69,7 @@
       },
       {
         "path": "src/codegen/layout.ts",
-        "sha256": "3f4df35e81a3d6e45b1b487c3d9a43b3e03c6d0d56e6295ea875e10185428d74"
+        "sha256": "8a67d47bf2caa32f7342552c7638090a67d91c2ed194b54fb07cfed6a12b4c2c"
       },
       {
         "path": "src/codegen/panels.test.ts",
@@ -85,7 +85,7 @@
       },
       {
         "path": "src/codegen/sections.test.ts",
-        "sha256": "c15b65f95acc4cf22fa3fe30d1358d7917591230f3abeb4bd15172b40575017b"
+        "sha256": "22b60f35ca09dba8c2e822f8145d737c24422ad53e957240ddf971def4f03efb"
       },
       {
         "path": "src/modules/catalog.ts",
@@ -169,11 +169,11 @@
       },
       {
         "path": "src/reader/read.ts",
-        "sha256": "390d117c63f4e1a632354d943e2fc7697a6f6f2cbf09dfcc7a0f17f5602b0094"
+        "sha256": "5af7a6de35c5cd7c769792930e21a1b62a47e99c5029bf708311b1f48f59c084"
       },
       {
         "path": "src/reader/sections.test.ts",
-        "sha256": "ded8c7198251171ead15b81ed267149520a479c94b8cfbb6cee1d95b2b1b37bb"
+        "sha256": "64233f69bd87f89d712b553b99d6c4c79fbe3756787285bd59533a292951b21b"
       },
       {
         "path": "src/reader/syntax.ts",

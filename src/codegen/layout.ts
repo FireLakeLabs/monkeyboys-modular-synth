@@ -265,6 +265,16 @@ export function bindScope(
         .filter(
           (candidate) =>
             (candidate.start - 1 <= owner.start && candidate.end - 1 >= owner.end) ||
+            // A suffix CODE owner's final comment lies outside the native AST span.
+            (module.type === 'code' &&
+              candidate.start - 1 <= owner.start &&
+              candidate.end - 1 > owner.start &&
+              candidate.end - 1 <= owner.end &&
+              [
+                ...tokenizer(expression.text.slice(candidate.end - 1, owner.end), {
+                  ecmaVersion: 'latest',
+                }),
+              ].length === 0) ||
             // Source CODE is wrapped to protect expression and terminal-comment syntax.
             // Its native tuple scope excludes those parentheses, but still owns CODE.
             (module.type === 'code' &&

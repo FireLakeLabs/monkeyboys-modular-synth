@@ -3,6 +3,1828 @@
   "node": "v24.22.2",
   "results": [
     {
+      "name": "terminal-comment-section",
+      "sourceExact": true,
+      "savedIdentity": true,
+      "samples": [
+        {
+          "form": "original",
+          "source": "setcpm(240/4)\n$: arrange([1,note(\"c3\").s(\"sine\").gain(.05).release(.03).gain(.5) // tail\n],[1,note(\"e3\").s(\"sine\").gain(.05).release(.03)])\n",
+          "events": [
+            {
+              "begin": "0",
+              "end": "1",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "1",
+              "end": "2",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "10",
+              "end": "11",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "11",
+              "end": "12",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "12",
+              "end": "13",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "13",
+              "end": "14",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "14",
+              "end": "15",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "15",
+              "end": "16",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "16",
+              "end": "17",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "17",
+              "end": "18",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "18",
+              "end": "19",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "19",
+              "end": "20",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "2",
+              "end": "3",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "20",
+              "end": "21",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "21",
+              "end": "22",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "22",
+              "end": "23",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "23",
+              "end": "24",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "24",
+              "end": "25",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "25",
+              "end": "26",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "26",
+              "end": "27",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "27",
+              "end": "28",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "28",
+              "end": "29",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "29",
+              "end": "30",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "3",
+              "end": "4",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "30",
+              "end": "31",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "31",
+              "end": "32",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "4",
+              "end": "5",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "5",
+              "end": "6",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "6",
+              "end": "7",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "7",
+              "end": "8",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "8",
+              "end": "9",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "9",
+              "end": "10",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            }
+          ],
+          "pcm": {
+            "rms": 0.04668521075273502,
+            "samples": 49152,
+            "peak": 0.07500000298023224
+          },
+          "orbits": ["1"]
+        },
+        {
+          "form": "regenerated",
+          "source": "setcpm(240/4)\n\n$: arrange([1, note(\"c3\")\n  .s(\"sine\")\n  .gain(0.05)\n  .release(.03)\n  .gain(.5) // tail\n], [1, note(\"e3\")\n  .s(\"sine\")\n  .gain(0.05)\n  .release(.03)])\n\n",
+          "events": [
+            {
+              "begin": "0",
+              "end": "1",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "1",
+              "end": "2",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "10",
+              "end": "11",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "11",
+              "end": "12",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "12",
+              "end": "13",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "13",
+              "end": "14",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "14",
+              "end": "15",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "15",
+              "end": "16",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "16",
+              "end": "17",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "17",
+              "end": "18",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "18",
+              "end": "19",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "19",
+              "end": "20",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "2",
+              "end": "3",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "20",
+              "end": "21",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "21",
+              "end": "22",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "22",
+              "end": "23",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "23",
+              "end": "24",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "24",
+              "end": "25",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "25",
+              "end": "26",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "26",
+              "end": "27",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "27",
+              "end": "28",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "28",
+              "end": "29",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "29",
+              "end": "30",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "3",
+              "end": "4",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "30",
+              "end": "31",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "31",
+              "end": "32",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "4",
+              "end": "5",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "5",
+              "end": "6",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "6",
+              "end": "7",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "7",
+              "end": "8",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "8",
+              "end": "9",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "9",
+              "end": "10",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            }
+          ],
+          "pcm": {
+            "rms": 0.04670022587125816,
+            "samples": 49152,
+            "peak": 0.07500000298023224
+          },
+          "orbits": ["1"]
+        }
+      ]
+    },
+    {
+      "name": "terminal-comment-nested-Stack",
+      "sourceExact": true,
+      "savedIdentity": true,
+      "samples": [
+        {
+          "form": "original",
+          "source": "setcpm(240/4)\n$: arrange([1,stack(note(\"c3\").s(\"sine\").gain(.05).release(.03).gain(.5) // tail\n,note(\"e3\").s(\"sine\").gain(.05).release(.03))],[1,note(\"g3\").s(\"sine\").gain(.05).release(.03)])\n",
+          "events": [
+            {
+              "begin": "0",
+              "end": "1",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "0",
+              "end": "1",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "1",
+              "end": "2",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "10",
+              "end": "11",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "10",
+              "end": "11",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "11",
+              "end": "12",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "12",
+              "end": "13",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "12",
+              "end": "13",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "13",
+              "end": "14",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "14",
+              "end": "15",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "14",
+              "end": "15",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "15",
+              "end": "16",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "16",
+              "end": "17",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "16",
+              "end": "17",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "17",
+              "end": "18",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "18",
+              "end": "19",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "18",
+              "end": "19",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "19",
+              "end": "20",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "2",
+              "end": "3",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "2",
+              "end": "3",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "20",
+              "end": "21",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "20",
+              "end": "21",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "21",
+              "end": "22",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "22",
+              "end": "23",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "22",
+              "end": "23",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "23",
+              "end": "24",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "24",
+              "end": "25",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "24",
+              "end": "25",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "25",
+              "end": "26",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "26",
+              "end": "27",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "26",
+              "end": "27",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "27",
+              "end": "28",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "28",
+              "end": "29",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "28",
+              "end": "29",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "29",
+              "end": "30",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "3",
+              "end": "4",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "30",
+              "end": "31",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "30",
+              "end": "31",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "31",
+              "end": "32",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "4",
+              "end": "5",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "4",
+              "end": "5",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "5",
+              "end": "6",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "6",
+              "end": "7",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "6",
+              "end": "7",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "7",
+              "end": "8",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "8",
+              "end": "9",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "8",
+              "end": "9",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "9",
+              "end": "10",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            }
+          ],
+          "pcm": {
+            "rms": 0.04675397414670415,
+            "samples": 49152,
+            "peak": 0.08249577134847641
+          },
+          "orbits": ["1"]
+        },
+        {
+          "form": "regenerated",
+          "source": "setcpm(240/4)\n\n$: arrange([1, stack(note(\"c3\")\n  .s(\"sine\")\n  .gain(0.05)\n  .release(.03)\n  .gain(.5) // tail\n, note(\"e3\")\n  .s(\"sine\")\n  .gain(0.05)\n  .release(.03))], [1, note(\"g3\")\n  .s(\"sine\")\n  .gain(0.05)\n  .release(.03)])\n\n",
+          "events": [
+            {
+              "begin": "0",
+              "end": "1",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "0",
+              "end": "1",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "1",
+              "end": "2",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "10",
+              "end": "11",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "10",
+              "end": "11",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "11",
+              "end": "12",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "12",
+              "end": "13",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "12",
+              "end": "13",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "13",
+              "end": "14",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "14",
+              "end": "15",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "14",
+              "end": "15",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "15",
+              "end": "16",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "16",
+              "end": "17",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "16",
+              "end": "17",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "17",
+              "end": "18",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "18",
+              "end": "19",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "18",
+              "end": "19",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "19",
+              "end": "20",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "2",
+              "end": "3",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "2",
+              "end": "3",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "20",
+              "end": "21",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "20",
+              "end": "21",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "21",
+              "end": "22",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "22",
+              "end": "23",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "22",
+              "end": "23",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "23",
+              "end": "24",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "24",
+              "end": "25",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "24",
+              "end": "25",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "25",
+              "end": "26",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "26",
+              "end": "27",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "26",
+              "end": "27",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "27",
+              "end": "28",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "28",
+              "end": "29",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "28",
+              "end": "29",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "29",
+              "end": "30",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "3",
+              "end": "4",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "30",
+              "end": "31",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "30",
+              "end": "31",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "31",
+              "end": "32",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "4",
+              "end": "5",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "4",
+              "end": "5",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "5",
+              "end": "6",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "6",
+              "end": "7",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "6",
+              "end": "7",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "7",
+              "end": "8",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "8",
+              "end": "9",
+              "value": {
+                "note": "e3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "8",
+              "end": "9",
+              "value": {
+                "note": "c3",
+                "s": "sine",
+                "gain": 0.5,
+                "release": 0.03,
+                "orbit": 1
+              }
+            },
+            {
+              "begin": "9",
+              "end": "10",
+              "value": {
+                "note": "g3",
+                "s": "sine",
+                "gain": 0.05,
+                "release": 0.03,
+                "orbit": 1
+              }
+            }
+          ],
+          "pcm": {
+            "rms": 0.046842745584898385,
+            "samples": 49152,
+            "peak": 0.08249678462743759
+          },
+          "orbits": ["1"]
+        }
+      ]
+    },
+    {
       "name": "local-phase-nested-next",
       "sourceExact": true,
       "savedIdentity": true,
@@ -443,9 +2265,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.005156155260485067,
+            "rms": 0.004974072527399804,
             "samples": 49152,
-            "peak": 0.013365672901272774
+            "peak": 0.013366295024752617
           },
           "orbits": ["1"]
         },
@@ -885,7 +2707,7 @@
             }
           ],
           "pcm": {
-            "rms": 0.005071483265906827,
+            "rms": 0.005069620096742287,
             "samples": 49152,
             "peak": 0.013365672901272774
           },
@@ -2952,9 +4774,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.004368585036756995,
+            "rms": 0.0042749841105255955,
             "samples": 49152,
-            "peak": 0.012189669534564018
+            "peak": 0.011910740286111832
           },
           "orbits": ["1"]
         },
@@ -5012,9 +6834,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.004206198382637486,
+            "rms": 0.004293089677269104,
             "samples": 49152,
-            "peak": 0.012224377132952213
+            "peak": 0.012034796178340912
           },
           "orbits": ["1"]
         }
@@ -7271,9 +9093,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.004160397609535478,
+            "rms": 0.0040394834914627845,
             "samples": 49152,
-            "peak": 0.01080345083028078
+            "peak": 0.010716390796005726
           },
           "orbits": ["1"]
         },
@@ -9523,9 +11345,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.004075679551018345,
+            "rms": 0.004097882263472232,
             "samples": 49152,
-            "peak": 0.010823285207152367
+            "peak": 0.010753919370472431
           },
           "orbits": ["1"]
         }
@@ -11590,9 +13412,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.004263877014211106,
+            "rms": 0.004171538387502563,
             "samples": 49152,
-            "peak": 0.012165023013949394
+            "peak": 0.011966105550527573
           },
           "orbits": ["7", "8"],
           "constructions": 2
@@ -13651,9 +15473,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.0042870877064571005,
+            "rms": 0.004279355145741797,
             "samples": 49152,
-            "peak": 0.012310367077589035
+            "peak": 0.01217140257358551
           },
           "orbits": ["7", "8"],
           "constructions": 2
@@ -17767,9 +19589,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.008563733879737072,
+            "rms": 0.008541803661208288,
             "samples": 49152,
-            "peak": 0.02433071658015251
+            "peak": 0.02442026138305664
           },
           "orbits": ["1", "2"]
         },
@@ -21875,9 +23697,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.008441306822754693,
+            "rms": 0.008565621626866622,
             "samples": 49152,
-            "peak": 0.02428939938545227
+            "peak": 0.024412643164396286
           },
           "orbits": ["1", "2"]
         }
@@ -24966,9 +26788,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.004519485882257633,
+            "rms": 0.004597378538356971,
             "samples": 49152,
-            "peak": 0.018353788182139397
+            "peak": 0.01831284537911415
           },
           "orbits": ["7"],
           "constructions": 1
@@ -28051,9 +29873,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.004604638831326749,
+            "rms": 0.004739870384438262,
             "samples": 49152,
-            "peak": 0.018191151320934296
+            "peak": 0.018488390371203423
           },
           "orbits": ["7"],
           "constructions": 1
@@ -29223,9 +31045,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.0050378500442250914,
+            "rms": 0.00506046840048488,
             "samples": 49152,
-            "peak": 0.012635594233870506
+            "peak": 0.012636065483093262
           },
           "orbits": ["1"]
         },
@@ -30387,9 +32209,9 @@
             }
           ],
           "pcm": {
-            "rms": 0.005020282955210418,
+            "rms": 0.005080286733355013,
             "samples": 49152,
-            "peak": 0.0125852320343256
+            "peak": 0.012717516161501408
           },
           "orbits": ["1"]
         }
@@ -30399,11 +32221,11 @@
   "tails": [
     {
       "form": "original",
-      "cycle": 0.569299999999999,
+      "cycle": 0.5693666666666644,
       "pcm": {
-        "rms": 0.0029805905966485222,
+        "rms": 0.003020689324768382,
         "samples": 12288,
-        "peak": 0.0062048668041825294
+        "peak": 0.006204845849424601
       },
       "events": [
         {
@@ -30426,11 +32248,11 @@
     },
     {
       "form": "regenerated",
-      "cycle": 0.5693666666666644,
+      "cycle": 0.5799999999999954,
       "pcm": {
-        "rms": 0.003026192867449698,
+        "rms": 0.0030030731129554746,
         "samples": 12288,
-        "peak": 0.006204845849424601
+        "peak": 0.005122127011418343
       },
       "events": [
         {
@@ -30457,71 +32279,12 @@
       "form": "original",
       "beforeStop": {
         "clock": {
-          "cycle": 0.7186333333333359,
-          "cps": 1,
-          "running": true
-        },
-        "orbits": ["1"],
-        "triggers": 119
-      },
-      "afterStop": {
-        "clock": {
-          "cycle": 0,
-          "cps": 1,
-          "running": false
-        },
-        "orbits": ["1"],
-        "triggers": 119
-      },
-      "windows": [
-        {
-          "startAfterStopMs": 700,
-          "durationMs": 600,
-          "pcm": {
-            "rms": 0.00020598752415590046,
-            "samples": 49152,
-            "peak": 0.0006025590118952096
-          },
-          "clock": {
-            "cycle": 0,
-            "cps": 1,
-            "running": false
-          },
-          "orbits": ["1"],
-          "sameBus": true,
-          "triggers": 119
-        },
-        {
-          "startAfterStopMs": 3000,
-          "durationMs": 600,
-          "pcm": {
-            "rms": 3.4214808413358394e-7,
-            "samples": 49152,
-            "peak": 9.812149528443115e-7
-          },
-          "clock": {
-            "cycle": 0,
-            "cps": 1,
-            "running": false
-          },
-          "orbits": ["1"],
-          "sameBus": true,
-          "triggers": 119
-        }
-      ],
-      "silenceThreshold": 0.0001,
-      "immediateSilenceClaim": false
-    },
-    {
-      "form": "regenerated",
-      "beforeStop": {
-        "clock": {
           "cycle": 0.7187000000000012,
           "cps": 1,
           "running": true
         },
         "orbits": ["1"],
-        "triggers": 120
+        "triggers": 129
       },
       "afterStop": {
         "clock": {
@@ -30530,14 +32293,14 @@
           "running": false
         },
         "orbits": ["1"],
-        "triggers": 120
+        "triggers": 129
       },
       "windows": [
         {
           "startAfterStopMs": 700,
           "durationMs": 600,
           "pcm": {
-            "rms": 0.00020977853256470787,
+            "rms": 0.0002059304255826112,
             "samples": 49152,
             "peak": 0.0006025966722518206
           },
@@ -30548,13 +32311,13 @@
           },
           "orbits": ["1"],
           "sameBus": true,
-          "triggers": 120
+          "triggers": 129
         },
         {
           "startAfterStopMs": 3000,
           "durationMs": 600,
           "pcm": {
-            "rms": 3.363917159061774e-7,
+            "rms": 3.4234661163697045e-7,
             "samples": 49152,
             "peak": 9.812764574235189e-7
           },
@@ -30565,7 +32328,66 @@
           },
           "orbits": ["1"],
           "sameBus": true,
-          "triggers": 120
+          "triggers": 129
+        }
+      ],
+      "silenceThreshold": 0.0001,
+      "immediateSilenceClaim": false
+    },
+    {
+      "form": "regenerated",
+      "beforeStop": {
+        "clock": {
+          "cycle": 0.7399999999999978,
+          "cps": 1,
+          "running": true
+        },
+        "orbits": ["1"],
+        "triggers": 130
+      },
+      "afterStop": {
+        "clock": {
+          "cycle": 0,
+          "cps": 1,
+          "running": false
+        },
+        "orbits": ["1"],
+        "triggers": 130
+      },
+      "windows": [
+        {
+          "startAfterStopMs": 700,
+          "durationMs": 600,
+          "pcm": {
+            "rms": 0.00019973520867909498,
+            "samples": 49152,
+            "peak": 0.0006026130868121982
+          },
+          "clock": {
+            "cycle": 0,
+            "cps": 1,
+            "running": false
+          },
+          "orbits": ["1"],
+          "sameBus": true,
+          "triggers": 130
+        },
+        {
+          "startAfterStopMs": 3000,
+          "durationMs": 600,
+          "pcm": {
+            "rms": 3.15237425917328e-7,
+            "samples": 49152,
+            "peak": 9.813031738303835e-7
+          },
+          "clock": {
+            "cycle": 0,
+            "cps": 1,
+            "running": false
+          },
+          "orbits": ["1"],
+          "sameBus": true,
+          "triggers": 130
         }
       ],
       "silenceThreshold": 0.0001,
@@ -30573,9 +32395,9 @@
     }
   ],
   "stopped": {
-    "rms": 1.4052700435916605e-11,
+    "rms": 1.320103927269497e-11,
     "samples": 49152,
-    "peak": 4.513736259759149e-11
+    "peak": 3.342187984700651e-11
   },
   "replacement": {
     "rms": 0,
@@ -30588,7 +32410,7 @@
     {
       "value": "0.75",
       "clock": {
-        "cycle": 1.6039999999999992,
+        "cycle": 1.6786333333333332,
         "cps": 1,
         "running": true
       },
@@ -31330,9 +33152,9 @@
         }
       ],
       "pcm": {
-        "rms": 0.008479648438983276,
+        "rms": 0.00926963071961148,
         "samples": 49152,
-        "peak": 0.03086928091943264
+        "peak": 0.030621709302067757
       },
       "orbits": ["1"],
       "nativeSends": true,
@@ -31341,7 +33163,7 @@
     {
       "value": "1",
       "clock": {
-        "cycle": 2.7773333333333357,
+        "cycle": 2.894633333333332,
         "cps": 1,
         "running": true
       },
@@ -32068,9 +33890,9 @@
         }
       ],
       "pcm": {
-        "rms": 0.004949018634919614,
+        "rms": 0.004705401935771435,
         "samples": 49152,
-        "peak": 0.01497606560587883
+        "peak": 0.014715595170855522
       },
       "orbits": ["1"],
       "nativeSends": true,
@@ -32079,7 +33901,7 @@
     {
       "value": "0.5",
       "clock": {
-        "cycle": 3.950666666666665,
+        "cycle": 4.099966666666664,
         "cps": 1,
         "running": true
       },
@@ -32806,9 +34628,9 @@
         }
       ],
       "pcm": {
-        "rms": 0.004618250208707699,
+        "rms": 0.0034085018086540985,
         "samples": 49152,
-        "peak": 0.008462527766823769
+        "peak": 0.008438490331172943
       },
       "orbits": ["1"],
       "nativeSends": true,

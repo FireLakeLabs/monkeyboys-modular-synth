@@ -37,6 +37,21 @@ const chainedCode = (text: string): boolean =>
 const roundedNumber = (value: number, precision = 3): string =>
   String(Number(value.toFixed(precision)))
 const quote = (value: string): string => JSON.stringify(value)
+/** A trailing line comment must end before a combiner adds its next token. */
+function combinerArmText(text: string): string {
+  if (!text.includes('//')) return text
+  let terminalComment = false
+  const tokens = tokenizer(text, {
+    ecmaVersion: 'latest',
+    onComment: (block, _comment, _start, end) => {
+      if (!block && end === text.length) terminalComment = true
+    },
+  })
+  while (tokens.getToken().type.label !== 'eof') {
+    // Tokenize only: strings containing // are not comments, and no code executes.
+  }
+  return text + (terminalComment ? '\n' : '')
+}
 function product(factors: readonly string[], numeric: (value: number) => string): string {
   const constant = factors
     .filter((factor) => Number.isFinite(Number(factor)))
@@ -467,7 +482,7 @@ export function generateDocument(
             if (!arm) return undefined
             if (i) result.text += ', '
             const offset = result.text.length
-            result.text += arm.text + (arm.inline ? '' : '\n')
+            result.text += combinerArmText(arm.text) + (arm.inline ? '' : '\n')
             result.owners.push(
               ...arm.owners.map((o) => ({ ...o, start: o.start + offset, end: o.end + offset })),
             )
@@ -898,7 +913,7 @@ export function generateDocument(
             for (const [index, arm] of arms.entries()) {
               if (index) expression.text += ', '
               const start = expression.text.length
-              expression.text += arm.text
+              expression.text += combinerArmText(arm.text)
               expression.owners.push(
                 ...arm.owners.map((o) => ({ ...o, start: o.start + start, end: o.end + start })),
               )
@@ -945,7 +960,7 @@ export function generateDocument(
             const arm = finishMixers(original)
             if (index) expression.text += ', '
             const offset = expression.text.length
-            expression.text += arm.text
+            expression.text += combinerArmText(arm.text)
             expression.owners.push(
               ...arm.owners.map((o) => ({ ...o, start: o.start + offset, end: o.end + offset })),
             )
