@@ -1,4 +1,5 @@
 import { packSetup } from '../samples/packs'
+import { sectionOrder } from '../modules/sections'
 import { bytebeatLiteral } from '../modules/bytebeat'
 import { parse, tokenizer } from 'acorn'
 import { planEffects } from './effects'
@@ -875,6 +876,57 @@ export function generateDocument(
         if (!omitted(node, 'drop'))
           expression = append(expression, `.degradeBy(${numeric(number(node, 'drop'))})`, node)
         return [transform(node, expression)]
+      }
+      case 'sections': {
+        let expression = blank(true)
+        expression.text = 'arrange('
+        let count = 0
+        function tuples(current: Node) {
+          const offset = count
+          for (const slot of sectionOrder(current.spec, current.module)) {
+            const cable = current.inputs.get(slot.jack)
+            if (!cable) continue
+            const originals = emit(requireNode(nodes, cable.from.module))
+            if (!originals.length) continue
+            if (originals.some((arm) => arm.mixers.some((m) => m.mute || m.solo || m.name)))
+              throw new Error('Sections cannot contain labelled, muted or soloed Voices')
+            const arms = originals.map(finishMixers)
+            if (count++) expression.text += ', '
+            // Durations are exact numeric values, never the ordinary knob formatter.
+            expression.text += `[${String(Number(string(current, slot.cycles)))}, `
+            if (arms.length > 1) expression.text += 'stack('
+            for (const [index, arm] of arms.entries()) {
+              if (index) expression.text += ', '
+              const start = expression.text.length
+              expression.text += arm.text
+              expression.owners.push(
+                ...arm.owners.map((o) => ({ ...o, start: o.start + start, end: o.end + start })),
+              )
+              expression.nodes.push(...arm.nodes)
+              expression.sourceRouting ||=
+                arm.sourceRouting || arm.nodes.some((id) => nodes.get(id)?.spec.id === 'code')
+            }
+            if (arms.length > 1) expression.text += ')'
+            expression.text += ']'
+          }
+          const next = current.spec.sections && current.inputs.get(current.spec.sections.next)
+          if (next) tuples(requireNode(nodes, next.from.module))
+          expression.owners.push({
+            module: current.module.id,
+            role: 'module',
+            start: 0,
+            end: 0,
+            part: offset,
+          })
+          expression.nodes.push(current.module.id)
+        }
+        tuples(node)
+        // An empty rack sequence is silent, avoiding the pinned arrange() zero total.
+        if (!count) return []
+        expression.text += ')'
+        for (const owner of expression.owners)
+          if (owner.end === 0) owner.end = expression.text.length
+        return [expression]
       }
       case 'mix': {
         const composition = node.spec.composition

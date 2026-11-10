@@ -181,8 +181,8 @@ bottom edge, which keeps the rack frame's size; its cycles become
 masks kept one `$:` line, label and orbit per voice, round-tripped as rack state
 and kept song time. `arrange()` folded voices into one CODE line, needed orbits in
 shared declarations, and restarted section time, changing 24 of 200 onsets. The
-reader reads only a final lane mask; `arrange()` and other masks stay
-source-owned CODE. Lanes are MIX channel values, so no format change is needed.
+reader reads only a final lane mask. Other masks stay source-owned CODE; static
+`arrange()` becomes separately editable under #244 below. Lanes are MIX channel values, so no format change is needed.
 Song length is derived from the longest lane (#230), and +/− edit lane literals
 in one undoable operation rather than changing view state. Growing aligns all
 arranged lanes to the new length by extending their final step. The owner chose
@@ -192,6 +192,21 @@ conflicting sound-preservation requirement. Unmasked channels write nothing;
 no new metadata is saved. The playhead shares the header's scheduler clock,
 wraps at song length, clears on Stop and freezes under reduced motion.
 See the [contract and evidence](arranger.md).
+
+## Section sequencing (#244)
+
+Add static native `arrange([cycles, pattern], ...)` as **SECTIONS**, Hardware /
+Pattern / 16 HP. The rendered sketch and [case matrix](section-sequencing.md)
+preceded the schema: four numbered inputs with exact positive numeric CYCLES,
+ORDER permutation, NEXT tuple continuation and one combined OUT. NEXT appends
+without nesting and requires an unnamed exclusive source; numbered inputs allow
+independent nested/named/fanned-out sections. Native sends share the final
+branch's orbit across sections, with persistent tails; opaque/inner routes keep
+ownership without a new overriding orbit. Outer Voices masks retain song time,
+and labels/mute/solo/output apply to the complete section expression. This adds
+expressiveness alongside #141/#230, retaining their mask behavior. The historical
+24/200 spike is not a new coverage measurement. Computed/shadowed/unsupported
+forms and saved CODE remain exact. #217 and #248–251 remain separate.
 
 ## Sound picker (#227, decided 8 November 2026)
 

@@ -28,6 +28,13 @@ export function events(expression) {
 
 // Each comparison is bounded to [0,4); source inspection establishes general constraints.
 export const comparisons = [
+  [
+    'C27',
+    'native section phase differs from song-time masks',
+    'arrange([1,note("<c3 e3 g3>")],[1,note("<c3 e3 g3>")]).s("sine")',
+    'note("<c3 e3 g3>").s("sine").mask("<1 1>")',
+    false,
+  ],
   ['C21', 'bipolar signal is not normalized alias', 'sine2.segment(8)', 'sine.segment(8)', false],
   ['C21', 'random integer is a numeric pattern', 'irand(8).segment(8)', 'rand.segment(8)', false],
   ['C21', 'continuous constant versus discrete pure', 'steady(1)', 'pure(1)', false],
@@ -307,6 +314,14 @@ export const comparisons = [
 ]
 
 export const readerCases = [
+  [
+    'C27',
+    'literal section tuples',
+    'arrange([.5,note("c3")],[1.25,stack(note("d3"),note("f3"))]).s("sine")',
+    ['sections', 'mix', 'seq', 'osc'],
+    [],
+    { sections: { cycles1: '0.5', cycles2: '1.25' } },
+  ],
   [
     'C26',
     'bare n imports degree SEQ but remains oscillator partial count',

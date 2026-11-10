@@ -935,6 +935,42 @@ export const MIX: ModuleSpec = {
   orderSensitive: false,
 }
 
+export const SECTIONS: ModuleSpec = {
+  id: 'sections',
+  name: 'SECTIONS',
+  title: 'Section sequencer',
+  family: 'hardware',
+  category: 'pattern',
+  hp: 16,
+  paletteCall: 'arrange([cycles, pattern], …)',
+  sections: {
+    inputs: [1, 2, 3, 4].map((n) => ({ jack: `in${n}`, cycles: `cycles${n}` })),
+    order: 'order',
+    next: 'next',
+  },
+  controls: [
+    { kind: 'text', id: 'order', label: 'ORDER', default: '1 2 3 4' },
+    ...[1, 2, 3, 4].map((n): Control => ({
+      kind: 'text',
+      id: `cycles${n}`,
+      label: `CYCLES ${n}`,
+      default: '4',
+    })),
+  ],
+  jacks: [
+    ...[1, 2, 3, 4].map((n) => ({
+      id: `in${n}`,
+      label: String(n),
+      direction: 'in' as const,
+      signal: 'any' as const,
+    })),
+    { id: 'next', label: 'NEXT', direction: 'in', signal: 'any' },
+    { id: 'out', label: 'OUT', direction: 'out', signal: 'any' },
+  ],
+  strudel: ['arrange'],
+  orderSensitive: true,
+}
+
 export const OUT: ModuleSpec = {
   id: 'out',
   name: 'OUT',
@@ -2383,6 +2419,7 @@ export const SPEAK: ModuleSpec = {
 }
 export const CATALOG: readonly ModuleSpec[] = [
   SEQ,
+  SECTIONS,
   GATES,
   SWITCH,
   AUX,

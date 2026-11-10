@@ -24,6 +24,25 @@ supersede the snapshot's reader-boundary observations for Stack. Other group/mod
 recommendations remain proposals; historical event/context evidence is not a new
 production coverage or PCM claim.
 
+## Current-input section reconciliation (#244)
+
+The current generated matrix/evidence now covers **60** modules, with one new
+SECTIONS annotation, supported tuple case C27 and computed-duration CODE fallback.
+The default command records **49 event comparisons, 65 source/save reader cases,
+60 per-module fallbacks and the same 8 report examples**, zero failures. Original
+#246 figures of 59/48/64 below remain dated research evidence. The new row is
+bounded production expressiveness already authorized by #244, not adoption of
+another consolidation. #243's remaining source-selector callback fallback and
+all unrelated module counterexamples remain intact. The C15 transpose/source-selector forms retain CODE under #243's source/OSC
+exclusions; their unrelated fallback expectations are unchanged.
+
+The inventory join and application/patch hashes were regenerated against current
+inputs, including #242/#243 changes that postdate the original snapshot. The
+historical report is not rewritten to claim that those current inputs existed
+at its original revision. [Section acceptance](../section-sequencing.md) owns the
+new 32/64-cycle engine and browser PCM evidence; this research command's [0,4)
+comparisons do not establish tails or universal timing behavior.
+
 ## Authority and reproducibility
 
 The owner explicitly authorized on tracker [#241](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/241):

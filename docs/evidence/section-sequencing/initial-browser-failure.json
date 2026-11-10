@@ -1,0 +1,14 @@
+{
+  "command": "npm run test:browser:report -- tests/browser/sections.spec.mjs --output /tmp/sections-focused-results",
+  "result": "RESULT passed=0 failed=2 exit=130; one interrupted native-placement case",
+  "failures": [
+    "Export identity assertion omitted documented factory cartridges",
+    "Combined Stop/replacement assertion failed after 700ms delay without emitting individual metrics"
+  ],
+  "interrupted": "Native chooser locator omitted IN in accessible name; interrupted after the two known failures",
+  "initialStopPcmMetrics": null,
+  "initialStopControllerMetrics": null,
+  "initialStopCause": "unconfirmed; initial combined assertion emitted no condition values",
+  "laterDiagnostic": "runtime.json records independently repeated original/regenerated 700ms and 3s windows at unchanged .0001 threshold, scheduler state and bus identity/counts",
+  "laterNativeHarnessCorrection": "RATE ArrowUp moves from2to3 under the existing catalog detents; a test expecting2.25 failed2/1 and the corrected native-only run passed1/0. No application or threshold change."
+}

@@ -679,3 +679,15 @@ signal refusal, labels, nesting and routing; #216 retains larger panel geometry.
 The private boards were unavailable; the implementation uses the existing catalog
 and look layouts, following a simple mode mockup shown in the implementation
 thread. That mockup did not prescribe new jack geometry.
+
+## Section sequencing (#244)
+
+SECTIONS is a 16-HP Hardware panel with ORDER and four CYCLES fields, four numbered
+inputs, NEXT and OUT. Its sketch was rendered for review before the panel relied
+on the schema; [the retained sketch and case matrix](section-sequencing.md) define
+NEXT appending versus numbered-input nesting. Fields use accessible single-line
+editors, Enter/blur commit and Escape cancellation. Full numeric strings remain
+editable without rounding. Looks affect presentation only; cables follow live
+jack positions. The footer Arrange and its mask lanes keep their existing geometry
+and behavior. Private canvas boards were unavailable; committed exports and the
+production looks supply the reference.

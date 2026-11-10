@@ -6,6 +6,7 @@ import { controlValue } from '../modules/values'
 import { numericNotation } from '../patch/notation'
 import { isRailHp } from '../patch/layout'
 import { isArrangement } from '../patch/arrangement'
+import { sectionCycles, sectionOrder } from '../modules/sections'
 import { getModuleSpec } from '../modules/catalog'
 import { callMethod, tupleControls, controlEnabled } from '../modules/bindings'
 import { looksFor } from '../modules/looks'
@@ -183,6 +184,12 @@ export function graph(patch: Patch): Map<string, Node> {
       )
         throw new Error(`${module.id}: ${bounded[0]} must be at most ${bounded[1]}`)
     }
+    if (spec.sections) {
+      sectionOrder(spec, module)
+      for (const input of spec.sections.inputs)
+        if (sectionCycles(string(node, input.cycles)) === undefined)
+          throw new Error('Section CYCLES requires a finite positive numeric literal')
+    }
     if (spec.id === 'mix') {
       for (const channel of [1, 2, 3, 4]) {
         const name = string(node, `name${channel}`)
@@ -276,6 +283,23 @@ export function graph(patch: Patch): Map<string, Node> {
     for (const [id, cable] of node.inputs) {
       const input = node.spec.jacks.find((jack) => jack.id === id)
       const actual = signal(requireNode(nodes, cable.from.module), cable.from.jack)
+      if (node.spec.sections) {
+        if (
+          id === node.spec.sections.next &&
+          (!requireNode(nodes, cable.from.module).spec.sections || cable.from.jack !== 'out')
+        )
+          throw new Error('NEXT requires SECTIONS OUT; it appends section tuples')
+        if (
+          id === node.spec.sections.next &&
+          ((requireNode(nodes, cable.from.module).outputs.get('out')?.length ?? 0) !== 1 ||
+            patch.names[`${cable.from.module}:out`] !== undefined)
+        )
+          throw new Error(
+            'NEXT continuation must be unnamed and exclusive; use a numbered input for reusable nested sections',
+          )
+        if (actual === 'mod' || actual === 'function')
+          throw new Error('Sections accept pattern or voiced events')
+      }
       if (node.spec.composition && node.spec.composition.inputs.includes(id)) {
         const stack = value(node, node.spec.composition.mode) === node.spec.composition.stack
         if (
@@ -422,6 +446,12 @@ export function outputSignal(
     return inputs.every((signal) => signal === inputs[0]) ? (inputs[0] ?? 'any') : 'any'
   }
   if (output?.signal !== 'any') return output?.signal ?? 'any'
+  if (node.spec.sections) {
+    const signals = [...node.inputs.values()].map((cable) =>
+      outputSignal(nodes, requireNode(nodes, cable.from.module), cable.from.jack, loops),
+    )
+    return signals.length && signals.every((s) => s === signals[0]) ? (signals[0] ?? 'any') : 'any'
+  }
   const input = node.inputs.get('in')
   return input
     ? outputSignal(nodes, requireNode(nodes, input.from.module), input.from.jack, loops)

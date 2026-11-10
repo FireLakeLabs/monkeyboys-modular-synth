@@ -628,8 +628,8 @@ unchanged, so a lane edit is a parameter edit, not a structural replacement.
 The reader treats a voice's `mask` as the channel's lane only when its single
 argument is lane text (`0`/`1` steps with optional `!n` inside `<…>`, at most 256
 cycles) and only postgain, mixer modulation, `channels` and `orbit` follow it.
-Patterned, mid-chain or repeated masks and `arrange()` stay exact
-CODE. Imported lane literals edit in place, and clearing one removes only its mask call; adding a lane where no mask exists
+Patterned, mid-chain or repeated masks stay exact CODE. Static `arrange()` has
+its separate [section contract](#section-sequencing-244), never a mask-lane rewrite. Imported lane literals edit in place, and clearing one removes only its mask call; adding a lane where no mask exists
 converts the code on edit, with Undo. Saved-rack reconciliation carries the lane
 with the channel, like its NAME and OUTPUT. See the [spike and contract](arranger.md).
 
@@ -904,3 +904,42 @@ binding without its emitted value is refused atomically. Edit the CODE reference
 first. This checks known callback names and the closed RETURN dependency graph;
 it neither executes CODE nor infers arbitrary global dependencies. Incomplete
 preset-only bodies remain savable when their known binding state is retained.
+
+## Section sequencing (#244)
+
+SECTIONS writes native `arrange([cycles, pattern], ...)` in ORDER socket order.
+Every duration is a finite positive numeric literal and bypasses knob rounding.
+NEXT appends more tuples to the **same** call; numbered inputs preserve actual
+nested arrange boundaries. NEXT must be unnamed and exclusive, preventing
+flattening from duplicating opaque construction. Empty sockets are omitted;
+empty/incomplete sequences are silent and their state remains saved. Additional
+imported sections never truncate. Direct expressions, Stack groups and resolved
+named references retain their nested ownership, reuse and downstream transforms.
+
+Native section phase is not mask song time, and later full arrangements need
+not repeat the first pass's values. The pinned engine fasts each pattern by its
+section duration, then uses stepcat and slows by the total. A period-three fixture
+with 4/4/8-cycle sections plays c2 at cycle 8 and g2 at cycle 24. The original
+#141 24/200 result remains historical, independently reproduced by its spike.
+An outer Voices mask runs **after** arrange in song time. Outer labels, mute,
+solo, gain and output pair apply to the combined voice. Inside each tuple,
+Voices settings materialize before composition; active independent labels refuse.
+
+Routing follows Stack: one generated orbit per final branch, no generated orbit
+inside reusable declarations. Native sends share that branch's persistent buses
+across sections; inline FX retain per-note release lifetime. Fan-out constructs
+shared patterns once and gives final native branches separate routing. Explicit
+inner/custom/opaque routes retain authority, including unresolved arrange/spread
+CODE; no overriding orbit is appended. Default orbit 1 and literal addresses
+remain reserved. Parameter duration edits retain buses; topology/replacement uses
+the existing engine reset boundary.
+
+The reader never evaluates source. Exact two-element tuples with numeric literal
+positive finite durations project; computed/runtime tuples, spread, shadowed
+constructors, arbitrary helpers and unsupported routing remain exact CODE. CODE
+inside a supported section retains its original bytes and forces conservative
+routing. Saved CODE stays CODE after unrelated source edits. Section-local
+callbacks are not a new #243 grammar form. Tuple element source paths are checked
+against the AST and saved graph independently. Proven duration/argument edits
+splice exact spans; ORDER/rewiring uses conversion with complete Undo. See the
+[case matrix, acceptance and distinct proof claims](section-sequencing.md).

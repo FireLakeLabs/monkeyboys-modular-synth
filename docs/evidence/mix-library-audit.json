@@ -531,6 +531,15 @@
     "stacks": 0
   },
   {
+    "file": "src/library/patches/modules/sections.strudel",
+    "sha256": "01dbe6ec7d9aa3f5e078b5a5c78639bc527d4b9a7cdd0cb187d7f22342addd04",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 0
+  },
+  {
     "file": "src/library/patches/modules/seq.strudel",
     "sha256": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",
     "layout": "restored",
@@ -682,6 +691,15 @@
     "bodyExact": true,
     "identity": true,
     "stacks": 0
+  },
+  {
+    "file": "src/library/patches/section-study.strudel",
+    "sha256": "6bc6255a1088846f31d24404a7b27f878faf001c2fdada807a01b04dd2d84120",
+    "layout": "restored",
+    "sourceExact": true,
+    "bodyExact": true,
+    "identity": true,
+    "stacks": 2
   },
   {
     "file": "src/library/patches/sound-effects.strudel",

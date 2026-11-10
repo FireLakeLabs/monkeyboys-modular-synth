@@ -11,11 +11,11 @@
   },
   "hashes": {
     "package-lock.json": "655b6afecb8b5e2087cafc1dd40cbe223b1cceef4df86509c6fcb4e03567d92d",
-    "src/modules/catalog.ts": "9f2080bdd9bd2fe889c929920b5bca6e8751d459912d7609f7c3e8c6427df4b4",
-    "src/reader/read.ts": "62956f6626797743d9ff52a42a2e346d3049cc86de4c6ef4e9fd31aafca85507",
-    "src/codegen/graph.ts": "d07fd4b7ee5df974992b83ab142af50c8b1354bfca5643e6ec2ff1c64b91e951",
-    "src/codegen/generate.ts": "dd5f2db08edc68d98e3ff7d02c11ad0eb13be9322805307279c9ffeb0879671c",
-    "src/codegen/effects.ts": "459d66503c000af6c555589855eb82c460226f0ea1d6aa96e829b4136d5c4f5b",
+    "src/modules/catalog.ts": "0293e56b6bf3107a08eeb439844efb6d143eded4669ddf6108c0863d492c7a49",
+    "src/reader/read.ts": "390d117c63f4e1a632354d943e2fc7697a6f6f2cbf09dfcc7a0f17f5602b0094",
+    "src/codegen/graph.ts": "8c6494b1a5a7eda6872d3ea92351c9ea3e8552a2f9fe0ad04aa631fcfc010f9d",
+    "src/codegen/generate.ts": "54863bb450c8afa66a21bb3aef5e586f377f7a75478517c8ba9a423cdea3c63a",
+    "src/codegen/effects.ts": "525fbd961ae8b955506b6f60852449996c9cb86e20958a0b5325846ad3012b6d",
     "src/strudel/engine.ts": "e6aabe6c42be4be38c85af033c5f0fb486f885400f1687a6f12a868f5f4fbac5",
     "node_modules/@strudel/web/dist/index.mjs": "310ef9c1172ad3ecb4f7981a2743164f01cd42015a3207fce541366b7839bef5",
     "node_modules/@strudel/core/pattern.mjs": "d562fa5f23ad204588d343165ed02376b5874ca74280c248dfe87b56738c0abd",
@@ -35,7 +35,7 @@
   },
   "inventory": {
     "path": "docs/research/strudel-api-coverage/inventory.json",
-    "sha256": "8e94f04921bf9530a4ad6981aad4edb4ebded6c81212a268494afd843d7d0221",
+    "sha256": "e0d9347e27e0bcbac7429fa387e6a858227876180b10168e1433de67ab28e382",
     "schemaVersion": 1,
     "candidateCount": 1100,
     "aliasCollisions": [
@@ -64,7 +64,7 @@
         "id": "expression-shapes",
         "owners": [242, 243, 244],
         "corpus": {
-          "committed": { "syntacticCalls": 6, "unmappedOuterCalls": 1 },
+          "committed": { "syntacticCalls": 9, "unmappedOuterCalls": 1 },
           "wild": { "syntacticCalls": 3, "unmappedOuterCalls": 3 }
         }
       },
@@ -91,7 +91,7 @@
         "id": "argument-and-companion-forms",
         "owners": [245, 246],
         "corpus": {
-          "committed": { "syntacticCalls": 84, "unmappedOuterCalls": 6 },
+          "committed": { "syntacticCalls": 88, "unmappedOuterCalls": 6 },
           "wild": { "syntacticCalls": 20, "unmappedOuterCalls": 16 }
         }
       },
@@ -157,9 +157,9 @@
       { "name": "steady", "familyId": "api:steady", "state": "joined" }
     ]
   },
-  "moduleCount": 59,
-  "comparisonCount": 48,
-  "readerCaseCount": 64,
+  "moduleCount": 60,
+  "comparisonCount": 49,
+  "readerCaseCount": 65,
   "failures": [],
   "matrix": [
     {
@@ -246,6 +246,54 @@
       "fallback": {
         "source": "$: note(patternValue).s(\"sawtooth\")\n",
         "code": ["note(patternValue)"],
+        "sourceExact": true,
+        "savedIdentity": true,
+        "fallbackObserved": true
+      },
+      "audioEvidence": "not measured by this study; see report/backend source"
+    },
+    {
+      "moduleId": "sections",
+      "role": "ordered pattern composition",
+      "engineContext": "Native arrange applies section-local phase; later full arrangements can retain section-length-dependent phase. NEXT appends tuples to the same call.",
+      "readerContext": "Literal finite positive durations and static tuple expressions; four physical slots plus exclusive unnamed NEXT continuation. Ordinary output supports named fan-out.",
+      "verdict": "keep",
+      "caseIds": ["C27"],
+      "counterexample": "arrange([duration,note(\"c3\")],[2,note(\"d3\")]).s(\"sine\")",
+      "counterexampleKind": "CODE",
+      "name": "SECTIONS",
+      "hp": 16,
+      "functions": ["arrange"],
+      "aliases": {},
+      "inventoryFamilies": [{ "name": "arrange", "familyId": "api:arrange", "state": "joined" }],
+      "source": null,
+      "soundSource": null,
+      "functionLoop": null,
+      "controls": [
+        { "kind": "text", "id": "order", "label": "ORDER", "default": "1 2 3 4" },
+        { "kind": "text", "id": "cycles1", "label": "CYCLES 1", "default": "4" },
+        { "kind": "text", "id": "cycles2", "label": "CYCLES 2", "default": "4" },
+        { "kind": "text", "id": "cycles3", "label": "CYCLES 3", "default": "4" },
+        { "kind": "text", "id": "cycles4", "label": "CYCLES 4", "default": "4" }
+      ],
+      "jacks": [
+        { "id": "in1", "label": "1", "direction": "in", "signal": "any" },
+        { "id": "in2", "label": "2", "direction": "in", "signal": "any" },
+        { "id": "in3", "label": "3", "direction": "in", "signal": "any" },
+        { "id": "in4", "label": "4", "direction": "in", "signal": "any" },
+        { "id": "next", "label": "NEXT", "direction": "in", "signal": "any" },
+        { "id": "out", "label": "OUT", "direction": "out", "signal": "any" }
+      ],
+      "exercise": {
+        "path": "src/library/patches/modules/sections.strudel",
+        "sha256": "01dbe6ec7d9aa3f5e078b5a5c78639bc527d4b9a7cdd0cb187d7f22342addd04",
+        "ownerPresent": true,
+        "sourceExact": true,
+        "savedIdentity": true
+      },
+      "fallback": {
+        "source": "$: arrange([duration,note(\"c3\")],[2,note(\"d3\")]).s(\"sine\")\n",
+        "code": ["arrange([duration,note(\"c3\")],[2,note(\"d3\")])"],
         "sourceExact": true,
         "savedIdentity": true,
         "fallbackObserved": true
@@ -678,6 +726,7 @@
       "functions": ["slow", "swingBy", "late"],
       "aliases": {},
       "inventoryFamilies": [
+        { "name": "fast", "familyId": "api:fast", "state": "joined" },
         { "name": "late", "familyId": "api:late", "state": "joined" },
         { "name": "slow", "familyId": "api:slow", "state": "joined" },
         { "name": "swingBy", "familyId": "api:swingBy", "state": "joined" }
@@ -686,6 +735,16 @@
       "soundSource": null,
       "functionLoop": null,
       "controls": [
+        {
+          "kind": "switch",
+          "id": "speed",
+          "label": "RATE",
+          "options": [
+            { "value": "Divide", "label": "Divide" },
+            { "value": "Multiply", "label": "Multiply" }
+          ],
+          "default": "Divide"
+        },
         {
           "kind": "switch",
           "id": "swingMode",
@@ -705,7 +764,10 @@
           "step": 0.25,
           "default": 2,
           "omitAt": 1,
-          "call": { "method": "slow", "argument": { "kind": "number" } }
+          "call": {
+            "method": { "control": "speed", "names": { "Divide": "slow", "Multiply": "fast" } },
+            "argument": { "kind": "number" }
+          }
         },
         {
           "kind": "knob",
@@ -3753,6 +3815,16 @@
       "functionLoop": null,
       "controls": [
         {
+          "kind": "switch",
+          "id": "mode",
+          "label": "MODE",
+          "options": [
+            { "value": "Voices", "label": "Voices" },
+            { "value": "Stack", "label": "Stack" }
+          ],
+          "default": "Voices"
+        },
+        {
           "kind": "knob",
           "id": "ch1",
           "label": "CH 1",
@@ -3763,7 +3835,8 @@
           "omitAt": 1,
           "call": { "method": "postgain", "argument": { "kind": "number" } },
           "modulation": { "min": -1, "max": 1, "default": -0.5 },
-          "group": "CH 1"
+          "group": "CH 1",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "switch",
@@ -3775,7 +3848,8 @@
             { "value": "on", "label": "on" }
           ],
           "default": "off",
-          "group": "CH 1"
+          "group": "CH 1",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "switch",
@@ -3787,7 +3861,8 @@
             { "value": "on", "label": "on" }
           ],
           "default": "off",
-          "group": "CH 1"
+          "group": "CH 1",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3795,7 +3870,8 @@
           "label": "NAME 1",
           "default": "",
           "more": true,
-          "group": "CH 1"
+          "group": "CH 1",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3803,7 +3879,8 @@
           "label": "OUTPUT 1",
           "default": "1:2",
           "more": true,
-          "group": "CH 1"
+          "group": "CH 1",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3811,7 +3888,8 @@
           "label": "ARRANGE 1",
           "default": "",
           "more": true,
-          "group": "CH 1"
+          "group": "CH 1",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "knob",
@@ -3824,7 +3902,8 @@
           "omitAt": 1,
           "call": { "method": "postgain", "argument": { "kind": "number" } },
           "modulation": { "min": -1, "max": 1, "default": -0.5 },
-          "group": "CH 2"
+          "group": "CH 2",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "switch",
@@ -3836,7 +3915,8 @@
             { "value": "on", "label": "on" }
           ],
           "default": "off",
-          "group": "CH 2"
+          "group": "CH 2",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "switch",
@@ -3848,7 +3928,8 @@
             { "value": "on", "label": "on" }
           ],
           "default": "off",
-          "group": "CH 2"
+          "group": "CH 2",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3856,7 +3937,8 @@
           "label": "NAME 2",
           "default": "",
           "more": true,
-          "group": "CH 2"
+          "group": "CH 2",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3864,7 +3946,8 @@
           "label": "OUTPUT 2",
           "default": "1:2",
           "more": true,
-          "group": "CH 2"
+          "group": "CH 2",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3872,7 +3955,8 @@
           "label": "ARRANGE 2",
           "default": "",
           "more": true,
-          "group": "CH 2"
+          "group": "CH 2",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "knob",
@@ -3885,7 +3969,8 @@
           "omitAt": 1,
           "call": { "method": "postgain", "argument": { "kind": "number" } },
           "modulation": { "min": -1, "max": 1, "default": -0.5 },
-          "group": "CH 3"
+          "group": "CH 3",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "switch",
@@ -3897,7 +3982,8 @@
             { "value": "on", "label": "on" }
           ],
           "default": "off",
-          "group": "CH 3"
+          "group": "CH 3",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "switch",
@@ -3909,7 +3995,8 @@
             { "value": "on", "label": "on" }
           ],
           "default": "off",
-          "group": "CH 3"
+          "group": "CH 3",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3917,7 +4004,8 @@
           "label": "NAME 3",
           "default": "",
           "more": true,
-          "group": "CH 3"
+          "group": "CH 3",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3925,7 +4013,8 @@
           "label": "OUTPUT 3",
           "default": "1:2",
           "more": true,
-          "group": "CH 3"
+          "group": "CH 3",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3933,7 +4022,8 @@
           "label": "ARRANGE 3",
           "default": "",
           "more": true,
-          "group": "CH 3"
+          "group": "CH 3",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "knob",
@@ -3946,7 +4036,8 @@
           "omitAt": 1,
           "call": { "method": "postgain", "argument": { "kind": "number" } },
           "modulation": { "min": -1, "max": 1, "default": -0.5 },
-          "group": "CH 4"
+          "group": "CH 4",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "switch",
@@ -3958,7 +4049,8 @@
             { "value": "on", "label": "on" }
           ],
           "default": "off",
-          "group": "CH 4"
+          "group": "CH 4",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "switch",
@@ -3970,7 +4062,8 @@
             { "value": "on", "label": "on" }
           ],
           "default": "off",
-          "group": "CH 4"
+          "group": "CH 4",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3978,7 +4071,8 @@
           "label": "NAME 4",
           "default": "",
           "more": true,
-          "group": "CH 4"
+          "group": "CH 4",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3986,7 +4080,8 @@
           "label": "OUTPUT 4",
           "default": "1:2",
           "more": true,
-          "group": "CH 4"
+          "group": "CH 4",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         },
         {
           "kind": "text",
@@ -3994,23 +4089,52 @@
           "label": "ARRANGE 4",
           "default": "",
           "more": true,
-          "group": "CH 4"
+          "group": "CH 4",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
         }
       ],
       "jacks": [
-        { "id": "in1", "label": "1", "direction": "in", "signal": "audio" },
-        { "id": "in2", "label": "2", "direction": "in", "signal": "audio" },
-        { "id": "in3", "label": "3", "direction": "in", "signal": "audio" },
-        { "id": "in4", "label": "4", "direction": "in", "signal": "audio" },
-        { "id": "cv1", "label": "CV 1", "direction": "in", "signal": "mod", "cvTarget": "ch1" },
-        { "id": "cv2", "label": "CV 2", "direction": "in", "signal": "mod", "cvTarget": "ch2" },
-        { "id": "cv3", "label": "CV 3", "direction": "in", "signal": "mod", "cvTarget": "ch3" },
-        { "id": "cv4", "label": "CV 4", "direction": "in", "signal": "mod", "cvTarget": "ch4" },
-        { "id": "out", "label": "OUT", "direction": "out", "signal": "audio" }
+        { "id": "in1", "label": "1", "direction": "in", "signal": "any" },
+        { "id": "in2", "label": "2", "direction": "in", "signal": "any" },
+        { "id": "in3", "label": "3", "direction": "in", "signal": "any" },
+        { "id": "in4", "label": "4", "direction": "in", "signal": "any" },
+        {
+          "id": "cv1",
+          "label": "CV 1",
+          "direction": "in",
+          "signal": "mod",
+          "cvTarget": "ch1",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
+        },
+        {
+          "id": "cv2",
+          "label": "CV 2",
+          "direction": "in",
+          "signal": "mod",
+          "cvTarget": "ch2",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
+        },
+        {
+          "id": "cv3",
+          "label": "CV 3",
+          "direction": "in",
+          "signal": "mod",
+          "cvTarget": "ch3",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
+        },
+        {
+          "id": "cv4",
+          "label": "CV 4",
+          "direction": "in",
+          "signal": "mod",
+          "cvTarget": "ch4",
+          "when": [{ "control": "mode", "values": ["Voices"] }]
+        },
+        { "id": "out", "label": "OUT", "direction": "out", "signal": "any" }
       ],
       "exercise": {
         "path": "src/library/patches/modules/mix.strudel",
-        "sha256": "272ea26fc34d23e26ed2dd44e0d6e74326db71bc796406b016a4cbc215954b0a",
+        "sha256": "e80770c4afe6694fb2198f542762b095bebb08b8cca6e0c3c02eee4582f6d9f1",
         "ownerPresent": true,
         "sourceExact": true,
         "savedIdentity": true
@@ -5041,6 +5165,27 @@
     }
   ],
   "comparisons": [
+    {
+      "id": "C27",
+      "label": "native section phase differs from song-time masks",
+      "left": "arrange([1,note(\"<c3 e3 g3>\")],[1,note(\"<c3 e3 g3>\")]).s(\"sine\")",
+      "right": "note(\"<c3 e3 g3>\").s(\"sine\").mask(\"<1 1>\")",
+      "expectedEqual": false,
+      "equal": false,
+      "arc": [0, 4],
+      "leftCount": 4,
+      "rightCount": 4,
+      "leftHash": "868ea5eb51bdd29baf2ae39d52d35e34c7a804cb9678d191a440947a807a8777",
+      "rightHash": "231ba0c039aeabb97c65be6692ebf40ba2b8da861d08b16281e776566a454fa3",
+      "leftSample": [
+        { "whole": ["0", "1"], "part": ["0", "1"], "value": { "note": "c3", "s": "sine" } },
+        { "whole": ["2", "3"], "part": ["2", "3"], "value": { "note": "e3", "s": "sine" } }
+      ],
+      "rightSample": [
+        { "whole": ["0", "1"], "part": ["0", "1"], "value": { "note": "c3", "s": "sine" } },
+        { "whole": ["3", "4"], "part": ["3", "4"], "value": { "note": "c3", "s": "sine" } }
+      ]
+    },
     {
       "id": "C21",
       "label": "bipolar signal is not normalized alias",
@@ -6261,6 +6406,18 @@
   ],
   "reader": [
     {
+      "id": "C27",
+      "label": "literal section tuples",
+      "source": "$: arrange([.5,note(\"c3\")],[1.25,stack(note(\"d3\"),note(\"f3\"))]).s(\"sine\")\n",
+      "modules": ["seq", "seq", "seq", "mix", "sections", "osc", "mix", "out"],
+      "code": [],
+      "contextValues": { "sections": { "cycles1": "0.5", "cycles2": "1.25" } },
+      "sourceExact": true,
+      "savedSourceExact": true,
+      "savedIdentity": true,
+      "layout": "restored"
+    },
+    {
       "id": "C26",
       "label": "bare n imports degree SEQ but remains oscillator partial count",
       "source": "$: n(\"0 2\").s(\"sawtooth\")\n",
@@ -6839,8 +6996,8 @@
       "id": "C13",
       "label": "nested stack before selector",
       "source": "$: stack(note(\"c2\"),note(\"e2\")).s(\"sine\")\n",
-      "modules": ["code", "osc", "mix", "out"],
-      "code": ["stack(note(\"c2\"),note(\"e2\"))"],
+      "modules": ["seq", "seq", "mix", "osc", "mix", "out"],
+      "code": [],
       "contextValues": {},
       "sourceExact": true,
       "savedSourceExact": true,

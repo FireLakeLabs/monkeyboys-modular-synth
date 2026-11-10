@@ -338,6 +338,13 @@ it('accounts for every catalog module/control without silently skipping new cont
       // Structural composition and CLOCK direction are covered in composition.test.ts.
       'mix.mode',
       'clock.speed',
+      // Tuple literals, exact fractional durations and structural order have independent
+      // source/save/events/history proof in reader/sections and codegen/sections tests.
+      'sections.order',
+      'sections.cycles1',
+      'sections.cycles2',
+      'sections.cycles3',
+      'sections.cycles4',
       'switch.steps',
       'duck.attack',
       'duck.depth',

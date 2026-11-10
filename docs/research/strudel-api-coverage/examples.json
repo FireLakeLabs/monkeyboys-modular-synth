@@ -101,8 +101,8 @@
     "id": "arrange-sections",
     "names": ["arrange"],
     "source": "$: arrange([2,s(\"bd\")],[2,s(\"hh\")])\n",
-    "expectCode": true,
-    "restriction": "Section-local time differs from mask lanes; #244 owns implementation"
+    "expectCode": false,
+    "restriction": "Static literal tuples project SECTIONS under #244; independently proven native local phase, exact source and saved identity in sections tests. Computed sections remain CODE."
   },
   {
     "id": "loop-chain",

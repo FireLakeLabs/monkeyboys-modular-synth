@@ -297,9 +297,11 @@ export function editDocument(document: SourceDocument, next: Patch): SourceDocum
       let spans = bindings.flatMap((b) => b.controls[control.id] ?? [])
       let text =
         typeof value === 'string'
-          ? control.kind === 'text' && control.syntax === 'bytebeat'
-            ? bytebeatLiteral(value)
-            : JSON.stringify(value)
+          ? getModuleSpec(module.type).sections?.inputs.some((slot) => slot.cycles === control.id)
+            ? String(Number(value))
+            : control.kind === 'text' && control.syntax === 'bytebeat'
+              ? bytebeatLiteral(value)
+              : JSON.stringify(value)
           : typeof value === 'number'
             ? String(value)
             : JSON.stringify(value)

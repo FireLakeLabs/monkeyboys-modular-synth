@@ -193,6 +193,8 @@ export interface ModuleSpec {
   }
   /** Event composition and physical input ordering; independent of panel geometry. */
   composition?: { mode: string; voices: string; stack: string; inputs: readonly string[] }
+  /** Ordered native arrange tuples; NEXT appends tuples instead of nesting time. */
+  sections?: { inputs: readonly { jack: string; cycles: string }[]; order: string; next: string }
   controls: readonly Control[]
   jacks: readonly Jack[]
   /**

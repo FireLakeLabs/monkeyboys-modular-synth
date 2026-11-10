@@ -350,6 +350,13 @@ exports[`built-in patch library > exercise-scope: preserves exact source and ind
 }
 `;
 
+exports[`built-in patch library > exercise-sections: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "01dbe6ec7d9aa3f5e078b5a5c78639bc527d4b9a7cdd0cb187d7f22342addd04",
+  "projection": "f198f45bbfc1f9b9f171977a05f25d9a87d8f50d21da99cc93baf46d9a59d30d",
+}
+`;
+
 exports[`built-in patch library > exercise-seq: preserves exact source and independently restores saved rack state 1`] = `
 {
   "generated": "2d710c95898aeb55631f9dfa41b991fba960048bf24fd654e59bc42d22044d1e",
@@ -529,6 +536,13 @@ exports[`built-in patch library > quantized-sequence: preserves exact source and
 {
   "generated": "73c6cd59074b27f76dafea21c5240351a932391cd5d2e187c239da3e3b0f5cad",
   "projection": "31e3d91adc6f4e812b6044ac68e02ca56a2563e77784fa20367ed60fe454dce8",
+}
+`;
+
+exports[`built-in patch library > section-study: preserves exact source and independently restores saved rack state 1`] = `
+{
+  "generated": "6bc6255a1088846f31d24404a7b27f878faf001c2fdada807a01b04dd2d84120",
+  "projection": "124a382d10790889cd6be39b28b05e84bbb9e92bca0f8335ef81f816e1487474",
 }
 `;
 

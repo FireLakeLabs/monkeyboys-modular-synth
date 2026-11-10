@@ -59,6 +59,12 @@ The reader/engine spikes and feature dependency order remain unchanged.
 
 ## Build order
 
+#244 builds on the merged #242 expression/routing foundation and #243 lexical
+guards. [Section sequencing](section-sequencing.md) adds native static arrange
+tuples, four-input SECTIONS panels and exclusive NEXT continuation without
+changing mask lanes. Implementation and focused proof are in progress; bounded
+review, the complete local suite and hosted protected merge gates remain pending.
+
 1. **Module catalog.** `src/modules/catalog.ts` holds every v1 module as data (controls, ranges, defaults, jacks, Strudel functions). _Started in the initial commit, with integrity tests._
 2. **Patch → code generator (#3, implemented).** Pure `generate(patch) → string` in `src/codegen/generate.ts`, following [`translation rules`](translation-rules.md#rack-generator-contract-3). Tests cover every v1 module, CV routing (LFO and ENV into VCF and VCA), fan-out/dependency naming, nested mixer channels, omitted defaults, CODE preservation, per-voice routing and the source-bound layout block. Imported-document reading/editing and playback are integrated in the later steps below.
 3. **Play through Strudel (#4, implemented).** The top-bar transport plays generated patch state, applies value changes without restarting scheduling, and controls OUT VOL at the engine output. Sample maps load before first evaluation. Its original cutoff/tempo/volume fixture preceded the rack controls shipped in step 4. Queued edits respect Stop, surfaced construction failures request Stop, and structural replacements clear old effect buses. See [browser signal evidence, reproduction and listening limits](playback-verification.md).

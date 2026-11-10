@@ -1,4 +1,5 @@
 import soundEffects from './patches/sound-effects.strudel?raw'
+import sectionStudy from './patches/section-study.strudel?raw'
 import { MODULE_EXERCISES } from './module-exercises'
 
 import functionLoops from './patches/function-loops.strudel?raw'
@@ -153,6 +154,17 @@ export const PATCH_LIBRARY: readonly LibraryNode[] = [
     id: 'pattern-time',
     title: 'Pattern and time',
     children: [
+      {
+        kind: 'patch',
+        id: 'section-study',
+        title: 'Changing rooms',
+        description: 'Five ordered sections reuse a three-cycle bass and a combined upper part.',
+        tryThis:
+          'Edit SECTIONS durations and order; NEXT appends the fifth section. Compare its phase with a Voices mask lane.',
+        source: sectionStudy,
+        attribution,
+        exercises: ['sections', 'mix', 'seq', 'osc', 'reverb', 'out'],
+      },
       {
         kind: 'patch',
         id: 'pattern-hardware',

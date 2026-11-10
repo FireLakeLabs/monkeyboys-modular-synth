@@ -1,5 +1,5 @@
 import type { SamplePack } from '../samples/packs'
-import { parse, type Expression } from 'acorn'
+import { parse, tokenizer, type Expression } from 'acorn'
 import { chain, nestedScope, expressionChildren, type ParsedScope } from '../reader/syntax'
 import type { RailHp } from '../patch/layout'
 import type { Cable, PlacedModule } from '../patch/types'
@@ -9,6 +9,8 @@ export const RACK_MARKER = '// ── @monkeyboy rack v1 ──'
 export interface ExpressionStep {
   call: number
   argument: number | 'receiver' | 'body' | 'binding' | 'value'
+  /** Element of a proven static arrange tuple argument. */
+  element?: 1
 }
 
 export interface Binding {
@@ -52,6 +54,7 @@ export interface RackLayout {
 
 export interface Owner {
   module: string
+  part?: number
   fx?: number
   role: Binding['role']
   start: number
@@ -131,7 +134,7 @@ export function syntax(
   }
   const root = chain(statement.expression)
   // An opaque combiner can carry routes through unknown arguments; never overwrite them.
-  const routingNames = ['orbit', 'o', ...(opaque ? ['stack'] : [])]
+  const routingNames = ['orbit', 'o', ...(opaque ? ['stack', 'arrange'] : [])]
   function usesOrbit(value: unknown): boolean {
     if (typeof value !== 'object' || value === null) return false
     // Retain the existing conservative orbit binding rule. The short alias and
@@ -255,9 +258,21 @@ export function bindScope(
   for (const owner of expression.owners) {
     const module = layout.modules.find((item) => item.id === owner.module)
     if (!module) throw new Error(`Unknown binding owner: ${owner.module}`)
+    const parentheses = (text: string, token: '(' | ')') =>
+      [...tokenizer(text, { ecmaVersion: 'latest' })].every((item) => item.type.label === token)
     const local =
       scopes
-        .filter((candidate) => candidate.start - 1 <= owner.start && candidate.end - 1 >= owner.end)
+        .filter(
+          (candidate) =>
+            (candidate.start - 1 <= owner.start && candidate.end - 1 >= owner.end) ||
+            // Source CODE is wrapped to protect expression and terminal-comment syntax.
+            // Its native tuple scope excludes those parentheses, but still owns CODE.
+            (module.type === 'code' &&
+              owner.start <= candidate.start - 1 &&
+              owner.end >= candidate.end - 1 &&
+              parentheses(expression.text.slice(owner.start, candidate.start - 1), '(') &&
+              parentheses(expression.text.slice(candidate.end - 1, owner.end), ')')),
+        )
         .at(-1) ?? top
     const calls = local.calls.flatMap((call, index) =>
       // A chained call's range starts at its receiver's end, including whitespace.
@@ -274,6 +289,7 @@ export function bindScope(
       ...(local.loop ? { loop: local.loop } : {}),
       ...(local.path ? { path: local.path } : {}),
       calls,
+      ...(owner.part === undefined ? {} : { part: owner.part }),
       role: owner.role,
       ...(owner.fx === undefined ? {} : { fx: owner.fx }),
       ...(owner.target === undefined ? {} : { target: owner.target }),
