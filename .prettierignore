@@ -14,3 +14,7 @@ test-results/
 
 # Deterministic machine inventory (JSON.stringify output).
 docs/research/strudel-api-coverage/inventory.json
+
+# Upstream legal text and original artwork.
+scripts/licenses/*.txt
+src/about/strudel.svg

@@ -127,12 +127,20 @@ const fixes = [
     ],
   },
 ]
+const notice = await readFile(
+  new URL('./licenses/modification-header.txt', import.meta.url),
+  'utf8',
+)
 const digest = (source) => createHash('sha256').update(source).digest('hex')
 
 for (const fix of fixes) {
   const file = new URL(`../node_modules/${fix.path}`, import.meta.url)
-  let source = await readFile(file, 'utf8')
-  if (digest(source) === fix.patched) continue
+  const installed = await readFile(file, 'utf8')
+  let source = installed.startsWith(notice) ? installed.slice(notice.length) : installed
+  if (digest(source) === fix.patched) {
+    if (!installed.startsWith(notice)) await writeFile(file, notice + source)
+    continue
+  }
   if (digest(source) !== fix.original && !fix.previous?.includes(digest(source)))
     throw new Error(
       `Unexpected ${fix.path}; review the pinned audio cleanup fixes before updating Strudel.`,
@@ -140,6 +148,6 @@ for (const fix of fixes) {
   for (const [before, after] of fix.replacements) source = source.replace(before, after)
   if (fix.bytebeat) source = patchBytebeatArtifact(source, fix.path.includes('/dist/'))
   if (digest(source) !== fix.patched) throw new Error(`Could not patch ${fix.path}`)
-  await writeFile(file, source)
+  await writeFile(file, notice + source)
 }
 process.stdout.write('Verified Strudel audio pool ownership and reset-safe routing cleanup.\n')

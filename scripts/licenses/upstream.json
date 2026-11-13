@@ -1,0 +1,38 @@
+[
+  {
+    "name": "strudel-core",
+    "revision": "d198910a86fcaecd658ef528bfa6d7884e93490b",
+    "url": "https://codeberg.org/uzu/strudel/archive/d198910a86fcaecd658ef528bfa6d7884e93490b.tar.gz",
+    "sha256": "f1f96291863c0104906820beb80be810ddd49baf4eda892ebf4e0015dda4fe97",
+    "packages": {
+      "@strudel/core": "1.2.6",
+      "@strudel/mini": "1.2.6",
+      "@strudel/tonal": "1.2.6",
+      "@strudel/transpiler": "1.2.6",
+      "@strudel/draw": "1.2.6"
+    }
+  },
+  {
+    "name": "strudel-web",
+    "revision": "f610965f4332837febe45743105da170e8b331ed",
+    "url": "https://codeberg.org/uzu/strudel/archive/f610965f4332837febe45743105da170e8b331ed.tar.gz",
+    "sha256": "4f500324cedc28a9d12f246293e7c5d8ce1ed4ffc0c82c83a1be43794512bdd1",
+    "packages": {
+      "@strudel/web": "1.3.0",
+      "@strudel/webaudio": "1.3.0",
+      "superdough": "1.3.0",
+      "supradough": "1.2.4"
+    }
+  },
+  {
+    "name": "kabelsalat",
+    "revision": "3c9f953bbe72a3d46cf58d053bdad28b2d9ed1d5",
+    "url": "https://codeberg.org/froos/kabelsalat/archive/3c9f953bbe72a3d46cf58d053bdad28b2d9ed1d5.tar.gz",
+    "sha256": "dd89459020ec6bc9889f819134a392e511cd5bfc58d451c8d28ccee2efae509a",
+    "packages": {
+      "@kabelsalat/core": "0.4.0",
+      "@kabelsalat/lib": "0.4.1",
+      "@kabelsalat/web": "0.4.1"
+    }
+  }
+]

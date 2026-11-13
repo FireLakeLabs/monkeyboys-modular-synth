@@ -59,6 +59,12 @@ The green **Locked** and blue **V1 scope** notes on the canvas match [`decisions
 
 ## App chrome
 
+About and matching GitHub/Strudel icon links sit together after the transport
+controls. The Strudel link uses its unchanged full-color upstream logo. About
+opens a native modal with versioned source and license links; Escape/Close returns
+focus to About. Narrow layouts wrap the group and use 44 px icon targets. See
+[license and source contract](licensing.md).
+
 The app fills the window and the page itself never scrolls; the dock, rack and code
 each scroll on their own. Selection tools, prompts and destinations float
 over the rack, and Connections and notes open as one-at-a-time footer popovers, so

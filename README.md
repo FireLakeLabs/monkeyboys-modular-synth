@@ -88,4 +88,9 @@ the [pstack adoption review](.agents/pstack-review.md) explains the selection.
 
 ## Licence
 
-See [LICENSE](LICENSE) for this project’s MIT license. Strudel is a separately licensed dependency under AGPL-3.0-or-later.
+Our original source is [MIT licensed](LICENSE). The combined software app includes
+Strudel and related AGPL-3.0-or-later dependencies and is distributed under AGPL
+terms, with no warranty. About links to the exact build source, a source download
+including our engine patches, and complete license/third-party notices. Music,
+samples, fonts and logos retain separate rights; some existing music/sample
+permissions remain unverified. See [license scope and source materials](docs/licensing.md).

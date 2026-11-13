@@ -1,0 +1,1 @@
+/*! MonkeyBoy’s Modular Synth: modified 2026-11-13; AGPL-3.0-or-later. See scripts/licenses/modifications.txt and the About source download. */
