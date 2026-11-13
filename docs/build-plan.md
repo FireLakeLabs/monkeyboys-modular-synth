@@ -49,6 +49,15 @@ feature was reverified on the public host.
   [#47](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/47) tracks
   another library collection. Neither is completed by this status reconciliation.
 
+## License/source notices (13 November 2026)
+
+Owner-approved follow-up to Order Doesn’t Matter PR #50: visible About, matching
+GitHub/Strudel links, build-generated license notices, dated engine modification
+notices and retained corresponding-source downloads. See the
+[contract and permission limits](licensing.md). Asset permission gaps are recorded
+explicitly; this work does not establish rights to the existing third-party music
+or every external sample. Browser verification and owner review precede merge.
+
 ## Early public hosting
 
 [Issue #22](https://github.com/FireLakeLabs/monkeyboys-modular-synth/issues/22)

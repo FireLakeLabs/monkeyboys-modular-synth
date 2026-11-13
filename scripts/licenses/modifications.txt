@@ -1,0 +1,33 @@
+Modified Strudel / Superdough — MonkeyBoy’s Modular Synth contributors
+Modification notice dated 13 November 2026 (documents existing local changes).
+These modifications to upstream AGPL-3.0-or-later code are under AGPL-3.0-or-later.
+Original copyright/licence notices are preserved. No warranty.
+
+scripts/patch-strudel-audio-pools.mjs applies hash-checked changes to
+@strudel/web@1.3.0 and superdough@1.3.0:
+- create duck orbits before the target's first note, attaching output once;
+- tolerate already-disconnected effect returns on structural resets;
+- keep pooled nodes owned by their AudioContext;
+- construct zero-gain helpers in the requested context.
+scripts/bytebeat-worklet-patch.mjs changes the BYTEBEAT processor to forward
+formula failures, zero failed output and stop that processor.
+These changes affect the ESM distributions, preferred .mjs source files and the
+embedded audio worklet. The source download includes both patch scripts,
+installed patched runtime packages and pinned upstream source archives.
+
+Reproduce the application with the Node version in app/.node-version:
+cd app
+npm ci
+npm run build
+npm run preview -- --host 127.0.0.1
+npm ci reapplies and verifies the patches. The build verifies/downloads pinned
+upstream archives into node_modules/.cache/mms-sources and assembles the notices
+and source download. Internet access is needed for npm and uncached archives.
+The app's lockfile pins installed packages. Upstream archives include their own
+source, build configurations and lockfiles; extract each upstream/*.tar.gz into
+its own directory to inspect or rebuild upstream with its documented toolchain.
+The included app/node_modules contains installed runtime packages (not dev tools).
+Do not run npm ci with --ignore-scripts: that would omit the engine fixes.
+
+External sample audio and hosted fonts are not part of the software source
+archive; see asset credits for their sources and separate permission status.

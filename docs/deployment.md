@@ -104,6 +104,13 @@ asset policy. HTML/root files use `no-cache,max-age=0,must-revalidate` and the
 default CloudFront behavior disables caching. This preserves lazy loading in
 older tabs while refreshing new navigations.
 
+About links to `assets/RELEASE_ID/licenses.txt` and
+`assets/RELEASE_ID/corresponding-source.tar.gz` from the same checked build. These
+use the existing immutable asset policy and indefinite retention, including on
+rollback. `/licenses.txt` is a current-release alias. Source downloads include
+pinned upstream archives and are generated during the check job; see
+[licensing](licensing.md). Retain source/notices for every retained served release.
+
 ## Retention and cleanup
 
 Website assets and S3 archives are retained **indefinitely** initially. Publishing

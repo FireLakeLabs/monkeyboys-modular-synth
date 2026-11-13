@@ -612,3 +612,14 @@ count consumption/default pitch remains separately documented source evidence,
 not audio proof. The dated whole-catalog report and its hash-based reproduction
 `node scripts/module-contexts.mjs --check` are explicit research checks, not a CI
 requirement to rewrite historical evidence after every application change.
+
+## Release license/source materials
+
+Enforced: `scripts/licenses.mts` rejects missing package license files, changed
+embedded bundle audits, AGPL versions without pinned preferred source, corrupt
+upstream source archives and production builds without a clean matching commit.
+`licenses.test.mts` probes these failures and source-file selection. The build
+produces retained release-specific notices and source downloads; source contents
+and browser links are covered separately. Asset permissions documented in
+[licensing](licensing.md) remain unresolved where no grant is established;
+a notice test does not establish those rights.

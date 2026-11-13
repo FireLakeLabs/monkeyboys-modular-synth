@@ -1,3 +1,4 @@
+import { About } from './about/About'
 import { SoundCrate } from './samples/SoundCrate'
 import { seatedResources } from './samples/crate'
 import { getSamplePacks, subscribeSamplePacks } from './strudel/engine'
@@ -939,6 +940,7 @@ export default function App() {
             </svg>
           )}
         </button>
+        <About />
       </header>
 
       <fieldset className="workspace-views" aria-label="Workspace view">
